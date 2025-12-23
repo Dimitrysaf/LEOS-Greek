@@ -219,7 +219,6 @@ When('click on revert to this version', function () {
 When('click on archive this version', function () {
     tableOfContent.archiveThisVersion();
 });
-
 When('click on three vertical dots of card header title {string} in version pane', function (headerTitle) {
     tableOfContent.clickThreeDotsOfCardHeader(headerTitle);
 });
@@ -434,3 +433,21 @@ Then(/^enacting terms contains article having text "(.*)" in toc$/, function (la
 Then ('enacting terms does not contains article having text {string} in toc',function(label){
     tableOfContent.elements.nodeLabel().should("not.contain", label)
 });
+
+When(/^click on place as child option from dropdown content$/, function () {
+    tableOfContent.clickPlaceAsChildOptionFromDropDownContent();
+});
+
+Then(/^no warning symbol should be displayed in the navigation pane$/, function () {
+    tableOfContent.elements.euiLabelWarningList()
+        .should('not.exist');
+});
+
+
+
+
+
+
+Then ('contribution card {int} is displayed', function(cardNumber){
+    tableOfContent.elements.contributionsPaneAccordion().should('be.visible');
+})

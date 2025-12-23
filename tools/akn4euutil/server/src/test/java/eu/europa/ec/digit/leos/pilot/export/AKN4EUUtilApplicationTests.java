@@ -197,8 +197,8 @@ class AKN4EUUtilApplicationTests {
 
     private ResultActions createApplyMetadataRequest(String mockInputFilename) throws Exception {
         MockMultipartFile mockMultipartFile = convertToMockMultipartFile(mockService.getMockInputFilename(mockInputFilename));
-        MockMultipartHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/applyMetadata")
-                .file(mockMultipartFile);
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/applyMetadata")
+                .file(mockMultipartFile).param("validate", "false");
         return mvc.perform(builder);
     }
 }

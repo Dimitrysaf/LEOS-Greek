@@ -16,10 +16,12 @@ package eu.europa.ec.leos.services.dto.response;
 
 import eu.europa.ec.leos.model.xml.Element;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-public class SaveElementResponse {
+public class SaveElementResponse implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final String elementId;
     private final String elementTagName;

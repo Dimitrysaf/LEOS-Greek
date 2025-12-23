@@ -221,7 +221,10 @@ public abstract class BillApiServiceImpl implements BillApiService {
         Bill updatedBill = this.billService.saveTableOfContent(bill, toc,
                 messageHelper.getMessage("operation.toc.updated"), user);
         Profile profile = genericDocumentApiService.getProfile(bill, clientContextToken);
-        List<TocItem> tocItems = billService.fetchTocItems(bill, this.structureContext.get(), profile);
+        Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
+        proposal = proposalService.populateProposalMetadataFromXml(proposal);
+        List<TocItem> tocItems = billService.fetchTocItems(bill, this.structureContext.get(), profile,
+                proposal.getMetadata().get().getDocumentCollectionName().equals("ACT_AUTO_COM"));
         return billService.getTableOfContent(updatedBill, tocMode, tocItems, true);
     }
 
@@ -496,8 +499,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
             Bill bill = billService.findBillByRef(documentRef);
             this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
             BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required");
-            byte[] newXmlContent = importService.insertSelectedElements(bill, aknDocument.getBytes(StandardCharsets.UTF_8), elementIds,
-                    this.getToc(documentRef, TocMode.NOT_SIMPLIFIED, null));
+            byte[] newXmlContent = importService.insertSelectedElements(bill, aknDocument.getBytes(StandardCharsets.UTF_8), elementIds, this.getToc(documentRef, TocMode.NOT_SIMPLIFIED, null));
             String notificationMsg =
                     "document.import.element.inserted" + (elementIds.stream().anyMatch(s -> s.startsWith("rec_"))
                             ? ".recitals" : "") +
@@ -515,7 +517,10 @@ public abstract class BillApiServiceImpl implements BillApiService {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
         Profile profile = genericDocumentApiService.getProfile(bill, clientContextToken);
-        List<TocItem> tocItems = billService.fetchTocItems(bill, this.structureContext.get(), profile);
+        Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
+        proposal = proposalService.populateProposalMetadataFromXml(proposal);
+        List<TocItem> tocItems = billService.fetchTocItems(bill, this.structureContext.get(), profile,
+                proposal.getMetadata().get().getDocumentCollectionName().equals("ACT_AUTO_COM"));
         return this.billService.getTableOfContent(bill, tocMode, tocItems, false);
     }
 
@@ -677,7 +682,10 @@ public abstract class BillApiServiceImpl implements BillApiService {
     public List<TocItem> getTocItems(@NotNull String documentRef) {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
-        return billService.fetchTocItems(bill, this.structureContext.get(), null);
+        Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
+        proposal = proposalService.populateProposalMetadataFromXml(proposal);
+        return billService.fetchTocItems(bill, this.structureContext.get(), null,
+                proposal.getMetadata().get().getDocumentCollectionName().equals("ACT_AUTO_COM"));
     }
 
     @Override
@@ -685,7 +693,10 @@ public abstract class BillApiServiceImpl implements BillApiService {
         Bill bill = this.billService.findBillByRef(documentRef);
         Profile profile = genericDocumentApiService.getProfile(bill, clientContextToken);
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
-        return billService.fetchTocItems(bill, this.structureContext.get(), profile);
+        Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
+        proposal = proposalService.populateProposalMetadataFromXml(proposal);
+        return billService.fetchTocItems(bill, this.structureContext.get(), profile,
+                proposal.getMetadata().get().getDocumentCollectionName().equals("ACT_AUTO_COM"));
     }
 
     private String getImportXml(String content) {

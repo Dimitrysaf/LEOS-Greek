@@ -86,6 +86,18 @@ public interface BillRepository {
      */
     Bill updateBill(String id, byte[] content);
 
+    /**
+     * Updates a [Bill] document with the given content, versionType and comment
+     *
+     * @param id      the ID of the bill document to update.
+     * @param content the updated content of the bill.
+     * @param versionType       the version type to be created
+     * @param comment           comment to update.
+     *
+     * @return the updated bill document.
+     */
+    Bill updateBill(String id, byte[] content, VersionType versionType, String comment);
+
 
     /**
      * Updates a [Bill] document with the given metadata.

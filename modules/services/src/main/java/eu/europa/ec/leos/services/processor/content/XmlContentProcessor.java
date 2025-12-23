@@ -67,7 +67,7 @@ public interface XmlContentProcessor {
 
     String getElementFragmentByPath(byte[] xmlContent, String xPath, boolean namespaceEnabled);
 
-    byte[] replaceElementById(byte[] xmlContent, String newContent, String elementId);
+    byte[] replaceElementById(byte[] xmlContent, String newContent, String elementId, boolean doPostProcessing);
 
     byte[] removeElementById(byte[] xmlContent, String elementId, boolean isTrackChangesEnabled);
 

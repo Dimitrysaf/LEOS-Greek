@@ -146,5 +146,11 @@ class financialStatementPage {
     getAllDatePicker(index, levelNumber) {
         return this.getLevelByNum(levelNumber).find('input[class="hasDatepicker"]').eq(index-1);
     }
+
+
+
+    mouseHoverOnLevel(levelNumber) {
+        cy.xpath("//mainbody//level[" + levelNumber + "]").invoke('attr', 'id').then(id => cy.get("#" + id).realHover());
+    }
 }
 export default new financialStatementPage();

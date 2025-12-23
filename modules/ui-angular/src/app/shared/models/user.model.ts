@@ -12,6 +12,7 @@ export interface User {
   connectedEntity: UserEntity | null;
   defaultEntity: UserEntity | null;
   lang: string;
+  greffeUser: boolean | null;
 }
 
 export interface UserEntity {

@@ -21,7 +21,6 @@ import eu.europa.ec.leos.repository.controllers.requests.OnCreateFromSource;
 import eu.europa.ec.leos.repository.controllers.requests.OnUpdateWithContent;
 import eu.europa.ec.leos.repository.controllers.requests.OnUpdateWithoutContent;
 import eu.europa.ec.leos.repository.controllers.requests.UpdateDocumentRequest;
-import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.model.LeosDocumentList;
@@ -406,9 +405,9 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<Object> findDocumentsUsingFilter(@RequestParam(value="packageName", required=false, defaultValue="%25") String packageName,
-                                                           @RequestBody FindDocumentsRequest findDocumentsRequest,
-                                                           @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResults,
-                                                           @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent)
+                                                                     @RequestBody FindDocumentsRequest findDocumentsRequest,
+                                                                     @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResults,
+                                                                     @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent)
             throws MalformedURLException {
         packageName = decode(packageName);
         List<LeosDocument> xmlDocs = documentService.findDocumentsUsingFilter(packageName, findDocumentsRequest.getCategories(),
@@ -431,17 +430,24 @@ public class DocumentController {
     }
 
 
-    @GetMapping(path = "/documents/find-by-validationStatus",
+    @GetMapping(path = "/documents/find-for-validation",
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "Find documents using validationStatus")
+    @Operation(summary = "Find documents for validation")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity<Object> findDocumentsUsingFilter(@RequestParam(value="validationStatus", required=true) String validationStatus)
-            throws MalformedURLException {
-        validationStatus = decode(validationStatus);
-        List<LeosDocument> documents = documentService.findDocumentsByValidationStatusNot(validationStatus);
-        return ResponseEntity.ok(new LeosDocumentList(documents));
+    public ResponseEntity<Object> findDocumentsPackagesForValidation() {
+        List<String> packageNames = documentService.findPackagesForValidation();
+        return ResponseEntity.ok(packageNames);
+    }
+
+    @PutMapping(path = "/documents/set-docs-validation-status")
+    @Operation(summary = "Set documents validation status")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
+    public ResponseEntity<Object> setDocumentsValidationStatus(@RequestBody List<String> versionIDs) throws RepositoryException {
+        return ResponseEntity.ok(documentService.setDocumentValidationStatus(versionIDs));
     }
 
 }

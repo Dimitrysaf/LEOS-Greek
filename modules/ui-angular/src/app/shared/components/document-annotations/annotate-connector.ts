@@ -1,4 +1,4 @@
-import {delay, Observable, shareReplay, takeUntil} from 'rxjs';
+import {delay, finalize, Observable, shareReplay, Subscriber, takeUntil} from 'rxjs';
 
 import {MergeContributionsService} from "@/features/akn-document/services/merge-contributions.service";
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
@@ -12,6 +12,9 @@ import { AnnotateService } from '@/shared/services/annotate.service';
 import { DocumentService } from '@/shared/services/document.service';
 import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
+import {EuiDialogService} from "@eui/components/eui-dialog";
+import {TranslateService} from "@ngx-translate/core";
+import {CKEditorService} from "@/features/akn-document/services/ckeditor.service";
 
 export type AnnotateConnectorInitialState = Omit<
   AnnotateConnectorState,
@@ -54,6 +57,8 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
     AnnotateService['getSecurityAnnotateToken']
   >;
 
+  protected isEditorOpen = false;
+
   constructor(
     state: AnnotateConnectorInitialState,
     private options: AnnotateConnectorOptions,
@@ -62,8 +67,14 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
     private milestoneService: ProposalMilestonesService,
     private mergeContributionService: MergeContributionsService,
     private detailsService: ProposalDetailsService,
+    private dialogService: EuiDialogService,
+    private translateService: TranslateService,
+    private ckEditorService?: CKEditorService,
   ) {
     super({ ...leosJavaScriptExtensionState, ...state }, null);
+    this.documentService.isEditorOpen$.subscribe((isOpen) => {
+      this.isEditorOpen = isOpen;
+    });
   }
 
   requestStoredDocumentAnnotations(uri: string) {
@@ -148,12 +159,29 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
         endOffset: endOffset as number,
       }),
     );
-
-    this.annotateService
-      .requestMergeSuggestion(mergeRequests[0])
-      .subscribe((res) => {
-        this.receiveMergeSuggestion(res);
+    if (this.isEditorOpen) {
+      this.dialogService.openDialog({
+        title: this.translateService.instant('page.editor.open.editor.dialog.title'),
+        content: this.translateService.instant('page.editor.open.editor.dialog.body'),
+        acceptLabel: this.translateService.instant('global.actions.confirm'),
+        accept: () => {
+          this.annotateService
+            .requestMergeSuggestion(mergeRequests[0])
+            .pipe(finalize(() => this.ckEditorService.saveWithConfirmation()))
+            .pipe(finalize(() => this.reloadDocument()))
+            .subscribe((res) => {
+              this.receiveMergeSuggestion(res);
+            });
+        }
       });
+    } else {
+      this.annotateService
+        .requestMergeSuggestion(mergeRequests[0])
+        .pipe(finalize(() => this.reloadDocument()))
+        .subscribe((res) => {
+          this.receiveMergeSuggestion(res);
+        });
+    }
   }
 
   requestMergeSuggestions(...args) {
@@ -178,9 +206,17 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
     );
     this.annotateService
       .requestMergeSuggestions(mergeRequests)
+      .pipe(finalize(() => this.reloadDocument()))
       .subscribe((res) => {
         this.receiveMergeSuggestions(...res);
       });
+  }
+
+  private reloadDocument() {
+    this.documentService.setDocumentRefAndCategory(
+      this.documentService.documentRef,
+      this.documentService.documentType,
+    );
   }
 
   requestSearchMetadata() {

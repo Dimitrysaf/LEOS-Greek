@@ -1,8 +1,8 @@
 package eu.europa.ec.leos.integration;
 
-import java.io.File;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 
 public interface LegisWriteService {
     
-    byte[] convert(File legFile) throws Exception;
+    byte[] convert(LeosFile legFile) throws Exception;
 }

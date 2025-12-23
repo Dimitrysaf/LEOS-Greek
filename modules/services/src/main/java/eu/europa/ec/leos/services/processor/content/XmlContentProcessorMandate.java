@@ -944,16 +944,16 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         }
         final String replace = XercesUtils.removeXmlDefinition(fragment).replace(contentFragmentMergeOn, contentFragmentMergeOn + " " + contentFragment);
 
-        byte[] updatedXmlContent = replaceElementById(xmlContent, replace, mergeOnElement.getElementId());
+        byte[] updatedXmlContent = replaceElementById(xmlContent, replace, mergeOnElement.getElementId(), true);
 
         Map<String, String> attributes = getElementAttributesByPath(content.getBytes(UTF_8), "/" + tagName, false);
         if (isProposalElement(attributes) && !isSoftMovedFrom(attributes)) {
-            updatedXmlContent = replaceElementById(updatedXmlContent, softDeleteElement(content, false), idAttributeValue);
+            updatedXmlContent = replaceElementById(updatedXmlContent, softDeleteElement(content, false), idAttributeValue, true);
         } else {
             updatedXmlContent = deleteElementById(updatedXmlContent, idAttributeValue);
             if (isSoftMovedFrom(attributes)) {
                 Element softMovedToElement = getElementById(updatedXmlContent, getSoftMovedFromAttribute(attributes));
-                updatedXmlContent = replaceElementById(updatedXmlContent, softDeleteElement(softMovedToElement.getElementFragment(), false), softMovedToElement.getElementId());
+                updatedXmlContent = replaceElementById(updatedXmlContent, softDeleteElement(softMovedToElement.getElementFragment(), false), softMovedToElement.getElementId(), true);
             }
             Element parentElement = getParentElement(updatedXmlContent, mergeOnElement.getElementId());
             if (Arrays.asList(PARAGRAPH, LEVEL, POINT, INDENT).contains(parentElement.getElementTagName()) && getChildElement(updatedXmlContent, parentElement.getElementTagName(), parentElement.getElementId(), Arrays.asList(SUBPARAGRAPH, SUBPOINT, LIST), 2) == null) {
@@ -961,7 +961,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
                 Map<String, String> mergedElementAttributes = getElementAttributesByPath(parentElement.getElementFragment().getBytes(UTF_8), xPath, false);
                 if (isSoftMovedFrom(mergedElementAttributes)) {
                     Element softMovedToMergedElement = getElementById(updatedXmlContent, getSoftMovedFromAttribute(mergedElementAttributes));
-                    updatedXmlContent = replaceElementById(updatedXmlContent, softDeleteElement(softMovedToMergedElement.getElementFragment(), false), softMovedToMergedElement.getElementId());
+                    updatedXmlContent = replaceElementById(updatedXmlContent, softDeleteElement(softMovedToMergedElement.getElementFragment(), false), softMovedToMergedElement.getElementId(), true);
                 }
                 String mergedElementFragment = getElementFragmentByPath(parentElement.getElementFragment().getBytes(UTF_8), xPath, false);
                 String mergedContentFragment = getElementFragmentByPath(parentElement.getElementFragment().getBytes(UTF_8), xPath + "/content", false);
@@ -969,7 +969,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
                 mergedContentFragment = XmlHelper.removeAllNameSpaces(mergedContentFragment);
                 String parentElementFragment = parentElement.getElementFragment().replace(mergedElementFragment, mergedContentFragment);
                 final String newContent = new String(updateSoftTransFromAttribute(parentElementFragment.getBytes(UTF_8), mergeOnElement.getElementId()), UTF_8);
-                updatedXmlContent = replaceElementById(updatedXmlContent, newContent, parentElement.getElementId());
+                updatedXmlContent = replaceElementById(updatedXmlContent, newContent, parentElement.getElementId(), true);
             } else if (Arrays.asList(PARAGRAPH, LEVEL, POINT, INDENT).contains(mergeOnElement.getElementTagName())) {
                 updatedXmlContent = insertAffectedAttributeIntoParentElements(updatedXmlContent, mergeOnElement.getElementId());
             }
@@ -1013,7 +1013,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         List<NumberingConfig> numberingConfigs = structureContextProvider.get().getNumberingConfigs();
 
-        replaceElementById(xmlContent, elementContent, elementId);
+        replaceElementById(xmlContent, elementContent, elementId, true);
 
         Optional<TableOfContentItemVO> hasIndentedItem = getItemFromTocById(elementId, toc);
         TableOfContentItemVO indentedItem = hasIndentedItem.orElseThrow(() -> new IllegalArgumentException("Indentation not allowed"));

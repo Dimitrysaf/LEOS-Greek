@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -21,8 +22,10 @@ import eu.europa.ec.leos.security.TokenService;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.structure.profile.ProfileService;
+import eu.europa.ec.leos.services.utils.HttpUtils;
 import eu.europa.ec.leos.vo.light.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -40,6 +43,8 @@ public class ConfigServiceImpl implements ConfigService {
     private final ProfileService profileService;
     private final TokenService tokenService;
     private final LanguageGroupService languageGroupService;
+    @Value("${leos.api.jwt.auth.client.decision.id}")
+    private String decisionClientId;
 
     @Autowired
     public ConfigServiceImpl(Properties applicationProperties, Properties integrationProperties, SecurityContext securityContext, LeosPermissionAuthorityMapHelper authorityMapHelper,
@@ -56,8 +61,11 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public AppConfigResponse getApplicationConfig(String clientContextToken) {
+    public AppConfigResponse getApplicationConfig(String authHeader) {
         AppConfigResponse appConfigResponse = new AppConfigResponse();
+
+        String remoteClientSystemID = HttpUtils.extractSystemClientIdFromAuthorizationHeader(authHeader)
+                .orElse(null);
 
         //load language map
         languageGroupService.getLanguageMap();
@@ -83,10 +91,6 @@ public class ConfigServiceImpl implements ConfigService {
         boolean showRevisionEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.view.revision.milestone"));
         String contextRole = null;
         Profile profile = null;
-        /*if(StringUtils.isNotBlank(clientContextToken) && tokenService.validateClientContextToken(clientContextToken)) {
-            contextRole = tokenService.extractUserRoleFromToken(clientContextToken);
-            profile = profileService.getProfile(tokenService.extractUserSystemNameFromToken(clientContextToken));
-        }*/
         boolean leosSwitchLevelArticle = Boolean.parseBoolean(applicationProperties.getProperty("leos.switch.level.article"));
         int minSearchChar = Integer.parseInt(applicationProperties.getProperty("leos.search.on.minimum.characters"));
         int maxSearchLimit = Integer.parseInt(applicationProperties.getProperty("leos.maximum.search.limit"));
@@ -102,7 +106,11 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setSupportDocumentCatalogKey(supportDocumentCatalogKey);
         appConfigResponse.setSupportDocumentEnabled(supportDocumentEnabled);
         appConfigResponse.setPermissionsMap(permissionsMap);
-        appConfigResponse.setUser(securityContext.getUser());
+        User user = securityContext.getUser();
+        boolean isGreffeUser = user.getEntities().stream().filter(entity -> entity.getOrganizationName().equals("GREFFE")).findAny().isPresent();
+        user.setGreffeUser((remoteClientSystemID != null && remoteClientSystemID.equals(decisionClientId))
+                || isGreffeUser);
+        appConfigResponse.setUser(user);
         appConfigResponse.setHeaderTitle(headerTitle);
         appConfigResponse.setAnnotateAuthority(annotateAuthority);
         appConfigResponse.setAnnotateClientUrl(annotateClientUrl);

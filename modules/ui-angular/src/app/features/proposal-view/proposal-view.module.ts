@@ -17,6 +17,8 @@ import { ProposalMilestoneSendCopyDialogComponent } from "./containers/proposal-
 import { ProposalMilestonesComponent } from "./containers/proposal-milestones/proposal-milestones.component";
 import { ProposalViewComponent } from "./containers/proposal-view/proposal-view.component";
 import { ProposalViewRoutingModule } from "./proposal-view-routing.module";
+import {MatFormField, MatHint, MatLabel, MatSuffix} from "@angular/material/form-field";
+import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/material/datepicker";
 
 
 @NgModule({
@@ -40,6 +42,13 @@ import { ProposalViewRoutingModule } from "./proposal-view-routing.module";
     SharedModule,
     CommonModule,
     ReactiveFormsModule,
+    MatFormField,
+    MatDatepickerToggle,
+    MatHint,
+    MatLabel,
+    MatDatepicker,
+    MatDatepickerInput,
+    MatSuffix,
   ],
   providers: [ProposalService],
 })

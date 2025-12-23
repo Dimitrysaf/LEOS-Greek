@@ -14,6 +14,8 @@
 
 package eu.europa.ec.leos.services.api;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
@@ -22,7 +24,7 @@ import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.LinkedPackage;
-import eu.europa.ec.leos.domain.repository.ProposalValidationStatus;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
@@ -38,15 +40,18 @@ import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.LeosAuthenticLanguage;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.ErrorVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.domain.vo.MilestonesVO;
+import eu.europa.ec.leos.domain.vo.ProposalDetailsVO;
 import eu.europa.ec.leos.domain.vo.ValidationVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
+import eu.europa.ec.leos.model.detailstab.DetailsTabExclusions;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.LeosRepository;
@@ -82,9 +87,11 @@ import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.services.exception.NotFoundException;
 import eu.europa.ec.leos.services.exception.XmlValidationException;
 import eu.europa.ec.leos.services.export.ExportLW;
+import eu.europa.ec.leos.services.export.ExportLeos;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportPackageVO;
 import eu.europa.ec.leos.services.export.ExportService;
+import eu.europa.ec.leos.services.export.LegPackage;
 import eu.europa.ec.leos.services.milestone.MilestoneService;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -94,6 +101,9 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.model.proposal.ProposalDetailsLists;
+import eu.europa.ec.leos.services.structure.details.ProposalDetailsService;
+import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
@@ -110,11 +120,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -144,22 +153,17 @@ import static org.apache.commons.lang3.StringUtils.normalizeSpace;
 
 @Service
 public abstract class ApiServiceImpl implements ApiService {
-    private static final String DOC = "doc";
     private static final String HTML = ".html";
     private static final String TOC_JS = "_toc.js";
     private static final String XML = ".xml";
     private static final String PDF = ".pdf";
     private static final String MAIN_DOCUMENT_FILE_NAME = "main";
     private static final String COVER_PAGE_CONTENT_FILE_NAME = "coverPage";
-    private static final String DOC_VERSION_START_TAG_REG = "<leos:docVersion\\b[^>]*>";
-    private static final String DOC_VERSION_END_TAG = "</leos:docVersion>";
     private static final String DOC_NUMBER_START_TAG_REG = "<leos:annexIndex\\b[^>]*>";
     private static final String DOC_NUMBER_END_TAG = "</leos:annexIndex>";
     public static final String  DOC_VERSION_SEPARATOR = "_";
-    private static final String DOC_LANGUAGE_SEPARATOR = "-";
     private static final Logger LOG = LoggerFactory.getLogger(ApiServiceImpl.class);
     private static final String COLLECTION_BLOCK_ANNEX_METADATA_UPDATED = "collection.block.annex.metadata.updated";
-    private static final String MILESTONE = "milestone";
     protected final ProposalService proposalService;
     protected final ExportService exportService;
     private final TemplateService templateService;
@@ -189,10 +193,12 @@ public abstract class ApiServiceImpl implements ApiService {
     private ExportPackageService exportPackageService;
     protected NotificationService notificationService;
     protected LegService legService;
+    private final CoverPageApiService coverPageApiService;
+    private final ProposalDetailsService proposalDetailsService;
     protected LeosRepository leosRepository;
     private TrackChangesContext trackChangesContext;
+    protected final TemplateConfigurationService templateConfigurationService;
     protected PackageRepository packageRepository;
-    protected ProposalRepository proposalRepository;
 
     private DocumentViewService documentViewService;
     @Value("${leos.clone.originRef}")
@@ -220,12 +226,15 @@ public abstract class ApiServiceImpl implements ApiService {
                           MilestoneService milestoneService,
                           ProposalConverterService proposalConverterService,
                           PostProcessingDocumentService postProcessingDocumentService,
-                          ValidationService validationService, Properties applicationProperties,
+                          ValidationService validationService,
+                          Properties applicationProperties,
                           ExplanatoryService explanatoryService,
                           ExportPackageService exportPackageService, NotificationService notificationService,
                           LegService legService, UserHelper userHelper, LeosRepository leosRepository,
                           TrackChangesContext trackChangesContext, DocumentViewService documentViewService,
-                          GenericDocumentTocApiService genericDocumentTocApiService, PackageRepository packageRepository, ProposalRepository proposalRepository) {
+                          GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
+                          ProposalDetailsService proposalDetailsService,
+                          TemplateConfigurationService templateConfigurationService, PackageRepository packageRepository) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -257,12 +266,10 @@ public abstract class ApiServiceImpl implements ApiService {
         this.trackChangesContext = trackChangesContext;
         this.documentViewService = documentViewService;
         this.genericDocumentTocApiService = genericDocumentTocApiService;
+        this.coverPageApiService = coverPageApiService;
+        this.proposalDetailsService = proposalDetailsService;
+        this.templateConfigurationService = templateConfigurationService;
         this.packageRepository = packageRepository;
-        this.proposalRepository = proposalRepository;
-    }
-
-    private static String readFileToString(File file) throws IOException {
-        return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
     }
 
     @Override
@@ -289,13 +296,13 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public CreateCollectionResult uploadProposal(File legDocument) throws CreateCollectionException {
+    public CreateCollectionResult uploadProposal(LeosFile legDocument) throws CreateCollectionException {
         DocumentVO propDocument = createCollectionService.getProposalDocumentFromLeg(legDocument);
         return createCollectionService.createCollectionFromLeg(legDocument, propDocument, "EN", false);
     }
 
     @Override
-    public LegFileValidation validateLegFile(File legDocument) {
+    public LegFileValidation validateLegFile(LeosFile legDocument) {
         LegFileValidation legFileValidation = new LegFileValidation();
         DocumentVO proposalVO = null;
         try {
@@ -323,19 +330,19 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public DocumentVO updateProposalMetadata(String proposalRef, UpdateProposalRequest request) {
+    public DocumentVO updateProposalTitleAndEEaRelevance(String proposalRef, String docPurpose, Boolean eeaRelevance) throws Exception {
         LOG.trace("Saving proposal metadata...");
         try {
             CollectionContextService context = collectionContextProvider.get();
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
             context.useProposal(proposal);
-            if (request.getDocPurpose() != null) {
-                context.usePurpose(request.getDocPurpose());
+            if (docPurpose != null) {
+                context.usePurpose(docPurpose);
             } else {
                 context.usePurpose(proposal.getMetadata().get().getPurpose());
             }
-            if (request.isEeaRelevance() != null) {
-                context.useEeaRelevance(request.isEeaRelevance());
+            if (eeaRelevance != null) {
+                context.useEeaRelevance(eeaRelevance);
             } else {
                 context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
             }
@@ -347,6 +354,110 @@ public abstract class ApiServiceImpl implements ApiService {
             LOG.error("Unexpected error occurred while updating proposal metadata ", e);
             throw e;
         }
+    }
+
+    @Override
+    public DocumentVO updateProposalMetadata(String proposalRef, UpdateProposalRequest request) throws Exception {
+        LOG.trace("Saving proposal metadata...");
+        LegPackage legPackage = null;
+        try {
+            CollectionContextService context = collectionContextProvider.get();
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+            if (leosPackage.getTranslated() != null && leosPackage.getTranslated()) {
+                LinkedPackage linkedPackage = packageService.findLinkedPackageByLinkedPkgId(leosPackage.getId());
+                leosPackage = packageService.findPackageByPackageId(linkedPackage.getPackageId());
+            }
+            Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
+            proposal = proposalService.populateProposalMetadataFromXml(proposal);
+            String proposalComment = generateProposalComment(request);
+            if (request.getCrossReferences() == null) {
+                request.setCrossReferences(proposal.getMetadata().get().getCrossReferences());
+            }
+            if (request.getEeaRelevance() == null) {
+                context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
+            } else {
+                context.useEeaRelevance(request.getEeaRelevance());
+            }
+            if (request.getPackageTitle() != null) {
+                context.usePackageTitle(request.getPackageTitle());
+            } else {
+                context.usePackageTitle(proposal.getMetadata().get().getPackageTitle());
+            }
+            if (request.getCoverPageType() != null) {
+                context.useCoverPageType(request.getCoverPageType());
+            } else {
+                context.useCoverPageType(proposal.getMetadata().get().getCoverPageType());
+            }
+            context.useActionMessage(ContextActionService.METADATA_UPDATED, proposalComment);
+            context.useActionComment(proposalComment);
+            List<LinkedPackage> linkedPackages =  packageService.findLinkedPackagesByPackageId(leosPackage.getId());
+            List<Proposal> proposalsToUpdate = new ArrayList<>();
+            proposalsToUpdate.add(proposal);
+            for (LinkedPackage linkedPackage : linkedPackages) {
+                leosPackage = packageService.findPackageByPackageId(linkedPackage.getLinkedPackageId());
+                proposalsToUpdate.add(proposalService.findProposalByPackagePath(leosPackage.getPath()));
+            }
+            for (int i = 0; i < proposalsToUpdate.size(); i++) {
+                Proposal proposalToUpdate = proposalsToUpdate.get(i);
+                if (request.getDocPurpose() != null) {
+                    context.usePurpose(request.getDocPurpose());
+                } else {
+                    context.usePurpose(proposalToUpdate.getMetadata().get().getPurpose());
+                }
+                if (request.getIsAuthenticLang() != null) {
+                    if (request.getIsAuthenticLang().equals(LeosAuthenticLanguage.NON_PROPOSAL_LANGUAGE) || request.getIsAuthenticLang().equals(LeosAuthenticLanguage.PROPOSAL_LANGUAGE)) {
+                        String currentLang = proposalToUpdate.getMetadata().get().getLanguage();
+                        boolean isContainingLang = request.getAuthenticLang() != null && request.getAuthenticLang().contains(currentLang.toLowerCase());
+                        context.useIsAuthenticLang(isContainingLang ? LeosAuthenticLanguage.PROPOSAL_LANGUAGE : LeosAuthenticLanguage.NON_PROPOSAL_LANGUAGE);
+                    } else {
+                        context.useIsAuthenticLang(request.getIsAuthenticLang());
+                    }
+                } else {
+                    context.useIsAuthenticLang(proposalToUpdate.getMetadata().get().getIsAuthenticLang());
+                }
+                if (proposal.isClonedProposal()) {
+                    legPackage = legService.createLegPackageForClone(proposalToUpdate.getId(), new ExportLeos());
+                } else {
+                    legPackage = legService.createLegPackage(proposalToUpdate.getId(), new ExportLeos());
+                }
+
+                Map<String, byte[]> updatedDocuments = proposalService.applyMetadata(legPackage, proposalToUpdate, request);
+                if (!updatedDocuments.containsKey(LeosCategory.PROPOSAL.name())) {
+                    throw new Exception("Unexpected error occurred while updating proposal metadata");
+                } else {
+                    context.useProposal(proposalToUpdate);
+                    context.useProposalContent(updatedDocuments.get(LeosCategory.PROPOSAL.name()));
+                    if (updatedDocuments.containsKey(LeosCategory.BILL.name())) {
+                        leosPackage = packageService.findPackageByDocumentRef(proposalToUpdate.getMetadata().get().getRef(), Proposal.class);
+                        Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
+                        if (!new String(bill.getContent().get().getSource().getBytes(), StandardCharsets.UTF_8).equals(new String(updatedDocuments.get(LeosCategory.BILL.name()), StandardCharsets.UTF_8))) {
+                            context.useBillContent(updatedDocuments.get(LeosCategory.BILL.name()));
+                        }
+                    }
+                    proposalToUpdate = context.executeUpdateMetadataProposal();
+                    proposalsToUpdate.set(i, proposalService.populateProposalMetadataFromXml(proposalToUpdate));
+                }
+            }
+            return new DocumentVO(proposalsToUpdate.get(0));
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while updating proposal metadata ", e);
+            throw e;
+        }
+    }
+
+    private String generateProposalComment(UpdateProposalRequest request) throws Exception {
+        List<String> metadata = new ArrayList<>();
+        for (Field field: request.getClass().getDeclaredFields()) {
+            if (request.getClass().getMethod("get" + StringUtils.capitalize(field.getName())).invoke(request) != null) {
+                String key = "operation.details.element." + String.join(".", field.getName().split("(?=\\p{Lu})")).toLowerCase();
+                String message = messageHelper.getMessage(key);
+                if (!message.equals(key)) {
+                    metadata.add(message);
+                }
+            }
+        }
+        return messageHelper.getMessage("operation.details.updated",
+                String.join(", ", metadata));
     }
 
     protected String getJobFileName(String proposalRef) {
@@ -375,6 +486,14 @@ public abstract class ApiServiceImpl implements ApiService {
     @Override
     public List<UserJSON> searchUser(String searchKey) {
         return userService.searchUsersByKey(searchKey);
+    }
+
+    @Override
+    public List<String> searchUserByJobTitle(String jobTitle) {
+        List<UserJSON> results = userService.searchUsersByJobTitle(jobTitle);
+        return results.stream()
+                .map(user -> user.getFirstName() + " " + user.getLastName())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -540,8 +659,10 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public Optional<DocumentVO> getProposalDetails(String proposalRef, String userId) {
+    public Optional<ProposalDetailsVO> getProposalDetails(String proposalRef, String userId) {
         LOG.trace(proposalRef);
+        ProposalDetailsVO proposalDetails = new ProposalDetailsVO();
+        ProposalDetailsLists proposalDetailsLists = proposalDetailsService.getProposalDetailsLists();
         Set<MilestonesVO> milestonesVOs = new TreeSet<>(Comparator.comparing(MilestonesVO::getUpdatedDateAsDate).reversed());
         Proposal proposal = null;
         byte[] proposalXmlContent = new byte[0];
@@ -564,6 +685,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     leosPackage = packageService.findPackageByPackageId(linkedPackage.getPackageId());
                 }
                 List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
+                proposalDetailsLists = proposalDetailsService.populateTemplateSignatures(proposalDetailsLists, documents);
                 List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, true);
                 FavouritePackageResponse favouritePackageResponse = packageService.getFavouritePackage(proposalRef, userId);
                 legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
@@ -600,13 +722,43 @@ public abstract class ApiServiceImpl implements ApiService {
                 } finally {
                     milestonesVOsLock.unlockWrite(stamp);
                 }
-                return Optional.of(proposalVO);
+                proposalVO.setDetailsTabExclusions(getDetailsTabExclusions(proposal));
+                proposalDetails.setProposalDetailsLists(proposalDetailsLists);
+                proposalDetails.setDocument(proposalVO);
+                return Optional.of(proposalDetails);
             } catch (Exception e) {
                 LOG.error("Unexpected error occoured while fetching proposal", e);
                 return Optional.empty();
             }
         }
         return Optional.empty();
+    }
+
+    private DetailsTabExclusions getDetailsTabExclusions(Proposal proposal) {
+        String detailsConf;
+
+        try {
+            detailsConf = templateConfigurationService.getElementFromTemplateConfiguration(
+                    proposal.getMetadata().get().getDocTemplate(), "detailsTabExclusions");
+        }
+        catch(IllegalArgumentException e){
+            return null;
+        }
+
+        if (detailsConf == null || detailsConf.trim().isEmpty()) {
+            return null;
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
+
+        try {
+            return mapper.readValue(detailsConf, DetailsTabExclusions.class);
+        } catch (Exception e) {
+            LOG.warn("Failed to parse JSON: {}", detailsConf, e);
+            return null;
+        }
     }
 
     private ExportPackageVO getExportPackageVO(ExportDocument exportDocument) {
@@ -632,7 +784,9 @@ public abstract class ApiServiceImpl implements ApiService {
                                 : new byte[0];
                     }
                     MetadataVO metadataVO = createMetadataVO(proposal);
-                    proposalVO.setMetaData(metadataVO);
+                    Optional<XmlDocument> bill = documents.stream().filter((d) -> d.getCategory().equals(LeosCategory.BILL)).findAny();
+                    proposalVO.setMetaData(proposalService.populateProposalMetadataFromXml(proposalXmlContent,
+                            bill.map(xmlDocument -> billService.findBillByRef(xmlDocument.getMetadata().get().getRef()).getContent().get().getSource().getBytes()).orElse(null), metadataVO));
                     proposalVO.addCollaborators(proposal.getCollaborators());
                     proposalVO.setUpdatedBy(userHelper.convertToPresentation(proposal.getLastModifiedBy()));
                     proposalVO.setCreatedBy(userHelper.convertToPresentation(proposal.getCreatedBy()));
@@ -642,6 +796,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     proposalVO.setSource(proposalXmlContent);
                     proposalVO.setRef(proposal.getMetadata().get().getRef());
                     proposalVO.setFavourite(isFavourite);
+                    proposalVO = coverPageApiService.getCoverPageCorrigendumAddendumDetails(proposalXmlContent, proposalVO);
                     if (proposalXmlContent != null && documentContentService.isCoverPageExists(proposalXmlContent)) {
                         proposalVO.addChildDocument(getCoverPageVO(proposalVO, proposal.getOriginRef()));
                     }
@@ -808,7 +963,15 @@ public abstract class ApiServiceImpl implements ApiService {
 
     private MetadataVO createMetadataVO(Proposal proposal) {
         ProposalMetadata metadata = proposal.getMetadata().getOrError(() -> "Proposal metadata is not available!");
-        return new MetadataVO(metadata.getStage(), metadata.getType(), metadata.getPurpose(), metadata.getTemplate(), metadata.getLanguage(), metadata.getEeaRelevance());
+        MetadataVO metadataVO = new MetadataVO(metadata.getStage(), metadata.getType(), metadata.getPurpose(), metadata.getTemplate(), metadata.getLanguage(),
+            metadata.getEeaRelevance());
+        metadataVO.setAuthenticLang(proposal.getMetadata().get().getAuthenticLang());
+        metadataVO.setIsAuthenticLang(proposal.getMetadata().get().getIsAuthenticLang());
+        metadataVO.setPackageTitle(proposal.getMetadata().get().getPackageTitle());
+        metadataVO.setInternalRef(proposal.getMetadata().get().getInternalRef());
+        metadataVO.setCoverPageType(proposal.getMetadata().get().getCoverPageType());
+        metadataVO.setCrossReferences(proposal.getMetadata().get().getCrossReferences());
+        return metadataVO;
     }
 
     private LegDocument getLegDocument(String legFileName, LeosPackage leosPackage) {
@@ -853,7 +1016,6 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.usePackageRef(proposalRef);
                 billContext.executeCreateBillAnnex(annexType, binaryContent, originalFilename, binaryContentSize);
                 billService.updateExternalReferencesAsync(leosPackage);
-                proposalService.setProposalValidationStatus(proposal.getId(), ProposalValidationStatus.NOT_VALIDATED);
             } catch (Exception e) {
                 LOG.error("Unexpected error occurred while creating new annex", e);
                 throw e;
@@ -870,13 +1032,9 @@ public abstract class ApiServiceImpl implements ApiService {
         LegDocument clonedLegDocument = legService.findLastContribution(clonedPackage.getPath(), clonedLegName);
         boolean contributionChanged = false;
         if (clonedLegDocument != null && originalLegDocument != null) {
-            File legFileTemp = null;
-            File originalLegFileTemp = null;
             try {
-                legFileTemp = File.createTempFile(MILESTONE, ".leg");
-                Map<String, Object> contributionFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, clonedLegDocument);
-                originalLegFileTemp = File.createTempFile("milestoneOriginal", ".leg");
-                Map<String, Object> originalDocumentFiles = MilestoneHelper.getMilestoneFiles(originalLegFileTemp, originalLegDocument);
+                Map<String, Object> contributionFiles = MilestoneHelper.getMilestoneFiles(clonedLegDocument);
+                Map<String, Object> originalDocumentFiles = MilestoneHelper.getMilestoneFiles(originalLegDocument);
 
                 Map<String, Object> docsAddedMap = MilestoneHelper.populateDocsAddedMap(contributionFiles, originalDocumentFiles, clonedLegDocument,
                         getAnnexes(originalLeosPackage),
@@ -896,12 +1054,6 @@ public abstract class ApiServiceImpl implements ApiService {
                 }
             } catch (IOException e) {
                 LOG.error("Exception occurred while deleting the file from file system" + e);
-            } finally {
-                try {
-                    MilestoneHelper.deleteTempFilesIfExists(legFileTemp);
-                } catch (IOException e) {
-                    LOG.error("Exception occurred while deleting the file from file system" + e);
-                }
             }
         }
         return contributionChanged;
@@ -1288,8 +1440,7 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     private MilestoneViewResponse listMilestoneDocuments(LegDocument legDocument, LegDocument clonedLegDoc, String clonedProposalRef, boolean isToBeCompared) throws IOException {
-        File legFileTemp = File.createTempFile(MILESTONE, ".leg");
-        Map<String, Object> unzippedFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);
+        Map<String, Object> unzippedFiles = MilestoneHelper.getMilestoneFiles(legDocument);
         Map<String, Object> contentFiles = MilestoneHelper.filterAndSortFiles(unzippedFiles, HTML);
         Map<String, Map> versionAndAnnexNumberMap = populateVersionAndAnnexNumberMap(unzippedFiles, legDocument.getContainedDocuments());
         Map<String, String> docVersionMap = versionAndAnnexNumberMap.get("docVersionMap");
@@ -1302,8 +1453,7 @@ public abstract class ApiServiceImpl implements ApiService {
 
         if (isToBeCompared) {
             try {
-                File clonedLegFileTemp = File.createTempFile("clonedMilestone", ".leg");
-                Map<String, Object> contributionFiles = MilestoneHelper.getMilestoneFiles(clonedLegFileTemp, clonedLegDoc);
+                Map<String, Object> contributionFiles = MilestoneHelper.getMilestoneFiles(clonedLegDoc);
                 Map<String, Object> clonedContentFiles = MilestoneHelper.filterAndSortFiles(contributionFiles, HTML);
                 Map<String, String> docVersionOriginalMap = versionAndAnnexNumberMap.get("docVersionMap");
                 Map<String, Integer> annexKeyOriginalMap = versionAndAnnexNumberMap.get("annexKeyMap");
@@ -1319,7 +1469,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 for (Map.Entry<String, Object> entry : annexDeletedMap.entrySet()) {
                     String contentFileName = entry.getKey().replace(PROCESSED, "").replace(ACCEPTED_ADDED, "").replace(ACCEPTED_DELETED, "");
                     String version = docVersionOriginalMap.get(contentFileName);
-                    byte[] xmlBytes = Files.readAllBytes(((File) entry.getValue()).toPath());
+                    byte[] xmlBytes = ((LeosFile) entry.getValue()).getBytes();
                     String htmlContent = new String(xmlBytes, StandardCharsets.UTF_8);
                     MilestoneDocumentView milestoneView = new MilestoneDocumentView(htmlContent, version, contentFileName, false, null);
                     milestoneView.setVersion(version);
@@ -1332,8 +1482,8 @@ public abstract class ApiServiceImpl implements ApiService {
                         milestoneView.setContentStatus("Accepted_Deleted");
                     }
                     String tocFile = contentFileName + TOC_JS;
-                    File toc = (File) unzippedFiles.get(tocFile);
-                    if (toc.exists()) {
+                    LeosFile toc = (LeosFile) unzippedFiles.get(tocFile);
+                    if (toc!=null) {
                         milestoneView.setTocData(this.buildTocTree(toc));
                     }
                     listDocuments.add(milestoneView);
@@ -1345,7 +1495,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     boolean existsStatFinancial =
                             clonedContentFiles.keySet().stream().filter((n) -> n.startsWith(String.valueOf(LeosCategory.STAT_DIGIT_FINANC_LEGIS))).count() > 0;
                     if (!existsStatFinancial) {
-                        byte[] htmlBytes = Files.readAllBytes(((File) contentFiles.get(financialStatementName.get())).toPath());
+                        byte[] htmlBytes = ((LeosFile) contentFiles.get(financialStatementName.get())).getBytes();
                         String contentFileName = financialStatementName.get();
                         String contentFileNameWithoutHtml = contentFileName.substring(0,
                                 contentFileName.indexOf(HTML));
@@ -1378,8 +1528,8 @@ public abstract class ApiServiceImpl implements ApiService {
                             milestoneView.setContentStatus("Accepted_Deleted");
                         }
                         String tocFile = contentFileName.replace(".html", "") + TOC_JS;
-                        File toc = (File) unzippedFiles.get(tocFile);
-                        if (toc.exists()) {
+                        LeosFile toc = (LeosFile) unzippedFiles.get(tocFile);
+                        if (toc != null) {
                             milestoneView.setTocData(this.buildTocTree(toc));
                         }
                         listDocuments.add(milestoneView);
@@ -1404,9 +1554,9 @@ public abstract class ApiServiceImpl implements ApiService {
             String version = docVersionMap.get(contentFileName);
             boolean isCoverPage = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME);
             try {
-                byte[] htmlBytes = Files.readAllBytes(((File) entry.getValue()).toPath());
+                byte[] htmlBytes = ((LeosFile) entry.getValue()).getBytes();
                 String xmlContent = LeosDomainUtil.wrapXmlFragment(new String(htmlBytes));
-                String htmlContent = new String(htmlBytes, StandardCharsets.UTF_8);
+                String htmlContent = new String(htmlBytes, UTF_8);
                 String tocFile = null;
                 MilestoneDocumentView milestoneView = new MilestoneDocumentView(htmlContent,
                         version, contentFileName, isCoverPage, null);
@@ -1445,7 +1595,7 @@ public abstract class ApiServiceImpl implements ApiService {
                                 if (clonedFS.isPresent() && clonedFS.get().contains(PROCESSED)) {
                                     milestoneView.setContentStatus("Rejected_Added");
                                 }
-                                byte[] xmlBytes = Files.readAllBytes(((File) unzippedFiles.get(contentFileName + XML)).toPath());
+                                byte[] xmlBytes = ((LeosFile) unzippedFiles.get(contentFileName + XML)).getBytes();
                                 populateCloneProposalMetadataVO(xmlBytes);
                                 List<FinancialStatement> fs = getFinancialStatements(originalPackage);
                                 if (!fs.isEmpty() && !fs.get(0).getMetadata().get().getRef().equals(cloneContext.getCloneProposalMetadataVO().getClonedFromRef())) {
@@ -1460,8 +1610,8 @@ public abstract class ApiServiceImpl implements ApiService {
                         milestoneView.setContentStatus("Modified");
                     }
                 }
-                File toc = (File) unzippedFiles.get(tocFile);
-                if (toc.exists()) {
+                LeosFile toc = (LeosFile) unzippedFiles.get(tocFile);
+                if (toc != null) {
                     milestoneView.setTocData(this.buildTocTree(toc));
                 }
                 listDocuments.add(milestoneView);
@@ -1496,14 +1646,13 @@ public abstract class ApiServiceImpl implements ApiService {
 
     private MilestonePDFDownloadResponse doDownloadMilestonePDF(LegDocument legDocument) throws IOException {
         byte[] content = null;
-        File legFileTemp = File.createTempFile(MILESTONE, ".leg");
-        Map<String, Object> unzippedFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);
+        Map<String, Object> unzippedFiles = MilestoneHelper.getMilestoneFiles(legDocument);
         Map<String, Object> pdfRenditions = MilestoneHelper.filterAndSortFiles(unzippedFiles, PDF);
         String fileName = null;
         if (!pdfRenditions.isEmpty()) {
             Map.Entry<String, Object> entry = pdfRenditions.entrySet().iterator().next();
-            content = Files.readAllBytes(((File) entry.getValue()).toPath());
-            fileName = ((File) entry.getValue()).getName();
+            content = ((LeosFile) entry.getValue()).getBytes();
+            fileName = ((LeosFile) entry.getValue()).getName();
         }
         return new MilestonePDFDownloadResponse(content, fileName);
     }
@@ -1521,20 +1670,16 @@ public abstract class ApiServiceImpl implements ApiService {
 
         Map<String, Object> xmlFiles = MilestoneHelper.filterAndSortFiles(files, XML);
         xmlFiles.forEach((key, value) -> {
-            try {
-                String xmlContent = readFileToString(((File) value));
-                String selectedKey = key.substring(0, key.indexOf(XML));
+            String xmlContent = new String(((LeosFile) value).getBytes(), StandardCharsets.UTF_8);
+            String selectedKey = key.substring(0, key.indexOf(XML));
 
-                Pattern patternForAnnexIndex = Pattern.compile(DOC_NUMBER_START_TAG_REG);
-                Matcher matcherForAnnexIndex = patternForAnnexIndex.matcher(xmlContent);
-                if (matcherForAnnexIndex.find()) {
-                    int endAnnexIndex = xmlContent.indexOf(DOC_NUMBER_END_TAG);
-                    String annexIndex = xmlContent.substring(matcherForAnnexIndex.end(), endAnnexIndex);
-                    annexIndexesMap.put(new Integer(annexIndex), selectedKey);
-                    annexKeyMap.put(selectedKey, new Integer(annexIndex));
-                }
-            } catch (IOException e) {
-                LOG.error("Exception occurred while reading the .leg file " + e);
+            Pattern patternForAnnexIndex = Pattern.compile(DOC_NUMBER_START_TAG_REG);
+            Matcher matcherForAnnexIndex = patternForAnnexIndex.matcher(xmlContent);
+            if (matcherForAnnexIndex.find()) {
+                int endAnnexIndex = xmlContent.indexOf(DOC_NUMBER_END_TAG);
+                String annexIndex = xmlContent.substring(matcherForAnnexIndex.end(), endAnnexIndex);
+                annexIndexesMap.put(new Integer(annexIndex), selectedKey);
+                annexKeyMap.put(selectedKey, new Integer(annexIndex));
             }
         });
         docVersionAndAnnexNumberMap.put("docVersionMap", docVersionMap);
@@ -1543,15 +1688,10 @@ public abstract class ApiServiceImpl implements ApiService {
         return docVersionAndAnnexNumberMap;
     }
 
-    private String buildTocTree(File file) {
+    private String buildTocTree(LeosFile file) {
         String fileData = "";
-        try {
-            fileData = readFileToString(file);
-            fileData = fileData.substring(fileData.indexOf("["), fileData.length() - 1);
-            return fileData;
-        } catch (IOException e) {
-            LOG.error("Exception occurred while reading the file", e);
-        }
+        fileData = new String(file.getBytes(), StandardCharsets.UTF_8);
+        fileData = fileData.substring(fileData.indexOf("["), fileData.length() - 1);
         return fileData;
     }
 

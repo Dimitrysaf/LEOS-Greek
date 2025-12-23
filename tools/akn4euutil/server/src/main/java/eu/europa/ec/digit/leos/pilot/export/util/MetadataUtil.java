@@ -69,6 +69,8 @@ public class MetadataUtil {
     public static final String VALUE_CONCLUSION_NODE_IDNEW = "_" + VALUE_CONCLUSION_NODE_ID;
     public static final String ATTRIBUTE_STATUS_CODE ="statusCode";
     public static final String ATTRIBUTE_KEY ="key";
+    public static final String ELEMENT_IDENTIFICATION="identification";
+    public static final String ELEMENT_IDENTIFIER="identifier";
     public static final String ELEMENT_DOCUMENT ="document";
     public static final String ELEMENT_TASK ="task";
     public static final String ATTRIBUTE_TASKID ="taskId";
@@ -139,6 +141,12 @@ public class MetadataUtil {
     public static final String COVERPAGE_TYPE_PATH = "//akn:coverPage/akn:container[@name='disclaimer']";
     public static final String ACTING_ENTITY_PATH = "//akn:coverPage/akn:container[@name='actingEntity']";
     public static final String ELEMENT_LONG_TITLE = "longTitle";
+    public static final String ELEMENT_PROCEDURE_REFERENCE = "procedureReference";
+    public static final String VALUE_PROCEDURE_IDENTIFIER = "procedureIdentifier";
+    public static final String VALUE_REFERENCE = "reference";
+    public static final String ELEMENT_DOC_NUMBER = "docNumber";
+    public static final String ELEMENT_INLINE = "inline";
+    public static final String VALUE_VERSION = "version";
 
     public static final List<String> validXmlDocumentPrefixes = Arrays.asList("annex",
             "bill", "dec", "dir", "expl_council", "expl_memorandum", "financial_statement",
@@ -679,7 +687,16 @@ public class MetadataUtil {
         if (pos == -1) {
             return documentFilename;
         }
-        return prefinalisationName + documentFilename.substring(pos);
+        String diffusionVersion = getDiffusionVersion(action.get());
+        return prefinalisationName + (StringUtil.isEmpty(diffusionVersion) ? "" : "_" + diffusionVersion) + documentFilename.substring(pos);
+    }
+
+    public static String getDiffusionVersion(ApplyMetadataRequest.ActionNode action) {
+        final Optional<ApplyMetadataRequest.FieldNode> optField = action.getFields()
+                .stream()
+                .filter((field) -> field.getKey().equals(MetadataFieldType.DIFFUSION_VERSION.toString()))
+                .findFirst();
+        return optField.isPresent() ? optField.get().getValue() : null;
     }
 
     public static void addRefersToAttribute(Node xmlNode, final String id) {
@@ -818,5 +835,9 @@ public class MetadataUtil {
         return !StringUtil.isEmpty(value) && spellings.stream()
                 .filter((spelling) -> value.toLowerCase().contains(spelling))
                 .findFirst().isPresent();
+    }
+
+    public static MetadataFieldInfo parseDiffusionVersion(String fieldValue) throws MetadataFieldInvalidValueException {
+        return new SimpleFieldInfo(fieldValue, MetadataFieldType.DIFFUSION_VERSION);
     }
 }

@@ -22,6 +22,7 @@ import {CoEditionServiceWS} from './shared/services/coEdition.websocket.service'
 import {NotificationsService} from './shared/services/notifications.service';
 import {DocumentService} from "@/shared/services/document.service";
 import {DomSanitizer, Title} from '@angular/platform-browser';
+import {AuthService} from "@/core/services/auth.service";
 
 @Component({
   selector: 'app-root',
@@ -38,6 +39,10 @@ export class AppComponent implements OnInit, OnDestroy {
   headerLogoImgUrl =
     process.env.NG_APP_LEOS_INSTANCE === 'cn'
       ? 'assets/images/logo-cn-w.svg'
+      : '';
+  polarisLogoImgUrl =
+    process.env.NG_APP_LEOS_INSTANCE === 'ec'
+      ? 'assets/images/logo-polaris-ec.svg'
       : '';
   userInfos: UserState;
   // Observe state changes
@@ -68,7 +73,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private documentService: DocumentService,
     private titleService: Title,
-    private domSanitizer: DomSanitizer
+    private domSanitizer: DomSanitizer,
+    private authService: AuthService
   ) {
     this.isNotificationsShown$ = this.notificationsService.isShown$;
     this.i18nState = this.store.select(getI18nState);

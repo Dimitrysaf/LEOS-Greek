@@ -124,7 +124,7 @@ $BLUE_COLOR: blue;
     }
   }
 
-  subparagraph[leos\:origin="ec"][leos\:indent-origin-num]::before,
+  :not(:has(> NUM)) > :not(:has(> NUM)) > subparagraph[leos\:origin="ec"][leos\:indent-origin-num]::before,
   paragraph[leos\:origin="ec"][leos\:indent-origin-num][leos\:indent-unumbered-paragraph]::before {
     margin-left: -20pt;
   }

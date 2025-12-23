@@ -7,6 +7,7 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.explanatory.ExplanatoryStructureType;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
 import java.util.List;
@@ -72,4 +73,5 @@ public interface ExplanatoryService {
 
     String generateExplanatoryReference(byte[] content, String language);
 
+    void updateReferencesAsync(Explanatory doc, Map<String, String> refsMatching, final Map<ContextActionService, String> actionMsgMap);
 }

@@ -1,6 +1,12 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgModule } from '@angular/core';
 import { MatTreeModule } from '@angular/material/tree';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMomentDateModule, MAT_MOMENT_DATE_ADAPTER_OPTIONS } from '@angular/material-moment-adapter';
+import { MAT_DATE_FORMATS, DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { EuiAllModule } from '@eui/components';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgForTrackByPropertyModule } from 'ng-for-track-by-property';
@@ -39,6 +45,18 @@ import { DynamicDropdownHoverComponent } from '@/shared/components/dynamic-dropd
 import { DynamicDropdownClickComponent } from '@/shared/components/dynamic-dropdown-click/dynamic-dropdown-click.component';
 import { MoveToLeftSideToolbarDirective } from './directives/MoveToLeftSideToolbar.directive';
 
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'DD-MM-YYYY',
+  },
+  display: {
+    dateInput: 'DD-MM-YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
+
 @NgModule({
   imports: [
     EuiAllModule,
@@ -50,6 +68,11 @@ import { MoveToLeftSideToolbarDirective } from './directives/MoveToLeftSideToolb
     DragDropModule,
     MatTreeModule,
     CommonModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatMomentDateModule,
   ],
   declarations: [
     DynamicDropdownClickComponent,
@@ -88,6 +111,11 @@ import { MoveToLeftSideToolbarDirective } from './directives/MoveToLeftSideToolb
     FormsModule,
     DragDropModule,
     MatTreeModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatMomentDateModule,
     AknDocumentComponent,
     DocumentAnnotationsComponent,
     ShowOnInstanceDirective,
@@ -111,6 +139,10 @@ import { MoveToLeftSideToolbarDirective } from './directives/MoveToLeftSideToolb
     NotificationUploadComponent,
     DynamicDropdownHoverComponent,
   ],
-  providers: [ProposalService, CommonModule],
+  providers: [ProposalService,
+    CommonModule,
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
+    { provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } }],
 })
 export class SharedModule {}

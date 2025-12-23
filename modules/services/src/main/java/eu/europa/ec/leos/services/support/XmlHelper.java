@@ -22,6 +22,8 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.tika.Tika;
+import org.apache.tika.io.TikaInputStream;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 import org.slf4j.Logger;
@@ -54,8 +56,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.tika.Tika;
-import org.apache.tika.io.TikaInputStream;
 
 public class XmlHelper {
     protected static final Logger LOG = LoggerFactory.getLogger(XmlHelper.class);
@@ -124,10 +124,12 @@ public class XmlHelper {
     public static final String POINT = "point";
     public static final String INDENT = "indent";
     public static final String SUBPOINT = "alinea";
+    public static final String TABLE = "table";
     public static final String SUBPOINT_LABEL = "subparagraph";
     public static final String CLAUSE = "clause";
     public static final String CONCLUSIONS = "conclusions";
     public static final String ORGANIZATION = "organization";
+    public static final String SIGNATURE = "signature";
     public static final String ROLE = "role";
     public static final String PERSON = "person";
     public static final String MAIN_BODY = "mainBody";
@@ -850,7 +852,7 @@ public class XmlHelper {
 
     public static boolean isValidFileNameForBinaryFile(String fileName) {
         Pattern pattern = Pattern.compile("^[A-Za-z0-9\\.\\-_ ()]+\\.(pdf|docx|xlsx|PDF|DOCX|XLSX)$");
-        if (fileName.length() > 255) {
+        if (fileName.length() > 400) {
             return false;
         }
         return pattern.matcher(fileName).matches();
@@ -889,6 +891,22 @@ public class XmlHelper {
             return false;
         }
         return true;
+    }
+
+    public static boolean isValidFileNameForZipFile(String fileName) {
+        Pattern pattern = Pattern.compile("^[A-Za-z0-9\\.\\-_]+\\.zip$");
+        if (fileName.length() > 400) {
+            return false;
+        }
+        return pattern.matcher(fileName).matches();
+    }
+
+    public static boolean isValidMimeTypeForLegFile(byte[] binaryContent) throws IOException {
+        Tika tika = new Tika();
+        String mimeType = tika.detect(TikaInputStream.get(binaryContent));
+        List<String> allowedTypes = Arrays.asList(
+                "application/zip");
+        return allowedTypes.contains(mimeType);
     }
 
     public static boolean isValidDocumentRef(String documentRef) {

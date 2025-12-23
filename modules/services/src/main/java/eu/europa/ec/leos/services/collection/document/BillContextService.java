@@ -85,7 +85,9 @@ public class BillContextService {
 
     private LeosPackage leosPackage = null;
     private Bill bill = null;
+    private byte[] billContent = null;
     private String versionComment;
+    private VersionType versionType;
     private String milestoneComment;
     private String purpose = null;
     private String moveDirection = null;
@@ -224,6 +226,11 @@ public class BillContextService {
         this.versionComment = comment;
     }
 
+    public void useVersionType(VersionType versionType) {
+        Validate.notNull(versionType, "Version type is required!");
+        this.versionType = versionType;
+    }
+
     public void useMilestoneComment(String milestoneComment) {
         Validate.notNull(milestoneComment, "milestoneComment is required!");
         this.milestoneComment = milestoneComment;
@@ -241,6 +248,12 @@ public class BillContextService {
     public void useEeaRelevance(boolean eeaRelevance) {
         LOG.trace("Using Proposal eeaRelevance... [eeaRelevance={}]", eeaRelevance);
         this.eeaRelevance = eeaRelevance;
+    }
+
+
+    public void useBillContent(byte[] content) {
+        LOG.trace("Using Bill content... [billContent={}]", content);
+        this.billContent = content;
     }
 
     public void usePackageRef(String packageRef) {
@@ -261,8 +274,7 @@ public class BillContextService {
         LOG.trace("Executing 'Update References On Bill' use case...");
         Validate.notNull(bill, "Bill is required!");
         Validate.notNull(mapOldAndNewRefs, "mapOldAndNewRefs is required!");
-        byte[] content = this.postProcessingDocumentService.updateReferences(bill.getContent().get().getSource().getBytes(), mapOldAndNewRefs);
-        billService.updateBill(bill.getId(), content, false);
+        billService.updateReferencesAsync(bill, mapOldAndNewRefs);
     }
 
     public Bill executeCreateBill() {
@@ -329,7 +341,7 @@ public class BillContextService {
         }
     
         final String updateRefsComment = messageHelper.getMessage("internal.ref.updatedOnImport");
-        final byte[] updatedBytes = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(bill.getContent().get().getSource().getBytes()); //updateRefs
+        final byte[] updatedBytes = xmlContentProcessor.doXMLPostProcessing(bill.getContent().get().getSource().getBytes()); //updateRefs
         bill = billService.updateBill(bill, updatedBytes, updateRefsComment, false);
 
         for (Annex annex : annexes) {
@@ -337,7 +349,7 @@ public class BillContextService {
                     .filter(p -> Integer.parseInt(p.getMetadata().getIndex()) == annex.getMetadata().get().getIndex())
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Annex not found index " + annex.getMetadata().get().getIndex()));
-            byte[] updatedAnnexBytes = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(docChild.getSource());  //updateRefs
+            byte[] updatedAnnexBytes = xmlContentProcessor.doXMLPostProcessing(docChild.getSource());  //updateRefs
             annexService.updateAnnex(annex, updatedAnnexBytes, annex.getMetadata().get(), VersionType.MINOR, updateRefsComment, false);
             idsAndUrlsHolder.addDocCloneAndOriginIdMap(annex.getMetadata().get().getRef(), docChild.getRef());
             refsMatching.put(docChild.getRef(), annex);
@@ -419,9 +431,30 @@ public class BillContextService {
         }
     }
 
+    public void executeUpdateBillContent() {
+        LOG.trace("Executing 'Update Bill' use case...");
+        Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
+        Validate.notNull(versionType, "Version Type is required!");
+        Validate.notNull(billContent, "Bill Content is required!");
+
+        Bill billByPackagePath = billService.findBillByPackagePath(leosPackage.getPath());
+        if(billByPackagePath != null) {
+            Option<BillMetadata> metadataOption = billByPackagePath.getMetadata();
+            Validate.isTrue(metadataOption.isDefined(), BILL_METADATA_IS_REQUIRED);
+            Validate.notNull(purpose, BILL_PURPOSE_IS_REQUIRED);
+            BillMetadata metadata = metadataOption.get()
+                    .builder()
+                    .withPurpose(purpose)
+                    .withEeaRelevance(eeaRelevance)
+                    .build();
+            billService.updateBill(billByPackagePath, metadata, billContent, this.versionType, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
+        }
+    }
+
     public void executeUpdateBill() {
         LOG.trace("Executing 'Update Bill' use case...");
         Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
+        Validate.notNull(versionType, "Version Type is required!");
         
         Bill billByPackagePath = billService.findBillByPackagePath(leosPackage.getPath());
         if(billByPackagePath != null) {
@@ -433,7 +466,7 @@ public class BillContextService {
                     .withPurpose(purpose)
                     .withEeaRelevance(eeaRelevance)
                     .build();
-            billService.updateBill(billByPackagePath, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
+            billService.updateBill(billByPackagePath, metadata, this.versionType, actionMsgMap.get(ContextActionService.METADATA_UPDATED), false);
             if(isAnnexToBeUpdated) {
                 // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
                 List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
@@ -443,6 +476,7 @@ public class BillContextService {
                     annexContext.useAnnexId(annex.getId());
                     annexContext.useActionMessageMap(actionMsgMap);
                     annexContext.useEeaRelevance(eeaRelevance);
+                    annexContext.useVersionType(versionType);
                     annexContext.executeUpdateAnnexMetadata();
                 });
             }

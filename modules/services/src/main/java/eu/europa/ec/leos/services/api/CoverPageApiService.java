@@ -15,7 +15,11 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 
 public interface CoverPageApiService extends BaseDocumentService<XmlDocument> {
+
+    DocumentVO getCoverPageCorrigendumAddendumDetails(byte[] proposalXMLContent, DocumentVO documentVO);
 
 }

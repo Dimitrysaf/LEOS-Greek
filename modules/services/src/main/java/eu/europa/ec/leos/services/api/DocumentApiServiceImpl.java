@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
@@ -47,16 +48,13 @@ import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +62,7 @@ import java.util.Map;
 import static eu.europa.ec.leos.services.api.ApiServiceImpl.DOC_VERSION_SEPARATOR;
 import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 import static eu.europa.ec.leos.util.LeosDomainUtil.wrapXmlFragment;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public abstract class DocumentApiServiceImpl implements DocumentApiService {
     private static final Logger LOG = LoggerFactory.getLogger(DocumentApiServiceImpl.class);
@@ -159,7 +158,7 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
 
     protected DownloadVersionResponse packageComparedXmlFiles(XmlDocument original, XmlDocument current, XmlDocument intermediate, String leosComparedContent,
                                                               String exportComparedContent, String comparedInfo, String language, String type) throws IOException {
-        File zipFile = null;
+        LeosFile zipFile = null;
         try {
             final Map<String, Object> contentToZip = new HashMap<>();
             if (intermediate != null) {
@@ -168,21 +167,17 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
             }
             contentToZip.put(current.getMetadata().get().getRef() + "_v" + current.getVersionLabel() + ".xml", current.getContent().get().getSource().getBytes());
             contentToZip.put(original.getMetadata().get().getRef() + "_v" + original.getVersionLabel() + ".xml", original.getContent().get().getSource().getBytes());
-            contentToZip.put("comparedContent_leos.xml", leosComparedContent);
+            contentToZip.put("comparedContent_leos.xml", leosComparedContent.getBytes(UTF_8));
             if (exportComparedContent != null) {
-                contentToZip.put("comparedContent_" + type + ".xml", exportComparedContent);
+                contentToZip.put("comparedContent_" + type + ".xml", exportComparedContent.getBytes(UTF_8));
             }
             final String zipFileName = original.getMetadata().get().getRef().concat("-").concat(comparedInfo).
                     concat(original.getMetadata().get().getLanguage().toLowerCase()).concat(".zip");
-            zipFile = ZipPackageUtil.zipFiles(zipFileName, contentToZip, language);
-            final byte[] zipBytes = FileUtils.readFileToByteArray(zipFile);
+            zipFile = ZipPackageUtil.zipLeosFiles(zipFileName, contentToZip, language);
+            final byte[] zipBytes = zipFile.getBytes();
             return new DownloadVersionResponse(zipFileName, zipBytes);
         } catch (Exception e) {
             throw new IOException("Unexpected error occurred while packaging compared xml files", e);
-        } finally {
-            if (zipFile != null && !Files.deleteIfExists(zipFile.toPath())) {
-                LOG.info("File was not deleted {}", zipFile.toPath());
-            }
         }
     }
 

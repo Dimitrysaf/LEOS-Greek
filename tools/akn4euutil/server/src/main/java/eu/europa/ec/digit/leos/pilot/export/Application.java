@@ -19,17 +19,21 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.util.Collections;
+
 @SpringBootApplication
 @EnableScheduling
 public class Application extends SpringBootServletInitializer {
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(Application.class);
+        return application.sources(Application.class).properties("spring.config.name=akn4euutil");
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication app = new SpringApplication(Application.class);
+        app.setDefaultProperties(Collections.singletonMap("spring.config.name", "akn4euutil"));
+        app.run(args);
     }
 
 }

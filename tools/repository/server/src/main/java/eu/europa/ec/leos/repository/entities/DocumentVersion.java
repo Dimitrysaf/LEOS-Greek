@@ -46,7 +46,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "DocumentVersion.findByAuditLastMBy", query = "SELECT d FROM DocumentVersion d WHERE d.auditLastMBy = :auditLastMBy"),
     @NamedQuery(name = "DocumentVersion.findByAuditLastMDate", query = "SELECT d FROM DocumentVersion d WHERE d.auditLastMDate = :auditLastMDate"),
     @NamedQuery(name = "DocumentVersion.findByIsImmutable", query = "SELECT d FROM DocumentVersion d WHERE d.isImmutable = :isImmutable"),
-    @NamedQuery(name = "DocumentVersion.findByDocumentId", query = "SELECT d FROM DocumentVersion d WHERE d.documentId = :documentId")})
+    @NamedQuery(name = "DocumentVersion.findByDocumentId", query = "SELECT d FROM DocumentVersion d WHERE d.documentId = :documentId"),
+    @NamedQuery(name = "DocumentVersion.findByValidationStatus", query = "SELECT d FROM DocumentVersion d WHERE d.validationStatus = :validationStatus")})
 public class DocumentVersion implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -86,6 +87,9 @@ public class DocumentVersion implements Serializable {
     private BigDecimal documentId;
     @Column(name = "IS_VERSION_ARCHIVED", nullable = false)
     private Boolean isVersionArchived;
+    @Column(name = "VALIDATION_STATUS", length = 30)
+    private String validationStatus;
+
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "version")
     private Collection<DocumentContent> documentContentCollection;
@@ -235,6 +239,14 @@ public class DocumentVersion implements Serializable {
 
     public void setDocumentContentCollection(Collection<DocumentContent> documentContentCollection) {
         this.documentContentCollection = documentContentCollection;
+    }
+
+    public String getValidationStatus() {
+        return validationStatus;
+    }
+
+    public void setValidationStatus(String validationStatus) {
+        this.validationStatus = validationStatus;
     }
 
     @Override

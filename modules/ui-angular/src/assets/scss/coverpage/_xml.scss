@@ -21,6 +21,8 @@
         @extend %defaultBoxSizing;
         @extend %pageFont;
 
+        @extend %xmlWatermark;
+
         coverPage {
             @extend %xmlCoverPage;
         }

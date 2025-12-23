@@ -2,7 +2,9 @@ class contributionPage {
     elements = {
         appMergeActions: () => cy.get('app-merge-actions'),
         applyChanges: () => cy.get('button#apply-id'),
-        contributionViewContainer: () => cy.get('#contributionViewContainer ')
+        contributionViewContainer: () => cy.get('#contributionViewContainer '),
+        titleMergeActionsMenu: () => cy.get('div container div.Vaadin-Icons.merge-actions-wrapper')
+
     }
 
     getElementInContribution(eltName, eltNumber) {
@@ -36,6 +38,10 @@ class contributionPage {
     clickApplyChanges() {
         this.elements.applyChanges().click();
         cy.wait(2000);
+    }
+
+    ClickTitleMergeActionsMenu(){
+        this.elements.titleMergeActionsMenu().click()
     }
 }
 export default new contributionPage();

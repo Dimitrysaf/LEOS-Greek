@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.export;
 
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.integration.ToolBoxService;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -29,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.inject.Provider;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -96,7 +96,7 @@ abstract class ExportServiceImpl implements ExportService {
     }
 
     @Override
-    public byte[] exportToToolboxCoDe(File legFile, ExportOptions exportOptions) throws Exception {
+    public byte[] exportToToolboxCoDe(LeosFile legFile, ExportOptions exportOptions) throws Exception {
         return null;
     }
 
@@ -106,34 +106,24 @@ abstract class ExportServiceImpl implements ExportService {
     }
 
     @Override
-    public File createCollectionPackage(String jobFileName, String documentId, ExportOptions exportOptions) throws Exception {
+    public LeosFile createCollectionPackage(String jobFileName, String documentId, ExportOptions exportOptions) throws Exception {
         Validate.notNull(jobFileName);
         Validate.notNull(exportOptions);
         Validate.notNull(documentId);
-        File legFile = null;
-        try {
-            LegPackage legPackage = legService.createLegPackage(documentId, exportOptions);
-            legFile = legPackage.getFile();
-            return createZipFile(legPackage, jobFileName, exportOptions);
-        } finally {
-            if (legFile != null && legFile.exists()) {
-                if(!legFile.delete()){
-                    LOG.info("File not deleted {}", legFile.toPath());
-                }
-            }
-        }
+        LegPackage legPackage = legService.createLegPackage(documentId, exportOptions);
+        return createZipFile(legPackage, jobFileName, exportOptions);
     }
 
-    protected File createZipFile(LegPackage legPackage, String jobFileName, ExportOptions exportOptions) throws Exception {
+    protected LeosFile createZipFile(LegPackage legPackage, String jobFileName, ExportOptions exportOptions) throws Exception {
         Validate.notNull(legPackage);
         Validate.notNull(jobFileName);
         Validate.notNull(exportOptions);
         try (ByteArrayOutputStream contentFileContent = exportHelper.createContentFile(exportOptions, legPackage.getExportResource())) {
             Map<String, Object> contentToZip = new HashMap<>();
-            contentToZip.put("content.xml", contentFileContent);
+            contentToZip.put("content.xml", contentFileContent.toByteArray());
             String propActFileName = legPackage.getExportResource().getName() + ".leg";
-            contentToZip.put(propActFileName, legPackage.getFile());
-            return ZipPackageUtil.zipFiles(jobFileName, contentToZip, "");
+            contentToZip.put(propActFileName, legPackage.getFile().getBytes());
+            return ZipPackageUtil.zipLeosFiles(jobFileName, contentToZip, "");
         }
     }
 

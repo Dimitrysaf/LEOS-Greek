@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -88,6 +89,9 @@ class JwtTokenService implements TokenService {
     @Qualifier("applicationProperties")
     private Properties applicationProperties;
 
+    @Autowired
+    private Environment env;
+
     PasswordConfigurator passwordConfigurator = new PasswordConfigurator();
     
     @Autowired
@@ -102,6 +106,11 @@ class JwtTokenService implements TokenService {
         for (String clientName : clientsNames) {
             String clientId = applicationProperties.getProperty(keyPrefix + clientName + ".id");
             String clientSecret = passwordConfigurator.getProperty(keyPrefix + clientName + ".secret");
+
+            if (clientSecret == null){
+                clientSecret = env.getProperty(keyPrefix + clientName + ".secret");
+            }
+
             if (clientId == null || clientSecret == null) {
                 LOG.error("the key 'leos.api.jwt.auth.clients' and its corresponding clientId/secret is not configured correctly for each single client");
                 // for now we do not block the deployment of the application throwing an Exception

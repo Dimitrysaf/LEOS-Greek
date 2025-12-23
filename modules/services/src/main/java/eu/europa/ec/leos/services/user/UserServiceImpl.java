@@ -57,6 +57,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserJSON> searchUsersByJobTitle(String jobTitle) {
+        return usersClient.searchUsersByJobTitle(jobTitle);
+    }
+
+    @Override
     public List<UserJSON> searchUsersInContextByKeyAndReference(String key, String searchContext, String searchReference) {
         List<UserJSON> result = usersClient.searchUsersInContext(key, searchContext, searchReference);
         return result;

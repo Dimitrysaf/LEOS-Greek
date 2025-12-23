@@ -13,9 +13,9 @@
  */
 package eu.europa.ec.leos.services.export;
 
+import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.model.user.User;
 
-import java.io.File;
 import java.util.Map;
 
 public interface ExportService {
@@ -24,11 +24,11 @@ public interface ExportService {
 
     byte[] exportToToolboxCoDeDownload(String documentId, ExportOptions exportOptions) throws Exception;
 
-    byte[] exportToToolboxCoDe(File legFile, ExportOptions exportOptions) throws Exception;
+    byte[] exportToToolboxCoDe(LeosFile legFile, ExportOptions exportOptions) throws Exception;
 
     String exportLegPackage(String proposalId, LegPackage legPackage) throws Exception;
 
-    File createCollectionPackage(String jobFileName, String documentId, ExportOptions exportOptions) throws Exception;
+    LeosFile createCollectionPackage(String jobFileName, String documentId, ExportOptions exportOptions) throws Exception;
     
     byte[] createDocuWritePackage(String jobFileName, String documentId, ExportOptions exportOptions) throws Exception;
 

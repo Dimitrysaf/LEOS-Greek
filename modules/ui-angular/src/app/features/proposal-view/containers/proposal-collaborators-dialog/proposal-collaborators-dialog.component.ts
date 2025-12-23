@@ -1,6 +1,6 @@
 import { Collaborator, User, CollaboratorRequest } from '@/shared';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import {Component, OnInit, OnDestroy, ViewChild, ElementRef, QueryList, ViewChildren} from '@angular/core';
 import {
   FormGroup,
   FormBuilder,
@@ -9,7 +9,7 @@ import {
   AbstractControl,
   ValidationErrors,
 } from '@angular/forms';
-import { EuiAutoCompleteItem } from '@eui/components/eui-autocomplete';
+import {EuiAutocompleteComponent, EuiAutoCompleteItem} from '@eui/components/eui-autocomplete';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { Subject, takeUntil, debounceTime, skip, take } from 'rxjs';
 import { ProposalDetailsService } from '../../services/proposal-details.service';
@@ -26,6 +26,7 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<any>();
 
   @ViewChild('addCollaboratorsModal') collaboratorsModal: EuiDialogComponent;
+  @ViewChildren('autocompleteComponent') autocompleteComponents: QueryList<EuiAutocompleteComponent>;
 
   protected addUsersError: HttpErrorResponse = null;
   private collaborators: Collaborator[] = [];
@@ -83,6 +84,11 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
       role: 'OWNER',
       login: event[0].login,
     });
+    // Select the Add Users button after the user is selected.
+    setTimeout(() => {
+      const button = document.querySelector('#addCollaboratorButton:not([disabled])') as HTMLElement;
+      button?.focus();
+    }, 0);
   }
 
   handleNameChanged(i: number) {
@@ -152,6 +158,15 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
     });
     this.addCollaborator();
     this.addUsersError = null;
+  }
+
+  onArrowSelect(i: number) {
+    const selected = this.autocompleteComponents.toArray()[i].selectedOptionIndex;
+    this.collaboratorsFormList.controls[i].patchValue({
+      entity: (this.userAutocompleteData[selected] as unknown as User).defaultEntity?.organizationName,
+      role: 'OWNER',
+      login: (this.userAutocompleteData[selected] as unknown as User).login,
+    });
   }
 
   private setPersistedCollaborators(collaborators: Collaborator[]) {

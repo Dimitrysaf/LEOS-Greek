@@ -156,7 +156,7 @@ Feature: financial statement page regression features
     When click on versions pane accordion
     And  last subversion of recent changes version card contains "1.0.1Document finalised"
 
-  @repeatSubparagraphInFinancialStatement @local
+  @repeatSubparagraphInFinancialStatement @local 
   Scenario: repeat subparagraph in financial statement document
     When click on Create act button
     Then user is on create new legislative document window
@@ -195,6 +195,21 @@ Feature: financial statement page regression features
     When click on ok button in dialog box window
     Then repeated subparagraph should exist
     Then repeated subparagraph should have track changes action delete
+    And  click on delete icon of repeatable subparagraph 1 of level "3.2.1.2."
+    Then "Delete Element: confirmation" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    Then repeatable subparagraph 1 of level "3.2.1.2." contains attribute name "leos:softaction" with value "del"
+    When right click on repeatable subparagraph 1 of level "3.2.1.2."
+    And  click on accept this change option under track changes action
+    Then "Optional element: accept deletion not allowed" dialog confirm box window is displayed
+    When click on ok button in dialog box window
+    Then repeatable subparagraph 1 of level "3.2.1.2." contains attribute name "leos:softaction" with value "del"
+    When right click on repeatable subparagraph 1 of level "3.2.1.2."
+    When click on reject this change option under track changes action
+    Then repeatable subparagraph 1 of level "3.2.1.2." does not contain attribute name "leos:softaction" with value "del"
+
+
+
 
   @repeatSubparagraphGroupInFinancialStatement @local
   Scenario: repeat subparagraph group in financial statement document
@@ -252,4 +267,9 @@ Feature: financial statement page regression features
     When click on delete button in dialog box window
     Then " There is no Legislative Financial and Digital Statement " is displayed
     And  add button is displayed under financial statement section
+
+
+
+
+
 

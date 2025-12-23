@@ -212,6 +212,14 @@ export class CKEditorService {
     }
   }
 
+  undoAllChanges() {
+    this.mergeContributionConnector?.undoAllChanges();
+  }
+
+  existAcceptedChanges(): boolean {
+    return this.mergeContributionConnector?.existAcceptedChanges();
+  }
+
   addMergeActionList(action: MergeActionVO) {
     this.mergeContributionService.addMergeActionList(action);
     this.mergeContributionConnector?.doUpdateMergeActionList({

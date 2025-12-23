@@ -15,6 +15,27 @@
 
 //------------------------------- XML Styles --------------------------------//
 %xmlCoverPage {
+    container[name=associatedReferences] {
+        display: block;
+        text-align: center;
+        padding-top: 6pt;
+        padding-bottom: 6pt;
+    }
+
+    container[name=associatedReferences] aknp:not(:first-child):before {
+        content: " - ";
+        width: 10px;
+        text-align: center;
+        display: inline-block;
+    }
+
+    container[name=packageTitle], container[name=authenticLang] {
+        display: block;
+        text-align: center;
+        padding-top: 6pt;
+        padding-bottom: 6pt;
+    }
+
     container[name=eeaRelevance] {
         & > * {
             text-align: center;
@@ -22,6 +43,21 @@
             display: block;
             font-weight: normal;
         }
+        display: block;
+        padding-top: 6pt;
+        padding-bottom: 6pt;
+    }
+
+    container[name=disclaimer] {
+        border: 1px;
+        display: block;
+        border-style: solid;
+        border-color: black;
+        position: absolute;
+        padding: 10px;
+        width: 75%;
+        text-align: justify;
+        font-style: italic;
     }
 
     coverPage {
@@ -127,8 +163,18 @@
 			}
 		}
 
+
+
         @extend %xmlLongTitle;
 
+    }
+
+    container[name=corrigendum],
+    container[name=addendum] {
+        display: block;
+        > aknp {
+            display: block;
+        }
     }
 
 }

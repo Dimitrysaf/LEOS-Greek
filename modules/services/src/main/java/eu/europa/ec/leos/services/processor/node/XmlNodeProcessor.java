@@ -53,7 +53,6 @@ public interface XmlNodeProcessor {
      */
     Map<String, String> getValuesFromXml(byte[] xmlContent, String[] keys, Map<String, XmlNodeConfig> configuration);
 
-
     /**
      * This method returns the map of values found for the key for the configuration.
      * (Key->XPATH from config-> value from XML.)
@@ -62,5 +61,4 @@ public interface XmlNodeProcessor {
      * @return map of keys with all values found in xml. if value if not found in xml, null is placed in map.
      */
     Map<String, List<String>> getMultipleValuesFromXml(byte[] xmlContent, String[] keys, Map<String, XmlNodeConfig> config);
-
 }

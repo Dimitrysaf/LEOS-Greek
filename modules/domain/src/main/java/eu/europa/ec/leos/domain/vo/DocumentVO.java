@@ -23,6 +23,7 @@ import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
+import eu.europa.ec.leos.model.detailstab.DetailsTabExclusions;
 import eu.europa.ec.leos.model.user.Collaborator;
 
 import java.util.*;
@@ -60,6 +61,15 @@ public class DocumentVO {
     private CloneProposalMetadataVO cloneProposalMetadataVO;
     private Boolean favourite;
     private String creationOptions;
+    private String proposalType;
+    private String targetProposalReference;
+    private Date targetProposalDate;
+    private String correctionInformation;
+    private Boolean showCorrigendumAddendum;
+    private Boolean finalVersion;
+    private Boolean allTargetLangSelected;
+    private List<String> proposalTargetLang;
+    private DetailsTabExclusions detailsTabExclusions;
 
     public DocumentVO(XmlDocument xmlDocument) {
         if (xmlDocument != null) {
@@ -74,6 +84,14 @@ public class DocumentVO {
             populateMetadataValues(xmlDocument);
             // FIX ME set remaining properties
         }
+    }
+
+    public DocumentVO(XmlDocument xmlDocument, String proposalType, String targetProposalReference, Date targetProposalDate, String correctionInformation ) {
+        this(xmlDocument);
+        this.proposalType = proposalType;
+        this.targetProposalReference = targetProposalReference;
+        this.targetProposalDate = targetProposalDate;
+        this.correctionInformation = correctionInformation;
     }
 
     public DocumentVO(LeosCategory documentType) {
@@ -150,6 +168,13 @@ public class DocumentVO {
                 this.getMetadata().setDocTemplate(metadataP.getDocTemplate());
                 this.getMetadata().setTemplateName(metadataP.getTemplate());
                 this.getMetadata().setEeaRelevance(metadataP.getEeaRelevance());
+
+                this.getMetadata().setPackageTitle(metadataP.getPackageTitle());
+                this.getMetadata().setInternalRef(metadataP.getInternalRef());
+                this.getMetadata().setAuthenticLang(metadataP.getAuthenticLang());
+                this.getMetadata().setIsAuthenticLang(metadataP.getIsAuthenticLang());
+                this.getMetadata().setCrossReferences(metadataP.getCrossReferences());
+
                 this.setRef(metadataP.getRef());
                 Proposal proposal = ((Proposal) xmlDocument);
                 if(proposal.isClonedProposal()) {
@@ -382,7 +407,47 @@ public class DocumentVO {
     public void setVersionSeriesId(String versionSeriesId) {
         this.versionSeriesId = versionSeriesId;
     }
-    
+
+    public String getProposalType() {
+        return proposalType;
+    }
+
+    public void setProposalType(String proposalType) {
+        this.proposalType = proposalType;
+    }
+
+    public String getTargetProposalReference() {
+        return targetProposalReference;
+    }
+
+    public void setTargetProposalReference(String targetProposalReference) {
+        this.targetProposalReference = targetProposalReference;
+    }
+
+    public Date getTargetProposalDate() {
+        return targetProposalDate;
+    }
+
+    public void setTargetProposalDate(Date targetProposalDate) {
+        this.targetProposalDate = targetProposalDate;
+    }
+
+    public String getCorrectionInformation() {
+        return correctionInformation;
+    }
+
+    public void setCorrectionInformation(String correctionInformation) {
+        this.correctionInformation = correctionInformation;
+    }
+
+    public Boolean getFinalVersion() {
+        return finalVersion;
+    }
+
+    public void setFinalVersion(Boolean finalVersion) {
+        this.finalVersion = finalVersion;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -484,6 +549,37 @@ public class DocumentVO {
         this.creationOptions = creationOptions;
     }
 
+    public Boolean getShowCorrigendumAddendum() {
+        return showCorrigendumAddendum;
+    }
+
+    public void setShowCorrigendumAddendum(Boolean showCorrigendumAddendum) {
+        this.showCorrigendumAddendum = showCorrigendumAddendum;
+    }
+
+    public List<String> getProposalTargetLang() {
+        return proposalTargetLang;
+    }
+
+    public void setProposalTargetLang(List<String> proposalTargetLang) {
+        this.proposalTargetLang = proposalTargetLang;
+    }
+
+    public Boolean getAllTargetLangSelected() {
+        return allTargetLangSelected;
+    }
+
+    public void setAllTargetLangSelected(Boolean allTargetLangSelected) {
+        this.allTargetLangSelected = allTargetLangSelected;
+    }
+
+    public DetailsTabExclusions getDetailsTabExclusions() {
+        return detailsTabExclusions;
+    }
+
+    public void setDetailsTabExclusions(DetailsTabExclusions detailsTabExclusions) {
+        this.detailsTabExclusions = detailsTabExclusions;
+    }
     public byte[] getBinaryFile() {
         return binaryFile;
     }

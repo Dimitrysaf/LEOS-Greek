@@ -14,6 +14,7 @@ import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.dto.collaborator.CollaboratorDTO;
 import eu.europa.ec.leos.services.dto.collaborator.WorkflowCollaboratorDTO;
+import eu.europa.ec.leos.services.exception.CollaboratorException;
 import eu.europa.ec.leos.services.request.WorkflowCollaboratorAclRequest;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
@@ -112,6 +113,11 @@ public class WorkflowCollaboratorController {
             // accessDTO.userId contains the entity but the accessDTO.entity is overwritten
             // The mapping towards the entity is done from the userId
             User user = userService.getUser(userId);
+            // If the user is not present skip it (do not break)
+            if (user == null) {
+                log.warn("add workflow collaborator for entity described by userId '{}' not found!, skip addition", userId);
+                return;
+            }
             // when a user is an entity should have only one entity in user.entities
             Optional<Entity> firstEntity = user.getEntities().stream().findFirst();
             if (firstEntity.isPresent()) {

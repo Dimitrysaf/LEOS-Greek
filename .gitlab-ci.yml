@@ -16,7 +16,7 @@ cache:
   paths:
     - $CI_BUILDS_DIR/$CI_PIPELINE_ID/.m2/repository/
 
-cypress-test-for-local:
+build-and-test:
   variables:
     TAGS_TO_RUN: "@local"
     GIT_CLEAN_FLAGS: none

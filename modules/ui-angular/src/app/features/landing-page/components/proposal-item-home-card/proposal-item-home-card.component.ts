@@ -34,13 +34,16 @@ export class ProposalItemHomeCardComponent implements OnInit {
     } else if (this.package) {
       this.setItemTitle(this.package.title);
       this.landingPageService
-        .getUserDoc(this.package.ref)
+        .getUserProposal(this.package.ref)
         .pipe(catchError(() => { return EMPTY; }))
-        .subscribe((document) => {
-          this.updatedBy = document.updatedBy;
-          this.updatedOn = document.updatedOn;
-          this.originRef = this.determineOriginRefFromDocument(document);
-          this.status = this.determineStatusFromDocument(document);
+        .subscribe((proposal) => {
+          if (!!proposal.document) {
+            const document = proposal.document;
+            this.updatedBy = document.updatedBy;
+            this.updatedOn = document.updatedOn;
+            this.originRef = this.determineOriginRefFromDocument(document);
+            this.status = this.determineStatusFromDocument(document);
+          }
         });
     }
   }

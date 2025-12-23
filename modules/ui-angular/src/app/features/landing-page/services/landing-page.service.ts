@@ -8,7 +8,7 @@ import {
 } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
-import { Document } from '@/shared';
+import { ProposalDetails} from '@/shared';
 
 import { PackagesFavourite } from '../models/packages-favourite.model';
 import { PackagesRecentlyChanged } from '../models/packages-recent-changed.model';
@@ -41,8 +41,8 @@ export class LandingPageService {
     );
   }
 
-  getUserDoc(pkg: PackagesRecentlyChanged): Observable<Document> {
-    return this.http.get<Document>(`${apiBaseUrl}/secured/proposals/${pkg}`,
+  getUserProposal(pkg: PackagesRecentlyChanged): Observable<ProposalDetails> {
+    return this.http.get<ProposalDetails>(`${apiBaseUrl}/secured/proposals/${pkg}`,
       { context: new HttpContext().set(IS_ERROR_INTERCEPTION_ENABLED, (err) => !err.status) });
   }
 

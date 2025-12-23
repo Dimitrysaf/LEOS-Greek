@@ -33,6 +33,16 @@ public interface FinancialStatementService {
 
     FinancialStatement updateFinancialStatement(String id, byte[] updatedFinancialStatementContent);
 
+    /**
+     * updates FinancialStatement document with the given content
+     * @param id the ID of the FinancialStatement
+     * @param updatedFinancialStatementContent new updated content of the FinancialStatement document
+     * @param versionType new version type
+     * @param comment new comment
+     * @return FinancialStatement document
+     */
+    FinancialStatement updateFinancialStatement(String id, byte[] updatedFinancialStatementContent, VersionType versionType, String comment);
+
     FinancialStatement updateFinancialStatement(FinancialStatement FinancialStatement, byte[] updatedFinancialStatementContent, VersionType versionType, String comment);
 
     FinancialStatement updateFinancialStatement(FinancialStatement FinancialStatement, byte[] updatedFinancialStatementContent, FinancialStatementMetadata metadata, VersionType versionType, String comment);
@@ -82,4 +92,6 @@ public interface FinancialStatementService {
     List<FinancialStatement> findFinancialStatementByPackagePath(String path);
 
     String generateFinancialStatementReference(byte[] content, String language);
+
+    void updateReferencesAsync(FinancialStatement doc, Map<String, String> refsMatching);
 }

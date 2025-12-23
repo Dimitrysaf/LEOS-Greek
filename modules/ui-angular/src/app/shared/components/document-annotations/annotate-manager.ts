@@ -24,6 +24,8 @@ import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.s
 
 import { AnnotateConnector } from './annotate-connector';
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
+import {EuiDialogService} from "@eui/components/eui-dialog";
+import {TranslateService} from "@ngx-translate/core";
 
 export type AnnotateConnectorOptions = Pick<
   AnnotateConnectorState,
@@ -57,6 +59,8 @@ export class AnnotateManager {
     private milestoneService: ProposalMilestonesService,
     private mergeContributionService: MergeContributionsService,
     private detailsService: ProposalDetailsService,
+    private dialogService: EuiDialogService,
+    private translateService: TranslateService,
     private ckEditorService?: CKEditorService,
   ) {
     this.ckEditorService?.openState$
@@ -82,7 +86,10 @@ export class AnnotateManager {
             this.documentService,
             this.milestoneService,
             this.mergeContributionService,
-            this.detailsService
+            this.detailsService,
+            this.dialogService,
+            this.translateService,
+            this.ckEditorService
           ),
       ),
       tap((connector) => (this.connector = connector)),

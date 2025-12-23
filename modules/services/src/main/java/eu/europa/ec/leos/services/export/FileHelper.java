@@ -10,8 +10,6 @@ See the Licence for the specific language governing permissions and limitations 
 */
 package eu.europa.ec.leos.services.export;
 
-import java.io.File;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,17 +33,4 @@ public class FileHelper {
         return oldFilename.substring(0, oldFilename.lastIndexOf(".") + 1)
                 + extensionReplacement;
     }
-
-    public static void deleteFile(File file) {
-        try {
-            if (file != null && file.exists()) {
-                if(!file.delete()){
-                    LOG.info("File not deleted {}", file.toPath());
-                }
-            }
-        } catch (Exception e) {
-            LOG.error("Error when cleaning up file ", e);
-        }
-    }
-
 }

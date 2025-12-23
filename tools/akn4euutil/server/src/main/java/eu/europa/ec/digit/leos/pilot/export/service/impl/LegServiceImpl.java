@@ -133,7 +133,7 @@ public class LegServiceImpl implements LegService {
 
         LegPackage legPackage = new LegPackage();
         String legPackageName = proposalRefsMap.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION).concat(LEG_FILE_EXTENSION);
-        legPackage.setFile(ZipUtil.zipFiles(legPackageName, contentToZip));
+        legPackage.setFile(ZipUtil.zipLeosFiles(legPackageName, contentToZip));
         legPackage.setExportResource(proposalExportResource);
         return legPackage;
     }

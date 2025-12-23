@@ -23,6 +23,8 @@ import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.LeosAuthenticLanguage;
+import eu.europa.ec.leos.domain.repository.metadata.LeosCoverPageType;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
@@ -100,15 +102,22 @@ public abstract class CollectionContextService {
     protected final Map<LeosCategory, XmlDocument> categoryTemplateMap;
     protected final Map<ContextActionService, String> actionMsgMap;
     protected Proposal proposal = null;
+    protected byte[] proposalContent = null;
+    protected byte[] billContent = null;
     protected String purpose;
     protected String procedureType;
     protected String actType;
     private String versionComment;
     private String milestoneComment;
-    protected boolean eeaRelevance;
+    protected Boolean eeaRelevance;
+    protected String packageTitle;
+    protected List<String> authenticLang;
+    protected LeosAuthenticLanguage isAuthenticLang;
+    protected LeosCoverPageType coverPageType;
     private DocumentVO propDocument;
     private String propChildDocument;
     private String proposalComment;
+    private VersionType versionType;
     private CollectionIdsAndUrlsHolder idsAndUrlsHolder;
     private String originRef;
     private boolean cloneProposal = false;
@@ -171,6 +180,16 @@ public abstract class CollectionContextService {
         this.proposal = proposal;
     }
 
+    public void useProposalContent(byte[] proposalContent) {
+        Validate.notNull(proposalContent, "Proposal Content is required!");
+        this.proposalContent = proposalContent;
+    }
+
+    public void useBillContent(byte[] billContent) {
+        Validate.notNull(billContent, "Bill Content is required!");
+        this.billContent = billContent;
+    }
+
     public void useProposalId(String id) {
         Validate.notNull(id, "Proposal identifier is required!");
         LOG.trace("Using Proposal... [id={}]", id);
@@ -196,9 +215,29 @@ public abstract class CollectionContextService {
         this.actType = actType;
     }
 
-    public void useEeaRelevance(boolean eeaRelevance) {
+    public void useEeaRelevance(Boolean eeaRelevance) {
         LOG.trace("Using Proposal eeaRelevance... [eeaRelevance={}]", eeaRelevance);
         this.eeaRelevance = eeaRelevance;
+    }
+
+    public void usePackageTitle(String packageTitle) {
+        LOG.trace("Using Proposal Package Title... [PackageTitle={}]", packageTitle);
+        this.packageTitle = packageTitle;
+    }
+
+    public void useAuthenticLang(List<String> authenticLang) {
+        LOG.trace("Using Proposal authenticLang... [authenticLang={}]", authenticLang);
+        this.authenticLang = authenticLang;
+    }
+
+    public void useIsAuthenticLang(LeosAuthenticLanguage isAuthenticLang) {
+        LOG.trace("Using Proposal authenticLang... [isAuthenticLang={}]", isAuthenticLang);
+        this.isAuthenticLang = isAuthenticLang;
+    }
+
+    public void useCoverPageType(LeosCoverPageType coverPageType) {
+        LOG.trace("Using Proposal coverPageType... [coverPageType={}]", coverPageType);
+        this.coverPageType = coverPageType;
     }
 
     public void useTemplateKey(String templateKey) {
@@ -229,6 +268,11 @@ public abstract class CollectionContextService {
     public void useActionComment(String comment) {
         Validate.notNull(comment, "Proposal comment is required!");
         proposalComment = comment;
+    }
+
+    public void useVersionType(VersionType versionType) {
+        Validate.notNull(versionType, "Version type is required!");
+        this.versionType = versionType;
     }
 
     public void useIdsAndUrlsHolder(CollectionIdsAndUrlsHolder idsAndUrlsHolder) {
@@ -293,7 +337,7 @@ public abstract class CollectionContextService {
         Validate.isTrue(metadataOption.isDefined(), PROPOSAL_METADATA_IS_REQUIRED);
         purpose = propMeta.getDocPurpose();
         Validate.notNull(purpose, PROPOSAL_PURPOSE_IS_REQUIRED);
-        eeaRelevance = propMeta.getEeaRelevance();
+        eeaRelevance = propMeta.isEeaRelevance();
         ProposalMetadata metadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)
@@ -437,6 +481,14 @@ public abstract class CollectionContextService {
                     break;
             }
         }
+        updateReferencesOnImport(refsMatching);
+        String coverPageRef = proposal.getMetadata().get().getRef();
+        idsAndUrlsHolder.setCoverpageId(coverPageRef);
+        idsAndUrlsHolder.setCoverpageUrl(urlBuilder.buildCoverPageViewUrl(coverPageRef));
+        return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
+    }
+
+    private void updateReferencesOnImport(HashMap<String, XmlDocument> refsMatching) {
         for (DocumentVO docChild : propDocument.getChildDocuments()) {
             XmlDocument doc = refsMatching.get(docChild.getRef());
             switch (doc.getCategory()) {
@@ -474,10 +526,7 @@ public abstract class CollectionContextService {
                     break;
             }
         }
-        String coverPageRef = proposal.getMetadata().get().getRef();
-        idsAndUrlsHolder.setCoverpageId(coverPageRef);
-        idsAndUrlsHolder.setCoverpageUrl(urlBuilder.buildCoverPageViewUrl(coverPageRef));
-        return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
+
     }
 
     private void setConnectedEntity() {
@@ -599,6 +648,8 @@ public abstract class CollectionContextService {
                 .builder()
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
+                .withIsAuthenticLang(isAuthenticLang)
+                .withCoverPageType(coverPageType)
                 .build();
 
         proposal = proposalService.updateProposal(proposal, metadata, VersionType.MINOR, proposalComment);
@@ -609,9 +660,73 @@ public abstract class CollectionContextService {
         String comment = messageHelper.getMessage("operation.docpurpose.updated");
         useActionMessage(ContextActionService.METADATA_UPDATED, comment);
         useActionComment(comment);
+        useVersionType(VersionType.MINOR);
         executeUpdateDocumentsAssociatedToProposal();
 
         return proposal;
+    }
+
+    public Proposal executeUpdateMetadataProposal() {
+        LOG.trace("Executing 'Update Metadata Proposal' use case...");
+
+        Validate.notNull(proposal, "Proposal is required!");
+        Validate.notNull(proposalComment, "Proposal comment is required!");
+        Validate.notNull(proposalContent, "Proposal content is required!");
+
+        Option<ProposalMetadata> metadataOption = proposal.getMetadata();
+        Validate.isTrue(metadataOption.isDefined(), PROPOSAL_METADATA_IS_REQUIRED);
+
+        Validate.notNull(purpose, PROPOSAL_PURPOSE_IS_REQUIRED);
+        ProposalMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .withEeaRelevance(eeaRelevance != null ? eeaRelevance : proposal.getMetadata().get().getEeaRelevance())
+                .withIsAuthenticLang(isAuthenticLang)
+                .withCoverPageType(coverPageType)
+                .build();
+
+        proposal = proposalService.updateProposal(proposal.getId(), proposalContent);
+        proposal = proposalService.updateProposal(proposal, metadata, VersionType.INTERMEDIATE, proposalComment);
+
+        useProposal(proposal);
+        usePurpose(purpose);
+        useActionMessage(ContextActionService.METADATA_UPDATED, proposalComment);
+        useActionComment(proposalComment);
+        useVersionType(VersionType.INTERMEDIATE);
+        if (eeaRelevance != null && billContent == null) {
+            useEeaRelevance(eeaRelevance);
+            executeUpdateDocumentsAssociatedToProposal();
+        } else if (billContent != null) {
+            useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
+            executeUpdateBillAssociatedToProposal();
+        }
+
+        return proposal;
+    }
+
+    public void executeUpdateBillAssociatedToProposal() {
+        LOG.trace("Executing 'Update Bill Associated to Proposal' use case...");
+
+        Validate.notNull(proposal, "Proposal is required!");
+        Validate.notNull(proposalComment, "Proposal comment is required!");
+        Validate.notNull(versionType, "Version Type is required!");
+        Validate.notNull(billContent, "Bill Content is required!");
+
+        Option<ProposalMetadata> metadataOption = proposal.getMetadata();
+        Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
+
+        Validate.notNull(purpose, "Proposal purpose is required!");
+
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+
+        BillContextService billContext = billContextProvider.get();
+        billContext.usePackage(leosPackage);
+        billContext.usePurpose(purpose);
+        billContext.useEeaRelevance(eeaRelevance);
+        billContext.useActionMessageMap(actionMsgMap);
+        billContext.useBillContent(this.billContent);
+        billContext.useVersionType(this.versionType);
+        billContext.executeUpdateBillContent();
     }
 
     public void executeUpdateDocumentsAssociatedToProposal() {
@@ -619,6 +734,7 @@ public abstract class CollectionContextService {
 
         Validate.notNull(proposal, "Proposal is required!");
         Validate.notNull(proposalComment, "Proposal comment is required!");
+        Validate.notNull(versionType, "Version Type is required!");
 
         Option<ProposalMetadata> metadataOption = proposal.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
@@ -633,7 +749,8 @@ public abstract class CollectionContextService {
         billContext.useEeaRelevance(eeaRelevance);
         billContext.useActionMessageMap(actionMsgMap);
         billContext.setAnnexToBeUpdated(false);
-        billContext.executeUpdateMetadataBill();
+        billContext.useVersionType(this.versionType);
+        billContext.executeUpdateBill();
     }
 
     public void executeDeleteProposal() {
