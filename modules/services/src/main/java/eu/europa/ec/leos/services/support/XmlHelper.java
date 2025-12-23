@@ -22,6 +22,8 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.tika.Tika;
+import org.apache.tika.io.TikaInputStream;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 import org.slf4j.Logger;
@@ -40,6 +42,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -871,6 +874,30 @@ public class XmlHelper {
             return false;
         }
         return pattern.matcher(fileName).matches();
+    }
+
+    public static boolean isValidFileNameForZipFile(String fileName) {
+        Pattern pattern = Pattern.compile("^[A-Za-z0-9\\.\\-_]+\\.zip$");
+        if (fileName.length() > 400) {
+            return false;
+        }
+        return pattern.matcher(fileName).matches();
+    }
+
+    public static boolean isValidSizeFileForBinaryFile(long sizeofBinaryFile) {
+        // Max 50 MB
+        if (sizeofBinaryFile > (50 * 1024 * 1024)) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isValidMimeTypeForLegFile(byte[] binaryContent) throws IOException {
+        Tika tika = new Tika();
+        String mimeType = tika.detect(TikaInputStream.get(binaryContent));
+        List<String> allowedTypes = Arrays.asList(
+                "application/zip");
+        return allowedTypes.contains(mimeType);
     }
 
     public static boolean isValidDocumentRef(String documentRef) {
