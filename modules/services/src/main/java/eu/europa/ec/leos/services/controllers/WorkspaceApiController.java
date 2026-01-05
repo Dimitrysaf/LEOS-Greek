@@ -129,7 +129,7 @@ public class WorkspaceApiController {
     @RequestMapping(value = "/getTemplatesForEntity", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> getTemplatesForEntity() {
-        List<List<CatalogItem>> combinedList = new ArrayList<>();
+        List<List<CatalogItem>> combinedList;
         try {
             combinedList = apiService.getAllTemplatesForEntity();
             return new ResponseEntity<>(combinedList, HttpStatus.OK);

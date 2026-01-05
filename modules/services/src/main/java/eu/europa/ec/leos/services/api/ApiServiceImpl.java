@@ -53,6 +53,7 @@ import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.model.detailstab.DetailsTabExclusions;
+import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.LeosRepository;
@@ -291,6 +292,41 @@ public abstract class ApiServiceImpl implements ApiService {
         List<XmlDocument> documents = getAllDocuments(request.getProposalRef());
         return createProposalFromExisting(request.getTemplateId(), request.getTemplateName(),
                     request.getLangCode(), request.getDocPurpose(), request.isEeaRelevance(), request.isCustomTemplateAct(), request.getKey(), documents);
+    }
+
+    @Override
+    public List<List<CatalogItem>> getAllTemplatesForEntity() throws IOException {
+        List<List<CatalogItem>> result = new ArrayList<>();
+
+        // Base templates
+        List<CatalogItem> baseTemplates = this.getTemplates();
+        if (CollectionUtils.isNotEmpty(baseTemplates)) {
+            result.add(baseTemplates);
+        }
+
+        // Entity-specific templates
+        List<String> organizationNames =
+                Optional.ofNullable(securityContext.getUser())
+                        .map(User::getEntities)
+                        .orElse(Collections.emptyList())
+                        .stream()
+                        .map(Entity::getOrganizationName)
+                        .filter(StringUtils::isNotBlank)
+                        .distinct()
+                        .collect(Collectors.toList());
+
+        for (String org : organizationNames) {
+            List<CatalogItem> customTemplates;
+            try {
+                customTemplates = getCustomTemplates(org);
+                if (CollectionUtils.isNotEmpty(customTemplates)) {
+                    result.add(customTemplates);
+                }
+            } catch(IllegalArgumentException illegalArgumentException) {
+                LOG.error("Error occurred while retrieving templates {} for org {}", illegalArgumentException.getMessage(), org);
+            }
+        }
+        return result;
     }
 
     private CreateCollectionResult createProposalFromExisting(String templateId, String templateName, String langCode,
