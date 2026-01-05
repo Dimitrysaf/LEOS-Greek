@@ -145,7 +145,7 @@
         <freemarker.version>2.3.34</freemarker.version>
         <xstream.version>1.4.21</xstream.version>
         <cuid.version>0.1.1</cuid.version> <!-- Needs upgrade-->
-        <jsoup.version>1.21.2</jsoup.version>
+        <jsoup.version>1.17.2</jsoup.version>
         <jackson-databind.version>2.16.1</jackson-databind.version>
         <fugue.version>6.1.2</fugue.version>
         <okhttp.version>5.3.1</okhttp.version>
@@ -780,6 +780,7 @@
                             --add-opens java.base/java.io=ALL-UNNAMED
                             --add-opens java.base/sun.nio.ch=ALL-UNNAMED
                             --add-opens java.base/sun.security.util=ALL-UNNAMED
+                            --add-opens java.xml/com.sun.org.apache.xerces.internal.jaxp=ALL-UNNAMED
                         </argLine>
                         <systemPropertyVariables>
                             <powermock.classloading>javagent</powermock.classloading>
