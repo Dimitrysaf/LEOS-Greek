@@ -54,7 +54,7 @@
 
     <properties>
         <!-- Project -->
-        <project.maven.version>3.9.9</project.maven.version>
+        <project.maven.version>[3.9.0,3.10.0)</project.maven.version>
         <project.java.version>21</project.java.version>
         <project.java.debug>false</project.java.debug>
         <project.java.optimize>true</project.java.optimize>
