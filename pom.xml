@@ -173,7 +173,8 @@
         <!-- Hazelcast -->
         <hazelcast.version>5.6.0</hazelcast.version>
         <spring-session-hazelcast.version>3.5.3</spring-session-hazelcast.version>
-        <cxf.version>4.0.3</cxf.version>
+        <cxf.version>4.0.5</cxf.version>
+        <angus.version>2.0.2</angus.version>
         <!-- Default authentication -->
         <leos.web.auth.method>BASIC</leos.web.auth.method>
     </properties>
@@ -650,6 +651,16 @@
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-rt-frontend-jaxws</artifactId>
                 <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.angus</groupId>
+                <artifactId>angus-activation</artifactId>
+                <version>${angus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.angus</groupId>
+                <artifactId>angus-mail</artifactId>
+                <version>${angus.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
