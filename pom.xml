@@ -175,6 +175,7 @@
         <spring-session-hazelcast.version>3.5.3</spring-session-hazelcast.version>
         <cxf.version>4.0.5</cxf.version>
         <angus.version>2.0.2</angus.version>
+        <jetbrains-annotations.version>24.1.0</jetbrains-annotations.version>
         <!-- Default authentication -->
         <leos.web.auth.method>BASIC</leos.web.auth.method>
     </properties>
@@ -661,6 +662,11 @@
                 <groupId>org.eclipse.angus</groupId>
                 <artifactId>angus-mail</artifactId>
                 <version>${angus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${jetbrains-annotations.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
