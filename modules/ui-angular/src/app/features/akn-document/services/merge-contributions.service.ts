@@ -35,6 +35,7 @@ import {
 import {MergeContributionResponse} from "@/shared/models/merge-contribution-response.model";
 import {ZoombarService} from "@/shared/services/zoombar.service";
 import {LoadingService} from "@/shared/services/loading.service";
+import {CoEditionServiceWS} from "@/shared/services/coEdition.websocket.service";
 
 @Injectable({
   providedIn: 'root',
@@ -106,6 +107,7 @@ export class MergeContributionsService {
     private growlService: EuiGrowlService,
     protected domSanitizer: DomSanitizer,
     private loadingService: LoadingService,
+    private coEditionService: CoEditionServiceWS,
     @Inject(DOCUMENT) private document: Document,
   ) {
     this.undo$ = this.undoBS.asObservable();
@@ -328,6 +330,8 @@ export class MergeContributionsService {
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
     this.loadingService.setLoading(true);
+    const presenterId = this.coEditionService.presenterId;
+
     this.http
       .post<MergeContributionResponse>(
         `${apiBaseUrl}/secured/contribution/merge-contributions/${documentRef}/${documentType}`,
@@ -335,6 +339,7 @@ export class MergeContributionsService {
           mergeActions,
           acceptAllContributions,
         },
+        { headers: { 'Content-Type': 'application/json; charset=utf-8', presenterId } },
       ).subscribe({
         next: (resp) => {
           this.appShell.growl({
