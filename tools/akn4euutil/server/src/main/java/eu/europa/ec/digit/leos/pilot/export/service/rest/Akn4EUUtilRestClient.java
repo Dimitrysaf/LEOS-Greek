@@ -77,7 +77,7 @@ public class Akn4EUUtilRestClient {
         String url = getUrl(leosRestCoreApiConValidationURI);
         MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
         ByteArrayResource byteArrayResource = convertFileToByteArray(inputFile);
-        map.add("legFile", byteArrayResource);
+        map.add("zipFile", byteArrayResource);
         map.add("email", email);
 
         HttpHeaders headers = new HttpHeaders();
