@@ -336,7 +336,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
             List<String> signaturesOrg = signatures.get(XmlNodeConfigProcessor.SIGNATURE_ORG);
             List<String> signaturesRole = signatures.get(XmlNodeConfigProcessor.SIGNATURE_ROLE);
             List<String> signaturesPerson = signatures.get(XmlNodeConfigProcessor.SIGNATURE_PERSON);
-            for (int index = 0; index < signaturesOrg.size(); index++) {
+            for (int index = 0; signaturesOrg != null && index < signaturesOrg.size(); index++) {
                 SignatureMetadata signatureMetadata = new SignatureMetadata();
                 signatureMetadata.setSpecialMention(signaturesOrg.get(index) != null ? signaturesOrg.get(index).replaceAll("~","") : null);
                 signatureMetadata.setCommissionerTitle(index < signaturesRole.size() && signaturesRole.get(index) != null ? signaturesRole.get(index).replaceAll("~","") : null);
@@ -344,7 +344,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 signaturesMetadata.add(signatureMetadata);
             }
         }
-        metadataVO.setSignatures(signaturesMetadata);
+        if(!signaturesMetadata.isEmpty()) {
+            metadataVO.setSignatures(signaturesMetadata);
+        }
         return metadataVO;
     }
 
@@ -439,9 +441,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
         }
         Optional<Collaborator> workflowCollaborator = proposal.getCollaborators().stream()
                 .filter(u ->
-                    u.getLeosClientId()!=null &&
-                    securityContext.getUser().getEntities().stream()
-                            .anyMatch(v -> v.getName().equals(u.getEntity()))
+                        u.getLeosClientId()!=null &&
+                                securityContext.getUser().getEntities().stream()
+                                        .anyMatch(v -> v.getName().equals(u.getEntity()))
                 ).findFirst();
         if (workflowCollaborator.isPresent()) { //remote call to ACL is needed
             Collaborator collaborator = workflowCollaborator.get();
@@ -567,10 +569,10 @@ public abstract class ProposalServiceImpl implements ProposalService {
         clonedProposalMetadataVOs.sort(Comparator.comparing(CloneProposalMetadataVO::getCreationDate).reversed());
         return clonedProposalMetadataVOs;
     }
-    
+
     @Override
-	public Map<String, String> getExplanatoryDocumentRef(byte[] xmlContent) {
-		Map<String, String> hrefIdMap = new HashMap<String, String>();
+    public Map<String, String> getExplanatoryDocumentRef(byte[] xmlContent) {
+        Map<String, String> hrefIdMap = new HashMap<String, String>();
         List<Map<String, String>> attrsElts = xmlContentProcessor.getElementsAttributesByPath(xmlContent, xPathCatalog.getXPathDocumentRefForExplanatory());
         attrsElts.forEach(element -> {
             if (element.containsKey("xml:id") && element.containsKey("href")) {
@@ -715,7 +717,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
 
     @Override
     public Proposal createProposalFromContent(String path, ProposalMetadata metadata, DocumentVO proposalDocument,
-            Boolean translated) {
+                                              Boolean translated) {
         LOG.trace("Creating Proposal From Content... [path={}, metadata={}]", path, metadata);
         documentLanguageContext.setDocumentLanguage(metadata.getLanguage());
         String ref;
