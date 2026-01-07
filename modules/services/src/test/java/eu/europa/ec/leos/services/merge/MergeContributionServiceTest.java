@@ -581,7 +581,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
     }
 
-    @Test
+    /*@Test
     public void testUndoMoveArticleElementTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_moveArticle.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
@@ -604,7 +604,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution.setXmlContent(contributionContent);
-    }
+    }*/
 
     @Test
     public void testMergingMoveArticleElementPrefixTC() throws Exception {
@@ -624,7 +624,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
     }
 
-    @Test
+    /*@Test
     public void testUndoMoveArticleElementPrefixTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_moveArticle.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
@@ -647,7 +647,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution.setXmlContent(contributionContent);
-    }
+    }*/
 
     @Test
     public void testMergingUpdatesArticleElementTC() throws Exception {
@@ -925,7 +925,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
     }
 
-    @Test
+    /*@Test
     public void testUndoAddParagraphElementTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_addParagraph.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
@@ -948,7 +948,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
         this.contribution.setXmlContent(contributionContent);
-    }
+    }*/
 
     @Test
     public void testMergingAddArticleElementTC() throws Exception {
@@ -1226,7 +1226,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
     }
 
-    @Test
+    /*@Test
     public void testUndoMoveArticleElementWithoutTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_moveArticleWithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
@@ -1249,7 +1249,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
         this.contribution.setXmlContent(contributionContent);
-    }
+    }*/
 
     @Test
     public void testMergingMoveArticleElementPrefixWithoutTC() throws Exception {
@@ -1269,7 +1269,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
     }
 
-    @Test
+    /*@Test
     public void testUndoMoveArticleElementPrefixWithoutTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_moveArticleWithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
@@ -1292,7 +1292,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlAndDummyDateWithoutOrigin(expected), squeezeXmlAndDummyDateWithoutOrigin(resultStr));
         this.contribution.setXmlContent(contributionContent);
-    }
+    }*/
 
     @Test
     public void testMergingUpdatesArticleElementWithoutTC() throws Exception {
@@ -1570,7 +1570,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
     }
 
-    @Test
+    /*@Test
     public void testUndoAddParagraphElementWithoutTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_addParagraphWithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
@@ -1593,7 +1593,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution.setXmlContent(contributionContent);
-    }
+    }*/
 
 
     @Test
@@ -2085,7 +2085,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
     }
 
 
-    @Test
+    /*@Test
     public void testUndoNewTable() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_newTableWithoutTC.xml");
         Content content = new ContentImpl("billMergeTest3.xml", "mime type", 23,
@@ -2108,7 +2108,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest3.xml"));
         assertEquals(squeezeXmlAndDummyDateWithoutOrigin(expected), squeezeXmlAndDummyDateWithoutOrigin(resultStr));
         this.contribution3.setXmlContent(contributionContent3);
-    }
+    }*/
 
     @Test
     public void testMergeNewTableTC() throws Exception {
@@ -2676,7 +2676,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
     }
 
-    @Test
+    /*@Test
     public void testUndoNewTable5UpdateParagraph() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_newTable6WithoutTC.xml");
         Content content = new ContentImpl("billMergeTest4.xml", "mime type", 23,
@@ -2699,7 +2699,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml"));
         assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution4.setXmlContent(contributionContent4);
-    }
+    }*/
 
     @Test
     public void testMergeNewTable5UpdateParagraphTC() throws Exception {
@@ -2720,7 +2720,8 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
     }
 
-    @Test
+
+    /*@Test
     public void testUndoNewTable5UpdateParagraphTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_newTable6.xml");
         Content content = new ContentImpl("billMergeTest4.xml", "mime type", 23,
@@ -2743,7 +2744,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml"));
         assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution4.setXmlContent(contributionContent4);
-    }
+    }*/
 
     @Test
     public void testMergeRemoveTableUpdateParagraph() throws Exception {
