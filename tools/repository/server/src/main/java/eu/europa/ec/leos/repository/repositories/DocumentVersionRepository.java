@@ -26,10 +26,10 @@ public interface DocumentVersionRepository extends JpaRepository<DocumentVersion
 
     List<DocumentVersion> findAllVersionsByDocumentId(BigDecimal documentId);
 
-    @Query(value = "SELECT * FROM DOCUMENT_VERSION d WHERE d.DOCUMENT_ID = ?1 AND d.IS_LATEST_VERSION = TRUE", nativeQuery = true)
+    @Query("SELECT d FROM DocumentVersion d WHERE d.documentId = ?1 AND d.isLatestVersion = true")
     Optional<DocumentVersion> findLastVersionByDocumentId(BigDecimal documentId);
 
-    @Query(value = "SELECT * FROM (SELECT * FROM DOCUMENT_VERSION d WHERE d.IS_LATEST_MAJOR_VERSION = TRUE and d.DOCUMENT_ID = ?1 ORDER BY d.AUDIT_C_DATE DESC) " +
-            "WHERE ROWNUM <= 1", nativeQuery = true)
+    @Query("SELECT d FROM DocumentVersion d WHERE d.isLatestMajorVersion = true AND d.documentId = ?1 ORDER BY d.auditCDate DESC LIMIT 1")
     Optional<DocumentVersion> findLastMajorVersionByDocumentId(BigDecimal documentId);
+
 }

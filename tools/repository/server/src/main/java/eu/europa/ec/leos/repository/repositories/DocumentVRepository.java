@@ -40,24 +40,22 @@ public interface DocumentVRepository extends JpaRepository<DocumentV, String> {
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE ref = ?1 AND version_id = ?2", nativeQuery = true)
     Optional<DocumentV> findVersionByRefAndVersionId(String ref, BigDecimal versionId);
 
-    @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.REF = ?1 AND d.IS_LATEST_VERSION = TRUE", nativeQuery = true)
+    @Query("SELECT d FROM DocumentV d WHERE d.ref = ?1 AND d.isLatestVersion = true")
     Optional<DocumentV> findDocumentByRef(String ref);
 
-    @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.DOCUMENT_ID = ?1 AND d.IS_LATEST_VERSION = TRUE", nativeQuery = true)
+    @Query("SELECT d FROM DocumentV d WHERE d.documentId = ?1 AND d.isLatestVersion = true")
     Optional<DocumentV> findLastVersionByDocumentId(BigDecimal documentId);
 
-    @Query(value = "SELECT * FROM DOCUMENT_V d WHERE (d.IS_ARCHIVED IS NULL OR d.IS_ARCHIVED = FALSE) AND d.PACKAGE_ID = ?1 AND d.CATEGORY_CODE = ?2 AND d" +
-            ".IS_LATEST_VERSION = TRUE ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
+    @Query("SELECT d FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.packageId = ?1 AND d.categoryCode = ?2 AND d.isLatestVersion = true ORDER BY d.updatedOn DESC")
     List<DocumentV> findDocumentsByPackageIdAndCategory(BigDecimal packageId, String categoryCode);
 
-    @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.IS_LATEST_VERSION = TRUE AND d.NAME = ?1 ORDER BY d" +
-            ".DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
+    @Query("SELECT d FROM DocumentV d WHERE d.isLatestVersion = true AND d.name = ?1 ORDER BY d.updatedOn DESC")
     List<DocumentV> findDocumentsByName(String name);
 
-    @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.PACKAGE_ID = ?1 AND d.IS_LATEST_VERSION = TRUE ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC", nativeQuery = true)
+    @Query("SELECT d FROM DocumentV d WHERE d.packageId = ?1 AND d.isLatestVersion = true ORDER BY d.updatedOn DESC")
     List<DocumentV> findDocumentsByPackageId(BigDecimal packageId);
 
-    @Query(value = "SELECT * FROM (SELECT * FROM DOCUMENT_V d WHERE d.IS_LATEST_MAJOR_VERSION = TRUE and d.REF = ?1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC) WHERE ROWNUM <= 1", nativeQuery = true)
+    @Query("SELECT d FROM DocumentV d WHERE d.isLatestMajorVersion = true AND d.ref = ?1 ORDER BY d.updatedOn DESC LIMIT 1")
     Optional<DocumentV> findLatestMajorVersionByRef(String ref);
 
     @Query(value = "SELECT * FROM (SELECT * FROM DOCUMENT_V d WHERE d.VERSION_TYPE = '1' and d.REF = ?1 ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC) WHERE ROWNUM <= 1", nativeQuery = true)
@@ -70,11 +68,10 @@ public interface DocumentVRepository extends JpaRepository<DocumentV, String> {
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.ref = ?1 AND d.version_label = ?2", nativeQuery = true)
     Optional<DocumentV> findDocumentByVersion(String docRef, String versionLabel);
 
-    @Query(value = "SELECT * FROM (SELECT * FROM DOCUMENT_V d WHERE d.IS_MAJOR_VERSION = TRUE and d.REF = ?1 AND d.DOC_AUDIT_LAST_M_DATE < (SELECT " +
-            "DOC_AUDIT_LAST_M_DATE FROM DOCUMENT_V WHERE REF = ?1 AND VERSION_LABEL= ?2) ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC) WHERE ROWNUM <= 1", nativeQuery = true)
+    @Query("SELECT d FROM DocumentV d WHERE d.isMajorVersion = true AND d.ref = ?1 AND d.updatedOn < (SELECT d2.updatedOn FROM DocumentV d2 WHERE d2.ref = ?1 AND d2.versionLabel = ?2) ORDER BY d.updatedOn DESC LIMIT 1")
     Optional<DocumentV> findPreviousMajorVersion(String docRef, String currIntVersion);
 
-    @Query(value = "SELECT COUNT(DISTINCT VERSION_ID) FROM DOCUMENT_V d WHERE IS_MAJOR_VERSION = TRUE and d.ref = ?1", nativeQuery = true)
+    @Query("SELECT COUNT(DISTINCT d.versionId) FROM DocumentV d WHERE d.isMajorVersion = true AND d.ref = ?1")
     long getAllMajorsCount(String docRef);
 
     @Query(value = "SELECT d FROM DocumentV d WHERE d.isMajorVersion = true AND d.ref = ?1")
@@ -84,8 +81,13 @@ public interface DocumentVRepository extends JpaRepository<DocumentV, String> {
     @Query(value = "SELECT d FROM DocumentV d WHERE d.isMajorVersion = false AND d.ref = ?1 AND d.versionLabel LIKE ?2 ESCAPE '\\' AND d.isVersionArchived = false AND d.versionType != '4'")
     Page<DocumentV> findRecentMinorVersions(String docRef, String lastMajorId, Pageable pageable);
 
-    @Query(value = "SELECT * FROM (SELECT COUNT(DISTINCT VERSION_ID) mvc FROM DOCUMENT_V d WHERE d.is_major_version = FALSE and d.ref = ?1 and version_label LIKE" +
-            " ?2 and d.is_version_archived = FALSE and d.version_type != '4') ", nativeQuery = true)
+    @Query("SELECT COUNT(DISTINCT d.versionId) " +
+            "FROM DocumentV d " +
+            "WHERE d.isMajorVersion = false " +
+            "AND d.ref = ?1 " +
+            "AND d.versionLabel LIKE ?2 " +
+            "AND d.isVersionArchived = false " +
+            "AND d.versionType <> '4'")
     long getRecentMinorVersionsCount(String docRef, String versionLabel);
 
     @Query(value = "SELECT COUNT(*) FROM DOCUMENT_V d WHERE (d.IS_ARCHIVED IS NULL OR d.IS_ARCHIVED = FALSE) AND d.PACKAGE_ID in (SELECT p.ID from PACKAGE p " +
