@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.repository.repositories;
 
+import eu.europa.ec.leos.repository.H2TestBase;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.entities.PackageCollaborators;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-class CollaboratorsRepositoryTests {
+class CollaboratorsRepositoryTests extends H2TestBase {
     private static Logger LOG = LoggerFactory.getLogger(CollaboratorsRepositoryTests.class);
 
     @Autowired

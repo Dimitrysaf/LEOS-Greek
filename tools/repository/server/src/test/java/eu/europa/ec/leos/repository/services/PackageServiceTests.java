@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.repository.services;
 
+import eu.europa.ec.leos.repository.H2TestBase;
 import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
@@ -39,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-class PackageServiceTests {
+class PackageServiceTests extends H2TestBase {
 
     @Autowired
     private PackageService packageService;

@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.repository.services;
 
+import eu.europa.ec.leos.repository.H2TestBase;
 import eu.europa.ec.leos.repository.entities.Collaborators;
 import eu.europa.ec.leos.repository.entities.PackageCollaborators;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
@@ -26,7 +27,7 @@ import static org.springframework.test.util.AssertionErrors.fail;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-class CollaboratorServiceTests {
+class CollaboratorServiceTests extends H2TestBase {
     @Autowired
     private CollaboratorsService collaboratorsService;
     @Autowired

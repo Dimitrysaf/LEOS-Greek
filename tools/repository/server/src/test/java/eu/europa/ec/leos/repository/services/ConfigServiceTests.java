@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.repository.services;
 
+import eu.europa.ec.leos.repository.H2TestBase;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @ActiveProfiles("test")
 @Transactional
-class ConfigServiceTests {
+class ConfigServiceTests extends H2TestBase {
     @Autowired
     DocumentService documentService;
 

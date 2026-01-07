@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.repository.repositories;
 
+import eu.europa.ec.leos.repository.H2TestBase;
 import eu.europa.ec.leos.repository.TestConstants;
 import eu.europa.ec.leos.repository.entities.LeosClients;
 import eu.europa.ec.leos.repository.entities.Package;
@@ -40,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @ActiveProfiles("test")
 @Slf4j
-class WorkflowCollaboratorConfigRepositoryTests {
+class WorkflowCollaboratorConfigRepositoryTests extends H2TestBase {
 
     @Autowired
     WorkflowCollaboratorConfigRepository workflowCollaboratorConfigRepository;

@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.repository.repositories;
 
+import eu.europa.ec.leos.repository.H2TestBase;
 import eu.europa.ec.leos.repository.entities.ConfigurationV;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-class ConfigurationRepositoryTests {
+class ConfigurationRepositoryTests extends H2TestBase {
     private static Logger LOG = LoggerFactory.getLogger(ConfigurationRepositoryTests.class);
 
     @Autowired
