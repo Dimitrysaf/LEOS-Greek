@@ -62,6 +62,28 @@ public class CoEditionContext {
         }).start();
     }
 
+    public void sendUpdatedElements(String documentRef, String presenterId) {
+        final String presenterIdFinal = encodeParam(presenterId);
+        final String documentRefFinal = encodeParam(documentRef);
+        new Thread(() -> {
+            User user = securityContext.getUser();
+            simpMessagingTemplate.convertAndSend(CoEditionContext.TOPIC_DOCUMENT_SLASH + documentRef,
+                    new UpdateCoEditionResponse(user, presenterIdFinal, documentRefFinal, InfoType.DOCUMENT_UPDATED,
+                            getUpdatedElements()));
+        }).start();
+    }
+
+    public void sendUpdatedElements(String documentRef, String presenterId, InfoType infoType) {
+        final String presenterIdFinal = encodeParam(presenterId);
+        final String documentRefFinal = encodeParam(documentRef);
+        new Thread(() -> {
+            User user = securityContext.getUser();
+            simpMessagingTemplate.convertAndSend(CoEditionContext.TOPIC_DOCUMENT_SLASH + documentRef,
+                    new UpdateCoEditionResponse(user, presenterIdFinal, documentRefFinal, infoType,
+                            getUpdatedElements()));
+        }).start();
+    }
+
     public void addUpdatedElement(String elementId, String elementTagName, String elementFragment, String alternateElementId) {
         Element newElement = new Element(elementId, elementTagName, elementFragment, alternateElementId);
         updatedElements.remove(newElement);

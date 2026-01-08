@@ -6,6 +6,7 @@ import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.api.ContributionApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
+import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
@@ -38,6 +39,9 @@ public class ContributionControllerTest {
 
     @Mock
     private ContributionApiService contributionApiService;
+
+    @Mock
+    private CoEditionContext coEditionContext;
 
     @InjectMocks
     private ContributionController contributionController;
@@ -156,10 +160,11 @@ public class ContributionControllerTest {
         String TEST_DOCUMENT_CONTENT = "test content";
         ApplyContributionsRequest TEST_REQUEST = new ApplyContributionsRequest();
 
+        when(contributionApiService.extractElementsFromMergeActions(any(), any())).thenReturn(new ArrayList<>());
         when(this.contributionApiService.mergeContribution(anyString(), any(ApplyContributionsRequest.class))).thenReturn(new MergeContributionResponse(true,
                 TEST_DOCUMENT_CONTENT.getBytes(StandardCharsets.UTF_8)));
 
-        ResponseEntity<MergeContributionResponse> response = this.contributionController.mergeContribution(TEST_DOCUMENT_REF, TEST_REQUEST);
+        ResponseEntity<MergeContributionResponse> response = this.contributionController.mergeContribution(TEST_DOCUMENT_REF, "presenterId", TEST_REQUEST);
 
         verify(this.contributionApiService).mergeContribution(TEST_DOCUMENT_REF, TEST_REQUEST);
         assertEquals(HttpStatus.OK, response.getStatusCode());
