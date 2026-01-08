@@ -70,10 +70,10 @@ public class CollectionContextProposalService extends CollectionContextService {
     private static final Logger LOG = LoggerFactory.getLogger(CollectionContextProposalService.class);
 
     CollectionContextProposalService(CustomTemplateService customTemplateService, TemplateService templateService, PackageService packageService,
-            ProposalService proposalService, CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider,
-            Provider<BillContextService> billContextProvider, SecurityContext securityContext, Provider<ExplanatoryContextService> explanatoryContextProvider,
-            Provider<FinancialStatementContextService> financialStatementContextProvider, Provider<AnnexContextService> annexContextProvider,
-            ExplanatoryService explanatoryService, MessageHelper messageHelper, XmlContentProcessor xmlContentProcessor) {
+                                     ProposalService proposalService, CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider,
+                                     Provider<BillContextService> billContextProvider, SecurityContext securityContext, Provider<ExplanatoryContextService> explanatoryContextProvider,
+                                     Provider<FinancialStatementContextService> financialStatementContextProvider, Provider<AnnexContextService> annexContextProvider,
+                                     ExplanatoryService explanatoryService, MessageHelper messageHelper, XmlContentProcessor xmlContentProcessor) {
         super(customTemplateService, templateService, packageService, proposalService, urlBuilder, memorandumContextProvider, billContextProvider, securityContext,
                 explanatoryContextProvider, financialStatementContextProvider, annexContextProvider, explanatoryService, messageHelper, xmlContentProcessor);
     }
@@ -261,13 +261,9 @@ public class CollectionContextProposalService extends CollectionContextService {
     }
 
     private boolean isToCreateDocument(String templateName, Map<String, String> templatePropertiesMap) {
-        if (templatePropertiesMap.get(DOCUMENT_MANDATORY_TEMPLATES).contains(templateName)) {
-            return true;
-        }
-        if (templatePropertiesMap.get(DOCUMENT_DEFAULT_TRUE_TEMPLATES).contains(templateName)) {
-            return true;
-        }
-        return false;
+        return templatePropertiesMap.get(DOCUMENT_MANDATORY_TEMPLATES).contains(templateName)
+                || templatePropertiesMap.get(DOCUMENT_DEFAULT_TRUE_TEMPLATES).contains(templateName)
+                || categoryTemplateMap.values().stream().anyMatch(doc -> templateName.equals(doc.getName()));
     }
 
     private boolean canDocumentBeAdded(String templateName, Map<String, String> templatePropertiesMap) {

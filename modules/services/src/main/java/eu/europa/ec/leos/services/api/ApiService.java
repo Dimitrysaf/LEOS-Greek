@@ -54,6 +54,8 @@ public interface ApiService {
     CreateCollectionResult createProposal(String templateId, String templateName, String langCode, String docPurpose,
                                           boolean eeaRelevance, boolean customTemplateAct, String template) throws CreateCollectionException;
 
+    List<String> createExtProposal(String templateKey, String[] languageCodes, String docPurpose) throws CreateCollectionException;
+
     CreateCollectionResult uploadProposal(LeosFile legDocument) throws CreateCollectionException;
 
     List<String> createLinguisticVersionsFromMilestone(String legFileId, List<String> linguisticVersions) throws CreateCollectionException;
