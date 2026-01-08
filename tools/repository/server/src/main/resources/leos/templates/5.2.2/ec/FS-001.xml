@@ -7685,13 +7685,9 @@
             </level>
             <level class="landscape" leos:deletable="false" leos:depth="2" leos:editable="true">
                 <num>4.1.</num>
-                <subparagraph>
-                    <content>
-                        <p>
-                            <b>Requirements of digital relevance</b>
-                        </p>
-                    </content>
-                </subparagraph>
+                <heading leos:editable="false">
+                    <b leos:editable="false">Requirements of digital relevance</b>
+                </heading>
                 <subparagraph>
                     <content>
                         <p>If the policy initiative is assessed as having no requirement of digital relevance:</p>
