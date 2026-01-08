@@ -33,6 +33,7 @@ import {LoadingService} from "@/shared/services/loading.service";
 import {CoEditionUpdate} from "@/shared/models/coEditionVO.model";
 import {getUserDetails, UserDetails} from "@eui/base";
 import {Store} from "@ngrx/store";
+import {MergeContributionsService} from "@/features/akn-document/services/merge-contributions.service";
 
 const MAIN_CONTAINER_WIDTH = 500.6;
 
@@ -83,7 +84,8 @@ export class DocumentComponent
     private milestoneService: ProposalMilestonesService,
     private domSanitizer: DomSanitizer,
     private loadingService: LoadingService,
-    private store: Store<any>
+    private store: Store<any>,
+    private mergeContributionService: MergeContributionsService,
   ) {
     this.waitUntil = (condition) => {
       return new Promise<void>((resolve, reject) => {
@@ -202,13 +204,21 @@ export class DocumentComponent
         .pipe(takeUntil(this.destroy$))
         .subscribe((coEditionUpdate) => {
           if (coEditionUpdate) {
-            if (coEditionUpdate.infoType === 'DOCUMENT_UPDATED') {
+            if (coEditionUpdate.infoType === 'DOCUMENT_UPDATED' || coEditionUpdate.infoType === 'DOCUMENT_CONTRIBUTION_UPDATED') {
               this.docUpdating = true;
             }
             if (
               coEditionUpdate.updatedElements &&
               coEditionUpdate.updatedElements.length > 0
             ) {
+              if (coEditionUpdate.infoType === 'DOCUMENT_CONTRIBUTION_UPDATED') {
+                const newElement = coEditionUpdate.updatedElements.find((elt) => this.document.getElementById(elt.elementId) == null);
+                if (newElement || coEditionUpdate.updatedElements.length === 0) {
+                  this.documentService.reloadDocument();
+                } else {
+                  this.mergeContributionService.getContributions();
+                }
+              }
               coEditionUpdate.updatedElements.forEach((element) => {
                 if (element.alternateElementId === 'null') {
                   element.alternateElementId = null;

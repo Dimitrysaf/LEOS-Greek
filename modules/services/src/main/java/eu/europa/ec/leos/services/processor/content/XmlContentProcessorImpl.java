@@ -100,6 +100,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getId;
 import static eu.europa.ec.leos.services.support.XercesUtils.getLastChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getNextSibling;
 import static eu.europa.ec.leos.services.support.XercesUtils.getParentId;
+import static eu.europa.ec.leos.services.support.XercesUtils.hasAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasAttributeWithValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.importNodeInDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.insertOrUpdateAttributeValue;
@@ -1288,6 +1289,14 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         addAttribute(subElement, XMLID, SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + elementId);
     }
 
+    private boolean isIndented(Node node) {
+        if (!hasAttribute(node, LEOS_INDENT_ORIGIN_TYPE_ATTR) && XercesUtils.getFirstChild(node, Arrays.asList(SUBPARAGRAPH, LIST)) != null) {
+            Node firstSubParagraph = XercesUtils.getFirstDescendant(node, Arrays.asList(SUBPARAGRAPH));
+            return (firstSubParagraph != null) && hasAttribute(firstSubParagraph, LEOS_INDENT_ORIGIN_TYPE_ATTR);
+        }
+        return hasAttribute(node, LEOS_INDENT_ORIGIN_TYPE_ATTR);
+    }
+
     protected String modifySubElement(Node node, String parentOrigin) {
 
         String originOfDocument = getOriginOfDocument(node);
@@ -1299,7 +1308,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         if (originAttr.equals(parentOrigin) && !is(node, LIST)) {
             addAttribute(node, LEOS_ORIGIN_ATTR, originAttr);
             String softAction = getAttributeValue(node, LEOS_SOFT_ACTION_ATTR);
-            if (softAction == null && !CN.equals(originOfDocument) && !is(node, MAIN_BODY)) {
+            if (softAction == null && !CN.equals(originOfDocument) && !is(node, MAIN_BODY) && !isIndented(node)) {
                 addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.ADD.getSoftAction());
                 addAttribute(node, LEOS_SOFT_USER_ATTR, getSoftUserAttribute(securityContext.getUser()));
                 addAttribute(node, LEOS_SOFT_DATE_ATTR, getDateAsXml());
