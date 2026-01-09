@@ -75,12 +75,12 @@
         {
           "index": "1",
           "title": "predsedníčka",
-          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"1\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">Za Komisiu</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\">predsedníčka</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"1\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">Za Komisiu</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">predsedníčka</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
         },
         {
           "index": "2",
           "title": "v mene predsedníčky",
-          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"2\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">Za Komisiu</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\">v mene predsedníčky</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"2\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">Za Komisiu</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">v mene predsedníčky</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
         }
       ]
     }

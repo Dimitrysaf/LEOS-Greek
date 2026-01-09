@@ -75,12 +75,12 @@
         {
           "index": "1",
           "title": "az elnök",
-          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"1\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">a Bizottság részéről</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\">az elnök</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"1\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">a Bizottság részéről</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">az elnök</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
         },
         {
           "index": "2",
           "title": "az elnök nevében",
-          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"2\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">a Bizottság részéről</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\">az elnök nevében</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"2\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">a Bizottság részéről</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">az elnök nevében</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
         }
       ]
     }

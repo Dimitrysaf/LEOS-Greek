@@ -75,12 +75,12 @@
         {
           "index": "1",
           "title": "La presidente",
-          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"1\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">Per la Commissione</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\">La presidente</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"1\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">Per la Commissione</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">La presidente</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
         },
         {
           "index": "2",
           "title": "A nome della presidente",
-          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"2\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">Per la Commissione</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\">A nome della presidente</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"2\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">Per la Commissione</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">A nome della presidente</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
         }
       ]
     }
