@@ -13,10 +13,12 @@
  */
 package eu.europa.ec.leos.services.processor.content;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
@@ -37,6 +39,7 @@ import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.util.LeosDomainUtil;
@@ -126,6 +129,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     protected DocumentLanguageContext documentLanguageContext;
     @Autowired
     protected StructureService structureService;
+    @Autowired
+    protected TemplateConfigurationService templateConfigurationService;
 
     @Override
     public byte[] addTrackChangesAttributesForMovedElement(byte[] xmlContent, String elementId, SoftActionType direction, String trackUser, String softUser,
@@ -3270,6 +3275,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
         alignMetaNode(sourceDoc, targetDoc);
         replaceUnchangedTextContentInSourceDocByTarget(targetDoc, sourceDoc, sourceBaseDoc);
+        alignAlternatives(targetXmlDoc, sourceDoc, sourceBaseDoc);
         alignAttachmentsIds(sourceDoc, targetDoc);
 
         return nodeToByteArray(sourceDoc);
@@ -3344,10 +3350,43 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 .equals(sourceTextNodes.stream().map(Node::getTextContent).collect(Collectors.joining())) && sourceNode.getNodeName()
                 .equals(targetNode.getNodeName()) && sourceTextNodes.size() == targetTextNodes.size()) {
             for (int j = 0; j < targetTextNodes.size(); j++) {
-                String oldText = targetTextNodes.get(j).getTextContent();
-                sourceTextNodes.get(j).setTextContent(oldText);
+                String targetText = targetTextNodes.get(j).getTextContent();
+                sourceTextNodes.get(j).setTextContent(targetText);
             }
         }
+    }
+
+    private void alignAlternatives(XmlDocument targetXmlDoc, Document sourceDoc, Document sourceBaseDoc) {
+        List<Node> sourceAlternativeNodes = XercesUtils.getDescendantsWithAttribute(sourceDoc, LEOS_ALTERNATIVE_ATTR);
+        List<Node> sourceBaseAlternativeNodes = XercesUtils.getDescendantsWithAttribute(sourceBaseDoc, LEOS_ALTERNATIVE_ATTR);
+
+        sourceAlternativeNodes.forEach(sourceAlternativeNode -> {
+            Node sourceBaseAlternativeNode = sourceBaseAlternativeNodes.stream()
+                    .filter(sourceBaseNode -> StringUtils.equals(getId(sourceAlternativeNode), getId(sourceBaseNode))).findFirst().orElse(null);
+            String selectedOption = XercesUtils.getAttributeValue(sourceAlternativeNode, LEOS_SELECTED_OPTION_ATTR);
+            if (!StringUtils.equals(selectedOption, XercesUtils.getAttributeValue(sourceBaseAlternativeNode, LEOS_SELECTED_OPTION_ATTR))) {
+                replaceAlternativeNodeWithContentFromLanguageTemplateConfig(targetXmlDoc, sourceAlternativeNode, selectedOption);
+            }
+        });
+    }
+
+    private void replaceAlternativeNodeWithContentFromLanguageTemplateConfig(XmlDocument targetXmlDoc, Node sourceAlternativeNode, String selectedOption) {
+        LeosMetadata targetDocMetadata = targetXmlDoc.getMetadata().get();
+        documentLanguageContext.setDocumentLanguage(targetDocMetadata.getLanguage());
+        JsonNode targetAlternatives = templateConfigurationService.getElementJsonFromTemplateConfiguration(targetDocMetadata.getDocTemplate(), "alternatives");
+        String optionList = XercesUtils.getAttributeValue(sourceAlternativeNode, LEOS_OPTION_LIST_ATTR);
+        targetAlternatives.elements().forEachRemaining(alternativesList -> {
+            if (StringUtils.equals(optionList, alternativesList.get("name").asText())) {
+                alternativesList.get("list").elements().forEachRemaining(alternativeItem -> {
+                    if (StringUtils.equals(selectedOption, alternativeItem.get("index").asText())) {
+                        String xmlFragment = alternativeItem.get("content").asText();
+                        Node targetAlternativeNode = createNodeFromXmlFragment(sourceAlternativeNode.getOwnerDocument(),
+                                xmlFragment.getBytes(StandardCharsets.UTF_8), false);
+                        XercesUtils.replaceElement(targetAlternativeNode, sourceAlternativeNode);
+                    }
+                });
+            }
+        });
     }
 
     private void alignAttachmentsIds(Document sourceDoc, Document targetDoc) {
