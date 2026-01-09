@@ -1284,6 +1284,9 @@ public abstract class ApiServiceImpl implements ApiService {
     @Override
     public void updateAnnexTitle(String proposalRef, String annexId, String annexTitle) {
         Annex annex = annexService.findAnnex(annexId, true);
+        byte[] binaryContent = annex.getBinaryContent();
+        String originalFilename = annex.getOriginalFilename();
+        String binaryContentSize = annex.getBinaryContentSize();
         AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
 
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
@@ -1296,7 +1299,7 @@ public abstract class ApiServiceImpl implements ApiService {
         }
 
         AnnexMetadata updatedMetadata = metadata.builder().withTitle(annexTitle).build();
-        annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED), false);
+        annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED), false, binaryContent, originalFilename, binaryContentSize);
         documentViewService.updateDocumentView(annex);
     }
 
