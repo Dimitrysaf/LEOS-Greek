@@ -61,11 +61,11 @@
       "list": [
         {
           "index": "1",
-          "content": "<clause xml:id=\"clause1\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\"><content xml:id=\"clause1Content\"><p xml:id=\"clause1ContentP\">Dan ir-Regolament għandu jorbot fl-intier tiegħu u japplika direttament fl-Istati Membri kollha.</p></content></clause>"
+          "content": "<clause xml:id=\"clause1\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\"><content xml:id=\"clause1Content\"><p xml:id=\"clause1ContentP\">This Regulation shall be binding in its entirety and directly applicable in all Member States.</p></content></clause>"
         },
         {
           "index": "2",
-          "content": "<clause xml:id=\"clause1\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\"><content xml:id=\"clause1Content\"><p xml:id=\"clause1ContentP\">Dan ir-Regolament għandu jorbot fl-intier tiegħu u japplika direttament fl-Istati Membri f’konformità mat-Trattati.</p></content></clause>"
+          "content": "<clause xml:id=\"clause1\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\"><content xml:id=\"clause1Content\"><p xml:id=\"clause1ContentP\">This Regulation shall be binding in its entirety and directly applicable in the Member States in accordance with the Treaties.</p></content></clause>"
         }
       ]
     },
@@ -74,13 +74,13 @@
       "list": [
         {
           "index": "1",
-          "title": "Il-President",
-          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"1\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">Għall-Kummissjoni</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Il-President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+          "title": "The President",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"1\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">The President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
         },
         {
           "index": "2",
-          "title": "F’isem il-President",
-          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"2\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">Għall-Kummissjoni</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">F’isem il-President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+          "title": "On behalf of the President",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"2\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">For the Commission</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">On behalf of the President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
         }
       ]
     }

@@ -170,7 +170,9 @@ public class XmlHelper {
     public static final String LEOS_INITIAL_NUM = "leos:initial-num";
     public static final String LEOS_DELETABLE_ATTR = "leos:deletable";
     public static final String LEOS_EDITABLE_ATTR = "leos:editable";
-    public static final String LEOS_REPEATABLE_ATTR = "leos:repeatable";
+    public static final String LEOS_ALTERNATIVE_ATTR = "leos:alternative";
+    public static final String LEOS_OPTION_LIST_ATTR = "leos:optionlist";
+    public static final String LEOS_SELECTED_OPTION_ATTR = "leos:selectedoption";
     public static final String LEOS_REPEATED_ATTR = "leos:repeated";
     public static final String LEOS_AFFECTED_ATTR = "leos:affected";
     public static final String LEOS_CROSS_HEADING_BLOCK_NAME = "leos:name";
