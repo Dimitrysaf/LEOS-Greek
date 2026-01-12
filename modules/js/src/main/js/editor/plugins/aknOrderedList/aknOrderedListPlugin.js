@@ -60,7 +60,6 @@ define(function aknOrderedListPluginModule(require) {
     function _checkLists(event) {
         var newDiv = new CKEDITOR.dom.element('div')
         newDiv.appendHtml(event.data.dataValue);
-        leosPluginUtils.checkLists(newDiv);
         event.data.dataValue = newDiv.getHtml();
     }
 
