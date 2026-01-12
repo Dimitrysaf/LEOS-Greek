@@ -217,6 +217,7 @@ define(function leosAlternativesPluginModule(require) {
             }
         });
         editor.getCommand(pluginName + index).setState(CKEDITOR.TRISTATE_ON);
+        editor.getCommand('leosInlineCancelDialog').setState(CKEDITOR.TRISTATE_ON);
     }
 
     function _getOptionLists() {
