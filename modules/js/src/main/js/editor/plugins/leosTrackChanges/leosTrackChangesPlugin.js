@@ -212,9 +212,6 @@ define(function leosTrackChangesPluginModule(require) {
                 });
                 editor.contextMenu.addListener(function(element) {
                     originalSelectedElement = element;
-                    var isAi = element.getAttribute('data-akn-uid') && element.getAttribute('data-akn-uid') === leosPluginUtils.AI_USER;
-                    editor.getMenuItem('acceptOneChangeItem').label = isAi ? "Accept this AI's prefilled text" : "Accept this change";
-                    editor.getMenuItem('rejectOneChangeItem').label = isAi ? "Reject this AI's prefilled text" : "Reject this change";
                     var elementWithPseudoElt = core.getClosestElementWithPseudoElt(element, core.BEFORE);
                     if (elementWithPseudoElt && (elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) || elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_ENTER))
                         && !elementWithPseudoElt.getAttribute(core.ACTION_ATTR) && core.isMouseOverPseudoElt(elementWithPseudoElt, core.BEFORE, editor.LEOS.mousePosition)) {
@@ -241,9 +238,6 @@ define(function leosTrackChangesPluginModule(require) {
                         var tcElement = element.$.closest(core.TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR);
                         if (tcElement) { // Is a track change deleted row
                             selectedElement = new CKEDITOR.dom.element(tcElement);
-                            isAi = selectedElement.getAttribute('data-akn-uid') && selectedElement.getAttribute('data-akn-uid') === leosPluginUtils.AI_USER;
-                            editor.getMenuItem('acceptOneChangeItem').label = isAi ? "Accept this AI's prefilled text" : "Accept this change";
-                            editor.getMenuItem('rejectOneChangeItem').label = isAi ? "Reject this AI's prefilled text" : "Reject this change";
                             return {
                                 acceptRowChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
                                 rejectRowChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
@@ -263,10 +257,6 @@ define(function leosTrackChangesPluginModule(require) {
                         }else if ((editor.getSelection().isCollapsed() || element.$.classList.contains("cke_widget_inline")) && !core.isInsideTrackedDeletedOrSoftMovedToElement(editor)) {
                             tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
                             if (tcElement) {
-                                selectedElement = new CKEDITOR.dom.element(tcElement);
-                                isAi = selectedElement.getAttribute('data-akn-uid') && selectedElement.getAttribute('data-akn-uid') === leosPluginUtils.AI_USER;
-                                editor.getMenuItem('acceptOneChangeItem').label = isAi ? "Accept this AI's prefilled text" : "Accept this change";
-                                editor.getMenuItem('rejectOneChangeItem').label = isAi ? "Reject this AI's prefilled text" : "Reject this change";
                                 editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
                                 return {
                                     acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,

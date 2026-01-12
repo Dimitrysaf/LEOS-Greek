@@ -266,11 +266,6 @@
                             'page.collection.drafts.financial-statement.title' | translate
                             }}</strong></a
                         >
-                      <div class="analysis-status" *ngIf="shouldDisplayAI()" [style]="getAIAnalysisColor()">
-                        {{
-                          textAnalysisStatus()
-                        }}
-                      </div>
                     </div>
                     <div *ngIf="financialStatement">
                         <eui-card-header-subtitle

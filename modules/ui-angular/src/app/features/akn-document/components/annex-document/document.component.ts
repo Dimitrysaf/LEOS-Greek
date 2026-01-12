@@ -33,9 +33,6 @@ import {LoadingService} from "@/shared/services/loading.service";
 import {CoEditionUpdate} from "@/shared/models/coEditionVO.model";
 import {getUserDetails, UserDetails} from "@eui/base";
 import {Store} from "@ngrx/store";
-import {AnalysisResults} from "@/shared/models/leos.ai.model";
-import {TableOfContentItemVO} from "@/shared/models/toc.model";
-import {scrollInParent} from "@/shared/utils";
 
 const MAIN_CONTAINER_WIDTH = 500.6;
 
@@ -156,18 +153,12 @@ export class DocumentComponent
   }
 
   ngOnInit(): void {
-    this.documentService.aiAnalysisResults$.subscribe((docView) => {
-      this.documentService.refreshView(docView, true);
-    });
     if (!this.readonly) {
       this.documentService.refreshView$
         .pipe(takeUntil(this.destroy$))
         .subscribe((documentView) => {
-          if (documentView && documentView.data && !this.contributionView) {
-            this.loadDocument(documentView.data.editableXml);
-          }
-          if (documentView.scroll) {
-            this.scrollToTable('4.2.');
+          if (documentView && !this.contributionView) {
+            this.loadDocument(documentView.editableXml);
           }
         });
 
@@ -690,44 +681,4 @@ export class DocumentComponent
       subtree: true,
     });
   }
-
-  private findElementByXPath(doc: Document, xpath: string): Element {
-    return <Element>new XPathEvaluator()
-      .createExpression(xpath)
-      .evaluate(doc, XPathResult.FIRST_ORDERED_NODE_TYPE)
-      .singleNodeValue;
-  }
-
-  private findNthTableInElement(levelNode: Element, n: number) {
-    const tables = levelNode.querySelectorAll('table');
-    if (n<tables.length) {
-      return tables.item(n);
-    } else {
-      return null;
-    }
-  }
-
-  private findNthTableInLevel(doc: Document, levelNumber: string, n: number) {
-    let xpath : string = "//num[text()='" + levelNumber + "']";
-    let level = this.findElementByXPath(doc, xpath);
-    if (level) {
-      return this.findNthTableInElement(level.parentElement, n);
-    }
-    return null;
-  }
-
-  private scrollToTable(
-    levelNumber: string
-  ) {
-    const el = this.findNthTableInLevel(document, levelNumber, 0);
-    if (el instanceof HTMLElement) {
-      el.style.background = 'cornsilk';
-      setTimeout(() => {
-        el.style.background = '';
-      }, 1000);
-
-      scrollInParent(el, { topOffset: 100, behavior: 'smooth', left: null });
-    }
-  }
-
 }

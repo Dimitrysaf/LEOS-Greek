@@ -64,16 +64,17 @@ public class LeosMetadataExtensions {
     }
 
     private static Map<String, ? extends Object> toLeosRepositoryProperties(ProposalMetadata proposalMetadata) {
-        Map<String, Object> leosProperties = new HashMap<>();
+
         String title = Stream.of(proposalMetadata.getStage(), proposalMetadata.getType(), proposalMetadata.getPurpose())
                 .filter(s -> s != null && !s.isEmpty())
                 .collect(Collectors.joining(" "));
 
+        Map<String, Object> leosProperties = new HashMap<>();
         leosProperties.putAll(buildCommonProperties(proposalMetadata, title));
 
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_AUTHENTIC_LANGUAGE), proposalMetadata.getIsAuthenticLang());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_COVERPAGE_TYPE), proposalMetadata.getCoverPageType());
-        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.AI_VALUES), proposalMetadata.getAiValues());
+
         return leosProperties;
     }
 

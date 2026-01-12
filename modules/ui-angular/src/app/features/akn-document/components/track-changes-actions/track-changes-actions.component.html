@@ -5,14 +5,14 @@
     euiButton
     euiIconButton
     euiBasicButton
-    [title]="(isAI()? 'page.editor.track.changes.actions.accept.ai' : 'page.editor.track.changes.actions.accept') | translate"
-    [attr.aria-label]="(isAI()? 'page.editor.track.changes.actions.accept.ai' : 'page.editor.track.changes.actions.accept') | translate"
+    [title]="'page.editor.track.changes.actions.accept' | translate"
+    [attr.aria-label]="'page.editor.track.changes.actions.accept' | translate"
     [disabled]="!this.canAcceptTrackChanges"
     (click)="onAccept()"
   >
     <img src="assets/images/ok.png" alt="" />
     <span class="tc_menubutton_label">{{
-        (isAI()? 'page.editor.track.changes.actions.accept.ai' : 'page.editor.track.changes.actions.accept') | translate
+      'page.editor.track.changes.actions.accept' | translate
     }}</span>
   </button>
   <button
@@ -21,14 +21,14 @@
     euiButton
     euiIconButton
     euiBasicButton
-    [title]="(isAI()? 'page.editor.track.changes.actions.reject.ai' : 'page.editor.track.changes.actions.reject') | translate"
-    [attr.aria-label]="(isAI()? 'page.editor.track.changes.actions.reject.ai' : 'page.editor.track.changes.actions.reject') | translate"
+    [title]="'page.editor.track.changes.actions.reject' | translate"
+    [attr.aria-label]="'page.editor.track.changes.actions.reject' | translate"
     [disabled]="!this.canRejectTrackChanges"
     (click)="onReject()"
   >
     <img src="assets/images/remove.png" alt="" />
     <span class="tc_menubutton_label">{{
-        (isAI()? 'page.editor.track.changes.actions.reject.ai' : 'page.editor.track.changes.actions.reject') | translate
+      'page.editor.track.changes.actions.reject' | translate
     }}</span>
   </button>
 </div>

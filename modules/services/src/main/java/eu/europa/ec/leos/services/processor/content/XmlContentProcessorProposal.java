@@ -64,7 +64,6 @@ import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.createElementAsLastChildOfNode;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.getChildren;
-import static eu.europa.ec.leos.services.support.XercesUtils.getContentNodeAsXmlFragment;
 import static eu.europa.ec.leos.services.support.XercesUtils.getDescendants;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getId;
@@ -72,7 +71,6 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
 import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
-import static eu.europa.ec.leos.services.support.XercesUtils.replaceElement;
 import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttributeFullStructureNode;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATION;
@@ -447,9 +445,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         Node nodeToBeAdded = XercesUtils.getElementById(document, elementId);
         String tagName = nodeToBeAdded.getNodeName().toLowerCase();
         document = restoreNumElementOnIntermediateNodes(document, elementId, null, tagName);
-        if (accept && tagName.equals(LEOS_TC_INSERT_ELEMENT_NAME)) {
-            acceptInsElement(nodeToBeAdded);
-        } else if (accept) {
+        if (accept) {
             restoreSoftMovedElementMarkedWithAttribute(nodeToBeAdded);
         } else {
             XercesUtils.deleteElement(nodeToBeAdded);
@@ -502,10 +498,6 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         }
         restoreSoftMovedElementMarkedWithAttribute(nodeToBeRestored);
         return nodeToByteArray(document);
-    }
-
-    private void acceptInsElement(Node node) {
-        XercesUtils.replaceElement(node, getContentNodeAsXmlFragment(node));
     }
 
     private void restoreSoftMovedElementMarkedWithAttribute(Node nodeToRestore) {
