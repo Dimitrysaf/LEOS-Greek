@@ -30,8 +30,6 @@ import { LoadingService } from "@/shared/services/loading.service";
 import { EuiGrowlService } from "@eui/core";
 import { HttpStatusCode } from "@angular/common/http";
 import { cleanDelInsert } from '@/shared/utils/string.utils';
-import {AnalysisStatus} from "@/shared/models/leos.ai.model";
-import {AIService} from "@/shared/services/ai.service";
 
 @Component({
   selector: 'app-proposal-drafts',
@@ -58,7 +56,6 @@ export class ProposalDraftsComponent
   permissions: Permission[];
   annexCreateOption: string;
   fsCreateOption: string;
-  analysisStatus: AnalysisStatus;
 
   @ViewChild('editAnnexTitleDialog') editAnnexTitleDialog: EuiDialogComponent;
   @ViewChild('editAnnexOrder') annexOrderDialog: EuiDialogComponent;
@@ -87,7 +84,6 @@ export class ProposalDraftsComponent
     private loadingService: LoadingService,
     private growlService: EuiGrowlService,
     private translateService: TranslateService,
-    private aiService: AIService,
   ) {}
 
   ngOnDestroy(): void {
@@ -114,16 +110,10 @@ export class ProposalDraftsComponent
     });
     this.populateView();
     this.coEditionService.joinDocumentChannel();
-    this.aiService.getAnalysisStatus(this.proposalRef);
     this.proposalDetailsService.permissions$
       .pipe(takeUntil(this.destroy$))
       .subscribe((perms) => {
         this.permissions = perms;
-      });
-    this.aiService.analysisStatus$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((status) => {
-        this.analysisStatus = status;
       });
   }
 
@@ -299,29 +289,4 @@ export class ProposalDraftsComponent
     this.annexCreateOption = createOptions[annexKey];
   }
    protected readonly cleanDelInsert = cleanDelInsert;
-
-  shouldDisplayAI(): boolean {
-    return this.analysisStatus && (this.analysisStatus == "ANALYSIS_STARTED"
-      || this.analysisStatus == "RESULTS_AVAILABLE"
-      || this.analysisStatus == "CLASSIFICATION_STARTED");
-  }
-
-  getAIAnalysisColor() {
-    return {
-      color: (this.analysisStatus && (this.analysisStatus == "ANALYSIS_STARTED"
-        || this.analysisStatus == "CLASSIFICATION_STARTED")) ? 'orange' : 'green'
-    };
-  }
-
-  textAnalysisStatus(): string {
-    if (this.analysisStatus) {
-      if (this.analysisStatus == "ANALYSIS_STARTED") {
-        return this.translate.instant('page.collection.drafts.analysis.status.started');
-      } else if (this.analysisStatus == "CLASSIFICATION_STARTED") {
-        return this.translate.instant('page.collection.drafts.analysis.status.classification.started');
-      } else if (this.analysisStatus == "RESULTS_AVAILABLE") {
-        return this.translate.instant('page.collection.drafts.analysis.results.available');
-      }
-    }
-  }
 }

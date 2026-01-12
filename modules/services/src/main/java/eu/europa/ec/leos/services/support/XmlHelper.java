@@ -96,9 +96,6 @@ public class XmlHelper {
     public static final String INTRO = "intro";
     public static final String HEADING = "heading";
     public static final String NUM = "num";
-    public static final String TABLE = "table";
-    public static final String TR = "tr";
-    public static final String TD = "td";
     public static final String P = "p";
     public static final String COVERPAGE = "coverPage";
     public static final String ATTACHMENTS = "attachments";
@@ -127,6 +124,7 @@ public class XmlHelper {
     public static final String POINT = "point";
     public static final String INDENT = "indent";
     public static final String SUBPOINT = "alinea";
+    public static final String TABLE = "table";
     public static final String SUBPOINT_LABEL = "subparagraph";
     public static final String CLAUSE = "clause";
     public static final String CONCLUSIONS = "conclusions";

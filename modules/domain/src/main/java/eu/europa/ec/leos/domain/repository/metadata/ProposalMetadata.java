@@ -25,7 +25,6 @@ public final class ProposalMetadata extends LeosMetadata {
     private String interInstitutionalReference;
     private List<SignatureMetadata> signatures;
     private Boolean stamp;
-    private String aiValues;
 
     public ProposalMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String objectId, String docVersion, boolean eeaRelevance, boolean customTemplateAct) {
         super(LeosCategory.PROPOSAL, stage, type, purpose, template, language, docTemplate, ref, objectId, docVersion, eeaRelevance, customTemplateAct);
@@ -66,7 +65,7 @@ public final class ProposalMetadata extends LeosMetadata {
         private String interInstitutionalReference;
         private List<SignatureMetadata> signatures;
         private Boolean stamp;
-        private String aiValues;
+
         private ProposalMetadataBuilder() {
         }
         private  ProposalMetadataBuilder(ProposalMetadata metadata) {
@@ -98,7 +97,6 @@ public final class ProposalMetadata extends LeosMetadata {
             this.isPublished = metadata.getIsPublished();
             this.adoptionDate = metadata.getAdoptionDate();
             this.stamp = metadata.getStamp();
-            this.aiValues = metadata.aiValues;
         }
         public ProposalMetadataBuilder withStage(String stage) {
             this.stage = stage;
@@ -176,10 +174,6 @@ public final class ProposalMetadata extends LeosMetadata {
             this.verticalShift = verticalShift;
             return this;
         }
-        public ProposalMetadataBuilder withAiValues(String aiValues) {
-            this.aiValues = aiValues;
-            return this;
-        }
 
         public ProposalMetadata build() {
             ProposalMetadata metadata = new ProposalMetadata(this.stage, this.type, this.purpose, this.template, this.language, this.docTemplate, this.ref,
@@ -203,7 +197,6 @@ public final class ProposalMetadata extends LeosMetadata {
             metadata.setInterInstitutionalReference(interInstitutionalReference);
             metadata.setSignatures(signatures);
             metadata.setStamp(stamp);
-            metadata.setAiValues(aiValues);
             return metadata;
         }
     }

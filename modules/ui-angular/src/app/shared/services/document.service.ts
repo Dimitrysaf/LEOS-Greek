@@ -48,8 +48,6 @@ import {
 import { SearchMatchVO } from '../models/search.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
 import {SearchAndReplaceAllResponse} from "@/features/akn-document/models/search-replace-response.model";
-import {AIService} from "@/shared/services/ai.service";
-import {AnalysisStatus} from "@/shared/models/leos.ai.model";
 
 
 export enum RelevantElements {
@@ -122,7 +120,7 @@ export class DocumentService {
     isClosing: boolean;
     isSaved: boolean;
   }>;
-  refreshView$: Observable<{data: DocumentViewResponse, scroll: boolean}>;
+  refreshView$: Observable<DocumentViewResponse>;
   documentRefAndCategory$: Observable<DocumentRefAndCategory | null>;
   replacedTextPresent = false;
   currentIndex: number;
@@ -150,13 +148,10 @@ export class DocumentService {
   pageSize = 10;
   isReloadRequired = false;
   isToRestoreOrToRemoveData = false;
-  proposalRef: string;
   public trackChangesStatus$: Observable<{
     isTrackChangesEnabled: boolean;
     isTrackChangesShowed: boolean;
   }>;
-  public aiAnalysisResults$: Observable<DocumentViewResponse>;
-
   public annexDocNumber = 0;
 
   private documentPageTitleBS = new BehaviorSubject<string>('');
@@ -203,7 +198,7 @@ export class DocumentService {
     isClosing: false,
     isSaved: false,
   });
-  private refreshViewBS = new BehaviorSubject<{data: DocumentViewResponse, scroll: boolean}>(null);
+  private refreshViewBS = new BehaviorSubject<DocumentViewResponse>(null);
   private documentRefAndCategoryBS = new BehaviorSubject<DocumentRefAndCategory | null>(null);
   private updatedContentToSaveAfterReplace: string = null;
   private isDocumentLoadedBS = new BehaviorSubject<boolean>(false);
@@ -237,8 +232,6 @@ export class DocumentService {
     isTrackChangesShowed: boolean;
   }>({ isTrackChangesEnabled: false, isTrackChangesShowed: false });
 
-  private aiAnalysisResultsBS = new BehaviorSubject<DocumentViewResponse>(null);
-
   private getAnnotations?: () => Promise<string>;
   private refreshAnnotateCall?: () => void;
   private currentDocumentRef: string;
@@ -247,7 +240,6 @@ export class DocumentService {
   private maxSearchLimit: number;
   private pendingSavingElements: Map<string, string> = new Map<string, string>();
   private currentCount: number;
-  analysisStatus: AnalysisStatus;
 
   constructor(
     private http: HttpClient,
@@ -259,9 +251,7 @@ export class DocumentService {
     private loadingService: LoadingService,
     private tocService: TableOfContentService,
     private envService: EnvironmentService,
-    private aiService: AIService,
   ) {
-    this.aiService.getAnalysisStatus(this.proposalRef);
     appConfig.config.subscribe((conf) => {
       this.minSearchChar = conf.searchOnMinimumCharacter;
     });
@@ -396,14 +386,6 @@ export class DocumentService {
     this.isEditorOpen$ = this.isEditorOpenBS.asObservable();
     this.getElementContent$ = this.getElementContentBS.asObservable();
     this.updateElementContent$ = this.updateElementContentBS.asObservable();
-    this.aiAnalysisResults$ = this.aiAnalysisResultsBS.asObservable();
-    this.aiService.analysisStatus$
-      .subscribe((status) => {
-        this.analysisStatus = status;
-      });
-    this.aiService.analysisResult$.subscribe((documentViewResponse) => {
-      this.aiAnalysisResultsBS.next(documentViewResponse);
-    });
   }
 
   hasUpdatePermission() {
@@ -706,8 +688,8 @@ export class DocumentService {
     });
   }
 
-  refreshView(data: DocumentViewResponse, scroll: boolean = false) {
-    this.refreshViewBS.next({data, scroll});
+  refreshView(data: DocumentViewResponse) {
+    this.refreshViewBS.next(data);
   }
 
   saveVersion(requestBody: any) {
@@ -1043,18 +1025,6 @@ export class DocumentService {
     this.setDocumentRefAndCategory(this.documentRef, this.documentType);
     this.setSearchResultsCounter(0);
     this.updatedContentToSaveAfterReplace = null;
-  }
-
-  aiDisplayText(analysisType: string = null) {
-    this.aiService.prefillDigitalDimensionsLFDS(this.proposalRef, analysisType);
-  }
-
-  shouldDisplayAI(): boolean {
-    return this.analysisStatus && this.analysisStatus == "RESULTS_AVAILABLE";
-  }
-
-  prepareAnalysis() {
-    this.aiService.prepareAnalysis(this.proposalRef);
   }
 
   toggleReplacePane(open?: boolean) {
@@ -1608,7 +1578,6 @@ export class DocumentService {
 
   private getCollaborators(proposalRef: string) {
     if (!proposalRef) return of([]);
-    this.proposalRef = proposalRef;
     return this.http.get<Collaborator[]>(
       `${apiBaseUrl}/secured/proposal/${proposalRef}/collaborators`,
     );

@@ -69,7 +69,6 @@ export class TrackChangesActionsService {
         this.selector += ', ';
       }
     }
-    this.selector += ', [leos\\:uid="ai"]';
   }
 
   getSelector() {

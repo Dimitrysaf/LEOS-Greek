@@ -6,7 +6,6 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
-import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
@@ -25,11 +24,9 @@ public class ProposalTocApiServiceImpl extends TocApiServiceImpl {
 
     public ProposalTocApiServiceImpl(Provider<StructureContext> structureContextProvider, ProposalService proposalService,
                                      BillService billService, AnnexService annexService, MessageHelper messageHelper,
-                                     ExplanatoryService explanatoryService, FinancialStatementService financialStatementService,
-                                     DocumentLanguageContext documentLanguageContext,
+                                     ExplanatoryService explanatoryService, DocumentLanguageContext documentLanguageContext,
                                      XPathCatalog xPathCatalog, XmlContentProcessor xmlContentProcessor) {
-        super(structureContextProvider, proposalService, billService, annexService, messageHelper, explanatoryService,
-                financialStatementService, documentLanguageContext,
+        super(structureContextProvider, proposalService, billService, annexService, messageHelper, explanatoryService, documentLanguageContext,
                 xPathCatalog, xmlContentProcessor);
     }
 

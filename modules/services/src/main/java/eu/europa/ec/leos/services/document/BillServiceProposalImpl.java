@@ -23,7 +23,6 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.repository.document.BillRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
-import eu.europa.ec.leos.services.ai.AIService;
 import eu.europa.ec.leos.services.document.util.DocumentVOProvider;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
@@ -53,10 +52,10 @@ public class BillServiceProposalImpl extends BillServiceImpl {
                             DocumentVOProvider documentVOProvider, NumberService numberService,
                             MessageHelper messageHelper, TableOfContentProcessor tableOfContentProcessor,
                             XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext, DocumentLanguageContext documentLanguageContext,
-                            AIService aiService, ProposalService proposalService) {
+                            ProposalService proposalService) {
         super(billRepository, packageRepository, xmlNodeProcessor, xmlContentProcessor, xmlDocumentService, xmlNodeConfigProcessor,
                 attachmentProcessor, validationService, documentVOProvider, numberService, messageHelper, tableOfContentProcessor,
-                xPathCatalog, trackChangesContext, documentLanguageContext, aiService, proposalService);
+                xPathCatalog, trackChangesContext, documentLanguageContext, proposalService);
     }
 
     @Override
