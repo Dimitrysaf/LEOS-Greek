@@ -17,6 +17,12 @@
   padding-bottom: 6px;
 }
 
+.sticky {
+  position: fixed;
+  top: 250px;
+  right: 0%;
+}
+
 @media (max-width: 914px) {
   .label-column {
     text-align: start;

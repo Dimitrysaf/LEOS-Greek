@@ -627,7 +627,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
 
   handleCoverPageTypeChange(covertype: string) {
     this.isVerticalShift = covertype != 'STANDARD';
-    if (!this.isVerticalShift) this.verticalShift = 6.0;
+    if (!this.isVerticalShift) this.verticalShift = 2.0;
     this.handleChange();
   }
 
@@ -815,7 +815,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   decrease() {
-    if (this.verticalShift > 2.0) {
+    if (this.verticalShift > 0.0) {
       this.verticalShift = Math.round((this.verticalShift - 0.1) * 10) / 10;
       this.handleChange();
     }

@@ -56,7 +56,6 @@ import eu.europa.ec.leos.model.detailstab.DetailsTabExclusions;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.LeosRepository;
-import eu.europa.ec.leos.repository.document.ProposalRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -1019,7 +1018,27 @@ public abstract class ApiServiceImpl implements ApiService {
                 legalText.addChildDocument(annexVO);
             }
         }
+        setLastUpdateOnAndBy(documents, proposalVO);
         return proposalVO;
+    }
+
+    // this method checks the last updateOn and lastUpdateBy of all child documents and sets it in the proposal
+    // it fixes the issue #2609
+    private void setLastUpdateOnAndBy(List<XmlDocument> documents, DocumentVO proposalVO) {
+        Date lastUpdatedOn = proposalVO.getUpdatedOn();
+        String lastUpdatedBy = proposalVO.getUpdatedBy();
+
+        for (XmlDocument document : documents) {
+            if(document.getLastModificationInstant() != null) {
+                Date updatedOn = Date.from(document.getLastModificationInstant());
+                if (lastUpdatedOn == null || updatedOn.after(lastUpdatedOn)) {
+                    lastUpdatedOn = updatedOn;
+                    lastUpdatedBy = document.getLastModifiedBy();
+                }
+            }
+        }
+        proposalVO.setUpdatedOn(lastUpdatedOn);
+        proposalVO.setUpdatedBy(userHelper.convertToPresentation(lastUpdatedBy));
     }
 
     private DocumentVO createFinancialStatementVO(FinancialStatement financialStatement) {

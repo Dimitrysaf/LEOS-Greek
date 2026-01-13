@@ -143,6 +143,11 @@ public class XercesUtils {
         return document.getFirstChild();
     }
 
+    public static Node createNodeFromXmlFragment(byte[] xmlFragment, boolean namespaceEnabled) {
+        Document document = createXercesDocument(xmlFragment, namespaceEnabled);
+        return document.getFirstChild();
+    }
+
     public static Node createNodeFromXmlFragment(Document document, byte[] xmlFragment) {
         return createNodeFromXmlFragment(document, xmlFragment, true);
     }
@@ -1680,7 +1685,11 @@ public class XercesUtils {
             XercesUtils.deleteElement(node);
             isNodeDeleted = true;
         } else if(LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName())) {
-            XercesUtils.replaceElement(node.getFirstChild(), node);
+            if (node.getFirstChild() != null) {
+                XercesUtils.replaceNodeWithSelfContent(node);
+            } else {
+                XercesUtils.deleteElement(node);
+            }
             isNodeDeleted = true;
         } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION)) {
             XercesUtils.deleteElement(node);
@@ -1692,6 +1701,169 @@ public class XercesUtils {
             } else {
                 removeTrackChangesAttributes(node);
             }
+        } else if(hasAttribute(node, LEOS_ACTION_NUMBER) || hasAttribute(node, LEOS_ACTION_ENTER) || hasAttribute(node, LEOS_SPLIT_CONTENT_ATTR)) {
+            removeTrackChangesAttributes(node);
+        }
+        return isNodeDeleted;
+    }
+
+    public static String cleanEmbeddedTrackChangesForText(String text) {
+        Node fakeNodeWithNewContent = createNodeFromXmlFragment(("<fake>" + text + "</fake>").getBytes(StandardCharsets.UTF_8), true);
+        cleanEmbeddedTrackChangesForElement(fakeNodeWithNewContent);
+        return getContentNodeAsXmlFragment(fakeNodeWithNewContent);
+    }
+
+    public static boolean cleanEmbeddedTrackChangesForElement(Node node) {
+        NodeList nodeList = node.getChildNodes();
+        for (int index = 0; index < nodeList.getLength(); index++) {
+            Node childNode = nodeList.item(index);
+            if (childNode.getNodeType() != Node.TEXT_NODE) {
+                boolean isNodeDeleted = doCleanEmbeddedTrackChanges(childNode);
+                if (isNodeDeleted) {
+                    index--;
+                    if (nodeList.getLength() == 0) {
+                        XercesUtils.deleteElement(node);
+                        return true;
+                    }
+                } else {
+                    isNodeDeleted = cleanEmbeddedTrackChangesForElement(childNode);
+                    if(isNodeDeleted) {
+                        index--;
+                        if (nodeList.getLength() == 0) {
+                            XercesUtils.deleteElement(node);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean doCleanEmbeddedTrackChanges(Node node) {
+        boolean isNodeDeleted = false;
+        if(LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName())
+                && (LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getParentNode().getNodeName()) || LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getParentNode().getNodeName()))) {
+            XercesUtils.deleteElement(node);
+            isNodeDeleted = true;
+        } else if(LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName())
+                && (LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getParentNode().getNodeName()) || LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getParentNode().getNodeName()))) {
+            XercesUtils.deleteElement(node);
+            isNodeDeleted = true;
+        } else if((LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName()) || LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName()))
+                && (node.getFirstChild() == null)) {
+            XercesUtils.deleteElement(node);
+            isNodeDeleted = true;
+        }
+        return isNodeDeleted;
+    }
+
+    public static String cleanBlankTrackChangesForText(String text) {
+        Node fakeNodeWithNewContent = createNodeFromXmlFragment(("<fake>" + text + "</fake>").getBytes(StandardCharsets.UTF_8), true);
+        cleanBlankTrackChangesForElement(fakeNodeWithNewContent);
+        return getContentNodeAsXmlFragment(fakeNodeWithNewContent);
+    }
+
+    public static boolean cleanBlankTrackChangesForElement(Node node) {
+        NodeList nodeList = node.getChildNodes();
+        for (int index = 0; index < nodeList.getLength(); index++) {
+            Node childNode = nodeList.item(index);
+            if (childNode.getNodeType() != Node.TEXT_NODE) {
+                boolean isNodeDeleted = doCleanBlankTrackChanges(childNode);
+                if (isNodeDeleted) {
+                    index--;
+                    if (nodeList.getLength() == 0) {
+                        XercesUtils.deleteElement(node);
+                        return true;
+                    }
+                } else {
+                    isNodeDeleted = cleanBlankTrackChangesForElement(childNode);
+                    if(isNodeDeleted) {
+                        index--;
+                        if (nodeList.getLength() == 0) {
+                            XercesUtils.deleteElement(node);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean doCleanBlankTrackChanges(Node node) {
+        boolean isNodeDeleted = false;
+        if(LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName())
+                && (StringUtils.isBlank(node.getTextContent()))) {
+            XercesUtils.deleteElement(node);
+            isNodeDeleted = true;
+        } else if(LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName())
+                && (StringUtils.isBlank(node.getTextContent()))) {
+            if (node.getFirstChild() != null) {
+                XercesUtils.replaceNodeWithSelfContent(node);
+            } else {
+                XercesUtils.deleteElement(node);
+            }
+            isNodeDeleted = true;
+        }
+        return isNodeDeleted;
+    }
+
+    public static String undoTrackChangesForText(String text) {
+        Node fakeNodeWithNewContent = createNodeFromXmlFragment(("<fake>" + text + "</fake>").getBytes(StandardCharsets.UTF_8), true);
+        undoTrackChangesForElement(fakeNodeWithNewContent);
+        return getContentNodeAsXmlFragment(fakeNodeWithNewContent);
+    }
+
+    public static boolean undoTrackChangesForElement(Node node) {
+        NodeList nodeList = node.getChildNodes();
+        for (int index = 0; index < nodeList.getLength(); index++) {
+            Node childNode = nodeList.item(index);
+            if (childNode.getNodeType() != Node.TEXT_NODE) {
+                boolean isNodeDeleted = doUndoTrackChanges(childNode);
+                if(isNodeDeleted) {
+                    index--;
+                    if (nodeList.getLength() == 0) {
+                        XercesUtils.deleteElement(node);
+                        return true;
+                    }
+                } else {
+                    isNodeDeleted = undoTrackChangesForElement(childNode);
+                    if(isNodeDeleted) {
+                        index--;
+                        if (nodeList.getLength() == 0) {
+                            XercesUtils.deleteElement(node);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean doUndoTrackChanges(Node node) {
+        boolean isNodeDeleted = false;
+        if(LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName())) {
+            XercesUtils.deleteElement(node);
+            isNodeDeleted = true;
+        } else if(LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName())) {
+            if (node.getFirstChild() != null) {
+                XercesUtils.replaceNodeWithSelfContent(node);
+            } else {
+                XercesUtils.deleteElement(node);
+            }
+            isNodeDeleted = true;
+        } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION)) {
+            if("span".equals(node.getNodeName())) {
+                XercesUtils.replaceElement(node.getFirstChild(), node);
+                isNodeDeleted = true;
+            } else {
+                removeTrackChangesAttributes(node);
+            }
+        } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION) || hasAttributeWithValue(node, LEOS_ACTION_NUMBER, LEOS_TC_INSERT_ACTION)) {
+            XercesUtils.deleteElement(node);
+            isNodeDeleted = true;
         } else if(hasAttribute(node, LEOS_ACTION_NUMBER) || hasAttribute(node, LEOS_ACTION_ENTER) || hasAttribute(node, LEOS_SPLIT_CONTENT_ATTR)) {
             removeTrackChangesAttributes(node);
         }
