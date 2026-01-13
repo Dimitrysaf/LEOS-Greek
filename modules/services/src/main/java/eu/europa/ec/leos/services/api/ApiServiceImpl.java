@@ -229,7 +229,7 @@ public abstract class ApiServiceImpl implements ApiService {
                           TrackChangesContext trackChangesContext, DocumentViewService documentViewService,
                           GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
                           ProposalDetailsService proposalDetailsService,
-                          TemplateConfigurationService templateConfigurationService, LanguageHelper languageHelper, PackageRepository packageRepository, ProposalRepository proposalRepository) {
+                          TemplateConfigurationService templateConfigurationService, LanguageHelper languageHelper, PackageRepository packageRepository) {
         this.customTemplateService = customTemplateService;
         this.templateService = templateService;
         this.workspaceService = workspaceService;
