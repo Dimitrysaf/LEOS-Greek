@@ -200,7 +200,7 @@ export class ProposalDetailsService implements OnDestroy {
                          correctionInformation?: string, finalVersion?: boolean, crossReferences?: string[],
                          adoptionPlace?: string, adoptionDate?: Date, institutionalReference?: string,
                          institutionalReferenceFinalVersion?: Boolean,interInstitutionalReference?: string, stamp?: Boolean,
-                         signatures?: SignatureMetadata[]) {
+                         signatures?: SignatureMetadata[], diffusionVersion?: string) {
     const internalRef = null;
     this.loadingService.setLoading(true);
     return this.http
@@ -227,7 +227,8 @@ export class ProposalDetailsService implements OnDestroy {
         institutionalReferenceFinalVersion,
         interInstitutionalReference,
         stamp,
-        signatures
+        signatures,
+        diffusionVersion
       });
   }
 

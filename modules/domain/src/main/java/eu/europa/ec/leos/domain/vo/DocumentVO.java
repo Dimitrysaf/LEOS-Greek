@@ -64,6 +64,7 @@ public class DocumentVO {
     private String correctionInformation;
     private Boolean showCorrigendumAddendum;
     private Boolean finalVersion;
+    private String diffusionVersion;
     private Boolean allTargetLangSelected;
     private List<String> proposalTargetLang;
     private DetailsTabExclusions detailsTabExclusions;
@@ -443,6 +444,14 @@ public class DocumentVO {
 
     public void setFinalVersion(Boolean finalVersion) {
         this.finalVersion = finalVersion;
+    }
+
+    public String getDiffusionVersion() {
+        return diffusionVersion;
+    }
+
+    public void setDiffusionVersion(String diffusionVersion) {
+        this.diffusionVersion = diffusionVersion;
     }
 
     @Override

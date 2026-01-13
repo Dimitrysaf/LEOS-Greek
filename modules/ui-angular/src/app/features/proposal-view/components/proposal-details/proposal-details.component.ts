@@ -105,6 +105,11 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   invalidTargetProposalDateInput: boolean;
   invalidCorrectionInfoInput: boolean;
   greffeUser: boolean;
+  diffusionVersion: string | null = null;
+  diffusionBarOptions: string[] = Array.from(
+    { length: 20 },
+    (_, i) => `/${i + 1}`
+  );
 
   constructor(
     private appConfigService: AppConfigService,
@@ -132,7 +137,8 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       || this.isCommissionerChanged()
       || this.isCorrigendumChanged()
       || this.isAdoptionPlaceChanged()
-      || this.isAdoptionDateChanged());
+      || this.isAdoptionDateChanged()
+      || this.isDiffusionVersionChanged());
   }
 
   isValid(): boolean {
@@ -219,6 +225,10 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   isAdoptionDateChanged(): boolean {
     return ((this.adoptionDate == null && this.proposalMetadata.adoptionDate !== null) || (this.adoptionDate !== null && this.proposalMetadata.adoptionDate == null))
       || (this.adoptionDate !== null && this.proposalMetadata.adoptionDate !== null && new Date(this.proposalMetadata.adoptionDate).getTime()/1000 != this.adoptionDate.unix());
+  }
+
+  isDiffusionVersionChanged(): boolean {
+    return this.diffusionVersion != this.proposalMetadata.diffusionVersion;
   }
 
   isCorrigendumChanged(): boolean {
@@ -477,6 +487,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.institutionalRefNumber = parseInt(myArray[3]);
     }
     this.institutionalReferenceFinalVersion = this.proposal.metadata.institutionalReferenceFinalVersion;
+    this.diffusionVersion = this.proposal.metadata.diffusionVersion;
 
     let interInstitutionalRef = this.proposal.metadata.interInstitutionalReference;
     if (interInstitutionalRef != null && this.interInstitutionalRefRegEx.test(interInstitutionalRef)) {
@@ -765,6 +776,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.isInterInstitutionalReferenceChanged() ? this.getInterInstitutionalReference() : null,
       this.isStampChanged() ? this.stamp : null,
       this.isCommissionerChanged() ? this.signatures : null,
+      this.diffusionVersion.replace("/", "")
     ).subscribe({
       next: () => {
         if (!this.showCorrigendumAddendum) {
