@@ -102,15 +102,15 @@ public abstract class AnnexRepositoryImpl implements AnnexRepository {
     }
 
     @Override
-    public Annex updateMilestoneComments(String id, List<String> milestoneComments, byte[] content, VersionType versionType, String comment) {
+    public Annex updateMilestoneComments(String id, List<String> milestoneComments, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize) {
         logger.debug("Updating Annex milestoneComments and content... [id=" + id + "]");
-        return leosRepository.updateMilestoneComments(id, content, milestoneComments, versionType, comment, Annex.class);
+        return leosRepository.updateMilestoneComments(id, content, milestoneComments, versionType, comment, Annex.class, binaryContent, originalFilename, binaryContentSize);
     }
 
     @Override
-    public Annex updateMilestoneComments(String ref, String id, List<String> milestoneComments) {
+    public Annex updateMilestoneComments(String ref, String id, List<String> milestoneComments, byte[] binaryContent, String originalFilename, String binaryContentSize) {
         logger.debug("Updating Annex milestoneComments... [id=" + id + "]");
-        return leosRepository.updateMilestoneComments(ref, id, milestoneComments, Annex.class);
+        return leosRepository.updateMilestoneComments(ref, id, milestoneComments, Annex.class, binaryContent, originalFilename, binaryContentSize);
     }
 
     @Override

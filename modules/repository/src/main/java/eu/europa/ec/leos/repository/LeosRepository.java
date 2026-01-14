@@ -192,9 +192,16 @@ public interface LeosRepository {
                                               VersionType versionType, String comment, Class<? extends D> type);
 
     <D extends LeosDocument> D updateMilestoneComments(String id, byte[] content, List<String> milestoneComments,
-                                                       VersionType versionType, String comment, Class<? extends D> type);
+            VersionType versionType, String comment, Class<? extends D> type);
 
     <D extends LeosDocument> D updateMilestoneComments(String ref, String id, List<String> milestoneComments, Class<? extends D> type);
+
+    <D extends LeosDocument> D updateMilestoneComments(String id, byte[] content, List<String> milestoneComments,
+            VersionType versionType, String comment, Class<? extends D> type,
+            byte[] binaryContent, String originalFilename, String binaryContentSize);
+
+    <D extends LeosDocument> D updateMilestoneComments(String ref, String id, List<String> milestoneComments, Class<? extends D> type,
+            byte[] binaryContent, String originalFilename, String binaryContentSize);
 
     /**
      * Updates a document with the given metadata and content.

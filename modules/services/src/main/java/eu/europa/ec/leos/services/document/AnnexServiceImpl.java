@@ -231,18 +231,18 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     @Override
-    public Annex updateAnnexWithMilestoneComments(Annex annex, List<String> milestoneComments, VersionType versionType, String comment){
+    public Annex updateAnnexWithMilestoneComments(Annex annex, List<String> milestoneComments, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize){
         LOG.trace("Updating Annex... [id={}, milestoneComments={}, versionType={}, comment={}]", annex.getId(), milestoneComments, versionType, comment);
         final byte[] updatedBytes = getContent(annex);
-        annex = annexRepository.updateMilestoneComments(annex.getId(), milestoneComments, updatedBytes, versionType, comment);
+        annex = annexRepository.updateMilestoneComments(annex.getId(), milestoneComments, updatedBytes, versionType, comment, binaryContent, originalFilename, binaryContentSize);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
         return annex;
     }
 
     @Override
-    public Annex updateAnnexWithMilestoneComments(String ref, String annexId, List<String> milestoneComments){
+    public Annex updateAnnexWithMilestoneComments(String ref, String annexId, List<String> milestoneComments, byte[] binaryContent, String originalFilename, String binaryContentSize){
         LOG.trace("Updating Annex... [id={}, milestoneComments={}]", annexId, milestoneComments);
-        Annex annex = annexRepository.updateMilestoneComments(ref, annexId, milestoneComments);
+        Annex annex = annexRepository.updateMilestoneComments(ref, annexId, milestoneComments, binaryContent, originalFilename, binaryContentSize);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
         return annex;
     }

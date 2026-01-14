@@ -380,13 +380,16 @@ public class AnnexContextService {
 
     public void executeCreateMilestone() {
         annex = annexService.findAnnex(annexId, true);
+        byte[] binaryContent = annex.getBinaryContent();
+        String originalFilename = annex.getOriginalFilename();
+        String binaryContentSize = annex.getBinaryContentSize();
         List<String> milestoneComments = annex.getMilestoneComments();
         milestoneComments.add(milestoneComment);
         if (annex.getVersionType().equals(VersionType.MAJOR)) {
-            annex = annexService.updateAnnexWithMilestoneComments(annex.getMetadata().get().getRef(), annex.getId(), milestoneComments);
+            annex = annexService.updateAnnexWithMilestoneComments(annex.getMetadata().get().getRef(), annex.getId(), milestoneComments, binaryContent, originalFilename, binaryContentSize);
             LOG.info("Major version {} already present. Updated only milestoneComment for [annex={}]", annex.getVersionLabel(), annex.getId());
         } else {
-            annex = annexService.updateAnnexWithMilestoneComments(annex, milestoneComments, VersionType.MAJOR, versionComment);
+            annex = annexService.updateAnnexWithMilestoneComments(annex, milestoneComments, VersionType.MAJOR, versionComment, binaryContent, originalFilename, binaryContentSize);
             LOG.info("Created major version {} for [annex={}]", annex.getVersionLabel(), annex.getId());
         }
     }

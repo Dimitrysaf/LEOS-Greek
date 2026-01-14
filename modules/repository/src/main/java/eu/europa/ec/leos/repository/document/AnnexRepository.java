@@ -138,9 +138,9 @@ public interface AnnexRepository {
      */
     Annex updateAnnex(String id, AnnexMetadata metadata, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize);
 
-    Annex updateMilestoneComments(String id, List<String> milestoneComments, byte[] content, VersionType versionType, String comment);
+    Annex updateMilestoneComments(String id, List<String> milestoneComments, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize);
 
-    Annex updateMilestoneComments(String ref, String id, List<String> milestoneComments);
+    Annex updateMilestoneComments(String ref, String id, List<String> milestoneComments, byte[] binaryContent, String originalFilename, String binaryContentSize);
 
     /**
      * Finds a [Annex] document with the specified characteristics.
