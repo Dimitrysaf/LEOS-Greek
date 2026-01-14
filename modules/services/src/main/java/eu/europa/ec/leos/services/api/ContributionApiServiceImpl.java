@@ -29,6 +29,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.notification.trackChanges.SendFeedbackNotification;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
@@ -792,5 +793,10 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             documentViewService.contextExecuteUpdateProposalAsync(proposal);
         }
 
+    }
+
+    @Override
+    public List<Element> extractElementsFromMergeActions(byte[] xmlContent, List<MergeActionVO> mergeActions) {
+        return contributionService.extractElementsFromMergeActions(xmlContent, mergeActions);
     }
 }

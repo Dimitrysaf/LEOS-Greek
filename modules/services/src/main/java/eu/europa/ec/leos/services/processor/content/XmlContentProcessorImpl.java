@@ -1266,6 +1266,14 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         addAttribute(subElement, XMLID, SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + elementId);
     }
 
+    private boolean isIndented(Node node) {
+        if (!hasAttribute(node, LEOS_INDENT_ORIGIN_TYPE_ATTR) && XercesUtils.getFirstChild(node, Arrays.asList(SUBPARAGRAPH, LIST)) != null) {
+            Node firstSubParagraph = XercesUtils.getFirstDescendant(node, Arrays.asList(SUBPARAGRAPH));
+            return (firstSubParagraph != null) && hasAttribute(firstSubParagraph, LEOS_INDENT_ORIGIN_TYPE_ATTR);
+        }
+        return hasAttribute(node, LEOS_INDENT_ORIGIN_TYPE_ATTR);
+    }
+
     protected String modifySubElement(Node node, String parentOrigin) {
 
         String originOfDocument = getOriginOfDocument(node);
@@ -1277,7 +1285,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         if (originAttr.equals(parentOrigin) && !is(node, LIST)) {
             addAttribute(node, LEOS_ORIGIN_ATTR, originAttr);
             String softAction = getAttributeValue(node, LEOS_SOFT_ACTION_ATTR);
-            if (softAction == null && !CN.equals(originOfDocument) && !is(node, MAIN_BODY)) {
+            if (softAction == null && !CN.equals(originOfDocument) && !is(node, MAIN_BODY) && !isIndented(node)) {
                 addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.ADD.getSoftAction());
                 addAttribute(node, LEOS_SOFT_USER_ATTR, getSoftUserAttribute(securityContext.getUser()));
                 addAttribute(node, LEOS_SOFT_DATE_ATTR, getDateAsXml());
@@ -1337,7 +1345,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     moved = true;
                 }
             }
-            if (!moved) {
+            if (!moved && !Character.isUpperCase(subpara.getTextContent().trim().charAt(0))) {
                 Node previousSiblingList = XercesUtils.getPrevSibling(subpara);
                 if (previousSiblingList != null && is(previousSiblingList, LIST)
                         && ((!isSoftDeletedOrMovedTo(subpara) && !isSoftDeletedOrMovedTo(previousSiblingList))

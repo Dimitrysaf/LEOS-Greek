@@ -1,6 +1,7 @@
 image: $CI_REGISTRY_IMAGE/image-for-tests:1.0.3
 
 stages:
+  - build
   - test
 
 variables:
@@ -15,6 +16,33 @@ cache:
   key: $CI_COMMIT_REF_SLUG
   paths:
     - $CI_BUILDS_DIR/$CI_PIPELINE_ID/.m2/repository/
+
+java-build:
+  stage: build
+  script:
+    - cd $CI_PROJECT_DIR/tools/user-repo
+    - mvn clean install
+    - cd $CI_PROJECT_DIR/tools/repository
+    - mvn clean install
+    - cd $CI_PROJECT_DIR/tools/akn4euutil
+    - mvn clean install
+    - cd $CI_PROJECT_DIR
+    - mvn clean install -DskipKarmaTests
+  artifacts:
+    expire_in: 1 hour
+    when: always
+    paths:
+      - pom.xml
+      - "**/target"
+      - "**/package-lock.json"
+      - "**/yarn.lock"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "web" && $TAGS_TO_RUN == "@fortify"
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $TAGS_TO_RUN == "@fortify"
+      when: always
+  interruptible: true
 
 build-and-test:
   variables:
@@ -83,7 +111,7 @@ cypress-test-for-non-local:
 include:
   - project: 'digit.s.1/sa/security-scan-template'
     file: '.gitlab-ci-security-scan.yml'
-    ref: main
+    ref: 1.0.0
 
 fortify-sast:
   rules:

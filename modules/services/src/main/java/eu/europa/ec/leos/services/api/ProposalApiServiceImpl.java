@@ -25,7 +25,6 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.integration.ConValidatorService;
 import eu.europa.ec.leos.model.notification.validation.DocumentExternalValidationNotification;
 import eu.europa.ec.leos.repository.LeosRepository;
-import eu.europa.ec.leos.repository.document.ProposalRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.security.LeosPermission;
@@ -113,13 +112,13 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
                                   DocumentViewService documentViewService, ConValidatorService conValidatorService,
                                   GenericDocumentTocApiService genericDocumentTocApiService,
                                   CoverPageApiService coverPageApiService, ProposalDetailsService proposalDetailsService,
-                                  TemplateConfigurationService templateConfigurationService, LanguageHelper languageHelper, PackageRepository packageRepository, ProposalRepository proposalRepository) {
+                                  TemplateConfigurationService templateConfigurationService, LanguageHelper languageHelper, PackageRepository packageRepository) {
         super(customTemplateService, templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap,
                 exportService, collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService,
                 xmlContentProcessor, archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService,
                 validationService, applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository,
                 trackChangesContext, documentViewService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService,
-                templateConfigurationService,languageHelper, packageRepository, proposalRepository);
+                templateConfigurationService,languageHelper, packageRepository);
         this.conValidatorService = conValidatorService;
     }
 
