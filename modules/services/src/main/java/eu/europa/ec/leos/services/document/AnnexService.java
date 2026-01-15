@@ -64,9 +64,9 @@ public interface AnnexService {
 
     Annex updateAnnex(String ref, String id, Map<String, Object> properties, boolean latest);
     
-    Annex updateAnnexWithMilestoneComments(Annex annex, List<String> milestoneComments, VersionType versionType, String comment);
+    Annex updateAnnexWithMilestoneComments(Annex annex, List<String> milestoneComments, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize);
 
-    Annex updateAnnexWithMilestoneComments(String ref, String annexId, List<String> milestoneComments);
+    Annex updateAnnexWithMilestoneComments(String ref, String annexId, List<String> milestoneComments, byte[] binaryContent, String originalFilename, String binaryContentSize);
     
     Annex findAnnex(String id, boolean latest);
 

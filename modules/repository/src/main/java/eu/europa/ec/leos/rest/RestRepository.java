@@ -260,12 +260,31 @@ public class RestRepository extends AbstractRestClient {
         return this.updateDocument(ref, versionId, properties, true, userId);
     }
 
+    LeosDocument updateDocument(String ref, final String versionId, Map<String, ?> properties, String userId, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+        return this.updateDocument(ref, versionId, properties, true, userId, binaryContent, originalFilename, binaryContentSize);
+    }
+
     LeosDocument updateDocument(String ref, final String versionId, Map<String, ?> properties, boolean latest, String userId) {
         LOGGER.trace("Updating document properties... [versionId=" + versionId + "]");
 
         UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
         updateDocumentRequest.setMetadata(properties);
         updateDocumentRequest.setUserId(userId);
+
+        String url = getUrl(leosRestUpdateDocumentMetadataURI);
+        LeosDocument resp = putEntity(url, updateDocumentRequest, LeosDocument.class, ref, versionId, latest);
+        return resp;
+    }
+
+    LeosDocument updateDocument(String ref, final String versionId, Map<String, ?> properties, boolean latest, String userId, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+        LOGGER.trace("Updating document properties... [versionId=" + versionId + "]");
+
+        UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
+        updateDocumentRequest.setMetadata(properties);
+        updateDocumentRequest.setUserId(userId);
+        updateDocumentRequest.setBinaryContent(binaryContent);
+        updateDocumentRequest.setOriginalFilename(originalFilename);
+        updateDocumentRequest.setBinaryContentSize(binaryContentSize);
 
         String url = getUrl(leosRestUpdateDocumentMetadataURI);
         LeosDocument resp = putEntity(url, updateDocumentRequest, LeosDocument.class, ref, versionId, latest);

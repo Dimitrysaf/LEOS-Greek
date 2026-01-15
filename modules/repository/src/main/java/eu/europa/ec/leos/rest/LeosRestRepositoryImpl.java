@@ -569,13 +569,24 @@ public class LeosRestRepositoryImpl implements LeosRepository {
             @CacheEvict(value = "documentByVersionCache", allEntries = true),
             @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public <D extends LeosDocument> D updateMilestoneComments(String id, byte[] content, List<String> milestoneComments, VersionType versionType, String comment, Class<? extends D> type) {
+        return updateMilestoneComments(id, content, milestoneComments, versionType, comment, type, null,  null,  null);
+    }
+
+    @Override
+    @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
+    public <D extends LeosDocument> D updateMilestoneComments(String id, byte[] content, List<String> milestoneComments, VersionType versionType, String comment, Class<? extends D> type, byte[] binaryContent, String originalFilename, String binaryContentSize) {
         logger.trace("Updating document metadata and content... [id=" + id + ", comment=" + comment + ']');
 
         Map<String, ?> properties = updateMilestoneCommentsProperties(milestoneComments);
         Set<LeosCategory> categories = LeosMapper.leosCategories(type);
         LeosCategory category = (LeosCategory) CollectionUtils.get(categories, 0);
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, properties, content, versionType, String.valueOf(category),
-                comment, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
+                comment, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER, binaryContent, originalFilename, binaryContentSize);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + "]"));
@@ -589,12 +600,23 @@ public class LeosRestRepositoryImpl implements LeosRepository {
             @CacheEvict(value = "documentByVersionCache", allEntries = true),
             @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public <D extends LeosDocument> D updateMilestoneComments(String ref, String id, List<String> milestoneComments, Class<? extends D> type) {
+        return updateMilestoneComments(ref, id, milestoneComments, type, null, null, null);
+    }
+
+    @Override
+    @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
+    public <D extends LeosDocument> D updateMilestoneComments(String ref, String id, List<String> milestoneComments, Class<? extends D> type, byte[] binaryContent, String originalFilename, String binaryContentSize) {
         logger.trace("Updating document metadata... [id=" + id + ']');
 
         Map<String, ?> properties = updateMilestoneCommentsProperties(milestoneComments);
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(ref, id, properties, securityContext!=null &&
-                securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
+                securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER, binaryContent, originalFilename, binaryContentSize);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ']'));

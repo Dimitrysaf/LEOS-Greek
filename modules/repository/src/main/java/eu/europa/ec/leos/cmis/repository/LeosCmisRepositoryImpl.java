@@ -442,6 +442,11 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
 
     @Override
     public <D extends LeosDocument> D updateMilestoneComments(String id, byte[] content, List<String> milestoneComments, VersionType versionType, String comment, Class<? extends D> type) {
+        return updateMilestoneComments(id, content, milestoneComments, versionType, comment, type, null, null, null);
+    }
+
+    @Override
+    public <D extends LeosDocument> D updateMilestoneComments(String id, byte[] content, List<String> milestoneComments, VersionType versionType, String comment, Class<? extends D> type, byte[] binaryContent, String originalFilename, String binaryContentSize) {
         logger.trace("Updating document metadata and content... [id=" + id + ", comment=" + comment + ']');
 
         long startTimeNanos = System.nanoTime();
@@ -457,6 +462,20 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
 
     @Override
     public <D extends LeosDocument> D updateMilestoneComments(String ref, String id, List<String> milestoneComments, Class<? extends D> type) {
+        logger.trace("Updating document metadata... [id=" + id + ']');
+        long startTimeNanos = System.nanoTime();
+
+        Map<String, List<String>> properties = updateMilestoneCommentsProperties(milestoneComments);
+
+        Document doc = repository.updateDocument(id, properties);
+        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
+        logger.trace("CMIS Repository document update took " + time + " milliseconds.");
+
+        return updateMilestoneComments(ref, id, milestoneComments, type, null, null, null);
+    }
+
+    @Override
+    public <D extends LeosDocument> D updateMilestoneComments(String ref, String id, List<String> milestoneComments, Class<? extends D> type, byte[] binaryContent, String originalFilename, String binaryContentSize) {
         logger.trace("Updating document metadata... [id=" + id + ']');
         long startTimeNanos = System.nanoTime();
 
