@@ -96,12 +96,11 @@ public class LeosDocumentApiController {
     @RequestMapping(value = "/applyMetadata", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<Object> applyMetadata(@RequestParam MultipartFile inputFile,
-                                                @RequestParam(name = "validate", required = false, defaultValue = "false") boolean validate,
                                                 @RequestParam(name = "email", required = false) String email) {
         try {
-            if (validate) {
+            if (!StringUtil.isEmpty(email)) {
                 if (!StringUtil.isEmailValid(email)) {
-                    return ResponseEntity.badRequest().body("Email is required when validate or is not valid");
+                    return ResponseEntity.badRequest().body("Email format is not valid");
                 }
                 leosDocumentService.callLeosValidation(inputFile, email);
             }
@@ -118,12 +117,11 @@ public class LeosDocumentApiController {
     @ResponseBody
     public ResponseEntity<Object> applyMetadata(@RequestParam("inputFile") MultipartFile inputFile,
                                                 @RequestParam("callbackUrl") String callbackUrl,
-                                                @RequestParam(name = "validate", required = false, defaultValue = "false") boolean validate,
                                                 @RequestParam(name = "email", required = false) String email) {
         try {
-            if (validate) {
+            if (!StringUtil.isEmpty(email)) {
                 if (!StringUtil.isEmailValid(email)) {
-                    return ResponseEntity.badRequest().body("Email is required when validate or is not valid");
+                    return ResponseEntity.badRequest().body("Email format is not valid");
                 }
                 leosDocumentService.callLeosValidation(inputFile, email);
             }
