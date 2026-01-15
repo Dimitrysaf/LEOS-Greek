@@ -17,6 +17,7 @@ import eu.europa.ec.digit.leos.pilot.export.exception.LeosDocumentException;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosDocumentService;
+import eu.europa.ec.digit.leos.pilot.export.util.StringUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,12 +96,12 @@ public class LeosDocumentApiController {
     @RequestMapping(value = "/applyMetadata", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<Object> applyMetadata(@RequestParam MultipartFile inputFile,
-                                                @RequestParam(name = "validate", required = false, defaultValue = "true") boolean validate,
+                                                @RequestParam(name = "validate", required = false, defaultValue = "false") boolean validate,
                                                 @RequestParam(name = "email", required = false) String email) {
         try {
             if (validate) {
-                if (email == null || email.trim().isEmpty()) {
-                    return ResponseEntity.badRequest().body("Email is required when validate is true");
+                if (!StringUtil.isEmailValid(email)) {
+                    return ResponseEntity.badRequest().body("Email is required when validate or is not valid");
                 }
                 leosDocumentService.callLeosValidation(inputFile, email);
             }
@@ -117,12 +118,12 @@ public class LeosDocumentApiController {
     @ResponseBody
     public ResponseEntity<Object> applyMetadata(@RequestParam("inputFile") MultipartFile inputFile,
                                                 @RequestParam("callbackUrl") String callbackUrl,
-                                                @RequestParam(name = "validate", required = false, defaultValue = "true") boolean validate,
+                                                @RequestParam(name = "validate", required = false, defaultValue = "false") boolean validate,
                                                 @RequestParam(name = "email", required = false) String email) {
         try {
             if (validate) {
-                if (email == null || email.trim().isEmpty()) {
-                    return ResponseEntity.badRequest().body("Email is required when validate is true");
+                if (!StringUtil.isEmailValid(email)) {
+                    return ResponseEntity.badRequest().body("Email is required when validate or is not valid");
                 }
                 leosDocumentService.callLeosValidation(inputFile, email);
             }
