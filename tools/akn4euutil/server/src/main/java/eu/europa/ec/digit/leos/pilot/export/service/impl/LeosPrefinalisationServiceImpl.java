@@ -232,7 +232,8 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
     }
 
     private ApplyMetadataResponse.ActionNode processApplyMetadataRequestAction(ApplyMetadataRequest.ActionNode action, List<XmlFile> documentXmlFiles){
-        final String diffusionVersion = MetadataUtil.getDiffusionVersion(action);
+        Optional<ApplyMetadataRequest.FieldNode> diffusionVersionField = MetadataUtil.getDiffusionVersion(action);
+        final String diffusionVersion = diffusionVersionField.isPresent() ? diffusionVersionField.get().getValue() : null;
         int commissionerPos = 0;
         List<ApplyMetadataResponse.FieldNode> fieldResponses = new ArrayList<>();
         for (ApplyMetadataRequest.FieldNode field : action.getFields()){

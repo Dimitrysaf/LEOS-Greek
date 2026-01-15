@@ -256,6 +256,29 @@
                   class="details-tab-inline">{{'page.collection.details.institutional.reference.final' | translate}}</label>
               </div>
             </div>
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-diffusion-bar">
+              <label
+                euiLabel
+                translate="page.collection.details.diffusion.bar"
+              ></label>
+            </div>
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-diffusion-bar-input">
+              <div class="adoption-info-institutional-reference">
+                <select
+                  euiSelect
+                  [(ngModel)]="diffusionVersion"
+                  (ngModelChange)="handleChange()"
+                  [disabled]="!institutionalRef"
+                  name="institutionalDiffusionBar"
+                  id="institutionalDiffusionBar"
+                  class="details-tab-first-select">
+                  <option [ngValue]="null">(none)</option>
+                  <option *ngFor="let option of diffusionBarOptions" [ngValue]="option">
+                    {{ option }}
+                  </option>
+                </select>
+              </div>
+            </div>
             <div euiInputGroup class="eui-u-width-auto grid-adoption-info-institutional-reference-version" *ngIf="false && !greffeUser">
               <label
                 euiLabel

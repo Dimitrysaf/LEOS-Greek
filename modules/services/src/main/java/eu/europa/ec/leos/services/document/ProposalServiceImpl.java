@@ -262,8 +262,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         proposal.getMetadata().get().setAdoptionDate(convertToDate(adoptionDateStr));
         proposal.getMetadata().get().setAdoptionPlace(detailsMetadata.get(XmlNodeConfigProcessor.ADOPTION_PLACE));
         proposal.getMetadata().get().setInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.COTE));
-        proposal.getMetadata().get().setInstitutionalReferenceFinalVersion(detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE) == null ? false :
-                detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE).equals("final"));
+        proposal.getMetadata().get().setInstitutionalReferenceFinalVersion(detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE) != null && detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE).startsWith("final"));
         proposal.getMetadata().get().setInterInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE));
         return proposal;
     }
@@ -327,8 +326,10 @@ public abstract class ProposalServiceImpl implements ProposalService {
         }
         metadataVO.setAdoptionPlace(detailsMetadata.get(XmlNodeConfigProcessor.ADOPTION_PLACE));
         metadataVO.setInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.COTE));
-        metadataVO.setInstitutionalReferenceFinalVersion(detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE) == null ? false :
-                detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE).equals("final"));
+        String finalCote = detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE);
+        metadataVO.setInstitutionalReferenceFinalVersion(finalCote != null
+                && detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE).startsWith("final"));
+        metadataVO.setDiffusionVersion(finalCote != null && finalCote.contains("/") ? finalCote.substring(finalCote.indexOf("/")) : "");
         metadataVO.setInterInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE));
         metadataVO.setStamp(billMetadata.get(XmlNodeConfigProcessor.STAMP) != null);
         List<SignatureMetadata> signaturesMetadata = new ArrayList<>();
@@ -791,6 +792,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 || Boolean.FALSE.equals(request.getInstitutionalReferenceFinalVersion()))) {
             fields.add(new MetadataOptions.FieldNode("cote", request.getInstitutionalReference()));
         }
+        if (request.getDiffusionVersion() != null) {
+            fields.add(new MetadataOptions.FieldNode("diffusionVersion", request.getDiffusionVersion()));
+        }
         if (request.getInstitutionalReference() != null
                 && request.getInstitutionalReferenceFinalVersion() != null
                 && Boolean.TRUE.equals(request.getInstitutionalReferenceFinalVersion())) {
@@ -813,6 +817,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
             }
             fields.add(new MetadataOptions.FieldNode("corrigendumAddendum", collectionToJson(corrigendumAddendumMetadata)));
         }
+
         metadataOptions.addTask(legFileName, proposal, fields);
         return metadataOptions;
     }
