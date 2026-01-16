@@ -313,9 +313,9 @@ define(function leosTrackChangesModule(require) {
                     tcElement.insertAfter(selectedElement);
                 }
                 tcElement.mergeSiblings();
-            // condition added in #2738, check if it can be removed in #2739
+                // condition added in #2738, check if it can be removed in #2739
             } else if (isEmptyDeleteTrackChange() && range.getCommonAncestor().getAttribute
-                    && range.getCommonAncestor().getAttribute(core.DATA_AKN_NAME) === core.SIGNATURE) {
+                && range.getCommonAncestor().getAttribute(core.DATA_AKN_NAME) === core.SIGNATURE) {
                 insertAlternativeSignature();
                 while (isEmptyDeleteTrackChange()) {
                     range.setStartAfter(selectedElement.getParent().getParent());
@@ -633,7 +633,7 @@ define(function leosTrackChangesModule(require) {
             editor.getSelection().getRanges()[0].optimize();
             var tcElement = core.searchTrackChangeElementCheckingParent(editor, core.INSERT_ACTION);
             if (tcElement && tcElement[0] && (tcElement[0].getAttribute(core.UID_ATTR) === core.getUserId(editor))
-                    && !tcElement[0].getId()) {
+                && !tcElement[0].getId()) {
                 if (tcElement[1] === core.PARENT || tcElement[1] === core.CURRENT) {
                     return false;
                 } else if (tcElement[1] === core.CARET_START) {
@@ -668,7 +668,7 @@ define(function leosTrackChangesModule(require) {
                     selectedNode = deleteKey ? selectedNode.getNext() : selectedNode.getPrevious();
                 }
                 if (selectedNode && (selectedNode.$.textContent.replace(/\u200B/g,'') === '') && ((selectedNode.type !== CKEDITOR.NODE_ELEMENT) ||
-                        ((selectedNode.type === CKEDITOR.NODE_ELEMENT) && !selectedNode.hasClass("cke_widget_inline")))) {
+                    ((selectedNode.type === CKEDITOR.NODE_ELEMENT) && !selectedNode.hasClass("cke_widget_inline")))) {
                     selectedNode = deleteKey ? editor.getSelection().getRanges()[0].getNextEditableNode() :
                         editor.getSelection().getRanges()[0].getPreviousEditableNode();
                 }
@@ -1139,7 +1139,8 @@ define(function leosTrackChangesModule(require) {
             liParentElementToCheckNumber = this.getParentToCheckAndRemove(liParentElementToCheckNumber);
             if (liParentElementToCheckText && liParentElementToCheckText.getText().trim() === ''
                 && liParentElementToCheckNumber && liParentElementToCheckNumber.getParent()
-                && liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                && (liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_NUM)
+                    || liParentElementToCheckNumber.getParent().getAttribute(leosPluginUtils.DATA_AKN_NUM))) {
                 return true;
             }
             return false;
@@ -1155,17 +1156,15 @@ define(function leosTrackChangesModule(require) {
             var liParentElementToCheckNumber = liParentElement;
             liParentElementToCheckNumber = this.getParentToCheckAndRemove(liParentElementToCheckNumber);
             var isFirstOfAll = numberModule.isFistElement(liParentElementToCheckNumber.getParent().$, liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_NUM));
-            var keyCodeToUse = 8;
-            if (isFirstOfAll) {
-                keyCodeToUse = 46;
-            }
+            var keyCodeToUse = isFirstOfAll ? 46 : 8;
+
             var ckEditorEvent = new CKEDITOR.dom.event(
                 new KeyboardEvent('key', {
                     keyCode: keyCodeToUse,
                     ctrlKey: false,
                     shiftKey: false,
                     getKey: function () {
-                        return keyCode;
+                        return keyCodeToUse;
                     }
                 })
             );
@@ -1174,6 +1173,10 @@ define(function leosTrackChangesModule(require) {
                 core.setToPosition(editor, liParentElement, CKEDITOR.POSITION_AFTER_START);
             }
             editor.fire('key', {keyCode: ckEditorEvent.getKey(), domEvent: ckEditorEvent});
+            // removing the empty li element as its not removed by the event
+            if(liParentElement.getParent() && !liParentElement.getText().trim()) {
+                liParentElement.remove();
+            }
         },
 
         getParentToCheckAndRemove(liParentElementToCheckNumber) {
@@ -1375,7 +1378,7 @@ define(function leosTrackChangesModule(require) {
                                     && !elementSibling.getAttribute(core.ACTION_ATTR)
                                 ) {
                                     if (/^\d+\.$/.test(elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM))) {
-                                         canFireParagraphChange = true;
+                                        canFireParagraphChange = true;
                                     }
 
                                     core.removeTrackChangesAttributes(elementSibling);
@@ -1406,8 +1409,8 @@ define(function leosTrackChangesModule(require) {
                     element.remove();
                 }
             } else if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.DELETE_ACTION
-                        && element.getAttribute(leosPluginUtils.DATA_AKN_NUM)
-                        && !element.hasAttribute(core.DATA_AKN_SOFTACTION)) {
+                && element.getAttribute(leosPluginUtils.DATA_AKN_NUM)
+                && !element.hasAttribute(core.DATA_AKN_SOFTACTION)) {
                 core.removeTrackChangesAttributesForNumbering(element);
             } else if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
                 if(parentElem && parentElem.getAttribute(core.DATA_AKN_NAME) === core.ARTICLE && element.getAscendant("li")) {
@@ -1422,8 +1425,8 @@ define(function leosTrackChangesModule(require) {
                         let lastEditable = leosPluginUtils.findLastEditable(pParentElement.getAscendant("div"));
                         let isSignatureElement = leosPluginUtils.isSignatureElement(pParentElement.$);
                         if (!isSignatureElement && (!lastEditable || lastEditable.getId() !== pParentElement.getId())
-                                // condition added in #2738, check if it can be removed in #2739
-                                || leosPluginUtils.isDuplicatedSignatureElement(pParentElement.$)) {
+                            // condition added in #2738, check if it can be removed in #2739
+                            || leosPluginUtils.isDuplicatedSignatureElement(pParentElement.$)) {
                             pParentElement.remove();
                         } else {
                             pParentElement.appendBogus();
@@ -1449,7 +1452,7 @@ define(function leosTrackChangesModule(require) {
                     if(parentElem.getAttribute(core.DATA_AKN_NAME) === core.ARTICLE) {
                         core.removeTrackChangesAttributesForNumbering(element.getAscendant("li"));
                         core.addTrackChangesAttributes(editor, element, core.INSERT_ACTION);
-                    // condition added in #2738, check if it can be removed in #2739
+                        // condition added in #2738, check if it can be removed in #2739
                     } else if (parentElem.getAttribute(core.DATA_AKN_NAME) !== core.SIGNATORY || isAlternativeSignatureBlock()) {
                         core.removeTrackChangesAttributesForAlternative(parentElem);
                     }
