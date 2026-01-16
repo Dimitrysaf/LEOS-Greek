@@ -91,7 +91,7 @@ define(function leosTablePluginModule(require) {
             editor.on("toHtml", _removeEmptyTableHeading, null, null, 15);
 
             editor.on( 'insertElement', _onInsertElement, this, null, 1 );
-
+            editor.on( 'afterCommandExec' , _checkEmptyCKEditor, null, null, 100);
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',
@@ -107,6 +107,29 @@ define(function leosTablePluginModule(require) {
             });
         }
     };
+
+    function _checkEmptyCKEditor(evt) {
+        const editor = evt.editor;
+
+        const editable = editor.editable().find("[leos\\:editable='true']");
+        const firstEditable = editable.getItem(0);
+
+        if (!firstEditable
+            || firstEditable.getChildCount() > 0
+            || firstEditable.getAttribute(leosPluginUtils.DATA_AKN_NAME)?.toLowerCase()
+                !== leosPluginUtils.BLOCKCONTAINER) {
+            return;
+        }
+
+        const newParagraph = new CKEDITOR.dom.element('p');
+        newParagraph.appendBogus();
+        firstEditable.append(newParagraph);
+
+        editor.getSelection().selectElement(newParagraph);
+
+        editor.fire('saveSnapshot');
+        editor.focus();
+    }
 
     function _onInsertElement(event) {
         if(event.data.getName() === 'table'){
