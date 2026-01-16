@@ -10,13 +10,15 @@
 
     <!-- Routing all requests to spring -->
     <sec:http use-expressions="true" entry-point-ref="http403EntryPoint">
-        <sec:intercept-url pattern="/ui/api/**" access="permitAll" />
-        <sec:intercept-url pattern="/ui/**" access="hasRole('**')" />
-        <sec:intercept-url pattern="/api/secured/**" access="isAuthenticated()" />
+        <sec:intercept-url pattern="/ui/api/**" access="authenticated" />
+        <sec:intercept-url pattern="/ui/**" access="authenticated" />
+        <sec:intercept-url pattern="/api/secured/**" access="authenticated" />
         <sec:intercept-url pattern="/**" access="permitAll" />
+        <sec:custom-filter before="PRE_AUTH_FILTER" ref="leosApiAuthenticationFilter"/>
         <sec:custom-filter after="PRE_AUTH_FILTER" ref="jeePreAuthenticatedFilter"/>
         <sec:session-management session-fixation-protection="none"/>
         <sec:csrf disabled="true"/> <!--Already handled by vaadin -->
+        <sec:cors configuration-source-ref="corsSource"/>
         <!-- Done to allow download (FileDownloader Vaadin Component is using iframes -->
         <sec:headers>
             <sec:frame-options policy="SAMEORIGIN"/>
