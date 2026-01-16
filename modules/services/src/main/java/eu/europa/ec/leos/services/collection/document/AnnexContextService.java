@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.getMimeType;
+import static eu.europa.ec.leos.services.support.XmlHelper.getShowAsForForeignAnnex;
 
 @Component
 @Scope("prototype")
@@ -261,22 +262,6 @@ public class AnnexContextService {
 
         annex = securityService.updateCollaborators(annex.getMetadata().get().getRef(), annex.getId(), collaborators, Annex.class);
         return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED), binaryContent, originalFilename, binaryContentSize);
-    }
-
-    public String getShowAsForForeignAnnex(String extension) {
-        String showAs = "";
-        switch (extension) {
-            case "DOCX":
-                showAs = "Word DOCX";
-                break;
-            case "XLSX":
-                showAs = "Excel XLSX";
-                break;
-            case "PDF":
-                showAs = "Adobe PDF";
-                break;
-        }
-        return showAs;
     }
 
     public Annex executeImportAnnex() {

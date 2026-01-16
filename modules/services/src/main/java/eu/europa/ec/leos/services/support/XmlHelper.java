@@ -959,4 +959,21 @@ public class XmlHelper {
     private static InputStream loadSchema(String schemaPath) {
         return XmlHelper.class.getClassLoader().getResourceAsStream(schemaPath);
     }
+
+    public static String getShowAsForForeignAnnex(String extension) {
+        String showAs = "";
+        switch (extension) {
+            case "DOCX":
+                showAs = "Word DOCX";
+                break;
+            case "XLSX":
+                showAs = "Excel XLSX";
+                break;
+            case "PDF":
+                showAs = "Adobe PDF";
+                break;
+        }
+        return showAs;
+    }
+
 }

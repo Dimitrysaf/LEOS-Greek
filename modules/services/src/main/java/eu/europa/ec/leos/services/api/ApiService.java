@@ -126,4 +126,7 @@ public interface ApiService {
     LeosRenditionOutputResponseList getHtmlRenditions(byte[] document) throws IOException;
 
     Package findPackageByName(String packageName);
+
+    void updateForeignAnnex(String proposalRef, String annexId, byte[] binaryContent, String originalFilename, String binaryContentSize);
+
 }

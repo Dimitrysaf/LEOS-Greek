@@ -1303,6 +1303,27 @@ public abstract class ApiServiceImpl implements ApiService {
         documentViewService.updateDocumentView(annex);
     }
 
+    @Override
+    public void updateForeignAnnex(String proposalRef, String annexId, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+        Annex annex = annexService.findAnnex(annexId, true);
+        AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
+        if (binaryContent != null) {
+            String extension = originalFilename.substring(originalFilename.indexOf(".") + 1).toUpperCase();
+            String mimeType = getMimeType(extension);
+            String showAs = getShowAsForForeignAnnex(extension);
+            metadata = metadata.builder()
+                .withFileFormatRefersTo("~" + extension)
+                .withFileFormatValue(mimeType)
+                .withTlcReferenceNameFormatId(extension)
+                .withTlcReferenceNameFormatHref("http://publications.europa.eu/resource/authority/file-type/" + extension)
+                .withTlcReferenceNameFormatShowAs(showAs)
+                .withForeignAnnexSource(originalFilename)
+                .build();
+        }
+        annexService.updateAnnex(annex, metadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED), false, binaryContent, originalFilename, binaryContentSize);
+        documentViewService.updateDocumentView(annex);
+    }
+
     public String generateTrackChangesText(String origText, String newText) {
 
         final String LEOS_UID_PREFIX = " leos:uid=\"";
