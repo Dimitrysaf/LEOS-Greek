@@ -491,12 +491,14 @@
                         <descriptions>
                             <description lang="EN">...</description>
                         </descriptions>
-                        <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                        <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                             <names>
-                                <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                             </names>
                             <descriptions>
-                                <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                             </descriptions>
                         </item>
                     </item>
@@ -537,12 +539,14 @@
                         <descriptions>
                             <description lang="EN">...</description>
                         </descriptions>
-                        <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                        <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                             <names>
-                                <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                             </names>
                             <descriptions>
-                                <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                             </descriptions>
                         </item>
                     </item>
@@ -592,12 +596,14 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
@@ -638,12 +644,14 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
@@ -688,12 +696,14 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
@@ -726,12 +736,14 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
@@ -770,12 +782,14 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
@@ -808,12 +822,14 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
@@ -861,12 +877,14 @@
                                 <descriptions>
                                     <description lang="EN">...</description>
                                 </descriptions>
-                                <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                     <names>
-                                        <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                        <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                        <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                     </names>
                                     <descriptions>
-                                        <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                        <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                        <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                     </descriptions>
                                 </item>
                             </item>
@@ -899,12 +917,14 @@
                                 <descriptions>
                                     <description lang="EN">...</description>
                                 </descriptions>
-                                <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                     <names>
-                                        <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                        <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                        <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                     </names>
                                     <descriptions>
-                                        <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                        <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                        <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                     </descriptions>
                                 </item>
                             </item>
@@ -937,12 +957,14 @@
                                 <descriptions>
                                     <description lang="EN">...</description>
                                 </descriptions>
-                                <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                     <names>
-                                        <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                        <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                        <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                     </names>
                                     <descriptions>
-                                        <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                        <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                        <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                     </descriptions>
                                 </item>
                             </item>
@@ -989,12 +1011,14 @@
                         <descriptions>
                             <description lang="EN">...</description>
                         </descriptions>
-                        <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                        <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                             <names>
-                                <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                             </names>
                             <descriptions>
-                                <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                             </descriptions>
                         </item>
                     </item>
@@ -1027,12 +1051,14 @@
                         <descriptions>
                             <description lang="EN">...</description>
                         </descriptions>
-                        <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                        <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                             <names>
-                                <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                             </names>
                             <descriptions>
-                                <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                             </descriptions>
                         </item>
                     </item>
@@ -1074,12 +1100,14 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
@@ -1112,12 +1140,14 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
@@ -1150,12 +1180,14 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
@@ -1184,12 +1216,14 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>

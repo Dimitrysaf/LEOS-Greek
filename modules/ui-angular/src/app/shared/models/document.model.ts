@@ -95,6 +95,7 @@ export interface Metadata {
   interInstitutionalReference: string | null;
   signatures: SignatureMetadata[] | null;
   stamp: boolean | null;
+  diffusionVersion: string | null;
 }
 //used in document-config.documentsmetadata
 export interface DocumentsMetadata {
