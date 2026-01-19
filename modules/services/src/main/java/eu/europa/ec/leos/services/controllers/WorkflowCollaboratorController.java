@@ -121,7 +121,7 @@ public class WorkflowCollaboratorController {
             // when a user is an entity should have only one entity in user.entities
             Optional<Entity> firstEntity = user.getEntities().stream().findFirst();
             if (firstEntity.isPresent()) {
-                connectedDG = firstEntity.get().getOrganizationName();
+                connectedDG = firstEntity.get().getName();
             }
         }
         String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);

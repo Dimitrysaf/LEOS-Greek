@@ -33,6 +33,7 @@ public class UpdateProposalRequest {
     private String proposalType;
     private Boolean showCorrigendumAddendum;
     private Boolean finalVersion;
+    private String diffusionVersion;
 
     private Boolean stamp;
 

@@ -2,7 +2,7 @@
   <eui-app-toolbar>
     <eui-toolbar>
       <eui-toolbar-logo
-        *ngIf="!headerLogoImgUrl"
+        *ngIf="!headerLogoImgUrl && !polarisLogoImgUrl"
         [homeUrl]="headerLogoUrl"
       ></eui-toolbar-logo>
       <eui-toolbar-app [innerHTML]="headerTitleHtml"></eui-toolbar-app>
