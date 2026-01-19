@@ -165,6 +165,28 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
+  updateForeignAnnex(annexId: string, data: File) {
+    const formData: FormData = new FormData();
+    this.loadingService.setLoading(true);
+    formData.append('foreignAnnexFile', data);
+    this.http
+      .post<any>(
+        `${apiBaseUrl}/secured/proposals/${this.proposalRef}/updateForeignAnnex/${annexId}`,
+        formData,
+        {},
+      )
+      .subscribe({
+        next: (val) => {
+          this.setProposalRef(this.proposalRef);
+          this.loadingService.setLoading(false);
+        },
+        error: (error) => {
+          this.setProposalRef(this.proposalRef);
+          this.loadingService.setLoading(false);
+        }
+      });
+  }
+
   updateAnnexTitle(annexId: string, annexTitle: string) {
     this.loadingService.setLoading(true);
     this.http

@@ -128,7 +128,7 @@ export class ProposalDraftsComponent
     }
   }
 
-  handleAnnexUploadPopup() {
+  handleAnnexUploadPopup(annex?: Document) {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.docx, .xlsx, .pdf';
@@ -137,8 +137,10 @@ export class ProposalDraftsComponent
         this.proposalStateChange.emit('active');
       }
       const file = event.target.files[0];
-      if (file) {
+      if (file && !annex) {
         this.proposalDetailsService.createForeignAnnex(file);
+      } else if (file && annex) {
+        this.proposalDetailsService.updateForeignAnnex(annex.id, file);
       }
     };
     input.click();
