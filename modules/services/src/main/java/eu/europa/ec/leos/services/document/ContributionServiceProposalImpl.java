@@ -321,6 +321,8 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
             Element element = xmlContentProcessor.getElementById(xmlContent, id);
             if (element != null) {
                 updatedElements.add(element);
+            } else {
+                updatedElements.add(new Element(id, mergeAction.getElementTagName(), null));
             }
         }
         return updatedElements;
