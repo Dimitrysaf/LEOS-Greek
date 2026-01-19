@@ -237,7 +237,7 @@ public class AnnexContextService {
                 .build();
 
         if (binaryContent != null) {
-            String extension = originalFilename.substring(originalFilename.indexOf(".") + 1).toUpperCase();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toUpperCase();
             String mimeType = getMimeType(extension);
             String showAs = getShowAsForForeignAnnex(extension);
             metadata = metadata.builder()

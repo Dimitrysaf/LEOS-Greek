@@ -1308,7 +1308,7 @@ public abstract class ApiServiceImpl implements ApiService {
         Annex annex = annexService.findAnnex(annexId, true);
         AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
         if (binaryContent != null) {
-            String extension = originalFilename.substring(originalFilename.indexOf(".") + 1).toUpperCase();
+            String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toUpperCase();
             String mimeType = getMimeType(extension);
             String showAs = getShowAsForForeignAnnex(extension);
             metadata = metadata.builder()
