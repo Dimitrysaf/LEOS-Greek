@@ -122,6 +122,7 @@ import javax.inject.Provider;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -883,8 +884,11 @@ public abstract class ApiServiceImpl implements ApiService {
     // this method checks the last updateOn and lastUpdateBy of all child documents and sets it in the proposal
     // it fixes the issue #2609
     private void setLastUpdateOnAndBy(List<XmlDocument> documents, DocumentVO proposalVO) {
-        Date lastUpdatedOn = proposalVO.getUpdatedOn();
-        String lastUpdatedBy = proposalVO.getUpdatedBy();
+        if (documents == null || documents.isEmpty() || proposalVO == null) {
+            return;
+        }
+        Date lastUpdatedOn = null;
+        String lastUpdatedBy = null;
 
         for (XmlDocument document : documents) {
             if(document.getLastModificationInstant() != null) {
@@ -895,8 +899,10 @@ public abstract class ApiServiceImpl implements ApiService {
                 }
             }
         }
-        proposalVO.setUpdatedOn(lastUpdatedOn);
-        proposalVO.setUpdatedBy(userHelper.convertToPresentation(lastUpdatedBy));
+        if(StringUtils.isNotBlank(lastUpdatedBy)) {
+            proposalVO.setUpdatedOn(lastUpdatedOn);
+            proposalVO.setUpdatedBy(userHelper.convertToPresentation(lastUpdatedBy));
+        }
     }
 
     private DocumentVO createFinancialStatementVO(FinancialStatement financialStatement) {
@@ -1216,7 +1222,7 @@ public abstract class ApiServiceImpl implements ApiService {
             milestonesVO.setClonedMilestones(clonedMilestonesVOS);
         }
         try {
-            String title = java.net.URLDecoder.decode(milestonesVO.getTitle(), StandardCharsets.UTF_8.toString());
+            String title = URLDecoder.decode(milestonesVO.getTitle(), StandardCharsets.UTF_8.toString());
             milestonesVO.setTitle(title);
         } catch (UnsupportedEncodingException e) {
             LOG.error("Encoding error occurred while retrieving the milestone", e);
