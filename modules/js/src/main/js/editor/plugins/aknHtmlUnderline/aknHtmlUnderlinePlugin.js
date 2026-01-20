@@ -20,10 +20,16 @@ define(function aknHtmlUnderlinePluginModule(require) {
     
     var pluginName = "aknHtmlUnderline";
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
+    var aknHTMLPluginsUtils = require("plugins/aknHTMLPluginUtils");
 
     var pluginDefinition = {
         init: function init(editor) {
             editor.on('selectionChange', _onSelectionChange, null, null, 11);
+            editor.on("afterCommandExec", function (event) {
+                if (event.data.command.name === commandName) {
+                    aknHTMLPluginsUtils.removeAttributeFromElement(event, 'id');
+                }
+            }, null, null, 99);
         }
     };
 
@@ -32,10 +38,7 @@ define(function aknHtmlUnderlinePluginModule(require) {
     var transformationConfig = {
         akn: "u",
         html: "u",
-        attr: [{
-            akn: "xml:id",
-            html: "id"
-        }, {
+        attr: [ {
             akn : "leos:origin",
             html : "data-origin"
         }, {

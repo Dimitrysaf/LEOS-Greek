@@ -26,7 +26,8 @@ define(function aknHtmlSubScriptPluginModule(require) {
             editor.on('selectionChange', _onSelectionChange, null, null, 11);
             editor.on("afterCommandExec", function (event) {
                 if(event.data.command.name === commandName) {
-                    aknHTMLPluginsUtils.resolveNestedStyleElements(event);
+                    const startContainer = aknHTMLPluginsUtils.resolveNestedStyleElements(event);
+                    startContainer && startContainer.removeAttribute('id');
                 }
             }, null, null, 99);
         }
@@ -37,9 +38,6 @@ define(function aknHtmlSubScriptPluginModule(require) {
         akn: "sub",
         html: "sub",
         attr: [{
-            akn: "xml:id",
-            html: "id"
-        }, {
             akn : "leos:origin",
             html : "data-origin"
         }],

@@ -466,7 +466,7 @@ public class XmlHelper {
         return prefixTobeUsedForChildren.contains(tagName) ? idOfNode : parentPrefix;  //if(root Node Name is in Article/Reictals/Citations..set the prefix)
     }
 
-    private static final ArrayList<String> nodeToSkip = new ArrayList<String>(Arrays.asList(META));
+    private static final ArrayList<String> nodeToSkip = new ArrayList<String>(Arrays.asList(META,BOLD,ITALICS,UNDERLINE,SUB,SUP));
 
     public static boolean skipNodeAndChildren(String tagName) {
         return nodeToSkip.contains(tagName) ? true : false;
