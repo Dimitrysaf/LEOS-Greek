@@ -207,18 +207,18 @@ export class DocumentComponent
             if (coEditionUpdate.infoType === 'DOCUMENT_UPDATED' || coEditionUpdate.infoType === 'DOCUMENT_CONTRIBUTION_UPDATED') {
               this.docUpdating = true;
             }
+            if (coEditionUpdate.infoType === 'DOCUMENT_CONTRIBUTION_UPDATED') {
+              const newElement = coEditionUpdate.updatedElements.find((elt) => this.document.getElementById(elt.elementId) == null);
+              if (newElement || coEditionUpdate.updatedElements.length === 0) {
+                this.documentService.reloadDocument();
+              } else {
+                this.mergeContributionService.getContributions();
+              }
+            }
             if (
               coEditionUpdate.updatedElements &&
               coEditionUpdate.updatedElements.length > 0
             ) {
-              if (coEditionUpdate.infoType === 'DOCUMENT_CONTRIBUTION_UPDATED') {
-                const newElement = coEditionUpdate.updatedElements.find((elt) => this.document.getElementById(elt.elementId) == null);
-                if (newElement || coEditionUpdate.updatedElements.length === 0) {
-                  this.documentService.reloadDocument();
-                } else {
-                  this.mergeContributionService.getContributions();
-                }
-              }
               coEditionUpdate.updatedElements.forEach((element) => {
                 if (element.alternateElementId === 'null') {
                   element.alternateElementId = null;
@@ -491,7 +491,7 @@ export class DocumentComponent
     elementType: string;
     elementFragment: string;
   }) {
-    return ['leos:id-to-be-restored', 'leos:id-to-be-removed'].some(attr => data.elementFragment.includes(attr));
+    return !data.elementFragment || ['leos:id-to-be-restored', 'leos:id-to-be-removed'].some(attr => data.elementFragment.includes(attr));
   }
 
   private isAnnexParagraphUpdated(data: {

@@ -1345,7 +1345,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     moved = true;
                 }
             }
-            if (!moved && !Character.isUpperCase(subpara.getTextContent().trim().charAt(0))) {
+            if (!moved && (subpara.getTextContent().isEmpty() || !Character.isUpperCase(subpara.getTextContent().trim().charAt(0)))) {
                 Node previousSiblingList = XercesUtils.getPrevSibling(subpara);
                 if (previousSiblingList != null && is(previousSiblingList, LIST)
                         && ((!isSoftDeletedOrMovedTo(subpara) && !isSoftDeletedOrMovedTo(previousSiblingList))

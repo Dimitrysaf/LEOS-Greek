@@ -284,7 +284,7 @@ export class ProposalDraftsComponent
     const createOptions = JSON.parse(this.proposal.creationOptions);
     const createOptionsKeys = Object.keys(createOptions);
     const fsKey = createOptionsKeys.find(key => key.startsWith('FS-001'));
-    const annexKey = createOptionsKeys.find(key => key.startsWith('SG-017'));
+    const annexKey = createOptionsKeys.find(key => key.startsWith('SG-017') || key.startsWith('SG-068'));
     this.fsCreateOption = createOptions[fsKey];
     this.annexCreateOption = createOptions[annexKey];
   }

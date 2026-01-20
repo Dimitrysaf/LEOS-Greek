@@ -170,6 +170,20 @@
   display: grid;
 }
 
+.grid-adoption-info-diffusion-bar {
+  grid-row: 2;
+  grid-column-start: 3;
+  grid-column-end: 5;
+  display: grid;
+}
+
+.grid-adoption-info-diffusion-bar-input {
+  grid-row: 3;
+  grid-column-start: 3;
+  grid-column-end: 5;
+  display: grid;
+}
+
 .grid-adoption-info-institutional-reference-flag {
   grid-row: 2;
   grid-column-start: 1;

@@ -96,6 +96,7 @@ export interface Metadata {
   customTemplateAct: boolean;
   availableLangs: string;
   isPublished: boolean;
+  diffusionVersion: string | null;
 }
 //used in document-config.documentsmetadata
 export interface DocumentsMetadata {
