@@ -18,7 +18,7 @@
                 <description lang="EN">The Manual of Operating Procedures of the Commission - Decision-making: interinstitutional stage (http://www.cc.cec/home/dgserv/sg/manupro/index.cfm?lang=en&amp;menu=on&amp;src=chapter&amp;chp=2)</description>
                 <description lang="FR">Manuel des procédures opérationnelles de la Commission - Processus décisionnel: phase interinstitutionnelle (http://www.cc.cec/home/dgserv/sg/manupro/index.cfm?lang=fr&amp;menu=on&amp;src=chapter&amp;chp=2)</description>
             </descriptions>
-            <item type="CATEGORY" id="c1.1.1" enabled="true" key="ORDINARY_LEGISLATIVE_PROC">
+            <item type="PROCEDURE" id="c1.1.1" enabled="true" key="ORDINARY_LEGISLATIVE_PROC">
                 <names>
                     <name lang="EN">Proposal for a</name>
                     <name lang="FR">Proposition de</name>
@@ -27,7 +27,7 @@
                     <description lang="EN">Proposal for a</description>
                     <description lang="FR">Proposition de</description>
                 </descriptions>
-                <item type="CATEGORY" id="c1.1.1.1" enabled="true" key="REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL">
+                <item type="ACT" id="c1.1.1.1" enabled="true" key="REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL">
                     <names>
                         <name lang="EN">Proposal for a regulation</name>
                         <name lang="FR">Proposition de règlement</name>
@@ -91,7 +91,7 @@
                         </item>
                     </item>
                 </item>
-                <item type="CATEGORY" id="c1.1.1.2" enabled="true" key="DIRECTIVE OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL">
+                <item type="ACT" id="c1.1.1.2" enabled="true" key="DIRECTIVE OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL">
                     <names>
                         <name lang="EN">Proposal for a directive</name>
                         <name lang="FR">Proposition de directive</name>
@@ -155,7 +155,7 @@
                         </item>
                     </item>
                 </item>
-                <item type="CATEGORY" id="c1.1.1.3" enabled="true" key="DECISION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL">
+                <item type="ACT" id="c1.1.1.3" enabled="true" key="DECISION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL">
                     <names>
                         <name lang="EN">Proposal for a decision</name>
                         <name lang="FR">Proposition de décision</name>
@@ -446,17 +446,17 @@
             </item>
         </item>
     </item>
-    <item type="CATEGORY" id="c2" enabled="true" key="AUTONOMOUS_ACTS">
+    <item type="PROCEDURE" id="c2" enabled="true" key="AUTONOMOUS_ACTS">
         <names>
             <name lang="EN">Autonomous acts (article 288, article 290, article 291 TFEU and internal decisions)</name>
             <name lang="FR">Actes autonomes (article 288, article 290, article 291 TFUE et décisions internes)</name>
         </names>
-        <item type="CATEGORY" id="c2.1" enabled="true" key="DELEGATED_AUTONOMOUS_ACTS">
+        <item type="ACT" id="c2.1" enabled="true" key="DELEGATED_AUTONOMOUS_ACTS">
             <names>
                 <name lang="EN">Delegated Acts (article 290 TFEU)</name>
                 <name lang="FR">Actes délégués (article 290 TFUE)</name>
             </names>
-            <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" enabled="true" key="SJ-003">
+            <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-003">
                 <names>
                     <name lang="EN">SJ-003 - Commission Delegated Regulation (EU) .../...</name>
                     <name lang="FR">SJ-003 - Règlement délégué  (UE) .../... de la Commission</name>
@@ -469,7 +469,7 @@
                     <language lang="EN">English</language>
                     <!--<language lang="FR">Français</language>-->
                 </languages>
-                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" id="PR-003" enabled="true" mandatory="true">
+                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-003" enabled="true" mandatory="true">
                     <names>
                         <name lang="EN">PR-003 - ....</name>
                     </names>
@@ -491,18 +491,20 @@
                         <descriptions>
                             <description lang="EN">...</description>
                         </descriptions>
-                        <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                        <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                             <names>
-                                <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                             </names>
                             <descriptions>
-                                <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                             </descriptions>
                         </item>
                     </item>
                 </item>
             </item>
-            <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" enabled="true" key="SJ-007">
+            <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-007">
                 <names>
                     <name lang="EN">SJ-007 - Commission Delegated Directive (EU) .../...</name>
                     <name lang="FR">SJ-007 - Directive déléguée (UE) .../... de la Commission</name>
@@ -515,7 +517,7 @@
                     <language lang="EN">English</language>
                     <!--<language lang="FR">Français</language>-->
                 </languages>
-                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" id="PR-007" enabled="true" mandatory="true">
+                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-007" enabled="true" mandatory="true">
                     <names>
                         <name lang="EN">PR-007 - ....</name>
                     </names>
@@ -537,18 +539,20 @@
                         <descriptions>
                             <description lang="EN">...</description>
                         </descriptions>
-                        <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                        <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                             <names>
-                                <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                             </names>
                             <descriptions>
-                                <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                             </descriptions>
                         </item>
                     </item>
                 </item>
             </item>
-            <item type="CATEGORY" id="c2.1.1" enabled="true" key="COMMISSION_DELEGATED_DECISION">
+            <item type="ACT" id="c2.1.1" enabled="true" key="COMMISSION_DELEGATED_DECISION">
                 <names>
                     <name lang="EN">Commission delegated Decision</name>
                     <name lang="FR">Décision déléguée de la Commission</name>
@@ -557,7 +561,7 @@
                     <description lang="EN">Delegated Commission decisions are adopted following a delegation given by the legislator in the basic act (art. 290 TFUE). They take effect upon their publication in the Official Journal of the European Union or upon notification to their destinataries. Do not forget to check the relevant box in the tab "Destination - Actes autonomes"</description>
                     <description lang="FR">Les décisions déléguées de la Commission sont adoptées suite à une délégation donnée par le législateur dans l'acte de base (art. 290 TFUE). Elles entrent en vigueur soit par leur publication au Journal officiel de l'Union européenne soit par leur notification aux destinataires. N'oubliez pas de cocher la case correspondante dans l'onglet "Destination" - "Actes autonomes"</description>
                 </descriptions>
-                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" enabled="true" key="SJ-033">
+                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-033">
                     <names>
                         <name lang="EN">SJ-033 - Commission Delegated Decision (EU) .../... (entry into force by its publication)</name>
                         <name lang="FR">SJ-033 - Décision déléguée de la Commission (UE) .../... (entre en vigueur par sa publication)</name>
@@ -570,7 +574,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" id="PR-033" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-033" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-033 - ....</name>
                         </names>
@@ -592,18 +596,20 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
                     </item>
                 </item>
-                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" enabled="true" key="SJ-012">
+                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-012">
                     <names>
                         <name lang="EN">SJ-012 - Commission Delegated Decision (entry into force by its notification)</name>
                         <name lang="FR">SJ-012 - Décision déléguée de la Commission (entre en vigueur par sa notification)</name>
@@ -616,7 +622,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" id="PR-012" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-012" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-012 - ....</name>
                         </names>
@@ -638,12 +644,14 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
@@ -651,12 +659,12 @@
                 </item>
             </item>
         </item>
-        <item type="CATEGORY" id="c2.2" enabled="true" key="IMPLEMENTING_ACTS">
+        <item type="ACT" id="c2.2" enabled="true" key="IMPLEMENTING_ACTS">
             <names>
                 <name lang="EN">Implementing Acts (article 291 TFEU) and Acts still under the former PRAC</name>
                 <name lang="FR">Actes d'exécution (article 291 TFUE) et Actes encore sous ancienne PRAC</name>
             </names>
-            <item type="CATEGORY" id="c2.2.1" enabled="true" key="REGULATION_IMPLEMENTING_ACTS">
+            <item type="ACT" id="c2.2.1" enabled="true" key="REGULATION_IMPLEMENTING_ACTS">
                 <names>
                     <name lang="EN">Regulation</name>
                     <name lang="FR">Règlement</name>
@@ -665,7 +673,7 @@
                     <description lang="EN">Regulation</description>
                     <description lang="FR">Règlement</description>
                 </descriptions>
-                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" enabled="true" key="SJ-004">
+                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-004">
                     <names>
                         <name lang="EN">SJ-004 - Commission Implementing Regulation (EU)  .../...</name>
                         <name lang="FR">SJ-004 - Règlement d'exécution (UE)  .../... de la Commission</name>
@@ -674,7 +682,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" id="PR-004" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-004" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-004 - ....</name>
                         </names>
@@ -688,18 +696,20 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
                     </item>
                 </item>
-                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" enabled="true" key="SJ-001">
+                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-001">
                     <names>
                         <name lang="EN">SJ-001 - Commission Regulation (EU) .../... (former PRAC)</name>
                         <name lang="FR">SJ-001 - Règlement (UE) .../... de la Commission (ancienne PRAC)</name>
@@ -712,7 +722,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" id="PR-001" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-001" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-001 - ....</name>
                         </names>
@@ -726,19 +736,21 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
                     </item>
                 </item>
             </item>
-            <item type="CATEGORY" id="c2.2.2" enabled="true" key="DIRECTIVE_IMPLEMENTING_ACTS">
+            <item type="ACT" id="c2.2.2" enabled="true" key="DIRECTIVE_IMPLEMENTING_ACTS">
                 <names>
                     <name lang="EN">Directive</name>
                     <name lang="FR">Directive</name>
@@ -747,7 +759,7 @@
                     <description lang="EN">Directive</description>
                     <description lang="FR">Directive</description>
                 </descriptions>
-                <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" enabled="true" key="SJ-008">
+                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-008">
                     <names>
                         <name lang="EN">SJ-008 - Commission Implementing Directive (EU)  .../...</name>
                         <name lang="FR">SJ-008 - Directive d'exécution (UE)  .../... de la Commission</name>
@@ -756,7 +768,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" id="PR-008" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-008" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-008 - ....</name>
                         </names>
@@ -770,18 +782,20 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
                     </item>
                 </item>
-                <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" enabled="true" key="SJ-005">
+                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-005">
                     <names>
                         <name lang="EN">SJ-005 - Commission Directive (EU) .../... (former PRAC)</name>
                         <name lang="FR">SJ-005 - Directive (UE) .../... de la Commission (ancienne PRAC)</name>
@@ -794,7 +808,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" id="PR-005" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-005" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-005 - ....</name>
                         </names>
@@ -808,19 +822,21 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
                     </item>
                 </item>
             </item>
-            <item type="CATEGORY" id="c2.2.3" enabled="true" key="DECISION_IMPLEMENTING_ACTS">
+            <item type="ACT" id="c2.2.3" enabled="true" key="DECISION_IMPLEMENTING_ACTS">
                 <names>
                     <name lang="EN">Decision</name>
                     <name lang="FR">Décision</name>
@@ -829,12 +845,12 @@
                     <description lang="EN">Decision</description>
                     <description lang="FR">Décision</description>
                 </descriptions>
-                <item type="CATEGORY" id="c2.2.3.1" enabled="true" key="COMMISSION_IMPLEMENTING_DECISION">
+                <item type="ACT" id="c2.2.3.1" enabled="true" key="COMMISSION_IMPLEMENTING_DECISION">
                     <names>
                         <name lang="EN">Commission implementing Decision</name>
                         <name lang="FR">Décision d'exécution de la Commission</name>
                     </names>
-                    <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" enabled="true" key="SJ-032">
+                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-032">
                         <names>
                             <name lang="EN">SJ-032 - Commission Implementing Decision (EU) .../... (entry into force by its publication)</name>
                             <name lang="FR">SJ-032 - Décision d'exécution de la Commission (UE) .../... (entre en vigueur par sa publication)</name>
@@ -847,7 +863,7 @@
                             <language lang="EN">English</language>
                             <!--<language lang="FR">Français</language>-->
                         </languages>
-                        <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" id="PR-032" enabled="true" mandatory="true">
+                        <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-032" enabled="true" mandatory="true">
                             <names>
                                 <name lang="EN">PR-032 - ....</name>
                             </names>
@@ -861,18 +877,20 @@
                                 <descriptions>
                                     <description lang="EN">...</description>
                                 </descriptions>
-                                <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                     <names>
-                                        <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                        <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                        <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                     </names>
                                     <descriptions>
-                                        <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                        <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                        <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                     </descriptions>
                                 </item>
                             </item>
                         </item>
                     </item>
-                    <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" enabled="true" key="SJ-009">
+                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-009">
                         <names>
                             <name lang="EN">SJ-009 - Commission Implementing Decision (entry into force by its notification)</name>
                             <name lang="FR">SJ-009 - Décision d'exécution de la Commission (entre en vigueur par sa notification)</name>
@@ -885,7 +903,7 @@
                             <language lang="EN">English</language>
                             <!--<language lang="FR">Français</language>-->
                         </languages>
-                        <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" id="PR-009" enabled="true" mandatory="true">
+                        <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-009" enabled="true" mandatory="true">
                             <names>
                                 <name lang="EN">PR-009 - ....</name>
                             </names>
@@ -899,18 +917,20 @@
                                 <descriptions>
                                     <description lang="EN">...</description>
                                 </descriptions>
-                                <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                     <names>
-                                        <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                        <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                        <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                     </names>
                                     <descriptions>
-                                        <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                        <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                        <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                     </descriptions>
                                 </item>
                             </item>
                         </item>
                     </item>
-                    <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" enabled="true" key="SJ-031">
+                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-031">
                         <names>
                             <name lang="EN">SJ-031 - Commission Implementing Decision (internal)</name>
                             <name lang="FR">SJ-031 - Décision d'exécution de la Commission (interne)</name>
@@ -923,7 +943,7 @@
                             <language lang="EN">English</language>
                             <!--<language lang="FR">Français</language>-->
                         </languages>
-                        <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" id="PR-031" enabled="true" mandatory="true">
+                        <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-031" enabled="true" mandatory="true">
                             <names>
                                 <name lang="EN">PR-031 - ....</name>
                             </names>
@@ -937,12 +957,14 @@
                                 <descriptions>
                                     <description lang="EN">...</description>
                                 </descriptions>
-                                <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                     <names>
-                                        <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                        <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                        <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                     </names>
                                     <descriptions>
-                                        <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                        <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                        <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                     </descriptions>
                                 </item>
                             </item>
@@ -957,12 +979,12 @@
                 </item>
             </item>
         </item>
-        <item type="CATEGORY" id="c2.3" enabled="true" key="OTHER_AUTONOMOUS_ACTS">
+        <item type="ACT" id="c2.3" enabled="true" key="OTHER_AUTONOMOUS_ACTS">
             <names>
                 <name lang="EN">Other Autonomous Acts</name>
                 <name lang="FR">Autres Actes Autonomes</name>
             </names>
-            <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" enabled="true" key="SJ-002">
+            <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-002">
                 <names>
                     <name lang="EN">SJ-002 - Commission Regulation (EU)  .../...</name>
                     <name lang="FR">SJ-002 - Règlement (UE)  .../... de la Commission</name>
@@ -975,7 +997,7 @@
                     <language lang="EN">English</language>
                     <!--<language lang="FR">Français</language>-->
                 </languages>
-                <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" id="PR-002" enabled="true" mandatory="true">
+                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-002" enabled="true" mandatory="true">
                     <names>
                         <name lang="EN">PR-002 - ....</name>
                     </names>
@@ -989,18 +1011,20 @@
                         <descriptions>
                             <description lang="EN">...</description>
                         </descriptions>
-                        <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                        <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                             <names>
-                                <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                             </names>
                             <descriptions>
-                                <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                             </descriptions>
                         </item>
                     </item>
                 </item>
             </item>
-            <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" enabled="true" key="SJ-006">
+            <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-006">
                 <names>
                     <name lang="EN">SJ-006 - Commission Directive (EU) .../...</name>
                     <name lang="FR">SJ-006 - Directive (UE) .../... de la Commission</name>
@@ -1013,7 +1037,7 @@
                     <language lang="EN">English</language>
                     <!--<language lang="FR">Français</language>-->
                 </languages>
-                <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" id="PR-006" enabled="true" mandatory="true">
+                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-006" enabled="true" mandatory="true">
                     <names>
                         <name lang="EN">PR-006 - ....</name>
                     </names>
@@ -1027,18 +1051,20 @@
                         <descriptions>
                             <description lang="EN">...</description>
                         </descriptions>
-                        <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                        <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                             <names>
-                                <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                             </names>
                             <descriptions>
-                                <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                             </descriptions>
                         </item>
                     </item>
                 </item>
             </item>
-            <item type="CATEGORY" id="c2.3.1" enabled="true" key="OTHER_COMMISSION_DECISION">
+            <item type="ACT" id="c2.3.1" enabled="true" key="OTHER_COMMISSION_DECISION">
                 <names>
                     <name lang="EN">Commission Decision</name>
                     <name lang="FR">Décision de la Commission</name>
@@ -1047,7 +1073,7 @@
                     <description lang="EN">Decisions take effect either upon their publication in the Official Journal of the European Union or upon notification to their destinataries (the last article in the text of the decision clearly specifies which of the two applies). Internal decisions are neither to be notified nor to be published (except for information purposes in some cases), they take effect upon their adoption. Do not forget to check the relevant box in the tab "Destination - Actes autonomes"</description>
                     <description lang="FR">Les décisions entrent en vigueur soit par leur publication au Journal officiel de l'Union européenne  soit par leur notification aux destinataires (Le dernier article du texte de la décision vous indique clairement le choix à prendre).  Les décisions internes ne sont ni à notifier ni à publier (sauf pour information en certains cas), et entrent en vigueur par leur adoption  N'oubliez pas de cocher la case correspondante dans l'onglet "Destination" - "Actes autonomes"</description>
                 </descriptions>
-                <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" enabled="true" key="SJ-011">
+                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-011">
                     <names>
                         <name lang="EN">SJ-011 - Commission Decision (entry into force by its notification)</name>
                         <name lang="FR">SJ-011 - Décision de la Commission (entre en vigueur par sa notification)</name>
@@ -1060,7 +1086,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" id="PR-011" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-011" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-011 - ....</name>
                         </names>
@@ -1074,18 +1100,20 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
                     </item>
                 </item>
-                <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" enabled="true" key="SJ-013">
+                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-013">
                     <names>
                         <name lang="EN">SJ-013 - Commission Decision (EU) .../... (entry into force by its publication)</name>
                         <name lang="FR">SJ-013 - Décision de la Commission (UE) .../... (entre en vigueur par sa publication)</name>
@@ -1098,7 +1126,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" id="PR-013" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-013" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-013 - ....</name>
                         </names>
@@ -1112,18 +1140,20 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
                     </item>
                 </item>
-                <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" enabled="true" key="SJ-030">
+                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-030">
                     <names>
                         <name lang="EN">SJ-030 - Commission Decision (internal)</name>
                         <name lang="FR">SJ-030 - Décision de la Commission (interne)</name>
@@ -1136,7 +1166,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" id="PR-030" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-030" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-030 - ....</name>
                         </names>
@@ -1150,18 +1180,20 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
                     </item>
                 </item>
-                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" enabled="true" key="SJ-037">
+                <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-037">
                     <names>
                         <name lang="EN">SJ-037 - Commission decision  (State aid - entry force by its notification)</name>
                         <name lang="FR">SJ-037 - Décision de la Commission (Aide d'état - entrée en vigueur par sa notification)</name>
@@ -1170,7 +1202,7 @@
                         <language lang="EN">English</language>
                         <!--<language lang="FR">Français</language>-->
                     </languages>
-                    <item type="TEMPLATE"  documentCollection="ACT_AUTO_COM" id="PR-037" enabled="true" mandatory="true">
+                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-037" enabled="true" mandatory="true">
                         <names>
                             <name lang="EN">PR-037 - ....</name>
                         </names>
@@ -1184,12 +1216,14 @@
                             <descriptions>
                                 <description lang="EN">...</description>
                             </descriptions>
-                            <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                            <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
                                 <names>
-                                    <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                    <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
                                 </names>
                                 <descriptions>
-                                    <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                    <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                 </descriptions>
                             </item>
                         </item>
@@ -1202,22 +1236,6 @@
                     <name lang="FR">Rectificatifs</name>
                 </names>
             </item>
-        </item>
-    </item>
-    <item type="CATEGORY" id="c3" hidden="true" enabled="true" key="SUPPORTING_DOCUMENTS">
-        <names>
-            <name lang="EN">Other supporting documents</name>
-        </names>
-        <descriptions>
-            <description lang="EN">Other supporting documents</description>
-        </descriptions>
-        <item type="TEMPLATE" id="FS-001" enabled="true" key="FS-001">
-            <names>
-                <name lang="EN">Financial statement</name>
-            </names>
-            <descriptions>
-                <description lang="EN">Financial statement</description>
-            </descriptions>
         </item>
     </item>
 </catalog>
