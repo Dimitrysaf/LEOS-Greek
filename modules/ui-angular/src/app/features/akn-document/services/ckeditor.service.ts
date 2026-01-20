@@ -220,6 +220,10 @@ export class CKEditorService {
     return this.mergeContributionConnector?.existAcceptedChanges();
   }
 
+  existNotProcessedChanges(): boolean {
+    return this.mergeContributionConnector?.existNotProcessedChanges();
+  }
+
   addMergeActionList(action: MergeActionVO) {
     this.mergeContributionService.addMergeActionList(action);
     this.mergeContributionConnector?.doUpdateMergeActionList({
