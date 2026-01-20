@@ -90,7 +90,7 @@ public interface ApiService {
 
     byte[] downloadProposal(String proposalRef) throws Exception;
 
-    void createProposalAnnex(String proposalRef, AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) throws Exception;
+    void createProposalAnnex(String proposalRef, AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) throws IOException;
 
     List<MilestonesVO> getProposalMilestones(String proposalRef) throws Exception;
 
