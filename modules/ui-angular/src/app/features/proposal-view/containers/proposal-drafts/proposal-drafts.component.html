@@ -338,8 +338,8 @@
                             class="eui-u-ml-l"
                             euiButton
                             euiPrimary
-                            [euiDisabled]="this.proposalState === 'active'"
-                            [disabled]="this.proposalState === 'active'"
+                            [euiDisabled]="this.proposalState === 'active' || (proposal.metadata.customTemplateAct && annexes.length > 0)"
+                            [disabled]="this.proposalState === 'active' || (proposal.metadata.customTemplateAct && annexes.length > 0)"
                             (click)="handleAnnexAdd()"
                     >
                         {{ 'global.actions.add' | translate }}
@@ -351,8 +351,8 @@
                             euiButton
                             euiPrimary
                             euiOutline
-                            [euiDisabled]="this.proposalState === 'active'"
-                            [disabled]="this.proposalState === 'active'"
+                            [euiDisabled]="this.proposalState === 'active' || proposal.metadata.customTemplateAct"
+                            [disabled]="this.proposalState === 'active' || proposal.metadata.customTemplateAct"
                             (click)="handleAnnexReorder()"
                     >
                         {{ 'page.collection.drafts.annex.table.re-order' | translate }}
