@@ -202,10 +202,10 @@ export abstract class DocumentActionsService {
     ];
   }
 
-  existMergeChanges(exists: boolean) {
-    this.mergeContributionApplyDropdownOptions[0].disabled = !this.canAcceptTrackChanges();
-    this.mergeContributionApplyDropdownOptions[1].disabled = !this.canAcceptTrackChanges();
-    this.mergeContributionApplyDropdownOptions[2].disabled = !(exists && this.canAcceptTrackChanges());
+  existMergeChanges(existsMerged: boolean, existsNotProcessed: boolean) {
+    this.mergeContributionApplyDropdownOptions[0].disabled = !(existsNotProcessed && this.canAcceptTrackChanges());
+    this.mergeContributionApplyDropdownOptions[1].disabled = !(existsNotProcessed && this.canAcceptTrackChanges());
+    this.mergeContributionApplyDropdownOptions[2].disabled = !(existsMerged && this.canAcceptTrackChanges());
     this.mergeContributionApplyDropdownOptions[3].disabled = !this.canRejectTrackChanges();
   }
 

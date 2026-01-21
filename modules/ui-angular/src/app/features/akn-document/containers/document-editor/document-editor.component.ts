@@ -866,7 +866,7 @@ export class DocumentEditorComponent
       : [];
     const elemList = nodeList ? [...nodeList] : [];
     this.contributionChangesBS.next(elemList);
-    this.documentActions.existMergeChanges(this.cdkEditor.existAcceptedChanges());
+    this.documentActions.existMergeChanges(this.cdkEditor.existAcceptedChanges(), this.cdkEditor.existNotProcessedChanges());
   }
 
   private reloadComponent() {
