@@ -791,7 +791,7 @@ public abstract class CollectionContextService {
             LeosPackage leosPckg = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
             List<LinkedPackage> linkedPackages = packageService.findLinkedPackagesByPackageId(leosPckg.getId());
             linkedPackages.forEach(linkedPkg -> {
-                LeosPackage linguisticPackage = packageService.findPackageByPackageId(linkedPkg.getPackageId());
+                LeosPackage linguisticPackage = packageService.findPackageByPackageId(linkedPkg.getLinkedPackageId());
                 packageService.deletePackage(linguisticPackage);
             });
             packageService.deletePackage(leosPckg);
