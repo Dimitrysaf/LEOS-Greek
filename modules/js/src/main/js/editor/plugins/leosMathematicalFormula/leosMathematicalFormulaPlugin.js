@@ -39,8 +39,14 @@ define(function leosMathematicalFormulaPluginModule(require) {
         }
     };
     
-    function _onSelectionChange(event) {   
-        leosCommandStateHandler.changeCommandState(event.editor, 'mathjax', changeStateElements, true);
+    function _onSelectionChange(event) {
+        var selection = event.editor.getSelection();
+        var isTableOnlyMode = event.editor.config.tableOnlyMode;
+        if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
+            event.editor.getCommand('mathjax').setState(CKEDITOR.TRISTATE_DISABLED);
+        } else {
+            leosCommandStateHandler.changeCommandState(event.editor, 'mathjax', changeStateElements, true);
+        }
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);

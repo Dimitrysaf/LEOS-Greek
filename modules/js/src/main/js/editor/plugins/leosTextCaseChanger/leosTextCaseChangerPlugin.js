@@ -175,7 +175,13 @@ define(function leosTextTransformerPluginModule(require) {
     };
     
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event.editor, 'transformTextSwitch', null, true);
+        var selection = event.editor.getSelection();
+        var isTableOnlyMode = event.editor.config.tableOnlyMode;
+        if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
+            event.editor.getCommand('transformTextSwitch').setState(CKEDITOR.TRISTATE_DISABLED);
+        } else {
+            leosCommandStateHandler.changeCommandState(event.editor, 'transformTextSwitch', null, true);
+        }
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);

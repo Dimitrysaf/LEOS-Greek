@@ -54,10 +54,16 @@ define(function aknAuthorialNotePluginModule(require) {
     };
     
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event.editor, widgetName, changeStateElements, true);
-        var refConfig = leosPluginUtils.getRefConfig(event.editor);
-        if(!refConfig || !refConfig.authorialNote) {
+        var selection = event.editor.getSelection();
+        var isTableOnlyMode = event.editor.config.tableOnlyMode;
+        if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
             event.editor.getCommand(widgetName).setState(CKEDITOR.TRISTATE_DISABLED);
+        } else {
+            leosCommandStateHandler.changeCommandState(event.editor, widgetName, changeStateElements, true);
+            var refConfig = leosPluginUtils.getRefConfig(event.editor);
+            if(!refConfig || !refConfig.authorialNote) {
+                event.editor.getCommand(widgetName).setState(CKEDITOR.TRISTATE_DISABLED);
+            }
         }
     }
 
