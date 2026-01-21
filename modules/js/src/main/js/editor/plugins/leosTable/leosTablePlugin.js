@@ -28,6 +28,8 @@ define(function leosTablePluginModule(require) {
     var $ = require('jquery');
 
     var pluginName = 'leosTable';
+    var DELETE_KEY = 46;
+    var BACKSPACE_KEY = 8;
     var ENTER_KEY = 13;
     var SHIFT_ENTER = CKEDITOR.SHIFT + ENTER_KEY;
     var HTML_CAPTION = "caption";
@@ -104,6 +106,20 @@ define(function leosTablePluginModule(require) {
                 eventType : 'key',
                 key : SHIFT_ENTER,
                 action : _onShiftEnterKey
+            });
+
+            leosKeyHandler.on({
+                editor : editor,
+                eventType : 'key',
+                key : BACKSPACE_KEY,
+                action : _handleTableRemoval
+            });
+
+            leosKeyHandler.on({
+                editor : editor,
+                eventType : 'key',
+                key : DELETE_KEY,
+                action : _handleTableRemoval
             });
         }
     };
@@ -186,6 +202,35 @@ define(function leosTablePluginModule(require) {
             var range = editor.createRange();
             range.moveToPosition(element, position);
             range.select();
+        }
+    }
+
+    function _handleTableRemoval(context) {
+        const editor = context.event.editor;
+        const firstElement = editor.elementPath().elements[0];
+
+        if (!firstElement || firstElement.type !== Node.ELEMENT_NODE) return;
+
+        const cancelAndEnable = () => {
+            context.event.cancel();
+            editor.commands.inlinesave.enable();
+            editor.commands.inlinesaveclose.enable();
+        };
+
+        if (firstElement.getName() === 'table') {
+            firstElement.remove();
+            cancelAndEnable();
+            return;
+        }
+        if (firstElement.getName() === 'li') {
+            const children = firstElement.getChildren();
+            if (children.count() === 1) {
+                const child = children.getItem(0);
+                if (child.type === Node.ELEMENT_NODE && child.getName() === 'table') {
+                    child.remove();
+                    cancelAndEnable();
+                }
+            }
         }
     }
 

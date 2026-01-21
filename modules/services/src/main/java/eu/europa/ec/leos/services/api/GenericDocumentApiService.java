@@ -86,14 +86,7 @@ import org.springframework.util.StringUtils;
 
 import javax.inject.Provider;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -375,16 +368,18 @@ public class GenericDocumentApiService {
 
     public List<VersionVO> searchVersions(@NotNull String docRef, String authorKey, String versionType) {
         List<String> authorLogins = new ArrayList<>();
+        boolean usersEmpty = false;
         if (StringUtils.hasText(authorKey)) {
             List<UserJSON> users = userService.searchUsersByKey(authorKey);
+            usersEmpty = users.isEmpty();
             authorLogins = users.stream().map(user -> user.getLogin()).collect(Collectors.toList());
         }
-        List<XmlDocument> foundVersions = this.leosRepository.searchVersions(XmlDocument.class, docRef, authorLogins,
-                versionType);
-        List<VersionVO> versions = VersionsUtil.buildVersionVO(foundVersions, messageHelper);
-
-        for (VersionVO version : versions) {
-            version.setCreatedBy(userHelper.convertToPresentation(version.getUsername()));
+        List<VersionVO> versions = Collections.emptyList();
+        if (!usersEmpty) {
+            List<XmlDocument> foundVersions = this.leosRepository.searchVersions(XmlDocument.class, docRef, authorLogins,
+                    versionType);
+            versions = VersionsUtil.buildVersionVO(foundVersions, messageHelper);
+            versions.forEach(v -> v.setCreatedBy(userHelper.convertToPresentation(v.getUsername())));
         }
         return versions;
     }
