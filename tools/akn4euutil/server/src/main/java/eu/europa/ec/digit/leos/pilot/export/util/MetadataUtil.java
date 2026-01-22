@@ -673,8 +673,8 @@ public class MetadataUtil {
             coteField = finalCote;
         }
 
-        final String coteValue = coteField.get().getValue().replace(" ", "_")
-                +(diffusionVersion != null ? diffusionVersion : "");
+        final String coteValue = coteField.get().getValue().replace(" ", "_");
+                //+(diffusionVersion != null ? diffusionVersion : "");
 
         String prefinalisationName = "";
         int pos = documentFilename.indexOf("-");
