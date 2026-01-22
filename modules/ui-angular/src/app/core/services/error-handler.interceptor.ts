@@ -71,13 +71,13 @@ export class ErrorInterceptor implements HttpInterceptor {
 
   private notifyError(message: string) {
     this.translate
-      .get('global.notifications.title.error')
-      .subscribe((title) => {
+      .get(['global.notifications.title.error', message])
+      .subscribe((translations) => {
         this.euiAppShellService.isBlockDocumentActive = false;
         this.euiGrowl.growl({
           severity: 'danger',
-          summary: title,
-          detail: message,
+          summary: translations['global.notifications.title.error'],
+          detail: translations[message] !== message ? translations[message] : message,
           sticky: true,
         });
       });

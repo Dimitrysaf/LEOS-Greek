@@ -59,6 +59,7 @@ import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.api.exception.CreateMilestoneException;
+import eu.europa.ec.leos.services.api.exception.SameNameAnnexException;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.CollectionContextService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
@@ -1022,6 +1023,11 @@ public abstract class ApiServiceImpl implements ApiService {
             try {
                 populateTrackChangesContext(proposal);
                 LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+                List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
+                boolean annexExistWithSameName = documents.stream().filter(xmlDocument -> { return xmlDocument.getCategory().equals(LeosCategory.ANNEX) && StringUtils.isNotEmpty(xmlDocument.getOriginalFilename()) && xmlDocument.getOriginalFilename().toUpperCase().equals(originalFilename.toUpperCase()); }).findAny().isPresent();
+                if (annexExistWithSameName) {
+                    throw new SameNameAnnexException();
+                }
                 Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
                 BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
                 BillContextService billContext = billContextProvider.get();
@@ -1040,7 +1046,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.usePackageRef(proposalRef);
                 billContext.executeCreateBillAnnex(annexType, binaryContent, originalFilename, binaryContentSize);
                 billService.updateExternalReferencesAsync(leosPackage);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 LOG.error("Unexpected error occurred while creating new annex", e);
                 throw e;
             }
@@ -1311,6 +1317,12 @@ public abstract class ApiServiceImpl implements ApiService {
 
     @Override
     public void updateForeignAnnex(String proposalRef, String annexId, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+        List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
+        boolean annexExistWithSameName = documents.stream().filter(xmlDocument -> { return xmlDocument.getCategory().equals(LeosCategory.ANNEX) && !xmlDocument.getId().equals(annexId) && StringUtils.isNotEmpty(xmlDocument.getOriginalFilename()) && xmlDocument.getOriginalFilename().toUpperCase().equals(originalFilename.toUpperCase()); }).findAny().isPresent();
+        if (annexExistWithSameName) {
+            throw new SameNameAnnexException();
+        }
         Annex annex = annexService.findAnnex(annexId, true);
         AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
         if (binaryContent != null) {
