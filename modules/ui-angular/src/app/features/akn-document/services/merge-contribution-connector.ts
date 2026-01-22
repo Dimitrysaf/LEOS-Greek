@@ -114,6 +114,11 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
     return elementsMerged.length > 0;
   }
 
+  existNotProcessedChanges(): boolean {
+    const elementsMerged = this.document.querySelectorAll('[class*="' + MERGE_CONTRIBUTION + '"]:not([leos\\:mergeAction])');
+    return elementsMerged.length > 0;
+  }
+
   undoAllChanges() {
     const elementsToBeMerged = this.document.querySelectorAll('.' + MERGE_CONTRIBUTION);
     let selectedElements: Element[] = Array.from(elementsToBeMerged);
