@@ -15,7 +15,6 @@ package eu.europa.ec.leos.services.collection;
 
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
-import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
@@ -789,11 +788,6 @@ public abstract class CollectionContextService {
         LOG.trace("Executing 'Delete Proposal' use case...");
         if (proposal != null && proposal.getId() != null) {
             LeosPackage leosPckg = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
-            List<LinkedPackage> linkedPackages = packageService.findLinkedPackagesByPackageId(leosPckg.getId());
-            linkedPackages.forEach(linkedPkg -> {
-                LeosPackage linguisticPackage = packageService.findPackageByPackageId(linkedPkg.getLinkedPackageId());
-                packageService.deletePackage(linguisticPackage);
-            });
             packageService.deletePackage(leosPckg);
         }
     }
