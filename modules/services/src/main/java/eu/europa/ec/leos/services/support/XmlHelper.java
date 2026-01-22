@@ -466,13 +466,13 @@ public class XmlHelper {
         return prefixTobeUsedForChildren.contains(tagName) ? idOfNode : parentPrefix;  //if(root Node Name is in Article/Reictals/Citations..set the prefix)
     }
 
-    private static final ArrayList<String> nodeToSkip = new ArrayList<String>(Arrays.asList(META,BOLD,ITALICS,UNDERLINE,SUB,SUP));
+    private static final ArrayList<String> nodeToSkip = new ArrayList<String>(Arrays.asList(META));
 
     public static boolean skipNodeAndChildren(String tagName) {
         return nodeToSkip.contains(tagName) ? true : false;
     }
 
-    private static final ArrayList<String> tagNamesToSkip = new ArrayList<String>(Arrays.asList(AKOMANTOSO, BILL, "documentCollection", "doc", "attachments"));
+    private static final ArrayList<String> tagNamesToSkip = new ArrayList<String>(Arrays.asList(AKOMANTOSO, BILL, "documentCollection", "doc", "attachments",BOLD,ITALICS,UNDERLINE,SUB,SUP));
 
     public static boolean skipNodeOnly(String tagName) {
         return tagNamesToSkip.contains(tagName) ? true : false;
