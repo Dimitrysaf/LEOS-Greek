@@ -1,3 +1,7 @@
+//ADDED FOR LEOS LOADING: START
+(function($, window, define) {
+  //ADDED FOR LEOS LOADING: END
+
 /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
@@ -14513,3 +14517,16 @@ if (isBrowser) {
 }
 /******/ })()
 ;
+
+//ADDED FOR LEOS LOADING: START
+define(function(require, exports) {
+  $ = require('jquery');
+  // nothing to export really as it's jQuery plugin
+});
+})(jQuery, window, typeof define === 'function' && define.amd ? define : function(factory) {
+if (typeof exports !== 'undefined') {
+  factory(require, exports);
+}
+}
+);
+//ADDED FOR LEOS LOADING: END
