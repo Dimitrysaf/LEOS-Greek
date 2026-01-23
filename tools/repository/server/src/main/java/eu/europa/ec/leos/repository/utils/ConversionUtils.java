@@ -158,16 +158,21 @@ public class ConversionUtils {
     public static List<LeosDocument> buildXmlDocument(DocumentPropertyValuesRepository documentPropertyValuesRepository,
                                                       List<Collaborator> collaborators, DocumentContentRepository documentContentRepository,
                                                 List<DocumentV> docs, boolean fetchContent) {
+        LOG.info("-- #1975 -- buildXmlDocument() fetchContent {}, docs size {}, collaborators size {}",fetchContent, docs.size(), collaborators.size());
         List<LeosDocument> convertedDocs = new ArrayList<>();
         for (DocumentV doc : docs) {
             List<DocumentPropertyValues> docProps = getDocumentProperties(documentPropertyValuesRepository, doc.getNumProps(),
                     doc.getVersionId());
+            LOG.info("-- #1975 --  docProps size {}", docProps.size());
             Optional<DocumentContent> content = Optional.empty();
             if (fetchContent) {
                 content = documentContentRepository.findDocumentContentByVersionId(doc.getVersionId());
+                LOG.info("-- #1975 --  content isPresent  {}", content.isPresent());
             }
             convertedDocs.add(content.isPresent() ? new LeosDocument(doc, content.get(), collaborators, docProps) : new LeosDocument(doc, collaborators, docProps));
         }
+        LOG.info("-- #1975 -- convertedDocs size {}", convertedDocs.size());
+
         return convertedDocs;
     }
 
