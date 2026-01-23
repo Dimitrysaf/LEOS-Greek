@@ -3333,35 +3333,50 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private static void importAndReplaceNodeInDocument(Document doc, Node originalNode, Node nodeToImport) {
-        if (originalNode != null && nodeToImport != null) {
+        if (originalNode != null && nodeToImport != null && !originalNode.isSameNode(nodeToImport)) {
             Node importedNode = importNodeInDocument(doc, nodeToImport);
             XercesUtils.replaceElement(importedNode, originalNode);
         }
     }
 
     private static void replaceUnchangedTextContentInSourceDocByTarget(Document targetDoc, Document sourceDoc, Document sourceBaseDoc) {
-        NodeList targetNodes = getAllNodesWithId(targetDoc);
-        for (int i = 0; i < targetNodes.getLength(); i++) {
-            Node targetNode = targetNodes.item(i);
-            Node sourceNode = XercesUtils.getElementById(sourceDoc, getId(targetNode));
-            if (sourceNode != null) {
-                Node sourceBaseNode = XercesUtils.getElementById(sourceBaseDoc, getId(targetNode));
-                replaceUnchangedTextContentInSourceNodeByTarget(sourceNode, targetNode, sourceBaseNode);
+        NodeList sourceNodes = getAllNodesWithId(sourceDoc);
+        for (int i = 0; i < sourceNodes.getLength(); i++) {
+            Node sourceNode = sourceNodes.item(i);
+            Node targetNode = XercesUtils.getElementById(targetDoc, getId(sourceNode));
+            if (targetNode != null && anyHasTextChildren(sourceNode, targetNode) && unchangedTextContentInSource(sourceNode, sourceBaseDoc)) {
+                Node alignedNode = alignChildNodes(sourceNode, targetNode, targetDoc);
+                importAndReplaceNodeInDocument(sourceDoc, sourceNode, alignedNode);
             }
         }
     }
 
-    private static void replaceUnchangedTextContentInSourceNodeByTarget(Node sourceNode, Node targetNode, Node sourceBaseNode) {
+    private static boolean anyHasTextChildren(Node... nodes) {
+        return Arrays.stream(nodes).anyMatch(node -> !getTextChildren(node).isEmpty());
+    }
+
+    private static boolean unchangedTextContentInSource(Node sourceNode, Document sourceBaseDoc) {
+        Node sourceBaseNode = XercesUtils.getElementById(sourceBaseDoc, getId(sourceNode));
         List<Node> sourceTextNodes = getTextChildren(sourceNode);
-        List<Node> targetTextNodes = getTextChildren(targetNode);
-        if (sourceBaseNode != null && getTextChildren(sourceBaseNode).stream().map(Node::getTextContent).collect(Collectors.joining())
-                .equals(sourceTextNodes.stream().map(Node::getTextContent).collect(Collectors.joining())) && sourceNode.getNodeName()
-                .equals(targetNode.getNodeName()) && sourceTextNodes.size() == targetTextNodes.size()) {
-            for (int j = 0; j < targetTextNodes.size(); j++) {
-                String targetText = targetTextNodes.get(j).getTextContent();
-                sourceTextNodes.get(j).setTextContent(targetText);
+        return sourceBaseNode != null && getTextChildren(sourceBaseNode).stream().map(Node::getTextContent).collect(Collectors.joining())
+                .equals(sourceTextNodes.stream().map(Node::getTextContent).collect(Collectors.joining()));
+    }
+
+    private static Node alignChildNodes(Node sourceNode, Node targetNode, Document targetDoc) {
+        List<Node> sourceChildNodesWithId = getChildrenExcluding(sourceNode, STYLING_ELEMENTS);
+        if (sourceChildNodesWithId.stream().allMatch((Node sourceChildNodeWithId) -> {
+            Node targetChildNodeWithId = XercesUtils.getElementById(targetNode, getId(sourceChildNodeWithId));
+            if (targetChildNodeWithId != null) {
+                importAndReplaceNodeInDocument(targetDoc, targetChildNodeWithId, sourceChildNodeWithId);
+                return true;
             }
+            // if there's no corresponding node in target document, we need to take the whole source node and overwrite the target node
+            return false;
+        })) {
+            removeDeletedNodes(targetNode, sourceNode);
+            return targetNode;
         }
+        return sourceNode;
     }
 
     private void alignAlternatives(XmlDocument targetXmlDoc, Document sourceDoc, Document sourceBaseDoc) {
