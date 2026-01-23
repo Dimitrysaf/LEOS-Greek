@@ -105,7 +105,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   invalidTargetProposalDateInput: boolean;
   invalidCorrectionInfoInput: boolean;
   greffeUser: boolean;
-  diffusionVersion: string | null = null;
+  diffusionVersion: string = '';
   diffusionBarOptions: string[] = Array.from(
     { length: 20 },
     (_, i) => `/${i + 1}`
