@@ -1024,7 +1024,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 populateTrackChangesContext(proposal);
                 LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
                 List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
-                boolean annexExistWithSameName = documents.stream().filter(xmlDocument -> { return xmlDocument.getCategory().equals(LeosCategory.ANNEX) && StringUtils.isNotEmpty(xmlDocument.getOriginalFilename()) && xmlDocument.getOriginalFilename().toUpperCase().equals(originalFilename.toUpperCase()); }).findAny().isPresent();
+                boolean annexExistWithSameName = StringUtils.isEmpty(originalFilename) ? false : documents.stream().filter(xmlDocument -> xmlDocument.getCategory().equals(LeosCategory.ANNEX) && StringUtils.isNotEmpty(xmlDocument.getOriginalFilename()) && xmlDocument.getOriginalFilename().toUpperCase().equals(originalFilename.toUpperCase())).findAny().isPresent();
                 if (annexExistWithSameName) {
                     throw new SameNameAnnexException();
                 }
