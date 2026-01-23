@@ -94,6 +94,25 @@ define(function leosHierarchicalElementSubparagraphAfterLastPointModule(require)
         cmd.setState(shiftEnterStatus);
     }
 
+    function _findLevelLiElement(startElement) {
+        return startElement.getAscendant(function(el) {
+            return el.getName() === 'li' && el.getAttribute(DATA_AKN_NAME) === 'level';
+        }, true);
+    }
+
+    function _insertInLevelLi(startElement, emptyElement) {
+        if (startElement.getParent() && startElement.getParent().getAttribute(DATA_AKN_NAME) === AKN_ANNEX_LIST) {
+            var liElement = _findLevelLiElement(startElement);
+            if (liElement) {
+                liElement.append(emptyElement);
+            } else {
+                emptyElement.insertAfter(startElement);
+            }
+        } else {
+            emptyElement.insertAfter(startElement);
+        }
+    }
+
     function _onShiftCtrlEnterKeyCommand(cmd, editor) {
         LOG.debug("SHIFT_CTRL_ENTER button clicked");
         _executeShiftCtrlEnter(editor);
@@ -111,17 +130,18 @@ define(function leosHierarchicalElementSubparagraphAfterLastPointModule(require)
             case LEVEL_ELEMENT_TYPE:
                 if( startElement && startElement.getAttribute(DATA_AKN_NAME) === AKN_ANNEX_LIST){
                     startElement.append(emptyElement);
-                }if( startElement.getParent() && startElement.getParent().getAttribute(DATA_AKN_NAME) === AKN_ANNEX_LIST){
-                    emptyElement.insertAfter(startElement);
-                }else {
+                } else if( startElement.getParent() && startElement.getParent().getAttribute(DATA_AKN_NAME) === AKN_ANNEX_LIST){
+                    // When inside a main li element, insert into the main li instead of inserting after the current element
+                    _insertInLevelLi(startElement, emptyElement);
+                } else {
                 // go up until reach the subparagraph level, and insert the empty element as last child of the level
                     while (startElement.getParent()
                             && startElement.getParent().getAttribute(DATA_AKN_NAME) != AKN_ANNEX_LIST
                             && startElement.getName() !== LEVEL_ELEMENT_TYPE) {
 
-                        emptyElement.insertAfter(startElement);
                         startElement = startElement.getParent();
                     }
+                    _insertInLevelLi(startElement, emptyElement);
                 }
                 break;
             default:
