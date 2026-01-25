@@ -365,6 +365,8 @@
   "page.collection.drafts.annex.reorder-dialog.warning.concurrency": "Un autre utilisateur est en train de réorganisez les annexes, veuillez rafraichir l'écran et réessayer",
   "page.collection.drafts.annex.deletion.error": "Échec de la suppression de l'annexe",
   "page.collection.drafts.same.name.annex.error": "Une annexe avec ce nom de fichier existe déjà",
+  "page.collection.drafts.same.name.annex.invalid.file": "Fichier invalide",
+  "page.collection.drafts.same.name.annex.max": "Taille maximale du fichier dépassée",
   "page.collection.drafts.last-updated-on-by": "Dernière mise à jour le {{ date }} par {{ name }}",
   "page.editor.actions-dropdown.label": "Actions",
   "page.editor.actions-dropdown.save": "Sauver",

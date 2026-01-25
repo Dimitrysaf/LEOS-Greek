@@ -59,7 +59,7 @@ import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.api.exception.CreateMilestoneException;
-import eu.europa.ec.leos.services.api.exception.SameNameAnnexException;
+import eu.europa.ec.leos.services.api.exception.CreateAnnexException;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.CollectionContextService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
@@ -1026,7 +1026,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
                 boolean annexExistWithSameName = StringUtils.isEmpty(originalFilename) ? false : documents.stream().filter(xmlDocument -> xmlDocument.getCategory().equals(LeosCategory.ANNEX) && StringUtils.isNotEmpty(xmlDocument.getOriginalFilename()) && xmlDocument.getOriginalFilename().toUpperCase().equals(originalFilename.toUpperCase())).findAny().isPresent();
                 if (annexExistWithSameName) {
-                    throw new SameNameAnnexException();
+                    throw new CreateAnnexException("page.collection.drafts.same.name.annex.error");
                 }
                 Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
                 BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
@@ -1321,7 +1321,7 @@ public abstract class ApiServiceImpl implements ApiService {
         List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
         boolean annexExistWithSameName = documents.stream().filter(xmlDocument -> { return xmlDocument.getCategory().equals(LeosCategory.ANNEX) && !xmlDocument.getId().equals(annexId) && StringUtils.isNotEmpty(xmlDocument.getOriginalFilename()) && xmlDocument.getOriginalFilename().toUpperCase().equals(originalFilename.toUpperCase()); }).findAny().isPresent();
         if (annexExistWithSameName) {
-            throw new SameNameAnnexException();
+            throw new CreateAnnexException("page.collection.drafts.same.name.annex.error");
         }
         Annex annex = annexService.findAnnex(annexId, true);
         AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
