@@ -605,7 +605,7 @@ public class LeosApiController {
     @ResponseBody
     public ResponseEntity<Object> createProposalForeignAnnex(@PathVariable("proposalRef") String proposalRef, @RequestParam("foreignAnnexFile") MultipartFile foreignAnnexFile) throws IOException {
         validatePath(FilenameUtils.normalize(foreignAnnexFile.getOriginalFilename()));
-        if (!isValidFileNameForBinaryFile(foreignAnnexFile.getOriginalFilename()) || !isValidMimeTypeForBinaryFile(foreignAnnexFile.getBytes())) {
+        if (!isValidFileNameForBinaryFile(foreignAnnexFile.getOriginalFilename()) || !isValidMimeTypeForBinaryFile(foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename())) {
             throw new CreateAnnexException("page.collection.drafts.same.name.annex.invalid.file");
         }
         if (!isValidSizeFileForBinaryFile(foreignAnnexFile.getSize())) {
@@ -640,7 +640,7 @@ public class LeosApiController {
     public ResponseEntity<Object> updateForeignAnnex(@PathVariable("proposalRef") String proposalRef, @PathVariable("annexId") String annexId,
             @RequestParam("foreignAnnexFile") MultipartFile foreignAnnexFile) throws IOException {
         validatePath(FilenameUtils.normalize(foreignAnnexFile.getOriginalFilename()));
-        if (!isValidFileNameForBinaryFile(foreignAnnexFile.getOriginalFilename()) || !isValidMimeTypeForBinaryFile(foreignAnnexFile.getBytes())) {
+        if (!isValidFileNameForBinaryFile(foreignAnnexFile.getOriginalFilename()) || !isValidMimeTypeForBinaryFile(foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename())) {
             throw new CreateAnnexException("page.collection.drafts.same.name.annex.invalid.file");
         }
         if (!isValidSizeFileForBinaryFile(foreignAnnexFile.getSize())) {
