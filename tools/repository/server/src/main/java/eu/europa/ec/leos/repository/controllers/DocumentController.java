@@ -31,6 +31,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,6 +50,7 @@ import static com.sun.jndi.toolkit.url.UrlUtil.decode;
 @RestController
 @Tag(name = "Document API", description = "Document API")
 public class DocumentController {
+    private static final Logger LOG = LoggerFactory.getLogger(DocumentController.class);
 
     @Autowired
     DocumentService documentService;
@@ -215,7 +218,9 @@ public class DocumentController {
     public ResponseEntity<Object> searchVersions(@PathVariable("ref") String docRef,
                                                    @RequestParam("versionType") String versionType,
                                                    @RequestBody List<String> logins) {
+        LOG.info("-- #1975 -- Parameters: docRef {}, logins {}, versionType {}",docRef, logins, versionType);
         List<LeosDocument> xmlDocs = documentService.searchVersionsByRef(docRef, logins, versionType);
+        LOG.info("-- #1975 -- Result : xmlDocs size {}", (xmlDocs != null && !xmlDocs.isEmpty()) ? xmlDocs.size() : "is null or empty");
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
