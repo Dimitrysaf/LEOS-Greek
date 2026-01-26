@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_NAME;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
@@ -963,23 +964,37 @@ public class XercesUtils {
     }
 
     public static List<Node> getChildren(Node node) {
-        return getChildrenByNodeType(node, Node.ELEMENT_NODE);
-    }
-
-    public static List<Node> getTextChildren(Node node) {
-        return getChildren(node, STYLING_ELEMENTS, true);
-    }
-
-    private static List<Node> getChildrenByNodeType(Node node, short nodeType) {
         List<Node> children = new ArrayList<>();
         NodeList nodeList = node.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
             node = nodeList.item(i);
-            if (node.getNodeType() == nodeType) {
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
                 children.add(node);
             }
         }
         return children;
+    }
+
+    /**
+     * Returns all children text nodes within the given node, including nested ones in styling node elements (<i>,<b>,<u>,<sub>,<sup>).
+     * @param node
+     * @return
+     */
+    public static List<Node> getTextChildren(Node node) {
+        return getChildren(node, STYLING_ELEMENTS, true).stream()
+                .flatMap(child -> STYLING_ELEMENTS.contains(child.getNodeName()) ? getTextChildren(child).stream() : Stream.of(child))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns all children element nodes. If a child is a styling node (<i>,<b>,<u>,<sub>,<sup>), its children element nodes are returned instead
+     * @param node
+     * @return
+     */
+    public static List<Node> getNonStylingChildren(Node node) {
+        return getChildren(node).stream()
+                .flatMap(child -> STYLING_ELEMENTS.contains(child.getNodeName()) ? getNonStylingChildren(child).stream() : Stream.of(child))
+                .collect(Collectors.toList());
     }
 
     public static List<Node> getDescendantsWithAttribute(Node node, String attribute) {

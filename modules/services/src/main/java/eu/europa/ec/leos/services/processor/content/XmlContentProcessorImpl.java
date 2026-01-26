@@ -3363,7 +3363,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private static Node alignChildNodes(Node sourceNode, Node targetNode, Document targetDoc) {
-        List<Node> sourceChildNodesWithId = getChildrenExcluding(sourceNode, STYLING_ELEMENTS);
+        List<Node> sourceChildNodesWithId = getNonStylingChildren(sourceNode);
         if (sourceChildNodesWithId.stream().allMatch((Node sourceChildNodeWithId) -> {
             Node targetChildNodeWithId = XercesUtils.getElementById(targetNode, getId(sourceChildNodeWithId));
             if (targetChildNodeWithId != null) {
