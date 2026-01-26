@@ -76,7 +76,7 @@ public interface XmlNodeConfigProcessor {
         switch (leosCategory) {
             case BILL:
                 showAs = "Regulation of the European Parliament and of the Council";
-                refersToList.addAll(Arrays.asList("~DEC", "~REG", "~DIR"));
+                refersToList.addAll(Arrays.asList("~DEC", "~DEC_DEL", "~DEC_IMPL", "~REG", "~REG_DEL", "~REG_IMPL", "~DIR", "~DIR_DEL", "~DIR_IMPL"));
                 break;
             case MEMORANDUM:
                 showAs = "Explanatory Memorandum";
