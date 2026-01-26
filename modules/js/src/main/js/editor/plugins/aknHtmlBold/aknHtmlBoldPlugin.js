@@ -18,6 +18,7 @@ define(function aknHtmlBoldPluginModule(require) {
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
     var pluginName = "aknHtmlBold";
+    var commandName = "bold";
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
     var aknHTMLPluginsUtils = require("plugins/aknHTMLPluginUtils");
 

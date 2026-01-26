@@ -18,6 +18,7 @@ define(function aknHtmlItalicPluginModule(require) {
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
     var pluginName = "aknHtmlItalic";
+    var commandName = "italic";
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
     var aknHTMLPluginsUtils = require("plugins/aknHTMLPluginUtils");
 

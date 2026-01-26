@@ -19,6 +19,7 @@ define(function aknHtmlUnderlinePluginModule(require) {
     var pluginTools = require("plugins/pluginTools");
     
     var pluginName = "aknHtmlUnderline";
+    var commandName = "underline";
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
     var aknHTMLPluginsUtils = require("plugins/aknHTMLPluginUtils");
 
