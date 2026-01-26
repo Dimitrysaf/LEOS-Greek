@@ -40,6 +40,7 @@ export class ProposalViewComponent
   proposalRef: string;
   @ViewChild('tabs') tabs: EuiTabsComponent;
   milestoneTabSelected = false;
+  detailsTabSelected = false;
   legFileName: string = null;
   translatedDocs: Document[];
   tabsContext: any;
@@ -128,6 +129,12 @@ export class ProposalViewComponent
     if (this.tabs && !this.milestoneTabSelected && this.legFileName && this.legFileName !== null) {
       this.tabs.changeTab(1);
       this.milestoneTabSelected = true;
+    }
+    if (this.tabs && this.tabs.activeTabIndex == 3 && !this.detailsTabSelected) {
+      this.detailsTabSelected = true;
+      this.proposalDetailsService.refreshProposalDetails(this.proposal);
+    } else if (this.tabs && this.tabs.activeTabIndex !== 3 && this.detailsTabSelected) {
+      this.detailsTabSelected = false;
     }
   }
 

@@ -111,6 +111,10 @@ export class ProposalDetailsService implements OnDestroy {
     this.clonedProposalCount = 0;
   }
 
+  refreshProposalDetails(proposal: Document) {
+    this.proposalDetailsRefreshedBS.next(proposal);
+  }
+
   setUserAutocompleteInputChange(name: string) {
     this.userInputFieldChangeBS.next(name);
   }
