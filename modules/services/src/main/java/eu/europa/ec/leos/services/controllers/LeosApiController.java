@@ -606,10 +606,10 @@ public class LeosApiController {
     public ResponseEntity<Object> createProposalForeignAnnex(@PathVariable("proposalRef") String proposalRef, @RequestParam("foreignAnnexFile") MultipartFile foreignAnnexFile) throws IOException {
         validatePath(FilenameUtils.normalize(foreignAnnexFile.getOriginalFilename()));
         if (!isValidFileNameForBinaryFile(foreignAnnexFile.getOriginalFilename()) || !isValidMimeTypeForBinaryFile(foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename())) {
-            throw new CreateAnnexException("page.collection.drafts.same.name.annex.invalid.file");
+            throw new CreateAnnexException("page.collection.drafts.annex.invalid.file");
         }
         if (!isValidSizeFileForBinaryFile(foreignAnnexFile.getSize())) {
-            throw new CreateAnnexException("page.collection.drafts.same.name.annex.max");
+            throw new CreateAnnexException("page.collection.drafts.annex.max.size.error");
         }
         proposalRef = encodeParam(proposalRef);
         this.apiService.createProposalAnnex(proposalRef, AnnexType.FOREIGN, foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename(), String.format("%.2f KB", foreignAnnexFile.getSize() / 1024.0));
@@ -641,10 +641,10 @@ public class LeosApiController {
             @RequestParam("foreignAnnexFile") MultipartFile foreignAnnexFile) throws IOException {
         validatePath(FilenameUtils.normalize(foreignAnnexFile.getOriginalFilename()));
         if (!isValidFileNameForBinaryFile(foreignAnnexFile.getOriginalFilename()) || !isValidMimeTypeForBinaryFile(foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename())) {
-            throw new CreateAnnexException("page.collection.drafts.same.name.annex.invalid.file");
+            throw new CreateAnnexException("page.collection.drafts.annex.invalid.file");
         }
         if (!isValidSizeFileForBinaryFile(foreignAnnexFile.getSize())) {
-            throw new CreateAnnexException("page.collection.drafts.same.name.annex.max");
+            throw new CreateAnnexException("page.collection.drafts.annex.max.size.error");
         }
         proposalRef = encodeParam(proposalRef);
         annexId = encodeParam(annexId);
