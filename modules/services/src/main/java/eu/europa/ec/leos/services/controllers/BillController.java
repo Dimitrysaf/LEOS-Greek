@@ -290,13 +290,15 @@ public class BillController {
                                                     @RequestParam(required = false, defaultValue = "") String authorKey,
                                                     @RequestParam(required = false, defaultValue = "") String type) {
         try {
+            LOG.info("-- #1975 -- Searching for version data documentRef:{}, authorKey:{}, type:{}", documentRef, authorKey, type);
             documentRef = encodeParam(documentRef);
             authorKey = encodeParam(authorKey);
             type = encodeParam(type);
             List<VersionVO> versions = this.genericDocumentApiService.searchVersions(documentRef, authorKey, type);
+            LOG.info("-- #1975 -- Version result : {} ", versions);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
-            LOG.error("Error occurred while getting versioning data - " + e.getMessage());
+            LOG.error("Error occurred while getting versioning data - {}", e);
             return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
