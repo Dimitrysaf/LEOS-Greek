@@ -1,13 +1,13 @@
 package eu.europa.ec.leos.services.api.exception;
 
-public class SameNameAnnexException extends RuntimeException {
+public class CreateAnnexException extends RuntimeException {
 
     private static final long serialVersionUID = 1644366742521353921L;
     private ErrorCode errorCode = ErrorCode.SNA001;
-    private String messageKey = "page.collection.drafts.same.name.annex.error";
+    private String messageKey;
 
-    public SameNameAnnexException() {
-        super();
+    public CreateAnnexException(String messageKey) {
+        this.messageKey = messageKey;
     }
 
     public ErrorCode getErrorCode() {

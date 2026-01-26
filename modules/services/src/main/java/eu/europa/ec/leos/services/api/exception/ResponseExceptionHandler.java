@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.Arrays;
 
@@ -45,15 +44,15 @@ public class ResponseExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(SameNameAnnexException.class)
-    public ResponseEntity<String> handleException(SameNameAnnexException ex) {
+    @ExceptionHandler(CreateAnnexException.class)
+    public ResponseEntity<String> handleException(CreateAnnexException ex) {
         String errorMessage = ex.getMessage();
         if (Arrays.stream(ex.getStackTrace()).findFirst().isPresent()) {
             LOG.error("Unexpected error occurred :" + Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);
         } else {
             LOG.error("Unexpected error occurred :" + errorMessage, ex);
         }
-        return new ResponseEntity<>(ex.getMessageKey(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(ex.getMessageKey(), HttpStatus.BAD_REQUEST);
     }
 
 }

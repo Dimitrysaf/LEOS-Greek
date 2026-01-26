@@ -858,14 +858,13 @@ public class XmlHelper {
         return pattern.matcher(fileName).matches();
     }
 
-    public static boolean isValidMimeTypeForBinaryFile(byte[] binaryContent) throws IOException {
+    public static boolean isValidMimeTypeForBinaryFile(byte[] binaryContent, String fileName) throws IOException {
         Tika tika = new Tika();
-        String mimeType = tika.detect(TikaInputStream.get(binaryContent));
+        String mimeType = tika.detect(TikaInputStream.get(binaryContent), fileName);
         List<String> allowedTypes = Arrays.asList(
                 "application/pdf",
                 "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                "application/octet-stream", "application/x-tika-ooxml");
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         return allowedTypes.contains(mimeType);
     }
 
