@@ -8,7 +8,7 @@
     euiBasicButton
     [title]="'page.editor.contribution.merge.actions.accept' | translate"
     [attr.aria-label]="'page.editor.contribution.merge.actions.accept' | translate"
-    [disabled]="!this.canAcceptTrackChanges"
+    [disabled]="!this.canAcceptTrackChanges || this.contribution.greyed"
     (click)="onAccept()"
   >
     <img src="assets/images/accept.png" alt="" height="16"/>
@@ -25,7 +25,7 @@
     euiBasicButton
     [title]="'page.editor.contribution.merge.actions.accept.tc' | translate"
     [attr.aria-label]="'page.editor.contribution.merge.actions.accept.tc' | translate"
-    [disabled]="!this.canAcceptTrackChanges"
+    [disabled]="!this.canAcceptTrackChanges || this.contribution.greyed"
     (click)="onAcceptWithTC()"
   >
     <img src="assets/images/accept_tc.png" alt="" height="16"/>
@@ -42,7 +42,7 @@
     euiBasicButton
     [title]="'page.editor.contribution.merge.actions.mark.processed' | translate"
     [attr.aria-label]="'page.editor.contribution.merge.actions.mark.processed' | translate"
-    [disabled]="!this.canRejectTrackChanges"
+    [disabled]="!this.canRejectTrackChanges || this.contribution.greyed"
     (click)="onMarkProcessed()"
   >
     <img src="assets/images/ok.png" alt="" />

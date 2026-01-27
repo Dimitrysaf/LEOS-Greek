@@ -329,6 +329,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
                     metadataService.processCoverPageType((SimpleFieldInfo)fieldInfo, xmlFile);
                     break;
                 case DIFFUSION_VERSION:
+                    metadataService.processDiffusionVersion(diffusionVersion, xmlFile);
                     break;
                 default:
                     throw new MetadataUtilsException(MetadataUtil.FIELD_NOT_SUPPORTED_MESSAGE);
