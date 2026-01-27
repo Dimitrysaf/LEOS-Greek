@@ -273,7 +273,7 @@ public class XmlHelper {
                                                                     LEVEL, CROSSHEADING, DIVISION);
     public static final List<String> ELEMENTS_TO_BE_PROCESSED_FOR_NUMBERING = Arrays.asList(ARTICLE, PARAGRAPH, SUBPARAGRAPH, POINT, SUBPOINT, INDENT, LEVEL);
     public static final List<String> ELEMENTS_TO_BE_NUMBERED = Arrays.asList(ARTICLE, PARAGRAPH, POINT, LEVEL);
-    public static final List<String> POINT_ROOT_PARENT_ELEMENTS = Arrays.asList(ARTICLE, LEVEL);
+    public static final List<String> STYLING_ELEMENTS = Arrays.asList(BOLD, ITALICS, UNDERLINE, SUP, SUB);
     public static final List<String> INLINE_ELEMENTS = Arrays.asList(AUTHORIAL_NOTE, MATHJAX, MREF, REF, BOLD, ITALICS, UNDERLINE, SUP, SUB, INLINE);
     private static final List<String> ELEMENTS_TO_REMOVE_FROM_CONTENT = Arrays.asList(INLINE, AUTHORIAL_NOTE);
     public static final List<String> ELEMENTS_TO_HIDE_CONTENT = Arrays.asList(PREFACE, PREAMBLE, CITATIONS, RECITALS, BODY, MAIN_BODY);

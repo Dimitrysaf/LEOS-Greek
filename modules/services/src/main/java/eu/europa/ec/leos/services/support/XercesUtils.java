@@ -42,60 +42,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_NAME;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN_NAME;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN_URI;
-import static eu.europa.ec.leos.services.support.XmlHelper.XML_NAME;
-import static eu.europa.ec.leos.services.support.XmlHelper.convertStringDateToCalendar;
-import static eu.europa.ec.leos.services.support.XmlHelper.findString;
-import static eu.europa.ec.leos.services.support.XmlHelper.isExcludedNode;
-import static eu.europa.ec.leos.services.support.XmlHelper.removeSelfClosingElements;
-import static eu.europa.ec.leos.services.support.XmlHelper.replaceNonBreakingSpace;
-import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
-import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
-import static eu.europa.ec.leos.services.support.XmlHelper.OPEN_END_TAG;
-import static eu.europa.ec.leos.services.support.XmlHelper.OPEN_TAG;
-import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
-import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
-import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_ACTIONS_PREFIXES;
-import static eu.europa.ec.leos.services.support.XmlHelper.STYLE;
-import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
-import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
-import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE_ENTER;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE_NUMBER;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_UID;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_UID_ENTER;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_UID_NUMBER;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_USER_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ELEMENT_NAME;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ELEMENT_NAME;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_ORIGINAL_NUMBER;
-import static eu.europa.ec.leos.services.support.XmlHelper.ID;
-import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
-import static eu.europa.ec.leos.services.support.XmlHelper.INLINE;
-import static eu.europa.ec.leos.services.support.XmlHelper.INLINE_NUM;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ENTER;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_NUMBER;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_DELETE;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_DATE_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
-import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.CLOSE_END_TAG;
-import static eu.europa.ec.leos.services.support.XmlHelper.CLOSE_TAG;
-import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT_NEW_CLASS;
-import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT_REMOVED_CLASS;
-import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
-import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SPLIT_CONTENT_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 public class XercesUtils {
     private static final String XML_DEFINITION_REGEX = "^<\\?xml *version=[\"\']1\\.[01][\"\'] *encoding=([\"\'])UTF-8([\"\'])?( *standalone=([\"\'])((yes)|(no))([\"\']))? *\\?>";
@@ -986,6 +939,10 @@ public class XercesUtils {
     }
 
     public static List<Node> getChildren(Node node, List<String> elementsName) {
+        return getChildren(node, elementsName, false);
+    }
+
+    public static List<Node> getChildren(Node node, List<String> elementsName, boolean includeTextNodes) {
         elementsName =
                 elementsName.stream().filter((elt) -> elt != null)
                         .map((eltName) -> eltName.toLowerCase()).collect(Collectors.toList());
@@ -994,7 +951,8 @@ public class XercesUtils {
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node child = nodeList.item(i);
             if (child.getNodeType() == Node.ELEMENT_NODE
-                    && (elementsName.contains(child.getNodeName().toLowerCase()) || elementsName.isEmpty())) {
+                    && (elementsName.contains(child.getNodeName().toLowerCase()) || elementsName.isEmpty())
+                    || includeTextNodes && child.getNodeType() == Node.TEXT_NODE && !child.getNodeValue().trim().isEmpty()) {
                 children.add(child);
             }
         }
@@ -1006,23 +964,37 @@ public class XercesUtils {
     }
 
     public static List<Node> getChildren(Node node) {
-        return getChildrenByNodeType(node, Node.ELEMENT_NODE);
-    }
-
-    public static List<Node> getTextChildren(Node node) {
-        return getChildrenByNodeType(node, Node.TEXT_NODE);
-    }
-
-    private static List<Node> getChildrenByNodeType(Node node, short nodeType) {
         List<Node> children = new ArrayList<>();
         NodeList nodeList = node.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
             node = nodeList.item(i);
-            if (node.getNodeType() == nodeType) {
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
                 children.add(node);
             }
         }
         return children;
+    }
+
+    /**
+     * Returns all children text nodes within the given node, including nested ones in styling node elements (<i>,<b>,<u>,<sub>,<sup>).
+     * @param node
+     * @return
+     */
+    public static List<Node> getTextChildren(Node node) {
+        return getChildren(node, STYLING_ELEMENTS, true).stream()
+                .flatMap(child -> STYLING_ELEMENTS.contains(child.getNodeName()) ? getTextChildren(child).stream() : Stream.of(child))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns all children element nodes. If a child is a styling node (<i>,<b>,<u>,<sub>,<sup>), its children element nodes are returned instead
+     * @param node
+     * @return
+     */
+    public static List<Node> getNonStylingChildren(Node node) {
+        return getChildren(node).stream()
+                .flatMap(child -> STYLING_ELEMENTS.contains(child.getNodeName()) ? getNonStylingChildren(child).stream() : Stream.of(child))
+                .collect(Collectors.toList());
     }
 
     public static List<Node> getDescendantsWithAttribute(Node node, String attribute) {
