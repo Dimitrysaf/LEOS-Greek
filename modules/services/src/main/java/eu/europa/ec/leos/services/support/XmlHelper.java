@@ -472,7 +472,7 @@ public class XmlHelper {
         return nodeToSkip.contains(tagName) ? true : false;
     }
 
-    private static final ArrayList<String> tagNamesToSkip = new ArrayList<String>(Arrays.asList(AKOMANTOSO, BILL, "documentCollection", "doc", "attachments"));
+    private static final ArrayList<String> tagNamesToSkip = new ArrayList<String>(Arrays.asList(AKOMANTOSO, BILL, "documentCollection", "doc", "attachments",BOLD,ITALICS,UNDERLINE,SUB,SUP));
 
     public static boolean skipNodeOnly(String tagName) {
         return tagNamesToSkip.contains(tagName) ? true : false;
