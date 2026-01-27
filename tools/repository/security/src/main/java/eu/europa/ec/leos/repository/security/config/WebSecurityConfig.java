@@ -126,13 +126,13 @@ public class WebSecurityConfig {
 					);
 		}
 
-		http
-				.exceptionHandling(exception -> exception
-						.authenticationEntryPoint(JwtAuthenticationEntryPoint()))
-				.sessionManagement(session -> session
-						.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.addFilterBefore(new JwtRequestFilter(), UsernamePasswordAuthenticationFilter.class)
-				.addFilterAfter(new XSSFilter(), UsernamePasswordAuthenticationFilter.class);
+//		http
+//				.exceptionHandling(exception -> exception
+//						.authenticationEntryPoint(JwtAuthenticationEntryPoint()))
+//				.sessionManagement(session -> session
+//						.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//				.addFilterBefore(new JwtRequestFilter(), UsernamePasswordAuthenticationFilter.class)
+//				.addFilterAfter(new XSSFilter(), UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}

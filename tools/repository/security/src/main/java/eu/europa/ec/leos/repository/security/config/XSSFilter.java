@@ -97,6 +97,9 @@ public class XSSFilter implements Filter {
         } catch (Exception e) {
             LOG.error("Error in XSSFilter: " + e.getMessage(), e);
             request.setAttribute("message", e.getMessage());
+            if (response instanceof HttpServletResponse) {
+                ((HttpServletResponse) response).sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Security Filter Error");
+            }
         } finally {
             // VERY IMPORTANT
             // clear out the ThreadLocal variables in the authenticator
