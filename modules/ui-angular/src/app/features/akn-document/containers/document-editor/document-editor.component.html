@@ -255,9 +255,12 @@
                               id="type-all"
                               formControlName="type"
                               value="all"
-                              label="All"
                               euiSizeXS
                             />
+                            <label euiLabel for="type-all" class="eui-u-mt-none">{{
+                                'page.editor.versions.search.form.all'
+                                  | translate
+                              }}</label>
                           </div>
                           <div class="version-search-form-author-label">
                             <input
@@ -266,8 +269,11 @@
                               id="type-save"
                               formControlName="type"
                               value="save"
-                              label="Save"
                             />
+                            <label euiLabel for="type-save" class="eui-u-mt-none">{{
+                                'page.editor.versions.search.form.major'
+                                  | translate
+                              }}</label>
                           </div>
                           <div class="version-search-form-author-label">
                             <input
@@ -276,8 +282,11 @@
                               id="type-milestone"
                               formControlName="type"
                               value="milestone"
-                              label="Milestone"
                             />
+                            <label euiLabel for="type-milestone" class="eui-u-mt-none">{{
+                                'page.editor.versions.search.form.milestone'
+                                  | translate
+                              }}</label>
                           </div>
                         </div>
                       </div>
@@ -303,8 +312,10 @@
                           }}:</label
                         >
                       </div>
-                      <div class="col-md-8">
-                        <input id="author" formControlName="author"/>
+                      <div class="col-md-6">
+                        <input id="author" formControlName="author" style="width:100%"/>
+                      </div>
+                      <div class="col-md-2">
                         <button
                           type="button"
                           class="eui-button eui-button--basic eui-button--icon-only eui-button--rounded eui-button--size-s ng-star-inserted"

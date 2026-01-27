@@ -50,7 +50,10 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
 
     public List<Collaborator> getCollaborators(Package pkg) {
         List<Collaborator> collaboratorList = new ArrayList<>();
+        LOG.info("-- #1975 -- pkg to search {}", pkg);
         List<PackageCollaborators> pkgCollaborators = packageCollaboratorsRepository.findPackageCollaboratorsByPkg(pkg);
+        LOG.info("-- #1975 -- pkgCollaborators :  size {}", (pkgCollaborators != null && !pkgCollaborators.isEmpty()) ? pkgCollaborators.size() : "pkgCollaborators is null or empty");
+
         for (PackageCollaborators pkgCollaborator : pkgCollaborators) {
             collaboratorList.add(
                     new Collaborator(
@@ -61,14 +64,18 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
                     )
             );
         }
+        LOG.info("-- #1975 -- collaboratorList size {}", collaboratorList.size());
         return collaboratorList;
     }
 
     public List<Collaborator> getCollaborators(BigDecimal pkgId) {
+        LOG.info("-- #1975 -- pkgId : {}", pkgId);
         Optional<Package> pkg = packageRepository.findById(pkgId);
         if (pkg.isPresent()) {
+            LOG.info("-- #1975 -- pkg isPresent ");
             return getCollaborators(pkg.get());
         }
+        LOG.info("-- #1975 -- pkg is not Present ");
         return Arrays.asList();
     }
 
