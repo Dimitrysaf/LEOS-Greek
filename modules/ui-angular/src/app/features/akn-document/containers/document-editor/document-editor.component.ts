@@ -179,6 +179,7 @@ export class DocumentEditorComponent
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
   private applyActionDisabledBS = new BehaviorSubject<boolean>(true);
+
   private contributionChangesBS = new BehaviorSubject<HTMLElement[]>([]);
 
   private requestStoredDocumentAnnotationsSubscription: Subscription = new Subscription();
@@ -865,6 +866,7 @@ export class DocumentEditorComponent
       : [];
     const elemList = nodeList ? [...nodeList] : [];
     this.contributionChangesBS.next(elemList);
+    this.documentActions.existMergeChanges(this.cdkEditor.existAcceptedChanges(), this.cdkEditor.existNotProcessedChanges());
   }
 
   private reloadComponent() {

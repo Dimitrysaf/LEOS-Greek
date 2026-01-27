@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.repository.services;
 
+import eu.europa.ec.leos.repository.H2TestBase;
 import eu.europa.ec.leos.repository.TestConstants;
 import eu.europa.ec.leos.repository.controllers.requests.WorkflowCollaboratorConfigRequest;
 import eu.europa.ec.leos.repository.entities.WorkflowCollaboratorConfig;
@@ -24,7 +25,7 @@ import java.util.Optional;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-class WorkflowCollaboratorConfigTests {
+class WorkflowCollaboratorConfigTests extends H2TestBase {
 
     @Autowired
     private WorkflowCollaboratorConfigService workflowCollaboratorConfigService;

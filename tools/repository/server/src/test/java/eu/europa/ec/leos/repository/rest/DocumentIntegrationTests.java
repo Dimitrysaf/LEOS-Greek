@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.repository.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.europa.ec.leos.repository.H2TestBase;
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.controllers.DocumentController;
 import eu.europa.ec.leos.repository.controllers.requests.CreateDocumentRequest;
@@ -58,7 +59,7 @@ import static org.springframework.web.util.UriUtils.encodeUriVariables;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(value = DocumentController.class)
 @ActiveProfiles("test")
-class DocumentIntegrationTests {
+class DocumentIntegrationTests extends H2TestBase {
     @Autowired
     protected MockMvc mockMvc;
 

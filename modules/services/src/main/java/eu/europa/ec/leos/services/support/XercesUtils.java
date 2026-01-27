@@ -33,6 +33,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
@@ -132,6 +133,11 @@ public class XercesUtils {
 
     public static Node createNodeFromXmlFragment(byte[] xmlFragment) {
         Document document = createXercesDocument(xmlFragment, true);
+        return document.getFirstChild();
+    }
+
+    public static Node createNodeFromXmlFragment(byte[] xmlFragment, boolean namespaceEnabled) {
+        Document document = createXercesDocument(xmlFragment, namespaceEnabled);
         return document.getFirstChild();
     }
 
@@ -277,20 +283,20 @@ public class XercesUtils {
     }
 
     public static byte[] sanitize(byte[] content) {
-    	Document doc = createXercesDocument(content);
-    	sanitize(doc.getDocumentElement());
-    	return nodeToByteArray(doc);
+        Document doc = createXercesDocument(content);
+        sanitize(doc.getDocumentElement());
+        return nodeToByteArray(doc);
     }
 
     public static void sanitize(Node node) {
-    	if (node.getNodeType() == Node.TEXT_NODE) {
-    		node.setTextContent(replaceNonBreakingSpace(node.getTextContent()));
-    	} else if (node.getNodeType() == Node.ELEMENT_NODE) {
-    		NodeList nodeList = node.getChildNodes();
+        if (node.getNodeType() == Node.TEXT_NODE) {
+            node.setTextContent(replaceNonBreakingSpace(node.getTextContent()));
+        } else if (node.getNodeType() == Node.ELEMENT_NODE) {
+            NodeList nodeList = node.getChildNodes();
             for (int i = 0; i < nodeList.getLength(); i++) {
-            	sanitize(nodeList.item(i));
+                sanitize(nodeList.item(i));
             }
-    	}
+        }
     }
 
     private static String buildNodeAsString(Node node, StringBuffer sb) {
@@ -1408,14 +1414,14 @@ public class XercesUtils {
         }
         return softActionType;
     }
-    
+
     public static void insertOrUpdateAttributeValueRecursively(Node node, String attrName, String attrValue) {
-    	insertOrUpdateAttributeValue(node, attrName, attrValue);
-    	if(node.hasChildNodes()) {
-    		for(Node child : getChildren(node)) {
-    			insertOrUpdateAttributeValueRecursively(child, attrName, attrValue);
-    		}
-    	}
+        insertOrUpdateAttributeValue(node, attrName, attrValue);
+        if(node.hasChildNodes()) {
+            for(Node child : getChildren(node)) {
+                insertOrUpdateAttributeValueRecursively(child, attrName, attrValue);
+            }
+        }
     }
 
     public static String removeXmlNSAttributes(String input) {
@@ -1476,13 +1482,13 @@ public class XercesUtils {
     }
 
     private static boolean hasChildContainsAttributeValue(Node node, String attrName, String attrValue) {
-    	NodeList children = node.getChildNodes();
-    	for (int i = 0; i < children.getLength(); i++) {
-        	if(hasAttributeWithValue(children.item(i), attrName, attrValue)) {
-        		return true;
-        	}
+        NodeList children = node.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            if(hasAttributeWithValue(children.item(i), attrName, attrValue)) {
+                return true;
+            }
         }
-    	return false;
+        return false;
     }
 
     public static boolean hasNodeContainingAttributeValue(NodeList bodyNodes, String attrName, String attrValue) {
@@ -1604,7 +1610,11 @@ public class XercesUtils {
             XercesUtils.deleteElement(node);
             isNodeDeleted = true;
         } else if(LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName())) {
-            XercesUtils.replaceElement(node.getFirstChild(), node);
+            if (node.getFirstChild() != null) {
+                XercesUtils.replaceNodeWithSelfContent(node);
+            } else {
+                XercesUtils.deleteElement(node);
+            }
             isNodeDeleted = true;
         } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION)) {
             XercesUtils.deleteElement(node);
@@ -1616,6 +1626,169 @@ public class XercesUtils {
             } else {
                 removeTrackChangesAttributes(node);
             }
+        } else if(hasAttribute(node, LEOS_ACTION_NUMBER) || hasAttribute(node, LEOS_ACTION_ENTER) || hasAttribute(node, LEOS_SPLIT_CONTENT_ATTR)) {
+            removeTrackChangesAttributes(node);
+        }
+        return isNodeDeleted;
+    }
+
+    public static String cleanEmbeddedTrackChangesForText(String text) {
+        Node fakeNodeWithNewContent = createNodeFromXmlFragment(("<fake>" + text + "</fake>").getBytes(StandardCharsets.UTF_8), true);
+        cleanEmbeddedTrackChangesForElement(fakeNodeWithNewContent);
+        return getContentNodeAsXmlFragment(fakeNodeWithNewContent);
+    }
+
+    public static boolean cleanEmbeddedTrackChangesForElement(Node node) {
+        NodeList nodeList = node.getChildNodes();
+        for (int index = 0; index < nodeList.getLength(); index++) {
+            Node childNode = nodeList.item(index);
+            if (childNode.getNodeType() != Node.TEXT_NODE) {
+                boolean isNodeDeleted = doCleanEmbeddedTrackChanges(childNode);
+                if (isNodeDeleted) {
+                    index--;
+                    if (nodeList.getLength() == 0) {
+                        XercesUtils.deleteElement(node);
+                        return true;
+                    }
+                } else {
+                    isNodeDeleted = cleanEmbeddedTrackChangesForElement(childNode);
+                    if(isNodeDeleted) {
+                        index--;
+                        if (nodeList.getLength() == 0) {
+                            XercesUtils.deleteElement(node);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean doCleanEmbeddedTrackChanges(Node node) {
+        boolean isNodeDeleted = false;
+        if(LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName())
+                && (LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getParentNode().getNodeName()) || LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getParentNode().getNodeName()))) {
+            XercesUtils.deleteElement(node);
+            isNodeDeleted = true;
+        } else if(LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName())
+                && (LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getParentNode().getNodeName()) || LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getParentNode().getNodeName()))) {
+            XercesUtils.deleteElement(node);
+            isNodeDeleted = true;
+        } else if((LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName()) || LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName()))
+                && (node.getFirstChild() == null)) {
+            XercesUtils.deleteElement(node);
+            isNodeDeleted = true;
+        }
+        return isNodeDeleted;
+    }
+
+    public static String cleanBlankTrackChangesForText(String text) {
+        Node fakeNodeWithNewContent = createNodeFromXmlFragment(("<fake>" + text + "</fake>").getBytes(StandardCharsets.UTF_8), true);
+        cleanBlankTrackChangesForElement(fakeNodeWithNewContent);
+        return getContentNodeAsXmlFragment(fakeNodeWithNewContent);
+    }
+
+    public static boolean cleanBlankTrackChangesForElement(Node node) {
+        NodeList nodeList = node.getChildNodes();
+        for (int index = 0; index < nodeList.getLength(); index++) {
+            Node childNode = nodeList.item(index);
+            if (childNode.getNodeType() != Node.TEXT_NODE) {
+                boolean isNodeDeleted = doCleanBlankTrackChanges(childNode);
+                if (isNodeDeleted) {
+                    index--;
+                    if (nodeList.getLength() == 0) {
+                        XercesUtils.deleteElement(node);
+                        return true;
+                    }
+                } else {
+                    isNodeDeleted = cleanBlankTrackChangesForElement(childNode);
+                    if(isNodeDeleted) {
+                        index--;
+                        if (nodeList.getLength() == 0) {
+                            XercesUtils.deleteElement(node);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean doCleanBlankTrackChanges(Node node) {
+        boolean isNodeDeleted = false;
+        if(LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName())
+                && (StringUtils.isBlank(node.getTextContent()))) {
+            XercesUtils.deleteElement(node);
+            isNodeDeleted = true;
+        } else if(LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName())
+                && (StringUtils.isBlank(node.getTextContent()))) {
+            if (node.getFirstChild() != null) {
+                XercesUtils.replaceNodeWithSelfContent(node);
+            } else {
+                XercesUtils.deleteElement(node);
+            }
+            isNodeDeleted = true;
+        }
+        return isNodeDeleted;
+    }
+
+    public static String undoTrackChangesForText(String text) {
+        Node fakeNodeWithNewContent = createNodeFromXmlFragment(("<fake>" + text + "</fake>").getBytes(StandardCharsets.UTF_8), true);
+        undoTrackChangesForElement(fakeNodeWithNewContent);
+        return getContentNodeAsXmlFragment(fakeNodeWithNewContent);
+    }
+
+    public static boolean undoTrackChangesForElement(Node node) {
+        NodeList nodeList = node.getChildNodes();
+        for (int index = 0; index < nodeList.getLength(); index++) {
+            Node childNode = nodeList.item(index);
+            if (childNode.getNodeType() != Node.TEXT_NODE) {
+                boolean isNodeDeleted = doUndoTrackChanges(childNode);
+                if(isNodeDeleted) {
+                    index--;
+                    if (nodeList.getLength() == 0) {
+                        XercesUtils.deleteElement(node);
+                        return true;
+                    }
+                } else {
+                    isNodeDeleted = undoTrackChangesForElement(childNode);
+                    if(isNodeDeleted) {
+                        index--;
+                        if (nodeList.getLength() == 0) {
+                            XercesUtils.deleteElement(node);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean doUndoTrackChanges(Node node) {
+        boolean isNodeDeleted = false;
+        if(LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName())) {
+            XercesUtils.deleteElement(node);
+            isNodeDeleted = true;
+        } else if(LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName())) {
+            if (node.getFirstChild() != null) {
+                XercesUtils.replaceNodeWithSelfContent(node);
+            } else {
+                XercesUtils.deleteElement(node);
+            }
+            isNodeDeleted = true;
+        } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION)) {
+            if("span".equals(node.getNodeName())) {
+                XercesUtils.replaceElement(node.getFirstChild(), node);
+                isNodeDeleted = true;
+            } else {
+                removeTrackChangesAttributes(node);
+            }
+        } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION) || hasAttributeWithValue(node, LEOS_ACTION_NUMBER, LEOS_TC_INSERT_ACTION)) {
+            XercesUtils.deleteElement(node);
+            isNodeDeleted = true;
         } else if(hasAttribute(node, LEOS_ACTION_NUMBER) || hasAttribute(node, LEOS_ACTION_ENTER) || hasAttribute(node, LEOS_SPLIT_CONTENT_ATTR)) {
             removeTrackChangesAttributes(node);
         }
@@ -1650,7 +1823,7 @@ public class XercesUtils {
         // Check if the node is an element (since only elements can have attributes)
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             Element element = (Element) node;
-                // Generate a new ID
+            // Generate a new ID
             element.setAttribute(XMLID, IdGenerator.generateId());
         }
 

@@ -23,7 +23,6 @@ import eu.europa.ec.leos.services.response.SearchAndReplaceAllResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Pair;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -265,7 +264,7 @@ public class FinancialStatementController {
                     elementName, elementContent);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, response, null);
             return ResponseEntity.ok(response);
-        } catch (CmisBaseException cmisBaseException) {
+        } catch (Exception cmisBaseException) {
             LOG.error("---[FINANCIAL STATEMENT] [CMIS EXCEPTION] --- Error saving element : {} ",
                     cmisBaseException.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).build();

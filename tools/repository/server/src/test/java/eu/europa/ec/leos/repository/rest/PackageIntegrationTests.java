@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.repository.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.europa.ec.leos.repository.H2TestBase;
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.controllers.PackageController;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
@@ -53,7 +54,7 @@ import static org.springframework.web.util.UriUtils.encodeUriVariables;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(PackageController.class)
 @ActiveProfiles("test")
-class PackageIntegrationTests {
+class PackageIntegrationTests extends H2TestBase {
     private static Logger LOG = LoggerFactory.getLogger(PackageIntegrationTests.class);
 
     @Autowired

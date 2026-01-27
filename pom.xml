@@ -20,7 +20,7 @@
 
     <groupId>eu.europa.ec.leos.pilot</groupId>
     <artifactId>leos</artifactId>
-    <version>5.3.0</version>
+    <version>5.3.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>LEOS Pilot</name>
@@ -54,7 +54,7 @@
 
     <properties>
         <!-- Project -->
-        <project.maven.version>3.9.9</project.maven.version>
+        <project.maven.version>[3.8.0,3.10.0)</project.maven.version>
         <project.java.version>21</project.java.version>
         <project.java.debug>false</project.java.debug>
         <project.java.optimize>true</project.java.optimize>
@@ -91,6 +91,7 @@
         <maven-war-plugin.version>3.5.0</maven-war-plugin.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <cxf-maven-plugin.version>4.1.4</cxf-maven-plugin.version>
 
         <!--        SHOULD BE MIGRATED TO NEWER TECHS-->
         <jasmine-maven-plugin.version>2.2</jasmine-maven-plugin.version>
@@ -132,7 +133,7 @@
         <hibernate-orm.version>6.6.36.Final</hibernate-orm.version>
         <jackson-core.version>2.16.1</jackson-core.version>
         <auth0.version>4.5.0</auth0.version>
-        <chemistry-opencmis.version>1.1.0</chemistry-opencmis.version>
+<!--        <chemistry-opencmis.version>1.1.0</chemistry-opencmis.version>-->
         <servlet.version>6.0.0</servlet.version>
         <commons-collections4.version>4.5.0</commons-collections4.version>
         <commons-lang3.version>3.20.0</commons-lang3.version>
@@ -144,7 +145,7 @@
         <freemarker.version>2.3.34</freemarker.version>
         <xstream.version>1.4.21</xstream.version>
         <cuid.version>0.1.1</cuid.version> <!-- Needs upgrade-->
-        <jsoup.version>1.21.2</jsoup.version>
+        <jsoup.version>1.17.2</jsoup.version>
         <jackson-databind.version>2.16.1</jackson-databind.version>
         <fugue.version>6.1.2</fugue.version>
         <okhttp.version>5.3.1</okhttp.version>
@@ -172,6 +173,9 @@
         <!-- Hazelcast -->
         <hazelcast.version>5.6.0</hazelcast.version>
         <spring-session-hazelcast.version>3.5.3</spring-session-hazelcast.version>
+        <cxf.version>4.0.5</cxf.version>
+        <angus.version>2.0.2</angus.version>
+        <jetbrains-annotations.version>24.1.0</jetbrains-annotations.version>
         <!-- Default authentication -->
         <leos.web.auth.method>BASIC</leos.web.auth.method>
     </properties>
@@ -280,40 +284,40 @@
 <!--                <scope>runtime</scope>-->
 <!--            </dependency>-->
             <!-- Apache Chemistry framework -->
-            <dependency>
-                <groupId>org.apache.chemistry.opencmis</groupId>
-                <artifactId>chemistry-opencmis-client-api</artifactId>
-                <version>${chemistry-opencmis.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.chemistry.opencmis</groupId>
-                <artifactId>chemistry-opencmis-client-impl</artifactId>
-                <version>${chemistry-opencmis.version}</version>
-                <scope>runtime</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>asm</groupId>
-                        <artifactId>asm</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.chemistry.opencmis</groupId>
-                <artifactId>chemistry-opencmis-commons-api</artifactId>
-                <version>${chemistry-opencmis.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.chemistry.opencmis</groupId>
-                <artifactId>chemistry-opencmis-commons-impl</artifactId>
-                <version>${chemistry-opencmis.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.chemistry.opencmis</groupId>
-                <artifactId>chemistry-opencmis-client-bindings</artifactId>
-                <version>${chemistry-opencmis.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.apache.chemistry.opencmis</groupId>-->
+<!--                <artifactId>chemistry-opencmis-client-api</artifactId>-->
+<!--                <version>${chemistry-opencmis.version}</version>-->
+<!--                <scope>compile</scope>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.apache.chemistry.opencmis</groupId>-->
+<!--                <artifactId>chemistry-opencmis-client-impl</artifactId>-->
+<!--                <version>${chemistry-opencmis.version}</version>-->
+<!--                <scope>runtime</scope>-->
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>asm</groupId>-->
+<!--                        <artifactId>asm</artifactId>-->
+<!--                    </exclusion>-->
+<!--                </exclusions>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.apache.chemistry.opencmis</groupId>-->
+<!--                <artifactId>chemistry-opencmis-commons-api</artifactId>-->
+<!--                <version>${chemistry-opencmis.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.apache.chemistry.opencmis</groupId>-->
+<!--                <artifactId>chemistry-opencmis-commons-impl</artifactId>-->
+<!--                <version>${chemistry-opencmis.version}</version>-->
+<!--                <scope>runtime</scope>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.apache.chemistry.opencmis</groupId>-->
+<!--                <artifactId>chemistry-opencmis-client-bindings</artifactId>-->
+<!--                <version>${chemistry-opencmis.version}</version>-->
+<!--            </dependency>-->
             <!-- Libraries -->
             <dependency>
                 <groupId>jakarta.servlet</groupId>
@@ -486,6 +490,12 @@
                 </exclusions>
             </dependency>
             <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-core</artifactId>
                 <version>${hamcrest.version}</version>
@@ -622,6 +632,56 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
                 <version>${jackson-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-core</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-transports-http</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-ws-policy</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-frontend-jaxws</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.angus</groupId>
+                <artifactId>angus-activation</artifactId>
+                <version>${angus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.angus</groupId>
+                <artifactId>angus-mail</artifactId>
+                <version>${angus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${jetbrains-annotations.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.soap</groupId>
+                <artifactId>jakarta.xml.soap-api</artifactId>
+                <version>3.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.ws</groupId>
+                <artifactId>jakarta.xml.ws-api</artifactId>
+                <version>4.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.woodstox</groupId>
+                <artifactId>woodstox-core</artifactId>
+                <version>6.6.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -773,6 +833,7 @@
                             --add-opens java.base/java.io=ALL-UNNAMED
                             --add-opens java.base/sun.nio.ch=ALL-UNNAMED
                             --add-opens java.base/sun.security.util=ALL-UNNAMED
+                            --add-opens java.xml/com.sun.org.apache.xerces.internal.jaxp=ALL-UNNAMED
                         </argLine>
                         <systemPropertyVariables>
                             <powermock.classloading>javagent</powermock.classloading>

@@ -9,6 +9,7 @@
 
     <mvc:annotation-driven/>
 
+
     <context:component-scan base-package="eu.europa.ec.leos.services.controllers" />
 
     <mvc:default-servlet-handler/>

@@ -135,6 +135,15 @@ public class DocumentController {
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
+    @GetMapping(path = "/documents/find-by-collaborator/{userName}/{entities}",
+            consumes = {},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity findDocumentsByUserNameOrEntityName(@RequestParam("role") String role, @RequestParam(value = "category", defaultValue = "") String category,
+                                                              @PathVariable("userName") String userName, @PathVariable("entities") String entities) {
+        List<LeosDocument> xmlDocs = documentService.findDocumentsByUserIdOrEntity(userName, entities, role, category);
+        return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
+    }
+
     @GetMapping(path = "/document/find-version/{versionId}",
             produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Object> findDocumentById(@PathVariable("versionId") BigDecimal versionId,
