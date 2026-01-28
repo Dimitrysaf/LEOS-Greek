@@ -49,7 +49,13 @@ define(function aknHtmlSuperScriptPluginModule(require) {
     pluginTools.addTransformationConfigForPlugin(transformationConfig, pluginName);
 
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event.editor, "superscript");
+        var selection = event.editor.getSelection();
+        var isTableOnlyMode = event.editor.config.tableOnlyMode;
+        if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
+            event.editor.getCommand('superscript').setState(CKEDITOR.TRISTATE_DISABLED);
+        } else {
+            leosCommandStateHandler.changeCommandState(event.editor, "superscript");
+        }
     }
 
     // return plugin module

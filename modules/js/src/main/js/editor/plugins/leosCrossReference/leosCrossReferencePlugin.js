@@ -65,10 +65,16 @@ define(function leosCrossReferencePluginModule(require) {
     };
     
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event.editor, widgetName, null, true);
-        var refConfig = leosPluginUtils.getRefConfig(event.editor);
-        if(!refConfig || !refConfig.internalRef) {
+        var selection = event.editor.getSelection();
+        var isTableOnlyMode = event.editor.config.tableOnlyMode;
+        if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
             event.editor.getCommand(widgetName).setState(CKEDITOR.TRISTATE_DISABLED);
+        } else {
+            leosCommandStateHandler.changeCommandState(event.editor, widgetName, null, true);
+            var refConfig = leosPluginUtils.getRefConfig(event.editor);
+            if(!refConfig || !refConfig.internalRef) {
+                event.editor.getCommand(widgetName).setState(CKEDITOR.TRISTATE_DISABLED);
+            }
         }
     }
 

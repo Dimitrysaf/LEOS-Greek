@@ -121,6 +121,21 @@ define(function leosTablePluginModule(require) {
                 key : DELETE_KEY,
                 action : _handleTableRemoval
             });
+
+            // Prevent typing outside table (only in table-only mode)
+            editor.on('key', function(evt) {
+                if (!editor.config.tableOnlyMode) return;
+                
+                var selection = evt.editor.getSelection();
+                if (!selection) return;
+                
+                var startElement = selection.getStartElement();
+                var isInTable = startElement && startElement.getAscendant('table', true) !== null;
+                
+                if (!isInTable) {
+                    evt.cancel();
+                }
+            });
         }
     };
 
