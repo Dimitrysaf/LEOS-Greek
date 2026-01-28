@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {
   Document,
   Permission,
@@ -8,7 +8,7 @@ import {
   Metadata,
   DetailsTabExclusions,
   LeosConfig,
-  User, SignatureMetadata
+  SignatureMetadata
 } from '@leos/shared';
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 import {Subject, takeUntil} from "rxjs";
