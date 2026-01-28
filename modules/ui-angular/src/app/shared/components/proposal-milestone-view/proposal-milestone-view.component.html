@@ -89,10 +89,9 @@
                   [label]="'page.editor.toc-pane.label' | translate"
                   isCollapsible
                   (collapsed)="onToggleTocPaneCollapsed()"
-
                   style="flex-basis: 400px"
                 >
-                  <eui-page-column-body>
+                  <eui-page-column-body *ngIf="!(doc.xml.includes('TECHNICAL DOCUMENTATION</heading>') && doc.xml.includes('<componentRef showAs='))">
                     <app-milestone-toc [toc]="doc.tocData"></app-milestone-toc>
                   </eui-page-column-body>
                 </eui-page-column>

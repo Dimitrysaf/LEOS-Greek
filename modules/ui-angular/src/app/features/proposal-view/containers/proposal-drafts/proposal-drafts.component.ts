@@ -263,7 +263,7 @@ export class ProposalDraftsComponent
       });
   }
 
-  downloadForeginAnnex(ref: string, originalFilename: string) {
+  downloadForeignAnnex(ref: string, originalFilename: string) {
     this.loadingService.setLoading(true);
     this.http
       .get(`${apiBaseUrl}/secured/annex/${ref}`, {

@@ -363,6 +363,7 @@
   "page.collection.drafts.annex.same.name.error": "An annex with this filename already exist",
   "page.collection.drafts.annex.invalid.file": "Invalid file",
   "page.collection.drafts.annex.max.size.error": "Maximum file size exceeded",
+  "page.collection.drafts.foreign.annex.download": "Download",
   "page.collection.drafts.last-updated-on-by": "Last updated on {{ date }} by {{ name }}",
   "page.editor.actions-merge-contributions.title": "Merging not fully completed",
   "page.editor.actions-merge-contributions.content": "Some changes could not be merged. Please do this manually if necessary.",

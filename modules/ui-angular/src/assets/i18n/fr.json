@@ -367,6 +367,7 @@
   "page.collection.drafts.annex.same.name.error": "Une annexe avec ce nom de fichier existe déjà",
   "page.collection.drafts.annex.invalid.file": "Fichier invalide",
   "page.collection.drafts.annex.max.size.error": "Taille maximale du fichier dépassée",
+  "page.collection.drafts.foreign.annex.download": "Télécharger",
   "page.collection.drafts.last-updated-on-by": "Dernière mise à jour le {{ date }} par {{ name }}",
   "page.editor.actions-dropdown.label": "Actions",
   "page.editor.actions-dropdown.save": "Sauver",
