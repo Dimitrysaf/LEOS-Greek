@@ -325,7 +325,7 @@ public class XercesUtils {
                 sb.append(CLOSE_END_TAG);// sb: <tagName atr="attrVal"/>
             }
         } else if (node.getNodeType() == Node.TEXT_NODE) {
-            sb.append(node.getTextContent());
+            sb.append(node.getTextContent().replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
         }
 
         NodeList nodeList = node.getChildNodes();
