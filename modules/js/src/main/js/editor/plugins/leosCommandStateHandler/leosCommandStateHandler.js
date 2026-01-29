@@ -54,7 +54,14 @@ define(function leosCommandStateHandler(require) {
         }
     }
 
+    function isInsideTable(selection) {
+        if (!selection) return false;
+        var startElement = selection.getStartElement();
+        return startElement && startElement.getAscendant('table', true) !== null;
+    }
+
     return {
-        changeCommandState: changeCommandState
+        changeCommandState: changeCommandState,
+        isInsideTable: isInsideTable
     }
 });

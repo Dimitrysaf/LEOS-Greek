@@ -86,7 +86,13 @@ define(function leosBase64ImagePluginModule(require) {
     };
 
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event.editor, 'leosBase64ImageDialog', changeStateElements, true);
+        var selection = event.editor.getSelection();
+        var isTableOnlyMode = event.editor.config.tableOnlyMode;
+        if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
+            event.editor.getCommand('leosBase64ImageDialog').setState(CKEDITOR.TRISTATE_DISABLED);
+        } else {
+            leosCommandStateHandler.changeCommandState(event.editor, 'leosBase64ImageDialog', changeStateElements, true);
+        }
     }
     
     pluginTools.addPlugin(pluginName, pluginDefinition);

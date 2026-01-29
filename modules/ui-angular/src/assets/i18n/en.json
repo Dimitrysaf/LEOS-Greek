@@ -128,7 +128,7 @@
   "page.collection.permision-error": "You do not have permission to access the requested act.",
   "page.collection.404": "The requested act does not exist.",
   "page.collection.default-error": "Something went wrong. Please try again and if the problem persists contact with support team.",
-  "page.collection.details.message.success": "The Cover Page Details have been successfully updated",
+  "page.collection.details.message.success": "The Proposal Details have been successfully updated",
   "page.collection.details.card.general.header.label": "GENERAL",
   "page.collection.details.all": "All",
   "page.collection.details.package-title": "Package Title",

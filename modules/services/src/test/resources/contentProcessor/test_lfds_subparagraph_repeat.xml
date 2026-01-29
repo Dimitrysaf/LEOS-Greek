@@ -61,7 +61,7 @@
             <level class="landscape" leos:deletable="false" leos:depth="4" xml:id="ecwKUbc8Bnteuvwk7">
                 <num xml:id="ecWCZumyxemQ40TAn">3.2.1.1</num>
                 <heading leos:editable="false" xml:id="ecA87kwWGTA6hikhH">
-                    <i xml:id="ecqTMvPjJVA1n0ul3">Appropriations from voted budget</i>
+                    <i>Appropriations from voted budget</i>
                 </heading>
                 <subparagraph leos:deletable="false" leos:editable="true" leos:optional="true" leos:repeatable="true" xml:id="ecVfyzuWfoIDe22U0">
                     <content xml:id="ecbQVk9OIffDNuceV">
@@ -85,32 +85,32 @@
                                 </td>
                                 <td rowspan="2" style="width: 11%;" xml:id="ecpWhoTutHAJRKq0d">
                                     <p xml:id="ecAoVJG3oMG1kK0xZ">
-                                        <b xml:id="ecsIYjoPfTidJkYIN">TOTAL MFF</b>
+                                        <b>TOTAL MFF</b>
                                     </p>
                                     <p xml:id="ecAvcQr50BPhrFq2Z">
-                                        <b xml:id="ecoElOUIscIza14ko">2021-2027</b>
+                                        <b>2021-2027</b>
                                     </p>
                                 </td>
                             </tr>
                             <tr xml:id="ecgzDophShuwefyqQ">
                                 <td style="width: 9%;" xml:id="ecyc5VSQKW7sgAFcH">
                                     <p xml:id="ecA9UmyZ0OPP2ny0N">
-                                        <b xml:id="ecHi3Vjq7FDwF7Oa5">2024</b>
+                                        <b>2024</b>
                                     </p>
                                 </td>
                                 <td style="width: 9%;" xml:id="ecLT9ihkP0qn0WMVM">
                                     <p xml:id="ec1Ort4MTkAFyEGrO">
-                                        <b xml:id="ecckqof9mr4T6od0s">2025</b>
+                                        <b>2025</b>
                                     </p>
                                 </td>
                                 <td style="width: 9%;" xml:id="ecEt63ga2DnfMNaqA">
                                     <p xml:id="ecg4mg02bEIUM4h2q">
-                                        <b xml:id="ecC5o0KgNHfbr2uED">2026</b>
+                                        <b>2026</b>
                                     </p>
                                 </td>
                                 <td style="width: 9%;" xml:id="ecp6Gd4O6sHo4mFfs">
                                     <p xml:id="ec8hE2K8fubniPn8s">
-                                        <b xml:id="eckx7EYQcVjSRNsYf">2027</b>
+                                        <b>2027</b>
                                     </p>
                                 </td>
                             </tr>
@@ -135,7 +135,7 @@
                                 <td style="width: 9%;" xml:id="ecBqHnZogCB7Fzd5S"/>
                                 <td style="width: 11%;" xml:id="ecRp2oicQwvnbYJ2q">
                                     <p xml:id="ecv48CaWikeJdVjze">
-                                        <b xml:id="ecCYr5AqglqTWMH9S">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -152,7 +152,7 @@
                                 <td style="width: 9%;" xml:id="ecl8wNy1mWveB1DjW"/>
                                 <td style="width: 11%;" xml:id="ecLeHqWcF5Enayg0I">
                                     <p xml:id="ectcpLY3WUvHmN6py">
-                                        <b xml:id="ecZ8J1BgOMYiQHIO1">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -172,7 +172,7 @@
                                 <td style="width: 9%;" xml:id="echqZBYDLewUD9Aly"/>
                                 <td style="width: 11%;" xml:id="ecWKlul8JfrNfJds4">
                                     <p xml:id="ecHeYiIgh61O3uPMG">
-                                        <b xml:id="ecMWtjO3IgGwsjzJJ">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -189,7 +189,7 @@
                                 <td style="width: 9%;" xml:id="ec3IEojP8q0chvqL6"/>
                                 <td style="width: 11%;" xml:id="ecDTyuuvVgxYjqkEU">
                                     <p xml:id="ecBMFsEcyAYa3G5SE">
-                                        <b xml:id="ecnfMdQ4VvubhJSUx">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -221,17 +221,17 @@
                                 </td>
                                 <td style="width: 11%;" xml:id="ecae1HtdhCG8M2pZ3">
                                     <p xml:id="ecus3emncOI5RtD7c">
-                                        <b xml:id="ecxDxdqqqD0Fo2BLz">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
                             <tr xml:id="ecJP0F2FaQWD5dfQo">
                                 <td rowspan="2" style="width: 28%;" xml:id="ec9KCu8W1y8LTNoep">
                                     <p xml:id="ecAQO0PpEZU6jlNrd">
-                                        <b xml:id="ec7nB9dm0bmNBWpQF">TOTAL appropriations</b>
+                                        <b>TOTAL appropriations</b>
                                     </p>
                                     <p xml:id="ecw79ScKEnjMHONL7">
-                                        <b xml:id="ecoESA8kAOjTH2pLj">for DG</b>
+                                        <b>for DG</b>
                                         ...
                                     </p>
                                 </td>
@@ -243,27 +243,27 @@
                                 </td>
                                 <td style="width: 9%;" xml:id="ec8oGZZHKYFAU84Q5">
                                     <p xml:id="ecAjqQyHhmeNl6CZD">
-                                        <b xml:id="ecZQq6x6jYIHp4hoG">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9%;" xml:id="ecTOqg9Ql0OmFy8EG">
                                     <p xml:id="ecKDCNCcP8JFYH0sp">
-                                        <b xml:id="ecv12Pc0OquoAGTsH">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9%;" xml:id="ecFGLoNFcj3661Lqn">
                                     <p xml:id="ecyQ5bdkQuKJtslzD">
-                                        <b xml:id="ecZfOpIhIZhSNOT5C">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9%;" xml:id="ec4CjkFJKlnbGhyti">
                                     <p xml:id="ecnwC4S0N01LConxc">
-                                        <b xml:id="ecR5nnbGhh3Uvu1eZ">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 11%;" xml:id="ecxOB89t6zHRDfwQH">
                                     <p xml:id="ecNMy4KcWitV4E3PI">
-                                        <b xml:id="ec4tIvpdEU00FO71i">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -276,27 +276,27 @@
                                 </td>
                                 <td style="width: 9%;" xml:id="ec7sf3P527lr7YzvE">
                                     <p xml:id="ecCpdMF3DIrTwoHSp">
-                                        <b xml:id="ecmKYB2TxZpUSHNLP">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9%;" xml:id="eckSld96r6e3y6Htm">
                                     <p xml:id="ecsELPgVksybH9HpA">
-                                        <b xml:id="eci2YdMB2dgtzwjqm">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9%;" xml:id="ecZ3eg9IsVGY7zsgu">
                                     <p xml:id="ecnEWRmKnUnxV1QwO">
-                                        <b xml:id="ecrnL084dP3vzEafV">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9%;" xml:id="eckiI4lLuBh7hL58k">
                                     <p xml:id="ecUPr0FSrPEzUKTZd">
-                                        <b xml:id="ec0e0sLgCdA2P4yMB">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 11%;" xml:id="ecTV1EDFtaxxAJs5T">
                                     <p xml:id="ecpm96P3QY6dV22f5">
-                                        <b xml:id="ecif5FOacxJTj3NOw">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>

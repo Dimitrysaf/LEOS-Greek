@@ -128,7 +128,7 @@
   "page.collection.permision-error": "Vous n’avez pas l’autorisation d’accéder à l’acte recherché",
   "page.collection.404": "L’acte recherché n’existe pas",
   "page.collection.default-error": "Un problème s'est produit. Veuillez réessayer et si le problème persiste, contactez l'équipe d'assistance.",
-  "page.collection.details.message.success": "Les détails de la page de couverture ont été sauvegardés avec succès",
+  "page.collection.details.message.success": "Les détails de la proposition ont été sauvegardés avec succès",
   "page.collection.details.card.general.header.label": "GENERAL",
   "page.collection.details.all": "Toutes",
   "page.collection.details.package-title": "Titre du package",

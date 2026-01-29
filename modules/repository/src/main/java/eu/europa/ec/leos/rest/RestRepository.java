@@ -469,8 +469,9 @@ public class RestRepository extends AbstractRestClient {
     }
 
     LeosDocumentList searchVersions(String docRef, List<String> logins, String versionType) {
-        LOGGER.trace("Search in all versions. [docRef={}, logins={}, versionType={}]", docRef, logins, versionType);
+        LOGGER.info("Search in all versions. [docRef={}, logins={}, versionType={}]", docRef, logins, versionType);
         String url = getUrl(leosRestSearchVersionsURI);
+        LOGGER.info("Search in url={}]", url);
         return postEntity(url, logins, LeosDocumentList.class, docRef, versionType);
     }
 

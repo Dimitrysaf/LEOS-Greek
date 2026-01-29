@@ -26,7 +26,8 @@ define(function aknHtmlSubScriptPluginModule(require) {
             editor.on('selectionChange', _onSelectionChange, null, null, 11);
             editor.on("afterCommandExec", function (event) {
                 if(event.data.command.name === commandName) {
-                    aknHTMLPluginsUtils.resolveNestedStyleElements(event);
+                    const startContainer = aknHTMLPluginsUtils.resolveNestedStyleElements(event);
+                    startContainer && startContainer.removeAttribute('id');
                 }
             }, null, null, 99);
         }
@@ -37,9 +38,6 @@ define(function aknHtmlSubScriptPluginModule(require) {
         akn: "sub",
         html: "sub",
         attr: [{
-            akn: "xml:id",
-            html: "id"
-        }, {
             akn : "leos:origin",
             html : "data-origin"
         }],
@@ -51,7 +49,13 @@ define(function aknHtmlSubScriptPluginModule(require) {
     pluginTools.addTransformationConfigForPlugin(transformationConfig, pluginName);
 
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event.editor, commandName);
+        var selection = event.editor.getSelection();
+        var isTableOnlyMode = event.editor.config.tableOnlyMode;
+        if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
+            event.editor.getCommand('subscript').setState(CKEDITOR.TRISTATE_DISABLED);
+        } else {
+            leosCommandStateHandler.changeCommandState(event.editor, commandName);
+        }
     }
 
     // return plugin module
