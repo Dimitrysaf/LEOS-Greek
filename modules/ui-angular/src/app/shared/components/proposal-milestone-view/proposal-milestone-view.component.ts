@@ -500,4 +500,10 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     const parts = version.split('.');
     return parts.slice(0, 3).join('.');
   }
+
+  getFilenameExtension(xml: string): string {
+    const srcMatch = xml.match(/componentRef[^>]*src="([^"]+)"/);
+    return srcMatch ? srcMatch[1].toLowerCase().substring(srcMatch[1].lastIndexOf('.')+1) : '';
+  }
+
 }

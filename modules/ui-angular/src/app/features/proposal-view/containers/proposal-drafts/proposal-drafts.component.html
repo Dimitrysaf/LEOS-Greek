@@ -457,9 +457,9 @@
                             {{ row.updatedBy }}
                         </td>
                         <td style="width: 5%">
-                          <i *ngIf="getFileExtension(row.originalFilename) === 'pdf'"><span class="eui-icon eui-icon-2x eui-icon-filetype-pdf" euiIconColored></span></i>
-                          <i *ngIf="getFileExtension(row.originalFilename) === 'docx'"><span class="eui-icon eui-icon-2x eui-icon-filetype-doc" euiIconColored></span></i>
-                          <i *ngIf="getFileExtension(row.originalFilename) === 'xlsx'"><span class="eui-icon eui-icon-2x eui-icon-filetype-xls" euiIconColored></span></i>
+                          <span *ngIf="getFileExtension(row.originalFilename) === 'pdf'" class="eui-icon eui-icon-2x eui-icon-filetype-pdf" euiIconColored></span>
+                          <span *ngIf="getFileExtension(row.originalFilename) === 'docx'" class="eui-icon eui-icon-2x eui-icon-filetype-doc" euiIconColored></span>
+                          <span *ngIf="getFileExtension(row.originalFilename) === 'xlsx'" class="eui-icon eui-icon-2x eui-icon-filetype-xls" euiIconColored></span>
                         </td>
                         <td style="width: 25%">
                           <span title="{{ row.originalFilename }}">{{ row.originalFilename }}</span>
