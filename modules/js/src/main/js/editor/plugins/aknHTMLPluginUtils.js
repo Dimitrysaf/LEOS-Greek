@@ -18,10 +18,9 @@ define(function aknHTMLPluginUtilsModule(require) {
     var $ = require('jquery');
 
     function _resolveNestedStyleElements(event) {
-        const selection = event.editor.getSelection();
-        const range = selection.getRanges()[0];
-        const startContainer = range.startContainer.$;
-        const endContainer = range.endContainer.$;
+        const result = getSelectionContainers(event);
+        const startContainer = result.startContainer;
+        const endContainer = result.endContainer;
         if (!(startContainer === endContainer)) {
             // Get the parent element
             var parentSub = $(event.editor.getSelection().getRanges()[0].endContainer.$).parent();
@@ -34,9 +33,33 @@ define(function aknHTMLPluginUtilsModule(require) {
             // Remove the child element
             childSub && childSub.remove();
         }
+        return startContainer;
+    }
+
+    function _removeAttributeFromElement(event, attribute) {
+        const result = getSelectionContainers(event);
+        const startContainer = result.startContainer;
+        const endContainer = result.endContainer;
+        if (startContainer === endContainer) {
+            element.removeAttribute(attribute);
+        }
+    }
+
+    function getSelectionContainers(event) {
+        const selection = event.editor.getSelection();
+        const range = selection.getRanges()[0];
+
+        const startContainer = range.startContainer.$;
+        const endContainer = range.endContainer.$;
+
+        return {
+            startContainer,
+            endContainer
+        };
     }
 
     return {
         resolveNestedStyleElements: _resolveNestedStyleElements,
+        removeAttributeFromElement: _removeAttributeFromElement
     };
 });

@@ -23,6 +23,7 @@ define(function leosAlternativesSignatoryPluginModule(require) {
     var pluginName = "leosAlternativesSignatory";
     var optionLists = "";
     var dialogDefinition = require("./leosAlternativesSignatoryDialog");
+    var leosPluginUtils = require("../leosPluginUtils");
     var dialogCommand;
     
     var pluginDefinition = {
@@ -50,7 +51,7 @@ define(function leosAlternativesSignatoryPluginModule(require) {
 
     function _getCurrentAltConfigFromAttributes(editor) {
         var currentAltConfig = {};
-        var element = editor.element.$.firstChild;
+        var element = leosPluginUtils.findFirstChild(editor.element).$;
         if (element && (element.firstChild && element.firstChild.id === 'spellchecker-contextmenu' || !element.getAttribute('leos:alternative'))
             && editor.element.$.childNodes[1]) {
             element = editor.element.$.childNodes[1];
@@ -234,6 +235,9 @@ define(function leosAlternativesSignatoryPluginModule(require) {
         });
         editor.getCommand(pluginName + index).setState(CKEDITOR.TRISTATE_ON);
         editor.getCommand('leosInlineCancelDialog').setState(CKEDITOR.TRISTATE_ON);
+        if (editor.element.getElementsByTag('div').count() > 0) {
+            editor.element.getElementsByTag('div').getItem(0).remove();
+        }
     }
 
     function _getOptionLists() {
