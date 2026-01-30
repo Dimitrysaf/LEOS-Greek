@@ -402,7 +402,6 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     public List<LeosDocument> searchVersionsByRef(final String ref, final List<String> logins, final String versionType) {
-        LOG.info("-- #1975 -- Find Document by version: docRef={}, versionType={}", ref, versionType);
         StringBuilder queryBuild = new StringBuilder("SELECT d FROM DocumentV d");
         queryBuild.append(" WHERE 1 = 1");
         queryBuild.append(" AND d.ref = :ref");
@@ -415,7 +414,6 @@ public class DocumentServiceImpl implements DocumentService {
         queryBuild.append(" ORDER BY d.updatedOn DESC");
 
         Query query = entityManager.createQuery(queryBuild.toString());
-        LOG.info("-- #1975 -- Query created : {}", queryBuild.toString());
 
         query.setParameter("ref", ref);
         if (!logins.isEmpty()) {
@@ -426,7 +424,6 @@ public class DocumentServiceImpl implements DocumentService {
         }
 
         List<DocumentV> docViews = query.getResultList();
-        LOG.info("-- #1975 -- Result : docViews size {}", (docViews != null && !docViews.isEmpty()) ? docViews.size() : "query.getResultList() is null or empty");
         return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docViews.isEmpty() ?
                 Arrays.asList() : ConversionUtils.fetchCollaborators(collaboratorsService,
                 docViews.get(0).getPackageId()), documentContentRepository, docViews, false);

@@ -50,7 +50,6 @@ import static com.sun.jndi.toolkit.url.UrlUtil.decode;
 @RestController
 @Tag(name = "Document API", description = "Document API")
 public class DocumentController {
-    private static final Logger LOG = LoggerFactory.getLogger(DocumentController.class);
 
     @Autowired
     DocumentService documentService;
@@ -217,9 +216,7 @@ public class DocumentController {
     public ResponseEntity<Object> searchVersions(@PathVariable("ref") String docRef,
                                                    @RequestParam("versionType") String versionType,
                                                    @RequestBody List<String> logins) {
-        LOG.info("-- #1975 -- Parameters: docRef {}, logins {}, versionType {}",docRef, logins, versionType);
         List<LeosDocument> xmlDocs = documentService.searchVersionsByRef(docRef, logins, versionType);
-        LOG.info("-- #1975 -- Result : xmlDocs size {}", (xmlDocs != null && !xmlDocs.isEmpty()) ? xmlDocs.size() : "is null or empty");
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
