@@ -61,7 +61,10 @@
                [euiAccent]="doc.selected === true"
           >
         <eui-tab-label>
-          <div [title]="getIconTabHelp(doc.state)">
+          <div [title]="getIconTabHelp(doc.state)" class="tab-label">
+            <span *ngIf="getFilenameExtension(doc.xml) === 'pdf'" class="eui-icon eui-icon-2x eui-icon-filetype-pdf" euiIconColored></span>
+            <span *ngIf="getFilenameExtension(doc.xml) === 'docx'" class="eui-icon eui-icon-2x eui-icon-filetype-doc" euiIconColored></span>
+            <span *ngIf="getFilenameExtension(doc.xml) === 'xlsx'" class="eui-icon eui-icon-2x eui-icon-filetype-xls" euiIconColored></span>
             {{ doc.label }}
             <small class="eui-u-font-regular"> [{{ getDisplayVersion(doc.version) }}] </small>
             <eui-icon-svg

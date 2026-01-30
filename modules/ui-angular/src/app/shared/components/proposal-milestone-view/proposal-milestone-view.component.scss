@@ -289,5 +289,10 @@ $color-tab-selected: rgba(230, 230, 230, 1.0);
     background-color: $color-tab-updated !important;
     color: white !important;
   }
+
 }
 
+.tab-label {
+  display: flex;
+  align-items: center;
+}
