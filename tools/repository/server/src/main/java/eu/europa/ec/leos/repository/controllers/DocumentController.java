@@ -26,6 +26,8 @@ import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.model.LeosDocumentList;
 import eu.europa.ec.leos.repository.services.DocumentService;
 import eu.europa.ec.leos.repository.utils.RestPreconditions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -315,20 +317,12 @@ public class DocumentController {
 
     @GetMapping(path = "/documents/find-for-validation",
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "Find documents for validation")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<Object> findDocumentsPackagesForValidation() {
         List<String> packageNames = documentService.findPackagesForValidation();
         return ResponseEntity.ok(packageNames);
     }
 
     @PutMapping(path = "/documents/set-docs-validation-status")
-    @Operation(summary = "Set documents validation status")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<Object> setDocumentsValidationStatus(@RequestBody List<String> versionIDs) throws RepositoryException {
         return ResponseEntity.ok(documentService.setDocumentValidationStatus(versionIDs));
     }

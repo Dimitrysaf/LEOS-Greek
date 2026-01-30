@@ -161,6 +161,7 @@
         <xml-sec.version>4.0.4</xml-sec.version>
         <xml-apis.version>1.4.01</xml-apis.version>
         <bouncycastle-bcprov.version>1.82</bouncycastle-bcprov.version>
+        <apache-tika.version>3.2.3</apache-tika.version>
         <!-- JUnit 5 -->
         <junit-jupiter.version>5.12.2</junit-jupiter.version>
         <assertj.version>3.24.2</assertj.version>
@@ -210,22 +211,6 @@
                 <artifactId>logback-classic</artifactId>
                 <version>${logback.version}</version>
                 <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback.db</groupId>
-                <artifactId>logback-classic-db</artifactId>
-                <version>${logbackdb.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.janino</groupId>
-                <artifactId>janino</artifactId>
-                <version>${janino.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.janino</groupId>
-                <artifactId>commons-compiler</artifactId>
-                <version>${janino.version}</version>
             </dependency>
             <!-- Spring framework -->
             <dependency>

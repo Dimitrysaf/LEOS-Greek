@@ -75,43 +75,6 @@ public class User implements Serializable {
     @OrderBy("ENTITY_ORG_NAME, ENTITY_NAME")
     private List<Entity> entities;
 
-    public User() {
-    }
-
-    public User(String login, Long perId, String lastName, String firstName,
-            String email, String jobTitle, List<Role> roleEntities, List<Entity> entities) {
-        this.login = login;
-        this.perId = perId;
-        this.lastName = lastName;
-        this.firstName = firstName;
-        this.email = email;
-        this.jobTitle = jobTitle;
-        this.roleEntities = roleEntities;
-        this.entities = entities;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public Long getPerId() {
-        return perId;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getJobTitle() { return jobTitle; }
-
     public List<Role> getRoleEntities() {
         roleEntities.add(new Role("USER","Default USER role"));
         return roleEntities;
