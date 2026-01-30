@@ -25,5 +25,5 @@ echo "---------------------Repository COMPILED.---------------------------------
 cd ./web
 
 echo "---------------------Repository STARTING...-----------------------------------"
-call mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config
+call mvn spring-boot:run -Dspring-boot.run.additional-classpath-elements=../config/target/generated-config
 echo "---------------------Repository STOPPED....-----------------------------------"

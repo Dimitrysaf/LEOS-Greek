@@ -22,37 +22,28 @@ import eu.europa.ec.digit.userdata.repositories.SpecialEntityRepository;
 import eu.europa.ec.digit.userdata.repositories.SpecialUserRepository;
 import eu.europa.ec.digit.userdata.repositories.UserRepository;
 import eu.europa.ec.digit.userdata.request.SpecialEntityRequest;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @RestController
+@RequiredArgsConstructor
 public class UserController {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
-    private static int MAX_RECORDS = 100;
+    private static final int MAX_RECORDS = 100;
 
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    EntityRepository entityRepository;
-    @Autowired
-    SpecialEntityRepository specialEntityRepository;
-    @Autowired
-    SpecialUserRepository specialUserRepository;
+    private final UserRepository userRepository;
+    private final EntityRepository entityRepository;
+    private final SpecialEntityRepository specialEntityRepository;
+    private final SpecialUserRepository specialUserRepository;
 
-    @RequestMapping(method = RequestMethod.GET, path = "/users")
+    @GetMapping(path = "/users")
     @Transactional(readOnly = true)
     public Collection<User> searchUsers(
             @RequestParam(value = "searchKey") String searchKey,
@@ -60,22 +51,22 @@ public class UserController {
             @RequestParam(value = "searchReference", required = false) String searchReference) {
         return userRepository
                 .findUsersByKey(searchKey.trim().replace(" ", "%").concat("%"))
-                .limit(MAX_RECORDS).collect(Collectors.toList());
+                .limit(MAX_RECORDS).toList();
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/users/{userId}")
+    @GetMapping(path = "/users/{userId}")
     @Transactional(readOnly = true)
     public User getUser(@PathVariable(value = "userId") String userId) {
         return userRepository.findByLogin(userId);
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/entities")
+    @GetMapping(path = "/entities")
     @Transactional(readOnly = true)
     public Collection<String> getAllOrganizations() {
-        return entityRepository.findAllOrganizations()
-                .collect(Collectors.toList());
+        return entityRepository.findAllOrganizations().toList();
     }
 
+    @GetMapping(path = "/entities/{org}/users")
 
     @RequestMapping(method = RequestMethod.GET, path = "/users/jobTitle/{jobTitle}")
     @Transactional(readOnly = true)
@@ -92,17 +83,17 @@ public class UserController {
                 .findUsersByKeyAndOrganization(
                         searchKey.trim().replace(" ", "%").concat("%"),
                         organization)
-                .limit(MAX_RECORDS).collect(Collectors.toList());
+                .limit(MAX_RECORDS).toList();
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/users/connectedEntity")
+    @PostMapping(path = "/users/connectedEntity")
     @Transactional
     public Boolean addSpecialEntityForUser(@RequestBody SpecialEntityRequest request) {
         LOG.debug("Adding special entity to LEOS_SPECIAL_ENTITY table in ud-repo ---Started");
         SpecialUser specialUser = specialUserRepository.findByLogin(request.getUserId());
         if (specialUser == null) {
             LOG.debug("Special user does not exists, adding to the special user table");
-            User user = getUser(request.getUserId());
+            User user = userRepository.findByLogin(request.getUserId());
             specialUser = new SpecialUser(user.getLogin(), user.getPerId(), user.getLastName(), user.getFirstName(),
                     user.getEmail());
             specialUser = specialUserRepository.save(specialUser);
@@ -128,14 +119,13 @@ public class UserController {
         return false;
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/entities/{userId}")
+    @GetMapping(path = "/entities/{userId}")
     @Transactional(readOnly = true)
     public Collection<Entity> getAllFullPathEntitiesForUser(@PathVariable(value = "userId") String userId) {
-        User user = getUser(userId);
-        Collection<Entity> entities = entityRepository
+        User user = userRepository.findByLogin(userId);
+        return entityRepository
                 .findAllFullPathEntities(user.getEntities().stream()
-                        .map(e -> e.getId()).collect(Collectors.toList()))
-                .collect(Collectors.toList());
-        return entities;
+                        .map(Entity::getId).toList())
+                .toList();
     }
 }

@@ -20,8 +20,8 @@ import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItemVOBuilder;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,9 +30,9 @@ import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-@Ignore
+@Disabled
 public class TableOfContentHelperExplanatoryMandateTest extends TableOfXmlContentProcessorTest {
 
     @Override
@@ -41,7 +41,7 @@ public class TableOfContentHelperExplanatoryMandateTest extends TableOfXmlConten
         configFile = "/structure-test-explanatory-CN.xml";
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_buildTableOfContent() {
         byte[] fileContent = TestUtils.getFileContent(FILE_PREFIX + "/explanatory_basic.xml");

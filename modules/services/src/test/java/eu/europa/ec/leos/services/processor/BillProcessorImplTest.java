@@ -32,14 +32,14 @@ import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Option;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +51,7 @@ import java.util.ArrayList;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -98,7 +98,7 @@ public class BillProcessorImplTest extends LeosTest {
     private List<TocItem> tocItems;
     private List<NumberingConfig> numberingConfigs;
 
-    @Before
+    @BeforeEach
     public void setUp(){
         docTemplate = "BL-023";
         documentLanguageContext.setDocumentLanguage("en");

@@ -15,7 +15,7 @@ import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -23,7 +23,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +64,7 @@ public abstract class NumberServiceTest extends LeosTest {
 
     protected Map<String, List<String>> languageMap = new HashMap<>();
 
-    @Before
+    @BeforeEach
     public void setup() {
         super.setup();
         getStructureFile();

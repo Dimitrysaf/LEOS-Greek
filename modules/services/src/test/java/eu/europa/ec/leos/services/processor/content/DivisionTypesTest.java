@@ -3,8 +3,7 @@ package eu.europa.ec.leos.services.processor.content;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import org.junit.Test;
-import org.mockito.InjectMocks;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.List;
@@ -13,13 +12,10 @@ import static eu.europa.ec.leos.services.TestVOCreatorUtils.getJaneTestUser;
 import static eu.europa.ec.leos.services.support.XmlHelper.DIVISION;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.updateStyleClassOfTocItems;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DivisionTypesTest extends TableOfXmlContentProcessorTest {
 
-    @InjectMocks
-    private TableOfContentProcessor tableOfContentProcessor = Mockito.spy(new TableOfContentProcessorImpl());
-    @InjectMocks
     protected XmlContentProcessor xmlContentProcessor = Mockito.spy(new XmlContentProcessorMandate());
 
     private final static String DIVISION_NUMBERING = "/numbering/explanatory/division";
@@ -28,6 +24,14 @@ public class DivisionTypesTest extends TableOfXmlContentProcessorTest {
     protected void getStructureFile() {
         docTemplate = "CE-003";
         configFile = "/structure-test-division-explanatory-CN.xml";
+    }
+
+    @Override
+    @org.junit.jupiter.api.BeforeEach
+    public void onSetUp() {
+        super.onSetUp();
+        org.springframework.test.util.ReflectionTestUtils.setField(tableOfContentProcessor, "structureContextProvider", structureContextProvider);
+        org.springframework.test.util.ReflectionTestUtils.setField(xmlContentProcessor, "structureContextProvider", structureContextProvider);
     }
 
     @Test

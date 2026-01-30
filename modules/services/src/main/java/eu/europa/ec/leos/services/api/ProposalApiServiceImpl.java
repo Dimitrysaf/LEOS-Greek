@@ -68,10 +68,10 @@ import eu.europa.ec.leos.services.validation.ValidationService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -108,7 +108,7 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
             CloneContext cloneContext, MilestoneService milestoneService,
             ProposalConverterService proposalConverterService,
             PostProcessingDocumentService postProcessingDocumentService,
-            ValidationService validationService, Properties applicationProperties,
+            ValidationService validationService, @Qualifier("applicationProperties") Properties applicationProperties,
             ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
             NotificationService notificationService, LegService legService, UserHelper userHelper,
             LeosRepository leosRepository, TrackChangesContext trackChangesContext,

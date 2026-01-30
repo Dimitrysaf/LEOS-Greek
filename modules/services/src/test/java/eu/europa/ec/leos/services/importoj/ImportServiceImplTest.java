@@ -15,11 +15,11 @@ package eu.europa.ec.leos.services.importoj;
 
 import eu.europa.ec.leos.integration.ExternalDocumentProvider;
 import eu.europa.ec.leos.test.support.LeosTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 public class ImportServiceImplTest extends LeosTest {

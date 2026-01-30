@@ -29,7 +29,7 @@ import eu.europa.ec.leos.services.label.ref.Ref;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
 import io.atlassian.fugue.Pair;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -55,12 +55,13 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -120,9 +121,11 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         assertThat(ids, is(Arrays.asList("part11", "art485", "art485-par2", "con")));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void test_getAncestorsIdsForElementId_should_throwException_when_nonExistedElementPassed() {
-        xercesXmlContentProcessor.getAncestorsIdsForElementId(docContent, "notExisted");
+        assertThrows(IllegalArgumentException.class, () -> {
+            xercesXmlContentProcessor.getAncestorsIdsForElementId(docContent, "notExisted");
+        });
     }
 
     @Test
@@ -153,12 +156,14 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         assertEquals(squeezeXmlAndRemoveAllNS(expected), squeezeXmlAndRemoveAllNS(tagContent));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void test_getTagContentByNameAndId_should_throwRuntimeException_when_illegalXmlFormat() {
-        String xml = " <article xml:id=\"art486\">" +
-                "                    <num class=\"ArticleNumber\">Article 486</num>";
-        String tagContent = xercesXmlContentProcessor.getElementByNameAndId(xml.getBytes(UTF_8), SUBPARAGRAPH, "art486-aln1");
-        assertThat(tagContent, is(nullValue()));
+        assertThrows(RuntimeException.class, () -> {
+            String xml = " <article xml:id=\"art486\">" +
+                    "                    <num class=\"ArticleNumber\">Article 486</num>";
+            String tagContent = xercesXmlContentProcessor.getElementByNameAndId(xml.getBytes(UTF_8), SUBPARAGRAPH, "art486-aln1");
+            assertThat(tagContent, is(nullValue()));
+        });
     }
 
     @Test

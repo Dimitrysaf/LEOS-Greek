@@ -5,8 +5,8 @@ import eu.europa.ec.leos.services.compare.vo.Element;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper;
 import eu.europa.ec.leos.services.support.XercesUtils;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.w3c.dom.Node;
 
 import java.util.ArrayList;

@@ -22,8 +22,8 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.w3c.dom.Document;
@@ -35,7 +35,7 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTEN
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlDescriptor;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 public class XMLContentComparatorServiceImplTest extends LeosTest {
@@ -58,7 +58,7 @@ public class XMLContentComparatorServiceImplTest extends LeosTest {
     protected ContentComparatorService proposalCompareService = new XMLContentComparatorServiceImpl(messageHelper,
             textComparator, securityContext, xmlContentProcessor, cloneContext);
 
-    @Before
+    @BeforeEach
     public void onSetUp() throws Exception {
         User user = getJaneDigitUser();
         when(cloneContext.isClonedProposal()).thenReturn(true);
