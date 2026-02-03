@@ -48,11 +48,11 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   institutionalRefActingEntities = [];
   institutionalRefActingEntity: string | null;
   institutionalRefVersions = [];
-  institutionalRefNumber: number | null;
+  institutionalRefNumber: string | null;
   institutionalReferenceFinalVersion: Boolean;
   interInstitutionalRef: boolean;
   interInstitutionalRefYear: number | null;
-  interInstitutionalRefNumber: number | null;
+  interInstitutionalRefNumber: string | null;
   interInstitutionalRefType: string | null;
   interInstitutionalRefTypes = [];
   signatures: SignatureMetadata[] | null;
@@ -325,7 +325,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   getInstitutionalReference(): string {
     if (this.institutionalRef && !!this.institutionalRefActingEntity && !!this.institutionalRefYear && !!this.institutionalRefNumber) {
       const institutionalRef = this.institutionalRefActingEntity + '(' + this.institutionalRefYear + ')' + this.institutionalRefNumber;
-      if (this.institutionalRefRegEx.test(institutionalRef) && !isNaN(Number(this.institutionalRefNumber))) {
+      if (this.institutionalRefRegEx.test(institutionalRef) && !isNaN(Number(this.institutionalRefNumber)) && Number(this.institutionalRefNumber)>=0) {
         return institutionalRef;
       }
     } else if (!this.institutionalRef) {
@@ -345,6 +345,9 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   getInstitutionalRefNonValidMsg(): string {
+    if (this.invalidInstitutionalNumberInput) {
+      return this.translateService.instant("page.collection.details.invalid.institutional.ref.number.empty");
+    }
     if (!this.isInstitutionalRefValid()) {
       if (this.institutionalRefActingEntity == null || this.institutionalRefActingEntity == undefined) {
         return this.translateService.instant("page.collection.details.invalid.institutional.ref.type");
@@ -382,6 +385,9 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   getTargetProposalRefNonValidMsg(): string {
+    if (this.invalidTargetProposalReferenceInput) {
+      return this.translateService.instant("page.collection.details.invalid.target.proposal.ref.number.empty");
+    }
     if (!this.isTargetProposalReferenceValid() && this.showCorrigendumAddendum) {
       if (this.targetProposalReferenceYear == null || this.targetProposalReferenceYear == undefined) {
         return this.translateService.instant("page.collection.details.invalid.target.proposal.ref.year");
@@ -453,6 +459,9 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   getInterInstitutionalRefNonValidMsg(): string {
+    if (this.invalidInterInstitutionalNumberInput) {
+      return this.translateService.instant("page.collection.details.invalid.inter.institutional.ref.number.empty");
+    }
     if (!this.isInterInstitutionalRefValid()) {
       if (this.interInstitutionalRefYear == null || this.interInstitutionalRefYear == undefined) {
         return this.translateService.instant("page.collection.details.invalid.inter.institutional.ref.year");
@@ -484,7 +493,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.institutionalRef = true;
       this.institutionalRefActingEntity = myArray[1];
       this.institutionalRefYear = parseInt(myArray[2]);
-      this.institutionalRefNumber = parseInt(myArray[3]);
+      this.institutionalRefNumber = myArray[3];
     }
     this.institutionalReferenceFinalVersion = this.proposal.metadata.institutionalReferenceFinalVersion;
     this.diffusionVersion = this.proposal.metadata.diffusionVersion;
@@ -494,7 +503,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       let myArray = interInstitutionalRef.match(this.interInstitutionalRefRegEx);
       this.interInstitutionalRef = true;
       this.interInstitutionalRefYear = parseInt(myArray[1]);
-      this.interInstitutionalRefNumber = parseInt(myArray[2]);
+      this.interInstitutionalRefNumber = myArray[2];
       this.interInstitutionalRefType = myArray[3];
     }
     this.signatures = cloneDeep(this.proposal.metadata.signatures);
@@ -1015,5 +1024,50 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     return true;
   }
 
+  checkInstitutionalNumberInput(event) {
+    if (!this.validateDigits(event)) {
+      this.invalidInstitutionalNumberInput = true;
+      setTimeout(() => {
+        this.invalidInstitutionalNumberInput= !this.isInstitutionalRefValid();
+      }, 1500)
+      event.returnValue = false;
+      if(event.preventDefault) event.preventDefault();
+    }
+  }
+
+  checkInterInstitutionalNumberInput(event) {
+    if (!this.validateDigits(event)) {
+      this.invalidInterInstitutionalNumberInput = true;
+      setTimeout(() => {
+        this.invalidInterInstitutionalNumberInput= !this.isInterInstitutionalRefValid();
+      }, 1500)
+      event.returnValue = false;
+      if(event.preventDefault) event.preventDefault();
+    }
+  }
+
+  checkTargetProposalNumberInput(event) {
+    if (!this.validateDigits(event)) {
+      this.invalidTargetProposalReferenceInput = true;
+      setTimeout(() => {
+        this.invalidTargetProposalReferenceInput = false;
+      }, 1500)
+      event.returnValue = false;
+      if(event.preventDefault) event.preventDefault();
+    }
+  }
+
+  validateDigits(event) {
+    // Handle paste
+    if (event.type === 'paste') {
+      key = event.clipboardData.getData('text/plain');
+    } else {
+      // Handle key press
+      var key = event.keyCode || event.which;
+      key = String.fromCharCode(key);
+    }
+    var regex = /[0-9]|\./;
+    return regex.test(key);
+  }
 }
 
