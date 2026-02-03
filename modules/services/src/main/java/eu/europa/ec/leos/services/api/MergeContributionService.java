@@ -1602,13 +1602,15 @@ public class MergeContributionService {
                                 }
                                 String toBeReplacedBy = !nodeToString(child).contains(prevContent) ? prevContent.trim() : prevContent;
                                 int positionOfToBeReplacedBy = nodeToString(child).lastIndexOf(toBeReplacedBy);
-                                int sizeOfToBeReplacedBy = toBeReplacedBy.length();
-                                String endOfString = "";
-                                if (positionOfToBeReplacedBy + sizeOfToBeReplacedBy + 1 < nodeToString(child).length()) {
-                                    endOfString = nodeToString(child).substring(positionOfToBeReplacedBy + toBeReplacedBy.length());
+                                if (positionOfToBeReplacedBy > -1) {
+                                    int sizeOfToBeReplacedBy = toBeReplacedBy.length();
+                                    String endOfString = "";
+                                    if (positionOfToBeReplacedBy + sizeOfToBeReplacedBy + 1 < nodeToString(child).length()) {
+                                        endOfString = nodeToString(child).substring(positionOfToBeReplacedBy + toBeReplacedBy.length());
+                                    }
+                                    XercesUtils.replaceElement(child, nodeToString(child).substring(0, positionOfToBeReplacedBy) + toReplace + endOfString);
+                                    found = true;
                                 }
-                                XercesUtils.replaceElement(child, nodeToString(child).substring(0, positionOfToBeReplacedBy) + toReplace + endOfString);
-                                found = true;
                                 break;
                             }
                         }
@@ -2914,7 +2916,7 @@ public class MergeContributionService {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             return cleanContent(getContentNodeAsXmlFragment(node));
         } else {
-            return cleanContent(node.getTextContent());
+            return cleanContent(node.getTextContent().replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
         }
     }
 
