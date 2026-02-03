@@ -260,11 +260,11 @@ define(function aknNumberedParagraphPluginModule(require) {
         var cmd = event.listenerData;
         var jqEditor = $(event.editor.editable().$);
         var paragraphs = jqEditor.find(PARA_SELECTOR);
-        var rootElement = event.editor.element.getFirst();
+        var rootElement = leosPluginUtils.findFirstChild(event.editor.element);
         var isAlternative = rootElement && rootElement.getAttribute("leos:alternative");
 
         if (paragraphs.length > 0) {
-            if(isAlternative && rootElement.getName() === leosTrackChanges.core.ARTICLE) {
+            if(isAlternative && rootElement && rootElement.getName() === leosTrackChanges.core.ARTICLE) {
                 PARA_MODE = paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM) ? NUMBERED : UNNUMBERED;
             } else {
                 PARA_MODE = paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM)
@@ -301,7 +301,7 @@ define(function aknNumberedParagraphPluginModule(require) {
         ckEditor.fire('lockSnapshot');
         var jqEditor = $(ckEditor.editable().$);
         var paragraphs = jqEditor.find(PARA_SELECTOR);
-        var rootElement = ckEditor.element.getFirst();
+        var rootElement = leosPluginUtils.findFirstChild(ckEditor.element);
         var isAlternative = rootElement && rootElement.getAttribute("leos:alternative");
         if (paragraphs.length > 0) {
             if (PARA_MODE === NUMBERED) {
@@ -318,7 +318,7 @@ define(function aknNumberedParagraphPluginModule(require) {
                         }
                     }
                 }
-                if (renumber && !(isAlternative && rootElement.getName() === leosTrackChanges.core.ARTICLE)) {
+                if (renumber && !(isAlternative && rootElement && rootElement.getName() === leosTrackChanges.core.ARTICLE)) {
                     renumberModule.updateNumbers([paragraphs[0].parentElement], renumberModule.getSequences('Paragraph'));
                 }
             } else {

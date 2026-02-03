@@ -1,8 +1,8 @@
 package eu.europa.ec.leos.services.processor.content;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
-@Ignore
+@Disabled
 public class TableOfContentHelperAnnexMandateTest extends TableOfXmlContentProcessorTest {
 
     @Override

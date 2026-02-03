@@ -21,7 +21,7 @@
     <parent>
         <groupId>eu.europa.ec.leos</groupId>
         <artifactId>user-repo</artifactId>
-        <version>1.1.0-SNAPSHOT</version>
+        <version>5.3.1</version>
     </parent>
 
     <groupId>eu.europa.ec.leos.user-repo</groupId>
@@ -58,6 +58,12 @@
                     <mainClass>eu.europa.ec.digit.userdata.Application</mainClass>
                     <jvmArguments>-Dfile.encoding=UTF8</jvmArguments>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>repackage</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

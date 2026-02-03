@@ -11,8 +11,8 @@ import eu.europa.ec.leos.services.numbering.processor.NumberProcessorParagraphAn
 import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDefault;
 import eu.europa.ec.leos.services.structure.profile.ProfileContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
-import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Ignore
+@Disabled
 public abstract class NumberServiceMandateTest extends NumberServiceTest {
 
     protected ParentChildConverter parentChildConverter = new ParentChildConverter();
@@ -53,7 +53,7 @@ public abstract class NumberServiceMandateTest extends NumberServiceTest {
 
     protected final static String FILE_PREFIX = "/numbering/bill/";
 
-    @Before
+    @BeforeEach
     public void setup() {
         super.setup();
         getStructureFile();

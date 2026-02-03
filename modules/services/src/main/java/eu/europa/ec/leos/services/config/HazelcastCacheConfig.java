@@ -46,7 +46,7 @@ public class HazelcastCacheConfig {
         joinConfig.getMulticastConfig().setEnabled(false);
         joinConfig.getTcpIpConfig().setEnabled(false);
         joinConfig.getAwsConfig().setEnabled(false);
-        
+
         if (Boolean.TRUE.equals(kubernetesEnabled)) {
             joinConfig.getKubernetesConfig()
                     .setEnabled(true)
@@ -232,7 +232,7 @@ public class HazelcastCacheConfig {
         coEditionCache.addEntryListenerConfig(listenerConfig);
 
         config.addMapConfig(coEditionCache);
-        
+
         // Update elements broadcast cache
         MapConfig updateElementsCache = new MapConfig("updateElementsCache");
         updateElementsCache.setBackupCount(0);
@@ -243,7 +243,7 @@ public class HazelcastCacheConfig {
         );
         updateElementsCache.addEntryListenerConfig(updateListener);
         config.addMapConfig(updateElementsCache);
-        
+
         // Update document broadcast cache
         MapConfig updateDocumentCache = new MapConfig("updateDocumentCache");
         updateDocumentCache.setBackupCount(0);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -19,7 +20,7 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
     private final ObjectMapper mapper = new ObjectMapper();
     @Override
     public boolean hasError(ClientHttpResponse httpResponse) throws IOException {
-        HttpStatus status = httpResponse.getStatusCode();
+        HttpStatusCode status = httpResponse.getStatusCode();
         return !status.is2xxSuccessful();
     }
 
@@ -42,7 +43,7 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
             if (httpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
                 throw new IllegalArgumentException("Resource not found");
             } else {
-                if (httpResponse.getStatusCode().series() == HttpStatus.Series.CLIENT_ERROR) {
+                if (httpResponse.getStatusCode().is4xxClientError()) {
                     throw new IllegalArgumentException("Client error: " + responseAsString);
                 } else {
                     throw new IllegalStateException("Server Error: " + httpResponse.getStatusText());

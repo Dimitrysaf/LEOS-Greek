@@ -3,7 +3,7 @@ package eu.europa.ec.leos.services.collection;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import org.apache.commons.lang3.Validate;

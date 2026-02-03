@@ -69,8 +69,8 @@ define(function leosPluginUtilsModule(require) {
     var DATA_AKN_HCONTAINER = "data-akn-hcontainer";
     var DATA_AKN_SUB_HCONTAINER = "data-akn-sub-hcontainer";
     var DATA_AKN_MEDIA_CONTAINER = "data-akn-media-container";
-    var HCONTAINER_TABLE = "BLOCK_TAB";
-    var SUB_HCONTAINER_TABLE = "TAB";
+    var HCONTAINER_TABLE = "TAB";
+    var SUB_HCONTAINER_TABLE = "TAB_CONTAINER";
     var HCONTAINER_IMAGE = "FGR";
     var SUB_HCONTAINER_IMAGE = "IMG";
     var ARTICLE = "article";

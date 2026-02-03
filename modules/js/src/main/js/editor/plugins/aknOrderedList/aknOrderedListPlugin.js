@@ -122,7 +122,7 @@ define(function aknOrderedListPluginModule(require) {
     function _startObservingAllLists(event){
         var editor = event.editor;
         if(editor.editable && editor.editable().getChildren && editor.editable().getChildren().count() > 0){
-            _addMutationObserverToLists(editor.editable().getChildren().getItem(0).find(ORDERED_LIST_SELECTOR).$);
+            _addMutationObserverToLists(leosPluginUtils.findFirstChild(editor.editable()).find(ORDERED_LIST_SELECTOR).$);
         }
     }
 

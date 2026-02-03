@@ -18,8 +18,8 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import eu.europa.ec.leos.test.support.LeosTest;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -29,7 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TokenServiceTest extends LeosTest {
     
@@ -150,7 +150,7 @@ public class TokenServiceTest extends LeosTest {
         return token;
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_printTokenWithLightSecurityContext() throws Exception {
         String clientId = "dgtClientId";
@@ -164,7 +164,7 @@ public class TokenServiceTest extends LeosTest {
         System.out.println(token);
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_printToken() throws Exception {
         //LOCAL/DEV ISC
@@ -177,7 +177,7 @@ public class TokenServiceTest extends LeosTest {
         System.out.println(token);
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_printDecodedToken(){
         String token = "insert_token_here";

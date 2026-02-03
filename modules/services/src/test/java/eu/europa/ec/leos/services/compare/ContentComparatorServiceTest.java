@@ -21,8 +21,8 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.w3c.dom.Document;
@@ -32,9 +32,9 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTEN
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Ignore
+@Disabled
 public class ContentComparatorServiceTest extends LeosTest {
 
     @Mock
@@ -71,7 +71,7 @@ public class ContentComparatorServiceTest extends LeosTest {
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_two_columns_img_diff_attributes_values_() {
         String oldContent = "<aknp><img id=\"img1\" src=\"src1\"></img></aknp>";
@@ -221,7 +221,7 @@ public class ContentComparatorServiceTest extends LeosTest {
 
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_two_clumns_text_diff_inside_b() {
         String oldContent = "<doc><aknp id=\"1\"> test <b>test2</b> </aknp></doc>";
@@ -616,7 +616,7 @@ public class ContentComparatorServiceTest extends LeosTest {
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_two_columns_table_diff_row_added() {
         String oldContent = "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" xmlns:leos=\"urn:eu:europa:ec:leos\"><blockContainer id=\"akn_annex_cee4K4\" leos:editable=\"true\" leos:deletable=\"true\"><table id=\"art_1_UHAr9x\" border=\"1\" cellpadding=\"1\" cellspacing=\"1\" style=\"width: 500px;\">"
@@ -649,7 +649,7 @@ public class ContentComparatorServiceTest extends LeosTest {
         assertEquals(expectedRightResult, result[1]);
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_two_columns_table_diff_colum_removed_keep_class() {
         String oldContent = "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" xmlns:leos=\"urn:eu:europa:ec:leos\"><blockContainer id=\"akn_annex_cee4K4\" leos:editable=\"true\" leos:deletable=\"true\"><table id=\"art_1_UHAr9x\" border=\"1\" cellpadding=\"1\" cellspacing=\"1\" style=\"width: 500px;\">"

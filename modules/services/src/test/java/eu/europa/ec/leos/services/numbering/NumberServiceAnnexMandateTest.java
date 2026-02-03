@@ -13,9 +13,9 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessorMandate;
 import eu.europa.ec.leos.services.structure.profile.ProfileContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -27,9 +27,9 @@ import java.util.stream.Stream;
 
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Ignore
+@Disabled
 public class NumberServiceAnnexMandateTest extends NumberServiceTest {
 
     protected final static String FILE_PREFIX = "/numbering/annex/";
@@ -64,7 +64,7 @@ public class NumberServiceAnnexMandateTest extends NumberServiceTest {
 
     protected NumberService numberService;
 
-    @Before
+    @BeforeEach
     public void setup() {
         super.setup();
         numberService = new NumberServiceMandate(xmlContentProcessor, structureContextProvider, numberProcessorHandler, parentChildConverter,

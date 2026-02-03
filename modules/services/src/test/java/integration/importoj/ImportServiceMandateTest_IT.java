@@ -27,9 +27,9 @@ import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -42,12 +42,12 @@ import java.util.stream.IntStream;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
 import static eu.europa.ec.leos.test.support.model.ModelHelper.createBillForBytes;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.spy;
 
-@Ignore
+@Disabled
 public class ImportServiceMandateTest_IT extends NumberServiceMandateTest {
 
     @Mock
@@ -74,7 +74,7 @@ public class ImportServiceMandateTest_IT extends NumberServiceMandateTest {
         configFile = "/structure-test-bill-CN.xml";
     }
 
-    @Before
+    @BeforeEach
     public void onSetUp() {
         numberService = new NumberServiceMandate(xmlContentMandateProcessor, structureContextProvider, numberProcessorHandler,
                 parentChildConverter, documentLanguageContext);

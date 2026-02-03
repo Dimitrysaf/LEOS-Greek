@@ -2,13 +2,12 @@ package eu.europa.ec.leos.services.label;
 
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.services.label.ref.Ref;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /** Article 46 used for the unnumbered paragraph:
  * first paragraph (a5_sdplN0)
@@ -308,7 +307,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
         assertEquals(expectedResults, result.get());
     }
 
-    @Ignore //same behaviour is actually happening. Waiting to discuss with business how to treat sub-points(alinea)
+    @Disabled //same behaviour is actually happening. Waiting to discuss with business how to treat sub-points(alinea)
     @Test
     public void generateLabel_sameArticle_sameParagraph_sourcePointD3IVIndent_targetPointD3SubPoint() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_nmQFmM", "bill", null)), "bill", "a5_A8TAMj", document, false);
@@ -326,7 +325,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
         assertEquals(expectedResults, result.get());
     }
 
-    @Ignore //same behaviour is actually happening. Waiting to discuss with business how to treat sub-points(alinea)
+    @Disabled //same behaviour is actually happening. Waiting to discuss with business how to treat sub-points(alinea)
     @Test
     public void generateLabel_sameArticle_sameParagraph_sourcePointD3IVIndent_targetPointDSubPoint() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_T0L37f", "bill", null)), "bill", "a5_A8TAMj", document, false);
@@ -529,7 +528,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
                 + ", <ref href=\"bill.xml/~a5_51QZD5\" xml:id=\"\">second</ref>"
                 + " and <ref href=\"bill.xml/~a5_IktngU\" xml:id=\"\">third</ref>"
                 + " indents";
-        Assert.assertEquals(expectedResults, result.get());
+        assertEquals(expectedResults, result.get());
     }
 
     @Test
@@ -540,7 +539,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
                 + ", point (d)(3)(iv)"
                 + ", <ref href=\"bill.xml/~a5_IktngU\" xml:id=\"\">third</ref>"
                 + " indent";
-        Assert.assertEquals(expectedResults, result.get());
+        assertEquals(expectedResults, result.get());
     }
 
 

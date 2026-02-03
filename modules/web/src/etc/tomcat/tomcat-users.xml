@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tomcat-users>
-  <user username="demo" password="demo" roles="LEOS_USER"/>
-  <user username="john" password="demo" roles="LEOS_USER"/>
-  <user username="jane" password="demo" roles="LEOS_USER"/>
+    <user username="demo" password="demo" roles=""/>
+    <user username="john" password="demo" roles=""/>
+    <user username="jane" password="demo" roles=""/>
+    <user username="leos" password="demo" roles=""/>
+    <user username="dasatya" password="demo" roles=""/>
+    <user username="a00012yl" password="demo" roles=""/>
+    <user username="n00015oj" password="demo" roles=""/>
+    <user username="n00015ok" password="demo" roles=""/>
+    <user username="n000181g" password="demo" roles=""/>
+    <user username="n000181h" password="demo" roles=""/>
 </tomcat-users>

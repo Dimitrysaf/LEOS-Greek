@@ -41,8 +41,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -115,7 +115,7 @@ public class PackageServiceImpl implements PackageService {
     }
 
     @Override
-    @Cacheable(cacheNames = "getPackageByName", key = "{#name}")
+    @Cacheable(cacheNames = "getPackageByName", key = "{#p0}")
     public eu.europa.ec.leos.repository.model.Package getPackageByName(final String name) throws RepositoryException {
         Package pkg =
                 packageRepository.findPackageByName(name).orElse(null);
@@ -123,7 +123,7 @@ public class PackageServiceImpl implements PackageService {
     }
 
     @Override
-    @Cacheable(cacheNames = "getPackageById", key = "#id")
+    @Cacheable(cacheNames = "getPackageById", key = "#p0")
     public eu.europa.ec.leos.repository.model.Package getPackageById(final String id) throws RepositoryException {
         try {
             Optional<Package> pkg = packageRepository.findById(new BigDecimal(id));

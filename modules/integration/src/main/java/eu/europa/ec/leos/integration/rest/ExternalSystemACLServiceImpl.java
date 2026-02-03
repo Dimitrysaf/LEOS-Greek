@@ -6,6 +6,7 @@ import eu.europa.ec.leos.integration.exception.ExternalSystemACLException;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -27,13 +28,14 @@ public class ExternalSystemACLServiceImpl implements ExternalSystemACLService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExternalSystemACLServiceImpl.class);
 
+
     private final RestTemplate restTemplate;
 
     @Value("${leos.external.acl.domain.whitelist}")
     private String allowedDomains;
     private Pattern allowedDomainsPattern;
 
-    public ExternalSystemACLServiceImpl(RestTemplate restTemplate) {
+    public ExternalSystemACLServiceImpl(@Qualifier("RestOperations") RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 

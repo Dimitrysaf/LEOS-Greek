@@ -18,7 +18,7 @@ import io.atlassian.fugue.Pair;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 public interface ToolBoxService {
 

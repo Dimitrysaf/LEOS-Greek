@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.repository.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.europa.ec.leos.repository.H2TestBase;
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.controllers.DocumentController;
 import eu.europa.ec.leos.repository.controllers.requests.CreateDocumentRequest;
@@ -13,18 +14,20 @@ import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.services.DocumentService;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.assertj.core.util.Sets;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.AdditionalMatchers;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -42,6 +45,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -52,10 +56,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.web.util.UriUtils.encodeUriVariables;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(value = DocumentController.class)
 @ActiveProfiles("test")
-public class DocumentIntegrationTests {
+class DocumentIntegrationTests extends H2TestBase {
     @Autowired
     protected MockMvc mockMvc;
 
@@ -176,7 +180,7 @@ public class DocumentIntegrationTests {
             "    </bill>\n" +
             "</akomaNtoso>";
 
-    public void createPackage() {
+    void createPackage() {
         eu.europa.ec.leos.repository.entities.Package pkgEntity = new eu.europa.ec.leos.repository.entities.Package();
         pkgEntity.setId(PKG_ID);
         pkgEntity.setName(PKG_NAME);
@@ -189,8 +193,9 @@ public class DocumentIntegrationTests {
         pkg = new eu.europa.ec.leos.repository.model.Package(pkgEntity);
     }
 
-    @Before
-    public void instantiateTestDocs() {
+    @WithMockUser
+    @BeforeEach
+    void instantiateTestDocs() {
         createPackage();
 
         xmlDoc = new LeosDocument();
@@ -211,8 +216,9 @@ public class DocumentIntegrationTests {
         xmlDoc.setVersionType(VersionType.MAJOR);
     }
 
+    @WithMockUser
     @Test
-    public void test_createDocumentFromContent() throws Exception {
+    void test_createDocumentFromContent() throws Exception {
         CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest();
         createDocumentRequest.setComments(xmlDoc.getComments());
         createDocumentRequest.setContent(xmlDoc.getSource());
@@ -233,7 +239,7 @@ public class DocumentIntegrationTests {
 
         mockMvc.perform(put("/document/create-with-content").contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(jsonPath("$.ref", is(xmlDoc.getRef())))
                 .andExpect(jsonPath("$.name", is(xmlDoc.getName())))
                 .andExpect(jsonPath("$.createdBy", is(USER)))
@@ -243,8 +249,9 @@ public class DocumentIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
-    public void test_createDocumentFromContentNotValidRequest() throws Exception {
+    void test_createDocumentFromContentNotValidRequest() throws Exception {
         CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest();
         createDocumentRequest.setComments(xmlDoc.getComments());
         createDocumentRequest.setContent(null);
@@ -258,12 +265,13 @@ public class DocumentIntegrationTests {
 
         mockMvc.perform(put("/document/create-with-content").contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(status().isBadRequest()).andDo(print());
     }
 
+    @WithMockUser
     @Test
-    public void test_createDocumentFromSource() throws Exception {
+    void test_createDocumentFromSource() throws Exception {
         CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest();
         createDocumentRequest.setComments(xmlDoc.getComments());
         createDocumentRequest.setSourceDocumentId("BL-023");
@@ -284,7 +292,7 @@ public class DocumentIntegrationTests {
 
         mockMvc.perform(put("/document/create-with-source").contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(jsonPath("$.ref", is(xmlDoc.getRef())))
                 .andExpect(jsonPath("$.name", is(xmlDoc.getName())))
                 .andExpect(jsonPath("$.createdBy", is(USER)))
@@ -294,8 +302,9 @@ public class DocumentIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
-    public void test_createDocumentFromSourceNonValidRequest() throws Exception {
+    void test_createDocumentFromSourceNonValidRequest() throws Exception {
         CreateDocumentRequest createDocumentRequest = new CreateDocumentRequest();
         createDocumentRequest.setComments(xmlDoc.getComments());
         createDocumentRequest.setSourceDocumentId(null);
@@ -308,28 +317,31 @@ public class DocumentIntegrationTests {
         String json = mapper.writeValueAsString(createDocumentRequest);
         mockMvc.perform(put("/document/create-with-source").contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(status().isBadRequest()).andDo(print());
     }
 
+    @WithMockUser
     @Test
-    public void test_deleteDocumentById() throws Exception {
-        mockMvc.perform(delete("/document/delete-by-id/{id}", xmlDoc.getVersionId()))
+    void test_deleteDocumentById() throws Exception {
+        mockMvc.perform(delete("/document/delete-by-id/{id}", xmlDoc.getVersionId()).with(csrf()))
                 .andExpect(status().isOk()).andDo(print());
         verify(documentService).deleteDocumentByVersionId(ArgumentMatchers.eq(xmlDoc.getVersionId()));
     }
 
+    @WithMockUser
     @Test
-    public void test_deleteDocumentByIdWithError() throws Exception {
+    void test_deleteDocumentByIdWithError() throws Exception {
         Mockito.doThrow(new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND,
                 "Document Not Found")).when(documentService).deleteDocumentByVersionId(ArgumentMatchers.eq(xmlDoc.getVersionId()));
 
-        mockMvc.perform(delete("/document/delete-by-id/{id}", xmlDoc.getVersionId()).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/document/delete-by-id/{id}", xmlDoc.getVersionId()).accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(status().is5xxServerError()).andDo(print());
     }
 
+    @WithMockUser
     @Test
-    public void test_updateDocument() throws Exception {
+    void test_updateDocument() throws Exception {
         UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
         updateDocumentRequest.setComments(xmlDoc.getComments());
         updateDocumentRequest.setMetadata(DOC_PROPERTIES);
@@ -346,7 +358,7 @@ public class DocumentIntegrationTests {
 
         mockMvc.perform(put("/document/update-content/{versionId}", xmlDoc.getVersionId()).contentType(MediaType.APPLICATION_JSON)
                 .content(json)
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(jsonPath("$.ref", is(xmlDoc.getRef())))
                 .andExpect(jsonPath("$.name", is(xmlDoc.getName())))
                 .andExpect(jsonPath("$.createdBy", is(USER)))
@@ -357,8 +369,9 @@ public class DocumentIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
-    public void test_updateDocumentWithContentBadRequest() throws Exception {
+    void test_updateDocumentWithContentBadRequest() throws Exception {
         UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
         updateDocumentRequest.setComments(xmlDoc.getComments());
         updateDocumentRequest.setMetadata(DOC_PROPERTIES);
@@ -369,12 +382,13 @@ public class DocumentIntegrationTests {
 
         mockMvc.perform(put("/document/update-content/{docRef}", xmlDoc.getRef()).contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(status().isBadRequest()).andDo(print());
     }
 
+    @WithMockUser
     @Test
-    public void test_updateDocumentMetadata() throws Exception {
+    void test_updateDocumentMetadata() throws Exception {
         String newTitle = "New Title";
         UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
         updateDocumentRequest.setComments(xmlDoc.getComments());
@@ -390,7 +404,7 @@ public class DocumentIntegrationTests {
 
         mockMvc.perform(put("/document/update-metadata/{docRef}/{versionId}?latest={latest}", xmlDoc.getRef(), xmlDoc.getVersionId(), latest).contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(jsonPath("$.ref", is(xmlDoc.getRef())))
                 .andExpect(jsonPath("$.name", is(xmlDoc.getName())))
                 .andExpect(jsonPath("$.updatedBy", is(USER)))
@@ -399,8 +413,9 @@ public class DocumentIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
-    public void findDocumentsByUserId() throws Exception {
+    void findDocumentsByUserId() throws Exception {
         String role = "OWNER";
         List<LeosDocument> listDocs = Arrays.asList(xmlDoc);
         String category = "BILL";
@@ -419,8 +434,9 @@ public class DocumentIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
-    public void findDocumentsByName() throws Exception {
+    void findDocumentsByName() throws Exception {
         String name = "catalog";
         List<LeosDocument> listDocs = Arrays.asList(xmlDoc);
 
@@ -437,8 +453,9 @@ public class DocumentIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
-    public void findDocumentsWithFilter() throws Exception {
+    void findDocumentsWithFilter() throws Exception {
         QueryFilter filter = new QueryFilter();
         filter.addFilter(new QueryFilter.Filter("procedureType", "IN", true, "ORDINARY_LEGISLATIVE_PROC"
                 , "SPECIAL_LEGISLATIVE_ACTS", "COMMISSION_LEGAL_ACTS", "COUNCIL_LEGAL_ACTS", "COUNCIL_INTERNAL_DOCUMENT"));
@@ -463,13 +480,14 @@ public class DocumentIntegrationTests {
         mockMvc.perform(post("/documents/find-by-filter?packageName={packageName}&startIndex={startIndex}&maxResults={maxResults}",
                         encodeUriVariables(PKG_NAME)[0],
                         startIndex, maxResults).contentType(MediaType.APPLICATION_JSON)
-                        .content(json).accept(MediaType.APPLICATION_JSON))
+                        .content(json).accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(jsonPath("$.leosDocumentList[0].ref", is(xmlDoc.getRef())))
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
-    public void countDocumentsWithFilter() throws Exception {
+    void countDocumentsWithFilter() throws Exception {
         QueryFilter filter = new QueryFilter();
         filter.addFilter(new QueryFilter.Filter("procedureType", "IN", true, "ORDINARY_LEGISLATIVE_PROC"
                 , "SPECIAL_LEGISLATIVE_ACTS", "COMMISSION_LEGAL_ACTS", "COUNCIL_LEGAL_ACTS", "COUNCIL_INTERNAL_DOCUMENT"));
@@ -489,13 +507,14 @@ public class DocumentIntegrationTests {
                 .thenReturn(1L);
 
         mockMvc.perform(post("/documents/count-by-filter?packageName={packageName}", encodeUriVariables(PKG_NAME)[0]).contentType(MediaType.APPLICATION_JSON)
-                        .content(json).accept(MediaType.APPLICATION_JSON))
+                        .content(json).accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(content().string("1"))
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
-    public void findDocumentById() throws Exception {
+    void findDocumentById() throws Exception {
         Boolean latest = true;
         when(documentService.findDocumentById(xmlDoc.getVersionId(), "BILL", latest)).thenReturn(xmlDoc);
 
@@ -509,8 +528,9 @@ public class DocumentIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
-    public void findAllVersionsByRef() throws Exception {
+    void findAllVersionsByRef() throws Exception {
         Boolean latest = true;
         when(documentService.findAllVersionsByRef(xmlDoc.getRef())).thenReturn(Arrays.asList(xmlDoc));
 

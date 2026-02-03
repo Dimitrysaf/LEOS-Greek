@@ -23,7 +23,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
 import eu.europa.ec.leos.services.structure.profile.ProfileContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import integration.saveToc.SaveTocTest_IT;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -73,7 +73,7 @@ public abstract class SaveTocProposalTest_IT extends SaveTocTest_IT {
 
     protected NumberService numberService;
 
-    @Before
+    @BeforeEach
     public void onSetUp() throws Exception {
         super.onSetUp();
         numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, documentLanguageContext);

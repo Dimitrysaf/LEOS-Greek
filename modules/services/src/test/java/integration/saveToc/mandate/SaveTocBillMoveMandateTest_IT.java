@@ -18,7 +18,7 @@ import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
 import static integration.saveToc.TocVOCreateUtils.getElementById;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -29,9 +29,9 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.test.support.model.ModelHelper;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,7 @@ import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import integration.saveToc.TocVOCreateMandateUtils;
 
-@Ignore
+@Disabled
 public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
 
     private static final Logger log = LoggerFactory.getLogger(SaveTocBillMoveMandateTest_IT.class);
@@ -50,7 +50,7 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
     @Mock
     private SecurityContext securityContext;
 
-    @Before
+    @BeforeEach
     public void onSetup() throws Exception {
         super.onSetUp();
         List<Entity> entities = new ArrayList<Entity>();
@@ -60,7 +60,7 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         when(securityContext.getUserName()).thenReturn("jane");
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_move__article_top_outsideChapter() {
         // Given
