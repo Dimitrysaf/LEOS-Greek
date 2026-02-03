@@ -132,12 +132,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			httpSecurity.anonymous().disable().authorizeRequests().antMatchers("*").permitAll();
 		}
 
+		// TO BE ENABLED WHEN SECURITY IS OPERATIONAL
 		// Make sure we use stateless session; session won't be used to store user's state
-		httpSecurity.exceptionHandling().authenticationEntryPoint(JwtAuthenticationEntryPoint()).and().
-				sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().
-				// Add a filter to validate the tokens with every request
-		        addFilterBefore(new JwtRequestFilter(), UsernamePasswordAuthenticationFilter.class).
-				// Add a filter for preventing XSS attacks
-		        addFilterAfter(new XSSFilter(), UsernamePasswordAuthenticationFilter.class);
+//		httpSecurity.exceptionHandling().authenticationEntryPoint(JwtAuthenticationEntryPoint()).and().
+//				sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().
+//				// Add a filter to validate the tokens with every request
+//		        addFilterBefore(new JwtRequestFilter(), UsernamePasswordAuthenticationFilter.class).
+//				// Add a filter for preventing XSS attacks
+//		        addFilterAfter(new XSSFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 }
