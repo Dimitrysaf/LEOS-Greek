@@ -26,7 +26,6 @@ public class AbstractRestClient {
     protected <T> T postEntity(String url, Object request, Class<T> responseType, Object... parameters) {
         HttpEntity<UpdateDocumentRequest> payload = new HttpEntity(request);
         ResponseEntity<T> resp = restTemplate.postForEntity(url, payload, responseType, parameters);
-        logger.info("Search in url={}, response: {} , body: {}", url, resp, resp.getBody());
         return resp.getBody();
     }
 

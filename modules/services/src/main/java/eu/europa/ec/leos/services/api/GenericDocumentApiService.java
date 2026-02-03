@@ -371,24 +371,17 @@ public class GenericDocumentApiService {
         List<String> authorLogins = new ArrayList<>();
         boolean usersEmpty = false;
         if (StringUtils.hasText(authorKey)) {
-            LOG.info("-- #1975 -- authorKey hasText :{}", authorKey);
             List<UserJSON> users = userService.searchUsersByKey(authorKey);
             usersEmpty = users.isEmpty();
             authorLogins = users.stream().map(user -> user.getLogin()).collect(Collectors.toList());
-            LOG.info("-- #1975 -- authorLogins size:{}", authorLogins.size());
         }
         List<VersionVO> versions = new ArrayList<>();
         if (!usersEmpty) {
-            LOG.info("-- #1975 -- users are not empty or not set {}", authorLogins.size());
             List<XmlDocument> foundVersions = this.leosRepository.searchVersions(XmlDocument.class, docRef, authorLogins,
                     versionType);
             versions = VersionsUtil.buildVersionVO(foundVersions, messageHelper);
             versions.forEach(v -> v.setCreatedBy(userHelper.convertToPresentation(v.getUsername())));
         }
-        if (usersEmpty) {
-            LOG.info("-- #1975 -- users are empty {}", authorLogins.size());
-        }
-        LOG.info("-- #1975 -- versions {}", versions.size());
         return versions;
     }
 
