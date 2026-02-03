@@ -1,8 +1,9 @@
 package eu.europa.ec.leos.services.compare.processor;
 
 import eu.europa.ec.leos.services.util.TestUtils;
-import junit.framework.TestCase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.mockito.InjectMocks;
 
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE_COMPARE_ADDED_CLASS;
@@ -10,7 +11,7 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
 
-public class LeosPostDiffingProcessorTest extends TestCase {
+public class LeosPostDiffingProcessorTest {
 
     @InjectMocks
     private LeosPostDiffingProcessor postDiffingProcessor = new LeosPostDiffingProcessor();

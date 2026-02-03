@@ -23,14 +23,14 @@ import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Option;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.io.ByteArrayInputStream;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -85,7 +85,7 @@ public class FinancialStatementProcessorTest extends LeosTest {
     private List<TocItem> tocItems;
     private List<NumberingConfig> numberingConfigs;
 
-    @Before
+    @BeforeEach
     public void setUp(){
         docTemplate = "FS-001";
         documentLanguageContext.setDocumentLanguage("en");

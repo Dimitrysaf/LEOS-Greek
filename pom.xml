@@ -54,8 +54,8 @@
 
     <properties>
         <!-- Project -->
-        <project.maven.version>3.3.9</project.maven.version>
-        <project.java.version>1.8</project.java.version>
+        <project.maven.version>[3.8.0,3.10.0)</project.maven.version>
+        <project.java.version>21</project.java.version>
         <project.java.debug>false</project.java.debug>
         <project.java.optimize>true</project.java.optimize>
         <project.java.showWarnings>true</project.java.showWarnings>
@@ -64,7 +64,6 @@
         <js.skipTests>true</js.skipTests>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <project.weblogic.version>12.2.1.4</project.weblogic.version>
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
         <!-- LEOS -->
         <leos.build.version>${project.version}</leos.build.version>
@@ -76,24 +75,25 @@
         <leos.source.committedRevision>${git.commit.id}</leos.source.committedRevision>
         <leos.source.committedDate>${git.commit.time}</leos.source.committedDate>
         <!-- Plugins -->
-        <maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
-        <extra-enforcer-rules.version>1.0-alpha-5</extra-enforcer-rules.version>
-        <git-commit-id-plugin.version>2.2.2</git-commit-id-plugin.version>
-        <maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
-        <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
-        <maven-dependency-plugin.version>2.10</maven-dependency-plugin.version>
-        <maven-install-plugin.version>2.5.2</maven-install-plugin.version>
-        <maven-deploy-plugin.version>3.1.1</maven-deploy-plugin.version>
-        <maven-site-plugin.version>3.5.1</maven-site-plugin.version>
-        <maven-resources-plugin.version>3.0.1</maven-resources-plugin.version>
-        <copy-rename-maven-plugin.version>1.0</copy-rename-maven-plugin.version>
-        <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
-        <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
-        <maven-war-plugin.version>3.0.0</maven-war-plugin.version>
-        <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.0.0</maven-javadoc-plugin.version>
-        <jetty-maven-plugin.version>9.4.53.v20231009</jetty-maven-plugin.version>
-        <tomcat7-maven-plugin.version>2.2</tomcat7-maven-plugin.version>
+        <maven-enforcer-plugin.version>3.6.2</maven-enforcer-plugin.version>
+        <extra-enforcer-rules.version>1.11.0</extra-enforcer-rules.version>
+        <git-commit-id-plugin.version>9.0.2</git-commit-id-plugin.version>
+        <maven-compiler-plugin.version>3.14.1</maven-compiler-plugin.version>
+        <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
+        <maven-dependency-plugin.version>3.9.0</maven-dependency-plugin.version>
+        <maven-install-plugin.version>3.1.4</maven-install-plugin.version>
+        <maven-deploy-plugin.version>3.1.4</maven-deploy-plugin.version>
+        <maven-site-plugin.version>3.21.0</maven-site-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+        <maven-antrun-plugin.version>3.1.0</maven-antrun-plugin.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
+        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
+        <maven-war-plugin.version>3.5.0</maven-war-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <cxf-maven-plugin.version>4.1.4</cxf-maven-plugin.version>
+
+        <!--        SHOULD BE MIGRATED TO NEWER TECHS-->
         <jasmine-maven-plugin.version>2.2</jasmine-maven-plugin.version>
         <frontend-maven-plugin.version>1.13.4</frontend-maven-plugin.version>
         <exec-maven-plugin.version>3.1.0</exec-maven-plugin.version>
@@ -101,79 +101,82 @@
         <phantomjs-webdriver.version>1.3.0</phantomjs-webdriver.version>
         <phantomjs.version>2.1.1</phantomjs.version>
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
-        <build-helper-plugin.version>1.12</build-helper-plugin.version>
-        <build-number-plugin.version>1.4</build-number-plugin.version>
         <jshint-maven-plugin.version>1.6.0</jshint-maven-plugin.version>
-        <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
-        <copy-maven-plugin.version>0.2.5</copy-maven-plugin.version>
-        <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
-        <mycila-license-maven-plugin.version>3.0</mycila-license-maven-plugin.version>
-        <codehause-license-maven-plugin.version>2.0.0</codehause-license-maven-plugin.version>
+        <!--        END-->
+
+        <build-helper-plugin.version>3.6.1</build-helper-plugin.version>
+        <build-number-plugin.version>3.2.1</build-number-plugin.version>
+        <codehause-license-maven-plugin.version>2.7.0</codehause-license-maven-plugin.version>
+        <jaxb-maven-plugin.version>4.0.8</jaxb-maven-plugin.version>
         <!-- Extensions -->
-        <wagon-ftp-extension.version>2.2</wagon-ftp-extension.version>
+        <wagon-ftp-extension.version>3.5.3</wagon-ftp-extension.version>
         <!-- Libraries -->
-        <lombok.version>1.18.34</lombok.version>
-        <slf4j.version>1.7.36</slf4j.version>
-        <logback.version>1.2.11</logback.version>
-        <logbackdb.version>1.2.11.1</logbackdb.version>
-        <janino.version>3.1.12</janino.version>
+        <jakarta.validation-api.version>3.1.1</jakarta.validation-api.version>
+        <jakarta.annotation-api.version>2.1.1</jakarta.annotation-api.version>
+        <jakarta.xml.bind-api.version>4.0.2</jakarta.xml.bind-api.version>
+        <jakarta.activation-api.version>2.1.4</jakarta.activation-api.version>
+        <jaxb-runtime.version>4.0.5</jaxb-runtime.version>
+        <jaxb-plugins-runtime.version>4.0.8</jaxb-plugins-runtime.version>
+        <micrometer-observation.version>1.15.6</micrometer-observation.version>
+        <!-- This is aligned with the other projects to keep the same Junit Version -->
+        <junit-jupiter-api.version>5.12.2</junit-jupiter-api.version>
+        <junit-platform-engine.version>1.12.2</junit-platform-engine.version>
+        <lombok.version>1.18.38</lombok.version>
+        <slf4j.version>2.0.9</slf4j.version>
+        <logback.version>1.4.14</logback.version>
         <log4j.version>2.17.2</log4j.version>
-        <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
-        <mockito.version>2.7.22</mockito.version>
+        <mockito.version>5.20.0</mockito.version>
         <mathjax.version>2.7.0</mathjax.version>
-        <spring.version>5.3.39</spring.version>
-        <spring-security.version>5.8.9</spring-security.version>
-        <spring-data.version>Codd-SR3</spring-data.version>
-        <hibernate-orm.version>4.2.10.Final</hibernate-orm.version><!--UPGRADE PENDING-->
-        <auth0.version>3.2.0</auth0.version>
-        <jboss-logging.version>3.3.0.Final</jboss-logging.version>
-        <chemistry-opencmis.version>1.1.0</chemistry-opencmis.version>
-        <servlet.version>3.1.0</servlet.version>
-        <javax-inject.version>1</javax-inject.version>
-        <commons-collections.version>3.2.2</commons-collections.version>
-        <commons-lang.version>2.6</commons-lang.version>
-        <commons-lang3.version>3.5</commons-lang3.version>
-        <commons-fileupload.version>1.3.3</commons-fileupload.version>
-        <commons-io.version>2.7</commons-io.version>
-        <guava.version>33.0.0-jre</guava.version>
-        <jsr305.version>3.0.1</jsr305.version>
-        <google-diffutils.version>1.3.0</google-diffutils.version>
-        <freemarker.version>2.3.27-incubating</freemarker.version>
-        <xstream.version>1.4.20</xstream.version>
-        <cachefilter.version>2.0</cachefilter.version>
-        <cuid.version>0.1.1</cuid.version>
+        <spring.version>6.2.12</spring.version>
+        <spring-security.version>6.5.6</spring-security.version>
+        <hibernate-orm.version>6.6.36.Final</hibernate-orm.version>
+        <jackson-core.version>2.16.1</jackson-core.version>
+        <auth0.version>4.5.0</auth0.version>
+<!--        <chemistry-opencmis.version>1.1.0</chemistry-opencmis.version>-->
+        <servlet.version>6.0.0</servlet.version>
+        <commons-collections4.version>4.5.0</commons-collections4.version>
+        <commons-lang3.version>3.20.0</commons-lang3.version>
+        <commons-fileupload.version>1.6.0</commons-fileupload.version>
+        <commons-io.version>2.21.0</commons-io.version>
+        <guava.version>33.5.0-jre</guava.version>
+        <spotbugs-annotations.version>4.9.8</spotbugs-annotations.version>
+        <java-diff-utils.version>4.16</java-diff-utils.version>
+        <freemarker.version>2.3.34</freemarker.version>
+        <xstream.version>1.4.21</xstream.version>
+        <cuid.version>0.1.1</cuid.version> <!-- Needs upgrade-->
         <jsoup.version>1.17.2</jsoup.version>
-        <sass-maven-plugin.version>2.22</sass-maven-plugin.version>
         <jackson-databind.version>2.16.1</jackson-databind.version>
-        <cxf-maven-plugin.version>3.1.10</cxf-maven-plugin.version>
-        <jaxb2-maven-plugin.version>2.3.1</jaxb2-maven-plugin.version>
-        <jaxb.version>2.3.1</jaxb.version>
-        <jaxb2-basics.version>0.11.1</jaxb2-basics.version>
-        <jvnet-jaxb2-plugin.version>0.15.3</jvnet-jaxb2-plugin.version>
-        <fugue.version>4.4.0</fugue.version>
-        <okhttp.version>3.7.0</okhttp.version>
+        <fugue.version>6.1.2</fugue.version>
+        <okhttp.version>5.3.1</okhttp.version>
+        <kotlin-stdlib.version>2.2.21</kotlin-stdlib.version>
+
         <saxon.version>9.8.0-3</saxon.version>
         <jena.version>3.3.0</jena.version>
-        <icu4j.version>74.2</icu4j.version>
+        <icu4j.version>78.1</icu4j.version>
         <jaxen-version>1.2.0</jaxen-version>
-        <commons-text.version>1.4</commons-text.version>
-        <javax-validation.version>1.1.0.Final</javax-validation.version>
-        <apache-tika.version>2.8.0</apache-tika.version>
+        <commons-text.version>1.14.0</commons-text.version>
+        <spring-security-extensions-saml2.version>1.0.9.RELEASE</spring-security-extensions-saml2.version>
+        <commons-codec.version>1.20.0</commons-codec.version>
+        <xml-sec.version>4.0.4</xml-sec.version>
+        <xml-apis.version>1.4.01</xml-apis.version>
+        <bouncycastle-bcprov.version>1.82</bouncycastle-bcprov.version>
+        <apache-tika.version>3.2.3</apache-tika.version>
         <!-- JUnit 5 -->
-        <junit-jupiter.version>5.0.2</junit-jupiter.version>
-        <junit-platform.version>1.0.2</junit-platform.version>
-        <junit-vintage.version>4.12.2</junit-vintage.version>
+        <junit-jupiter.version>5.12.2</junit-jupiter.version>
         <assertj.version>3.24.2</assertj.version>
-        <byte-buddy.version>1.12.21</byte-buddy.version>
+        <byte-buddy.version>1.14.9</byte-buddy.version>
         <!-- httpclient -->
-       <httpclient.version>4.5.13</httpclient.version> <!--  5.4-alpha1 4.5.3-->
+       <httpclient5.version>5.5.1</httpclient5.version>
         <!-- Sonar -->
-        <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
-        <sonar-jacoco-plugin.version>0.8.7</sonar-jacoco-plugin.version>
+        <sonar-maven-plugin.version>5.3.0.6276</sonar-maven-plugin.version>
+        <sonar-jacoco-plugin.version>0.8.14</sonar-jacoco-plugin.version>
         <!-- Hazelcast -->
-        <hazelcast.version>5.3.6</hazelcast.version>
-        <spring-session-hazelcast.version>2.7.4</spring-session-hazelcast.version>
+        <hazelcast.version>5.6.0</hazelcast.version>
+        <spring-session-hazelcast.version>3.5.3</spring-session-hazelcast.version>
+        <cxf.version>4.0.5</cxf.version>
+        <angus.version>2.0.2</angus.version>
+        <jetbrains-annotations.version>24.1.0</jetbrains-annotations.version>
         <!-- Default authentication -->
         <leos.web.auth.method>BASIC</leos.web.auth.method>
     </properties>
@@ -209,22 +212,6 @@
                 <version>${logback.version}</version>
                 <scope>runtime</scope>
             </dependency>
-            <dependency>
-                <groupId>ch.qos.logback.db</groupId>
-                <artifactId>logback-classic-db</artifactId>
-                <version>${logbackdb.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.janino</groupId>
-                <artifactId>janino</artifactId>
-                <version>${janino.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.janino</groupId>
-                <artifactId>commons-compiler</artifactId>
-                <version>${janino.version}</version>
-            </dependency>
             <!-- Spring framework -->
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -248,13 +235,13 @@
                 <artifactId>spring-aspects</artifactId>
                 <version>${spring.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-releasetrain</artifactId>
-                <version>${spring-data.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.data</groupId>-->
+<!--                <artifactId>spring-data-releasetrain</artifactId>-->
+<!--                <version>${spring-data.version}</version>-->
+<!--                <scope>import</scope>-->
+<!--                <type>pom</type>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-core</artifactId>
@@ -287,73 +274,67 @@
             </dependency>
             <!-- Persistence framework -->
             <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-core</artifactId>
                 <version>${hibernate-orm.version}</version>
-                <scope>runtime</scope>
             </dependency>
-            <dependency>
-                <groupId>org.jboss.logging</groupId>
-                <artifactId>jboss-logging</artifactId>
-                <version>${jboss-logging.version}</version>
-                <scope>runtime</scope>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.jboss.logging</groupId>-->
+<!--                <artifactId>jboss-logging</artifactId>-->
+<!--                <version>${jboss-logging.version}</version>-->
+<!--                <scope>runtime</scope>-->
+<!--            </dependency>-->
             <!-- Apache Chemistry framework -->
-            <dependency>
-                <groupId>org.apache.chemistry.opencmis</groupId>
-                <artifactId>chemistry-opencmis-client-api</artifactId>
-                <version>${chemistry-opencmis.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.chemistry.opencmis</groupId>
-                <artifactId>chemistry-opencmis-client-impl</artifactId>
-                <version>${chemistry-opencmis.version}</version>
-                <scope>runtime</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>asm</groupId>
-                        <artifactId>asm</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.chemistry.opencmis</groupId>
-                <artifactId>chemistry-opencmis-commons-api</artifactId>
-                <version>${chemistry-opencmis.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.chemistry.opencmis</groupId>
-                <artifactId>chemistry-opencmis-commons-impl</artifactId>
-                <version>${chemistry-opencmis.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.chemistry.opencmis</groupId>
-                <artifactId>chemistry-opencmis-client-bindings</artifactId>
-                <version>${chemistry-opencmis.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.apache.chemistry.opencmis</groupId>-->
+<!--                <artifactId>chemistry-opencmis-client-api</artifactId>-->
+<!--                <version>${chemistry-opencmis.version}</version>-->
+<!--                <scope>compile</scope>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.apache.chemistry.opencmis</groupId>-->
+<!--                <artifactId>chemistry-opencmis-client-impl</artifactId>-->
+<!--                <version>${chemistry-opencmis.version}</version>-->
+<!--                <scope>runtime</scope>-->
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>asm</groupId>-->
+<!--                        <artifactId>asm</artifactId>-->
+<!--                    </exclusion>-->
+<!--                </exclusions>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.apache.chemistry.opencmis</groupId>-->
+<!--                <artifactId>chemistry-opencmis-commons-api</artifactId>-->
+<!--                <version>${chemistry-opencmis.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.apache.chemistry.opencmis</groupId>-->
+<!--                <artifactId>chemistry-opencmis-commons-impl</artifactId>-->
+<!--                <version>${chemistry-opencmis.version}</version>-->
+<!--                <scope>runtime</scope>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.apache.chemistry.opencmis</groupId>-->
+<!--                <artifactId>chemistry-opencmis-client-bindings</artifactId>-->
+<!--                <version>${chemistry-opencmis.version}</version>-->
+<!--            </dependency>-->
             <!-- Libraries -->
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
                 <version>${servlet.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>javax.inject</groupId>
-                <artifactId>javax.inject</artifactId>
-                <version>${javax-inject.version}</version>
+                <groupId>jakarta.inject</groupId>
+                <artifactId>jakarta.inject-api</artifactId>
+                <version>2.0.1</version>
             </dependency>
             <dependency>
-                <groupId>commons-collections</groupId>
-                <artifactId>commons-collections</artifactId>
-                <version>${commons-collections.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-lang</groupId>
-                <artifactId>commons-lang</artifactId>
-                <version>${commons-lang.version}</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collections4.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -382,6 +363,11 @@
                 <scope>runtime</scope>
             </dependency>
             <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>${kotlin-stdlib.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson-databind.version}</version>
@@ -402,14 +388,14 @@
                 <version>${guava.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.google.code.findbugs</groupId>
-                <artifactId>jsr305</artifactId>
-                <version>${jsr305.version}</version>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-annotations</artifactId>
+                <version>${spotbugs-annotations.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.googlecode.java-diff-utils</groupId>
-                <artifactId>diffutils</artifactId>
-                <version>${google-diffutils.version}</version>
+                <groupId>io.github.java-diff-utils</groupId>
+                <artifactId>java-diff-utils</artifactId>
+                <version>${java-diff-utils.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.freemarker</groupId>
@@ -447,9 +433,9 @@
                 <version>${jsoup.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>${httpclient.version}</version>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>${httpclient5.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.jena</groupId>
@@ -467,19 +453,31 @@
                 <artifactId>icu4j</artifactId>
                 <version>${icu4j.version}</version>
             </dependency>
-            <!-- Testing frameworks -->
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
-                <scope>test</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.hamcrest</groupId>
-                        <artifactId>hamcrest-core</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
             </dependency>
+            <!-- Testing frameworks -->
+<!--            <dependency>-->
+<!--                <groupId>junit</groupId>-->
+<!--                <artifactId>junit</artifactId>-->
+<!--                <version>${junit.version}</version>-->
+<!--                <scope>test</scope>-->
+<!--                <exclusions>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>org.hamcrest</groupId>-->
+<!--                        <artifactId>hamcrest-core</artifactId>-->
+<!--                    </exclusion>-->
+<!--                </exclusions>-->
+<!--            </dependency>-->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit-jupiter-api.version}</version>
+                <scope>test</scope>
+            </dependency>
+
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
@@ -493,6 +491,12 @@
                 </exclusions>
             </dependency>
             <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-core</artifactId>
                 <version>${hamcrest.version}</version>
@@ -502,12 +506,6 @@
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest-library</artifactId>
                 <version>${hamcrest.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.platform</groupId>
-                <artifactId>junit-platform-surefire-provider</artifactId>
-                <version>${junit-platform.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -539,20 +537,9 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.junit.vintage</groupId>
-                <artifactId>junit-vintage-engine</artifactId>
-                <version>${junit-vintage.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-text</artifactId>
                 <version>${commons-text.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.jvnet.jaxb2_commons</groupId>
-                <artifactId>jaxb2-basics</artifactId>
-                <version>${jaxb2-basics.version}</version>
             </dependency>
             <dependency>
                 <groupId>jaxen</groupId>
@@ -565,9 +552,15 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.validation</groupId>
-                <artifactId>validation-api</artifactId>
-                <version>${javax-validation.version}</version>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta.validation-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jakarta.annotation-api.version}</version>
+                <scope>provided</scope>
             </dependency>
             <!-- Hazelcast -->
             <dependency>
@@ -591,11 +584,6 @@
                 <version>${log4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>${jaxb.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
@@ -604,6 +592,102 @@
                 <groupId>org.apache.tika</groupId>
                 <artifactId>tika-core</artifactId>
                 <version>${apache-tika.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jakarta.xml.bind-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-runtime</artifactId>
+                <version>${jaxb-runtime.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.activation</groupId>
+                <artifactId>jakarta.activation-api</artifactId>
+                <version>${jakarta.activation-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-observation</artifactId>
+                <version>${micrometer-observation.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-engine</artifactId>
+                <version>${junit-platform-engine.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.13</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jvnet.jaxb</groupId>
+                <artifactId>jaxb-plugins-runtime</artifactId>
+                <version>${jaxb-plugins-runtime.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>MathJax</artifactId>
+                <version>${mathjax.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-core</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-transports-http</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-ws-policy</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-frontend-jaxws</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.angus</groupId>
+                <artifactId>angus-activation</artifactId>
+                <version>${angus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.angus</groupId>
+                <artifactId>angus-mail</artifactId>
+                <version>${angus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>${jetbrains-annotations.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.soap</groupId>
+                <artifactId>jakarta.xml.soap-api</artifactId>
+                <version>3.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.ws</groupId>
+                <artifactId>jakarta.xml.ws-api</artifactId>
+                <version>4.0.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.woodstox</groupId>
+                <artifactId>woodstox-core</artifactId>
+                <version>6.6.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -681,6 +765,7 @@
                         <source>${project.java.version}</source>
                         <target>${project.java.version}</target>
                         <debug>${project.java.debug}</debug>
+                        <parameters>true</parameters>
                         <optimize>${project.java.optimize}</optimize>
                         <showWarnings>${project.java.showWarnings}</showWarnings>
                         <showDeprecation>${project.java.showDeprecation}</showDeprecation>
@@ -726,9 +811,9 @@
                     <version>${maven-resources-plugin.version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>com.coderplus.maven.plugins</groupId>
-                    <artifactId>copy-rename-maven-plugin</artifactId>
-                    <version>${copy-rename-maven-plugin.version}</version>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>${maven-antrun-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -741,22 +826,30 @@
                             <include>**/*Tests.java</include>
                             <include>**/*Test_IT.java</include>
                         </includes>
+                        <argLine>
+                            --add-opens java.base/java.lang=ALL-UNNAMED
+                            --add-opens java.base/java.util=ALL-UNNAMED
+                            --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+                            --add-opens java.base/java.text=ALL-UNNAMED
+                            --add-opens java.desktop/java.awt.font=ALL-UNNAMED
+                            --add-opens java.base/jdk.internal.reflect=ALL-UNNAMED
+                            --add-opens java.base/java.lang.invoke=ALL-UNNAMED
+                            --add-opens java.base/java.security=ALL-UNNAMED
+                            --add-opens java.base/java.net=ALL-UNNAMED
+                            --add-opens java.base/java.io=ALL-UNNAMED
+                            --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+                            --add-opens java.base/sun.security.util=ALL-UNNAMED
+                            --add-opens java.xml/com.sun.org.apache.xerces.internal.jaxp=ALL-UNNAMED
+                        </argLine>
+                        <systemPropertyVariables>
+                            <powermock.classloading>javagent</powermock.classloading>
+                        </systemPropertyVariables>
                     </configuration>
                     <dependencies>
-                        <dependency>
-                            <groupId>org.junit.platform</groupId>
-                            <artifactId>junit-platform-surefire-provider</artifactId>
-                            <version>${junit-platform.version}</version>
-                        </dependency>
                         <dependency>
                             <groupId>org.junit.jupiter</groupId>
                             <artifactId>junit-jupiter-engine</artifactId>
                             <version>${junit-jupiter.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.junit.vintage</groupId>
-                            <artifactId>junit-vintage-engine</artifactId>
-                            <version>${junit-vintage.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
@@ -831,21 +924,9 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-maven-plugin</artifactId>
-                    <version>${jetty-maven-plugin.version}</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.samaxes.filter</groupId>
-                            <artifactId>cachefilter</artifactId>
-                            <version>${cachefilter.version}</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.tomcat.maven</groupId>
-                    <artifactId>tomcat7-maven-plugin</artifactId>
-                    <version>${tomcat7-maven-plugin.version}</version>
+                    <groupId>org.codehaus.cargo</groupId>
+                    <artifactId>cargo-maven3-plugin</artifactId>
+                    <version>1.10.25</version>
                 </plugin>
                 <plugin>
                     <groupId>com.github.searls</groupId>
@@ -913,27 +994,12 @@
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>properties-maven-plugin</artifactId>
-                    <version>${properties-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>com.github.goldin</groupId>
-                    <artifactId>copy-maven-plugin</artifactId>
-                    <version>${copy-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>sql-maven-plugin</artifactId>
-                    <version>${sql-maven-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
                     <artifactId>license-maven-plugin</artifactId>
                     <version>${codehause-license-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>pl.project13.maven</groupId>
-                    <artifactId>git-commit-id-plugin</artifactId>
+                    <groupId>io.github.git-commit-id</groupId>
+                    <artifactId>git-commit-id-maven-plugin</artifactId>
                     <version>${git-commit-id-plugin.version}</version>
                 </plugin>
                 <plugin>
@@ -945,11 +1011,6 @@
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>${sonar-jacoco-plugin.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.jvnet.jaxb2.maven2</groupId>
-                    <artifactId>maven-jaxb2-plugin</artifactId>
-                    <version>${jvnet-jaxb2-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -975,8 +1036,8 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>pl.project13.maven</groupId>
-                <artifactId>git-commit-id-plugin</artifactId>
+                <groupId>io.github.git-commit-id</groupId>
+                <artifactId>git-commit-id-maven-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>get-the-git-infos</id>

@@ -16,12 +16,12 @@ package eu.europa.ec.leos.repository.entities;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "CONFIG_CATEGORIES")
@@ -40,7 +40,7 @@ public class ConfigCategory implements Serializable {
     @Id
     @Column(name = "ID", nullable = false, updatable = false, precision = 22, scale = 0)
     private BigDecimal id;
-    @Column(name = "CATEGORY_CODE", nullable = false, length = 30)
+    @Column(name = "CATEGORY_CODE", nullable = false, length = 100)
     private String categoryCode;
     @Column(name = "CATEGORY_DESC", nullable = false, length = 100)
     private String categoryDesc;

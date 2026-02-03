@@ -11,7 +11,7 @@ import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
 import io.atlassian.fugue.Pair;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

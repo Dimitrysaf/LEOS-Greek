@@ -13,12 +13,9 @@
  */
 package eu.europa.ec.leos.services.compare;
 
-import difflib.Chunk;
-import difflib.DeleteDelta;
-import difflib.Delta;
-import difflib.DiffUtils;
-import difflib.InsertDelta;
-import difflib.Patch;
+
+import com.github.difflib.DiffUtils;
+import com.github.difflib.patch.*;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.services.compare.processor.InternalReferenceProcessor;
 import org.jsoup.Jsoup;
@@ -37,9 +34,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
-import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
-import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
+import static eu.europa.ec.leos.services.compare.ContentComparatorService.*;
 
 @Service
 public class LeosTextComparatorImpl implements TextComparator {
@@ -86,33 +81,32 @@ public class LeosTextComparatorImpl implements TextComparator {
         StringBuilder diffBuilder = new StringBuilder();
     
         Patch patch = DiffUtils.diff(originalList, revisedList);
-        final List<Delta> deltaList = patch.getDeltas();
+        final List<AbstractDelta<String>> deltaList = patch.getDeltas();
     
         int endPos = 0;
     
-        for (Delta delta : deltaList) {
+        for (AbstractDelta<String> delta : deltaList) {
     
-            Chunk orig = delta.getOriginal();
-            Chunk rev = delta.getRevised();
+            Chunk<String> source = delta.getSource();
+            Chunk<String> target = delta.getTarget();
     
             // catch the equal prefix for each chunk
-            for (String line : originalList.subList(endPos, orig.getPosition())) {
+            for (String line : originalList.subList(endPos, source.getPosition())) {
                 // handle equal lines
                 writeUnchangedLine(diffBuilder, line);
             }
             boolean doContinue = false;
             // handle Inserted rows
-            if (delta.getClass().equals(InsertDelta.class)) {
-                endPos = orig.last() + 1;
-                for (String line : (List<String>) rev.getLines()) {
-                    // handle insert line
+            if (delta.getType() == DeltaType.INSERT) {
+                endPos = source.last() + 1; // or target.first(), depending on your logic
+                for (String line : target.getLines()) {
                     writeChangedLine(diffBuilder, line, context.getAttrName(), context.getAddedValue());
                 }
                 doContinue = true;
-            } else  if (delta.getClass().equals(DeleteDelta.class)) { // Deleted DiffRow
-                endPos = orig.last() + 1;
-                for (String line : (List<String>) orig.getLines()) {
-                    // handle delete lines
+
+            } else if (delta.getType() == DeltaType.DELETE) {
+                endPos = source.last() + 1;
+                for (String line : source.getLines()) {
                     writeChangedLine(diffBuilder, line, context.getAttrName(), context.getRemovedValue());
                 }
                 doContinue = true;
@@ -122,8 +116,8 @@ public class LeosTextComparatorImpl implements TextComparator {
             }
     
             // catch now changed line
-            catchChangedLine(orig, rev, diffBuilder, diffBuilder, context.getAttrName(), context.getRemovedValue(), context.getAddedValue());
-            endPos = orig.last() + 1;
+            catchChangedLine(source, target, diffBuilder, diffBuilder, context.getAttrName(), context.getRemovedValue(), context.getAddedValue());
+            endPos = source.last() + 1;
     
         }
     
@@ -192,12 +186,12 @@ public class LeosTextComparatorImpl implements TextComparator {
         StringBuilder trackChangesAmendmentBuilder = new StringBuilder((int) (secondContent.length() * 1.5));
 
         int endPos = 0;
-        final List<Delta> deltaList = patch.getDeltas();
+        final List<AbstractDelta<String>> deltaList = patch.getDeltas();
 
-        for (Delta delta : deltaList) {
+        for (AbstractDelta<String> delta : deltaList) {
 
-            Chunk orig = delta.getOriginal();
-            Chunk rev = delta.getRevised();
+            Chunk<String> orig = delta.getSource();
+            Chunk<String>  rev = delta.getTarget();
 
             // catch the equal prefix for each chunk
             for (String line : originalList.subList(endPos, orig.getPosition())) {
@@ -207,9 +201,9 @@ public class LeosTextComparatorImpl implements TextComparator {
             }
             boolean doContinue = false;
             // handle Inserted rows
-            if (delta.getClass().equals(InsertDelta.class)) {
+            if (delta.getType() == DeltaType.INSERT) {
                 endPos = orig.last() + 1;
-                for (String line : (List<String>) rev.getLines()) {
+                for (String line : rev.getLines()) {
 
                     // handle insert line
                     writeChangedLine(trackChangesAmendmentBuilder, line, ATTR_NAME, CONTENT_ADDED_CLASS);
@@ -218,9 +212,9 @@ public class LeosTextComparatorImpl implements TextComparator {
                     // writeEmptySpacesForLine(trackChangesOriginalBuilder, line)
                 }
                 doContinue = true;
-            } else if (delta.getClass().equals(DeleteDelta.class)) {  // Deleted Diff row
+            } else if (delta.getType() == DeltaType.DELETE) {  // Deleted Diff row
                 endPos = orig.last() + 1;
-                for (String line : (List<String>) orig.getLines()) {
+                for (String line : orig.getLines()) {
                     // handle delete lines
 
                     writeChangedLine(trackChangesOriginalBuilder, line, ATTR_NAME, CONTENT_REMOVED_CLASS);

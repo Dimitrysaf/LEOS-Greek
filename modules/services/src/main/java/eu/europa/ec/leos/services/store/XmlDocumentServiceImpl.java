@@ -31,7 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static eu.europa.ec.leos.cmis.support.RepositoryUtil.updateDocumentProperties;
+import static eu.europa.ec.leos.rest.support.RepositoryUtil.updateDocumentProperties;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
 

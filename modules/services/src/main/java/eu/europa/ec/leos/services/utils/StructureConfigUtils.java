@@ -30,7 +30,7 @@ import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import eu.europa.ec.leos.vo.structure.TocItemTypes;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -42,7 +42,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.collections.CollectionUtils.isNotEmpty;
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 public class StructureConfigUtils {
     private StructureConfigUtils() {

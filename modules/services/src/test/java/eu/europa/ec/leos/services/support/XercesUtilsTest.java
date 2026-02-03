@@ -10,9 +10,9 @@ import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.parser.Parser;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.w3c.dom.Document;
@@ -35,11 +35,11 @@ import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocumen
 import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValue;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
 import static eu.europa.ec.leos.util.LeosDomainUtil.calculateLeftPadd;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class XercesUtilsTest extends LeosTest {
 
@@ -49,7 +49,7 @@ public class XercesUtilsTest extends LeosTest {
     protected final static String FILE_PREFIX = "/xercesUtil";
     private static int countItems = 0;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         ReflectionTestUtils.setField(akomantosoXsdValidator, "SCHEMA_PATH", "eu/europa/ec/leos/xsd");
         ReflectionTestUtils.setField(akomantosoXsdValidator, "SCHEMA_NAME", "akomantoso30.xsd");
@@ -101,7 +101,7 @@ public class XercesUtilsTest extends LeosTest {
         return current;
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_printFullXml() {
         byte[] fileContent = TestUtils.getFileContent(FILE_PREFIX + "/bill1.xml");

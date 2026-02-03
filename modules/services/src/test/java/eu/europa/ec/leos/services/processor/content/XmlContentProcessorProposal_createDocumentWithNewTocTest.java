@@ -16,8 +16,8 @@ package eu.europa.ec.leos.services.processor.content;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 
@@ -32,8 +32,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.BODY;
 import static eu.europa.ec.leos.services.TestVOCreatorUtils.getJohnTestUser;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends XmlContentProcessorTest {
 
@@ -63,7 +63,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         assertEquals(expected, result);
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_mergeTableOfContentIntoDocument_should_returnUpdatedByteArray_when_oldContainedutf8() {
         String xml = "<akomaNtoso><bill><body>" + "<article xml:id=\"art486\">" +
@@ -87,7 +87,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         assertThat(new String(result, UTF_8), is(xml));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_mergeTableOfContentIntoDocument_should_returnUpdatedByteArray_when_oldContainedEscapedXML() {
         String xml = "<akomaNtoso><bill><body>" + "<article xml:id=\"art486\">" +
@@ -113,7 +113,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         assertThat(new String(result, UTF_8), is(xml));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_mergeTableOfContentIntoDocument_should_returnUpdatedByteArray_when_2newAreAddedAtSameOffset() {
         String xml = "<akomaNtoso><bill><body>" + "<article xml:id=\"art486\">" +
@@ -159,7 +159,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         assertThat(expected + " should be found in " + new String(result), matcher.find(), is(true));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_mergeTableOfContentIntoDocument_should_returnUpdatedByteArray_when_articlesAreRemoved() {
         String xml = "<akomaNtoso><bill><preface id =\"1\"><p>preface</p></preface>" + "<body><article xml:id=\"art486\">" +
@@ -204,7 +204,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         assertThat(new String(result), is(expected));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_mergeTableOfContentIntoDocument_should_returnUpdatedByteArray_when_numAndHeadingAreAdded() {
         String xml = "<akomaNtoso><bill><body>" + "<section xml:id=\"sect1\">" + "</section>" + "</body></bill></akomaNtoso>";
@@ -226,7 +226,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         assertThat(new String(result), is(expected));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_mergeTableOfContentIntoDocument_should_returnUpdatedByteArray_when_articlesMovedFromSection() {
         String xml = "<akomaNtoso><bill><body>" + "<section xml:id=\"sect1\">" + "<num>Section 1</num>" + "<heading >Paragraphs</heading>" +
@@ -281,7 +281,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         assertThat(new String(result), is(expected));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_mergeTableOfContentIntoDocument_should_returnUpdatedByteArray_when_allArticlesRemovedFromSection() {
         String xml = "<akomaNtoso><bill>" + "<body><section xml:id=\"sect1\">" + "<num>Section 1</num>" + "<heading>Paragraphs</heading>" +
@@ -329,7 +329,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         assertThat(new String(result), is(expected));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_mergeTableOfContentIntoDocument_should_returnUpdatedByteArray_when_sectionAdded() {
         String xml = "<!--This AkomaNtoso document was created via a LegisWrite export.--><akomaNtoso><bill><body>" + "<section xml:id=\"sect1\">" +
@@ -380,7 +380,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         assertThat(expected + " should be found in " + new String(result), matcher.find(), is(true));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_mergeTableOfContentIntoDocument_should_returnUpdatedByteArray_when_sectionAddedWithHeaderAndNumberTagsPreserved() {
         String xml = "<!--This AkomaNtoso document was created via a LegisWrite export.--><akomaNtoso><bill><body>" + "<section xml:id=\"sect1\">" +
@@ -429,7 +429,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         assertThat(expected + " should be found in " + new String(result), matcher.find(), is(true));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_mergeTableOfContentIntoDocument_should_returnUpdatedByteArray_when_articleAddedAndHcontainerAtTheEnd() {
         String xml = "<!--This AkomaNtoso document was created via a LegisWrite export.-->" +
@@ -466,7 +466,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         assertThat(expected + " should be found in " + new String(result), matcher.find(), is(true));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_mergeTableOfContentIntoDocument_should_returnUpdatedByteArray_when_sectionMoved() {
         String xml = "<!--This AkomaNtoso document was created via a LegisWrite export.--><akomaNtoso><bill><body>" + "<section xml:id=\"sect1\">" +
@@ -512,7 +512,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         assertThat(new String(result), is(expected));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_mergeTableOfContentIntoDocument_should_returnUpdatedByteArray_when_sectionHasNoNumOrHeading() {
         String xml = "<akomaNtoso><bill><body>" + "<section xml:id=\"sect1\">" + "<article xml:id=\"art486\">" +
@@ -561,7 +561,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         assertThat(expected + " should be found in " + new String(result), matcher.find(), is(true));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_mergeTableOfContentIntoDocument_should_returnUpdatedByteArray_when_sectionAddedin3levelBill() {
         String xml = "<akomaNtoso><bill><body>" + "<part xml:id=\"part1\">" + "<num>Part 1</num>" + "<heading>part1</heading>" + "<section xml:id=\"sect1\">" +
@@ -616,7 +616,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         assertThat(expected + " should be found in " + new String(result), matcher.find(), is(true));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_mergeTableOfContentIntoDocument_when_chapterHasNoChildrenAndBodyHasHcontainer() {
         String xml = "<akomaNtoso><bill>" +
@@ -678,7 +678,7 @@ public class XmlContentProcessorProposal_createDocumentWithNewTocTest extends Xm
         assertThat(new String(result), is(expected));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_mergeTableOfContentIntoDocument_should_returnUpdatedByteArray_when_NoBillFound() {
         String xml = "<!--This AkomaNtoso document was created via a LegisWrite export.-->" + "<akomaNtoso>" +

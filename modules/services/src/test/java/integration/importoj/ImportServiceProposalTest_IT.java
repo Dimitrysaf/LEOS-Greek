@@ -24,8 +24,8 @@ import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -39,9 +39,9 @@ import java.util.stream.IntStream;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
 import static eu.europa.ec.leos.test.support.model.ModelHelper.createBillForBytes;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.spy;
 
 public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
@@ -67,7 +67,7 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
         configFile = "/structure-test-bill-EC.xml";
     }
 
-    @Before
+    @BeforeEach
     public void onSetUp() {
         super.setup();
         importService = new ImportServiceImpl(externalDocumentProvider, conversionHelper, xmlContentProcessor, numberService, xPathCatalog, documentLanguageContext);

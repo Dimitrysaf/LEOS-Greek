@@ -154,7 +154,7 @@
         </body>
         <conclusions>
             <p>Done at <location refersTo="~BEL_BRU">Brussels</location>, <date class="template" date="2999-01-01"/></p>
-            <block name="signatory">
+            <block name="signatory" leos:editable="false">
                 <signature>
                     <organization refersTo="~CONSIL">For the Council</organization>
                     <role refersTo="~PRESID">The President</role>

@@ -7,8 +7,8 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.model.ModelHelper;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +18,8 @@ import java.util.List;
 
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
 import static integration.saveToc.TocVOCreateUtils.getElementById;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class SaveTocBillMoveProposalTest_IT extends SaveTocBillProposalTest_IT {
@@ -29,7 +29,7 @@ public class SaveTocBillMoveProposalTest_IT extends SaveTocBillProposalTest_IT {
     @Mock
     private SecurityContext securityContext;
 
-    @Before
+    @BeforeEach
     public void onSetup() throws Exception {
         super.onSetUp();
         List<Entity> entities = new ArrayList<Entity>();

@@ -18,8 +18,8 @@ import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.util.TestUtils;
 import io.atlassian.fugue.Pair;
-import org.junit.Test;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 import org.mockito.InjectMocks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,12 +44,12 @@ import static eu.europa.ec.leos.services.support.XmlHelper.skipNodeAndChildren;
 import static eu.europa.ec.leos.services.support.XmlHelper.skipNodeOnly;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndDummyDate;
 import static eu.europa.ec.leos.services.util.TestUtils.trimAndRemoveNS;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.spy;
 
-@Ignore
+@Disabled
 public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
 
     @InjectMocks
@@ -145,7 +145,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(result));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_doXMLPostProcessing_WithInternalRefs_split_ec_paragraph() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_ec_paragraph.xml");
@@ -170,7 +170,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_doXMLPostProcessing_WithInternalRefs_split_cn_paragraph() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_cn_paragraph.xml");
@@ -219,7 +219,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_doXMLPostProcessing_WithInternalRefs_split_ec_subparagraph() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_ec_subparagraph.xml");
@@ -232,7 +232,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_doXMLPostProcessing_WithInternalRefs_ec_subparagraph_add_cn_subparagraph() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_ec_subparagraph_add_cn_subparagraph.xml");
@@ -245,7 +245,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_doXMLPostProcessing_WithInternalRefs_split_cn_subparagraph() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_cn_subparagraph.xml");
@@ -282,7 +282,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_doXMLPostProcessing_WithInternalRefs_split_cn_paragraph2() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_cn_paragraph2.xml");
@@ -307,7 +307,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_doXMLPostProcessing_WithInternalRefs_split_ec_paragraph_empty() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_ec_paragraph_empty.xml");
@@ -320,7 +320,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(result));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_doXMLPostProcessing_WithInternalRefs_split_cn_subparagraph_empty() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_split_cn_subparagraph_empty.xml");

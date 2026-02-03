@@ -589,7 +589,7 @@ export class DocumentService {
     const documentRef = this.documentRef;
     this.http
       .post(
-        `${apiBaseUrl}/secured/document/export-compared-version-as-PDF/${documentType}/${documentRef}/`,
+        `${apiBaseUrl}/secured/document/export-compared-version-as-PDF/${documentType}/${documentRef}`,
         {
           originalVersion: originalVersion ? originalVersion.cmisVersionNumber : null,
           currentVersion: currentVersion ? currentVersion.cmisVersionNumber : null,

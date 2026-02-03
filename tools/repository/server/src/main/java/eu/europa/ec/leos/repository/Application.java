@@ -18,11 +18,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.web.WebApplicationInitializer;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
-
 @SpringBootApplication
-@OpenAPIDefinition(info = @Info(title = "Repository API", description = "Repository API"))
 public class Application extends SpringBootServletInitializer implements WebApplicationInitializer {
 
     @Override
@@ -32,7 +28,7 @@ public class Application extends SpringBootServletInitializer implements WebAppl
                 .sources(Application.class);
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         new SpringApplicationBuilder()
                 .properties("spring.config.name:repository")
                 .sources(Application.class)

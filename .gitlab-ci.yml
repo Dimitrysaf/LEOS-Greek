@@ -1,7 +1,6 @@
-image: $CI_REGISTRY_IMAGE/image-for-tests:1.0.3
+image: $CI_REGISTRY_IMAGE/image-for-tests:1.0.4
 
 stages:
-  - build
   - test
 
 variables:
@@ -17,40 +16,94 @@ cache:
   paths:
     - $CI_BUILDS_DIR/$CI_PIPELINE_ID/.m2/repository/
 
-java-build:
-  stage: build
-  script:
-    - cd $CI_PROJECT_DIR/tools/user-repo
-    - mvn clean install
-    - cd $CI_PROJECT_DIR/tools/repository
-    - mvn clean install
-    - cd $CI_PROJECT_DIR/tools/akn4euutil
-    - mvn clean install
-    - cd $CI_PROJECT_DIR
-    - mvn clean install -DskipKarmaTests
-  artifacts:
-    expire_in: 1 hour
-    when: always
-    paths:
-      - pom.xml
-      - "**/target"
-      - "**/package-lock.json"
-      - "**/yarn.lock"
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: never
-    - if: $CI_PIPELINE_SOURCE == "web" && $TAGS_TO_RUN == "@fortify"
-    - if: $CI_PIPELINE_SOURCE == "schedule" && $TAGS_TO_RUN == "@fortify"
-      when: always
-  interruptible: true
+#variables:
+#  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
+#  YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/.yarn/cache"
+#  GIT_CLEAN_FLAGS: -ffdx -e .yarn -e .m2/repository -e .npm
+#  npm_config_cache: '$CI_PROJECT_DIR/.npm'
+#  CYPRESS_CACHE_FOLDER: '$CI_PROJECT_DIR/cache/Cypress'
+#  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+#
+#cache:
+#  key: $CI_COMMIT_REF_SLUG
+#  paths:
+#    - .m2/repository/
+#    - .yarn/cache
+#    - .npm
+
+
+#java-build:
+#  stage: build
+#  script:
+#    - cd $CI_PROJECT_DIR/tools/user-repo
+#    - mvn clean install
+#    - cd $CI_PROJECT_DIR/tools/repository
+#    - mvn clean install
+#    - cd $CI_PROJECT_DIR/tools/akn4euutil
+#    - mvn clean install
+#    - cd $CI_PROJECT_DIR
+#    - mvn clean install -DskipKarmaTests
+#  artifacts:
+#    expire_in: 2 hour
+#    when: always
+#    paths:
+#      - pom.xml
+#      - "**/target"
+#      - "**/package-lock.json"
+#      - "**/yarn.lock"
+#  rules:
+#      - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+#      - if: $CI_PIPELINE_SOURCE == "web"
+#      - if: $CI_PIPELINE_SOURCE == "schedule"
+#  interruptible: true
+#
+#cypress-test-for-local:
+#  variables:
+#    TAGS_TO_RUN: "@local"
+#    GIT_CLEAN_FLAGS: none
+#  stage: test
+#  needs:
+#    - job: java-build
+#      artifacts: true
+#  #  resource_group: cypress
+#  rules:
+#    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $TAGS_TO_RUN == "@local"
+#    - if: $CI_PIPELINE_SOURCE == "web"
+#    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+#      when: never
+#  before_script:
+#    - cd $CI_PROJECT_DIR/tools/user-repo/web
+#    - mvn spring-boot:run -Dspring-boot.run.profiles=h2 &
+#    - cd $CI_PROJECT_DIR/tools/repository/web
+#    - mvn spring-boot:run -Dspring-boot.run.additional-classpath-elements=../config/target/generated-config &
+#    - cd $CI_PROJECT_DIR/tools/akn4euutil/web
+#    - mvn spring-boot:run -Dspring-boot.run.additional-classpath-elements=../config/target/generated-config &
+#    - cd $CI_PROJECT_DIR/modules/web
+#    - mvn -Dcargo.jvmargs="-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false -Xms512m -Xmx2g" cargo:run &
+#    - sleep 40
+#  script:
+#    - cd $CI_PROJECT_DIR/modules/test-cypress
+#    - npm install
+#    - npx cypress run --quiet -e CE_ENV="$TAGS_TO_RUN",TAGS="$TAGS_TO_RUN" --browser chrome --headed
+#  after_script:
+#    - cd $CI_PROJECT_DIR/modules/test-cypress
+#    - node ./cucumberReport.js
+#    - rm -rf $CI_BUILDS_DIR/$CI_PIPELINE_ID/.m2/repository
+#  artifacts:
+#    expire_in: 1 day
+#    when: always
+#    paths:
+#      - $CI_PROJECT_DIR/modules/test-cypress/cypress/screenshots/**/*.png
+#      - $CI_PROJECT_DIR/modules/test-cypress/cypress/report/**/*.*
+#  interruptible: true
+
 
 build-and-test:
   variables:
     TAGS_TO_RUN: "@local"
-    GIT_CLEAN_FLAGS: none
   stage: test
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $TAGS_TO_RUN == "@local"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_PIPELINE_SOURCE == "web"
     - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
       when: never
@@ -66,11 +119,11 @@ build-and-test:
     - cd $CI_PROJECT_DIR/tools/user-repo/web
     - mvn spring-boot:run -Dspring-boot.run.profiles=h2 &
     - cd $CI_PROJECT_DIR/tools/repository/web
-    - mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config &
+    - mvn spring-boot:run -Dspring-boot.run.additional-classpath-elements=../config/target/generated-config &
     - cd $CI_PROJECT_DIR/tools/akn4euutil/web
-    - mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config &
+    - mvn spring-boot:run -Dspring-boot.run.additional-classpath-elements=../config/target/generated-config &
     - cd $CI_PROJECT_DIR/modules/web
-    - mvn -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false -Djetty.jvmArgs="-Xms512m -Xmx2g" jetty:run-war &
+    - mvn -Dcargo.jvmargs="-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false -Xms512m -Xmx2g" cargo:run &
     - sleep 40
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - npm install

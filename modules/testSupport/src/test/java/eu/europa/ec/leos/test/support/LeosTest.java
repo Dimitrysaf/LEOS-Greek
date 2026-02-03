@@ -13,22 +13,27 @@
  */
 package eu.europa.ec.leos.test.support;
 
-import org.junit.Before;
-import org.junit.rules.Timeout;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockitoAnnotations;
 
 import java.nio.charset.Charset;
-import java.util.concurrent.TimeUnit;
 
 public class LeosTest {
 
     protected static final Charset UTF_8 = Charset.forName("UTF-8");
+    private AutoCloseable closeable;
 
-//    @Rule
-    public Timeout timeout = new Timeout(60, TimeUnit.SECONDS);
-
-    @Before
+    @BeforeEach
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        closeable = MockitoAnnotations.openMocks(this);
+    }
+
+    @AfterEach
+    public void releaseMocks() throws Exception {
+        if (closeable != null) {
+            closeable.close();
+        }
     }
 }

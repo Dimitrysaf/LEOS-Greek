@@ -19,7 +19,7 @@ import eu.europa.ec.digit.leos.pilot.export.util.ConstantsTestsUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.MetadataTestsUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.MetadataTestsUtil.MetadataTestConfiguration;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLocationType;
-import jdk.nashorn.internal.ir.annotations.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -43,6 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 class AKN4EUUtilApplicationTests {
+
     @Autowired
     private MockMvc mvc;
 
@@ -62,7 +63,7 @@ class AKN4EUUtilApplicationTests {
         return mvc.perform(builder);
     }
 
-    @Ignore
+    @Disabled
     public void convertLegToLw() throws Exception {
         MvcResult mvcResult = createConvertRequest("{ \"format\" : [\"LW\"], \"mode\" : \"individual\", \"convertAnnotations\" : \"yes\", \"documents\" : [\"bill_xxxxx.xml\"] }")
                 .andExpect(status().isOk())
@@ -72,7 +73,7 @@ class AKN4EUUtilApplicationTests {
         Assert.notNull(content, "Content is null");
     }
 
-    @Ignore
+    @Disabled
     public void convertLegToPdf() throws Exception {
         MvcResult mvcResult = createConvertRequest("{ \"format\" : [\"PDF\"], \"mode\" : \"individual\", \"convertAnnotations\" : \"yes\", \"documents\" : [\"bill_xxxxx.xml\"] }")
                 .andExpect(status().isOk())
@@ -201,4 +202,49 @@ class AKN4EUUtilApplicationTests {
                 .file(mockMultipartFile).param("validate", "false");
         return mvc.perform(builder);
     }
+/*
+    @Test
+    public void convertXmlToHtmlWithoutOutputType() throws Exception {
+        convertWithOK(EC_CONVERT_DOCUMENT_URI, EC_SERVICE_TYPE, mockService.getMockInputFilename("xml"), MediaType.APPLICATION_XML_VALUE, null, "true");
+    }
+
+    @Ignore
+    public void convertLegToPdfWithoutAnnotations() throws Exception {
+        convertWithOK(EC_CONVERT_DOCUMENT_URI, EC_SERVICE_TYPE, mockService.getMockInputFilename("leg"), ZipUtils.APPLICATION_ZIP_VALUE, "pdf", "false");
+    }
+
+    @Test
+    public void convertErrorOnOutputParam() throws Exception {
+        convertWithBadRequest(EC_CONVERT_DOCUMENT_URI, mockService.getMockInputFilename("leg"), ZipUtils.APPLICATION_ZIP_VALUE, "aaa", "true");
+    }
+
+    @Test
+    public void convertErrorOnContentTypeWithWrongFilename() throws Exception {
+        convertWithBadRequest(EC_CONVERT_DOCUMENT_URI, mockService.getMockInputFilename("xml"), MediaType.TEXT_PLAIN_VALUE, "pdf", "true");
+    }
+
+    @Test
+    public void convertErrorWrongAnnotation() throws Exception {
+        convertWithBadRequest(EC_CONVERT_DOCUMENT_URI, mockService.getMockInputFilename("leg"), ZipUtils.APPLICATION_ZIP_VALUE, "pdf", "aaa");
+    }
+
+    @Test
+    public void convertErrorOnOutputHtmlWithoutXml() throws Exception {
+        convertWithBadRequest(EC_CONVERT_DOCUMENT_URI, mockService.getMockInputFilename("leg"), ZipUtils.APPLICATION_ZIP_VALUE, "html", "true");
+    }
+
+    @Test
+    public void convertXmlToPdf() throws Exception {
+        convertWithOK(EC_CONVERT_DOCUMENT_URI, EC_SERVICE_TYPE, mockService.getMockInputFilename("xml"), MediaType.APPLICATION_XML_VALUE, "pdf", "true");
+    }
+
+    @Test
+    public void cnConvertErrorLegToPdf() throws Exception {
+        convertWithBadRequest(CN_CONVERT_DOCUMENT_URI, mockService.getMockInputFilename("leg"), ZipUtils.APPLICATION_ZIP_VALUE, "pdf", "true");
+    }
+
+    @Ignore
+    public void cnConvertLegToLw() throws Exception {
+        convertWithOK(CN_CONVERT_DOCUMENT_URI, CN_SERVICE_TYPE, mockService.getMockInputFilename("leg"), ZipUtils.APPLICATION_ZIP_VALUE, "lw", "true");
+    }*/
 }

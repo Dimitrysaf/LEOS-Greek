@@ -25,5 +25,5 @@ echo "---------------------AKN4EUUtil COMPILED.---------------------------------
 cd ./web
 
 echo "---------------------AKN4EUUtil STARTING...-----------------------------------"
-call mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config
+call mvn spring-boot:run -Dspring-boot.run.additional-classpath-elements=../config/target/generated-config
 echo "---------------------AKN4EUUtil STOPPED....-----------------------------------"
