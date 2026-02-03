@@ -485,6 +485,11 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   initializeAdoptionInfo() {
+    this.institutionalRef = false;
+    this.institutionalRefActingEntity = null;
+    this.institutionalRefYear = null;
+    this.institutionalRefNumber = null;
+
     this.adoptionPlace = this.proposal.metadata.adoptionPlace;
     this.adoptionDate = this.proposal.metadata.adoptionDate != null ? moment(this.proposal.metadata.adoptionDate) : null;
     let institutionalRef = this.proposal.metadata.institutionalReference;
@@ -497,6 +502,11 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     }
     this.institutionalReferenceFinalVersion = this.proposal.metadata.institutionalReferenceFinalVersion;
     this.diffusionVersion = this.proposal.metadata.diffusionVersion;
+
+    this.interInstitutionalRef = false;
+    this.interInstitutionalRefYear = null;
+    this.interInstitutionalRefNumber = null;
+    this.interInstitutionalRefType = null;
 
     let interInstitutionalRef = this.proposal.metadata.interInstitutionalReference;
     if (interInstitutionalRef != null && this.interInstitutionalRefRegEx.test(interInstitutionalRef)) {
@@ -529,6 +539,13 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
         } else {
           this.proposal = proposal;
         }
+        this.enableSave = false;
+        this.invalidCorrectionInfoInput = false;
+        this.invalidInstitutionalNumberInput = false;
+        this.invalidCrossRefNumberInput = false;
+        this.invalidInterInstitutionalNumberInput = false;
+        this.invalidTargetProposalDateInput = false;
+        this.invalidTargetProposalReferenceInput = false;
         this.initializeLists();
         this.initializeGeneral();
         this.initializeCoverPageType();
@@ -903,6 +920,19 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   private initializeCorrigendumAddendumFields(): void {
+    this.showCorrigendumAddendum = false;
+    this.targetProposalReferenceActingEntity = null;
+    this.targetProposalReferenceYear = null;
+    this.targetProposalReferenceNumber = null;
+    this.correctionInformation = null;
+    this.targetProposalDate = null;
+    this.isTargetLang = false;
+    this.allTargetLangSelected = false;
+    this.languages.forEach(lang => {
+      this.selectedTargetLanguages[lang.toUpperCase()] = false;
+    });
+    this.proposalTargetLang = null;
+
     if (this.proposal.showCorrigendumAddendum) {
       const proposal = this.proposal;
       this.showCorrigendumAddendum = proposal.showCorrigendumAddendum;
