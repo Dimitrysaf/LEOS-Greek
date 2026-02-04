@@ -28,6 +28,7 @@ import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.Collaborator;
 import eu.europa.ec.leos.repository.model.LeosDocument;
+import eu.europa.ec.leos.repository.model.PackageInfo;
 import eu.europa.ec.leos.repository.repositories.DocumentCategoriesRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentContentRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentPropertiesRepository;
@@ -60,6 +61,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -228,7 +230,9 @@ public class DocumentServiceImpl implements DocumentService {
                 Optional<LeosDocument> leosDoc = milestoneDocumentService.findMilestoneById(versionId);
                 Document legDoc = documentRepository.findDocumentById(leosDoc.get().getDocumentId()).orElseThrow(() ->
                         new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Document.class.getName()));
-                return milestoneDocumentService.updateMilestone(legDoc, contentBytes, metadata, userId);
+                LeosDocument docUpdated = milestoneDocumentService.updateMilestone(legDoc, contentBytes, metadata, userId);
+                updatePackageAuditFields(legDoc, userId, LocalDateTime.now());
+                return docUpdated;
 
             default:
                 boolean isMajor = !versionType.equals(VersionType.MINOR) && !versionType.equals(VersionType.TECHNICAL);
@@ -246,13 +250,19 @@ public class DocumentServiceImpl implements DocumentService {
                 Map<DocumentContent, DocumentVersion> docs = updateDocument(doc, metadata, labelVersion, versionType.value(), contentBytes, comments, userId);
                 doc = updateDocumentMetadata(doc, docs.values().stream().findFirst().get(), (Map<String, Object>) metadata, userId);
 
+                boolean toUpdatePackage = false;
                 if (latestVersion.isPresent()) {
                     latestVersion.get().setIsLatestVersion(false);
                     documentVersionRepository.save(latestVersion.get());
+                    toUpdatePackage = true;
                 }
                 if (latestMajorVersion.isPresent()) {
                     latestMajorVersion.get().setIsLatestMajorVersion(false);
                     documentVersionRepository.save(latestMajorVersion.get());
+                    toUpdatePackage = true;
+                }
+                if(toUpdatePackage) {
+                    updatePackageAuditFields(doc, userId, LocalDateTime.now());
                 }
 
                 return ConversionUtils.buildXmlDocument(doc, docs.values().stream().findFirst().get(),
@@ -822,22 +832,34 @@ public class DocumentServiceImpl implements DocumentService {
 
     public List<LeosDocument> findDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter,
             final int startIndex, final int maxResults, final boolean fetchContent) {
-        StringBuilder queryBuild = new StringBuilder("SELECT d ");
-        queryBuild.append(" FROM DocumentV d");
+        StringBuilder queryBuild = new StringBuilder("SELECT d, p.auditLastMBy as pkgAuditLastMBy, p.auditLastMDate as pkgAuditLastMDate ");
+        queryBuild.append(" FROM DocumentV d LEFT JOIN Package p ON d.packageId = p.id");
         Query query = createQuery(queryBuild, packageName, categories, queryFilter, true);
 
-        List<DocumentV> docs = query.setFirstResult(startIndex).setMaxResults(maxResults).getResultList();
+        List<Object[]> results = query.setFirstResult(startIndex).setMaxResults(maxResults).getResultList();
+        List<DocumentV> docs = new ArrayList<>();
+        Map<BigDecimal, PackageInfo> packageInfoMap = new HashMap<>();
+        
+        for (Object[] result : results) {
+            DocumentV doc = (DocumentV) result[0];
+            String pkgLastMBy = (String) result[1];
+            LocalDateTime pkgLastMDate = (LocalDateTime) result[2];
+            docs.add(doc);
+            
+            if (pkgLastMBy != null && pkgLastMDate != null) {
+                packageInfoMap.put(doc.getPackageId(), new PackageInfo(pkgLastMBy, pkgLastMDate));
+            }
+        }
 
         List<LeosDocument> xmlDocs = ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository,
-                docs,
-                fetchContent);
+                docs, fetchContent, packageInfoMap);
         xmlDocs.addAll(milestoneDocumentService.findMilestonesUsingFilter(packageName, categories, queryFilter, startIndex, maxResults, fetchContent));
         return xmlDocs;
     }
 
     public long countDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter) {
         StringBuilder queryBuild = new StringBuilder("SELECT COUNT(d) ");
-        queryBuild.append(" FROM DocumentV d");
+        queryBuild.append(" FROM DocumentV d LEFT JOIN Package p ON d.packageId = p.id ");
         Query query = createQuery(queryBuild, packageName, categories, queryFilter, false);
 
         Long count = (Long) query.getSingleResult();
@@ -889,7 +911,7 @@ public class DocumentServiceImpl implements DocumentService {
                 }
                 if (filter.nullCheck) {
                     queryBuild.append(" AND ( ");
-                    queryBuild.append(columnName);
+                    queryBuild.append("d.").append(columnName);
                     queryBuild.append(" = '-' ");
                 }
                 if ("IN".equalsIgnoreCase(filter.operator)) {
@@ -899,7 +921,7 @@ public class DocumentServiceImpl implements DocumentService {
                     else {
                         queryBuild.append(" AND ");
                     }
-                    queryBuild.append(columnName);
+                    queryBuild.append("d.").append(columnName);
                     queryBuild.append(" IN ( ");
                     queryBuild.append(":valueList_").append(i);
                     queryBuild.append(")");
@@ -910,7 +932,7 @@ public class DocumentServiceImpl implements DocumentService {
                     else {
                         queryBuild.append(" AND ");
                     }
-                    queryBuild.append("LOWER(").append(columnName).append(")");
+                    queryBuild.append("LOWER(").append("d.").append(columnName).append(")");
                     queryBuild.append(" ").append(filter.operator).append(" ");
                     queryBuild.append("LOWER(:keyValue_").append(i).append(")");
 
@@ -1007,7 +1029,12 @@ public class DocumentServiceImpl implements DocumentService {
                 QueryFilter.SortOrder sortOrder = queryFilter.getSortOrders().get(i);
                 try {
                     Field field = objectClass.getDeclaredField(QueryFilter.FilterType.getColumnName(sortOrder.key));
-                    queryBuild.append(QueryFilter.FilterType.getColumnName(sortOrder.key));
+                    String columnName = QueryFilter.FilterType.getColumnName(sortOrder.key);
+                    if ("updatedOn".equals(columnName)) {
+                        queryBuild.append("p.auditLastMDate");
+                    } else {
+                        queryBuild.append("d.").append(columnName);
+                    }
                     queryBuild.append(" ");
                     queryBuild.append(sortOrder.direction);
                     if (i < queryFilter.getSortOrders().size() - 1) {
@@ -1108,7 +1135,8 @@ public class DocumentServiceImpl implements DocumentService {
 
     private DocumentVersion updateDocumentVersionComments(DocumentVersion version, String updatedBy, Map<String, ?> metadata) {
         version.setAuditLastMBy(updatedBy);
-        version.setAuditLastMDate(LocalDateTime.now());
+        LocalDateTime localDateTime = LocalDateTime.now();
+        version.setAuditLastMDate(localDateTime);
         try {
             String metadataComment = metadata.get(PropertiesMetadata.COMMENTS.getLeosName()).toString();
             String[] metadataComments = metadataComment.split("::");
@@ -1128,6 +1156,7 @@ public class DocumentServiceImpl implements DocumentService {
         } catch (Exception e) {
             LOG.debug("No need to updated comments");
         }
+        updatePackageAuditFields(version.getDocumentId(), updatedBy, localDateTime);
         return documentVersionRepository.save(version);
     }
 
@@ -1144,9 +1173,10 @@ public class DocumentServiceImpl implements DocumentService {
             String comments) throws RepositoryException {
         DocumentVersion docVersion = new DocumentVersion();
         docVersion.setAuditCBy(doc.getAuditCBy());
-        docVersion.setAuditCDate(LocalDateTime.now());
+        LocalDateTime localDateTime = LocalDateTime.now();
+        docVersion.setAuditCDate(localDateTime);
         docVersion.setAuditLastMBy(updatedBy);
-        docVersion.setAuditLastMDate(LocalDateTime.now());
+        docVersion.setAuditLastMDate(localDateTime);
         docVersion.setVersionLabel(labelVersion);
         docVersion.setVersionType(String.valueOf(versionType));
         docVersion.setDocumentId(doc.getId());
@@ -1160,6 +1190,8 @@ public class DocumentServiceImpl implements DocumentService {
         docVersion.setVersionSeriesId(labelVersion);
         docVersion.setVersionArchived(false);
 
+        updatePackageAuditFields(doc, updatedBy, localDateTime);
+
         return documentVersionRepository.save(docVersion);
     }
 
@@ -1168,9 +1200,10 @@ public class DocumentServiceImpl implements DocumentService {
         DocumentContent content = new DocumentContent();
         content.setContent(contentString);
         content.setCreatedBy(userId);
-        content.setCreationDate(LocalDateTime.now());
+        LocalDateTime localDateTime = LocalDateTime.now();
+        content.setCreationDate(localDateTime);
         content.setLastModifiedBy(userId);
-        content.setLastModificationDate(LocalDateTime.now());
+        content.setLastModificationDate(localDateTime);
 
 
         Boolean eeaRelevance = ConversionUtils.convertBoolean(metadata.get(PropertiesMetadata.EEA_RELEVANCE.getLeosName()));
@@ -1215,6 +1248,28 @@ public class DocumentServiceImpl implements DocumentService {
             content.setCategoryCode(prevVersion.getCategoryCode());
         }
         return documentContentRepository.save(content);
+    }
+
+    // Update package audit fields
+    private void updatePackageAuditFields(Document doc, String userId, LocalDateTime localDateTime) {
+        if (doc != null) {
+            if(doc.getPackageId() != null) {
+                Package pkg = doc.getPackageId();
+                pkg.setAuditLastMBy(userId);
+                pkg.setAuditLastMDate(localDateTime);
+                packageRepository.save(pkg);
+            } else {
+                LOG.warn("Unable to update package audit fields as Document {} has no package", doc.getId());
+            }
+        }
+    }
+
+    // Update package audit fields
+    private void updatePackageAuditFields(BigDecimal docId, String userId, LocalDateTime localDateTime) {
+        if (docId != null) {
+            Document doc = documentRepository.findById(docId).orElse(null);
+            updatePackageAuditFields(doc, userId, localDateTime);
+        }
     }
 
     private void checkMetadata(Map<String, ?> metadata)
