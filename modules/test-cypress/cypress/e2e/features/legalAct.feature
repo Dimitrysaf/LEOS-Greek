@@ -1022,7 +1022,7 @@ Feature: Legal Act Page Regression Features
     And  content of subparagraph 2 of paragraph 1 of article 1 contains "subparagraph 2"
     And  content of subparagraph 3 of paragraph 1 of article 1 contains "subparagraph 1"
 
-  @searchAndReplaceLimitNumbers @local
+  @searchAndReplaceLimitNumbers @local @focus
   Scenario: search and limit numbers and replace search word
     Given navigate to leos application with "User1"
     Then user is on home page
