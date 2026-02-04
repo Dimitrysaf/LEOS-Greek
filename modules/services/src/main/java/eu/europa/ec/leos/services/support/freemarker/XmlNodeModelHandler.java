@@ -16,7 +16,7 @@ package eu.europa.ec.leos.services.support.freemarker;
 import java.io.InputStream;
 import java.io.StringReader;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

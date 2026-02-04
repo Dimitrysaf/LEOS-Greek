@@ -15,6 +15,7 @@ class headerPage {
     }
 
     getCurrentPageName(){
+        cy.wait(1000);
         return this.elements.breadCrumbItemLabel();
     }
 

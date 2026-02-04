@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.repository.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.europa.ec.leos.repository.H2TestBase;
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.controllers.PackageController;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
@@ -11,9 +12,9 @@ import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.services.CollaboratorsService;
 import eu.europa.ec.leos.repository.services.PackageService;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
@@ -22,8 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -39,6 +41,7 @@ import java.util.stream.Stream;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -48,10 +51,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.web.util.UriUtils.encodeQueryParam;
 import static org.springframework.web.util.UriUtils.encodeUriVariables;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(PackageController.class)
 @ActiveProfiles("test")
-public class PackageIntegrationTests {
+class PackageIntegrationTests extends H2TestBase {
     private static Logger LOG = LoggerFactory.getLogger(PackageIntegrationTests.class);
 
     @Autowired
@@ -179,8 +182,8 @@ public class PackageIntegrationTests {
             "    </bill>\n" +
             "</akomaNtoso>";
 
-    @Before
-    public void instantiatePackages() {
+    @BeforeEach
+    void instantiatePackages() {
         eu.europa.ec.leos.repository.entities.Package pkgEntity = new eu.europa.ec.leos.repository.entities.Package();
         pkgEntity.setId(PKG_ID);
         pkgEntity.setName(PKG_NAME);
@@ -212,8 +215,9 @@ public class PackageIntegrationTests {
         xmlDoc.setVersionType(VersionType.MAJOR);
     }
 
+    @WithMockUser
     @Test
-    public void createPackage() throws Exception {
+    void createPackage() throws Exception {
         CreatePackageRequest createPackageRequest = new CreatePackageRequest();
         createPackageRequest.setUserId(USER);
         String json = mapper.writeValueAsString(createPackageRequest);
@@ -223,7 +227,7 @@ public class PackageIntegrationTests {
 
         mockMvc.perform(post("/package/create/{name}", encodeUriVariables(PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
                 .content(json)
-                .accept(MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(jsonPath("$.id", is(PKG_ID.toString())))
                 .andExpect(jsonPath("$.name", is(PKG_NAME)))
                 .andExpect(jsonPath("$.createdBy", is(USER)))
@@ -236,18 +240,20 @@ public class PackageIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
-    public void deletePackage() throws Exception {
+    void deletePackage() throws Exception {
         Mockito.doThrow(new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND,
                 "Package Not Found")).when(packageService).deletePackage( PKG_NAME);
 
         mockMvc.perform(delete("/package/delete/{name}", encodeUriVariables(PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(status().is5xxServerError()).andDo(print());
     }
 
+    @WithMockUser
     @Test
-    public void findDocumentsByPackageName() throws Exception {
+    void findDocumentsByPackageName() throws Exception {
         FindDocumentsRequest findDocumentsRequest = new FindDocumentsRequest();
         findDocumentsRequest.setCategories(Stream.of("BILL")
                 .collect(Collectors.toSet()));
@@ -259,7 +265,7 @@ public class PackageIntegrationTests {
 
         mockMvc.perform(post("/package/find-by-name/documents?name={name}", encodeUriVariables(TEST_PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(jsonPath("$.leosDocumentList[0].ref", is(xmlDoc.getRef())))
                 .andExpect(jsonPath("$.leosDocumentList[0].name", is(xmlDoc.getName())))
                 .andExpect(jsonPath("$.leosDocumentList[0].createdBy", is(USER)))
@@ -269,8 +275,9 @@ public class PackageIntegrationTests {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @WithMockUser
     @Test
-    public void findDocumentsByPackageId() throws Exception {
+    void findDocumentsByPackageId() throws Exception {
         FindDocumentsRequest findDocumentsRequest = new FindDocumentsRequest();
         findDocumentsRequest.setCategories(Stream.of("BILL")
                 .collect(Collectors.toSet()));
@@ -282,7 +289,7 @@ public class PackageIntegrationTests {
 
         mockMvc.perform(post("/package/find-by-id/{id}/documents", PKG_ID).contentType(MediaType.APPLICATION_JSON)
                         .content(json)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON).with(csrf()))
                 .andExpect(jsonPath("$.leosDocumentList[0].ref", is(xmlDoc.getRef())))
                 .andExpect(jsonPath("$.leosDocumentList[0].name", is(xmlDoc.getName())))
                 .andExpect(jsonPath("$.leosDocumentList[0].createdBy", is(USER)))

@@ -73,12 +73,12 @@ define(function leosTablePluginModule(require) {
                 ck.editor.removeMenuItem('tablecell_insertBefore'); 
                 ck.editor.removeMenuItem('tablecell_insertAfter'); 
                 ck.editor.removeMenuItem('tablecell_delete'); 
-                ck.editor.removeMenuItem('tablecell_properties'); 
+                ck.editor.removeMenuItem('tablecell_properties');
                 ck.editor.getCommand('tableDelete').exec = _tableDelete.bind(undefined, ck.editor);
 
                 if (ck.editor.contextMenu) {
                     ck.editor.contextMenu.addListener(function(element) {
-                        if (element && element.getAscendant('table', true) && element.getAscendant('table', true).getAttribute('leos:deletable') === 'false') {
+                        if (element && element.getAscendant('table', true) && (element.getAscendant('table', true).getAttribute('leos:deletable') === 'false' || element.getAscendant('table', true).getAttribute('leos:predefinedTable') ==="true")){
                             ck.editor.contextMenu.items.map(function(item) {
                                 if(item.command === 'tableDelete'){
                                     item.state = CKEDITOR.TRISTATE_DISABLED;
@@ -120,6 +120,21 @@ define(function leosTablePluginModule(require) {
                 eventType : 'key',
                 key : DELETE_KEY,
                 action : _handleTableRemoval
+            });
+
+            // Prevent typing outside table (only in table-only mode)
+            editor.on('key', function(evt) {
+                if (!editor.config.tableOnlyMode) return;
+                
+                var selection = evt.editor.getSelection();
+                if (!selection) return;
+                
+                var startElement = selection.getStartElement();
+                var isInTable = startElement && startElement.getAscendant('table', true) !== null;
+                
+                if (!isInTable) {
+                    evt.cancel();
+                }
             });
         }
     };

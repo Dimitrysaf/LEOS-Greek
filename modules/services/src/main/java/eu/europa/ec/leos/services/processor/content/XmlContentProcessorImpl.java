@@ -64,7 +64,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1330,6 +1330,20 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private void moveSubparagraphsInList(Node node) {
         NodeList nodeList = XercesUtils.getElementsByName(node, SUBPARAGRAPH);
+        if (nodeList.getLength() > 0) {
+            Node lastSubpar = nodeList.item(nodeList.getLength() - 1);
+            Node lastSubparParent = lastSubpar.getParentNode();
+            Node lastSubparParentSibbling = lastSubparParent.getNextSibling();
+            if (lastSubpar.getAttributes().getNamedItem(REFERS_TO_ATTR) != null
+                    && lastSubpar.getAttributes().getNamedItem(REFERS_TO_ATTR).getNodeValue().equals(ENDING_PART)
+                    && Character.isUpperCase(lastSubpar.getTextContent().trim().charAt(0))) {
+                if (lastSubparParentSibbling != null) {
+                    lastSubparParent.getParentNode().insertBefore(lastSubpar, lastSubparParentSibbling);
+                } else {
+                    lastSubparParent.getParentNode().appendChild(lastSubpar);
+                }
+            }
+        }
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node subpara = nodeList.item(i);
             Node nextSiblingList = getNextSibling(subpara);
@@ -1345,7 +1359,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     moved = true;
                 }
             }
-            if (!moved && (subpara.getTextContent().isEmpty() || !Character.isUpperCase(subpara.getTextContent().trim().charAt(0)))) {
+            if (!moved && (subpara.getTextContent().isEmpty() || !Character.isUpperCase(subpara.getTextContent().trim().charAt(0)))
+                    && XercesUtils.getElementsByName(subpara, "table").getLength() == 0) {
                 Node previousSiblingList = XercesUtils.getPrevSibling(subpara);
                 if (previousSiblingList != null && is(previousSiblingList, LIST)
                         && ((!isSoftDeletedOrMovedTo(subpara) && !isSoftDeletedOrMovedTo(previousSiblingList))
@@ -2017,7 +2032,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
         insertOrUpdateAttributeValue(nodeToSetAttributes, LEOS_INDENT_LEVEL_ATTR, indentLevelStr);
         insertOrUpdateStylingAttribute(nodeToSetAttributes, INDENT_LEVEL_PROPERTY, indentLevelStr);
-        insertOrUpdateStylingAttribute(nodeToSetAttributes, INLINE_NUM_PROPERTY, org.apache.commons.lang.StringUtils.isNotEmpty(inlinePropertyStr) ? inlinePropertyStr : null);
+        insertOrUpdateStylingAttribute(nodeToSetAttributes, INLINE_NUM_PROPERTY, org.apache.commons.lang3.StringUtils.isNotEmpty(inlinePropertyStr) ? inlinePropertyStr : null);
         return nodeToByteArray(document);
     }
 

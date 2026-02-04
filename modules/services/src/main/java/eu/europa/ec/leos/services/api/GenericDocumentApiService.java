@@ -76,15 +76,16 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Maybe;
 import io.atlassian.fugue.Option;
 import io.atlassian.fugue.Pair;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -147,7 +148,7 @@ public class GenericDocumentApiService {
                                      @NotNull ComparisonDelegateAPI<XmlDocument> comparisonDelegate,
                                      @NotNull ExportService exportService,
                                      @NotNull UserService userService,
-                                     @NotNull Properties applicationProperties,
+                                     @NotNull @Qualifier("applicationProperties") Properties applicationProperties,
                                      @NotNull LanguageGroupService languageGroupService,
                                      @NotNull DocumentLanguageContext documentLanguageContext,
                                      @NotNull TokenService tokenService,
@@ -370,24 +371,17 @@ public class GenericDocumentApiService {
         List<String> authorLogins = new ArrayList<>();
         boolean usersEmpty = false;
         if (StringUtils.hasText(authorKey)) {
-            LOG.info("-- #1975 -- authorKey hasText :{}", authorKey);
             List<UserJSON> users = userService.searchUsersByKey(authorKey);
             usersEmpty = users.isEmpty();
             authorLogins = users.stream().map(user -> user.getLogin()).collect(Collectors.toList());
-            LOG.info("-- #1975 -- authorLogins size:{}", authorLogins.size());
         }
         List<VersionVO> versions = new ArrayList<>();
         if (!usersEmpty) {
-            LOG.info("-- #1975 -- users are not empty or not set {}", authorLogins.size());
             List<XmlDocument> foundVersions = this.leosRepository.searchVersions(XmlDocument.class, docRef, authorLogins,
                     versionType);
             versions = VersionsUtil.buildVersionVO(foundVersions, messageHelper);
             versions.forEach(v -> v.setCreatedBy(userHelper.convertToPresentation(v.getUsername())));
         }
-        if (usersEmpty) {
-            LOG.info("-- #1975 -- users are empty {}", authorLogins.size());
-        }
-        LOG.info("-- #1975 -- versions {}", versions.size());
         return versions;
     }
 

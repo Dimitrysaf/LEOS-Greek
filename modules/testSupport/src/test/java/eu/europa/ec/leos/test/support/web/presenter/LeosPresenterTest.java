@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.test.support.web.presenter;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 
 import org.mockito.Mock;
 

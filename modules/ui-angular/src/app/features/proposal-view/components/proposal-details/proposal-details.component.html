@@ -243,12 +243,12 @@
                          class="details-tab-select" [disabled]="!institutionalRef">
                   <option *ngFor="let institutionalRefYear of years">{{ institutionalRefYear }}</option>
                 </select>)
-                <input type="number"
+                <input type="text" (keypress)="this.checkInstitutionalNumberInput($event)"
                        [(ngModel)]="institutionalRefNumber"
                        (ngModelChange)="handleChange()"
                        [disabled]="!institutionalRef"
                        class="details-tab-text"/>
-                <div *ngIf="!isInstitutionalRefValid()" class="tooltip">
+                <div *ngIf="!isInstitutionalRefValid() || this.invalidInstitutionalNumberInput" class="tooltip">
                   {{ this.getInstitutionalRefNonValidMsg() }}
                 </div>
 
@@ -318,7 +318,7 @@
                         [disabled]="!interInstitutionalRef">
                   <option *ngFor="let interInstitutionalRefYear of years">{{ interInstitutionalRefYear }}</option>
                 </select>/
-                <input type="number"
+                <input type="text" (keypress)="this.checkInterInstitutionalNumberInput($event)"
                        [(ngModel)]="interInstitutionalRefNumber"
                        (ngModelChange)="handleChange()"
                        [disabled]="!interInstitutionalRef"
@@ -610,7 +610,7 @@
                     <option *ngFor="let targetProposalReferenceYear of years">{{ targetProposalReferenceYear }}</option>
                   </select>
                   <label style="font-size: x-large; margin-top: 5px;">)</label>
-                  <input type="number"
+                  <input type="text" (keypress)="this.checkTargetProposalNumberInput($event)"
                          [(ngModel)]="targetProposalReferenceNumber"
                          (ngModelChange)="handleChange()"
                          [required]="showCorrigendumAddendum"

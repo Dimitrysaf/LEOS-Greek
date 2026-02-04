@@ -1,11 +1,11 @@
 PROJECT: LEOS
-Joinup Release: 5.X.X
+Release: 5.3.1
 Date: 2024-XX-XX
 
 INTRODUCTION
 ============
 
-This is a joinup release of Project LEOS (pilot) which enables users to edit legal texts in AkomaNtoso XML format.
+This is a release of Project LEOS (pilot) which enables users to edit legal texts in AkomaNtoso XML format.
 
 
 IMPORTANT NOTES
@@ -20,8 +20,8 @@ DEPENDENCIES
 ============
 
 To compile the supplied source files and run the generated WAR the following software should be configured:
-    * Java SDK version 8.0 (⚠️ do not upgrade to newer versions of Java SDK yet. It won't work)
-    * Maven version 3.3.9+
+    * Java SDK version 21
+    * Maven version 3.9.9
       (Maven runtime memory might need to be set: MAVEN_OPTS=-Xms256m -Xmx512m)
       (Maven settings, proxy and mirrors, might need to be adjusted to your environment and internet access requirements)
     * Supported browser is Google Chrome version 45+

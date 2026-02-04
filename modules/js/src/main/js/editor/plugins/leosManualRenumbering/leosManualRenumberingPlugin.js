@@ -20,6 +20,7 @@ define(function leosManualRenumberingPlugin(require) {
     const UTILS = require("core/leosUtils");
     const pluginTools = require("plugins/pluginTools");
     const dialogDefinition = require("./leosManualRenumberingDialog");
+    const leosPluginUtils = require("../leosPluginUtils");
 
     const DATA_AKN_NUM = "data-akn-num";
     const NUM_ORIGIN = "data-num-origin";
@@ -67,7 +68,7 @@ define(function leosManualRenumberingPlugin(require) {
 
     function _isManualRenumberingEnabled(editor){
         return editor.editable && editor.editable().getChildren && editor.editable().getChildren().count() > 0
-            && "ec" === UTILS.getElementOrigin(editor.editable().getChildren().getItem(0));
+            && "ec" === UTILS.getElementOrigin(leosPluginUtils.findFirstChild(editor.editable()));
     }
 
     function _isNumberEditable(editor, element){

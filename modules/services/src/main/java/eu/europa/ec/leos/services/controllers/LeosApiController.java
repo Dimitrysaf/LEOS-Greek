@@ -69,6 +69,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -88,9 +89,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.w3c.dom.Document;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -152,8 +153,8 @@ public class LeosApiController {
     @Autowired
     public LeosApiController(LegService legService, WorkspaceService workspaceService, TokenService tokenService,
                              TransformationService transformationService, ContentComparatorService comparatorService,
-                             EventBus leosApplicationEventBus, ExportService exportService,
-                             CreateCollectionService createCollectionService, Properties applicationProperties,
+                             @Qualifier("leosApplicationEventBus") EventBus leosApplicationEventBus, ExportService exportService,
+                             CreateCollectionService createCollectionService, @Qualifier("applicationProperties") Properties applicationProperties,
                              ExportPackageService exportPackageService, ApiService apiService, ConfigService configService,
                              SecurityContext securityContext, UserService userService, CoEditionInfoHandler coEditionInfoHandler,
                              DocumentContentService documentContentService, ConValidatorService conValidatorService,

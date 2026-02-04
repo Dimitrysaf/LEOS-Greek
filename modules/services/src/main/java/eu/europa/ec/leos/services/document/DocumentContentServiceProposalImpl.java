@@ -27,9 +27,10 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.util.Properties;
 
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
@@ -50,7 +51,7 @@ public class DocumentContentServiceProposalImpl extends DocumentContentServiceIm
                                               XmlContentProcessor xmlContentProcessor, XmlDocumentService xmlDocumentService,
                                               XmlNodeProcessor xmlNodeProcessor,
                                               CloneContext cloneContext, XPathCatalog xPathCatalog,
-                                              Properties applicationProperties, Provider<CollectionContextService> proposalContextProvider, PackageService packageService) {
+                                              @Qualifier("applicationProperties") Properties applicationProperties, Provider<CollectionContextService> proposalContextProvider, PackageService packageService) {
         super(transformationService, compareService, annexService, billService, memorandumService, null, financialStatementService, proposalService,
                 xmlContentProcessor, xmlDocumentService, xmlNodeProcessor, xPathCatalog, proposalContextProvider, packageService);
         this.cloneContext = cloneContext;

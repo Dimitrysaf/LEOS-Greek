@@ -716,7 +716,13 @@ class ckEditorWindow {
                 range.setStart(elementToPutCursor, offset);
                 range.setEnd(elementToPutCursor, offset);
                 range.collapse(true);
-                range.select();
+                // range.select();
+                // Force selection to this range
+                const selection = editor.getSelection();
+                selection.removeAllRanges();
+                selection.selectRanges([range]);
+
+                editor.focus();
             })
         });
     }

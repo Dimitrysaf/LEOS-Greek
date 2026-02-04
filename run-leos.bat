@@ -24,5 +24,5 @@ echo "---------------------LEOS COMPILED.-------------------------------------"
 cd ./modules/web
 
 echo "---------------------LEOS STARTING...-----------------------------------"
-call mvn jetty:run-war
+call mvn cargo:run
 echo "---------------------LEOS STOPPED.--------------------------------------"

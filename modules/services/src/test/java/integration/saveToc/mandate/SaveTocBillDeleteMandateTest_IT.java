@@ -16,7 +16,7 @@ package integration.saveToc.mandate;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
 import static integration.saveToc.TocVOCreateUtils.getElementById;
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
@@ -29,9 +29,9 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.test.support.model.ModelHelper;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +48,7 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
  * test_add__article => starting from a initial state, add an article, the output will be an XML with a CN article.
  * test_delete__article => from the output of previous method, delete the CN element, the output will be the initial state.
  */
-@Ignore
+@Disabled
 public class SaveTocBillDeleteMandateTest_IT extends SaveTocBillMandateTest_IT {
 
     private static final Logger log = LoggerFactory.getLogger(SaveTocBillDeleteMandateTest_IT.class);
@@ -56,7 +56,7 @@ public class SaveTocBillDeleteMandateTest_IT extends SaveTocBillMandateTest_IT {
     @Mock
     private SecurityContext securityContext;
 
-    @Before
+    @BeforeEach
     public void onSetup() throws Exception {
         super.onSetUp();
         List<Entity> entities = new ArrayList<Entity>();

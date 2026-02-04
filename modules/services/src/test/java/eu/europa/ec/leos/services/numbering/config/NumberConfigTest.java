@@ -1,13 +1,13 @@
 package eu.europa.ec.leos.services.numbering.config;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class NumberConfigTest {
 
-    @Ignore
+    @Disabled
     @Test
     public void test_printArabicConfig() {
         NumberConfig numberConfig = new NumberConfigArabic();
@@ -157,7 +157,7 @@ public class NumberConfigTest {
         for (int i = 1; i < 1000; i++) {
             numberConfig.incrementComplexValue();
         }
-        assertEquals("For config: " + numberConfig.toString(), "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk", numberConfig.getComplexValueToShow());
+        assertEquals("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk", numberConfig.getComplexValueToShow(), "For config: " + numberConfig.toString());
         assertEquals("1kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk", numberConfig.getActualNumberToShow());
 
     }

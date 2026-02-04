@@ -6,8 +6,8 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -18,14 +18,14 @@ import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 public class SearchEngineTest extends LeosTest {
 
     protected final static String PREFIX_SEARCH_REPLACE = "/searchReplace";
     User user;
-    @Before
+    @BeforeEach
     public void setup() {
         super.setup();
         User user = getJaneDigitUser();

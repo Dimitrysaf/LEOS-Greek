@@ -10,8 +10,8 @@ import eu.europa.ec.leos.services.structure.profile.ProfileServiceImpl;
 import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.vo.light.Profile;
 import io.atlassian.fugue.Option;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -23,7 +23,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -36,7 +36,7 @@ public class ProfileServiceTest extends LeosTest {
 
     private String systemName;
     
-    @Before
+    @BeforeEach
     public void init() {
         systemName = "DGT_EDIT";
         byte[] bytesFile = getFileContent("/light/lightProfileTest.xml");

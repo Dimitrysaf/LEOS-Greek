@@ -11,20 +11,20 @@ import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@RunWith(MockitoJUnitRunner.class)
+
 public class FinancialStatementControllerTest {
 
     @Mock
@@ -35,8 +35,13 @@ public class FinancialStatementControllerTest {
     private FinancialStatementApiService financialStatementApiService;
     @Mock
     private HttpServletRequest request;
-    @InjectMocks
     private FinancialStatementController financialStatementController;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+        financialStatementController = new FinancialStatementController(genericDocumentApiService, genericDocumentTocApiService, financialStatementApiService);
+    }
 
     @Test
     public void getDocumentByRef() {
@@ -50,12 +55,10 @@ public class FinancialStatementControllerTest {
 
         DocumentViewResponse response = this.financialStatementController.getDocumentByRef(TEST_DOC_REF);
 
-        Assert.assertNotNull(response);
-        Assert.assertEquals(TEST_PROPOSAL_REF, response.getProposalRef());
-        Assert.assertEquals(TEST_XML, response.getEditableXml());
-        Assert.assertEquals(TEST_VERSION_INFO, response.getVersionInfoVO());
-
-        Mockito.spy(this.genericDocumentApiService).getDocumentByRef(Mockito.eq(TEST_DOC_REF));
+        assertNotNull(response);
+        assertEquals(TEST_PROPOSAL_REF, response.getProposalRef());
+        assertEquals(TEST_XML, response.getEditableXml());
+        assertEquals(TEST_VERSION_INFO, response.getVersionInfoVO());
     }
 
     @Test
@@ -68,10 +71,8 @@ public class FinancialStatementControllerTest {
 
         List<TableOfContentItemVO> response = this.financialStatementController.getToc(TEST_DOC_REF, TEST_TOC_MODE);
 
-        Assert.assertNotNull(response);
-        Assert.assertTrue(response.isEmpty());
-
-        Mockito.spy(this.genericDocumentTocApiService).getTableOfContent(Mockito.eq(TEST_DOC_REF), Mockito.eq(TEST_TOC_MODE));
+        assertNotNull(response);
+        assertTrue(response.isEmpty());
     }
 
     @Test
@@ -83,10 +84,8 @@ public class FinancialStatementControllerTest {
 
         List<TocItem> response = this.financialStatementController.getTocItems(TEST_DOC_REF);
 
-        Assert.assertNotNull(response);
-        Assert.assertTrue(response.isEmpty());
-
-        Mockito.spy(this.genericDocumentApiService).getTocItems(Mockito.eq(TEST_DOC_REF));
+        assertNotNull(response);
+        assertTrue(response.isEmpty());
     }
 
     @Test
@@ -98,10 +97,8 @@ public class FinancialStatementControllerTest {
 
         List<VersionVO> response = this.financialStatementController.getMajorVersionsData(TEST_DOC_REF, 0, 9999);
 
-        Assert.assertNotNull(response);
-        Assert.assertTrue(response.isEmpty());
-
-        Mockito.spy(this.genericDocumentApiService).getMajorVersionsData(Mockito.eq(TEST_DOC_REF), Mockito.eq(0), Mockito.eq(9999));
+        assertNotNull(response);
+        assertTrue(response.isEmpty());
     }
 
     @Test
@@ -130,10 +127,8 @@ public class FinancialStatementControllerTest {
 
         DocumentConfigResponse response = this.financialStatementController.getDocumentConfig(TEST_DOC_REF, this.request);
 
-        Assert.assertNotNull(response);
-        Assert.assertEquals(TEST_RESPONSE, response);
-
-        Mockito.spy(this.genericDocumentApiService).getTocItems(Mockito.eq(TEST_DOC_REF));
+        assertNotNull(response);
+        assertEquals(TEST_RESPONSE, response);
     }
 
     @Test
@@ -145,9 +140,7 @@ public class FinancialStatementControllerTest {
 
         List<VersionVO> response = this.financialStatementController.getRecentChanges(TEST_DOC_REF, 0, Integer.MAX_VALUE);
 
-        Assert.assertNotNull(response);
-        Assert.assertTrue(response.isEmpty());
-
-        Mockito.spy(this.genericDocumentApiService).getRecentMinorVersions(Mockito.eq(TEST_DOC_REF), Mockito.eq(0), Mockito.eq(Integer.MAX_VALUE));
+        assertNotNull(response);
+        assertTrue(response.isEmpty());
     }
 }

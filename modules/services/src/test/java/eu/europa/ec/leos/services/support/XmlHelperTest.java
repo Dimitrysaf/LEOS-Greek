@@ -2,10 +2,10 @@ package eu.europa.ec.leos.services.support;
 
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.test.support.LeosTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class XmlHelperTest extends LeosTest {
 

@@ -14,10 +14,6 @@
 package eu.europa.ec.leos.repository.controllers;
 
 import eu.europa.ec.leos.repository.services.ConfigService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +36,6 @@ public class ConfigController {
     @PostMapping(path = "/config/notifications/upload",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "Upload News Notifications to DB")
     public ResponseEntity<Object> configNotificationsUpload(@RequestBody String json) {
         try {
             configService.saveNotifications(json);
@@ -53,10 +48,6 @@ public class ConfigController {
 
     @GetMapping(path = "/config/notifications/fetch",
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "Fetch News Notifications from DB ")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Document Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<Object> configNotificationsFetch() {
         try {
             String content = configService.fetchNotifications();

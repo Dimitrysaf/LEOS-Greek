@@ -25,6 +25,7 @@ import eu.europa.ec.leos.services.structure.profile.ProfileService;
 import eu.europa.ec.leos.services.utils.HttpUtils;
 import eu.europa.ec.leos.vo.light.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -48,9 +49,9 @@ public class ConfigServiceImpl implements ConfigService {
     private String decisionClientId;
 
     @Autowired
-    public ConfigServiceImpl(Properties applicationProperties, Properties integrationProperties, SecurityContext securityContext, LeosPermissionAuthorityMapHelper authorityMapHelper,
-            MessageHelper messageHelper, ProfileService profileService,
-            TokenService tokenService, LanguageGroupService languageGroupService) {
+    public ConfigServiceImpl(@Qualifier("applicationProperties") Properties applicationProperties, @Qualifier("integrationProperties") Properties integrationProperties, SecurityContext securityContext, LeosPermissionAuthorityMapHelper authorityMapHelper,
+                             MessageHelper messageHelper, ProfileService profileService,
+                             TokenService tokenService, LanguageGroupService languageGroupService) {
         this.applicationProperties = applicationProperties;
         this.integrationProperties = integrationProperties;
         this.securityContext = securityContext;

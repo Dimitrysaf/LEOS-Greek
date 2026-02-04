@@ -14,6 +14,8 @@
 package eu.europa.ec.leos.security;
 
 import eu.europa.ec.leos.model.user.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,14 +32,19 @@ import java.util.stream.Collectors;
 @Component
 public class SecurityContext {
 
+    private static final Logger LOG = LoggerFactory.getLogger(SecurityContext.class);
+
     private LeosPermissionEvaluator leosPermissionEvaluator;
     private TokenService tokenService;
+    private SecurityUserProvider securityUserProvider;
 
     @Autowired
     public SecurityContext(LeosPermissionEvaluator leosPermissionEvaluator,
-                           TokenService tokenService){
+                           TokenService tokenService,
+                           SecurityUserProvider securityUserProvider){
         this.leosPermissionEvaluator = leosPermissionEvaluator;
         this.tokenService = tokenService;
+        this.securityUserProvider = securityUserProvider;
     }
 
     public boolean hasAuthenticationInContext() {
@@ -45,7 +52,12 @@ public class SecurityContext {
     }
 
     public User getUser() {
-        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof String) {
+            return securityUserProvider.getUserByLogin(principal.toString());
+        } else {
+            return (User) principal;
+        }
     }
 
     public String getUserName() {

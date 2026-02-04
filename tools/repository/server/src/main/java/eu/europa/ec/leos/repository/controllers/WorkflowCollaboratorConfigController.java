@@ -21,11 +21,6 @@ import eu.europa.ec.leos.repository.model.WorkflowCollaboratorConfiguration;
 import eu.europa.ec.leos.repository.services.PackageService;
 import eu.europa.ec.leos.repository.services.WorkflowCollaboratorConfigService;
 import eu.europa.ec.leos.repository.utils.RestPreconditions;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -42,7 +37,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -54,7 +49,6 @@ import java.util.stream.Collectors;
 import static org.springframework.web.util.UriUtils.decode;
 
 @RestController
-@Tag(name = "Workflow Collaborator Config API", description = "Workflow Collaborator Config API")
 @Slf4j
 @AllArgsConstructor
 public class WorkflowCollaboratorConfigController {
@@ -64,7 +58,6 @@ public class WorkflowCollaboratorConfigController {
 
     @PostMapping(path = "/workflow-collaborator-config",
             consumes = {MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "Create or replace Workflow collaborator configuration")
     public ResponseEntity<Object> setWorkflowConfiguration(@Valid @RequestBody WorkflowCollaboratorConfigRequest workflowCollaboratorConfigRequest) {
         try {
             log.info("POST workflowCollaboratorConfigRequest "+workflowCollaboratorConfigRequest);
@@ -77,10 +70,6 @@ public class WorkflowCollaboratorConfigController {
     }
 
     @GetMapping(path = "/workflow-collaborator-config")
-    @Operation(summary = "Get a Workflow collaborator config for a packageName and a clientName")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Workflow collaborator config Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> getWorkflowCollaboratorConfig
             (@RequestParam("packageName") String packageName,
              @RequestParam("clientName") String clientName) {
@@ -100,10 +89,6 @@ public class WorkflowCollaboratorConfigController {
     }
 
     @GetMapping(path = "/workflow-collaborator-config/all")
-    @Operation(summary = "Get a list of Workflow collaborator configs associated to a packageName")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List Workflow collaborator config Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> getWorkflowCollaboratorConfigs
             (@RequestParam("packageName") String packageName)
             throws  RepositoryException {
@@ -117,10 +102,6 @@ public class WorkflowCollaboratorConfigController {
     }
 
     @DeleteMapping(path = "/workflow-collaborator-config/{id}")
-    @Operation(summary = "Delete a Workflow collaborator config")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Workflow collaborator config Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> deleteWorkflowCollaboratorConfig
             (@PathVariable("id") int id) {
         final Optional<WorkflowCollaboratorConfig> workflowCollaboratorConfiguration = getWorkflowCollaboratorConfiguration(id);
@@ -154,10 +135,6 @@ public class WorkflowCollaboratorConfigController {
     }
 
     @DeleteMapping(path = "/workflow-collaborator-config")
-    @Operation(summary = "Delete a Workflow collaborator config for a packageName and a clientName")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Workflow collaborator config Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> deleteWorkflowCollaboratorConfig
             (@RequestParam("packageName") String packageName, @RequestParam("clientName") String clientName) {
         final Optional<WorkflowCollaboratorConfig> workflowCollaboratorConfiguration = getWorkflowCollaboratorConfiguration(packageName, clientName);
@@ -178,8 +155,4 @@ public class WorkflowCollaboratorConfigController {
         });
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
-
-    //Advanced
-    //set/reset and get All the workflow collaborators (in collaboratos table) 4 a workflowCollabConfig
-
 }

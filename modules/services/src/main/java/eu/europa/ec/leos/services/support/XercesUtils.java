@@ -253,20 +253,20 @@ public class XercesUtils {
     }
 
     public static byte[] sanitize(byte[] content) {
-    	Document doc = createXercesDocument(content);
-    	sanitize(doc.getDocumentElement());
-    	return nodeToByteArray(doc);
+        Document doc = createXercesDocument(content);
+        sanitize(doc.getDocumentElement());
+        return nodeToByteArray(doc);
     }
 
     public static void sanitize(Node node) {
-    	if (node.getNodeType() == Node.TEXT_NODE) {
-    		node.setTextContent(replaceNonBreakingSpace(node.getTextContent()));
-    	} else if (node.getNodeType() == Node.ELEMENT_NODE) {
-    		NodeList nodeList = node.getChildNodes();
+        if (node.getNodeType() == Node.TEXT_NODE) {
+            node.setTextContent(replaceNonBreakingSpace(node.getTextContent()));
+        } else if (node.getNodeType() == Node.ELEMENT_NODE) {
+            NodeList nodeList = node.getChildNodes();
             for (int i = 0; i < nodeList.getLength(); i++) {
-            	sanitize(nodeList.item(i));
+                sanitize(nodeList.item(i));
             }
-    	}
+        }
     }
 
     private static String buildNodeAsString(Node node, StringBuffer sb) {
@@ -285,7 +285,7 @@ public class XercesUtils {
                 sb.append(CLOSE_END_TAG);// sb: <tagName atr="attrVal"/>
             }
         } else if (node.getNodeType() == Node.TEXT_NODE) {
-            sb.append(node.getTextContent());
+            sb.append(node.getTextContent().replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
         }
 
         NodeList nodeList = node.getChildNodes();
@@ -1461,14 +1461,14 @@ public class XercesUtils {
         }
         return softActionType;
     }
-    
+
     public static void insertOrUpdateAttributeValueRecursively(Node node, String attrName, String attrValue) {
-    	insertOrUpdateAttributeValue(node, attrName, attrValue);
-    	if(node.hasChildNodes()) {
-    		for(Node child : getChildren(node)) {
-    			insertOrUpdateAttributeValueRecursively(child, attrName, attrValue);
-    		}
-    	}
+        insertOrUpdateAttributeValue(node, attrName, attrValue);
+        if(node.hasChildNodes()) {
+            for(Node child : getChildren(node)) {
+                insertOrUpdateAttributeValueRecursively(child, attrName, attrValue);
+            }
+        }
     }
 
     public static String removeXmlNSAttributes(String input) {
@@ -1529,13 +1529,13 @@ public class XercesUtils {
     }
 
     private static boolean hasChildContainsAttributeValue(Node node, String attrName, String attrValue) {
-    	NodeList children = node.getChildNodes();
-    	for (int i = 0; i < children.getLength(); i++) {
-        	if(hasAttributeWithValue(children.item(i), attrName, attrValue)) {
-        		return true;
-        	}
+        NodeList children = node.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            if(hasAttributeWithValue(children.item(i), attrName, attrValue)) {
+                return true;
+            }
         }
-    	return false;
+        return false;
     }
 
     public static boolean hasNodeContainingAttributeValue(NodeList bodyNodes, String attrName, String attrValue) {
@@ -1870,7 +1870,7 @@ public class XercesUtils {
         // Check if the node is an element (since only elements can have attributes)
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             Element element = (Element) node;
-                // Generate a new ID
+            // Generate a new ID
             element.setAttribute(XMLID, IdGenerator.generateId());
         }
 

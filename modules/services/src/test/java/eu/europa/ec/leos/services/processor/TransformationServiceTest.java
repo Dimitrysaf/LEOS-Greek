@@ -5,9 +5,11 @@ import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
 import freemarker.template.Configuration;
 import freemarker.template.TemplateHashModel;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -26,7 +28,7 @@ public class TransformationServiceTest extends LeosTest {
 
     private final String FILE_PREFIX = "/transformation/";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         super.setup();
         String path = "/src/main/resources/eu/europa/ec/leos/freemarker/templates/";
@@ -45,11 +47,13 @@ public class TransformationServiceTest extends LeosTest {
      *  For now this error is being avoided calling removeAllNameSpaces(byte[]).
      *  @See XmlContentProcessor.getElementByNameAndId(byte[], String, String)
      */
-    @Ignore // TODO
-    @Test(expected = RuntimeException.class)
+    @Disabled // TODO
+    @Test
     public void test_transformation_citation_elementWithNamespace() {
-        byte[] documentXml = TestUtils.getFileContent(FILE_PREFIX + "test_transformation_citation_elementWithNamespace.xml");
-        InputStream contentStream = new ByteArrayInputStream(documentXml);
-        transformationService.formatToHtml(contentStream, "", null);
+        assertThrows(RuntimeException.class, () -> {
+            byte[] documentXml = TestUtils.getFileContent(FILE_PREFIX + "test_transformation_citation_elementWithNamespace.xml");
+            InputStream contentStream = new ByteArrayInputStream(documentXml);
+            transformationService.formatToHtml(contentStream, "", null);
+        });
     }
 }

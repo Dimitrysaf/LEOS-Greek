@@ -17,8 +17,8 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 
@@ -28,10 +28,10 @@ import java.util.List;
 import static eu.europa.ec.leos.services.TestVOCreatorUtils.getJohnTestUser;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.spy;
 
-@Ignore
+@Disabled
 public class XmlContentProcessorMandate_createDocumentWithNewTocTest extends XmlContentProcessorTest {
 
     @InjectMocks
@@ -62,7 +62,7 @@ public class XmlContentProcessorMandate_createDocumentWithNewTocTest extends Xml
         assertEquals(expected, result);
     }
 
-    @Ignore
+    @Disabled
     @Test
     @SuppressWarnings("unchecked")
     public void test_addSubParagraphInPointAUsingTOC() throws IOException, ClassNotFoundException {
