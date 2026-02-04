@@ -38,6 +38,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -81,8 +82,8 @@ public abstract class SaveTocTest_IT extends LeosTest {
     protected StructureContext structureContext;
     @Mock
     protected TemplateStructureService templateStructureService;
-    @InjectMocks
-    private LanguageHelper languageHelper = Mockito.spy(new LanguageHelper());
+    @Spy
+    private LanguageHelper languageHelper = new LanguageHelper();
     @Mock
     private eu.europa.ec.leos.security.SecurityContext leosSecurityContext;
     @Mock

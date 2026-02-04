@@ -26,8 +26,7 @@ import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.model.LeosDocumentList;
 import eu.europa.ec.leos.repository.services.DocumentService;
 import eu.europa.ec.leos.repository.utils.RestPreconditions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,7 +34,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
@@ -314,10 +312,6 @@ public class DocumentController {
     @GetMapping(path = "/documents/find-by-packageId/{packageId}",
             consumes = {},
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "Find proposal ref by packageId and category")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "LEG Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<Object> findDocumentRefByPackageIdAndCategory(@PathVariable("packageId") String packageId,
                                                        @RequestParam(value="category", required=false, defaultValue="%25") String categoryCode) {
         String documentRef = documentService.findDocumentRefByPackageIdAndCategory(packageId, categoryCode);
