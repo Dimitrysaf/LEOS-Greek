@@ -978,8 +978,8 @@
                     </names>
                     <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-035">
                         <names>
-                            <name lang="EN">SJ-035 - Commission Implementing Decision (internal)</name>
-                            <name lang="FR">SJ-035 - Décision d'exécution de la Commission (interne)</name>
+                            <name lang="EN">SJ-035 - Commission Decision (former PRAC) (internal)</name>
+                            <name lang="FR">SJ-035 - Décision de la Commission (ancienne PRAC) (interne)</name>
                         </names>
                         <descriptions>
                             <description lang="EN">Template 35 of the LS: Commission implementig Decision (internal)</description>
