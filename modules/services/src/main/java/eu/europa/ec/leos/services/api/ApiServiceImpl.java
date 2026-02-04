@@ -900,8 +900,11 @@ public abstract class ApiServiceImpl implements ApiService {
             }
         }
         if(StringUtils.isNotBlank(lastUpdatedBy)) {
-            proposalVO.setUpdatedOn(lastUpdatedOn);
-            proposalVO.setUpdatedBy(userHelper.convertToPresentation(lastUpdatedBy));
+            proposalVO.setPkgLastUpdatedOn(lastUpdatedOn);
+            proposalVO.setPkgLastUpdatedBy(userHelper.convertToPresentation(lastUpdatedBy));
+        } else {
+            proposalVO.setPkgLastUpdatedOn(proposalVO.getUpdatedOn());
+            proposalVO.setPkgLastUpdatedBy(proposalVO.getUpdatedBy());
         }
     }
 

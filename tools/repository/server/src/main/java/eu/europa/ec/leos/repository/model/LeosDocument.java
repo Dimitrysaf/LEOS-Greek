@@ -65,6 +65,9 @@ public class LeosDocument {
 
     private String packageId;
 
+    private Date pkgLastUpdatedOn;
+    private String pkgLastUpdatedBy;
+
     private String category;
 
     private BigDecimal documentId;
@@ -466,6 +469,8 @@ public class LeosDocument {
         this.setCreatedOn(null);
         this.setUpdatedBy(null);
         this.setUpdatedOn(null);
+        this.setPkgLastUpdatedBy(null);
+        this.setPkgLastUpdatedOn(null);
     }
 
     public void setName(String name) {
@@ -490,6 +495,22 @@ public class LeosDocument {
 
     public void setMilestoneId(BigDecimal milestoneId) {
         this.milestoneId = milestoneId;
+    }
+
+    public Date getPkgLastUpdatedOn() {
+        return pkgLastUpdatedOn;
+    }
+
+    public void setPkgLastUpdatedOn(Date pkgLastUpdatedOn) {
+        this.pkgLastUpdatedOn = pkgLastUpdatedOn;
+    }
+
+    public String getPkgLastUpdatedBy() {
+        return pkgLastUpdatedBy;
+    }
+
+    public void setPkgLastUpdatedBy(String pkgLastUpdatedBy) {
+        this.pkgLastUpdatedBy = pkgLastUpdatedBy;
     }
 
 }
