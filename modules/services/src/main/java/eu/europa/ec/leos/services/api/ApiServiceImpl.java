@@ -111,7 +111,7 @@ import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,7 +119,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;

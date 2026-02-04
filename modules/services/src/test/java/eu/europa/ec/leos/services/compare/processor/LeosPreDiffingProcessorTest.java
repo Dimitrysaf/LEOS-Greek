@@ -1,12 +1,13 @@
 package eu.europa.ec.leos.services.compare.processor;
 
 import eu.europa.ec.leos.services.util.TestUtils;
-import junit.framework.TestCase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
 
-public class LeosPreDiffingProcessorTest extends TestCase {
+public class LeosPreDiffingProcessorTest {
 
     protected final static String FILE_PREFIX = "/leosDiffing";
 

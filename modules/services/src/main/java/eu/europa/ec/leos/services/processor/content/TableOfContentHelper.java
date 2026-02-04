@@ -24,7 +24,7 @@ import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 

@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 @Service("proposalAnnex")
 @Instance(instances = {InstanceType.COMMISSION, InstanceType.OS})

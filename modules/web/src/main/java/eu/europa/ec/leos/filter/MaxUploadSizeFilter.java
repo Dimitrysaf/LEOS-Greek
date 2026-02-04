@@ -2,14 +2,14 @@ package eu.europa.ec.leos.filter;
 
 import org.springframework.stereotype.Component;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
@@ -28,10 +28,10 @@ public class MaxUploadSizeFilter implements Filter {
         String contentType = httpRequest.getContentType();
         if (contentType != null && contentType.startsWith("multipart/form-data")) {
             long contentLength = httpRequest.getContentLengthLong();
-            if (contentLength > 209715200L) { // 200MB
+            if (contentLength > 419430400L) { // 200MB
                 httpResponse.setStatus(413);
                 httpResponse.setContentType("application/json");
-                httpResponse.getWriter().write("Invalid file");
+                httpResponse.getWriter().write("page.collection.drafts.annex.max.size.error");
                 return;
             }
         }

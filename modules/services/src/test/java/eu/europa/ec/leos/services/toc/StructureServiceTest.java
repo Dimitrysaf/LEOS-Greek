@@ -5,8 +5,8 @@ import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.export.ExportHelperTest;
 import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -19,8 +19,8 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 public class StructureServiceTest extends LeosTest {
@@ -35,7 +35,7 @@ public class StructureServiceTest extends LeosTest {
 
     private String docTemplate;
     
-    @Before
+    @BeforeEach
     public void init() {
         docTemplate = "BL-023";
         byte[] bytesFile = getFileContent("/structure-test-bill-EC.xml");

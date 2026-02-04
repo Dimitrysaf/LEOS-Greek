@@ -13,9 +13,9 @@
  */
 package eu.europa.ec.leos.repository.security;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
@@ -26,12 +26,12 @@ public class JwtTokenServiceTest {
     @InjectMocks
     private JwtTokenService jwtTokenService = new JwtTokenService();
 
-    @Before
+    @BeforeEach
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void test_printToken() {
         String issuer = "leosClientId";

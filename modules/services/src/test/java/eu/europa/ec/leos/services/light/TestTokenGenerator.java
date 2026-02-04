@@ -13,15 +13,11 @@ public class TestTokenGenerator {
 
     public static void main(String a[]) {
         TestTokenGenerator tokenGenerator = new TestTokenGenerator();
-        try {
-            Algorithm algorithm = Algorithm.HMAC256("dgtSecret");
-            JWTCreator.Builder builder = tokenGenerator.generateTokenBuilder("demo", "dgtClientId", null, null, new Date(), new Date(), 525600);
-            String token = builder.sign(algorithm);
-            System.out.println("Token generated successfully");
-            System.out.println(token);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        Algorithm algorithm = Algorithm.HMAC256("dgtSecret");
+        JWTCreator.Builder builder = tokenGenerator.generateTokenBuilder("demo", "dgtClientId", null, null, new Date(), new Date(), 525600);
+        String token = builder.sign(algorithm);
+        System.out.println("Token generated successfully");
+        System.out.println(token);
     }
 
     private JWTCreator.Builder generateTokenBuilder(String user, String clientId, String subject, String audience, Date issuedAt, Date notBefore,

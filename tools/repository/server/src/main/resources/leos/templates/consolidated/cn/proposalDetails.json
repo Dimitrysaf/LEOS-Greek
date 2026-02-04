@@ -3,5 +3,6 @@
   "institionalRefsTypes": ["COM", "SEC", "C", "SWD", "JOIN", "P"],
   "interInstitionalRefsTypes": ["COD", "SYN", "AVC", "CNS", "ACC", "PRT", "CNB", "CNC", "NLE", "APP", "BUD", "DEC"],
   "adoptionPlaces": ["Brussels", "Strasbourg", "Luxembourg"],
-  "specialMentions": ["For the Commission", "For the European Parliament", "For the Council"]
+  "specialMentions": ["COM", "EP", "CONSIL"],
+  "commissionerTitles": ["PRESID", "PRESID_VICE", "MEMBER_COM", "DIR_GEN"]
 }

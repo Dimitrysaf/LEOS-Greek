@@ -1,7 +1,7 @@
 package eu.europa.ec.leos.services.numbering.depthBased;
 
 import eu.europa.ec.leos.services.util.TestUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -10,7 +10,7 @@ import java.util.List;
 import static eu.europa.ec.leos.services.support.XmlHelper.DIVISION;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.getId;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ParentChildConverterTest {
 

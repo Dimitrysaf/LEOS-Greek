@@ -81,11 +81,12 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -95,7 +96,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -171,7 +172,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                                       SecurityContext securityContext,
                                       ContributionService contributionService,
                                       NotificationService notificationService,
-                                      MilestoneService milestoneService, Properties applicationProperties,
+                                      MilestoneService milestoneService, @Qualifier("applicationProperties") Properties applicationProperties,
                                       LeosRepository leosRepository,
                                       Provider<StructureContext> structureContextProvider,
                                       AttachmentProcessor attachmentProcessor,

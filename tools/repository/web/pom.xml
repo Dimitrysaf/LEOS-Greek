@@ -90,6 +90,12 @@
                     <mainClass>eu.europa.ec.leos.repository.Application</mainClass>
                     <jvmArguments>-Dfile.encoding=UTF8</jvmArguments>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>repackage</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

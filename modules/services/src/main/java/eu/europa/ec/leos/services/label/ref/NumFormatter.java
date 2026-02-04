@@ -26,9 +26,10 @@ import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT_LABEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.TITLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
-import static sun.security.x509.X509CertImpl.SIGNATURE;
 
 class NumFormatter {
+    public static final String SIGNATURE = "signature";
+
     static private final List<String> unNumberedItems = Arrays.asList(CITATION, PARAGRAPH, SUBPARAGRAPH, SUBPOINT_LABEL, POINT, INDENT, SIGNATURE, ROLE,
             PERSON, ORGANIZATION);
 

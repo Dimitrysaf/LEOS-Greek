@@ -49,7 +49,7 @@ import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 import java.io.IOException;
 import java.util.HashMap;

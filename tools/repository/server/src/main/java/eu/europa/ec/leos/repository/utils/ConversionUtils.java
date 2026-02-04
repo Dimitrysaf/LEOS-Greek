@@ -183,6 +183,7 @@ public class ConversionUtils {
             }
             convertedDocs.add(content.isPresent() ? new LeosDocument(doc, content.get(), collaborators, docProps) : new LeosDocument(doc, originalFilename, binarySourceSize, collaborators, docProps));
         }
+
         return convertedDocs;
     }
 

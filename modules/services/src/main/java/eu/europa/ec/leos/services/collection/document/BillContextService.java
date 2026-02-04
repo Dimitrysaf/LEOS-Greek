@@ -50,7 +50,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.util.*;
 
 import static eu.europa.ec.leos.domain.repository.LeosCategory.ANNEX;

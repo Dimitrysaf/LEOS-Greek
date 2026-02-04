@@ -52,7 +52,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
 import eu.europa.ec.leos.vo.response.LeosClientResponse;
 import eu.europa.ec.leos.vo.response.RecentPackageResponse;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -885,9 +885,8 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     @Override
     @PerformanceLogger
     public <D extends LeosDocument> List<D> searchVersions(Class<? extends D> type, String docRef, List<String> logins, String versionType) {
-        logger.info("Finding versions. [docRef={}, versionType={}]", docRef, versionType);
+        logger.trace("Finding versions. [docRef={}, versionType={}]", docRef, versionType);
         LeosDocumentList docs = repository.searchVersions(docRef, logins, versionType);
-        logger.info("-- #1975 -- LeosDocumentList : {} ", docs);
         return toLeosDocuments(docs.getLeosDocumentList(), type, false);
     }
 

@@ -36,7 +36,7 @@ import eu.europa.ec.leos.rest.support.requests.UpdateDocumentRequest;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
 import eu.europa.ec.leos.vo.response.LeosClientResponse;
 import eu.europa.ec.leos.vo.response.RecentPackageResponse;
-import org.apache.cxf.common.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -469,9 +469,8 @@ public class RestRepository extends AbstractRestClient {
     }
 
     LeosDocumentList searchVersions(String docRef, List<String> logins, String versionType) {
-        LOGGER.info("Search in all versions. [docRef={}, logins={}, versionType={}]", docRef, logins, versionType);
+        LOGGER.trace("Search in all versions. [docRef={}, logins={}, versionType={}]", docRef, logins, versionType);
         String url = getUrl(leosRestSearchVersionsURI);
-        LOGGER.info("Search in url={}]", url);
         return postEntity(url, logins, LeosDocumentList.class, docRef, versionType);
     }
 

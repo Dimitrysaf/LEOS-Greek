@@ -50,27 +50,6 @@
 
     <build>
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>nl.geodienstencentrum.maven</groupId>-->
-<!--                <artifactId>sass-maven-plugin</artifactId>-->
-<!--                <version>${sass-maven-plugin.version}</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <goals>-->
-<!--                            <goal>update-stylesheets</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--                <configuration>-->
-<!--                    <sassOptions>-->
-<!--                        <always_update>true</always_update>-->
-<!--                        <style>:expanded</style>-->
-<!--                        <sourcemap>:none</sourcemap>-->
-<!--                    </sassOptions>-->
-<!--                    <sassSourceDirectory>${basedir}/src/assets/scss</sassSourceDirectory>-->
-<!--                    <destination>${basedir}/src/assets/css</destination>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
             <plugin>
                 <groupId>io.github.cleydyr</groupId>
                 <artifactId>dart-sass-maven-plugin</artifactId>

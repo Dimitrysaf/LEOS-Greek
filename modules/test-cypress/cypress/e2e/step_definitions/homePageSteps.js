@@ -2,6 +2,7 @@ import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import homePage from "../pages/homePage";
 
 Then('user is on home page', () => {
+    cy.wait(1000);
     homePage.elements.euiLabel().should('have.text', 'The online collaboration tool for drafting legislation');
 })
 
