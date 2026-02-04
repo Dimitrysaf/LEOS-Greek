@@ -10,6 +10,8 @@ export interface Document {
   createdOn: number; // TimestampMs
   updatedBy: string; // Username
   updatedOn: number; // TimestampMs
+  pkgLastUpdatedBy: string; // Username
+  pkgLastUpdatedOn: number; // TimestampMs
   language: string; // LanguageCode - eg "EN"
   template: string; // TemplateKey
   docNumber: number;
