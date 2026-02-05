@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 public class ConversionUtils {
@@ -189,7 +190,7 @@ public class ConversionUtils {
 
     public static List<LeosDocument> buildXmlDocument(DocumentPropertyValuesRepository documentPropertyValuesRepository,
                                                       CollaboratorsService collaboratorsService, DocumentContentRepository documentContentRepository,
-                                                      List<DocumentV> docs, boolean fetchContent) {
+                                                      List<DocumentV> docs, boolean fetchContent, Map<BigDecimal, PackageInfo> packageInfoMap) {
         List<LeosDocument> convertedDocs = new ArrayList<>();
         for (DocumentV doc : docs) {
             List<DocumentPropertyValues> docProps = getDocumentProperties(documentPropertyValuesRepository, doc.getNumProps(),
@@ -198,8 +199,17 @@ public class ConversionUtils {
             if (fetchContent) {
                 content = documentContentRepository.findDocumentContentByVersionId(doc.getVersionId());
             }
-            convertedDocs.add(content.isPresent() ? new LeosDocument(doc, content.get(), fetchCollaborators(collaboratorsService, doc.getPackageId()), docProps) :
-                    new LeosDocument(doc, fetchCollaborators(collaboratorsService, doc.getPackageId()), docProps));
+            LeosDocument leosDoc = content.isPresent() ? new LeosDocument(doc, content.get(), fetchCollaborators(collaboratorsService, doc.getPackageId()), docProps) :
+                    new LeosDocument(doc, fetchCollaborators(collaboratorsService, doc.getPackageId()), docProps);
+
+            // Set package info if available
+            PackageInfo packageInfo = packageInfoMap.get(doc.getPackageId());
+            if (packageInfo != null) {
+                leosDoc.setPkgLastUpdatedOn(Date.from(packageInfo.getLastUpdatedOn().atZone(ZoneId.systemDefault()).toInstant()));
+                leosDoc.setPkgLastUpdatedBy(packageInfo.getLastUpdatedBy());
+            }
+
+            convertedDocs.add(leosDoc);
         }
         return convertedDocs;
     }

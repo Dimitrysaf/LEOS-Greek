@@ -35,6 +35,8 @@ public class DocumentVO {
     private Date createdOn;
     private String updatedBy;
     private Date updatedOn;
+    private Date pkgLastUpdatedOn;
+    private String pkgLastUpdatedBy;
     private String language;
     private String template;
     private int docNumber;// optional
@@ -506,6 +508,8 @@ public class DocumentVO {
         this.setProcedureType(null);
         this.getChildDocuments().clear();
         this.getCollaborators().clear();
+        this.setPkgLastUpdatedBy(null);
+        this.setPkgLastUpdatedOn(null);
     }
 
     public void setName(String name) {
@@ -588,6 +592,22 @@ public class DocumentVO {
 
     public void setDetailsTabExclusions(DetailsTabExclusions detailsTabExclusions) {
         this.detailsTabExclusions = detailsTabExclusions;
+    }
+
+    public Date getPkgLastUpdatedOn() {
+        return pkgLastUpdatedOn;
+    }
+
+    public void setPkgLastUpdatedOn(Date pkgLastUpdatedOn) {
+        this.pkgLastUpdatedOn = pkgLastUpdatedOn;
+    }
+
+    public String getPkgLastUpdatedBy() {
+        return pkgLastUpdatedBy;
+    }
+
+    public void setPkgLastUpdatedBy(String pkgLastUpdatedBy) {
+        this.pkgLastUpdatedBy = pkgLastUpdatedBy;
     }
     public byte[] getBinaryFile() {
         return binaryFile;
