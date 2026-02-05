@@ -45,8 +45,8 @@
             <proprietary source="~COM">
                 <leos:templateVersion>1.0.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
-                <leos:template>SJ-035</leos:template>
-                <leos:docTemplate>PR-035</leos:docTemplate>
+                <leos:template>SJ-036</leos:template>
+                <leos:docTemplate>PR-036</leos:docTemplate>
             </proprietary>
         </meta>
         <coverPage>
