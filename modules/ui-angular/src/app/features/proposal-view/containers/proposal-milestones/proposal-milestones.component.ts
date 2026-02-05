@@ -66,6 +66,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   inputMilestoneViewed = false;
   translated = false;
   isAutonomousAct = false;
+  linguisticVersionsEnabled = false;
 
   private milestonesCheckTimer: ReturnType<typeof setTimeout>;
   private milestonesStatus = {
@@ -144,6 +145,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
     this.translated = this.proposalDetailsService.getTranslated();
     this.isAutonomousAct = this.proposal.metadata.documentCollectionName == 'ACT_AUTO_COM';
+    this.linguisticVersionsEnabled = this.proposalDetailsService.isLinguisticVersionsEnabled();
   }
 
   private updateLastMilestoneVersion(milestone: Milestone) {

@@ -98,6 +98,7 @@ public class ConfigServiceImpl implements ConfigService {
         int minSearchChar = Integer.parseInt(applicationProperties.getProperty("leos.search.on.minimum.characters"));
         int maxSearchLimit = Integer.parseInt(applicationProperties.getProperty("leos.maximum.search.limit"));
         boolean repetitiveActsEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.repetitive.acts.enabled"));
+        boolean linguisticVersionsEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.custom.template.linguistic.versions.enabled"));
 
         appConfigResponse.setMappingUrl(mappingUrl);
         appConfigResponse.setImplicitSaveAndClose(implicitSaveEnabled);
@@ -129,6 +130,7 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setSearchOnMinimumCharacter(minSearchChar);
         appConfigResponse.setMaxSearchLimit(maxSearchLimit);
         appConfigResponse.setRepetitiveActsEnabled(repetitiveActsEnabled);
+        appConfigResponse.setLinguisticVersionsEnabled(linguisticVersionsEnabled);
         appConfigResponse.setLanguages(languages);
 
         return appConfigResponse;
