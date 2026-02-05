@@ -1019,11 +1019,11 @@
                     <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-036">
                         <names>
                             <name lang="EN">SJ-036 - Commission Decision (EU) .../... (former PRAC) (entry into force by its publication)</name>
-                            <name lang="FR">SJ-036 - Décision de la Commission (UE) .../... (ancienne PRAC) (Entrée en vigueur par sa publication)</name>
+                            <name lang="FR">SJ-036 - Décision de la Commission (UE) .../... (ancienne PRAC) (entre en vigueur par sa publication)</name>
                         </names>
                         <descriptions>
                             <description lang="EN">Template 36 of the LS: Commission Decision (EU) .../... (former PRAC) (entry into force by its publication)</description>
-                            <description lang="FR">Template 36 du SJ: Décision de la Commission (UE) .../... (ancienne PRAC) (Entrée en vigueur par sa publication)</description>
+                            <description lang="FR">Template 36 du SJ: Décision de la Commission (UE) .../... (ancienne PRAC) (entre en vigueur par sa publication)</description>
                         </descriptions>
                         <languages>
                             <language lang="EN">English</language>
