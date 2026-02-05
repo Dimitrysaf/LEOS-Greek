@@ -28,7 +28,8 @@ Feature: create act regression features
             | SJ-032 - Commission Implementing Decision (EU) .../... (entry into force by its publication)        |
             | SJ-009 - Commission Implementing Decision (entry into force by its notification)                    |
             | SJ-031 - Commission Implementing Decision (internal)                                                |
-            | SJ-035 - Commission Decision (former PRAC) (internal)                                            |
+            | SJ-035 - Commission Decision (former PRAC) (internal)                                               |
+            | SJ-036 - Commission Decision (EU) .../... (former PRAC) (entry into force by its publication)       |
             | SJ-002 - Commission Regulation (EU)  .../...                                                        |
             | SJ-006 - Commission Directive (EU) .../...                                                          |
             | SJ-011 - Commission Decision (entry into force by its notification)                                 |
