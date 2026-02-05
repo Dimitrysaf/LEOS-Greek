@@ -29,6 +29,7 @@ import eu.europa.ec.leos.repository.model.Collaborator;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.model.LinkedPackage;
 import eu.europa.ec.leos.repository.model.Package;
+import eu.europa.ec.leos.repository.model.PackageInfo;
 import eu.europa.ec.leos.repository.repositories.DocumentContentRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneRepository;
