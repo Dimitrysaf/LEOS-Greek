@@ -55,6 +55,7 @@ export class ProposalDetailsService implements OnDestroy {
   clonedProposalCount: number;
   exceptionResponseVO: ExceptionResponseVO = null;
   private repetitiveActsEnabled: boolean;
+  private linguisticVersionsEnabled: boolean;
 
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private userInputFieldChangeBS = new BehaviorSubject('');
@@ -105,6 +106,7 @@ export class ProposalDetailsService implements OnDestroy {
         const permissions = this.resolvePermissions(collaborators, config);
         this.permissionsBS.next(permissions);
         this.repetitiveActsEnabled = config.repetitiveActsEnabled;
+        this.linguisticVersionsEnabled = config.linguisticVersionsEnabled;
       });
 
     this.clonedProposalCount = 0;
@@ -141,6 +143,10 @@ export class ProposalDetailsService implements OnDestroy {
   }
   isRepetitiveActsEnabled(): boolean{
     return this.repetitiveActsEnabled;
+  }
+
+  isLinguisticVersionsEnabled(): boolean{
+    return this.linguisticVersionsEnabled;
   }
 
   createAnnex() {

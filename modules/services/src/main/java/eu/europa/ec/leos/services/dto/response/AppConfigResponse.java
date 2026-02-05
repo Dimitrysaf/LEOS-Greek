@@ -51,6 +51,7 @@ public class AppConfigResponse {
     private int searchOnMinimumCharacter;
     private int maxSearchLimit;
     private boolean repetitiveActsEnabled;
+    private boolean linguisticVersionsEnabled;
     private List<String> languages;
 
     public AppConfigResponse() {
@@ -266,6 +267,10 @@ public class AppConfigResponse {
     public boolean isRepetitiveActsEnabled() { return repetitiveActsEnabled; }
 
     public void setRepetitiveActsEnabled(boolean repetitiveActsEnabled) { this.repetitiveActsEnabled = repetitiveActsEnabled; }
+
+    public boolean isLinguisticVersionsEnabled() { return linguisticVersionsEnabled; }
+
+    public void setLinguisticVersionsEnabled(boolean linguisticVersionsEnabled) { this.linguisticVersionsEnabled = linguisticVersionsEnabled; }
 
     public List<String> getLanguages() {
         return languages;
