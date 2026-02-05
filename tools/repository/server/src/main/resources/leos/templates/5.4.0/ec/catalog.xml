@@ -982,8 +982,8 @@
                             <name lang="FR">SJ-035 - Décision de la Commission (ancienne PRAC) (interne)</name>
                         </names>
                         <descriptions>
-                            <description lang="EN">Template 35 of the LS: Commission implementig Decision (internal)</description>
-                            <description lang="FR">Template 35 du SJ: Décision d'exécution de la Commission (interne)</description>
+                            <description lang="EN">Template 35 of the LS: Commission Decision (former PRAC) (internal)</description>
+                            <description lang="FR">Template 35 du SJ: Décision de la Commission (ancienne PRAC) (interne)</description>
                         </descriptions>
                         <languages>
                             <language lang="EN">English</language>
@@ -999,6 +999,46 @@
                             <item type="DOCUMENT" id="BL-035" enabled="true" mandatory="true" default="true">
                                 <names>
                                     <name lang="EN">BL-035 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                                <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
+                                    <names>
+                                        <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                        <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
+                                    </names>
+                                    <descriptions>
+                                        <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                        <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
+                                    </descriptions>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
+                    <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-036">
+                        <names>
+                            <name lang="EN">SJ-036 - Commission Decision (EU) .../... (former PRAC) (entry into force by its publication)</name>
+                            <name lang="FR">SJ-036 - Décision de la Commission (UE) .../... (ancienne PRAC) (Entrée en vigueur par sa publication)</name>
+                        </names>
+                        <descriptions>
+                            <description lang="EN">Template 36 of the LS: Commission Decision (EU) .../... (former PRAC) (entry into force by its publication)</description>
+                            <description lang="FR">Template 36 du SJ: Décision de la Commission (UE) .../... (ancienne PRAC) (Entrée en vigueur par sa publication)</description>
+                        </descriptions>
+                        <languages>
+                            <language lang="EN">English</language>
+                            <!--<language lang="FR">Français</language>-->
+                        </languages>
+                        <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-036" enabled="true" mandatory="true">
+                            <names>
+                                <name lang="EN">PR-036 - ....</name>
+                            </names>
+                            <descriptions>
+                                <description lang="EN">...</description>
+                            </descriptions>
+                            <item type="DOCUMENT" id="BL-036" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">BL-036 - ....</name>
                                 </names>
                                 <descriptions>
                                     <description lang="EN">...</description>
