@@ -6,8 +6,8 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.model.ModelHelper;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +22,8 @@ import static integration.saveToc.TocVOCreateProposalUtils.createPart;
 import static integration.saveToc.TocVOCreateProposalUtils.createSection;
 import static integration.saveToc.TocVOCreateProposalUtils.createTitle;
 import static integration.saveToc.TocVOCreateUtils.getElementById;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 public class SaveTocAnnexAddProposalTest_IT extends SaveTocAnnexProposalTest_IT {
@@ -33,7 +33,7 @@ public class SaveTocAnnexAddProposalTest_IT extends SaveTocAnnexProposalTest_IT 
     @Mock
     private SecurityContext securityContext;
 
-    @Before
+    @BeforeEach
     public void onSetup() throws Exception {
         super.onSetUp();
         List<Entity> entities = new ArrayList<Entity>();

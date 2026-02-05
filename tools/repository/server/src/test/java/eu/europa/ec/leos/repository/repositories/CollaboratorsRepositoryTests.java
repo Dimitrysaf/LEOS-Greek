@@ -13,16 +13,17 @@
  */
 package eu.europa.ec.leos.repository.repositories;
 
+import eu.europa.ec.leos.repository.H2TestBase;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.entities.PackageCollaborators;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -31,10 +32,10 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class CollaboratorsRepositoryTests {
+class CollaboratorsRepositoryTests extends H2TestBase {
     private static Logger LOG = LoggerFactory.getLogger(CollaboratorsRepositoryTests.class);
 
     @Autowired
@@ -43,7 +44,7 @@ public class CollaboratorsRepositoryTests {
     PackageRepository packageRepository;
 
     @Test
-    public void test_getCollaboratorsFromPackageId() {
+    void test_getCollaboratorsFromPackageId() {
         List<PackageCollaborators> collaboratorsList = packageCollaboratorsRepository.findCollaboratorsByPackageId(new BigDecimal(1));
         assertEquals(collaboratorsList.size(), 1);
         assertEquals(collaboratorsList.get(0).getCollaborator().getCollaboratorName(), "demo");
@@ -51,7 +52,7 @@ public class CollaboratorsRepositoryTests {
     }
 
     @Test
-    public void test_getCollaboratorsFromPackage() {
+    void test_getCollaboratorsFromPackage() {
         Optional<Package> pkg = packageRepository.findPackageByName("package_leos");
         assertTrue(pkg.isPresent());
         List<PackageCollaborators> collaboratorsList = packageCollaboratorsRepository.findPackageCollaboratorsByPkg(pkg.get());
@@ -61,7 +62,7 @@ public class CollaboratorsRepositoryTests {
     }
 
     @Test
-    public void test_findPackageIdByCollaboratorNameAndByRole() {
+    void test_findPackageIdByCollaboratorNameAndByRole() {
         List<BigDecimal> packagesList = packageCollaboratorsRepository.findPackageIdByCollaboratorNameAndRole("demo", "OWNER");
         assertEquals(packagesList.size(), 1);
         assertEquals(packagesList.get(0), new BigDecimal(1));

@@ -69,8 +69,8 @@ define(function leosPluginUtilsModule(require) {
     var DATA_AKN_HCONTAINER = "data-akn-hcontainer";
     var DATA_AKN_SUB_HCONTAINER = "data-akn-sub-hcontainer";
     var DATA_AKN_MEDIA_CONTAINER = "data-akn-media-container";
-    var HCONTAINER_TABLE = "BLOCK_TAB";
-    var SUB_HCONTAINER_TABLE = "TAB";
+    var HCONTAINER_TABLE = "TAB";
+    var SUB_HCONTAINER_TABLE = "TAB_CONTAINER";
     var HCONTAINER_IMAGE = "FGR";
     var SUB_HCONTAINER_IMAGE = "IMG";
     var ARTICLE = "article";
@@ -1903,6 +1903,19 @@ define(function leosPluginUtilsModule(require) {
         return originalRange;
     }
 
+    function _findFirstChild(element) {
+        if (element && element instanceof CKEDITOR.dom.element) {
+            let children = element.getChildren();
+            for (let i=0; i < children.count(); i++) {
+                let child = children.getItem(i);
+                if (child.type !== Node.TEXT_NODE) {
+                    return child;
+                }
+            }
+        }
+        return null;
+    }
+
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -2000,6 +2013,7 @@ define(function leosPluginUtilsModule(require) {
         copyAllAttributes: _copyAllAttributes,
         isContentEditable: _isContentEditable,
         clearSelection: _clearSelection,
+        findFirstChild: _findFirstChild,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
@@ -2073,6 +2087,7 @@ define(function leosPluginUtilsModule(require) {
         HCONTAINER_IMAGE: HCONTAINER_IMAGE,
         SUB_HCONTAINER_IMAGE: SUB_HCONTAINER_IMAGE,
         AKN_ORDERED_LIST: AKN_ORDERED_LIST,
-        BLOCKCONTAINER: BLOCKCONTAINER
+        BLOCKCONTAINER: BLOCKCONTAINER,
+        REG_EXP_FOR_UNICODE_ZERO_WIDTH_SPACE_IN_HEX: REG_EXP_FOR_UNICODE_ZERO_WIDTH_SPACE_IN_HEX,
     };
 });

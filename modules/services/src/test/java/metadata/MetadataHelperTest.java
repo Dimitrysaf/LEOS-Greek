@@ -28,13 +28,12 @@ import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportResource;
 import eu.europa.ec.leos.services.metadata.MetadataHelper;
 import eu.europa.ec.leos.services.metadata.MetadataOptions;
-import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import io.atlassian.fugue.Option;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.slf4j.Logger;
@@ -44,6 +43,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -56,7 +56,7 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 public class MetadataHelperTest extends LeosTest {
@@ -70,7 +70,7 @@ public class MetadataHelperTest extends LeosTest {
 
     private String template = "metadata/metadata.ftl";
 
-    @Before
+    @BeforeEach
     public void init() {
         ReflectionTestUtils.setField(metadataHelperImpl, "templateMetadata", template);
     }
@@ -109,7 +109,7 @@ public class MetadataHelperTest extends LeosTest {
             InputStream inputStream = this.getClass().getResource("/eu/europa/ec/leos/freemarker/templates/metadata/metadata.ftl").openStream();
             Reader targetReader = new InputStreamReader(inputStream);
             final Template t = new Template("metadata.ftl", targetReader, null);
-            byte[] xmlContent = TestUtils.getFileContent("/document/originalProposals/", "proposal_original.xml");
+            byte[] xmlContent = getFileContent("/document/originalProposals/proposal_original.xml");
 
             String proposalId = "555";
             List<Collaborator> collaborators = new ArrayList<>();
@@ -142,6 +142,18 @@ public class MetadataHelperTest extends LeosTest {
             if (fileOutputStream != null) {
                 fileOutputStream.close();
             }
+        }
+    }
+
+    private byte[] getFileContent(String fileName) {
+        try {
+            InputStream inputStream = this.getClass().getResource(fileName).openStream();
+            byte[] content = new byte[inputStream.available()];
+            inputStream.read(content);
+            inputStream.close();
+            return content;
+        } catch (IOException e) {
+            throw new IllegalStateException("Cannot read bytes from file: " + fileName);
         }
     }
 }

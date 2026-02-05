@@ -27,6 +27,7 @@ define(function leosShowblocksPluginModule(require) {
 
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
+    var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
     var pluginName = "leosShowblocks";
 
     // TODO implement translations
@@ -63,6 +64,16 @@ define(function leosShowblocksPluginModule(require) {
                 label: 'Show blocks',
                 command: 'leosShowBlocks',
                 toolbar: 'tools'
+            });
+
+            editor.on('selectionChange', function(event) {
+                var selection = event.editor.getSelection();
+                var isTableOnlyMode = event.editor.config.tableOnlyMode;
+                if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
+                    event.editor.getCommand('leosShowBlocks').setState(CKEDITOR.TRISTATE_DISABLED);
+                } else if (isTableOnlyMode) {
+                    event.editor.getCommand('leosShowBlocks').setState(CKEDITOR.TRISTATE_ON);
+                }
             });
 
             // Refresh the command on setData.

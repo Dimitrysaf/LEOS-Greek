@@ -14,11 +14,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.Cookie;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -38,7 +39,8 @@ import static org.springframework.util.StringUtils.hasLength;
  * Default class to generate and validate tokens.
  */
 @Component
-class JwtTokenService implements TokenService {
+@Primary
+public class JwtTokenService implements TokenService {
     private static final Logger LOG = LoggerFactory.getLogger(JwtTokenService.class);
     private static final String VALIDATION_ERROR = "Error occurred while token validation. Error: {}";
 
@@ -249,7 +251,7 @@ class JwtTokenService implements TokenService {
 
             token = builder.sign(algorithm);
 
-        } catch (UnsupportedEncodingException | JWTCreationException e) {
+        } catch (JWTCreationException e) {
             //UTF-8 encoding not supported
             //Invalid Signing configuration / Couldn't convert Claims.
             LOG.error(VALIDATION_ERROR, e.getMessage());

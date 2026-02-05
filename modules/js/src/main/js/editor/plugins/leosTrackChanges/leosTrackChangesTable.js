@@ -16,6 +16,7 @@ define(function leosTrackChangesTableModule(require) {
     "use strict";
 
     var log = require("logger");
+    var leosPluginUtils = require("../leosPluginUtils");
     var trackChanges = require("./leosTrackChanges"), core = trackChanges.core;
     var trackChangesStyle = require("./leosTrackChangesStyle"), style = trackChangesStyle.style;
 
@@ -275,7 +276,7 @@ define(function leosTrackChangesTableModule(require) {
             // Check if table is the only element in the editor (ignoring whitespace nodes)
             var isOnlyElement = editable.getChildCount() === 1 ||
                     (
-                        (editable.getFirst().is('table') &&
+                        (leosPluginUtils.findFirstChild(editable).is('table') &&
                             editable.getLast().type === CKEDITOR.NODE_TEXT &&
                             editable.getLast().getText().trim() === '') ||
                         (editable.getChild(1).equals(parent) && parent.getChildCount() === 1)

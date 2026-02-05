@@ -3,8 +3,9 @@ package eu.europa.ec.leos.services.processor.node;
 import static eu.europa.ec.leos.services.util.TestUtils.removeXmlNSLeosAttribute;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -12,7 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 
 import eu.europa.ec.leos.services.util.TestUtils;
@@ -124,8 +125,9 @@ public class XmlNodeProcessorImplTest extends LeosTest {
         assertEquals(expected, result);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void test_setValues_wrongXPath() {
+        assertThrows(IllegalStateException.class, () -> {
         // Given
         byte[] xmlContent = TestUtils.getFileContent(FILE_PREFIX + "/setValues_tags_not_present.xml");
         byte[] xmlContentExpected = TestUtils.getFileContent(FILE_PREFIX + "/setValues_tags_not_present.xml");
@@ -133,15 +135,16 @@ public class XmlNodeProcessorImplTest extends LeosTest {
         Map<String, String> keyValue = new HashMap<>();
         keyValue.put("wrong_xpath", "EN");
 
-        // When
-        byte[] returnedElement = metaDataProcessor.setValuesInXml(xmlContent, keyValue, CONFIGURATIONS);
+            // When
+            byte[] returnedElement = metaDataProcessor.setValuesInXml(xmlContent, keyValue, CONFIGURATIONS);
 
-        // Then
-        String result = new String(returnedElement);
-        String expected = new String(xmlContentExpected);
-        result = squeezeXmlAndRemoveAllNS(result);
-        expected = squeezeXmlAndRemoveAllNS(expected);
-        assertEquals(expected, result);
+            // Then
+            String result = new String(returnedElement);
+            String expected = new String(xmlContentExpected);
+            result = squeezeXmlAndRemoveAllNS(result);
+            expected = squeezeXmlAndRemoveAllNS(expected);
+            assertEquals(expected, result);
+        });
     }
 
     @Test

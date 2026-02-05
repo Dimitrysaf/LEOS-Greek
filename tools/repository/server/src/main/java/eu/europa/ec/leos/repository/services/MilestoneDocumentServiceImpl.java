@@ -16,8 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -339,6 +339,16 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
                     queryBuild.append(" IN ( ");
                     queryBuild.append(":valueList_").append(i);
                     queryBuild.append(")");
+                } else if (filter.isBoolean){
+                    if (filter.nullCheck) {
+                        queryBuild.append(" OR ");
+                    }
+                    else {
+                        queryBuild.append(" AND ");
+                    }
+                    queryBuild.append(columnName);
+                    queryBuild.append(" ").append(filter.operator).append(" ");
+                    queryBuild.append(":keyValue_").append(i);
                 } else {
                     if (filter.nullCheck) {
                         queryBuild.append(" OR ");
@@ -369,6 +379,8 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
                 }
                 if ("IN".equalsIgnoreCase(filter.operator)) {
                     query.setParameter("valueList_" + i, Arrays.asList(filter.value));
+                } else if(filter.isBoolean) {
+                    query.setParameter("keyValue_" + i, Boolean.parseBoolean(filter.value[0]));
                 } else {
                     query.setParameter("keyValue_" + i, Arrays.asList(filter.value));
                 }

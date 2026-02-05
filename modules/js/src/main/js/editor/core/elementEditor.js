@@ -529,9 +529,10 @@ define(function elementEditorModule(require) {
             var eventData = _removeNonBreakingSpaceFromElement(elementId,  event.data.data);
             // set read-only to prevent changes
             editor.setReadOnly(true);
-            var alternateElementId = editor.config.isAlternative ? editor.element.getFirst().getId() : null;
-            if (editor.config.isAlternative && editor.element.getFirst().getAttribute('class') && editor.element.getFirst().getAttribute('class').includes('leosNonEditableEmptyWidget')) {
-                alternateElementId = editor.element.getChildren().getItem(1).$.id;
+            var firstElt = leosPluginUtils.findFirstChild(editor.element);
+            var alternateElementId = editor.config.isAlternative && firstElt ? firstElt.getId() : null;
+            if (editor.config.isAlternative && firstElt && firstElt.getAttribute('class') && firstElt.getAttribute('class').includes('leosNonEditableEmptyWidget')) {
+                alternateElementId = firstElt.getNext().$.id;
             }
 
             // save the element being edited

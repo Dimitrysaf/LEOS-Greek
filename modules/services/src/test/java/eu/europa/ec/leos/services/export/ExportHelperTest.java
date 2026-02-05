@@ -19,8 +19,8 @@ import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.test.support.LeosTest;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.slf4j.Logger;
@@ -33,7 +33,7 @@ import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 public class ExportHelperTest extends LeosTest {
@@ -48,7 +48,7 @@ public class ExportHelperTest extends LeosTest {
     private String templatePdf_LW = "export/legiswrite/pdf.ftl";
     private String templatePdf_DW = "export/docuwrite/pdf_legalText.ftl";
 
-    @Before
+    @BeforeEach
     public void init() {
         ReflectionTestUtils.setField(exportHelperImpl, "exportTemplateLW_pdf", templatePdf_LW);
         ReflectionTestUtils.setField(exportHelperImpl, "exportTemplateDW_pdfLegalText", templatePdf_DW);

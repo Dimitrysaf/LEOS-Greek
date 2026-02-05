@@ -14,8 +14,8 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessorMandate;
 import eu.europa.ec.leos.services.structure.profile.ProfileContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -32,7 +32,7 @@ import integration.saveToc.SaveTocTest_IT;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static org.mockito.Mockito.when;
 
-@Ignore
+@Disabled
 public abstract class SaveTocMandateTest_IT extends SaveTocTest_IT {
 
     @InjectMocks
@@ -68,7 +68,7 @@ public abstract class SaveTocMandateTest_IT extends SaveTocTest_IT {
 
     protected NumberService numberService ;
 
-    @Before
+    @BeforeEach
     public void onSetUp() throws Exception {
         super.onSetUp();
         ReflectionTestUtils.setField(numberProcessorHandler, "numberConfigFactory", numberConfigFactory);

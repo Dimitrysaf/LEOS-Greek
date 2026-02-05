@@ -8,8 +8,8 @@ import eu.europa.ec.leos.domain.vo.ErrorVO;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -19,15 +19,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AkomantosoXsdValidatorTest extends LeosTest {
     private static final Logger LOG = LoggerFactory.getLogger(AkomantosoXsdValidatorTest.class);
 
     private AkomantosoXsdValidator akomantosoXsdValidator = new AkomantosoXsdValidator();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         ReflectionTestUtils.setField(akomantosoXsdValidator,"SCHEMA_PATH", "eu/europa/ec/leos/xsd" );
         ReflectionTestUtils.setField(akomantosoXsdValidator,"SCHEMA_NAME", "akomantoso30.xsd" );

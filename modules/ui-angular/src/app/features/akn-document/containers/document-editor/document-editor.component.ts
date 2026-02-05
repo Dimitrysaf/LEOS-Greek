@@ -440,6 +440,12 @@ export class DocumentEditorComponent
     this.documentService.setVersionSearchParams(values);
   }
 
+  toggleVersionsSearchPane(){
+    this.versionSearchForm.setValue({type: 'all', author: ''});
+    this.documentService.toggleVersionsSearchPane();
+  }
+
+
   ngOnDestroy() {
     this.tocService.setIsEditMode(false);
     // called on every document view page destruction in order to avoid multiple instances of ckeditor

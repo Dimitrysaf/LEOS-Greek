@@ -5,8 +5,8 @@ import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItemVOBuilder;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,9 +22,9 @@ import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-@Ignore
+@Disabled
 public class TableOfContentHelperBillMandateTest extends TableOfXmlContentProcessorTest {
 
     @Override
@@ -33,7 +33,7 @@ public class TableOfContentHelperBillMandateTest extends TableOfXmlContentProces
         configFile = "/structure-test-bill-CN.xml";
     }
 
-    @Ignore // to be implemented the Mandate logic with more children
+    @Disabled // to be implemented the Mandate logic with more children
     @Test
     public void test_buildTableOfContent() {
         byte[] fileContent = TestUtils.getFileContent(FILE_PREFIX + "/bill_basic.xml");

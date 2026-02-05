@@ -11,15 +11,15 @@ import eu.europa.ec.leos.services.search.SearchEngineImpl;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 
 public class SearchEngineWholeWordTest extends LeosTest {
 
     protected final static String PREFIX_SEARCH_REPLACE = "/searchReplace";
 
-    @Before
+    @BeforeEach
     public void setup() {
         super.setup();
         MockitoAnnotations.initMocks(this);
