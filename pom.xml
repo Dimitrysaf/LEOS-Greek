@@ -56,6 +56,9 @@
         <!-- Project -->
         <project.maven.version>[3.8.0,3.10.0)</project.maven.version>
         <project.java.version>21</project.java.version>
+        <maven.compiler.source>${project.java.version}</maven.compiler.source>
+        <maven.compiler.target>${project.java.version}</maven.compiler.target>
+        <maven.compiler.release>${project.java.version}</maven.compiler.release>
         <project.java.debug>false</project.java.debug>
         <project.java.optimize>true</project.java.optimize>
         <project.java.showWarnings>true</project.java.showWarnings>
