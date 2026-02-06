@@ -30,24 +30,6 @@
     {
       "targets": [
         {
-          "destinationPath": "//citations/citation[3]",
-          "position": "AFTER-WRAPPER"
-        }
-      ],
-      "content": "<guidance id=\"guidance-citation-3\" class=\"guidance-green-block\"><span id=\"clause-citation-3\">[for acts adopted after consultation of a committee under the advisory procedure]</span></guidance>"
-    },
-    {
-      "targets": [
-        {
-          "destinationPath": "//recitals/recital[3]",
-          "position": "AFTER-WRAPPER"
-        }
-      ],
-      "content": "<guidance id=\"guidance-recital-3\" class=\"guidance-green-block\"><span id=\"clause-recital-3\">[for acts adopted after consultation of a committee under the examination procedure]</span></guidance>"
-    },
-    {
-      "targets": [
-        {
           "destinationPath": "//article[@refersto='~ART_DEF']/heading",
           "position": "AFTER-WRAPPER"
         }
