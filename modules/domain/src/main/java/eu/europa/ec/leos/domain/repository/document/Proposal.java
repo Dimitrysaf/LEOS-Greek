@@ -24,6 +24,9 @@ public final class Proposal extends XmlDocument {
 
     private final String contributionStatus;
 
+    private final Instant pkgLastUpdatedOn;
+    private final String pkgLastUpdatedBy;
+
     @Getter
     private final String validationStatus;
 
@@ -32,7 +35,8 @@ public final class Proposal extends XmlDocument {
                     boolean isLatestVersion, String title, List<Collaborator> collaborators, List<String> milestoneComments,
                     String initialCreatedBy, Instant initialCreationInstant, Option<Content> content, Option<ProposalMetadata> metadata,
                     boolean clonedProposal, String originRef, String clonedFrom, String revisionStatus,
-                    List<String> clonedMilestoneIds, String contributionStatus, boolean trackChangesEnabled, String validationStatus) {
+                    List<String> clonedMilestoneIds, String contributionStatus, boolean trackChangesEnabled, String validationStatus,
+                    Instant pkgLastUpdatedOn, String pkgLastUpdatedBy) {
         super(LeosCategory.PROPOSAL, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
                 versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title,
                 collaborators, milestoneComments, content, trackChangesEnabled, false);
@@ -45,6 +49,8 @@ public final class Proposal extends XmlDocument {
         this.revisionStatus = revisionStatus;
         this.clonedMilestoneIds = clonedMilestoneIds;
         this.contributionStatus = contributionStatus;
+        this.pkgLastUpdatedOn = pkgLastUpdatedOn;
+        this.pkgLastUpdatedBy = pkgLastUpdatedBy;
         this.validationStatus = validationStatus;
     }
 
@@ -82,6 +88,14 @@ public final class Proposal extends XmlDocument {
 
     public String getContributionStatus() {
         return contributionStatus;
+    }
+
+    public Instant getPkgLastUpdatedOn() {
+        return pkgLastUpdatedOn;
+    }
+
+    public String getPkgLastUpdatedBy() {
+        return pkgLastUpdatedBy;
     }
 
 
