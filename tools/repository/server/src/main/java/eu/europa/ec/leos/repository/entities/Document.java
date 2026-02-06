@@ -110,6 +110,10 @@ public class Document implements Serializable {
     private DocumentCategories categoryId;
     @Column(name = "CATEGORY_CODE", nullable = false, length = 25)
     private String categoryCode;
+    @Column(name = "CUSTOM_TEMPLATE_ACT")
+    private Boolean customTemplateAct;
+    @Column(name = " IS_PUBLISHED")
+    private Boolean  isPublished;
 
     public Document() {
     }
@@ -313,6 +317,18 @@ public class Document implements Serializable {
     public void setCategoryCode(String categoryCode) {
         this.categoryCode = categoryCode;
     }
+
+    public Boolean getCustomTemplateAct() {
+        return customTemplateAct;
+    }
+
+    public void setCustomTemplateAct(Boolean customTemplateAct) {
+        this.customTemplateAct = customTemplateAct;
+    }
+
+    public Boolean getPublished() { return isPublished; }
+
+    public void setPublished(Boolean published) { isPublished = published; }
 
     @Override
     public int hashCode() {

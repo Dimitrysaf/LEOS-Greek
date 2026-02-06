@@ -13,13 +13,13 @@
  */
 package eu.europa.ec.leos.services.collection;
 
+import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.Bill;
-import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
-import eu.europa.ec.leos.domain.repository.document.Memorandum;
-import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.*;
+import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -37,30 +37,31 @@ import eu.europa.ec.leos.services.dto.document.SpecificDocumentInformationDTO;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
-import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
+import eu.europa.ec.leos.services.template.CustomTemplateService;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.atlassian.fugue.Option;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 
 import jakarta.inject.Provider;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static eu.europa.ec.leos.domain.repository.LeosCategory.*;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.BILL;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.MEMORANDUM;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 
 @Service
 @Scope("prototype")
@@ -68,8 +69,12 @@ import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocumen
 public class CollectionContextProposalService extends CollectionContextService {
     private static final Logger LOG = LoggerFactory.getLogger(CollectionContextProposalService.class);
 
-    CollectionContextProposalService(TemplateService templateService, PackageService packageService, ProposalService proposalService, CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider, Provider<BillContextService> billContextProvider, SecurityContext securityContext, Provider<ExplanatoryContextService> explanatoryContextProvider, Provider<FinancialStatementContextService> financialStatementContextProvider, Provider<AnnexContextService> annexContextProvider, ExplanatoryService explanatoryService, MessageHelper messageHelper, XmlContentProcessor xmlContentProcessor) {
-        super(templateService, packageService, proposalService, urlBuilder, memorandumContextProvider, billContextProvider, securityContext,
+    CollectionContextProposalService(CustomTemplateService customTemplateService, TemplateService templateService, PackageService packageService,
+            ProposalService proposalService, CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider,
+            Provider<BillContextService> billContextProvider, SecurityContext securityContext, Provider<ExplanatoryContextService> explanatoryContextProvider,
+            Provider<FinancialStatementContextService> financialStatementContextProvider, Provider<AnnexContextService> annexContextProvider,
+            ExplanatoryService explanatoryService, MessageHelper messageHelper, XmlContentProcessor xmlContentProcessor) {
+        super(customTemplateService, templateService, packageService, proposalService, urlBuilder, memorandumContextProvider, billContextProvider, securityContext,
                 explanatoryContextProvider, financialStatementContextProvider, annexContextProvider, explanatoryService, messageHelper, xmlContentProcessor);
     }
 
@@ -77,17 +82,15 @@ public class CollectionContextProposalService extends CollectionContextService {
     public Proposal executeCreateProposal() {
         LOG.trace("Executing 'Create Proposal' use case...");
 
-        this.packageService.useLanguage(this.language);
-        this.packageService.useTranslated(this.translated);
-        LeosPackage leosPackage = this.packageService.createPackage();
-
         List<CatalogItem> catalogItems;
         Map<String, String> templatePropertiesMap = new HashMap<>();
         templatePropertiesMap.put(DOCUMENT_MANDATORY_TEMPLATES, "");
         templatePropertiesMap.put(DOCUMENT_DEFAULT_TRUE_TEMPLATES, "");
         templatePropertiesMap.put(DOCUMENT_DEFAULT_FALSE_TEMPLATES, "");
         try {
-            catalogItems = templateService.getTemplatesCatalog();
+            catalogItems = templateKey.contains(StructureConfigUtils.CUSTOM_TEMPLATE_SEPARATOR) ?
+                    customTemplateService.getCustomTemplatesCatalog(securityContext.getUser().getDefaultEntity().getOrganizationName()) :
+                    templateService.getTemplatesCatalog();
             getTemplateProperties(templatePropertiesMap, catalogItems, templateKey, false);
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving catalog items " + e.getMessage());
@@ -95,6 +98,11 @@ public class CollectionContextProposalService extends CollectionContextService {
 
         loadTemplates(templatePropertiesMap, DOCUMENT_MANDATORY_TEMPLATES);
         loadTemplates(templatePropertiesMap, DOCUMENT_DEFAULT_TRUE_TEMPLATES);
+
+        this.packageService.useLanguage(this.language);
+        this.packageService.useTranslated(this.translated);
+        this.packageService.useOriginRef(this.originRef);
+        LeosPackage leosPackage = this.packageService.createPackage();
 
         Proposal proposalTemplate = cast(categoryTemplateMap.get(PROPOSAL));
         Validate.notNull(proposalTemplate, "Proposal template is required!");
@@ -110,12 +118,15 @@ public class CollectionContextProposalService extends CollectionContextService {
                 .withActType(templatePropertiesMap.get(ACT_TYPE))
                 .withProcedureType(templatePropertiesMap.get(PROCEDURE_TYPE))
                 .withEeaRelevance(eeaRelevance)
+                .withCustomTemplateAct(customTemplateAct)
+                .withRef(this.originRef)
                 .build();
 
         String creationOptions = createJsonCreationOptions(templatePropertiesMap);
         metadata.setCreationOptions(creationOptions);
 
-        Proposal proposal = proposalService.createProposal(proposalTemplate.getId(), leosPackage.getPath(), metadata, null);
+        useProposalContentForLinguisticVersion(proposalTemplate);
+        Proposal proposal = proposalService.createProposal(proposalTemplate.getId(), leosPackage.getPath(), metadata, this.proposalContent);
 
         Memorandum memorandum = cast(categoryTemplateMap.get(MEMORANDUM));
         if (memorandum != null && isToCreateDocument(categoryTemplateMap.get(MEMORANDUM).getName(), templatePropertiesMap)) {
@@ -127,11 +138,22 @@ public class CollectionContextProposalService extends CollectionContextService {
             memorandumContext.useType(metadata.getType());
             memorandumContext.usePackageTemplate(metadata.getTemplate());
             memorandumContext.usePackageRef(proposal.getMetadata().get().getRef());
+            memorandumContext.useCustomTemplateAct(customTemplateAct);
+            memorandumContext.useOriginRef(idsAndUrlsHolder.getMemorandumId());
+
+            //Repetitive Acts
+            List<XmlDocument> doc = categoryExistingDocuments.get(MEMORANDUM);
+            if (doc != null && !doc.isEmpty() && doc.get(0).getContent().isDefined()) {
+                memorandumContext.useExistingContent(doc.get(0).getContent().get().getSource().getBytes(), true);
+            }
+
             Memorandum memorandumCreated = memorandumContext.executeCreateMemorandum();
 
             SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(memorandumCreated.getContent().get().getSource().getBytes());
 
             proposal = proposalService.addComponentRef(proposal, memorandumCreated.getName(), LeosCategory.MEMORANDUM, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
+            String memorandumRef = memorandumCreated.getMetadata().get().getRef();
+            this.idsAndUrlsHolder.setMemorandumId(memorandumRef);
         }
 
         Bill bill = cast(categoryTemplateMap.get(BILL));
@@ -142,19 +164,62 @@ public class CollectionContextProposalService extends CollectionContextService {
             billContext.usePurpose(purpose);
             billContext.useEeaRelevance(eeaRelevance);
             billContext.useActionMessageMap(actionMsgMap);
+            billContext.useCustomTemplateAct(customTemplateAct);
             billContext.usePackageRef(proposal.getMetadata().get().getRef());
+            billContext.useOriginRef(idsAndUrlsHolder.getBillId());
+
+            // Repetitive Acts
+            List<XmlDocument> sourceDocuments = categoryExistingDocuments.get(BILL);
+            if (sourceDocuments != null && !sourceDocuments.isEmpty()) {
+                XmlDocument firstDocument = sourceDocuments.get(0);
+                if (firstDocument != null && firstDocument.getContent().isDefined()) {
+                    billContext.useExistingContent(firstDocument.getContent().get().getSource().getBytes(), true);
+                }
+            }
+
             Bill billCreated = billContext.executeCreateBill();
 
             SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(billCreated.getContent().get().getSource().getBytes());
+            String billRef = billCreated.getMetadata().get().getRef();
+            this.idsAndUrlsHolder.setBillId(billRef);
+
+            // Repetitive Acts - Annexes
+            List<XmlDocument> annex = categoryExistingDocuments.get(ANNEX);
+            if (annex != null && !annex.isEmpty()) {
+                BillMetadata billMetadata = billCreated.getMetadata().getOrError(() -> "Bill metadata is required!");
+                billContext.useTemplate(billCreated);
+
+                annex.sort(Comparator.comparingInt(doc ->
+                        ((AnnexMetadata) doc.getMetadata().get()).getIndex()
+                ));
+
+                for (XmlDocument xmlDocument : annex) {
+                    CatalogItem templateItem;
+                    try {
+                        templateItem = templateService.getTemplateItem(billMetadata.getDocTemplate());
+                        billContext.useAnnexTemplate(templateItem.getItems().get(0).getId());
+                        billContext.useExistingAnnexTitle(((AnnexMetadata) xmlDocument.getMetadata().get()).getTitle());
+                        billContext.useExistingAnnexOrder(((AnnexMetadata) xmlDocument.getMetadata().get()).getIndex());
+                        billContext.useExistingAnnexContent(xmlDocument.getContent().get().getSource().getBytes());
+                        billContext.executeCreateBillAnnex();
+                    } catch (IOException e) {
+                        LOG.error("Error occurred while retrieving template " + metadata.getDocTemplate());
+                    }
+                }
+            }
 
             proposal = proposalService.addComponentRef(proposal, billCreated.getName(), LeosCategory.BILL, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
         }
 
+        // Financial Statement
         FinancialStatement financialStatement = cast(categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS));
-        if (financialStatement != null && isToCreateDocument(categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS).getName(), templatePropertiesMap)) {
+        List<XmlDocument> sourceFinancialDocuments = categoryExistingDocuments.get(STAT_DIGIT_FINANC_LEGIS);
+
+        if ((sourceFinancialDocuments != null && !sourceFinancialDocuments.isEmpty() && canDocumentBeAdded(sourceFinancialDocuments.get(0).getMetadata().get().getDocTemplate(), templatePropertiesMap))
+                || (financialStatement != null && isToCreateDocument(categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS).getName(), templatePropertiesMap))) {
             FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
             financialStatementContext.usePackage(leosPackage);
-            String financialStatementTemplate = categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS).getName();
+            String financialStatementTemplate = financialStatement == null ? sourceFinancialDocuments.get(0).getMetadata().get().getDocTemplate() : categoryTemplateMap.get(STAT_DIGIT_FINANC_LEGIS).getName();
             financialStatementContext.useDocTemplate(financialStatementTemplate);
             financialStatementContext.useTitle(messageHelper.getMessage("document.default.financial.statement.title.default." + financialStatementTemplate));
             financialStatementContext.usePurpose(purpose);
@@ -163,13 +228,36 @@ public class CollectionContextProposalService extends CollectionContextService {
             financialStatementContext.usePackageTemplate(metadata.getTemplate());
             financialStatementContext.usePackageRef(proposal.getMetadata().get().getRef());
             financialStatementContext.useCollaborators(proposal.getCollaborators());
+            financialStatementContext.useCustomTemplateAct(customTemplateAct);
+            financialStatementContext.useOriginRef(idsAndUrlsHolder.getFinancialStatementId());
+
+            // Repetitive Act
+            List<XmlDocument> sourceDocuments = categoryExistingDocuments.get(STAT_DIGIT_FINANC_LEGIS);
+            if (sourceDocuments != null && !sourceDocuments.isEmpty()) {
+                XmlDocument firstDocument = sourceDocuments.get(0);
+                if (firstDocument != null && firstDocument.getContent().isDefined()) {
+                    financialStatementContext.useExistingContent(firstDocument.getContent().get().getSource().getBytes(), true);
+                }
+            }
+
             FinancialStatement financialStatementCreated = financialStatementContext.executeCreateFinancialStatement();
 
             SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(financialStatementCreated.getContent().get().getSource().getBytes());
 
             proposal = proposalService.addComponentRef(proposal, financialStatementCreated.getName(), LeosCategory.STAT_DIGIT_FINANC_LEGIS, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
+            String financialStatementRef = financialStatementCreated.getMetadata().get().getRef();
+            this.idsAndUrlsHolder.setFinancialStatementId(financialStatementRef);
         }
         return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
+    }
+
+    private void useProposalContentForLinguisticVersion(Proposal proposalTemplate) {
+        if (StringUtils.isNotEmpty(this.languageTemplateSuffix)) {
+            Content content = proposalTemplate.getContent().getOrNull();
+            if (content != null) {
+                useProposalContent(content.getSource().getBytes());
+            }
+        }
     }
 
     private boolean isToCreateDocument(String templateName, Map<String, String> templatePropertiesMap) {
@@ -177,6 +265,19 @@ public class CollectionContextProposalService extends CollectionContextService {
             return true;
         }
         if (templatePropertiesMap.get(DOCUMENT_DEFAULT_TRUE_TEMPLATES).contains(templateName)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean canDocumentBeAdded(String templateName, Map<String, String> templatePropertiesMap) {
+        if (templatePropertiesMap.get(DOCUMENT_MANDATORY_TEMPLATES).contains(templateName)) {
+            return true;
+        }
+        if (templatePropertiesMap.get(DOCUMENT_DEFAULT_TRUE_TEMPLATES).contains(templateName)) {
+            return true;
+        }
+        if (templatePropertiesMap.get(DOCUMENT_DEFAULT_FALSE_TEMPLATES).contains(templateName)) {
             return true;
         }
         return false;

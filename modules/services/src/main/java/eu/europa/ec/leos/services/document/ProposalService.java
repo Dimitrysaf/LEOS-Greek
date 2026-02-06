@@ -138,4 +138,6 @@ public interface ProposalService {
     Proposal populateProposalMetadataFromXml(Proposal proposal);
 
     MetadataVO populateProposalMetadataFromXml(byte[] xmlContent, byte[] billContent, MetadataVO metadataVO);
+
+    String findDocumentRefByPackageIdAndCategory(String packageId, String categoryCode);
 }

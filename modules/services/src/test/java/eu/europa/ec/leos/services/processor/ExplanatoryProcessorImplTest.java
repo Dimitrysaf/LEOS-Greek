@@ -47,6 +47,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -79,8 +80,8 @@ public class ExplanatoryProcessorImplTest extends LeosTest {
     private TableOfContentProcessor tableOfContentProcessor;
     @Mock
     private TemplateStructureService templateStructureService;
-    @Mock
-    protected LanguageHelper languageHelper;
+    @Spy
+    private LanguageHelper languageHelper = new LanguageHelper();
     @InjectMocks
     protected MessageHelper messageHelper = Mockito.spy(getMessageHelper());
     @Mock
@@ -143,7 +144,7 @@ public class ExplanatoryProcessorImplTest extends LeosTest {
     protected LanguageMapHolder languageMapHolder;
     protected LanguageGroupService languageGroupService;
     @InjectMocks
-    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext(languageHelper));
 
     private String docTemplate;
     private List<TocItem> tocItems;
@@ -254,7 +255,7 @@ public class ExplanatoryProcessorImplTest extends LeosTest {
 
     private Explanatory getMockedExplanatory(Content content) {
         ExplanatoryMetadata explanatoryMetadata = new ExplanatoryMetadata("... at this stage", "REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL", "on ...",
-                "CE-001", "EN", "CE-001", "explanatory", "Working Party cover page", "555", "0.1.0", false);
+                "CE-001", "EN", "CE-001", "explanatory", "Working Party cover page", "555", "0.1.0", false, false);
         List<Collaborator> collaborators = new ArrayList<>();
         collaborators.add(new Collaborator("test", "OWNER", "SG"));
         return new Explanatory("555", "EXPL_COUNCIL", "test", Instant.now(), "test", Instant.now(),

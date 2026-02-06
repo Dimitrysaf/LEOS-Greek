@@ -638,9 +638,9 @@ Feature: Legal Act Page Regression Features
     Then ck editor window is displayed
     When click at offset 59 of child 0 of citation in edition mode
     And  click on internal reference icon present in ck editor panel
-   Then cke dialog window is displayed with title "Internal reference"
+    Then cke dialog window is displayed with title "Internal reference"
     When click on "Article 3 - Subject matter and scope 1.In order..." link in enacting terms on the left side of internal reference window
-   And  click on point 2 of list 1 of paragraph 3 of article on the right side of internal reference window
+    And  click on point 2 of list 1 of paragraph 3 of article on the right side of internal reference window
     And  click on ok button in cke dialog window
     And  click save and close button of ck editor
     Then "Article 3(3), point (b)" is added as internal reference 1 of citation 2
@@ -882,7 +882,6 @@ Feature: Legal Act Page Regression Features
     And  paragraph 2 of article 1 doesn't contain num tag
     When click close button of ck editor
     Then ck editor window is not displayed
-
 
   @checksForStory1703And2060And2208 @local
   Scenario: Checks related to specific stories: 1703, 2060 and 2208. Tests for alternatives and some track changes related to paragraph mode
@@ -1312,7 +1311,7 @@ Feature: Legal Act Page Regression Features
     And  click on toc edit button
     And click on three vertical dots for the element contains text "(1) Recital..." in toc
     And click on move option from dropdown content
-    And  click on three vertical dots for the element contains text "Recitals 1. RECITAL SECTION HEADING" in toc
+    And  click on three vertical dots for the element contains text "Recitals 1. Recital Section Heading" in toc
     And click on place as child option from dropdown content
     And  click on save and close button in navigation pane
     Then no warning symbol should be displayed in the navigation pane
@@ -1321,9 +1320,9 @@ Feature: Legal Act Page Regression Features
     Then total recital count is 2
     And recital section count is 1
     And recital section 1 contains "num" tag with value "1."
-    And  recital section 1 contains "heading" tag with value "RECITAL SECTION HEADING"
+    And  recital section 1 contains "heading" tag with value "Recital Section Heading"
     When click on toc edit button
-    And click on three vertical dots for the element contains text "Recitals 1. RECITAL SECTION HEADING" in toc
+    And click on three vertical dots for the element contains text "Recitals 1. Recital Section Heading" in toc
     And click on delete option from eui dropdown content
     Then "Delete Element: confirmation" dialog confirm box window is displayed
     When click on ok button in dialog box window

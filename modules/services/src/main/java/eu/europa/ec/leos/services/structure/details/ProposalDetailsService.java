@@ -106,9 +106,7 @@ public class ProposalDetailsService {
 
     public ProposalDetailsLists getProposalDetailsLists() {
         byte[] proposalDetailsDocument = getProposalDetailsDocument();
-        final ProposalDetailsLists propDetails = loadProposalDetailsFromFile(proposalDetailsDocument);
-        propDetails.setLanguages(languageService.getLanguageList());
-        return propDetails;
+        return loadProposalDetailsFromFile(proposalDetailsDocument);
     }
 
     public byte[] getProposalDetailsDocument() {

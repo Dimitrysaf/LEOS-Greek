@@ -26,6 +26,7 @@ import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
+import eu.europa.ec.leos.services.dto.request.CreateProposalCopyRequest;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
@@ -46,10 +47,16 @@ public interface ApiService {
 
     List<CatalogItem> getTemplates() throws IOException;
 
+    List<CatalogItem> getCustomTemplates(String entityName) throws IOException;
+
+    CreateCollectionResult copyAct(CreateProposalCopyRequest request) throws CreateCollectionException;
+
     CreateCollectionResult createProposal(String templateId, String templateName, String langCode, String docPurpose,
-                                          boolean eeaRelevance, String template) throws CreateCollectionException;
+                                          boolean eeaRelevance, boolean customTemplateAct, String template) throws CreateCollectionException;
 
     CreateCollectionResult uploadProposal(LeosFile legDocument) throws CreateCollectionException;
+
+    List<String> createLinguisticVersionsFromMilestone(String legFileId, List<String> linguisticVersions) throws CreateCollectionException;
 
     LegFileValidation validateLegFile(LeosFile legDocument);
 
@@ -105,8 +112,8 @@ public interface ApiService {
 
     LegDocument createMilestone(String proposalRef, String milestoneComment) throws Exception;
 
-    LegDocument addLegDocument(String packageName, String legFileName, List<String> milestoneComments, byte[] content,
-            LeosLegStatus status, List<String> containedDocuments) throws  Exception;
+    void addLegDocument(String packageName, String legFileName, List<String> milestoneComments, byte[] content,
+            LeosLegStatus status, List<String> containedDocuments, boolean isCustomTemplate);
 
     MilestoneViewResponse listMilestoneDocuments(String proposalRef, String legFileName, String legFileId) throws Exception;
 
@@ -123,6 +130,8 @@ public interface ApiService {
     void validateProposals(String email, String username) throws Exception;
 
     LeosRenditionOutputResponseList getHtmlRenditions(byte[] document) throws IOException;
+
+    String findDocumentRefByPackageIdAndCategory(String packageId, String category);
 
     Package findPackageByName(String packageName);
 }

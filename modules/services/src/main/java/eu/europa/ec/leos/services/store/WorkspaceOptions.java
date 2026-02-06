@@ -58,10 +58,20 @@ public class WorkspaceOptions {
     void initializeOptions(List<CatalogItem> catalogItems, FilterProposalsRequest.Filter[] filters) {
         if (filters != null && filters.length > 0) {
             initFilter(filters);
-        } else {
-            initRoleFilter();
         }
+        initRoleFilter();
+        customTemplateFilter();
         initSortOrder();
+
+    }
+
+    private void customTemplateFilter() {
+        boolean hasCreateTemplatePermission = securityContext.hasPermission(null, LeosPermission.CAN_CREATE_TEMPLATE);
+        //Set the value to false if the user does not have create template permission.
+        if (!(hasCreateTemplatePermission)) {
+            workspaceFilter.addFilter(new QueryFilter.Filter(FilterType.customTemplates.name(),
+                    "=", false, true, "false"));
+        }
     }
 
     private void initFilter(FilterProposalsRequest.Filter[] filters) {
@@ -74,7 +84,7 @@ public class WorkspaceOptions {
             }
 
             List<String> values = new ArrayList<>(Arrays.asList(filter.getValue()));
-            if(id.equalsIgnoreCase(FilterType.role.name())) {
+            /*if(id.equalsIgnoreCase(FilterType.role.name())) {
                 List<String> appRoles = authorityMap.getAllRoles().stream()
                         .filter(Role::isApplicationRole)
                         .map(role->role.getName())
@@ -93,6 +103,16 @@ public class WorkspaceOptions {
                 } else {
                     initRoleFilter();
                 }
+            } else*/
+            if (id.equalsIgnoreCase(FilterType.customTemplates.name()) && securityContext.getUser() != null
+                    && securityContext.getUser().getRoles() != null
+                    && (securityContext.getUser().getRoles().contains("TEMPLATE_MANAGER")
+            || securityContext.getUser().getRoles().contains("SUPPORT"))) {
+                if (!values.isEmpty()) {
+                    workspaceFilter.addFilter(new QueryFilter.Filter(FilterType.customTemplates.name(),
+                            "=", false, true,
+                            values.get(0)));
+                }
             } else if(id.equalsIgnoreCase(FilterType.title.name())) {
                 workspaceFilter.removeFilter(FilterType.title.name());
                 if (!values.isEmpty()) {
@@ -102,7 +122,7 @@ public class WorkspaceOptions {
                 }
             } else {
                 workspaceFilter.removeFilter(id);
-                initRoleFilter();
+               // initRoleFilter();
                 workspaceFilter.addFilter(new QueryFilter.Filter(id, "IN", nullCheck,
                         values.toArray(new String[]{})));
             }

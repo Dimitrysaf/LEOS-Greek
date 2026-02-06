@@ -48,6 +48,8 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
+import eu.europa.ec.leos.services.template.CustomTemplateService;
+import eu.europa.ec.leos.services.utils.LanguageMapUtils;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.StringUtils;
@@ -61,6 +63,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.domain.repository.LeosCategory.BILL;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.COUNCIL_EXPLANATORY;
@@ -89,6 +92,7 @@ public abstract class CollectionContextService {
     protected final MessageHelper messageHelper;
     protected final ExplanatoryService explanatoryService;
     protected final TemplateService templateService;
+    protected final CustomTemplateService customTemplateService;
     protected final PackageService packageService;
     protected final ProposalService proposalService;
     private final CollectionUrlBuilder urlBuilder;
@@ -97,9 +101,10 @@ public abstract class CollectionContextService {
     protected final Provider<ExplanatoryContextService> explanatoryContextProvider;
     protected final Provider<FinancialStatementContextService> financialStatementContextProvider;
     protected final Provider<AnnexContextService> annexContextProvider;
-    private SecurityContext securityContext;
+    protected SecurityContext securityContext;
     protected final XmlContentProcessor xmlContentProcessor;
     protected final Map<LeosCategory, XmlDocument> categoryTemplateMap;
+    protected final Map<LeosCategory, List<XmlDocument>> categoryExistingDocuments;
     protected final Map<ContextActionService, String> actionMsgMap;
     protected Proposal proposal = null;
     protected byte[] proposalContent = null;
@@ -110,6 +115,7 @@ public abstract class CollectionContextService {
     private String versionComment;
     private String milestoneComment;
     protected Boolean eeaRelevance;
+    protected Boolean customTemplateAct;
     protected String packageTitle;
     protected List<String> authenticLang;
     protected LeosAuthenticLanguage isAuthenticLang;
@@ -118,24 +124,27 @@ public abstract class CollectionContextService {
     private String propChildDocument;
     private String proposalComment;
     private VersionType versionType;
-    private CollectionIdsAndUrlsHolder idsAndUrlsHolder;
-    private String originRef;
+    protected CollectionIdsAndUrlsHolder idsAndUrlsHolder;
+    protected String originRef;
     private boolean cloneProposal = false;
     private String connectedEntity;
     private CloneProposalMetadataVO cloneProposalMetadataVO;
     private String explanatoryId;
     protected LeosPackage leosPackage = null;
     protected String language;
+    protected String languageTemplateSuffix = "";
     protected boolean translated = false;
     protected String templateKey;
 
-    CollectionContextService(TemplateService templateService, PackageService packageService, ProposalService proposalService,
+    CollectionContextService(CustomTemplateService customTemplateService, TemplateService templateService,
+                             PackageService packageService, ProposalService proposalService,
                              CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider,
                              Provider<BillContextService> billContextProvider, SecurityContext securityContext,
                              Provider<ExplanatoryContextService> explanatoryContextProvider,
                              Provider<FinancialStatementContextService> financialStatementContextProvider,
                              Provider<AnnexContextService> annexContextProvider,
                              ExplanatoryService explanatoryService, MessageHelper messageHelper, XmlContentProcessor xmlContentProcessor) {
+        this.customTemplateService = customTemplateService;
         this.templateService = templateService;
         this.explanatoryService = explanatoryService;
         this.packageService = packageService;
@@ -148,6 +157,7 @@ public abstract class CollectionContextService {
         this.annexContextProvider = annexContextProvider;
         this.securityContext = securityContext;
         this.categoryTemplateMap = new EnumMap<>(LeosCategory.class);
+        this.categoryExistingDocuments = new EnumMap<>(LeosCategory.class);
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.messageHelper = messageHelper;
         this.xmlContentProcessor = xmlContentProcessor;
@@ -160,6 +170,15 @@ public abstract class CollectionContextService {
 
         LOG.trace("Using {} template... [id={}, name={}]", template.getCategory(), template.getId(), template.getName());
         categoryTemplateMap.put(template.getCategory(), template);
+    }
+
+    public void useExistingDocuments(List<XmlDocument> copiedDocuments) {
+        Validate.notNull(copiedDocuments, "Source documents are required!");
+
+        Map<LeosCategory, List<XmlDocument>> groupedByCategory = copiedDocuments.stream()
+                .collect(Collectors.groupingBy(XmlDocument::getCategory));
+
+        categoryExistingDocuments.putAll(groupedByCategory);
     }
 
     public void useActionMessage(ContextActionService action, String actionMsg) {
@@ -218,6 +237,11 @@ public abstract class CollectionContextService {
     public void useEeaRelevance(Boolean eeaRelevance) {
         LOG.trace("Using Proposal eeaRelevance... [eeaRelevance={}]", eeaRelevance);
         this.eeaRelevance = eeaRelevance;
+    }
+
+    public void useCustomTemplateAct(Boolean customTemplateAct) {
+        LOG.trace("Using Proposal customTemplateAct... [customTemplateAct={}]", customTemplateAct);
+        this.customTemplateAct = customTemplateAct;
     }
 
     public void usePackageTitle(String packageTitle) {
@@ -290,6 +314,11 @@ public abstract class CollectionContextService {
 
     public void useLanguage(String language) {
         this.language = language;
+        useLanguageTemplateSuffix();
+    }
+
+    private void useLanguageTemplateSuffix() {
+        this.languageTemplateSuffix = LanguageMapUtils.getLanguageTemplateSuffix(language);
     }
 
     public void useTranslated(boolean translated) {
@@ -331,6 +360,8 @@ public abstract class CollectionContextService {
         // use template
         Proposal proposalTemplate = cast(categoryTemplateMap.get(PROPOSAL));
         Validate.notNull(proposalTemplate, "Proposal template is required!");
+        useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
+        useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
 
         // get metadata from template
         Option<ProposalMetadata> metadataOption = proposalTemplate.getMetadata();
@@ -851,7 +882,7 @@ public abstract class CollectionContextService {
                 .orElse(null);
 
         if (matchingItem != null) {
-            tp.put(TEMPLATE, matchingItem.getKey());
+            tp.put(TEMPLATE, matchingItem.getKey().concat(this.languageTemplateSuffix));
             tp = getTemplateProperties(tp, matchingItem.getItems(), templateId, true);
             return tp;
         }
@@ -884,11 +915,11 @@ public abstract class CollectionContextService {
         return tp;
     }
 
-    private static void fillTemplate(Map<String, String> tp, CatalogItem item, String documentTemplatesType) {
+    private void fillTemplate(Map<String, String> tp, CatalogItem item, String documentTemplatesType) {
         if (tp.containsKey(documentTemplatesType) && !tp.get(documentTemplatesType).isEmpty()) {
             tp.put(documentTemplatesType, tp.get(documentTemplatesType) + ";");
         }
-        tp.put(documentTemplatesType, tp.get(documentTemplatesType) + item.getId());
+        tp.put(documentTemplatesType, tp.get(documentTemplatesType) + item.getId().concat(this.languageTemplateSuffix));
     }
 
     protected void loadTemplates(Map<String, String> templatePropertiesMap, String documentTemplatesType) {

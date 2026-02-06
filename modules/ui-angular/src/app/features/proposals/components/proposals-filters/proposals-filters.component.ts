@@ -1,14 +1,14 @@
 import {
-  AfterViewInit,
+  AfterViewInit, ChangeDetectorRef,
   Component,
   ElementRef,
   OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup  } from '@angular/forms';
 import { getI18nState } from '@eui/core';
-import { CatalogItem, ProcedureType, Role } from '@leos/shared';
+import { CatalogItem} from '@leos/shared';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -34,7 +34,14 @@ import {
   ProposalFilter,
   ProposalFilterGroup,
 } from '../../models';
-
+import {AppConfigService} from "@/core/services/app-config.service";
+import {EuiTreeComponent, TreeDataModel, TreeItemModel, TreeNode} from "@eui/components/eui-tree";
+import {EuiTreeSelectionChanges} from "@eui/components/eui-tree/eui-tree.model";
+import {appConfig} from "../../../../../config";
+const iconClassCategory = 'folder:sharp';
+const iconClassTemplate = 'document:sharp';
+const defaultLanguage =
+  appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();
 @Component({
   selector: 'app-proposals-filters',
   templateUrl: './proposals-filters.component.html',
@@ -43,30 +50,55 @@ import {
 export class ProposalsFiltersComponent
   implements OnInit, OnDestroy, AfterViewInit
 {
-  private static get emptyFilterParams(): ProposalFilter {
+  static get emptyFilterParams(): ProposalFilter {
     return {
       searchTerm: '',
       procedures: [],
       acts: [],
       templates: [],
       roles: [],
+      customTemplates: ''
     };
   }
 
   @ViewChild('filtersContainer') filtersContainer: ElementRef<HTMLElement>;
+  @ViewChild('treeComponent') treeComponent: EuiTreeComponent;
   filterGroups: ProposalFilterGroup[] = [];
   form: FormGroup;
 
   private resizeObserver: ResizeObserver;
   private formChangesSub: Subscription;
   private destroy$ = new Subject<void>();
+  private canCreateTemplate: boolean = false;
+  treeNodes: TreeDataModel = null;
+  filteredNodes: TreeDataModel = null;
+  isExpanded: boolean;
+  private templates: Map<string, CatalogItem> = new Map();
+  selectedLanguage: string;
+  languages: Array<{ code: string; label: string }>;
+  filterText: string;
+
+  selectedTemplates: any[] =[];
+
 
   constructor(
     private fb: FormBuilder,
     private proposalService: ProposalService,
     private translateService: TranslateService,
     private store: Store<any>,
-  ) {}
+    private appConfig: AppConfigService,
+    private cdRef: ChangeDetectorRef
+  ) {
+    this.setInitialState();
+  }
+
+  private setInitialState() {
+    this.filterText = '';
+    this.isExpanded = true;
+    this.selectedLanguage = '';
+    this.languages = [];
+    this.selectedTemplates = [];
+  }
 
   ngOnInit(): void {
     const templateCatalog$ = this.proposalService.templateCatalog$.pipe(
@@ -85,16 +117,14 @@ export class ProposalsFiltersComponent
       filters$.pipe(take(1)),
     ]).subscribe(([catalog]) => {
       this.setupFilterGroups(catalog);
-      this.buildForm();
-      this.watchForChanges();
+     });
 
-      i18nState$.pipe(skip(1)).subscribe(() => this.setupFilterGroups(catalog));
-      filters$.pipe(skip(1)).subscribe((filters) => this.patchForm(filters));
+    this.appConfig.config.subscribe((config) => {
+      this.canCreateTemplate = config.userAppPermissions.includes('CAN_CREATE_TEMPLATE');
     });
   }
 
   ngAfterViewInit() {
-    this.setupResizeObserver();
   }
 
   ngOnDestroy(): void {
@@ -108,6 +138,11 @@ export class ProposalsFiltersComponent
   }
 
   resetFilters() {
+    this.resetSelectedTree(this.treeNodes);
+    this.setInitialState();
+    this.treeNodes = this.filteredNodes;
+    this.resetSelectedTree(this.treeNodes);
+    this.cdRef.detectChanges();
     this.proposalService.setFilters(
       ProposalsFiltersComponent.emptyFilterParams,
     );
@@ -118,218 +153,206 @@ export class ProposalsFiltersComponent
   }
 
   private setupFilterGroups(catalog: CatalogItem[]) {
-    this.filterGroups = this.createFilters(catalog);
+    this.createTreeNode(catalog);
+    //this.filterGroups = this.createFilters(catalog);
+  }
+  private createTreeNode(catalogItems: CatalogItem[]) {
+    this.templates = this.extractTemplatesFromCatalog(catalogItems);
+    this.treeNodes = this.catalogToTreeNodes(catalogItems);
+    this.filteredNodes = JSON.parse(JSON.stringify(this.treeNodes));
+    //this.assignParents(this.treeNodes, null);
   }
 
-  private createFilters(catalog: CatalogItem[]): ProposalFilterGroup[] {
-    const catalogItemToOption =
-      (group: keyof typeof groups) =>
-      (item: CatalogItem): FilterOption => ({
-        id: `${group}-${item.key}`,
-        fieldName: `${group}-${item.key}`,
-        label: this.proposalService.getTranslation(item.names),
-        value: `${group}-${item.key}`,
-        checked: false,
-      });
-    const roleToOption = (role: Role): FilterOption => ({
-      id: `roles-${role}`,
-      fieldName: `roles-${role}`,
-      label: this.translateService.instant(
-        `page.workspace.filter.filters.roles.${role.toLowerCase()}`,
-      ),
-      value: `roles-${role}`,
-      checked: false,
-    });
-    const groups = this.groupFilterCatalogItems(catalog);
-    return [
-      {
-        title: this.translateService.instant(
-          'page.workspace.filter.procedures',
-        ),
-        filterOptions: groups.procedures.map(catalogItemToOption('procedures')),
-      },
-      {
-        title: this.translateService.instant('page.workspace.filter.acts'),
-        filterOptions: groups.acts.map(catalogItemToOption('acts')),
-      },
-      {
-        title: this.translateService.instant('page.workspace.filter.templates'),
-        filterOptions: groups.templates.map(catalogItemToOption('templates')),
-      },
-      {
-        title: this.translateService.instant('page.workspace.filter.roles'),
-        filterOptions: [
-          'OWNER',
-          'CONTRIBUTOR',
-          'REVIEWER',
-          'VIEWER',
-          'SUPPORT',
-          'ADMIN',
-          'USER',
-        ].map(roleToOption),
-      },
-    ];
-  }
-
-  private groupFilterCatalogItems(catalog: CatalogItem[]) {
-    const groups = {
-      procedures: [] as CatalogItem[],
-      acts: [] as CatalogItem[],
-      templates: [] as CatalogItem[],
-    };
-
-    const addCatalogItemToGroups = (item: CatalogItem, parent: CatalogItem = null, grandparent: CatalogItem = null) => {
-      if (item.type === 'TEMPLATE') {
-        groups.templates.push(item);
-        // if (grandparent != null && groups.procedures.indexOf(grandparent) === -1) {
-        //   groups.procedures.push(grandparent);
-        // }
-        // if (parent != null && groups.acts.indexOf(parent) === -1) {
-        //   groups.acts.push(parent);
-        // }
-      }
-      if (item.type === 'ACT') {
-        groups.acts.push(item);
-      }
-      if (item.type === 'PROCEDURE') {
-        groups.procedures.push(item);
-      }
-
-      if (item.type !== 'TEMPLATE' && item.enabled) {
-        grandparent = parent;
-        parent = item;
-        item.items.forEach((child) => addCatalogItemToGroups(child, parent, grandparent));
-      }
-    };
-
-    catalog.forEach((item) => addCatalogItemToGroups(item));
-
-    let self = this;
-    groups.templates.sort(function(a, b) {
-      let textA = self.proposalService.getTranslation(a.names).toUpperCase();
-      let textB = self.proposalService.getTranslation(b.names).toUpperCase();
-      return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+  private catalogToTreeNodes(catalogItems: CatalogItem[]) {
+    console.log(catalogItems);
+    catalogItems.forEach(item => {
+      // Access properties, e.g., item.visibleTo, item.someProperty
+      console.log(item);
     });
 
-    return groups;
-  }
-
-  private buildForm() {
-    if (!this.form) {
-      this.form = this.fb.group({});
-    }
-    // FIXME: remove old controls, while maintaining state
-    this.form.addControl('searchTerm', new FormControl(''));
-    this.filterGroups
-      .flatMap((group) => group.filterOptions)
-      .forEach((opt) => {
-        this.form.addControl(opt.fieldName, new FormControl(opt.checked));
-      });
-  }
-
-  private watchForChanges() {
-    this.formChangesSub?.unsubscribe();
-    this.formChangesSub = this.form.valueChanges
-      .pipe(debounceTime(400))
-      .subscribe(() => {
-        const filters = this.constructFiltersFromForm();
-        this.proposalService.setFilters(filters);
-      });
-  }
-
-  private constructFiltersFromForm(): ProposalFilter {
-    const formValue = this.form.value;
-    const checkedFormControlNames = Object.keys(formValue).filter(
-      (name) => formValue[name] === true,
+    catalogItems = catalogItems.filter(item =>
+      !item.hidden && (!item.visibleTo || item.visibleTo.trim() === ''
+       /* ||(!this.userRoles?.length || item.visibleTo.split(',').some(role => this.userRoles.includes(role.toUpperCase().trim() as ApplicationRole)))*/
+        )
     );
-    const filterOptions = this.filterGroups.flatMap((f) => f.filterOptions);
-
-    const filters = checkedFormControlNames
-      .map((name) => filterOptions.find((opt) => opt.fieldName === name))
-      .filter(Boolean)
-      .reduce((fs, filterOption) => {
-        const [_, filterKey, filterVal] =
-          filterOption.value.match(/^([^-]+)-(.*)/);
-        switch (filterKey) {
-          case 'procedures':
-            fs.procedures.push(filterVal as ProcedureType);
-            break;
-          case 'acts':
-            fs.acts.push(filterVal);
-            break;
-          case 'templates':
-            fs.templates.push(filterVal);
-            break;
-          case 'roles':
-            fs.roles.push(filterVal as Role);
-            break;
-          default:
-            break;
-        }
-        return fs;
-      }, ProposalsFiltersComponent.emptyFilterParams);
-    filters.searchTerm = formValue.searchTerm as string;
-
-    return filters;
+    return catalogItems.map((item) => this.catalogItemToTreeItem(item));
   }
 
-  private patchForm(filters: Partial<ProposalFilter>) {
-    const patch = {} as any;
-
-    if (filters.searchTerm !== undefined) {
-      patch.searchTerm = filters.searchTerm;
-    }
-
-    const updateGroup = (group: string) => {
-      const controlNamesChecked = filters[group].map(
-        (key) => `${group}-${key}`,
-      );
-      Object.keys(this.form.value)
-        .filter((name) => name.startsWith(`${group}-`))
-        .forEach((name) => (patch[name] = controlNamesChecked.includes(name)));
+  private catalogItemToTreeItem(item: CatalogItem): TreeItemModel {
+    const { id, documentCollection, key, names, customName, type, enabled, items, hidden, visibleTo } = item;
+    let tooltipLabel = this.proposalService.getTranslation(names);
+    const label = customName ? (key.substring(0, key.lastIndexOf('_')) + ' - ' + customName) : tooltipLabel;
+    const iconClass =
+      type === 'CATEGORY' ? iconClassCategory : iconClassTemplate;
+    let disabled = !enabled;
+    const children =
+      type === 'CATEGORY' && !hidden && enabled
+        ? items
+          .filter((child) => !child.hidden &&
+            (!child.visibleTo || child.visibleTo.trim() === ''
+             /* || (!this.userRoles?.length ||
+                child.visibleTo.split(',').some(role => this.userRoles.includes(role.toUpperCase().trim() as ApplicationRole)))*/
+            ))
+          .map((child) => this.catalogItemToTreeItem(child))
+        : [];
+    const isEmptyCategory = type === 'CATEGORY' && !children.length;
+    const isTemplate = type !== 'CATEGORY';
+    const node: TreeNode = {
+      isExpanded: this.isExpanded,
+      selectable: isTemplate,
+      treeContentBlock: {
+        id,
+        key,
+        label,
+        disabled,
+        iconSvgName: iconClass,
+      },
     };
-    const groupsToUpdate = Object.keys(filters).filter((key) =>
-      Array.isArray(filters[key]),
+
+    return {
+      node,
+      children
+    };
+  }
+
+  private extractTemplatesFromCatalog(catalogItems: CatalogItem[]) {
+    const getChildTemplates = (item: CatalogItem): CatalogItem[] =>
+      (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') ? item.items.flatMap(getChildTemplates) : [item];
+    const templates = catalogItems.flatMap(getChildTemplates);
+    return templates.reduce(
+      (map, item) => map.set(item.key, item),
+      new Map<string, CatalogItem>(),
     );
-    groupsToUpdate.forEach(updateGroup);
-
-    this.form.patchValue(patch, { emitEvent: false });
   }
 
-  private setupResizeObserver() {
-    const widthBS = new BehaviorSubject<number>(0);
-    this.resizeObserver = new ResizeObserver((entries) => {
-      widthBS.next(entries[0].contentRect.width);
-    });
-
-    widthBS
-      .pipe(debounceTime(250), distinctUntilChanged(), takeUntil(this.destroy$))
-      .subscribe(() => this.updateOptionTooltips());
-    this.resizeObserver.observe(this.filtersContainer.nativeElement);
-  }
-
-  private updateOptionTooltips() {
-    this.filterGroups
-      .flatMap((group) => group.filterOptions)
-      .forEach((option) => this.setOptionTooltip(option));
-  }
-
-  private setOptionTooltip(option: FilterOption) {
-    const labelEl: HTMLElement =
-      this.filtersContainer.nativeElement.querySelector(
-        `#${option.id} + label`,
+  onNodeClick(event: EuiTreeSelectionChanges) {
+    const selectedNode = event.selection[0];
+    if (
+      selectedNode &&
+      this.templates.has(selectedNode.node.treeContentBlock.key)
+    ) {
+      this.setTemplate(
+        this.templates.get(selectedNode.node.treeContentBlock.key),
       );
-    const isLabelTextTruncated =
-      labelEl && labelEl.offsetWidth < labelEl.scrollWidth;
-    option.tooltip = isLabelTextTruncated
-      ? this.truncateLabelText(option.label)
-      : '';
+    } else {
+      this.unsetTemplate();
+    }
   }
 
-  private truncateLabelText(label: string): string {
-    if (label.length > MAX_TRUNCATION_LIMIT) {
-      return label.substring(0, MAX_TRUNCATION_LIMIT) + '…';
+  private unsetTemplate() {
+    this.languages = [];
+    this.onSelectLanguage('');
+  }
+
+  private setLanguagesFromLangMap(languages: Record<string, string>) {
+    this.languages = Object.keys(languages).map((code) => ({
+      code,
+      label: languages[code],
+    }));
+  }
+
+  private setTemplate(item: CatalogItem) {
+   // this.selectTemplate.emit(item);
+    this.setLanguagesFromLangMap(item.languages);
+
+    const codes = Object.keys(item.languages);
+    const newLanguage = codes.includes(this.selectedLanguage)
+      ? this.selectedLanguage
+      : codes.includes(defaultLanguage)
+        ? defaultLanguage
+        : codes[0];
+    if (this.selectedLanguage !== newLanguage) {
+      this.onSelectLanguage(newLanguage);
     }
-    return label;
+  }
+
+  private onSelectLanguage(code: string) {
+    this.selectedLanguage = code;
+    //this.selectLanguage.emit(code);
+  }
+
+  onDocumentTypeFilter(documentType: string) {
+    this.treeNodes = this.filterNodesByDocumentType(
+      this.filteredNodes,
+      documentType,
+    );
+  }
+
+  private filterNodesByDocumentType(
+    nodes: TreeDataModel | undefined,
+    documentType: string,
+  ): TreeDataModel {
+    if (!nodes) {
+      return [];
+    }
+
+    const documentTypeLower = documentType?.toLowerCase() ?? '';
+
+    return nodes.reduce((acc: TreeDataModel, treeItem: TreeItemModel) => {
+      const label = treeItem.node.treeContentBlock.label.toLowerCase();
+
+      if (label && label.includes(documentTypeLower)) {
+        return [...acc, treeItem];
+      }
+
+      const filteredChildren = this.filterNodesByDocumentType(
+        treeItem.children,
+        documentType,
+      );
+      if (filteredChildren.length > 0) {
+        const newTreeItem: TreeItemModel = {
+          node: treeItem.node,
+          children: filteredChildren,
+        };
+        return [...acc, newTreeItem];
+      }
+      return acc;
+    }, []);
+  }
+
+  resetSelectedTree(nodes: TreeDataModel) {
+    nodes?.forEach((n) => {
+      n.node.isSelected = false;
+      this.resetSelectedTree(n.children);
+    });
+  }
+  // Called when a node is clicked in template
+  onSelectNode(event: any, nodeKey: string) {
+    this.selectedTemplates = [];
+    this.resetSelectedTree(this.treeNodes);
+    const wrapperNode = this.findWrapperNode(this.treeNodes, nodeKey);
+    if (!wrapperNode) return;
+
+    this.toggleNodeSelection(wrapperNode, event.target.checked);
+
+    this.treeNodes = [...this.treeNodes]; // new array reference
+    this.cdRef.detectChanges();
+    this.proposalService.updateTemplates(this.selectedTemplates);
+
+  }
+
+  // Recursive search in tree by node key
+  findWrapperNode(nodes: any[], key: string): any {
+    for (const wrapper of nodes) {
+      if (wrapper.node.treeContentBlock.key === key) return wrapper;
+      if (wrapper.children && wrapper.children.length) {
+        const found = this.findWrapperNode(wrapper.children, key);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+
+  // Toggle selection for node and all children
+  toggleNodeSelection(wrapperNode: any, isSelected: boolean) {
+    wrapperNode.node.isSelected = isSelected;
+    wrapperNode.node.isIndeterminate = false;
+    if (wrapperNode.node.selectable && wrapperNode.node.isSelected ) {
+      this.selectedTemplates.push(wrapperNode.node.treeContentBlock.key);
+    }
+
+    if (wrapperNode.children && wrapperNode.children.length) {
+      wrapperNode.children.forEach(child => this.toggleNodeSelection(child, isSelected));
+    }
   }
 }

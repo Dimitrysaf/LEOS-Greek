@@ -38,6 +38,8 @@ public abstract class AbstractMilestoneService implements MilestoneService{
 
     private final StampedLock updateMilestoneLock = new StampedLock();
 
+    private static final String CUSTOM_TEMPLATE = "Custom Template";
+
     public AbstractMilestoneService(LegService legService, CloneContext cloneContext) {
         this.legService = legService;
         this.cloneContext = cloneContext;
@@ -47,6 +49,8 @@ public abstract class AbstractMilestoneService implements MilestoneService{
     protected abstract LegDocument createLegDocument(String proposalId, LegPackage legPackage) throws Exception;
 
     protected abstract LegPackage createLegPackage(String proposalId) throws IOException;
+
+    protected abstract LegPackage createLegPackage(String proposalId, boolean withAnnotations) throws IOException;
 
     @Override
     public LegDocument createMilestone(String proposalId, String milestoneComment) throws Exception {

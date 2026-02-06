@@ -1,0 +1,159 @@
+/*
+ * Copyright 2024 European Union
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ *     https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
+ */
+package eu.europa.ec.leos.repository.entities;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQueries;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "CUSTOM_TEMPLATE_ENTITIES")
+@NamedQueries({
+    @NamedQuery(name = "CustomTemplateEntities.findAll", query = "SELECT c FROM CustomTemplateEntities c"),
+    @NamedQuery(name = "CustomTemplateEntities.findById", query = "SELECT c FROM CustomTemplateEntities c WHERE c.id = :id"),
+    @NamedQuery(name = "CustomTemplateEntities.findByPackageId", query = "SELECT c FROM CustomTemplateEntities c WHERE c.packageId = :packageId"),
+    @NamedQuery(name = "CustomTemplateEntities.findByEntities", query = "SELECT c FROM CustomTemplateEntities c WHERE c.entities = :entities")
+})
+public class CustomTemplateEntities implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @Column(name = "ID", nullable = false, updatable = false, precision = 22, scale = 0)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private BigDecimal id;
+
+    @ManyToOne
+    @JoinColumn(name = "PACKAGE_ID", nullable = false)
+    private Package packageId;
+
+    @Column(name = "ENTITIES", length = 4000)
+    private String entities;
+
+    @Column(name = "AUDIT_C_BY", nullable = false, length = 30)
+    private String auditCBy;
+
+    @Column(name = "AUDIT_C_DATE", nullable = false)
+    private LocalDateTime auditCDate;
+
+    @Column(name = "AUDIT_LAST_M_BY", length = 30)
+    private String auditLastMBy;
+
+    @Column(name = "AUDIT_LAST_M_DATE")
+    private LocalDateTime auditLastMDate;
+
+    public CustomTemplateEntities() {
+    }
+
+    public CustomTemplateEntities(BigDecimal id) {
+        this.id = id;
+    }
+
+    public CustomTemplateEntities(BigDecimal id, Package packageId, String auditCBy, LocalDateTime auditCDate) {
+        this.id = id;
+        this.packageId = packageId;
+        this.auditCBy = auditCBy;
+        this.auditCDate = auditCDate;
+    }
+
+    public BigDecimal getId() {
+        return id;
+    }
+
+    public void setId(BigDecimal id) {
+        this.id = id;
+    }
+
+    public Package getPackageId() {
+        return packageId;
+    }
+
+    public void setPackageId(Package packageId) {
+        this.packageId = packageId;
+    }
+
+    public String getEntities() {
+        return entities;
+    }
+
+    public void setEntities(String entities) {
+        this.entities = entities;
+    }
+
+    public String getAuditCBy() {
+        return auditCBy;
+    }
+
+    public void setAuditCBy(String auditCBy) {
+        this.auditCBy = auditCBy;
+    }
+
+    public LocalDateTime getAuditCDate() {
+        return auditCDate;
+    }
+
+    public void setAuditCDate(LocalDateTime auditCDate) {
+        this.auditCDate = auditCDate;
+    }
+
+    public String getAuditLastMBy() {
+        return auditLastMBy;
+    }
+
+    public void setAuditLastMBy(String auditLastMBy) {
+        this.auditLastMBy = auditLastMBy;
+    }
+
+    public LocalDateTime getAuditLastMDate() {
+        return auditLastMDate;
+    }
+
+    public void setAuditLastMDate(LocalDateTime auditLastMDate) {
+        this.auditLastMDate = auditLastMDate;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (id != null ? id.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (!(object instanceof CustomTemplateEntities)) {
+            return false;
+        }
+        CustomTemplateEntities other = (CustomTemplateEntities) object;
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "eu.europa.ec.leos.repository.entities.CustomTemplateEntities[ id=" + id + " ]";
+    }
+}

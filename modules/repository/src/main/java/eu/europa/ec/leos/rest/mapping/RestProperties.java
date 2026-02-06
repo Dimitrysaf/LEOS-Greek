@@ -34,6 +34,8 @@ public class RestProperties implements RepositoryPropertiesMapper {
         ids.put(DOCUMENT_TITLE, "title");
         ids.put(DOCUMENT_TEMPLATE, "template");
         ids.put(DOCUMENT_LANGUAGE, "language");
+        ids.put(DOCUMENT_AVAILABLE_LANGUAGES, "availableLangs");
+        ids.put(DOCUMENT_IS_PUBLISHED, "isPublished");
         ids.put(METADATA_REF, "ref");
         ids.put(MILESTONE_COMMENTS, "milestoneComments");
         ids.put(INITIAL_CREATED_BY, "initialCreatedBy");
@@ -48,6 +50,7 @@ public class RestProperties implements RepositoryPropertiesMapper {
         ids.put(METADATA_PURPOSE, "docPurpose");
         ids.put(METADATA_DOCTEMPLATE, "docTemplate");
         ids.put(METADATA_EEA_RELEVANCE, "eeaRelevance");
+        ids.put(METADATA_CUSTOM_TEMPLATE_ACT, "customTemplateAct");
         ids.put(METADATA_AUTHENTIC_LANGUAGE, "authenticLanguage");
         ids.put(METADATA_COVERPAGE_TYPE, "coverPageType");
         ids.put(ANNEX_INDEX, "docIndex");

@@ -23,10 +23,12 @@ import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
+import eu.europa.ec.leos.services.api.AnnexApiService;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.SecurityService;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.TemplateService;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
@@ -57,6 +59,8 @@ public class AnnexContextService {
     private final SecurityService securityService;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
     private final PostProcessingDocumentService postProcessingDocumentService;
+    private final XmlContentProcessor xmlContentProcessor;
+    private final AnnexApiService annexApiService;
 
     private LeosPackage leosPackage;
     private VersionType versionType = VersionType.MINOR;
@@ -74,16 +78,21 @@ public class AnnexContextService {
     private String versionComment;
     private String milestoneComment;
     private boolean eeaRelevance;
+    private boolean customTemplateAct;
     private boolean cloneProposal = false;
     private String originRef;
     private String language;
     private String packageRef = null;
     private Map<String, String> mapOldAndNewRefs;
+    private byte[] existingContent = null;
+    private String existingTitle = null;
+    private Integer existingOrder = null;
 
     public AnnexContextService(
             TemplateService templateService,
             AnnexService annexService,
-            ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper, PostProcessingDocumentService postProcessingDocumentService) {
+            ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper,
+            PostProcessingDocumentService postProcessingDocumentService, XmlContentProcessor xmlContentProcessor, AnnexApiService annexApiService) {
         this.templateService = templateService;
         this.annexService = annexService;
         this.proposalService = proposalService;
@@ -91,6 +100,36 @@ public class AnnexContextService {
         this.postProcessingDocumentService = postProcessingDocumentService;
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
+        this.xmlContentProcessor = xmlContentProcessor;
+        this.annexApiService = annexApiService;
+    }
+
+    public void useExistingOrder(Integer order) {
+        Validate.notNull(order, "Order must not be null!");
+        LOG.trace("Using Existing Order...");
+        this.existingOrder = order;
+    }
+
+    public void useExistingTitle(String title) {
+        Validate.notNull(title, "Title must not be null!");
+        LOG.trace("Using Existing Title...");
+        this.existingTitle = title;
+    }
+
+    public void useExistingContent(byte[] sourceContent, boolean cleanTrackChanges) {
+        Validate.notNull(sourceContent, "Existing content must not be null!");
+        LOG.trace("Using Annex source content...");
+
+        if (cleanTrackChanges){
+//            To be replaced by https://code.europa.eu/leos/core/-/issues/2364
+//            this.existingContent = xmlContentProcessor.cleanTrackChanges(sourceContent);
+//            this.existingContent = xmlContentProcessor.cleanSoftActions(this.existingContent);
+//            this.existingContent = annexApiService.renumberAnnexContent(annex, this.existingContent);
+            this.existingContent = sourceContent;
+        }
+        else{
+            this.existingContent = sourceContent;
+        }
     }
 
     public void useTemplate(String template) {
@@ -188,6 +227,11 @@ public class AnnexContextService {
         this.eeaRelevance = eeaRelevance;
     }
 
+    public void useCustomTemplateAct(boolean customTemplateAct) {
+        LOG.trace("Using Proposal customTemplateAct... [customTemplateAct={}]", customTemplateAct);
+        this.customTemplateAct = customTemplateAct;
+    }
+
     public void useCloneProposal(boolean cloneProposal) {
         this.cloneProposal = cloneProposal;
     }
@@ -230,6 +274,8 @@ public class AnnexContextService {
                 .withType(type)
                 .withTemplate(template)
                 .withPackageRef(packageRef)
+                .withRef(originRef)
+                .withCustomTemplateAct(customTemplateAct)
                 .build();
 
         if (cloneProposal) {
@@ -239,6 +285,11 @@ public class AnnexContextService {
         } else {
             annex = annexService.createAnnex(annex.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED),
                     getContent(annex));
+
+            if (existingContent != null) {
+                metadata = metadata.builder().withTitle(existingTitle).withIndex(existingOrder).build();
+                annex = annexService.updateAnnex(annex, existingContent, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.COPY_CONTENT), true);
+            }
         }
 
         annex = securityService.updateCollaborators(annex.getMetadata().get().getRef(), annex.getId(), collaborators, Annex.class);

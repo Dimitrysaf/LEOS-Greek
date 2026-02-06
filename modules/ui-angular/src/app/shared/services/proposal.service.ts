@@ -4,7 +4,7 @@ import { GLOBAL_CONFIG_TOKEN, GlobalConfig, I18nService } from '@eui/core';
 import {
   CatalogItem,
   CreateExplanatoryDocument,
-  CreateProposalBody,
+  CreateProposalBody, CreateProposalCopy,
   CreateProposalResponse,
   Document,
   GetTemplatesResponse,
@@ -83,6 +83,12 @@ export class ProposalService {
         value: [formFilters.searchTerm],
       });
     }
+    if (formFilters.customTemplates) {
+      reqFilters.push({
+        type: 'customTemplates',
+        value: [formFilters.customTemplates],
+      });
+    }
 
     return reqFilters;
   }
@@ -111,6 +117,8 @@ export class ProposalService {
   proposals$: Observable<Document[]>;
   totalResults$: Observable<number>;
   templateCatalog$: Observable<CatalogItem[]>;
+  customTemplateCatalog$: Observable<CatalogItem[]>;
+  documentRef$: Observable<String>;
 
   private defaultLanguage: string;
   private userLang: string;
@@ -118,6 +126,10 @@ export class ProposalService {
   private sortOrderBS = new BehaviorSubject(DEFAULT_SORT_ORDER);
   private limitBS = new BehaviorSubject<number>(DEFAULT_LIMIT);
   private pageBS = new BehaviorSubject<number>(DEFAULT_PAGE);
+  private templatesBs = new BehaviorSubject<string[]>([]);
+  templates$ = this.templatesBs.asObservable();
+  private customTemplateCatalogBS = new BehaviorSubject<CatalogItem[]>([]);
+  private documentRefBS = new BehaviorSubject<String>('');
   private params$: Observable<ListProposalsWithFilterBody>;
   private proposalResponse$: Observable<ListProposalsWithFilterResponse>;
 
@@ -135,6 +147,8 @@ export class ProposalService {
     this.templateCatalog$ = this.http
       .get<GetTemplatesResponse>(`${apiBaseUrl}/secured/getTemplates`)
       .pipe(shareReplay(1));
+    this.customTemplateCatalog$ = this.customTemplateCatalogBS.asObservable();
+    this.documentRef$ = this.documentRefBS.asObservable();
 
     this.filters$ = this.filtersBS.pipe(
       distinctUntilChanged(ProposalService.eqFilters),
@@ -180,6 +194,27 @@ export class ProposalService {
     this.proposals$ = this.proposalResponse$.pipe(pluck('proposals'));
   }
 
+  loadCustomTemplateCatalog(dg) {
+    this.http
+      .get<GetTemplatesResponse>(`${apiBaseUrl}/secured/getCustomTemplates/${dg}`)
+      .subscribe((customTemplatesCatalog) => {
+        this.customTemplateCatalogBS.next(customTemplatesCatalog);
+      });
+  }
+
+  getDocumentRef( packageId :string) : Observable<String> {
+    return this.http
+    .get<String>(`${apiBaseUrl}/secured/document-ref/${packageId}` ,
+      {
+        responseType: 'text' as 'json',
+      }
+    )
+    .pipe(
+        tap((documentRef) => {
+          this.documentRefBS.next(documentRef);
+        })
+      );
+  }
   setSortOrder(order: boolean) {
     this.sortOrderBS.next(order);
   }
@@ -213,6 +248,13 @@ export class ProposalService {
     this.loadingService.setLoading(true);
     return this.http
       .post<CreateProposalResponse>(`${apiBaseUrl}/secured/createPackage`, data)
+      .pipe(finalize(() => this.loadingService.setLoading(false)));
+  }
+
+  copyProposal(data: CreateProposalCopy) {
+    this.loadingService.setLoading(true);
+    return this.http
+      .post<CreateProposalResponse>(`${apiBaseUrl}/secured/proposal/copyAct`, data)
       .pipe(finalize(() => this.loadingService.setLoading(false)));
   }
 
@@ -263,5 +305,9 @@ export class ProposalService {
       `${apiBaseUrl}/secured/proposal/updateDocPurpose/${proposalRef}`,
       requestData,
     );
+  }
+
+  updateTemplates(list: string[]) {
+    this.templatesBs.next(list);
   }
 }

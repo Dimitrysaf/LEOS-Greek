@@ -10,5 +10,7 @@ public enum LeosLegStatus implements Serializable {
     CONTRIBUTION_SENT,
     EXPORTED,
     IN_CONSULTATION,
-    IMPORTED
+    IMPORTED,
+    PUBLISHED,
+    UNPUBLISHED
 }

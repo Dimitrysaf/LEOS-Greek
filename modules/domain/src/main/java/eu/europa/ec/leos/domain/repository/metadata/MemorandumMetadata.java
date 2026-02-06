@@ -4,12 +4,12 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 
 public final class MemorandumMetadata extends LeosMetadata {
 
-    public MemorandumMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String objectId, String docVersion, boolean eeaRelevance) {
-        this(stage, type, purpose, template, language, docTemplate, ref, null, objectId, docVersion, eeaRelevance);
+    public MemorandumMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String objectId, String docVersion, boolean eeaRelevance, boolean customTemplateAct) {
+        this(stage, type, purpose, template, language, docTemplate, ref, null, objectId, docVersion, eeaRelevance, customTemplateAct);
     }
 
-    public MemorandumMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String packageRef, String objectId, String docVersion, boolean eeaRelevance) {
-        super(LeosCategory.MEMORANDUM, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance);
+    public MemorandumMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String packageRef, String objectId, String docVersion, boolean eeaRelevance, boolean customTemplateAct) {
+        super(LeosCategory.MEMORANDUM, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance, customTemplateAct);
     }
     public MemorandumMetadataBuilder builder() {
         return new MemorandumMetadataBuilder(this);
@@ -25,6 +25,7 @@ public final class MemorandumMetadata extends LeosMetadata {
         private String objectId;
         private String docVersion;
         private boolean eeaRelevance;
+        private boolean customTemplateAct;
         private String packageRef;
         private MemorandumMetadataBuilder() {
         }
@@ -39,6 +40,7 @@ public final class MemorandumMetadata extends LeosMetadata {
             this.objectId = metadata.objectId;
             this.docVersion = metadata.docVersion;
             this.eeaRelevance= metadata.eeaRelevance;
+            this.customTemplateAct = metadata.customTemplateAct;
             this.packageRef = metadata.packageRef;
         }
         public MemorandumMetadataBuilder withStage(String stage) {
@@ -81,13 +83,17 @@ public final class MemorandumMetadata extends LeosMetadata {
             this.eeaRelevance = eeaRelevance;
             return this;
         }
+        public MemorandumMetadataBuilder withCustomTemplateAct(boolean customTemplateAct) {
+            this.customTemplateAct = customTemplateAct;
+            return this;
+        }
         public MemorandumMetadataBuilder withPackageRef(String packageRef) {
             this.packageRef = packageRef;
             return this;
         }
 
         public MemorandumMetadata build() {
-            return new MemorandumMetadata(this.stage, this.type, this.purpose, this.template, this.language, this.docTemplate, this.ref, this.packageRef, this.objectId, this.docVersion, this.eeaRelevance);
+            return new MemorandumMetadata(this.stage, this.type, this.purpose, this.template, this.language, this.docTemplate, this.ref, this.packageRef, this.objectId, this.docVersion, this.eeaRelevance, this.customTemplateAct);
         }
     }
 }

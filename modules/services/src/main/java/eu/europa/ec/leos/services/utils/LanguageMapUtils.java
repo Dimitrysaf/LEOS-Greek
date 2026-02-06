@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 public class LanguageMapUtils {
+    public static final String PROPOSAL_MAIN_LANGUAGE = "EN";
 
     public static String getLanguageGroup(Map<String, List<String>> languageMap, String language) {
         return languageMap.entrySet().stream()
@@ -41,5 +42,9 @@ public class LanguageMapUtils {
         Validate.notNull(originalRef, "Original reference should not be null");
         Validate.notNull(language, "Language should not be null");
         return originalRef.substring(0, originalRef.lastIndexOf("-")).concat("-").concat(language.toLowerCase());
+    }
+
+    public static String getLanguageTemplateSuffix(String language) {
+        return language != null && !PROPOSAL_MAIN_LANGUAGE.equalsIgnoreCase(language) ? "-".concat(language.toLowerCase()) : "";
     }
 }

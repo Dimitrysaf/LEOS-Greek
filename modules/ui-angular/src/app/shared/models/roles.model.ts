@@ -1,4 +1,4 @@
-export type ApplicationRole = 'USER' | 'SUPPORT' | 'ADMIN';
+export type ApplicationRole = 'USER' | 'SUPPORT' | 'ADMIN' | 'TEMPLATE_MANAGER';
 
 export type DocumentRole = 'OWNER' | 'CONTRIBUTOR' | 'REVIEWER' | 'AUTHOR' | 'VIEWER';
 
@@ -34,4 +34,5 @@ export type Permission =
   | 'CAN_REJECT_CHANGES'
   | 'CAN_VALIDATE'
   | 'CAN_UPLOAD_XML_DOC'
-  | 'CAN_ARCHIVE_VERSION';
+  | 'CAN_ARCHIVE_VERSION'
+  | 'CAN_CREATE_TEMPLATE';
