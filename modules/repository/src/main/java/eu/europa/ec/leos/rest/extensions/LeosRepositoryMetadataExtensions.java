@@ -36,14 +36,14 @@ class LeosRepositoryMetadataExtensions {
     private static RepositoryPropertiesMapper repositoryPropertiesMapper = new RestProperties();
 
     private static class CommonMetadataProperties {
-        String stage, type, purpose, template, language, docTemplate, ref, callbackAddress, creationOptions, authenticLanguage, coverPageType, actType, docType, procedureType;
-        Boolean eeaRelevance, imported, customTemplateAct;
+        String stage, type, purpose, template, language, availableLangs, docTemplate, ref, callbackAddress, creationOptions, authenticLanguage, coverPageType, actType, docType, procedureType;
+        Boolean eeaRelevance, imported, customTemplateAct, isPublished;
     }
 
     static Option<ProfileMetaData> getProfileMetaDataOption(eu.europa.ec.leos.rest.support.model.LeosDocument leosDocument) {
         return buildMetadata(leosDocument, props -> {
             ProfileMetaData metadata = new ProfileMetaData(props.stage,  props.type, props.purpose, props.template,
-                    props.language, props.docTemplate, props.ref,null, "0.1.0", props.eeaRelevance);
+                    props.language, props.docTemplate, props.ref,null, "0.1.0", props.eeaRelevance, props.customTemplateAct);
             metadata.setCallbackAddress(props.callbackAddress);
             metadata.setImported(props.imported);
             return Option.some(metadata);
@@ -53,7 +53,7 @@ class LeosRepositoryMetadataExtensions {
     static Option<ProposalMetadata> getProposalMetadataOption(LeosDocument leosDocument) {
         return buildMetadata(leosDocument, props -> {
             ProposalMetadata metadata = new ProposalMetadata(props.stage, props.type, props.purpose, props.template,
-                    props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance);
+                    props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance, props.customTemplateAct);
             metadata.setCallbackAddress(props.callbackAddress);
             metadata.setImported(props.imported);
             metadata.setCreationOptions(props.creationOptions);
@@ -61,7 +61,8 @@ class LeosRepositoryMetadataExtensions {
             metadata.setCoverPageType(LeosCoverPageType.caseInsensitiveValueOf(props.coverPageType));
             metadata.setActType(props.actType);
             metadata.setProcedureType(props.procedureType);
-
+            metadata.setAvailableLangs(props.availableLangs);
+            metadata.setIsPublished(props.isPublished);
             return Option.some(metadata);
         });
     }
@@ -69,7 +70,7 @@ class LeosRepositoryMetadataExtensions {
     static Option<StructureMetaData> getStructureMetadataOption(LeosDocument leosDocument) {
         return buildMetadata(leosDocument, props -> {
             StructureMetaData metadata = new StructureMetaData(props.stage, props.type, props.purpose, props.template,
-                    props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance);
+                    props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance, props.customTemplateAct);
             metadata.setCallbackAddress(props.callbackAddress);
             metadata.setImported(props.imported);
             return Option.some(metadata);
@@ -80,7 +81,7 @@ class LeosRepositoryMetadataExtensions {
         String title = getExplanatoryTitle(leosDocument);
         return buildMetadata(leosDocument, props -> {
             ExplanatoryMetadata metadata = new ExplanatoryMetadata(props.stage, props.type, props.purpose, props.template,
-                    props.language, props.docTemplate, props.ref, title, null, "0.1.0", props.eeaRelevance);
+                    props.language, props.docTemplate, props.ref, title, null, "0.1.0", props.eeaRelevance, props.customTemplateAct);
             metadata.setCallbackAddress(props.callbackAddress);
             metadata.setImported(props.imported);
             return Option.some(metadata);
@@ -90,7 +91,7 @@ class LeosRepositoryMetadataExtensions {
     static Option<MemorandumMetadata> getMemorandumMetadataOption(LeosDocument leosDocument) {
         return buildMetadata(leosDocument, props -> {
             MemorandumMetadata metadata = new MemorandumMetadata(props.stage, props.type, props.purpose, props.template,
-                    props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance);
+                    props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance, props.customTemplateAct);
             metadata.setCallbackAddress(props.callbackAddress);
             metadata.setImported(props.imported);
             return Option.some(metadata);
@@ -100,7 +101,7 @@ class LeosRepositoryMetadataExtensions {
     static Option<BillMetadata> getBillMetadataOption(LeosDocument leosDocument) {
         return buildMetadata(leosDocument, props -> {
             BillMetadata metadata = new BillMetadata(props.stage, props.type, props.purpose, props.template,
-                    props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance);
+                    props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance, props.customTemplateAct);
             metadata.setCallbackAddress(props.callbackAddress);
             metadata.setImported(props.imported);
             return Option.some(metadata);
@@ -123,7 +124,7 @@ class LeosRepositoryMetadataExtensions {
 
         return buildMetadata(leosDocument, props -> {
             AnnexMetadata metadata = new AnnexMetadata(props.stage, props.type, props.purpose, props.template,
-                    props.language, props.docTemplate, props.ref, null, index, number, annexTitle, null, "0.1.0", props.eeaRelevance, clonedRef,
+                    props.language, props.docTemplate, props.ref, null, index, number, annexTitle, null, "0.1.0", props.eeaRelevance, props.customTemplateAct, clonedRef,
                     fileFormatRefersTo, fileFormatValue, tlcReferenceNameFormatHref, tlcReferenceNameFormatShowAs, tlcReferenceNameFormatId,
                     foreignAnnexNumber, foreignAnnexSource);
             metadata.setCallbackAddress(props.callbackAddress);
@@ -136,7 +137,7 @@ class LeosRepositoryMetadataExtensions {
         String title = getFinancialStatementTitle(leosDocument);
         return buildMetadata(leosDocument, props -> {
             FinancialStatementMetadata metadata = new FinancialStatementMetadata(props.stage, props.type, props.purpose, props.template,
-                    props.language, props.docTemplate, props.ref, title, null, "0.1.0", props.eeaRelevance);
+                    props.language, props.docTemplate, props.ref, title, null, "0.1.0", props.eeaRelevance, props.customTemplateAct);
             metadata.setCallbackAddress(props.callbackAddress);
             metadata.setImported(props.imported);
             return Option.some(metadata);
@@ -150,6 +151,8 @@ class LeosRepositoryMetadataExtensions {
         props.purpose = getMetadataPurpose(doc);
         props.template = getTemplate(doc);
         props.language = getLanguage(doc);
+        props.availableLangs = getAvailableLangs(doc);
+        props.isPublished = getPublished(doc);
         props.docTemplate = getMetadataDocTemplate(doc);
         props.docType = getMetadataDocType(doc);
         props.actType = getMetadataActType(doc);
@@ -161,6 +164,7 @@ class LeosRepositoryMetadataExtensions {
         props.creationOptions = getMetadataCreationOptions(doc);
         props.authenticLanguage = getMetadataAuthenticLanguage(doc);
         props.coverPageType = getMetadataCoverPageType(doc);
+        props.customTemplateAct = getMetadataCustomTemplateAct(doc);
 
         Option<T> result;
         if (props.language != null && props.docTemplate != null) {
@@ -210,6 +214,11 @@ class LeosRepositoryMetadataExtensions {
 
     private static String getMetadataCoverPageType(LeosDocument leosDocument) {
         return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_COVERPAGE_TYPE));
+    }
+
+    protected static Boolean getMetadataCustomTemplateAct(LeosDocument leosDocument) {
+        Boolean customTemplateAct = (Boolean) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_CUSTOM_TEMPLATE_ACT));
+        return customTemplateAct != null ? customTemplateAct : false;
     }
 
     private static String getMetadataCallbaclAddress(LeosDocument leosDocument) {
@@ -290,6 +299,14 @@ class LeosRepositoryMetadataExtensions {
         return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_LANGUAGE));
     }
 
+    private static String getAvailableLangs(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_AVAILABLE_LANGUAGES));
+    }
+
+    private static boolean getPublished(LeosDocument leosDocument) {
+        Boolean isPublished = (Boolean) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_IS_PUBLISHED));
+        return isPublished != null ? isPublished : false;
+    }
     private static String getFinancialStatementTitle(LeosDocument leosDocument) {
         return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE));
     }

@@ -30,7 +30,19 @@ export type CreateProposalBody = {
   langCode: string;
   docPurpose: string;
   eeaRelevance: boolean;
+  customTemplateAct: boolean;
   key: string;
+};
+
+export type CreateProposalCopy = {
+  templateId: string;
+  templateName: string;
+  langCode: string;
+  docPurpose: string;
+  eeaRelevance: boolean;
+  customTemplateAct: boolean;
+  key: string;
+  proposalRef: string;
 };
 
 export interface CreateExplanatoryDocument {

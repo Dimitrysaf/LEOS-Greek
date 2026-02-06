@@ -98,5 +98,7 @@ public interface DocumentService {
 
     LeosDocument findTemplateByName(String ref) throws RepositoryException;
 
+    String findDocumentRefByPackageIdAndCategory(final String pkgId, final String categoryCode);
+
     boolean setDocumentValidationStatus(List<String> documentIDs) throws RepositoryException;
 }

@@ -26,11 +26,9 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class LanguageGroupServiceTest extends LeosTest {
-    LanguageMapHolder languageMapHolder;
     Map<String, List<String>> languageMap = new HashMap<>();
     @Mock
     private ConfigurationRepository configurationRepository;
@@ -49,8 +47,7 @@ public class LanguageGroupServiceTest extends LeosTest {
         languageMap.put("latin", Arrays.asList("cs", "da", "de", "en", "es", "et", "fi", "fr", "ga", "hr", "hu", "it", "lt", "lv", "mt", "nl", "pl", "pt", "ro", "sk", "sl", "sv"));
         languageMap.put("cyrillic", Arrays.asList("bg"));
 
-        languageMapHolder = Mockito.spy(new LanguageMapHolder());
-        languageGroupService = Mockito.spy(new LanguageGroupService(configurationRepository, languageMapHolder));
+        languageGroupService = Mockito.spy(new LanguageGroupService(configurationRepository, new LanguageMapHolder()));
 
         ConfigDocument configDocument = new ConfigDocument("555", "Config", "login", Instant.now(), "login", Instant.now(),
                 "0.0.1", "", "0.0.1", "", VersionType.MINOR, true,
@@ -64,7 +61,6 @@ public class LanguageGroupServiceTest extends LeosTest {
     @Test
     public void test_getLanguageMap() {
         languageGroupService.getLanguageMap();
-        verify(languageMapHolder).loadLanguageMap(languageMap);
         assertEquals(languageMap, LanguageMapHolder.getLanguageMap());
         assertNotNull(LanguageMapHolder.getLanguageMap());
     }

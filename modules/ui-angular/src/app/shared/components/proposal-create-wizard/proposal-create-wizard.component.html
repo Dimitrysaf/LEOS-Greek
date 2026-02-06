@@ -1,3 +1,38 @@
+<div *ngIf="isCopyChangeAct">
+  <!-- Keep type act -->
+  <form [formGroup]="createForm">
+    <div>
+      <input
+        type="radio"
+        euiInputRadio
+        id="keep-type-true"
+        formControlName="changeCopyAct"
+        name="changeCopyAct"
+        value="true"
+        (change)="handleKeepCopyRadioChange($event)"
+      />
+      <label euiLabel for="keep-type-true" class="eui-u-mt-none">{{
+          ('page.workspace.create-form.document.keep-type-act' ) | translate
+        }}</label>
+    </div>
+    <!-- Change type of act -->
+    <div>
+      <input
+        type="radio"
+        euiInputRadio
+        id="keep-type-false"
+        formControlName="changeCopyAct"
+        name="changeCopyAct"
+        value="false"
+        (change)="handleKeepCopyRadioChange($event)"
+      />
+      <label euiLabel for="keep-type-false" class="eui-u-mt-none">{{
+          ('page.workspace.create-form.document.change-type-act') | translate
+        }}</label>
+    </div>
+  </form>
+</div>
+
 <eui-wizard
   (selectStep)="onSelectStepRemoteNav($event)"
   [activeStepIndex]="currentStepIndex"
@@ -7,13 +42,45 @@
     label="Template selection"
     [isCompleted]="!!(selectedTemplate && selectedLanguage)"
   >
-      <app-proposal-create-template-selector
-        [userRoles]="userRoles"
-        #templateSelector
-        (navigationClick)="onNavigation(+1)"
-        (selectTemplate)="handleSelectTemplate($event)"
-        (selectLanguage)="handleSelectLanguage($event)"
-      ></app-proposal-create-template-selector>
+    <!-- Tabs -->
+    <eui-tabs (tabSelect)="onTabSelected($event)"><!-- *ngIf="isOpened"-->
+      <eui-tab>
+        <eui-tab-label>
+          {{ 'page.workspace.create-tab.base.title' | translate }}
+        </eui-tab-label>
+        <eui-tab-content *ngIf="activeTabIndex === 0">
+          <app-proposal-create-template-selector
+            [documentCollectionName]="documentCollectionName"
+            [proposalTemplate]="proposalTemplate"
+            [isCustomTemplatesCatalog]=false
+            [isCopyChangeAct]="isCopyChangeAct"
+            [userRoles]="userRoles"
+            #templateSelector
+            (navigationClick)="onNavigation(+1)"
+            (selectTemplate)="handleSelectTemplate($event)"
+            (selectLanguage)="handleSelectLanguage($event)"
+          ></app-proposal-create-template-selector>
+        </eui-tab-content>
+      </eui-tab>
+      <eui-tab [isDisabled]=isCopyChangeAct>
+        <eui-tab-label>
+          {{ 'page.workspace.create-tab.custom.title' | translate }}
+        </eui-tab-label>
+        <eui-tab-content *ngIf="activeTabIndex === 1">
+          <app-proposal-create-template-selector
+            [documentCollectionName]="documentCollectionName"
+            [proposalTemplate]="proposalTemplate"
+            [isCustomTemplatesCatalog]=true
+            [isCopyChangeAct]="isCopyChangeAct"
+            [userRoles]="userRoles"
+            #templateSelector
+            (navigationClick)="onNavigation(+1)"
+            (selectTemplate)="handleSelectTemplate($event)"
+            (selectLanguage)="handleSelectLanguage($event)"
+          ></app-proposal-create-template-selector>
+        </eui-tab-content>
+      </eui-tab>
+    </eui-tabs>
   </eui-wizard-step>
   <eui-wizard-step
     label="Document metadata"
@@ -21,6 +88,7 @@
   >
       <app-proposal-create-form
         [createForm]="createForm"
+        [isCustomTemplate]="!!(selectedTemplate?.customName)"
       ></app-proposal-create-form>
   </eui-wizard-step>
 </eui-wizard>

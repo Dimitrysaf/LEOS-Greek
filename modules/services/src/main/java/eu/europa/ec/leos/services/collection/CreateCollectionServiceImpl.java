@@ -1,10 +1,12 @@
 package eu.europa.ec.leos.services.collection;
 
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.inject.Provider;
 
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -109,7 +111,50 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     }
 
     @Override
-    public CreateCollectionResult createCollection(DocumentVO documentVO) throws CreateCollectionException {
+    public CreateCollectionResult createCollection(DocumentVO documentVO, boolean isTranslated) throws CreateCollectionException {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        LOG.debug("Handling create document request event... [category={}]", documentVO.getCategory());
+        if (LeosCategory.PROPOSAL.equals(documentVO.getCategory())) {
+            CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
+            useChildDocumentsRefs(documentVO, idsAndUrlsHolder);
+            CollectionContextService context = proposalContextProvider.get();
+            context.usePurpose(documentVO.getMetadata().getDocPurpose());
+            context.useEeaRelevance(documentVO.getMetadata().isEeaRelevance());
+            context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
+            context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
+            context.useLanguage(documentVO.getMetadata().getLanguage());
+            context.useTranslated(isTranslated);
+            context.useTemplateKey(documentVO.getMetadata().getTemplate());
+            context.useCustomTemplateAct(documentVO.getMetadata().isCustomTemplateAct());
+            context.useOriginRef(documentVO.getRef());
+            context.useIdsAndUrlsHolder(idsAndUrlsHolder);
+            //create proposal
+            Proposal proposal = context.executeCreateProposal();
+
+            String proposalId = proposal.getMetadata().get().getRef();
+            String proposalUrl = urlBuilder.buildProposalViewUrl(proposalId);
+            idsAndUrlsHolder.setProposalId(proposalId);
+            idsAndUrlsHolder.setProposalUrl(proposalUrl);
+            LOG.info("New document of type {} created in {} milliseconds ({} sec)", documentVO.getCategory(),
+                    stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            return new CreateCollectionResult(idsAndUrlsHolder, true, null);
+        }
+        CreateCollectionError error = new CreateCollectionError(0,
+                messageHelper.getMessage("repository.create.proposal.error"));
+        throw new CreateCollectionException(error.getMessage());
+    }
+
+    private static void useChildDocumentsRefs(DocumentVO documentVO, CollectionIdsAndUrlsHolder idsAndUrlsHolder) {
+        DocumentVO memorandum = documentVO.getChildDocument(LeosCategory.MEMORANDUM);
+        DocumentVO bill = documentVO.getChildDocument(LeosCategory.BILL);
+        DocumentVO financialStatement = documentVO.getChildDocument(LeosCategory.STAT_DIGIT_FINANC_LEGIS);
+        idsAndUrlsHolder.setMemorandumId(memorandum != null ? memorandum.getRef() : null);
+        idsAndUrlsHolder.setBillId(bill != null ? bill.getRef() : null);
+        idsAndUrlsHolder.setFinancialStatementId(financialStatement != null ? financialStatement.getRef() : null);
+    }
+
+    @Override
+    public CreateCollectionResult createCollectionFromExisting(DocumentVO documentVO, List<XmlDocument> documents) throws CreateCollectionException {
         Stopwatch stopwatch = Stopwatch.createStarted();
         LOG.debug("Handling create document request event... [category={}]", documentVO.getCategory());
         CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
@@ -117,11 +162,14 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             CollectionContextService context = proposalContextProvider.get();
             context.usePurpose(documentVO.getMetadata().getDocPurpose());
             context.useEeaRelevance(documentVO.getMetadata().isEeaRelevance());
+            context.useCustomTemplateAct(documentVO.getMetadata().isCustomTemplateAct());
+            context.useActionMessage(ContextActionService.COPY_CONTENT, messageHelper.getMessage("operation.copy.content"));
             context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
             context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
             context.useLanguage(documentVO.getMetadata().getLanguage());
             context.useTranslated(false);
             context.useTemplateKey(documentVO.getMetadata().getTemplate());
+            context.useExistingDocuments(documents);
             //create proposal
             Proposal proposal = context.executeCreateProposal();
 

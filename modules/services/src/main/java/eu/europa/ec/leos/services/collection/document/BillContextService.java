@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.collection.document;
 
+import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
@@ -27,10 +28,13 @@ import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
+import eu.europa.ec.leos.services.api.BillApiService;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.importoj.ImportService;
+import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.document.models.AnnexType;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
@@ -79,6 +83,8 @@ public class BillContextService {
     private final CollectionUrlBuilder urlBuilder;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
     private final PostProcessingDocumentService postProcessingDocumentService;
+    private final ImportService importService;
+    private final BillApiService billApiService;
     private XPathCatalog xPathCatalog;
 
     private final Provider<AnnexContextService> annexContextProvider;
@@ -97,6 +103,7 @@ public class BillContextService {
     private String annexRef;
     private boolean cloneProposal;
     private boolean eeaRelevance;
+    private boolean customTemplateAct;
     private String originRef;
     private Map<String, String> mapOldAndNewRefs;
     private HashMap<String, XmlDocument> refsMatching;
@@ -111,6 +118,10 @@ public class BillContextService {
     private boolean translated;
     private String packageRef = null;
     private boolean isAnnexToBeUpdated;
+    private byte[] existingContent = null;
+    private byte[] existingAnnexContent = null;
+    private String existingAnnexTitle = null;
+    private Integer existingAnnexOrder = null;
 
     @Autowired
     BillContextService(BillService billService,
@@ -125,7 +136,9 @@ public class BillContextService {
                        PostProcessingDocumentService postProcessingDocumentService, Provider<AnnexContextService> annexContextProvider,
                        XPathCatalog xPathCatalog,
                        RepositoryPropertiesMapper repositoryPropertiesMapper,
-                       DocumentLanguageContext documentLanguageContext) {
+                       DocumentLanguageContext documentLanguageContext,
+                       ImportService importService,
+                       BillApiService billApiService) {
         this.billService = billService;
         this.packageService = packageService;
         this.proposalService = proposalService;
@@ -142,6 +155,40 @@ public class BillContextService {
         this.xPathCatalog = xPathCatalog;
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
         this.documentLanguageContext = documentLanguageContext;
+        this.importService = importService;
+        this.billApiService = billApiService;
+    }
+
+    public void useExistingContent(byte[] sourceContent, boolean cleanTrackChanges) {
+        Validate.notNull(sourceContent, "Existing content must not be null!");
+        LOG.trace("Using Bill source content...");
+        if (cleanTrackChanges){
+//            To be replaced by https://code.europa.eu/leos/core/-/issues/2364
+//            byte[] cleaned = xmlContentProcessor.cleanTrackChanges(sourceContent);
+//            this.existingContent = xmlContentProcessor.cleanSoftActions(cleaned);
+            this.existingContent = sourceContent;
+        }
+        else {
+            this.existingContent = sourceContent;
+        }
+    }
+
+    public void useExistingAnnexOrder(Integer order) {
+        Validate.notNull(order, "Existing order must not be null!");
+        LOG.trace("Using existing order...");
+        this.existingAnnexOrder = order;
+    }
+
+    public void useExistingAnnexTitle(String title) {
+        Validate.notNull(title, "Existing title must not be null!");
+        LOG.trace("Using existing title...");
+        this.existingAnnexTitle = title;
+    }
+
+    public void useExistingAnnexContent(byte[] sourceAnnexContent) {
+        Validate.notNull(sourceAnnexContent, "Existing content must not be null!");
+        LOG.trace("Using Bill Annex source content...");
+        this.existingAnnexContent = sourceAnnexContent;
     }
 
     public void usePackage(LeosPackage leosPackage) {
@@ -250,6 +297,10 @@ public class BillContextService {
         this.eeaRelevance = eeaRelevance;
     }
 
+    public void useCustomTemplateAct(boolean customTemplateAct) {
+        LOG.trace("Using Proposal customTemplateAct... [CustomTemplateAct={}]", customTemplateAct);
+        this.customTemplateAct = customTemplateAct;
+    }
 
     public void useBillContent(byte[] content) {
         LOG.trace("Using Bill content... [billContent={}]", content);
@@ -290,11 +341,20 @@ public class BillContextService {
                 .builder()
                 .withPurpose(purpose)
                 .withPackageRef(packageRef)
+                .withCustomTemplateAct(customTemplateAct)
                 .withEeaRelevance(eeaRelevance)
+                .withRef(originRef)
                 .build();
 
         Bill billCreated = billService.createBill(bill.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED),
                 getContent(bill));
+
+        if (existingContent != null) {
+            byte[] newContent =  importService.insertSelectedElements(billCreated, existingContent, xmlContentProcessor.extractElementIdsFromXml(existingContent),
+                    billApiService.getToc(billCreated.getMetadata().get().getRef(), TocMode.NOT_SIMPLIFIED, null));
+            billService.updateBill(billCreated, billCreated.getMetadata().get(), newContent, VersionType.MINOR, actionMsgMap.get(ContextActionService.COPY_CONTENT), true);
+        }
+
         return billService.createVersion(billCreated.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
@@ -545,7 +605,7 @@ public class BillContextService {
                 affectedAnnexContext.useAnnexId(annex.getId());
                 affectedAnnexContext.useIndex(index == 1 ? index : index - 1);
                 affectedAnnexContext.useActionMessageMap(actionMsgMap);
-                String affectedAnnexNumber = AnnexNumberGenerator.getAnnexNumber(annexes.size() == 1 ? 0 : index - 1);
+                String affectedAnnexNumber = getAnnexNumber(annexes.size() == 1 ? 0 : index - 1);
                 affectedAnnexContext.useAnnexNumber(affectedAnnexNumber);
                 affectedAnnexContext.executeUpdateAnnexIndex();
                 attachments.put(annex.getName(), affectedAnnexNumber);
@@ -553,6 +613,10 @@ public class BillContextService {
         });
 
         billService.updateAttachments(billByPackagePath, attachments, actionMsgMap.get(ContextActionService.ANNEX_BLOCK_UPDATED));
+    }
+
+    public void executeCreateBillAnnex() {
+        executeCreateBillAnnex(null, null, null, null);
     }
 
     public void executeCreateBillAnnex(AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) {
@@ -565,6 +629,8 @@ public class BillContextService {
         annexContext.usePackage(leosPackage);
         annexContext.usePurpose(purpose);
         annexContext.useTemplate(annexTemplate);
+        annexContext.useLanguage(language);
+        annexContext.useCustomTemplateAct(customTemplateAct);
         // we are using the same template for the annexes for sj-23 and sj19, the only change is this type. that's why we get it form the bill.
         Option<BillMetadata> metadataOption = bill.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), BILL_METADATA_IS_REQUIRED);
@@ -573,7 +639,7 @@ public class BillContextService {
         // We dont need to fetch the content here, the executeUpdateAnnexMetadata gets the latest version of the annex by id
         List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
         int annexIndex = annexes.size() + 1;
-        String annexNumber = AnnexNumberGenerator.getAnnexNumber(annexes.isEmpty() ? annexes.size() : annexIndex);
+        String annexNumber = getAnnexNumber(annexes.isEmpty() ? 0 : annexIndex);
         annexContext.useIndex(annexIndex);
         annexContext.useCollaborators(bill.getCollaborators());
         annexContext.useActionMessageMap(actionMsgMap);
@@ -581,6 +647,12 @@ public class BillContextService {
         annexContext.useCloneProposal(cloneProposal);
         annexContext.useOriginRef(originRef);
         annexContext.usePackageRef(packageRef);
+
+        if (existingAnnexContent != null){
+            annexContext.useExistingOrder(existingAnnexOrder);
+            annexContext.useExistingTitle(existingAnnexTitle);
+            annexContext.useExistingContent(existingAnnexContent, true);
+        }
         Annex annex = annexContext.executeCreateAnnex(annexType, binaryContent, originalFilename, binaryContentSize);
 
         String href = annex.getName();
@@ -596,7 +668,7 @@ public class BillContextService {
             annexContext.useIndex(firstIndex);
             annexContext.useCollaborators(bill.getCollaborators());
             annexContext.useActionMessageMap(actionMsgMap);
-            String firstAnnexNumber = AnnexNumberGenerator.getAnnexNumber(firstIndex);
+            String firstAnnexNumber = getAnnexNumber(firstIndex);
             annexContext.useAnnexNumber(firstAnnexNumber);
             annexContext.executeUpdateAnnexIndex();
             HashMap<String, String> attachmentsElements = new HashMap<>();
@@ -703,7 +775,7 @@ public class BillContextService {
         operatedAnnexContext.useAnnexId(operatedAnnex.getId());
         operatedAnnexContext.useIndex(affectedAnnex.getMetadata().get().getIndex());
         operatedAnnexContext.useActionMessageMap(actionMsgMap);
-        String operatedAnnexNumber = AnnexNumberGenerator.getAnnexNumber(affectedAnnex.getMetadata().get().getIndex());
+        String operatedAnnexNumber = getAnnexNumber(affectedAnnex.getMetadata().get().getIndex());
         operatedAnnexContext.useAnnexNumber(operatedAnnexNumber);
         operatedAnnexContext.executeUpdateAnnexIndex();
 
@@ -711,7 +783,7 @@ public class BillContextService {
         affectedAnnexContext.useAnnexId(affectedAnnex.getId());
         affectedAnnexContext.useIndex(currentIndex);
         affectedAnnexContext.useActionMessageMap(actionMsgMap);
-        String affectedAnnexNumber = AnnexNumberGenerator.getAnnexNumber(currentIndex);
+        String affectedAnnexNumber = getAnnexNumber(currentIndex);
         affectedAnnexContext.useAnnexNumber(affectedAnnexNumber);
         affectedAnnexContext.executeUpdateAnnexIndex();
 
@@ -731,7 +803,7 @@ public class BillContextService {
 
         List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
         Annex operatedAnnex = findAnnexFromIndex(annexes, annexPreviousIndex);
-        String operatedAnnexNumber  = AnnexNumberGenerator.getAnnexNumber(annexNextIndex);
+        String operatedAnnexNumber  = getAnnexNumber(annexNextIndex);
 
         moveDirection = annexPreviousIndex < annexNextIndex ? "UP" : "DOWN";
         HashMap<String, String> attachments = new HashMap<>();
@@ -739,7 +811,7 @@ public class BillContextService {
             // Updating annexes between previous position and next position => Decrease them by one
             for (int i = annexPreviousIndex + 1 ; i <= annexNextIndex; i++) {
                 Annex affectedAnnex = findAnnexFromIndex(annexes, i);
-                String affectedAnnexNewNumber  = AnnexNumberGenerator.getAnnexNumber(i-1);
+                String affectedAnnexNewNumber = getAnnexNumber(i-1);
                 AnnexContextService affectedAnnexContext = annexContextProvider.get();
                 affectedAnnexContext.useAnnexId(affectedAnnex.getId());
                 affectedAnnexContext.useIndex(i-1);
@@ -752,7 +824,7 @@ public class BillContextService {
             // Updating annexes between next position and previous position => Increase them by one
             for (int i = annexPreviousIndex - 1; i >= annexNextIndex; i--) {
                 Annex affectedAnnex = findAnnexFromIndex(annexes, i);
-                String affectedAnnexNewNumber  = AnnexNumberGenerator.getAnnexNumber(i+1);
+                String affectedAnnexNewNumber = getAnnexNumber(i+1);
                 AnnexContextService affectedAnnexContext = annexContextProvider.get();
                 affectedAnnexContext.useAnnexId(affectedAnnex.getId());
                 affectedAnnexContext.useIndex(i+1);
@@ -850,7 +922,7 @@ public class BillContextService {
         AnnexContextService annexContext = annexContextProvider.get();
         List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
         int annexIndex = annexes.size() + 1;
-        String annexNumber = AnnexNumberGenerator.getAnnexNumber(annexIndex);
+        String annexNumber = getAnnexNumber(annexIndex);
         annexContext.useActionMessage(ContextActionService.ANNEX_BLOCK_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
         this.annexDocument.getMetadata().setNumber(annexNumber);
         this.annexDocument.getMetadata().setIndex(String.valueOf(annexIndex));
@@ -870,6 +942,11 @@ public class BillContextService {
     private byte[] getContent(Bill bill) {
         final Content content = bill.getContent().getOrError(() -> "Bill content is required!");
         return content.getSource().getBytes();
+    }
+
+    private String getAnnexNumber(int number) {
+        String annexTitlePrefix = messageHelper.getMessage("document.annex.title.prefix");
+        return AnnexNumberGenerator.getAnnexNumber(annexTitlePrefix, number);
     }
 
     public void useLanguage(String language) {

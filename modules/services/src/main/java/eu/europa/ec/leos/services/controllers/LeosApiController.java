@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.controllers;
 
 import com.google.common.eventbus.EventBus;
 import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
@@ -42,6 +43,7 @@ import eu.europa.ec.leos.services.collection.CreateCollectionService;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.TransformationService;
+import eu.europa.ec.leos.services.dto.request.PublishTemplateRequest;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.models.AnnexType;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
@@ -59,6 +61,7 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.template.CustomTemplateService;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
 import eu.europa.ec.leos.vo.coedition.InfoType;
@@ -96,15 +99,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
@@ -146,6 +141,7 @@ public class LeosApiController {
     private final CoEditionInfoHandler coEditionInfoHandler;
     private ConValidatorService conValidatorService;
     private NotificationService notificationService;
+    private final CustomTemplateService customTemplateService;
 
     private final ConfigService configService;
     private final SecurityContext securityContext;
@@ -169,7 +165,7 @@ public class LeosApiController {
                              ExportPackageService exportPackageService, ApiService apiService, ConfigService configService,
                              SecurityContext securityContext, UserService userService, CoEditionInfoHandler coEditionInfoHandler,
                              DocumentContentService documentContentService, ConValidatorService conValidatorService,
-                             NotificationService notificationService) {
+                             NotificationService notificationService, CustomTemplateService customTemplateService) {
         this.legService = legService;
         this.workspaceService = workspaceService;
         this.tokenService = tokenService;
@@ -185,6 +181,7 @@ public class LeosApiController {
         this.securityContext = securityContext;
         this.userService = userService;
         this.coEditionInfoHandler = coEditionInfoHandler;
+        this.customTemplateService = customTemplateService;
         this.documentContentService = documentContentService;
         this.conValidatorService = conValidatorService;
         this.notificationService = notificationService;
@@ -592,7 +589,7 @@ public class LeosApiController {
     public ResponseEntity<Object> createProposalAnnex(@PathVariable("proposalRef") String proposalRef) {
         try {
             proposalRef = encodeParam(proposalRef);
-            this.apiService.createProposalAnnex(proposalRef, AnnexType.NORMAL, null, null, null);
+            this.apiService.createProposalAnnex(proposalRef, null, AnnexType.NORMAL, null, null, null);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             LOG.error(ERROR_WHILE_CREATING_NEW_BILL_ANNEX + e.getMessage());
@@ -613,7 +610,7 @@ public class LeosApiController {
             throw new CreateAnnexException("page.collection.drafts.annex.max.size.error");
         }
         proposalRef = encodeParam(proposalRef);
-        this.apiService.createProposalAnnex(proposalRef, AnnexType.FOREIGN, foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename(), String.format("%.2f KB", foreignAnnexFile.getSize() / 1024.0));
+        this.apiService.createProposalAnnex(proposalRef, null, AnnexType.FOREIGN, foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename(), String.format("%.2f KB", foreignAnnexFile.getSize() / 1024.0));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -922,6 +919,31 @@ public class LeosApiController {
         catch (Exception e) {
             LOG.error("Error occurred running conValidation - {}", e.getMessage());
             return new ResponseEntity<>("Error occurred running conValidation", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @RequestMapping(value = "/secured/organizations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getOrganizations() {
+        try {
+            List<String> organizations = userService.getAllOrganizations();
+            return new ResponseEntity<>(organizations, HttpStatus.OK);
+        } catch (Exception ex) {
+            LOG.error("Error occurred while retrieving organizations: " + ex.getMessage());
+            return new ResponseEntity<>("Error occurred while retrieving organizations", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/secured/document-ref/{packageId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> findDocumentRefByPackageIdAndCategory(@PathVariable("packageId") String packageId) {
+        try {
+            String documentRef = apiService.findDocumentRefByPackageIdAndCategory(packageId,LeosCategory.PROPOSAL.name());
+            return new ResponseEntity<>(documentRef, HttpStatus.OK);
+        } catch (Exception ex) {
+            LOG.error("Error occurred while find DocumentRef By PackageId and Category: " + ex.getMessage());
+            return new ResponseEntity<>("Error occurred while find DocumentRef By PackageId and Category", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

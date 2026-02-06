@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -35,8 +36,8 @@ public abstract class NumberServiceTest extends LeosTest {
 
     protected final static String PREFIX_SAVE_TOC_CN = "/saveToc/bill/cn/";
 
-    @Mock
-    protected LanguageHelper languageHelper;
+    @Spy
+    protected LanguageHelper languageHelper = new LanguageHelper();
     @Mock
     protected Provider<StructureContext> structureContextProvider;
     @Mock
@@ -50,7 +51,7 @@ public abstract class NumberServiceTest extends LeosTest {
     protected LanguageMapHolder languageMapHolder;
     protected LanguageGroupService languageGroupService;
     @InjectMocks
-    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext(languageHelper));
 
     @InjectMocks
     protected StructureServiceImpl structureServiceImpl;

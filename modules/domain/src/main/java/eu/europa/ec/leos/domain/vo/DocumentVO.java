@@ -122,6 +122,8 @@ public class DocumentVO {
                 this.getMetadata().setTemplateName(metadataB.getTemplate());
                 this.getMetadata().setEeaRelevance(metadataB.getEeaRelevance());
                 this.setRef(metadataB.getRef());
+                this.getMetadata().setCustomTemplateAct(metadataB.isCustomTemplateAct());
+
                 break;
             case ANNEX:
                 AnnexMetadata metadataA = ((Annex) xmlDocument).getMetadata()
@@ -142,6 +144,8 @@ public class DocumentVO {
                 this.getMetadata().setTemplateName(metadataA.getTemplate());
                 this.getMetadata().setEeaRelevance(metadataA.getEeaRelevance());
                 this.setRef(metadataA.getRef());
+                this.getMetadata().setCustomTemplateAct(metadataA.isCustomTemplateAct());
+
                 break;
             case COUNCIL_EXPLANATORY:
                 ExplanatoryMetadata metadataE = ((Explanatory) xmlDocument).getMetadata()
@@ -159,6 +163,7 @@ public class DocumentVO {
                 this.getMetadata().setTemplateName(metadataE.getTemplate());
                 this.getMetadata().setEeaRelevance(metadataE.getEeaRelevance());
                 this.setRef(metadataE.getRef());
+                this.getMetadata().setCustomTemplateAct(metadataE.isCustomTemplateAct());
 
                 break;
             case PROPOSAL:
@@ -177,6 +182,9 @@ public class DocumentVO {
                 this.getMetadata().setAuthenticLang(metadataP.getAuthenticLang());
                 this.getMetadata().setIsAuthenticLang(metadataP.getIsAuthenticLang());
                 this.getMetadata().setCrossReferences(metadataP.getCrossReferences());
+                this.getMetadata().setCustomTemplateAct(metadataP.isCustomTemplateAct());
+                this.getMetadata().setAvailableLangs(metadataP.getAvailableLangs());
+                this.getMetadata().setIsPublished(metadataP.getIsPublished());
 
                 this.setRef(metadataP.getRef());
                 Proposal proposal = ((Proposal) xmlDocument);
@@ -198,6 +206,7 @@ public class DocumentVO {
                 this.getMetadata().setDocTemplate(metadataM.getDocTemplate());
                 this.getMetadata().setTemplateName(metadataM.getTemplate());
                 this.getMetadata().setEeaRelevance(metadataM.getEeaRelevance());
+                this.getMetadata().setCustomTemplateAct(metadataM.isCustomTemplateAct());
                 this.setRef(metadataM.getRef());
 
                 break;

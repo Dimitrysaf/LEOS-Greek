@@ -20,17 +20,17 @@ public final class AnnexMetadata extends LeosMetadata {
 
     public AnnexMetadata(String stage, String type, String purpose, String template, String language, String docTemplate,
                          String ref, int index, String number, String title, String objectId, String docVersion,
-                         boolean eeaRelevance, String clonedRef) {
+                         boolean eeaRelevance, boolean customTemplateAct, String clonedRef) {
         this(stage, type, purpose, template, language, docTemplate, ref, null, index, number, title, objectId, docVersion,
-                eeaRelevance, clonedRef, null, null, null, null, null, null, null);
+                eeaRelevance, customTemplateAct, clonedRef, null, null, null, null, null, null, null);
     }
 
     public AnnexMetadata(String stage, String type, String purpose, String template, String language, String docTemplate,
                          String ref, String packageRef, int index, String number, String title, String objectId, String docVersion,
-                         boolean eeaRelevance, String clonedRef, String fileFormatRefersTo, String fileFormatValue,
+                         boolean eeaRelevance, boolean customTemplateAct, String clonedRef, String fileFormatRefersTo, String fileFormatValue,
                          String tlcReferenceNameFormatHref, String tlcReferenceNameFormatShowAs, String tlcReferenceNameFormatId,
                          String foreignAnnexNumber, String foreignAnnexSource) {
-        super(LeosCategory.ANNEX, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance);
+        super(LeosCategory.ANNEX, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance, customTemplateAct);
         this.index = index;
         this.number = number;
         this.title = title;
@@ -136,6 +136,7 @@ public final class AnnexMetadata extends LeosMetadata {
         private String objectId;
         private String docVersion;
         private boolean eeaRelevance;
+        private boolean customTemplateAct;
         private int index;
         private String number;
         private String title;
@@ -165,6 +166,7 @@ public final class AnnexMetadata extends LeosMetadata {
             this.objectId = metadata.objectId;
             this.docVersion = metadata.docVersion;
             this.eeaRelevance = metadata.eeaRelevance;
+            this.customTemplateAct = metadata.customTemplateAct;
             this.packageRef = metadata.packageRef;
             this.fileFormatRefersTo = metadata.fileFormatRefersTo;
             this.fileFormatValue = metadata.fileFormatValue;
@@ -212,6 +214,10 @@ public final class AnnexMetadata extends LeosMetadata {
         }
         public AnnexMetadataBuilder withEeaRelevance(boolean eeaRelevance) {
             this.eeaRelevance = eeaRelevance;
+            return this;
+        }
+        public AnnexMetadataBuilder withCustomTemplateAct(boolean customTemplateAct) {
+            this.customTemplateAct = customTemplateAct;
             return this;
         }
         public AnnexMetadataBuilder withIndex(int index) {
@@ -265,7 +271,7 @@ public final class AnnexMetadata extends LeosMetadata {
         public AnnexMetadata build() {
             return new AnnexMetadata(this.stage, this.type, this.purpose, this.template, this.language,
                     this.docTemplate, this.ref, this.packageRef, this.index, this.number, this.title, this.objectId, this.docVersion,
-                    this.eeaRelevance, this.clonedRef, this.fileFormatRefersTo, this.fileFormatValue,
+                    this.eeaRelevance, this.customTemplateAct, this.clonedRef, this.fileFormatRefersTo, this.fileFormatValue,
                     this.tlcReferenceNameFormatHref, this.tlcReferenceNameFormatShowAs, this.tlcReferenceNameFormatId,
                     this.foreignAnnexNumber, this.foreignAnnexSource);
         }

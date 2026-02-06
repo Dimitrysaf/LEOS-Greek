@@ -69,7 +69,7 @@ public class LeosMetadataExtensions {
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    private static Map<String, Object> toLeosRepositoryProperties(ProposalMetadata proposalMetadata) {
+    private static Map<String, ? extends Object> toLeosRepositoryProperties(ProposalMetadata proposalMetadata) {
 
         String title = Stream.of(proposalMetadata.getStage(), proposalMetadata.getType(), proposalMetadata.getPurpose())
                 .filter(s -> s != null && !s.isEmpty())
@@ -80,6 +80,7 @@ public class LeosMetadataExtensions {
 
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_AUTHENTIC_LANGUAGE), proposalMetadata.getIsAuthenticLang());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_COVERPAGE_TYPE), proposalMetadata.getCoverPageType());
+
         return leosProperties;
     }
 
@@ -145,6 +146,7 @@ public class LeosMetadataExtensions {
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_PROCEDURE_TYPE), leosMetadata.getProcedureType());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_ACT_TYPE), leosMetadata.getActType());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_EEA_RELEVANCE), leosMetadata.getEeaRelevance());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_CUSTOM_TEMPLATE_ACT), leosMetadata.isCustomTemplateAct());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TEMPLATE), leosMetadata.getTemplate());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_LANGUAGE), leosMetadata.getLanguage());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_DOCTEMPLATE), leosMetadata.getDocTemplate());

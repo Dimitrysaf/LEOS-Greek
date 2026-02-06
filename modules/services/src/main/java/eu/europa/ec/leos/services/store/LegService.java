@@ -37,8 +37,8 @@ public interface LegService {
     
     LegDocument createLegDocument(String proposalId, String jobId, LegPackage legPackage, LeosLegStatus status) throws IOException;
 
-    LegDocument addLegDocument(String packageName, String legFileName, List<String> milestoneComments, byte[] content, LeosLegStatus status,
-            List<String> containedDocuments) throws IOException;
+    void addLegDocument(String packageName, String legFileName, List<String> milestoneComments, byte[] content, LeosLegStatus status,
+            List<String> containedDocuments, boolean isCustomTemplate);
 
     LegDocument updateLegDocument(String id, byte[] content, LeosLegStatus legStatus);
 

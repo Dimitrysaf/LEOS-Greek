@@ -46,4 +46,19 @@ public class LeosMilestoneServiceImpl extends AbstractMilestoneService {
         exportOptions.setWithSuggestions(false);
         return legService.createLegPackage(proposalId, exportOptions);
     }
+
+    @Override
+    protected LegPackage createLegPackage(String proposalId, boolean withAnnotations) throws IOException {
+        if(cloneContext != null && cloneContext.isClonedProposal()) {
+            ExportLeos exportOptions = new ExportLeos(ExportOptions.Output.PDF);
+            exportOptions.setWithSuggestions(false);
+            exportOptions.setWithAnonymization(true);
+            exportOptions.setWithAnnotations(withAnnotations);
+            return legService.createLegPackageForClone(proposalId, exportOptions);
+        }
+        ExportLeos exportOptions = new ExportLeos(ExportOptions.Output.WORD);
+        exportOptions.setWithSuggestions(false);
+        exportOptions.setWithAnnotations(withAnnotations);
+        return legService.createLegPackage(proposalId, exportOptions);
+    }
 }

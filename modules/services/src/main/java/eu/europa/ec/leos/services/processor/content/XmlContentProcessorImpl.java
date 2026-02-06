@@ -13,10 +13,12 @@
  */
 package eu.europa.ec.leos.services.processor.content;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
@@ -37,6 +39,7 @@ import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.util.LeosDomainUtil;
@@ -83,35 +86,7 @@ import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.isSoftAdded;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.isSoftDeletedOrMovedTo;
 import static eu.europa.ec.leos.services.support.LeosXercesUtils.getTitleValue;
-import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
-import static eu.europa.ec.leos.services.support.XercesUtils.addSibling;
-import static eu.europa.ec.leos.services.support.XercesUtils.cleanTrackChangesForElement;
-import static eu.europa.ec.leos.services.support.XercesUtils.createElement;
-import static eu.europa.ec.leos.services.support.XercesUtils.createNodeFromXmlFragment;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValue;
-import static eu.europa.ec.leos.services.support.XercesUtils.getChildContent;
-import static eu.europa.ec.leos.services.support.XercesUtils.getChildren;
-import static eu.europa.ec.leos.services.support.XercesUtils.getContentByTagName;
-import static eu.europa.ec.leos.services.support.XercesUtils.getDescendantsWithAttribute;
-import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
-import static eu.europa.ec.leos.services.support.XercesUtils.getFirstElementByName;
-import static eu.europa.ec.leos.services.support.XercesUtils.getId;
-import static eu.europa.ec.leos.services.support.XercesUtils.getLastChild;
-import static eu.europa.ec.leos.services.support.XercesUtils.getNextSibling;
-import static eu.europa.ec.leos.services.support.XercesUtils.getParentId;
-import static eu.europa.ec.leos.services.support.XercesUtils.hasAttribute;
-import static eu.europa.ec.leos.services.support.XercesUtils.hasAttributeWithValue;
-import static eu.europa.ec.leos.services.support.XercesUtils.importNodeInDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.insertOrUpdateAttributeValue;
-import static eu.europa.ec.leos.services.support.XercesUtils.insertOrUpdateStylingAttribute;
-import static eu.europa.ec.leos.services.support.XercesUtils.is;
-import static eu.europa.ec.leos.services.support.XercesUtils.isFirstSubParagraph;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
-import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
-import static eu.europa.ec.leos.services.support.XercesUtils.removeXmlNSAttributes;
-import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttributeFullStructureNode;
+import static eu.europa.ec.leos.services.support.XercesUtils.*;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml10;
@@ -154,6 +129,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     protected DocumentLanguageContext documentLanguageContext;
     @Autowired
     protected StructureService structureService;
+    @Autowired
+    protected TemplateConfigurationService templateConfigurationService;
 
     @Override
     public byte[] addTrackChangesAttributesForMovedElement(byte[] xmlContent, String elementId, SoftActionType direction, String trackUser, String softUser,
@@ -2594,6 +2571,38 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return buildSplittedElementPair(xmlContent, splitElement);
     }
 
+    @Override
+    public List<String> extractElementIdsFromXml(byte[] xmlContent) {
+        List<String> allIds = new ArrayList<>();
+
+        try {
+            Document document = createXercesDocument(xmlContent);
+
+            String[] elementNames = {"citation", "recitals", "recital", "part", "title", "chapter", "section", "article"};
+
+            for (String elementName : elementNames) {
+                NodeList nodeList = document.getElementsByTagName(elementName);
+                for (int i = 0; i < nodeList.getLength(); i++) {
+
+                    if (elementName.equals("recitals") && i == 0){
+                        continue;
+                    }
+
+                    Node node = nodeList.item(i);
+                    String id = getId(node);
+                    if (id != null && !id.trim().isEmpty()) {
+                        allIds.add(id);
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            LOG.error("Error extracting IDs: {}", e.getMessage(), e);
+        }
+
+        return allIds;
+    }
+
     protected byte[] removeElement(byte[] xmlContent, Element element, String currentOrigin, boolean isTrackChangesEnabled) {
         Document document = createXercesDocument(xmlContent);
         String tagName = element.getElementTagName();
@@ -3221,4 +3230,207 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return new SpecificDocumentInformationDTO(refersToOfDocument, showAs);
     }
 
+    @Override
+    public byte[] alignBaseVersionDocumentIds(XmlDocument sourceXmlDoc, XmlDocument targetXmlDoc) throws IllegalArgumentException {
+        Document sourceDoc = getXercesDocument(sourceXmlDoc);
+        Document targetDoc = getXercesDocument(targetXmlDoc);
+        Node attachmentsNode = removeAttachmentsIfExist(targetDoc);
+        alignAllIds(sourceDoc, targetDoc, sourceXmlDoc.getCategory().toString());
+        reinsertAttachments(targetDoc, attachmentsNode);
+        return nodeToByteArray(targetDoc);
+    }
+
+    private Node removeAttachmentsIfExist(Document document) {
+        Node attachmentsNode = getFirstElementByXPath(document, xPathCatalog.getXPathAttachments());
+        return attachmentsNode != null ? deleteElement(attachmentsNode) : null;
+    }
+
+    private static void reinsertAttachments(Document document, Node attachmentsNode) {
+        if (attachmentsNode != null) {
+            Node billNode = getFirstElementByXPath(document, XPathCatalog.getXPathElement(BILL));
+            addChild(attachmentsNode, billNode);
+        }
+    }
+
+    private void alignAllIds(Node sourceDoc, Node targetDoc, String category) {
+        if (sourceDoc != null && targetDoc != null) {
+            NodeList sourceNodes = getAllNodesWithId(sourceDoc);
+            NodeList targetNodes = getAllNodesWithId(targetDoc);
+
+            if (sourceNodes.getLength() == targetNodes.getLength()) {
+                for (int i = 0; i < sourceNodes.getLength(); i++) {
+                    Node sourceNode = sourceNodes.item(i);
+                    Node targetNode = targetNodes.item(i);
+                    validateNodeAlignment(sourceNode, targetNode, category);
+                    String sourceNodeId = getId(sourceNode);
+                    setId(targetNode, sourceNodeId);
+                }
+            } else {
+                throw new IllegalArgumentException(category + " document not structurally aligned");
+            }
+        } else if (sourceDoc != null || targetDoc != null) {
+            throw new IllegalArgumentException(category + " document not structurally aligned");
+        }
+    }
+
+    private static NodeList getAllNodesWithId(Node node) {
+        return getElementsByXPath(node, String.format(".//*[@%s]", XMLID));
+    }
+
+    private static Document getXercesDocument(XmlDocument xmlDoc) {
+        byte[] xmlContent = xmlDoc.getContent().get().getSource().getBytes();
+        return createXercesDocument(xmlContent);
+    }
+
+    private void validateNodeAlignment(Node sourceNode, Node targetNode, String category) throws IllegalArgumentException {
+        if (!sourceNode.getNodeName().equals(targetNode.getNodeName())
+                || !getFirstAscendantId(sourceNode).equals(getFirstAscendantId(targetNode))
+                || !getPreviousSiblingId(sourceNode).equals(getPreviousSiblingId(targetNode))) {
+            throw new IllegalArgumentException(category + " document not structurally aligned");
+        }
+    }
+
+    @Override
+    public byte[] alignLatestVersionDocument(byte[] sourceXml, byte[] sourceBaseXml, XmlDocument targetXmlDoc) throws IllegalArgumentException {
+        Document sourceBaseDoc = createXercesDocument(sourceBaseXml);
+        Document sourceDoc = createXercesDocument(sourceXml);
+        Document targetDoc = getXercesDocument(targetXmlDoc);
+
+        alignMetaNode(sourceDoc, targetDoc);
+        replaceUnchangedTextContentInSourceDocByTarget(targetDoc, sourceDoc, sourceBaseDoc);
+        alignAlternatives(targetXmlDoc, sourceDoc, sourceBaseDoc);
+        alignAttachmentsIds(sourceDoc, targetDoc);
+
+        return nodeToByteArray(sourceDoc);
+    }
+
+    private static void alignMetaNode(Document sourceDoc, Document targetDoc) {
+        Node sourceMeta = getFirstElementByXPath(sourceDoc, XPathCatalog.getXPathElement(META));
+        Node targetMeta = getFirstElementByXPath(targetDoc, XPathCatalog.getXPathElement(META));
+
+        removeDeletedNodes(targetMeta, sourceMeta);
+        addNewNodes(sourceMeta, targetMeta);
+
+        importAndReplaceNodeInDocument(sourceDoc, sourceMeta, targetMeta);
+    }
+
+    private static void removeDeletedNodes(Node targetRootNode, Node sourceRootNode) {
+        NodeList targetNodes = getAllNodesWithId(targetRootNode);
+        for (int i = 0; i < targetNodes.getLength(); i++) {
+            Node targetNode = targetNodes.item(i);
+            Node nodeInSource = XercesUtils.getElementById(sourceRootNode, getId(targetNode));
+            if (nodeInSource == null) {
+                deleteElement(targetNode);
+            }
+        }
+    }
+
+    private static void addNewNodes(Node sourceRootNode, Node targetRootNode) {
+        NodeList sourceNodes = getAllNodesWithId(sourceRootNode);
+        for (int i = 0; i < sourceNodes.getLength(); i++) {
+            Node sourceNode = sourceNodes.item(i);
+            addNodeToDocumentIfNotExists(targetRootNode, sourceNode);
+        }
+    }
+
+    private static void addNodeToDocumentIfNotExists(Node targetRootNode, Node nodeToBeAdded) {
+        Node nodeInTargetDocument = XercesUtils.getElementById(targetRootNode, getId(nodeToBeAdded));
+        if (nodeInTargetDocument == null) {
+            Node importedNode = importNodeInDocument(targetRootNode.getOwnerDocument(), nodeToBeAdded);
+            Node prevSiblingInTargetDocument = XercesUtils.getElementById(targetRootNode, getPreviousSiblingId(nodeToBeAdded));
+            if (prevSiblingInTargetDocument != null) {
+                addSibling(importedNode, prevSiblingInTargetDocument, false);
+            } else {
+                Node parentNodeInTargetDocument = XercesUtils.getElementById(targetRootNode, getId(nodeToBeAdded.getParentNode()));
+                addFirstChild(importedNode, parentNodeInTargetDocument);
+            }
+        }
+    }
+
+    private static void importAndReplaceNodeInDocument(Document doc, Node originalNode, Node nodeToImport) {
+        if (originalNode != null && nodeToImport != null && !originalNode.isSameNode(nodeToImport)) {
+            Node importedNode = importNodeInDocument(doc, nodeToImport);
+            XercesUtils.replaceElement(importedNode, originalNode);
+        }
+    }
+
+    private static void replaceUnchangedTextContentInSourceDocByTarget(Document targetDoc, Document sourceDoc, Document sourceBaseDoc) {
+        NodeList sourceNodes = getAllNodesWithId(sourceDoc);
+        for (int i = 0; i < sourceNodes.getLength(); i++) {
+            Node sourceNode = sourceNodes.item(i);
+            Node targetNode = XercesUtils.getElementById(targetDoc, getId(sourceNode));
+            if (targetNode != null && anyHasTextChildren(sourceNode, targetNode) && unchangedTextContentInSource(sourceNode, sourceBaseDoc)) {
+                Node alignedNode = alignChildNodes(sourceNode, targetNode, targetDoc);
+                importAndReplaceNodeInDocument(sourceDoc, sourceNode, alignedNode);
+            }
+        }
+    }
+
+    private static boolean anyHasTextChildren(Node... nodes) {
+        return Arrays.stream(nodes).anyMatch(node -> !getTextChildren(node).isEmpty());
+    }
+
+    private static boolean unchangedTextContentInSource(Node sourceNode, Document sourceBaseDoc) {
+        Node sourceBaseNode = XercesUtils.getElementById(sourceBaseDoc, getId(sourceNode));
+        List<Node> sourceTextNodes = getTextChildren(sourceNode);
+        return sourceBaseNode != null && getTextChildren(sourceBaseNode).stream().map(Node::getTextContent).collect(Collectors.joining())
+                .equals(sourceTextNodes.stream().map(Node::getTextContent).collect(Collectors.joining()));
+    }
+
+    private static Node alignChildNodes(Node sourceNode, Node targetNode, Document targetDoc) {
+        List<Node> sourceChildNodesWithId = getNonStylingChildren(sourceNode);
+        if (sourceChildNodesWithId.stream().allMatch((Node sourceChildNodeWithId) -> {
+            Node targetChildNodeWithId = XercesUtils.getElementById(targetNode, getId(sourceChildNodeWithId));
+            if (targetChildNodeWithId != null) {
+                importAndReplaceNodeInDocument(targetDoc, targetChildNodeWithId, sourceChildNodeWithId);
+                return true;
+            }
+            // if there's no corresponding node in target document, we need to take the whole source node and overwrite the target node
+            return false;
+        })) {
+            removeDeletedNodes(targetNode, sourceNode);
+            return targetNode;
+        }
+        return sourceNode;
+    }
+
+    private void alignAlternatives(XmlDocument targetXmlDoc, Document sourceDoc, Document sourceBaseDoc) {
+        List<Node> sourceAlternativeNodes = XercesUtils.getDescendantsWithAttribute(sourceDoc, LEOS_ALTERNATIVE_ATTR);
+        List<Node> sourceBaseAlternativeNodes = XercesUtils.getDescendantsWithAttribute(sourceBaseDoc, LEOS_ALTERNATIVE_ATTR);
+
+        sourceAlternativeNodes.forEach(sourceAlternativeNode -> {
+            Node sourceBaseAlternativeNode = sourceBaseAlternativeNodes.stream()
+                    .filter(sourceBaseNode -> StringUtils.equals(getId(sourceAlternativeNode), getId(sourceBaseNode))).findFirst().orElse(null);
+            String selectedOption = XercesUtils.getAttributeValue(sourceAlternativeNode, LEOS_SELECTED_OPTION_ATTR);
+            if (!StringUtils.equals(selectedOption, XercesUtils.getAttributeValue(sourceBaseAlternativeNode, LEOS_SELECTED_OPTION_ATTR))) {
+                replaceAlternativeNodeWithContentFromLanguageTemplateConfig(targetXmlDoc, sourceAlternativeNode, selectedOption);
+            }
+        });
+    }
+
+    private void replaceAlternativeNodeWithContentFromLanguageTemplateConfig(XmlDocument targetXmlDoc, Node sourceAlternativeNode, String selectedOption) {
+        LeosMetadata targetDocMetadata = targetXmlDoc.getMetadata().get();
+        documentLanguageContext.setDocumentLanguage(targetDocMetadata.getLanguage());
+        JsonNode targetAlternatives = templateConfigurationService.getElementJsonFromTemplateConfiguration(targetDocMetadata.getDocTemplate(), "alternatives");
+        String optionList = XercesUtils.getAttributeValue(sourceAlternativeNode, LEOS_OPTION_LIST_ATTR);
+        targetAlternatives.elements().forEachRemaining(alternativesList -> {
+            if (StringUtils.equals(optionList, alternativesList.get("name").asText())) {
+                alternativesList.get("list").elements().forEachRemaining(alternativeItem -> {
+                    if (StringUtils.equals(selectedOption, alternativeItem.get("index").asText())) {
+                        String xmlFragment = alternativeItem.get("content").asText();
+                        Node targetAlternativeNode = createNodeFromXmlFragment(sourceAlternativeNode.getOwnerDocument(),
+                                xmlFragment.getBytes(StandardCharsets.UTF_8), false);
+                        XercesUtils.replaceElement(targetAlternativeNode, sourceAlternativeNode);
+                    }
+                });
+            }
+        });
+    }
+
+    private void alignAttachmentsIds(Document sourceDoc, Document targetDoc) {
+        Node sourceAttachmentsNode = getFirstElementByXPath(sourceDoc, xPathCatalog.getXPathAttachments());
+        Node targetAttachmentsNode = getFirstElementByXPath(targetDoc, xPathCatalog.getXPathAttachments());
+        alignAllIds(sourceAttachmentsNode, targetAttachmentsNode, LeosCategory.BILL.toString());
+        importAndReplaceNodeInDocument(sourceDoc, sourceAttachmentsNode, targetAttachmentsNode);
+    }
 }

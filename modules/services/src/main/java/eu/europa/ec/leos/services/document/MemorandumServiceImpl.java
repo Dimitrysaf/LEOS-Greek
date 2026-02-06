@@ -49,6 +49,7 @@ import java.util.concurrent.TimeUnit;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
+import static eu.europa.ec.leos.services.utils.LanguageMapUtils.getTranslatedProposalReference;
 
 public abstract class MemorandumServiceImpl implements MemorandumService {
 
@@ -248,6 +249,7 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
         LOG.trace("Finding Memorandum by ref... [ref=" + ref + "]");
         Memorandum memorandum = memorandumRepository.findMemorandumByRef(ref);
         trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(memorandum.getMetadata().get().getLanguage());
         return memorandum;
     }
 
@@ -306,7 +308,10 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
     @Override
     public Memorandum createMemorandum(String templateId, String path, MemorandumMetadata metadata, String actionMsg, byte[] content) {
         LOG.trace("Creating Memorandum... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
-        final String ref = generateMemorandumReference(content, metadata.getLanguage());
+        final String language = metadata.getLanguage();
+        final String ref = metadata.getRef() != null ?
+                getTranslatedProposalReference(metadata.getRef(), language) :
+                generateMemorandumReference(content, language);
         metadata = metadata
                 .builder()
                 .withRef(ref)

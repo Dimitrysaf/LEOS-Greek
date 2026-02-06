@@ -47,6 +47,28 @@
             </eui-dropdown-content>
           </eui-dropdown>
         </eui-toolbar-item>
+        <eui-toolbar-item >
+          <eui-dropdown [appMoveToLeftSideToolbar]="'eui-toolbar__left'">
+            <button euiButton euiPrimary *ngIf="showAdminOption">
+            <span euiLabel>{{
+                'page.workspace.filter.filters.roles.administration' | translate
+              }}</span>
+              <eui-icon-svg icon="eui-chevron-down"></eui-icon-svg>
+            </button>
+            <eui-dropdown-content class="eui-b-p-l">
+              <li
+                euiDropdownItem
+                *ngFor="let item of listAdministrationButtoms"
+                (click)="onAdminListItemClicked(item)"
+              >
+                <a *ngIf="item?.id <= 2">{{ item.label | translate }}</a>
+                <a style="font-weight: bolder" *ngIf="item?.id > 2">{{
+                    item.label | translate
+                  }}</a>
+              </li>
+            </eui-dropdown-content>
+          </eui-dropdown>
+        </eui-toolbar-item>
         <eui-toolbar-item *ngIf="polarisLogoImgUrl">
             <img class="eui-toolbar-logo-polaris" [src]="polarisLogoImgUrl" alt="Logo"/>
         </eui-toolbar-item>

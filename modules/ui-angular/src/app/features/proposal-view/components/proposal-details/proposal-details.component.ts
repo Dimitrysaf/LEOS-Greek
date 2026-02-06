@@ -31,6 +31,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   @ViewChild('resetConfirmation') resetConfirmation: EuiDialogComponent;
   leosConfig: LeosConfig;
   permissions: Permission[];
+  templateId: string;
   eeaRelevance: boolean;
   isAuthenticLang: boolean;
   isVerticalShift: boolean;
@@ -257,10 +258,6 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     this.proposalRefTypeList = this.proposalDetails.proposalRefTypes;
     this.adoptionPlaces = this.proposalDetails.adoptionPlaces;
     this.proposalLanguage = this.proposal.metadata.language;
-    this.languages = [];
-    for (const lang of this.proposalDetails.languages) {
-      this.languages.push(lang.toUpperCase());
-    }
     this.institutionalRefActingEntities = this.proposalDetails.institionalRefsTypes;
     this.interInstitutionalRefTypes = this.proposalDetails.interInstitionalRefsTypes;
     this.specialMentions = this.proposalDetails.specialMentions;
@@ -273,6 +270,8 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.selectedLanguages[lang] = false;
     });
 
+    const index = this.proposal.metadata.template.lastIndexOf('_');
+    this.templateId = index > -1 ? this.proposal.metadata.template.substring(0, index) : this.proposal.metadata.template;
     this.eeaRelevance = this.proposal.metadata.eeaRelevance;
     this.packageTitle = this.proposal.metadata.packageTitle;
     this.authenticLang = cloneDeep(this.proposal.metadata.authenticLang);
@@ -529,6 +528,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       .subscribe((config) => {
         this.leosConfig = config;
       });
+    this.languages = this.leosConfig.languages.map(language => language.toUpperCase());
     this.greffeUser = this.leosConfig.user.greffeUser;
     this.isAutonomousAct = this.proposal.metadata.documentCollectionName == 'ACT_AUTO_COM';
     this.detailsService.proposalDetailsRefreshedBS.subscribe((proposal) => {

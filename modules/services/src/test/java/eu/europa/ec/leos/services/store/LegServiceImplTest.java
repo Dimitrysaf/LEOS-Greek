@@ -149,8 +149,8 @@ class LegServiceImplTest {
     private ExplanatoryService explanatoryService;
     @Mock
     private ProposalRepository proposalRepository;
-    @Mock
-    private LanguageHelper languageHelper;
+    @InjectMocks
+    private LanguageHelper languageHelper = Mockito.spy(new LanguageHelper());
     @Mock
     private ReferenceLabelService referenceLabelService;
     @Mock
@@ -207,7 +207,7 @@ class LegServiceImplTest {
             new XMLContentComparatorServiceImpl(messageHelper, textComparator, securityContext, xmlContentProcessor, cloneContext));
 
     @InjectMocks
-    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext(languageHelper));
 
     @InjectMocks
     private ProposalService proposalService = spy(
@@ -629,7 +629,7 @@ class LegServiceImplTest {
         byte[] proposalXmlContent = TestUtils.getFileContent(STORE_DIR, "proposal.xml");
         Source proposalSource = new SourceImpl(new ByteArrayInputStream(proposalXmlContent));
         Content proposalContent = new ContentImpl("PR-00.xml", "mime type", proposalXmlContent.length, proposalSource);
-        ProposalMetadata proposalMetadata = new ProposalMetadata("", "REGULATION for EC", "", "PR-00.xml", "EN", "", "proposal-id", "", "0.1.0", false);
+        ProposalMetadata proposalMetadata = new ProposalMetadata("", "REGULATION for EC", "", "PR-00.xml", "EN", "", "proposal-id", "", "0.1.0", false, false);
         Proposal leosProposal = new Proposal(proposalId, "Proposal", "login", Instant.now(), "login", Instant.now(), "", "", "", "", VersionType.MAJOR, true,
                 "REGULATION for EC", collaborators,
                 Arrays.asList(""), "login", Instant.now(), Option.some(proposalContent), Option.some(proposalMetadata), true, "", "", "", null,
@@ -642,7 +642,7 @@ class LegServiceImplTest {
         Source source = new SourceImpl(new ByteArrayInputStream(xmlContent));
         Content content = new ContentImpl("CE-001.xml", "mime type", xmlContent.length, source);
         ExplanatoryMetadata explanatoryMetadata = new ExplanatoryMetadata("", "REGULATION", "", "CE-001", "EN", "CE-001",
-                "explanatory_cl43ykqyd0006k485zxvf53na.xml", "Working Party cover page", "555", "0.1.0", false);
+                "explanatory_cl43ykqyd0006k485zxvf53na.xml", "Working Party cover page", "555", "0.1.0", false, false);
         return new Explanatory("555", "explanatory_cl43ykqyd0006k485zxvf53na.xml", "test", Instant.now(), "test", Instant.now(), "", "", "", "",
                 VersionType.MINOR, false, "", collaborators, Arrays.asList(""),
                 Option.some(content), null, false, Option.some(explanatoryMetadata), false);
@@ -653,7 +653,7 @@ class LegServiceImplTest {
         Source source = new SourceImpl(new ByteArrayInputStream(xmlContent));
         Content content = new ContentImpl("BL-023.xml", "mime type", xmlContent.length, source);
         BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN", "BL-023",
-                "bill_ckn97778i000zwn56esq96qet.xml", "", "0.1.0", false);
+                "bill_ckn97778i000zwn56esq96qet.xml", "", "0.1.0", false, false);
         return new Bill("555", "bill_ckn97778i000zwn56esq96qet.xml", "login", Instant.now(), "login", Instant.now(),
                 "", "", "Version 1.0.0", "", VersionType.MAJOR,
                 true, "title", collaborators, Arrays.asList(""), "", "",
@@ -665,7 +665,7 @@ class LegServiceImplTest {
         Source source = new SourceImpl(new ByteArrayInputStream(xmlContent));
         Content content = new ContentImpl("EM-LP01.xml", "mime type", xmlContent.length, source);
         MemorandumMetadata metadata = new MemorandumMetadata("555", "REGULATION", "", "EM-LP01", "EN", "EM-LP01",
-                "memorandum_ckn9773is000ywn567lsopipc.xml", "", "0.1.0", false);
+                "memorandum_ckn9773is000ywn567lsopipc.xml", "", "0.1.0", false, false);
         return new Memorandum("555", "memorandum_ckn9773is000ywn567lsopipc.xml", "login", Instant.now(), "login", Instant.now(),
                 "", "", "Version 1.0.0", "", VersionType.MAJOR, true, "title",
                 collaborators, Arrays.asList(""), Option.some(content), "", null, Option.some(metadata), false, false);
@@ -676,7 +676,7 @@ class LegServiceImplTest {
         Source source = new SourceImpl(new ByteArrayInputStream(xmlContent));
         Content content = new ContentImpl("AN-000.xml", "mime type", xmlContent.length, source);
         AnnexMetadata annexMetadata = new AnnexMetadata("", "REGULATION", "", "AN-000.xml", "EN", "AN-000.xml",
-                "annex_cl3yjnpcz0007k485t5p989mq.xml", 1, "Annex 1", "title", "", "0.0.1", false, STORE_DIR);
+                "annex_cl3yjnpcz0007k485t5p989mq.xml", 1, "Annex 1", "title", "", "0.0.1", false, false, STORE_DIR);
         return new Annex("555", "annex_cl3yjnpcz0007k485t5p989mq.xml", "login", Instant.now(), "login", Instant.now(),
                 "0.1.0", "", "0.1.0", "", VersionType.MINOR, true,
                 "title", Collections.emptyList(), Arrays.asList(""), "", false, "", "",

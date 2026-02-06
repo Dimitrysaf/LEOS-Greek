@@ -37,22 +37,40 @@
             </select>
         </div>
 
-        <button
-                euiButton
-                euiIconButton
-                [title]="isExpanded ? 'Collapse All' : 'Expand All'"
-                (click)="toggleExpanded()"
-                [attr.aria-label]="isExpanded ? 'Collapse All' : 'Expand All'"
-        >
+        <div class="eui-u-mr-l">
+          <button
+            euiButton
+            euiIconButton
+            [title]="isExpanded ? 'Collapse All' : 'Expand All'"
+            (click)="toggleExpanded()"
+            [attr.aria-label]="isExpanded ? 'Collapse All' : 'Expand All'"
+          >
             <eui-icon-svg
-                    [icon]="isExpanded ? 'contract' : 'expand'"
-                    set="outline"
-                    size="l"
+              [icon]="isExpanded ? 'contract' : 'expand'"
+              set="outline"
+              size="l"
             ></eui-icon-svg>
-        </button>
+          </button>
+        </div>
+
+      <div class="eui-u-mr-l" style="width: 244px" *ngIf="isCustomTemplatesCatalog">
+        <select
+          euiSelect
+          name="dg"
+          [(ngModel)]="selectedDg"
+          (ngModelChange)="onDgChange($event)"
+          title="DG"
+          aria-label="DG"
+          [disabled]="dgList?.length === 1"
+        >
+          <option *ngFor="let dg of dgList" [value]="dg">
+            {{ dg }}
+          </option>
+        </select>
+      </div>
     </div>
 
-    <eui-tree
+    <eui-tree  *ngIf="treeNodes.length > 0"
             isSingleSelect
             (selectionChange)="onNodeClick($event)"
             [nodeTemplateRef]="nodeTemplateCustom2"
@@ -60,6 +78,22 @@
             #treeComponent
     >
     </eui-tree>
+</div>
+
+<div *ngIf="treeNodes.length === 0 && !isCustomTemplatesCatalog">
+  <p>
+    {{
+      'page.workspace.create-selector.no-template' | translate
+    }}
+  </p>
+</div>
+
+<div *ngIf="treeNodes.length === 0 && isCustomTemplatesCatalog">
+  <p>
+    {{
+      'page.workspace.create-selector.no-custom-template' | translate
+    }}
+  </p>
 </div>
 
 

@@ -6,7 +6,7 @@ export interface Milestone {
   createdDate: string;
   documentTitle: string;
   legDocumentName: string;
-  versionedReference: string;
+  versionLabel: string;
   legFileId: string;
   proposalRef: string;
   legFileStatus: MilestoneStatus | string;
@@ -40,4 +40,6 @@ export enum MilestoneStatus {
   Error = 'FILE_ERROR',
   ReadyToMerge = 'Ready to merge',
   RevisionSent = 'Sent for contribution',
+  CustomTemplatePublished = 'PUBLISHED',
+  CustomTemplateUnPublished = 'UNPUBLISHED'
 }

@@ -17,9 +17,9 @@ package eu.europa.ec.leos.services.api;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
-import eu.europa.ec.leos.integration.ConValidatorService;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.rest.support.model.Package;
@@ -51,6 +51,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.structure.details.ProposalDetailsService;
+import eu.europa.ec.leos.services.template.CustomTemplateService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
@@ -63,7 +64,6 @@ import org.springframework.stereotype.Service;
 import jakarta.inject.Provider;
 import java.io.File;
 import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 
 @Service
@@ -71,7 +71,8 @@ import java.util.Properties;
 public class MandateApiServiceImpl extends ApiServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(MandateApiServiceImpl.class);
 
-    public MandateApiServiceImpl(TemplateService templateService,
+    public MandateApiServiceImpl(CustomTemplateService customTemplateService,
+                                 TemplateService templateService,
                                  WorkspaceService workspaceService,
                                  UserService userService, CreateCollectionService createCollectionService,
                                  ProposalService proposalService, SecurityContext securityContext,
@@ -88,16 +89,18 @@ public class MandateApiServiceImpl extends ApiServiceImpl {
                                  ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
                                  NotificationService notificationService, LegService legService, UserHelper userHelper,
                                  LeosRepository leosRepository, TrackChangesContext trackChangesContext,
-                                 DocumentViewService documentViewService, ConValidatorService conValidatorService,
-                                 GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
-                                 ProposalDetailsService proposalDetailsService, TemplateConfigurationService templateConfigurationService,
-                                 PackageRepository packageRepository) {
-        super(templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap, exportService,
-                collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService, xmlContentProcessor,
-                archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService, validationService,
-                applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository, trackChangesContext,
-                documentViewService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService, templateConfigurationService,
-                packageRepository);
+                                 DocumentViewService documentViewService,
+                                 GenericDocumentTocApiService genericDocumentTocApiService,
+                                 CoverPageApiService coverPageApiService,
+                                 ProposalDetailsService proposalDetailsService,
+                                 TemplateConfigurationService templateConfigurationService,
+                                 LanguageHelper languageHelper, PackageRepository packageRepository) {
+        super(customTemplateService, templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap,
+                exportService, collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService,
+                xmlContentProcessor, archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService,
+                validationService, applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository,
+                trackChangesContext, documentViewService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService,
+                templateConfigurationService, languageHelper, packageRepository);
     }
 
     @Override

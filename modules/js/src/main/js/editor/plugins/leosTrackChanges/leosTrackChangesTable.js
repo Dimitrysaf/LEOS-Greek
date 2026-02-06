@@ -450,14 +450,20 @@ define(function leosTrackChangesTableModule(require) {
                         if (key === 13 && !(keystroke === 13 || keystroke === CKEDITOR.SHIFT + 13)) {
                             return;
                         }
+                        if (editor.LEOS.isTrackChangesEnabled
+                                || firstCell?.getAscendant('table')?.getAttribute("leos:predefinedtable") === 'true'
+                                || editor.LEOS.type === 'stat_digit_financ_legis') {
+                            var deleteTcStyle = new CKEDITOR.style({
+                                element: core.TRACKCHANGES_ELEMENT,
+                                attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION)
+                            });
 
-                        var deleteTcStyle = new CKEDITOR.style({
-                            element: core.TRACKCHANGES_ELEMENT,
-                            attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION)
-                        });
-
-                        style.apply(editor, deleteTcStyle);
-
+                            style.apply(editor, deleteTcStyle);
+                        }else{
+                            for (i = 0; i < ranges.length; i++) {
+                                clearCellInRange(ranges[i]);
+                            }
+                        }
                         /*for (i = 0; i < ranges.length; i++) {
                             clearCellInRange(ranges[i]);
                         }*/
