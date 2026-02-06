@@ -1,6 +1,8 @@
 package eu.europa.ec.leos.services.collection;
 
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
+
+import java.util.List;
 import java.util.Map;
 
 public class CreateCollectionResult {
@@ -18,6 +20,7 @@ public class CreateCollectionResult {
     private Map<String, String> annexIdUrl;
     private String packageName;
     private Map<String, String> docCloneAndOriginIdMap;
+    private List<String> notFoundLanguages;
     private boolean collectionCreated;
     private CreateCollectionError error;
 
@@ -95,5 +98,13 @@ public class CreateCollectionResult {
 
     public CreateCollectionError getError() {
         return error;
+    }
+
+    public List<String> getNotFoundLanguages() {
+        return notFoundLanguages;
+    }
+
+    public void setNotFoundLanguages(List<String> notFoundLanguages) {
+        this.notFoundLanguages = notFoundLanguages;
     }
 }

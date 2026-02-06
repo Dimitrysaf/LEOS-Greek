@@ -49,7 +49,8 @@ public class BillServiceMandateImpl extends BillServiceImpl {
                            XmlDocumentService xmlDocumentService, XmlNodeConfigProcessor xmlNodeConfigProcessor, AttachmentProcessor attachmentProcessor,
                            ValidationService validationService, DocumentVOProvider documentVOProvider, NumberService numberService,
                            MessageHelper messageHelper, TableOfContentProcessor tableOfContentProcessor,
-                           XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext, DocumentLanguageContext documentLanguageContext, ProposalService proposalService) {
+                           XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext, DocumentLanguageContext documentLanguageContext,
+                           ProposalService proposalService) {
         super(billRepository, packageRepository, xmlNodeProcessor, xmlContentProcessor, xmlDocumentService, xmlNodeConfigProcessor,
                 attachmentProcessor, validationService, documentVOProvider, numberService, messageHelper, tableOfContentProcessor,
                 xPathCatalog, trackChangesContext, documentLanguageContext, proposalService);

@@ -1,4 +1,4 @@
-<ng-container *ngIf="permissions.includes('CAN_CREATE_MILESTONE')">
+<ng-container *ngIf="permissions.includes('CAN_CREATE_MILESTONE') && (permissions.includes('CAN_CREATE_TEMPLATE') || !proposal.metadata?.customTemplateAct)">
   <div class="eui-u-flex eui-u-flex-justify-content-end">
     <button
       class="eui-u-mb-m eui-u-mt-2xs"
@@ -97,12 +97,33 @@
             </button>
             <ng-container *appShowOnInstance="['ec', 'os']">
               <button
+                [disabled]="row.legFileStatus == MilestoneStatus.CustomTemplatePublished || row.legFileStatus == MilestoneStatus.InPreparation"
+                euiDropdownItem
+                (click)="openMilestonePublishToDgTemplateCatalog(row)"
+                *ngIf="row.title === customTemplateText && proposal.metadata?.customTemplateAct && !proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_CREATE_TEMPLATE')"
+              >
+                {{
+                  'page.collection.milestones.actions.publish-to-dg-template-catalog'
+                    | translate
+                }}
+              </button>
+              <button
                 euiDropdownItem
                 (click)="openMilestoneSendCopyForContributionDialog(row)"
-                *ngIf="!proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_UPDATE')"
+                *ngIf="row.title !== customTemplateText && !proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_UPDATE')"
               >
                 {{
                   'page.collection.milestones.actions.send-copy-for-contribution'
+                    | translate
+                }}
+              </button>
+              <button
+                euiDropdownItem
+                (click)="openLinguisticVersionsDialog(row)"
+                *ngIf="row.versionLabel.startsWith(lastMilestoneVersion) && proposal.metadata?.customTemplateAct && isAutonomousAct && !proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_CREATE_TEMPLATE') && linguisticVersionsEnabled"
+              >
+                {{
+                  'page.collection.milestones.actions.generate-linguistic-versions'
                     | translate
                 }}
               </button>
@@ -201,6 +222,8 @@
   (closed)="onAddMilestoneDialogClosed()"
   *ngIf="addMilestoneDialogVisible"
   [isCloneProposal]="proposal.cloneProposalMetadataVO?.clonedProposal"
+  [isCustomTemplate]="proposal.metadata?.customTemplateAct"
+  [hasLinguisticVersions]="translatedLanguages?.length > 0"
 ></app-add-milestone-dialog>
 
 <app-proposal-milestone-view
@@ -218,6 +241,24 @@
   (closed)="onMilestoneSendCopyForContributionDialogClosed()"
   *ngIf="sendCopyDialogVisible && milestoneViewData"
 ></app-proposal-milestone-send-copy-dialog>
+
+<app-proposal-milestone-publish-to-catalog-dialog
+  #sendMilestonePublishToDgTemplateCatalog
+  [milestone]="milestoneViewData"
+  [document]="proposal"
+  (closed)="onMilestoneSendCopyForContributionDialogClosed()"
+  *ngIf="sendCopyDialogVisible && milestoneViewData"
+></app-proposal-milestone-publish-to-catalog-dialog>
+
+<app-proposal-linguistic-versions-dialog
+  #linguisticVersionsDialog
+  [proposalRef]="proposalRef"
+  [proposalLanguage]="proposalLanguage"
+  [translatedLanguages]="translatedLanguages"
+  [milestone]="milestoneViewData"
+  (closed)="onLinguisticVersionsDialogClosed()"
+  *ngIf="linguisticVersionsDialogVisible && milestoneViewData"
+></app-proposal-linguistic-versions-dialog>
 
 <app-milestone-annotation-warning-modal
   #milestoneAnnotationWarningModal

@@ -16,6 +16,8 @@ public final class ProposalMetadata extends LeosMetadata {
     private Float verticalShift;
     private List<String> crossReferences;
 
+    private String availableLangs;
+    private Boolean isPublished;
     private String adoptionPlace;
     private Date adoptionDate;
     private String institutionalReference;
@@ -24,8 +26,8 @@ public final class ProposalMetadata extends LeosMetadata {
     private List<SignatureMetadata> signatures;
     private Boolean stamp;
 
-    public ProposalMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String objectId, String docVersion, boolean eeaRelevance) {
-        super(LeosCategory.PROPOSAL, stage, type, purpose, template, language, docTemplate, ref, objectId, docVersion, eeaRelevance);
+    public ProposalMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String objectId, String docVersion, boolean eeaRelevance, boolean customTemplateAct) {
+        super(LeosCategory.PROPOSAL, stage, type, purpose, template, language, docTemplate, ref, objectId, docVersion, eeaRelevance, customTemplateAct);
     }
     public static ProposalMetadataBuilder builder(ProposalMetadata metadata) {
         return new ProposalMetadataBuilder(metadata);
@@ -46,6 +48,7 @@ public final class ProposalMetadata extends LeosMetadata {
         private String procedureType;
         private String actType;
         private boolean eeaRelevance;
+        private boolean customTemplateAct;
         private String packageTitle;
         private List<String> authenticLang;
         private LeosAuthenticLanguage isAuthenticLang;
@@ -54,6 +57,8 @@ public final class ProposalMetadata extends LeosMetadata {
         private Float verticalShift;
         private List<String> crossReferences;
         private String adoptionPlace;
+        private String availableLangs;
+        private Boolean isPublished;
         private Date adoptionDate;
         private String institutionalReference;
         private Boolean institutionalReferenceFinalVersion;
@@ -74,6 +79,7 @@ public final class ProposalMetadata extends LeosMetadata {
             this.objectId= metadata.objectId;
             this.docVersion= metadata.docVersion;
             this.eeaRelevance= metadata.eeaRelevance;
+            this.customTemplateAct = metadata.customTemplateAct;
             this.procedureType = metadata.getProcedureType();
             this.packageTitle = metadata.packageTitle;
             this.internalRef = metadata.internalRef;
@@ -87,6 +93,8 @@ public final class ProposalMetadata extends LeosMetadata {
             this.interInstitutionalReference = metadata.getInterInstitutionalReference();
             this.signatures = metadata.getSignatures();
             this.adoptionPlace = metadata.getAdoptionPlace();
+            this.availableLangs = metadata.getAvailableLangs();
+            this.isPublished = metadata.getIsPublished();
             this.adoptionDate = metadata.getAdoptionDate();
             this.stamp = metadata.getStamp();
         }
@@ -130,6 +138,10 @@ public final class ProposalMetadata extends LeosMetadata {
             this.eeaRelevance = eeaRelevance;
             return this;
         }
+        public ProposalMetadataBuilder withCustomTemplateAct(boolean customTemplateAct) {
+            this.customTemplateAct = customTemplateAct;
+            return this;
+        }
         public ProposalMetadataBuilder withPackageTitle(String packageTitle) {
             this.packageTitle = packageTitle;
             return this;
@@ -166,7 +178,7 @@ public final class ProposalMetadata extends LeosMetadata {
         public ProposalMetadata build() {
             ProposalMetadata metadata = new ProposalMetadata(this.stage, this.type, this.purpose, this.template, this.language, this.docTemplate, this.ref,
                     this.objectId,
-                this.docVersion, this.eeaRelevance);
+                this.docVersion, this.eeaRelevance, this.customTemplateAct);
             metadata.setProcedureType(procedureType);
             metadata.setActType(actType);
             metadata.setPackageTitle(packageTitle);
@@ -177,6 +189,8 @@ public final class ProposalMetadata extends LeosMetadata {
             metadata.setVerticalShift(verticalShift);
             metadata.setCrossReferences(crossReferences);
             metadata.setAdoptionPlace(adoptionPlace);
+            metadata.setAvailableLangs(availableLangs);
+            metadata.setIsPublished(isPublished);
             metadata.setAdoptionDate(adoptionDate);
             metadata.setInstitutionalReference(institutionalReference);
             metadata.setInstitutionalReferenceFinalVersion(institutionalReferenceFinalVersion);

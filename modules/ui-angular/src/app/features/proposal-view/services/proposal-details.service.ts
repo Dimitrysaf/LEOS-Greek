@@ -37,7 +37,10 @@ import { downloadBlob } from '@/shared/utils';
 
 import { ExportPackageVO } from '../models/export-package.model';
 import { Milestone } from '../models/milestone.model';
-import {EuiDialogService} from "@eui/components/eui-dialog";
+import { EuiDialogConfig, EuiDialogService } from "@eui/components/eui-dialog";
+import {
+  ProposalCreateWizardComponent
+} from "@/shared/components/proposal-create-wizard/proposal-create-wizard.component";
 
 @Injectable({ providedIn: 'root' })
 export class ProposalDetailsService implements OnDestroy {
@@ -51,6 +54,8 @@ export class ProposalDetailsService implements OnDestroy {
   permissions$: Observable<Permission[]>;
   clonedProposalCount: number;
   exceptionResponseVO: ExceptionResponseVO = null;
+  private repetitiveActsEnabled: boolean;
+  private linguisticVersionsEnabled: boolean;
 
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private userInputFieldChangeBS = new BehaviorSubject('');
@@ -100,6 +105,8 @@ export class ProposalDetailsService implements OnDestroy {
       .subscribe(([collaborators, config]) => {
         const permissions = this.resolvePermissions(collaborators, config);
         this.permissionsBS.next(permissions);
+        this.repetitiveActsEnabled = config.repetitiveActsEnabled;
+        this.linguisticVersionsEnabled = config.linguisticVersionsEnabled;
       });
 
     this.clonedProposalCount = 0;
@@ -133,6 +140,13 @@ export class ProposalDetailsService implements OnDestroy {
 
   getTranslated(): boolean {
     return this.translated;
+  }
+  isRepetitiveActsEnabled(): boolean{
+    return this.repetitiveActsEnabled;
+  }
+
+  isLinguisticVersionsEnabled(): boolean{
+    return this.linguisticVersionsEnabled;
   }
 
   createAnnex() {
@@ -434,7 +448,7 @@ export class ProposalDetailsService implements OnDestroy {
               summary: this.translateService.instant(
                 'page.collection.milestones.create-milestone-dialog.error',
               ),
-              detail: res,
+              detail: res.error,
               life: 3000,
               isGrowlSticky: false,
               position: 'bottom-right',
@@ -481,6 +495,120 @@ export class ProposalDetailsService implements OnDestroy {
             detail: res,
             life: 3000,
             isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
+  }
+
+  /**
+   * Publish a custom template to the DG Template Catalog.
+   * @param milestone The milestone to publish from.
+   * @param templateName The display name of the template in the catalog.
+   * @param dgCodes Array of DG codes (e.g. ['CLIMA','RTD']).
+   */
+  publishTemplateToDgCatalog(
+    milestone: MilestoneDescriptor,
+    templateName: string,
+    dgCodes: string[],
+  ) {
+    this.loadingService.setLoading(true);
+
+    const url = `${apiBaseUrl}/secured/catalog/publish-template/${milestone.legFileId}`;
+    const body = {
+      legDocumentName: milestone.legDocumentName,
+      templateName,
+      dgCodes,
+    };
+
+    return this.http
+      .post(url, body)
+      .pipe(finalize(() => this.loadingService.setLoading(false)))
+      .subscribe({
+        next: () => {
+          console.log('PUBLISH SUCCESS')
+          this.growlService.growl({
+            severity: 'success',
+            summary: this.translateService.instant('global.notifications.title.success'),
+            detail: this.translateService.instant('page.collection.milestones.publish-to-catalog.success'),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+          this.loadProposalMilestones();
+        },
+        error: (err) => {
+          console.log('PUBLISH ERROR')
+          this.growlService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant('global.notifications.title.error'),
+            detail:
+              err?.error?.message ??
+              this.translateService.instant('page.collection.milestones.publish-to-catalog.error'),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
+  }
+
+  /**
+   * Create linguistic versions linked to the proposal of the milestone
+   *
+   * @param milestone The main language milestone from which the documents will be aligned
+   * @param linguisticVersions The list of languages to create new linguistic versions
+   * @param proposalRef to reload the proposal after linguistic versions have been added
+   */
+  createLinguisticVersions(
+    milestone: MilestoneDescriptor,
+    linguisticVersions: string[],
+    proposalRef: string,
+  ) {
+    this.loadingService.setLoading(true);
+
+    const url = `${apiBaseUrl}/secured/proposal/${milestone.legFileId}/linguistic-versions`;
+
+    return this.http
+      .post(url, linguisticVersions)
+      .pipe(finalize(() => this.loadingService.setLoading(false)))
+      .subscribe({
+        next: (notFoundLanguages: string[]) => {
+          if (notFoundLanguages.length > 0) {
+            let successMsg = '';
+            if (notFoundLanguages.length < linguisticVersions.length) {
+              successMsg = '<b>' + this.translateService.instant('page.collection.add-linguistic-version.success') + '</b><br>';
+            }
+            console.log('ADD LINGUISTIC VERSIONS WARNING');
+            this.growlService.growl({
+              severity: 'warning',
+              summary: this.translateService.instant('global.notifications.title.warning'),
+              detail: successMsg + this.translateService.instant('page.collection.add-linguistic-version.warning') + notFoundLanguages.join(', '),
+              sticky: true,
+              position: 'bottom-right',
+            });
+          } else {
+            console.log('ADD LINGUISTIC VERSIONS SUCCESS');
+            this.growlService.growl({
+              severity: 'success',
+              summary: this.translateService.instant('global.notifications.title.success'),
+              detail: this.translateService.instant('page.collection.add-linguistic-version.success'),
+              life: 3000,
+              isGrowlSticky: false,
+              position: "bottom-right"
+            });
+          }
+          this.setProposalRef(proposalRef);
+        },
+        error: (err) => {
+          console.log('ADD LINGUISTIC VERSIONS ERROR');
+          this.growlService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant('global.notifications.title.error'),
+            detail:
+              err?.error ??
+              this.translateService.instant('page.collection.add-linguistic-version.error'),
+            sticky: true,
             position: 'bottom-right',
           });
         },
@@ -720,6 +848,14 @@ export class ProposalDetailsService implements OnDestroy {
     });
   }
 
+  getAllOrganizations(): Observable<string[]> {
+    return this.http.get<string[]>(`${apiBaseUrl}/secured/organizations`);
+  }
+
+  getTemplateInfo(proposalRef: string): Observable<{templateName: string, templateVisibility: string[]}> {
+    return this.http.get<{templateName: string, templateVisibility: string[]}>(`${apiBaseUrl}/secured/catalog/template/${proposalRef}`);
+  }
+
   searchUsersByJobTitle(jobTitle: string): Observable<string[]> {
     return this.http.get<string[]>(`${apiBaseUrl}/secured/proposal/searchUsersByJobTitle`, {
       params: { jobTitle: jobTitle },
@@ -769,4 +905,115 @@ export class ProposalDetailsService implements OnDestroy {
     const permissions = roles.flatMap((r) => config.permissionsMap[r]);
     return [...new Set(permissions)];
   }
+
+  openProposalChangeCopyDialog(nonEditablePartOfTitle: string, editableTitle: string, proposalTemplate: string,
+                               proposalLanguage: string, documentCollectionName:string) {
+    const dialog = this.dialogService.openDialog(
+      new EuiDialogConfig({
+        dialogId: 'change-copy-dialog',
+        title: this.translateService.instant('page.workspace.create-title'),
+        bodyComponent: {
+          component: ProposalCreateWizardComponent,
+          config: {
+            closeDialog: () => this.dialogService.closeDialog(dialog.id),
+            isCopyChangeAct: true,
+            nonEditablePartOfTitle: nonEditablePartOfTitle,
+            editableTitle: editableTitle,
+            proposalTemplate: proposalTemplate,
+            proposalRef: this.proposalRef,
+            proposalLanguage: proposalLanguage,
+            documentCollectionName:documentCollectionName,
+          },
+        },
+        hasFooter: false,
+      }),
+    );
+  }
+  updateTemplate(
+    milestone: MilestoneDescriptor,
+    templateName: string,
+    dgCodes: string[]
+  ): Observable<any> {
+    this.loadingService.setLoading(true);
+
+    const url = `${apiBaseUrl}/secured/catalog/update-template/${milestone.legFileId}`;
+    const body = {
+      legDocumentName: milestone.legDocumentName,
+      templateName,
+      dgCodes,
+    };
+
+    return this.http.post(url, body).pipe(
+      finalize(() => this.loadingService.setLoading(false)),
+      tap({
+        next: () => {
+          this.growlService.growl({
+            severity: 'success',
+            summary: this.translateService.instant('global.notifications.title.success'),
+            detail: this.translateService.instant('page.collection.milestones.publish-to-catalog.success'),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right'
+          });
+        },
+        error: (err) => {
+          this.growlService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant('global.notifications.title.error'),
+            detail:
+              err?.error?.message ?? this.translateService.instant('page.collection.milestones.update-template.error'),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right'
+          });
+        }
+      })
+    );
+  }
+
+  unPublishTemplate(packageId: string) {
+    this.loadingService.setLoading(true);
+    const url = `${apiBaseUrl}/secured/catalog/un-publish-template/${packageId}`;
+
+    return this.http.post<boolean>(url, null, {
+      headers: { 'Content-Type': 'application/json' }
+    }).pipe(
+      finalize(() => this.loadingService.setLoading(false)),
+      tap({
+        next: (isupdate) => {
+          if (isupdate) {
+            this.growlService.growl({
+              severity: 'success',
+              summary: this.translateService.instant('global.notifications.title.success'),
+              detail: this.translateService.instant('page.collection.milestones.un-publish-to-catalog.success'),
+              life: 3000,
+              isGrowlSticky: false,
+              position: 'bottom-right'
+            });
+          } else{
+            this.growlService.growl({
+              severity: 'danger',
+              summary: this.translateService.instant('global.notifications.title.error'),
+              detail: this.translateService.instant('page.collection.milestones.un-publish-to-catalog.failed'),
+              life: 3000,
+              isGrowlSticky: false,
+              position: 'bottom-right'
+            });
+          }
+
+        },
+        error: (err) => {
+          this.growlService.growl({
+            severity: 'danger',
+            summary: this.translateService.instant('global.notifications.title.error'),
+            detail: this.translateService.instant('page.collection.milestones.un-publish-to-catalog.failed'),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right'
+          });
+        }
+      })
+      );
+  }
+
 }

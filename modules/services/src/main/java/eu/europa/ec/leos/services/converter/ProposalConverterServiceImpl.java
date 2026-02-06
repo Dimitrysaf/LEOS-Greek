@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -239,5 +240,11 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                 LOG.error("Error parsing metadata {}", e);
             }
         }
+    }
+
+    public static LeosFile createFileFromXmlSource(byte[] xmlSource, String docName) throws IOException {
+        LeosFile file = new LeosFile(docName);
+        file.setBytes(xmlSource);
+        return file;
     }
 }

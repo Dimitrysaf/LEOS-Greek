@@ -19,6 +19,7 @@ import eu.europa.ec.leos.domain.repository.Content.Source;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
+import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -77,6 +78,9 @@ public class BillProcessorImplTest extends LeosTest {
     @Mock
     private MessageHelper messageHelper;
 
+    @InjectMocks
+    private LanguageHelper languageHelper = Mockito.spy(new LanguageHelper());
+
     @Mock
     private Provider<StructureContext> structureContextProvider;
 
@@ -84,7 +88,7 @@ public class BillProcessorImplTest extends LeosTest {
     private StructureContext structureContext;
 
     @InjectMocks
-    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext(languageHelper));
 
     @InjectMocks
     private StructureServiceImpl structureServiceImpl = Mockito.spy(new StructureServiceImpl());
@@ -119,7 +123,7 @@ public class BillProcessorImplTest extends LeosTest {
         Content content = mock(Content.class);
         Source source = mock(Source.class);
 
-        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN", "BL-023", "bill-id", "", "0.1.0", false);
+        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN", "BL-023", "bill-id", "", "0.1.0", false, false);
         List<Collaborator> collaborators = new ArrayList<>();
         collaborators.add(new Collaborator("login", "OWNER", "SG"));
 
@@ -154,7 +158,7 @@ public class BillProcessorImplTest extends LeosTest {
         Content content = mock(Content.class);
         Source source = mock(Source.class);
 
-        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","BL-023", "bill-id", "", "0.1.0", false);
+        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","BL-023", "bill-id", "", "0.1.0", false, false);
         List<Collaborator> collaborators = new ArrayList<>();
         collaborators.add(new Collaborator("login", "OWNER", "SG"));
 

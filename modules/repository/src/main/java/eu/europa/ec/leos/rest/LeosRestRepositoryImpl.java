@@ -332,7 +332,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
             @CacheEvict(value = "documentByVersionCache", allEntries = true),
             @CacheEvict(value = "documentCache", allEntries = true) })
     public LegDocument createLegDocumentFromContent(String path, String name, String jobId, List<String> milestoneComments, byte[] contentBytes, LeosLegStatus status,
-                                                    List<String> containedDocuments) {
+                                                    List<String> containedDocuments, boolean isCustomTemplate) {
         logger.trace("Creating leg document from content... [path=" + path + ", name=" + name + ']');
 
         checkSecurityContextEnsureUserIsPresent();
@@ -347,6 +347,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATED_BY), securityContext.getUser().getLogin());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.INITIAL_CREATION_DATE), ConversionUtils.getLeosDateAsString(new Date(), ConversionUtils.LEOS_REPO_DATE_FORMAT));
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTAINED_DOCUMENTS), containedDocuments);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_CUSTOM_TEMPLATE_ACT), isCustomTemplate);
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromContent(path, name, properties, legMimeType, contentBytes, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
@@ -624,9 +625,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public <D extends LeosDocument> D findDocumentByParentPath(String path, String name, Class<? extends D> type) {
         logger.trace("Finding document by parent path... [path=" + path + ", name=" + name + ']');
 
-        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentByName(name).orElseThrow(() -> new IllegalArgumentException("Document not found! [path=" + path +
-                    ", name=" + name + ']'));
-        if (doc.getCategory().contains("TEMPLATE")) {
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentByName(name)
+                .orElseThrow(() -> new IllegalArgumentException("404 NOT_FOUND Document not found! [path=" + path + ", name=" + name + ']'));
+        if (doc.getCategory() == null) {
+            throw new IllegalArgumentException("404 NOT_FOUND Document not found! [path=" + path + ", name=" + name + ']');
+        } else if (doc.getCategory().contains("TEMPLATE")) {
             try {
                 populateTemplateMetadataFromContent(doc);
             } catch (Exception e) {
@@ -906,6 +909,13 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         return recentMinorVersionsCountCount;
     }
 
+    @Override
+    @PerformanceLogger
+    public <D extends LeosDocument> String findDocumentRefByPackageIdAndCategory(Class<? extends D> type, String packageId, String category) {
+        String documentRef = repository.findDocumentRefByPackageIdAndCategory(packageId, category);
+        return documentRef;
+    }
+
     private void checkSecurityContextEnsureUserIsPresent() {
         if(isEmpty(securityContext.getUser())) {
             throw new IllegalStateException("Missing user in security context");
@@ -1156,6 +1166,34 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public void setDocumentsValidationStatus(List<String> versionIDs) {
         logger.trace("Validation status of documents will be set as sent for validation ");
         repository.setDocumentValidationStatus(versionIDs);
+    }
+
+    @Override
+    @PerformanceLogger
+    public void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId, String originalDg) {
+        logger.trace("publishing custom template {}", legFileId);
+        repository.publishCustomTemplate(legFileId, templateName, dgs, userId, originalDg);
+    }
+
+    @Override
+    @PerformanceLogger
+    public void updateCustomTemplate(String packageId, String templateName, List<String> dgs, String userId, String originalDg) {
+        logger.trace("Update custom template {}", packageId);
+        repository.updateCustomTemplate(packageId, templateName, dgs, userId,originalDg);
+    }
+
+    @Override
+    @PerformanceLogger
+    public Boolean unPublishCustomTemplate(String packageId, String userId) {
+        logger.trace("un publishing custom template {}", packageId);
+        return repository.unPublishCustomTemplate(packageId, userId);
+    }
+
+    @Override
+    @PerformanceLogger
+    public Map<String, Object> getTemplateInfo(String packageId) {
+        logger.trace("Getting template info for packageId: {}", packageId);
+        return repository.getTemplateInfo(packageId);
     }
 
     @Override

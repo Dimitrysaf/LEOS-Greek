@@ -48,7 +48,7 @@ export type MilestoneDescriptor = Pick<Milestone,
   | 'proposalRef'
   | 'title'
   | 'legFileId'
-  | 'versionedReference'>;
+  | 'versionLabel'>;
 
 @Component({
   selector: 'app-proposal-milestone-view',
@@ -167,7 +167,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     } else {
       this.milestonesService.exportMilestonePdfFromVersion(
         this.milestone.proposalRef,
-        this.milestone.versionedReference,
+        this.milestone.versionLabel,
       );
     }
   }
@@ -205,7 +205,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
         this.milestonesService.sendRequestStoredDocumentAnnotationsFromVersionedRef(
           this.milestone.proposalRef,
           this.milestone.legDocumentName,
-          this.milestone.versionedReference,
+          this.milestone.versionLabel,
           true,
           dbg
         );
@@ -243,7 +243,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       this.milestonesService
         .listMilestoneViewFromVersion(
           this.milestone.proposalRef,
-          this.milestone.versionedReference,
+          this.milestone.versionLabel,
         )
         .subscribe((response) => {
           this.handleMilestoneExplorerDocuments(response, hiddenCategories);

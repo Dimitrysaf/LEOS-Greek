@@ -1,9 +1,11 @@
 export interface CatalogItem {
   type: CatalogItemType;
   id: string;
+  documentCollection:string;
   enabled: boolean;
   hidden: true | null;
   key: string;
+  customName: string;
   visibleTo: string;
   /** langCode->name */
   names: Record<string, string>;
@@ -12,6 +14,7 @@ export interface CatalogItem {
   /** langCode->languageName */
   languages: Record<string, string>;
   items: CatalogItem[];
+  originalDg: string;
 }
 
 export type CatalogItemType = 'CATEGORY' | 'TEMPLATE' | 'ACT' | 'PROCEDURE';

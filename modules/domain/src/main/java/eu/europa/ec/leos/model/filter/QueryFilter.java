@@ -47,6 +47,7 @@ public class QueryFilter {
         procedureType("metadata:procedureType"),
         docType("metadata:docType"),
         ref("metadata:ref"),
+        customTemplates("metadata:customTemplates"),
         template("leos:template"),
         docTemplate("leos:docTemplate"),
 
@@ -98,12 +99,22 @@ public class QueryFilter {
         public final String[] value;
         public final String operator;
         public final boolean nullCheck;
+        public final boolean isBoolean;
 
         public Filter(String key, String operator, boolean nullCheck, String... value) {
             this.key = key;
             this.value = value;
             this.operator = operator;
             this.nullCheck = nullCheck;
+            this.isBoolean = false;
+        }
+
+        public Filter(String key, String operator, boolean nullCheck, boolean isBoolean, String... value) {
+            this.key = key;
+            this.value = value;
+            this.operator = operator;
+            this.nullCheck = nullCheck;
+            this.isBoolean = isBoolean;
         }
         
         public String getKey() {

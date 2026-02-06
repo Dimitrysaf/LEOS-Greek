@@ -4,13 +4,13 @@ import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
+import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.repository.domain.ContentImpl;
 import eu.europa.ec.leos.repository.domain.SourceImpl;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
-import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorImpl;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
 import eu.europa.ec.leos.services.structure.StructureContext;
@@ -60,6 +60,9 @@ public class FinancialStatementProcessorTest extends LeosTest {
     @Mock
     private MessageHelper messageHelper;
 
+    @InjectMocks
+    private LanguageHelper languageHelper = Mockito.spy(new LanguageHelper());
+
     @Mock
     private StructureContext structureContext;
 
@@ -73,7 +76,7 @@ public class FinancialStatementProcessorTest extends LeosTest {
     XmlContentProcessorImpl xmlContentProcessor = new XmlContentProcessorProposal();
 
     @InjectMocks
-    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext(languageHelper));
 
     @InjectMocks
     private StructureServiceImpl structureServiceImpl = Mockito.spy(new StructureServiceImpl());
@@ -162,6 +165,7 @@ public class FinancialStatementProcessorTest extends LeosTest {
                 "LEGISLATIVE FINANCIAL AND DIGITAL STATEMENT",
                 "555",
                 "0.1.0",
+                false,
                 false);
 
         List<Collaborator> collaborators = new ArrayList<>();

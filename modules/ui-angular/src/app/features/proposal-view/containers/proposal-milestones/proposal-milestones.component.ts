@@ -17,6 +17,13 @@ import {ProposalMilestonesService} from '@/shared/services/proposal-milestones.s
 
 import {ProposalMilestoneSendCopyDialogComponent} from '../proposal-milestone-send-copy-dialog/proposal-milestone-send-copy-dialog.component';
 import { EuiDialogService } from '@eui/components/eui-dialog';
+import {
+  ProposalMilestonePublishToCatalogDialogComponent
+} from "@/features/proposal-view/containers/proposal-milestone-publish-to-dg-template-catalog/proposal-milestone-publish-to-catalog-dialog.component";
+import {
+  ProposalLinguisticVersionsDialogComponent
+} from "@/features/proposal-view/containers/proposal-linguistic-versions-dialog/proposal-linguistic-versions-dialog.component";
+import {getMajorVersionNumber} from "@/shared/utils/version.utils";
 
 const MILESTONE_RELOAD_INTERVAL = 10000;
 
@@ -28,28 +35,38 @@ const MILESTONE_RELOAD_INTERVAL = 10000;
 export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   @Input() proposal: Document;
   @Input() proposalRef: string;
+  @Input() proposalLanguage!: string;
+  @Input() translatedLanguages!: string[];
   @Input() legFileName = null;
   @ViewChild('addMilestoneDialog')
   addMilestoneDialog: AddMilestoneDialogComponent;
   addMilestoneDialogVisible = false;
   openMilestoneViewDialogVisible = false;
   sendCopyDialogVisible = false;
+  linguisticVersionsDialogVisible = false;
   annotationWarningDialogVisible = false;
   viewContribution = true;
   @ViewChild('milestoneViewDialog')
   milestoneViewDialog: ProposalMilestoneViewComponent;
   @ViewChild('sendMilestoneCopyForContributionDialog')
   sendMilestoneCopyForContributionDialog: ProposalMilestoneSendCopyDialogComponent;
+  @ViewChild('sendMilestonePublishToDgTemplateCatalog')
+  sendMilestonePublishToDgTemplateCatalog: ProposalMilestonePublishToCatalogDialogComponent;
+  @ViewChild('linguisticVersionsDialog')
+  linguisticVersionsDialog: ProposalLinguisticVersionsDialogComponent;
   @ViewChild('milestoneAnnotationWarningModal')
   milestoneAnnotationWarningModal: MilestoneAnnotationWarningModalComponent;
   milestoneViewData: MilestoneDescriptor = null;
   parentClonedProposal;
   parentLegDocumentId: string = null;
   dataSource: Milestone[] = [];
+  lastMilestoneVersion: number;
   permissions: Permission[];
   milestoneStatus = MilestoneStatus;
   inputMilestoneViewed = false;
   translated = false;
+  isAutonomousAct = false;
+  linguisticVersionsEnabled = false;
 
   private milestonesCheckTimer: ReturnType<typeof setTimeout>;
   private milestonesStatus = {
@@ -105,6 +122,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
                 }
               }
             }
+            this.updateLastMilestoneVersion(milestone);
           });
         },
         error: (error) => {
@@ -126,6 +144,13 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
       .subscribe((perms) => (this.permissions = perms));
 
     this.translated = this.proposalDetailsService.getTranslated();
+    this.isAutonomousAct = this.proposal.metadata.documentCollectionName == 'ACT_AUTO_COM';
+    this.linguisticVersionsEnabled = this.proposalDetailsService.isLinguisticVersionsEnabled();
+  }
+
+  private updateLastMilestoneVersion(milestone: Milestone) {
+    const majorVersionNumber = getMajorVersionNumber(milestone.versionLabel);
+    this.lastMilestoneVersion = !this.lastMilestoneVersion ? majorVersionNumber : Math.max(majorVersionNumber, this.lastMilestoneVersion);
   }
 
   ngOnDestroy(): void {
@@ -178,6 +203,23 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     setTimeout(() => this.sendMilestoneCopyForContributionDialog.open(), 0);
   }
 
+  openMilestonePublishToDgTemplateCatalog(milestone: MilestoneDescriptor) {
+    this.sendCopyDialogVisible = true;
+    this.milestoneViewData = milestone;
+    setTimeout(() => this.sendMilestonePublishToDgTemplateCatalog.open(), 0);
+  }
+
+  openLinguisticVersionsDialog(milestone: MilestoneDescriptor) {
+    this.linguisticVersionsDialogVisible = true;
+    this.milestoneViewData = milestone;
+    setTimeout(() => this.linguisticVersionsDialog.open(), 0);
+  }
+
+  onLinguisticVersionsDialogClosed() {
+    this.linguisticVersionsDialogVisible = false;
+    this.milestoneViewData = null;
+  }
+
   onMilestoneSendCopyForContributionDialogClosed() {
     this.sendCopyDialogVisible = false;
     this.milestoneViewData = null;
@@ -223,6 +265,14 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
       case MilestoneStatus.RevisionSent:
         return this.translateService.instant(
           'page.workspace.milestones.status.revision-sent',
+        );
+      case MilestoneStatus.CustomTemplatePublished:
+        return this.translateService.instant(
+          'page.workspace.milestones.status.ct-published',
+        );
+      case MilestoneStatus.CustomTemplateUnPublished:
+        return this.translateService.instant(
+          'page.workspace.milestones.status.ct-unpublished',
         );
       default:
         return status;
@@ -301,4 +351,10 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
     return clonedMilestone;
   }
+
+  get customTemplateText(): string {
+    return this.translateService.instant('page.collection.milestones.type.custom-template');
+  }
+
+  protected readonly MilestoneStatus = MilestoneStatus;
 }

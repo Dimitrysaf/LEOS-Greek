@@ -54,6 +54,7 @@ CREATE TABLE DOCUMENT_CATEGORIES
 ( ID INT NOT NULL AUTO_INCREMENT COMMENT "Technical ID for a document category",
   CATEGORY_CODE VARCHAR(30) NOT NULL COMMENT "Code for a document category",
   CATEGORY_DESC VARCHAR(100) NOT NULL COMMENT "Description for the category code",
+  CONFIG_CATEGORY_ID INT COMMENT "Reference to CONFIG_CATEGORIES table",
   AUDIT_C_BY VARCHAR(30) NOT NULL COMMENT "Audit column holding the user that created this record",
   AUDIT_C_DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT "Audit column holding the date at which this record was created",
   AUDIT_LAST_M_BY VARCHAR(30) COMMENT "Audit column holding the user of the last update on this record",
@@ -139,6 +140,7 @@ CREATE TABLE DOCUMENT
   AUDIT_C_DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT "Audit column holding the date at which this record was created",
   AUDIT_LAST_M_DATE TIMESTAMP COMMENT "Audit column holding the date of the last update on this record",
   AUDIT_LAST_M_BY VARCHAR(30) COMMENT "Audit column holding the user of the last update on this record",
+  IS_CUSTOM_TEMPLATE DECIMAL COMMENT "Is this a custom template",
   CONSTRAINT DOCUMENT_PK PRIMARY KEY (ID),
   CONSTRAINT DOCUMENT_FK FOREIGN KEY (PACKAGE_ID) REFERENCES PACKAGE (ID),
   CONSTRAINT DOCUMENT_FK2 FOREIGN KEY (CATEGORY_ID) REFERENCES DOCUMENT_CATEGORIES (ID)
@@ -308,15 +310,30 @@ CREATE INDEX PACKAGE_COLLABORATORS_IDX ON PACKAGE_COLLABORATORS (PACKAGE_ID);
 
 CREATE INDEX PACKAGE_COLLABORATORS_IDX2 ON PACKAGE_COLLABORATORS (COLLABORATOR_ID);
 
+CREATE TABLE CUSTOM_TEMPLATE_ENTITIES
+(
+    ID INT NOT NULL AUTO_INCREMENT,
+    PACKAGE_ID INT NOT NULL COMMENT "The package id that this custom template entities belongs to",
+    ENTITIES VARCHAR(4000) COMMENT "Comma-separated list of entities",
+    AUDIT_C_BY VARCHAR(30) NOT NULL COMMENT "Audit column holding the user that created this record",
+    AUDIT_C_DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT "Audit column holding the date at which this record was created",
+    AUDIT_LAST_M_BY VARCHAR(30) COMMENT "Audit column holding the user of the last update on this record",
+    AUDIT_LAST_M_DATE TIMESTAMP COMMENT "Audit column holding the date of the last update on this record",
+    CONSTRAINT CUSTOM_TEMPLATE_ENTITIES_PK PRIMARY KEY (ID),
+    CONSTRAINT CUSTOM_TEMPLATE_ENTITIES_FK FOREIGN KEY (PACKAGE_ID) REFERENCES PACKAGE (ID)
+) COMMENT "Table for custom template entities" TABLESPACE leos_repository;
 
-CREATE OR REPLACE VIEW DOCUMENT_CATEGORIES_V (ID, CATEGORY_CODE, CATEGORY_DESC, AUDIT_C_BY, AUDIT_C_DATE, AUDIT_LAST_M_BY, AUDIT_LAST_M_DATE) AS
-SELECT ID,CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE FROM DOCUMENT_CATEGORIES;
+CREATE INDEX CUSTOM_TEMPLATE_ENTITIES_PKG_IDX ON CUSTOM_TEMPLATE_ENTITIES (PACKAGE_ID);
+
+
+CREATE OR REPLACE VIEW DOCUMENT_CATEGORIES_V (ID, CATEGORY_CODE, CATEGORY_DESC, CONFIG_CATEGORY_ID, AUDIT_C_BY, AUDIT_C_DATE, AUDIT_LAST_M_BY, AUDIT_LAST_M_DATE) AS
+SELECT ID,CATEGORY_CODE,CATEGORY_DESC,CONFIG_CATEGORY_ID,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE FROM DOCUMENT_CATEGORIES;
 
 CREATE OR REPLACE VIEW DOCUMENT_V  AS
 SELECT doc.id||'_'||docver.id||'_'||doccat.id unique_id
      , doc.id document_id,0 doc_object_id,doc.category_id
      , doc.package_id, pkg.name package_name, docxml.version_id
-     , doccat.category_code, doccat.category_desc
+     , doccat.category_code, doccat.category_desc, doccat.config_category_id
      , doc.name, doc.cloned_from,doc.revision_status,doc.contribution_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy
      , docver.audit_c_by doc_audit_c_by,docver.audit_c_date doc_audit_c_date,docver.audit_last_m_date doc_audit_last_m_date,docver.audit_last_m_by doc_audit_last_m_by
      , docver.version_label, docver.version_series_id, docver.version_type, docver.is_latest_major_version, docver.is_latest_version, docver.is_major_version, docver.is_version_series_checked_out

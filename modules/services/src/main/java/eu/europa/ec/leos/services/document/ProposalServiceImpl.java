@@ -695,8 +695,11 @@ public abstract class ProposalServiceImpl implements ProposalService {
     @Override
     public Proposal createProposal(String templateId, String path, ProposalMetadata metadata, byte[] content) {
         LOG.trace("Creating Proposal... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
-        documentLanguageContext.setDocumentLanguage(metadata.getLanguage());
-        String ref = generateProposalReference(metadata.getLanguage());
+        final String language = metadata.getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
+        String ref = metadata.getRef() != null ?
+                getTranslatedProposalReference(metadata.getRef(), language) :
+                generateProposalReference(language);
         String creationOptions = metadata.getCreationOptions();
         metadata = metadata
                 .builder()
@@ -834,5 +837,11 @@ public abstract class ProposalServiceImpl implements ProposalService {
 
     protected String generateProposalReference(String language) {
         return PROPOSAL_NAME_PREFIX + "-" + Cuid.createCuid() + "-" + language.toLowerCase();
+    }
+
+    @Override
+    public String findDocumentRefByPackageIdAndCategory(String packageId, String category) {
+        final String documentRef = proposalRepository.findDocumentRefByPackageIdAndCategory(packageId, category);
+        return documentRef;
     }
 }

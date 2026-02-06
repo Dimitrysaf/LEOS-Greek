@@ -141,7 +141,7 @@ public class XmlHelper {
     public static final String TLC_CONCEPT = "TLCConcept";
     public static final String EXPL_COUNCIL = "EXPL_COUNCIL";
     public static final List<String> HIGHER_ELEMENTS = Arrays.asList(PART, TITLE, CHAPTER, SECTION);
-    public static final List<String> OJ_IMPORT_ELEMENTS = Arrays.asList(PART, TITLE, CHAPTER, SECTION, ARTICLE, RECITAL);
+    public static final List<String> OJ_IMPORT_ELEMENTS = Arrays.asList(PART, TITLE, CHAPTER, SECTION, ARTICLE, RECITALS, RECITAL);
 
     public static final String ID = "id";
     public static final String XMLID = "xml:id";
@@ -168,7 +168,9 @@ public class XmlHelper {
     public static final String LEOS_INITIAL_NUM = "leos:initial-num";
     public static final String LEOS_DELETABLE_ATTR = "leos:deletable";
     public static final String LEOS_EDITABLE_ATTR = "leos:editable";
-    public static final String LEOS_REPEATABLE_ATTR = "leos:repeatable";
+    public static final String LEOS_ALTERNATIVE_ATTR = "leos:alternative";
+    public static final String LEOS_OPTION_LIST_ATTR = "leos:optionlist";
+    public static final String LEOS_SELECTED_OPTION_ATTR = "leos:selectedoption";
     public static final String LEOS_REPEATED_ATTR = "leos:repeated";
     public static final String LEOS_AFFECTED_ATTR = "leos:affected";
     public static final String LEOS_CROSS_HEADING_BLOCK_NAME = "leos:name";
@@ -271,7 +273,7 @@ public class XmlHelper {
                                                                     LEVEL, CROSSHEADING, DIVISION);
     public static final List<String> ELEMENTS_TO_BE_PROCESSED_FOR_NUMBERING = Arrays.asList(ARTICLE, PARAGRAPH, SUBPARAGRAPH, POINT, SUBPOINT, INDENT, LEVEL);
     public static final List<String> ELEMENTS_TO_BE_NUMBERED = Arrays.asList(ARTICLE, PARAGRAPH, POINT, LEVEL);
-    public static final List<String> POINT_ROOT_PARENT_ELEMENTS = Arrays.asList(ARTICLE, LEVEL);
+    public static final List<String> STYLING_ELEMENTS = Arrays.asList(BOLD, ITALICS, UNDERLINE, SUP, SUB);
     public static final List<String> INLINE_ELEMENTS = Arrays.asList(AUTHORIAL_NOTE, MATHJAX, MREF, REF, BOLD, ITALICS, UNDERLINE, SUP, SUB, INLINE);
     private static final List<String> ELEMENTS_TO_REMOVE_FROM_CONTENT = Arrays.asList(INLINE, AUTHORIAL_NOTE);
     public static final List<String> ELEMENTS_TO_HIDE_CONTENT = Arrays.asList(PREFACE, PREAMBLE, CITATIONS, RECITALS, BODY, MAIN_BODY);
@@ -290,6 +292,7 @@ public class XmlHelper {
     public static final String STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX = "STAT_DIGIT_FINANC_LEGIS";
     public static final String PROPOSAL_FILE = "main";
     public static final String PROP_ACT = "PROP_ACT";
+    public static final String ACT_AUTO_COM = "ACT_AUTO_COM";
     public static final String COUNCIL_EXPLANATORY = "EXPL_COUNCIL";
     public static final String STAT_DIGIT_FINANC_LEGIS = "STAT_DIGIT_FINANC_LEGIS";
 
@@ -379,7 +382,7 @@ public class XmlHelper {
                         && tocItem.isNumWithType()
                         ? StringUtils.capitalize(messageHelper.getMessage("toc.item.type." + tocItem.getAknTag().value() + ".number"))
                         + " " + num : num),
-                HEADING, Collections.singletonMap(HEADING_PLACEHOLDER_ESCAPED, heading), CONTENT,
+                HEADING, Collections.singletonMap(HEADING_PLACEHOLDER_ESCAPED, getHeadingText(tocItem.getAknTag().value(),heading, messageHelper) ), CONTENT,
                 Collections.singletonMap(CONTENT_TEXT_PLACEHOLDER_ESCAPED, getDefaultContentText(tocItem.getAknTag().value(), messageHelper))));
     }
 
@@ -450,6 +453,14 @@ public class XmlHelper {
             sb.replace(m.start(), m.end(), replacement);
             start = m.start() + replacement.length();
         }
+    }
+
+    private static String getHeadingText(String tocTagName, String heading, MessageHelper messageHelper) {
+       String defaultHeadingContent = messageHelper.getMessage("toc.item.type." + tocTagName + ".heading");
+        if (("toc.item.type." + tocTagName + ".heading").equals(defaultHeadingContent)) {
+            return heading;
+        }
+        return defaultHeadingContent;
     }
 
     private static String getDefaultContentText(String tocTagName, MessageHelper messageHelper) {
@@ -600,7 +611,22 @@ public class XmlHelper {
     }
 
     public static String addLeosNamespace(String str) {
-        return str.replaceFirst(">", " xmlns:leos=\"urn:eu:europa:ec:leos\">");
+        String namespace = "xmlns:leos=\"urn:eu:europa:ec:leos\"";
+
+        // Find the first element start tag
+        int firstTagEnd = str.indexOf(">");
+        if (firstTagEnd == -1) {
+            return str; // malformed, nothing to do
+        }
+
+        String openingTag = str.substring(0, firstTagEnd);
+
+        // Only add if the namespace is NOT in the opening tag
+        if (openingTag.contains(namespace)) {
+            return str; // already present on root element
+        }
+
+        return openingTag + " " + namespace + str.substring(firstTagEnd);
     }
 
     public static String addDummyNamespace(String str) {

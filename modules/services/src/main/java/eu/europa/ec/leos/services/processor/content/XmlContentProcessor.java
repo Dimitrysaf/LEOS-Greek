@@ -417,4 +417,9 @@ public interface XmlContentProcessor {
 
     public SpecificDocumentInformationDTO getSpecificDocumentInformation(byte xmlContent[]);
 
+    List<String> extractElementIdsFromXml(byte[] xmlContent);
+
+    byte[] alignBaseVersionDocumentIds(XmlDocument sourceXmlDoc, XmlDocument targetXmlDoc) throws IllegalArgumentException;
+
+    byte[] alignLatestVersionDocument(byte[] sourceXml, byte[] sourceBaseXml, XmlDocument targetXmlDoc) throws IllegalArgumentException;
 }

@@ -19,6 +19,7 @@ import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.utils.LegUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -26,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -45,6 +47,9 @@ public class UserHelper {
     private static final String DOMAIN_SEPARATOR="/";
 
     private static final String MAIN_DOCUMENT_FILE_NAME = "main";
+
+    @Value("${leos.templates.catalog}")
+    private String templatesCatalog;
 
     public User getUser(String login) {
         //Remove auth domain from CMIS. admin/XXX ecas/YYYY
@@ -120,4 +125,24 @@ public class UserHelper {
         return LegUtils.fetchMilestoneVersion(legDocument);
     }
 
+    public String getUserDgCustomTemplatesCatalog() {
+        return templatesCatalog + "-" + securityContext.getUser().getDefaultEntity().getOrganizationName();
+    }
+
+    public String getUserDgCustomTemplatesCatalog(String entityName) {
+        return templatesCatalog + "-" + entityName;
+    }
+
+    public User validateTemplateManager(String errorMessage) throws IllegalStateException{
+        // Validate authenticated user exists
+        User user = securityContext.getUser();
+        if (user == null) {
+            throw new IllegalStateException("No authenticated user found");
+        }
+
+        if (!securityContext.hasPermission(null, LeosPermission.CAN_CREATE_TEMPLATE)) {
+            throw new IllegalStateException(errorMessage);
+        }
+        return user;
+    }
 }

@@ -1,0 +1,133 @@
+<ng-container >
+  <eui-card
+    class="card-container eui-u-shadow-1">
+    <eui-card-header *ngIf="templates.size > 0">
+      <eui-card-header-title class="label-icon-container">
+          <div class="eui-u-mr-l icon-text">
+            <eui-icon-svg [icon]=icon></eui-icon-svg>
+            <span>{{ 'page.admin.my-dg-catalog' | translate }}</span>
+          </div>
+          <div class="eui-u-flex-grow eui-u-mr-l">
+            <div class="eui-input-group-addon">
+              <div class="eui-input-group-addon-item">
+                <eui-icon-svg icon="eui-search"></eui-icon-svg>
+              </div>
+              <input
+                euiInputText
+                euiClearable
+                [(ngModel)]="filterText"
+                (ngModelChange)="onDocumentTypeFilter($event)"
+                placeholder="Search by document type"
+                aria-label="Search by document type"
+              />
+            </div>
+          </div>
+          <button
+            euiButton
+            euiIconButton
+            [title]="isExpanded ? 'Collapse All' : 'Expand All'"
+            (click)="toggleExpanded()"
+            [attr.aria-label]="isExpanded ? 'Collapse All' : 'Expand All'"
+          >
+            <eui-icon-svg
+              [icon]="isExpanded ? 'contract' : 'expand'"
+              set="outline"
+              size="l"
+            ></eui-icon-svg>
+          </button>
+      </eui-card-header-title>
+    </eui-card-header>
+
+    <eui-card-content>
+      <div>
+        <eui-tree
+          isSingleSelect
+          (selectionChange)="onNodeClick($event)"
+          [nodeTemplateRef]="nodeTemplateCustom2"
+          [nodes]="treeNodes"
+          #treeComponent
+        >
+        </eui-tree>
+      </div>
+      <div *ngIf="templates.size === 0 && !loading" class="no-templates">
+        <h2>
+          {{
+            'page.workspace.create-selector.no-custom-template' | translate
+          }}
+        </h2>
+      </div>
+    </eui-card-content>
+  </eui-card>
+
+</ng-container>
+
+<ng-template let-node #nodeTemplateCustom2 let-onSelect="onSelect" let-id2="id" let-children>
+  <div (click)="onSelect({ target: { checked: !node.isSelected } })"
+       class="eui-tree-node-wrapper__container-middle">
+    <eui-icon-svg euiIconSvg [icon]="node?.treeContentBlock?.iconSvgName"></eui-icon-svg>
+    <label
+      euiLabel
+      [euiDisabled]="node?.treeContentBlock?.disabled"
+      class="eui-u-text-truncate eui-u-p-2xs eui-u-color-grey-75"
+      [class.eui-label--selected]="node?.isSelected"
+      [class.eui-u-cursor-pointer]="node?.selectable">
+      {{ node?.treeContentBlock?.label }}
+    </label>
+  </div>
+  <div *ngIf="children.selectable"
+       class="node-actions eui-u-ml-s">
+    <eui-dropdown>
+      <button euiButton euiBasicButton="true" (click)="onclickAction(node)">
+        <eui-icon-svg icon="eui-ellipsis-vertical"></eui-icon-svg>
+      </button>
+      <eui-dropdown-content>
+        <button euiDropdownItem
+                (click)="viewTemplate()">
+          {{'page.collection.custom.catalog.actions-dropdown.edit.template' | translate }}
+        </button>
+        <button euiDropdownItem
+                (click)="onUpdateTemplate()">
+          {{'page.collection.custom.catalog.actions-dropdown.change.name.visiblity'| translate }}
+        </button>
+        <button euiDropdownItem
+                (click)="unPublishTemplateCatalog(node)">
+          {{ 'page.collection.custom.catalog.actions-dropdown.un-publish.template' | translate }}
+        </button>
+      </eui-dropdown-content>
+    </eui-dropdown>
+  </div>
+
+    <div (click)="onSelect({ target: { checked: !node.isSelected } })"
+       *ngIf="node?.treeContentBlock?.rightContent" class="eui-tree-node-wrapper__container-right">
+    <!--badges area-->
+    <ng-container *ngFor="let badge of node.treeContentBlock.rightContent?.badges">
+      <eui-badge euiSizeM euiOutline [euiVariant]="badge.typeClass || 'secondary'" class="eui-u-ml-xs">
+        <span euiLabel>{{ badge.label }}</span>
+      </eui-badge>
+    </ng-container>
+  </div>
+</ng-template>
+
+<app-proposal-milestone-publish-to-catalog-dialog
+  #updateNameAndDgTemplateCatalog
+  [milestone]="milestoneViewData"
+  [document]=""
+  (closed)="reloadTemplate()"
+></app-proposal-milestone-publish-to-catalog-dialog>
+
+<eui-dialog
+  #unPublishConfirmation
+  [title]="'page.collection.custom.catalog.actions.un-publish.confirmation' | translate"
+  [acceptLabel]="'page.collection.custom.catalog.actions.un-publish.yes' | translate"
+  [dismissLabel]="'page.collection.custom.catalog.actions.un-publish.cancel' | translate"
+  [width]="'25vw'"
+  [isHandleCloseOnAccept]="true"
+  [isHandleCloseOnDismiss]="true"
+  [hasCloseButton]="false"
+  (clickOutside)="closeUnPublish()"
+  (close)="closeUnPublish()"
+  (accept)="acceptUnPublish()"
+  (dismiss)="closeUnPublish()"
+> <p>{{ 'page.collection.custom.catalog.actions.un-publish.message' | translate }}</p>
+</eui-dialog>
+

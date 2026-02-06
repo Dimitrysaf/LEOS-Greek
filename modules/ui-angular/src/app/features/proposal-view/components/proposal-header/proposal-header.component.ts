@@ -37,6 +37,12 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isClonedProposal: boolean;
   @Input() originRef: string | null;
   @Input() proposalState: string;
+  @Input() proposalTemplate!: string;
+  @Input() proposalLanguage!: string;
+  @Input() documentCollectionName!: string;
+  @Input() customTemplateAct: boolean;
+  @Input() translatedLanguages: string[];
+  @Input() isPublished: boolean;
 
   title: string;
   createForm: FormGroup;
@@ -74,6 +80,8 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy, OnChanges {
         .checkAndUpdateFavouriteStatus(this.proposalDetailsService.proposalRef)
         .pipe(takeUntil(this.destroy$))
         .subscribe();
+
+      this.proposalDetailsService.loadProposalMilestones();
     }
 
     this.landingPageService.isFavourite$
@@ -101,7 +109,7 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy, OnChanges {
   handleClose() {
     this.router.navigate([`/workspace`]);
   }
-  
+
   toggleFavourite(): void {
     if (this.proposalDetailsService.proposalRef) {
       this.landingPageService
@@ -114,7 +122,7 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy, OnChanges {
         });
     }
   }
-  
+
   private setPageTitle(newTitle: any) {
     this.title = [this.nonEditablePartOfTitle, newTitle]
       .filter(Boolean)

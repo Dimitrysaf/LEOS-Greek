@@ -12,7 +12,7 @@ import {
 import { Subject, takeUntil } from 'rxjs';
 import { appConfig } from 'src/config';
 
-import {ApplicationRole, CatalogItem} from '@/shared';
+import {ApplicationRole, CatalogItem, UserEntity} from '@/shared';
 import { ProposalService } from '@/shared/services/proposal.service';
 import {
   EuiTreeComponent,
@@ -21,6 +21,8 @@ import {
   TreeNode,
 } from '@eui/components/eui-tree';
 import { EuiTreeSelectionChanges } from '@eui/components/eui-tree/eui-tree.model';
+import {AppConfigService} from "@/core/services/app-config.service";
+import {TranslateService} from "@ngx-translate/core";
 
 const defaultLanguage =
   appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();
@@ -37,6 +39,11 @@ export class ProposalCreateTemplateSelectorComponent
   implements OnInit, OnDestroy
 {
   @Input() translationKey: 'document' | 'draft' = 'document';
+  @Input() disabled: boolean = false;
+  @Input() isCopyChangeAct!: boolean;
+  @Input() isCustomTemplatesCatalog!: boolean;
+  @Input() documentCollectionName!: string;
+  @Input() proposalTemplate!: string;
   @Input() userRoles!: ApplicationRole[];
   @Output() navigationClick = new EventEmitter<void>();
   @Output() selectTemplate = new EventEmitter<CatalogItem | null>();
@@ -51,23 +58,35 @@ export class ProposalCreateTemplateSelectorComponent
   doubleClickTimer: any;
   filteredNodes: TreeDataModel = null;
 
+  selectedDg: string;
+  dgList: UserEntity[] = [];
+
+
   private destroy$ = new Subject<void>();
   private templates: Map<string, CatalogItem> = new Map();
 
   constructor(
     private cd: ChangeDetectorRef,
     private proposalService: ProposalService,
+    private appConfig: AppConfigService,
+    private translateService: TranslateService
   ) {
     this.setInitialState();
   }
 
   ngOnInit() {
-    this.proposalService.templateCatalog$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((catalog) => {
-        this.loadTemplates(catalog);
-        this.cd.detectChanges(); // trigger `treeComponent` update
-      });
+    this.initialize(this.isCopyChangeAct); // if isCopyChangeAct then default true for disabling the tree selection
+    this.getDgList();
+  }
+
+  getDgList() {
+    this.appConfig.config.subscribe((config) => {
+      if (config.user.entities.length > 1) {
+        this.dgList = config.user.entities;
+        const selectedDg = this.dgList.find(dg => dg.organizationName === config.user.defaultEntity.organizationName);
+        this.selectedDg = selectedDg.organizationName ;
+      }
+    });
   }
 
   ngOnDestroy() {
@@ -96,6 +115,11 @@ export class ProposalCreateTemplateSelectorComponent
     this.selectLanguage.emit(this.selectedLanguage);
   }
 
+  onDgChange(dg) {
+    this.selectedDg = dg;
+    this.proposalService.loadCustomTemplateCatalog(dg);
+  }
+
   toggleExpanded(expand = !this.isExpanded) {
     this.isExpanded = expand;
     if (this.isExpanded) {
@@ -120,6 +144,7 @@ export class ProposalCreateTemplateSelectorComponent
   //   }
   // }
 
+
   onNodeClick(event: EuiTreeSelectionChanges) {
     const selectedNode = event.selection[0];
     if (
@@ -135,6 +160,28 @@ export class ProposalCreateTemplateSelectorComponent
     } else {
       this.unsetTemplate();
     }
+  }
+
+  resetInit(disabled: boolean){
+    this.reset();
+    this.initialize(disabled);
+  }
+
+  initialize(disabled:boolean) {
+    this.disabled = disabled;
+    this.isCustomTemplatesCatalog ?
+      this.proposalService.customTemplateCatalog$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((catalog) => {
+          this.loadTemplates(catalog);
+          this.cd.detectChanges(); // trigger `treeComponent` update
+        }) :
+      this.proposalService.templateCatalog$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((catalog) => {
+          this.loadTemplates(catalog);
+          this.cd.detectChanges(); // trigger `treeComponent` update
+        });
   }
 
   private loadTemplates(catalogItems: CatalogItem[] | null) {
@@ -180,11 +227,12 @@ export class ProposalCreateTemplateSelectorComponent
   }
 
   private catalogItemToTreeItem(item: CatalogItem): TreeItemModel {
-    const { id, key, names, type, enabled, items, hidden, visibleTo } = item;
-    const label = this.proposalService.getTranslation(names);
+    const { id, documentCollection, key, names, customName, type, enabled, items, hidden, visibleTo } = item;
+    let tooltipLabel = this.proposalService.getTranslation(names);
+    const label = customName ? (key.substring(0, key.lastIndexOf('_')) + ' - ' + customName) : tooltipLabel;
     const iconClass =
       (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') ? iconClassCategory : iconClassTemplate;
-    const disabled = !enabled;
+    let disabled = !enabled;
     const children =
       (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') && !hidden && enabled
         ? items
@@ -196,21 +244,31 @@ export class ProposalCreateTemplateSelectorComponent
         : [];
     const isEmptyCategory = (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') && !children.length;
     const isTemplate = type === 'TEMPLATE';
+    const sameTemplate = (this.proposalTemplate && key === this.proposalTemplate);
+    const isSameDocCollection = (!this.isCopyChangeAct || documentCollection == this.documentCollectionName);
+    disabled = disabled || this.disabled || !isSameDocCollection || sameTemplate;
 
+    if(isEmptyCategory) {
+      tooltipLabel = this.translateService.instant("page.workspace.create-selector.empty-category-tooltip");
+    } else if(isTemplate) {
+      if(this.disabled) {
+        tooltipLabel = this.translateService.instant("page.workspace.create-selector.invalid-selection-tooltip");
+      } else if(!isSameDocCollection) {
+        tooltipLabel = this.translateService.instant("page.workspace.create-selector.different-category-type-tooltip");
+      } else if(sameTemplate) {
+        tooltipLabel = this.translateService.instant("page.workspace.create-selector.same-template-type-tooltip");
+      }
+    }
     const node: TreeNode = {
       isExpanded: this.isExpanded,
-      selectable: isTemplate,
+      selectable: isTemplate && !this.disabled && isSameDocCollection && !sameTemplate,
       treeContentBlock: {
         id,
         key,
         label,
         disabled,
         iconSvgName: iconClass,
-        tooltipLabel: isEmptyCategory
-          ? 'empty-category'
-          : isTemplate
-          ? 'template'
-          : '', // Adjust tooltipLabel based on conditions
+        tooltipLabel: tooltipLabel, // Adjust tooltipLabel based on conditions
         // Add other properties as needed
       },
     };
@@ -290,5 +348,9 @@ export class ProposalCreateTemplateSelectorComponent
       }
       return acc;
     }, []);
+  }
+
+  get catalogTemplates(): Map<string, CatalogItem> {
+    return this.templates;
   }
 }

@@ -51,6 +51,8 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
 
+import static eu.europa.ec.leos.rest.extensions.LeosRepositoryMetadataExtensions.getMetadataCustomTemplateAct;
+
 public class LeosDocumentExtensions {
 
     private static final Logger logger = LoggerFactory.getLogger(LeosDocumentExtensions.class);
@@ -322,7 +324,8 @@ public class LeosDocumentExtensions {
                 getStatus(d),
                 getContainedDocuments(d),
                 d.getRef(),
-                d.getPackageId());
+                d.getPackageId(),
+                getMetadataCustomTemplateAct(d));
     }
 
     private static ExportDocument toLeosExportDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
@@ -352,9 +355,12 @@ public class LeosDocumentExtensions {
     }
 
     static Instant getLastModificationInstant(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        GregorianCalendar lastModificationDate = new GregorianCalendar();
-        lastModificationDate.setTime(document.getUpdatedOn());
-        return lastModificationDate != null ? lastModificationDate.toInstant() : Instant.MIN;
+        if (document.getUpdatedOn() != null) {
+            GregorianCalendar lastModificationDate = new GregorianCalendar();
+            lastModificationDate.setTime(document.getUpdatedOn());
+            return lastModificationDate.toInstant();
+        }
+        return Instant.MIN;
     }
 
     private static Option<Content> contentOption(eu.europa.ec.leos.rest.support.model.LeosDocument document, boolean fetchContent) {

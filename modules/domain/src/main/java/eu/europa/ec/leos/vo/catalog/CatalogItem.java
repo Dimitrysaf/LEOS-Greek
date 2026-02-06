@@ -13,6 +13,9 @@
  */
 package eu.europa.ec.leos.vo.catalog;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,9 +33,12 @@ public class CatalogItem {
 
     private ItemType type;
     private String id;
+    private String documentCollection;
     private Boolean enabled;
     private Boolean hidden;
     private String key;
+    @Getter @Setter
+    private String customName;
     private String visibleTo;
     private String category;
     private Boolean mandatory;
@@ -42,6 +48,8 @@ public class CatalogItem {
     private Map<String, String> langMap;
 
     private List<CatalogItem> itemList = new ArrayList<>();
+
+    private String originalDg;
 
     public ItemType getType() {
         return type;
@@ -118,8 +126,19 @@ public class CatalogItem {
     public void setDefaultDocument(Boolean defaultDocument) {
         this.defaultDocument = defaultDocument;
     }
+    public String getDocumentCollection() { return documentCollection; }
+
+    public void setDocumentCollection(String documentCollection) { this.documentCollection = documentCollection; }
 
     public String getVisibleTo() {  return visibleTo; }
 
     public void setVisibleTo(String visibleTo) { this.visibleTo = visibleTo; }
+
+    public String getOriginalDg() {
+        return originalDg;
+    }
+
+    public void setOriginalDg(String originalDg) {
+        this.originalDg = originalDg;
+    }
 }
