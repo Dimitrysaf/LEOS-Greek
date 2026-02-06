@@ -150,6 +150,7 @@ article subparagraph {
 
 .cke_dialog_tabs {
     margin: 19px 0 0;
+    display: flex;
 }
 
 .cke_dialog_tab {

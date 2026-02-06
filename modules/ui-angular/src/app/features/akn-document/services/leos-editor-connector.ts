@@ -649,6 +649,10 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
         this.loadingService.setLoading(false);
         // pass also the document reference associated with the request
         response["documentRef"] = documentRef;
+        if (response["tocItemsMap"][response["documentRef"]][1].node.indexOf("TECHNICAL DOCUMENTATION</heading>") != -1
+          && response["tocItemsMap"][response["documentRef"]][1].node.indexOf("<componentRef showAs=") != -1) {
+          response["tocItemsMap"][response["documentRef"]].splice(1, 1);
+        }
         this.receiveToc(JSON.stringify(response));
       });
   }

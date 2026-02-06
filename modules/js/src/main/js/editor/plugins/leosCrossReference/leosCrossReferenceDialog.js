@@ -167,7 +167,7 @@ define(function leosCrossReferenceDialog(require) {
                         ];
                         dialogDefinitionCKE.addContents({
                             id: documentMetadata.ref,
-                            label: getTabName(editor, documentMetadata.category, documentMetadata.index),
+                            label: getTabName(editor, documentMetadata.category, documentMetadata.index, documentMetadata.tlcReferenceNameFormatId),
                             elements: elements
                         });
                     }
@@ -198,14 +198,18 @@ define(function leosCrossReferenceDialog(require) {
         }, 0)
     }
 
-    function getTabName(editor, category, annexIndex) {
+    function getTabName(editor, category, annexIndex, tlcReferenceNameFormatId) {
         switch (category) {
             case "MEMORANDUM":
                 return editor.lang.leosCrossReference.memorandum;
             case "BILL":
                 return editor.lang.leosCrossReference.bill;
             case "ANNEX":
-                return editor.lang.leosCrossReference.annex + " " + annexIndex;
+                var icon = "";
+                if (tlcReferenceNameFormatId) {
+                    icon = `<span euiiconcolored="" style="display: flex;align-items: center;justify-content: center;" class="eui-icon eui-icon-2xs eui-icon-filetype-${tlcReferenceNameFormatId.toLowerCase()} eui-icon-color ng-star-inserted" _ngcontent-ng-c2742287287=""><span><span class="path1 ng-star-inserted"></span><span class="path2 ng-star-inserted"></span><span class="path3 ng-star-inserted"></span><span class="path4 ng-star-inserted"></span><span class="path5 ng-star-inserted"></span><span class="path6 ng-star-inserted"></span><span class="path7 ng-star-inserted"></span><span class="path8 ng-star-inserted"></span><span class="path9 ng-star-inserted"></span><span class="path10 ng-star-inserted"></span><span class="path11 ng-star-inserted"></span><span class="path12 ng-star-inserted"></span><span class="path13 ng-star-inserted"></span><span class="path14 ng-star-inserted"></span><span class="path15 ng-star-inserted"></span><span class="path16 ng-star-inserted"></span><span class="path17 ng-star-inserted"></span><span class="path18 ng-star-inserted"></span><span class="path19 ng-star-inserted"></span><span class="path20 ng-star-inserted"></span><!----></span></span>`;
+                }
+                return icon + editor.lang.leosCrossReference.annex + " " + annexIndex;
             case "STAT_DIGIT_FINANC_LEGIS":
                 return editor.lang.leosCrossReference.financialStatement;
             default:
