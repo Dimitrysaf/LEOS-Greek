@@ -1056,7 +1056,7 @@
                             </item>
                         </item>
                     </item>
-                    <item type="TEMPLATE" visibleTo="SUPPORT" enabled="true" key="SJ-010">
+                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-010">
                         <names>
                             <name lang="EN">SJ-010 - Commission Decision (former PRAC) (entry into force by its notification)</name>
                             <name lang="FR">SJ-010 - Décision de la Commission (ancienne PRAC) (entre en vigueur par sa notification)</name>
@@ -1069,7 +1069,7 @@
                             <language lang="EN">English</language>
                             <!--<language lang="FR">Français</language>-->
                         </languages>
-                        <item type="TEMPLATE" visibleTo="SUPPORT" id="PR-010" enabled="true" mandatory="true">
+                        <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-010" enabled="true" mandatory="true">
                             <names>
                                 <name lang="EN">PR-010 - ....</name>
                             </names>

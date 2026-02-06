@@ -1056,6 +1056,46 @@
                             </item>
                         </item>
                     </item>
+                    <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" enabled="true" key="SJ-010">
+                        <names>
+                            <name lang="EN">SJ-010 - Commission Decision (former PRAC) (entry into force by its notification)</name>
+                            <name lang="FR">SJ-010 - Décision de la Commission (ancienne PRAC) (entre en vigueur par sa notification)</name>
+                        </names>
+                        <descriptions>
+                            <description lang="EN">Template 10 of the LS: ommission Decision (former PRAC) (entry into force by its notification)</description>
+                            <description lang="FR">Template 10 du SJ: Décision de la Commission (ancienne PRAC) (entre en vigueur par sa notification)</description>
+                        </descriptions>
+                        <languages>
+                            <language lang="EN">English</language>
+                            <!--<language lang="FR">Français</language>-->
+                        </languages>
+                        <item type="TEMPLATE" documentCollection="ACT_AUTO_COM" visibleTo="SUPPORT" id="PR-010" enabled="true" mandatory="true">
+                            <names>
+                                <name lang="EN">PR-010 - ....</name>
+                            </names>
+                            <descriptions>
+                                <description lang="EN">...</description>
+                            </descriptions>
+                            <item type="DOCUMENT" id="BL-010" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">BL-010 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                                <item type="DOCUMENT" id="SG-068" enabled="true" mandatory="false" default="false">
+                                    <names>
+                                        <name lang="EN">SG-068 - Annex to an autonomous act / to another autonomous act</name>
+                                        <name lang="FR">SG-068 - Annexe à un acte autonome / à un autre acte autonome</name>
+                                    </names>
+                                    <descriptions>
+                                        <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
+                                        <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
+                                    </descriptions>
+                                </item>
+                            </item>
+                        </item>
+                    </item>
                 </item>
             </item>
         </item>
