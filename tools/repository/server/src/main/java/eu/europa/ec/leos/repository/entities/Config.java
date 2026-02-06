@@ -81,6 +81,14 @@ public class Config implements Serializable {
         this.auditCDate = auditCDate;
     }
 
+    public BigDecimal getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(BigDecimal objectId) {
+        this.objectId = objectId;
+    }
+
     public BigDecimal getId() {
         return id;
     }

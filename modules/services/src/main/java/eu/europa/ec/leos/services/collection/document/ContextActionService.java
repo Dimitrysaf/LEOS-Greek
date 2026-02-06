@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.collection.document;
 
 public enum ContextActionService {
     DOCUMENT_CREATED,
+    COPY_CONTENT,
     METADATA_UPDATED,
     ANNEX_BLOCK_UPDATED,
     ANNEX_STRUCTURE_UPDATED,

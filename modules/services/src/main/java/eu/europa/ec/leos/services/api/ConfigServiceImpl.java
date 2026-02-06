@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -71,6 +72,7 @@ public class ConfigServiceImpl implements ConfigService {
         //load language map
         languageGroupService.getLanguageMap();
 
+        List<String> languages = languageGroupService.getLanguageList();
         String mappingUrl = applicationProperties.getProperty("leos.mapping.url");
         boolean implicitSaveEnabled = Boolean.parseBoolean(applicationProperties.getProperty("implicitSaveAndClose.enabled"));
         String spellCheckerName = integrationProperties.getProperty("leos.spell.checker");
@@ -95,6 +97,8 @@ public class ConfigServiceImpl implements ConfigService {
         boolean leosSwitchLevelArticle = Boolean.parseBoolean(applicationProperties.getProperty("leos.switch.level.article"));
         int minSearchChar = Integer.parseInt(applicationProperties.getProperty("leos.search.on.minimum.characters"));
         int maxSearchLimit = Integer.parseInt(applicationProperties.getProperty("leos.maximum.search.limit"));
+        boolean repetitiveActsEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.repetitive.acts.enabled"));
+        boolean linguisticVersionsEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.custom.template.linguistic.versions.enabled"));
 
         appConfigResponse.setMappingUrl(mappingUrl);
         appConfigResponse.setImplicitSaveAndClose(implicitSaveEnabled);
@@ -125,6 +129,9 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setLeosSwitchLevelArticle(leosSwitchLevelArticle);
         appConfigResponse.setSearchOnMinimumCharacter(minSearchChar);
         appConfigResponse.setMaxSearchLimit(maxSearchLimit);
+        appConfigResponse.setRepetitiveActsEnabled(repetitiveActsEnabled);
+        appConfigResponse.setLinguisticVersionsEnabled(linguisticVersionsEnabled);
+        appConfigResponse.setLanguages(languages);
 
         return appConfigResponse;
     }

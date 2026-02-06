@@ -19,7 +19,7 @@
         [isCollapsible]="true"
         [isCollapsed]="isFilterCollapsed"
         (collapsed)="onToggleTOCColumnCollapsed()"
-        [label]="'page.workspace.filter.filters' | translate"
+        [label]="'page.workspace.filter.search' | translate"
         size="4xl"
       >
         <eui-page-column-header-right-content>
@@ -87,19 +87,44 @@
           <!-- Results list -->
           <div class="eui-u-ph-m eui-u-pb-2xl eui-u-width-100">
             <div [class.eui-u-display-hidden]="(proposals$ | async) === null">
-              <div
-                class="eui-u-flex eui-u-flex-justify-content-between eui-u-flex-align-items-center eui-u-pt-l"
-              >
-                <div class="totalResults">
-                  <h4 class="eui-u-font-bold" style="margin: 0px">
-                    {{ 'page.workspace.results.title' | translate }}
-                  </h4>
-                  <div>
-                    {{ totalResults$ | async }}
-                    {{ 'page.workspace.results.proposals-found' | translate }}
+              <div class="eui-u-flex eui-u-flex-justify-content-between eui-u-flex-align-items-center eui-u-pt-l">
+                <div class="left-group eui-u-flex">
+                  <div class="eui-u-mr-2xl">
+                    <h4 class="eui-u-font-bold" style="margin: 0px">
+                      {{ 'page.workspace.results.title' | translate }}
+                    </h4>
+                    <div>
+                      {{ totalResults$ | async }}
+                      {{ 'page.workspace.results.proposals-found' | translate }}
+                    </div>
+                  </div>
+
+                  <div class="eui-u-ml-l search-box">
+                    <div class="eui-input-group-addon">
+                      <input euiInputText
+                             [(ngModel)]="filterParams.searchTitle"
+                             (ngModelChange)="onSearchInput($event)"
+                             id="searchInput"
+                             [placeholder]="'search by title' | translate"
+                      />
+                      <div class="eui-input-group-addon-item">
+                        <eui-icon-svg icon="eui-search"></eui-icon-svg>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <div class="eui-u-ml-l" *ngIf="canCreateTemplate">
+                    <input euiInputCheckBox
+                      [(ngModel)]="filterParams.isCustomTemplate"
+                      (ngModelChange)="checkedCustomTemplate()"
+                      name="checkbox-custom-template"
+                      label="Filter Custom Templates"
+                    />
+                    <label>Custom Templates</label>
                   </div>
                 </div>
-                <div class="sort-btn">
+             <div class="sort-btn">
                   <button euiButton (click)="toggleSortOrder()">
                     <span euiLabel>{{
                       'page.workspace.results.sort' | translate

@@ -41,8 +41,11 @@ public class XmlDocumentMetadata {
     private String internalRef;
     private String coverPageType;
     private String language;
+    private String availableLangs;
+    private Boolean isPublished;
     private String ref;
     private Boolean eeaRelevance;
+    private Boolean customTemplateAct;
     private String authenticLanguage;
     private String templateName;
     private String template;
@@ -67,7 +70,10 @@ public class XmlDocumentMetadata {
         this.procedureType = doc.getProcedureType();
         this.template = doc.getTemplate();
         this.language = doc.getLanguage();
+        this.availableLangs = doc.getAvailableLangs();
+        this.isPublished = doc.getPublished();
         this.eeaRelevance = doc.getEeaRelevance();
+        this.customTemplateAct = doc.getCustomTemplateAct();
         this.title = doc.getTitle();
         this.category = doc.getCategoryCode();
         this.docTemplate = doc.getDocTemplate();
@@ -123,8 +129,17 @@ public class XmlDocumentMetadata {
         if (this.getLanguage() != null) {
             metadataMap.put("language", this.getLanguage());
         }
+        if (this.getAvailableLangs() != null) {
+            metadataMap.put("availableLangs", this.getAvailableLangs());
+        }
+        if (this.getPublished() != null) {
+            metadataMap.put("isPublished", this.getPublished());
+        }
         if (this.getEeaRelevance() != null) {
             metadataMap.put("eeaRelevance", this.getEeaRelevance());
+        }
+        if (this.getCustomTemplateAct() != null) {
+            metadataMap.put("customTemplateAct", this.getCustomTemplateAct());
         }
         if (this.getTitle() != null) {
             metadataMap.put("title", this.getTitle());
@@ -251,6 +266,21 @@ public class XmlDocumentMetadata {
 
     public void setLanguage(String languageCode) {
         this.language = languageCode;
+    }
+
+    public String getAvailableLangs() {
+        return availableLangs;
+    }
+    public void setAvailableLangs(String availableLangs) {
+        this.availableLangs = availableLangs;
+    }
+
+    public Boolean getPublished() {
+        return isPublished;
+    }
+
+    public void setPublished(Boolean published) {
+        isPublished = published;
     }
 
     public String getTemplateName() {
@@ -387,5 +417,13 @@ public class XmlDocumentMetadata {
 
     public void setCoverPageType(String coverPageType) {
         this.coverPageType = coverPageType;
+    }
+
+    public Boolean getCustomTemplateAct() {
+        return customTemplateAct;
+    }
+
+    public void setCustomTemplateAct(Boolean customTemplateAct) {
+        this.customTemplateAct = customTemplateAct;
     }
 }

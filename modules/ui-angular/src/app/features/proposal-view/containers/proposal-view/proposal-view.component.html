@@ -22,6 +22,12 @@
       [editableTitle]="proposalTitleEditablePart"
       [isClonedProposal]="isClonedProposal"
       [originRef]="originRef"
+      [proposalTemplate]="proposalTemplate"
+      [proposalLanguage]="proposalLanguage"
+      [documentCollectionName]="documentCollectionName"
+      [customTemplateAct]="customTemplateAct"
+      [translatedLanguages]="translatedLanguages"
+      [isPublished]="isPublished"
     ></app-proposal-header>
 
     <eui-tabs class="eui-u-display-block eui-u-mt-l" #tabs *ngIf="!translatedDocs || translatedDocs.length === 0">
@@ -45,6 +51,8 @@
           <app-proposal-milestones
             [proposal]="proposal"
             [proposalRef]="proposalRef"
+            [proposalLanguage]="proposalLanguage"
+            [translatedLanguages]="translatedLanguages"
             [legFileName]="legFileName"
           ></app-proposal-milestones>
         </eui-tab-content>
@@ -106,6 +114,8 @@
                 <app-proposal-milestones
                   [proposal]="proposal"
                   [proposalRef]="proposalRef"
+                  [proposalLanguage]="proposalLanguage"
+                  [translatedLanguages]="translatedLanguages"
                   [legFileName]="legFileName"
                 ></app-proposal-milestones>
               </eui-tab-content>

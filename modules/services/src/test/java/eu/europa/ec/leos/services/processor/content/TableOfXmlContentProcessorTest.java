@@ -48,8 +48,8 @@ public abstract class TableOfXmlContentProcessorTest extends LeosTest {
     protected StructureContext structureContext;
     @Mock
     protected TemplateStructureService templateStructureService;
-    @Mock
-    protected LanguageHelper languageHelper;
+    @InjectMocks
+    private LanguageHelper languageHelper = Mockito.spy(new LanguageHelper());
     @InjectMocks
     protected MessageHelper messageHelper = Mockito.spy(getMessageHelper());
     @InjectMocks
@@ -61,7 +61,7 @@ public abstract class TableOfXmlContentProcessorTest extends LeosTest {
     protected LanguageMapHolder languageMapHolder;
     protected LanguageGroupService languageGroupService;
     @InjectMocks
-    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext(languageHelper));
     
     protected MessageHelper getMessageHelper() {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("test-servicesContext.xml");

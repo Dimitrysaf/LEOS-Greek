@@ -165,6 +165,12 @@ public class ProposalRepositoryImpl implements ProposalRepository {
     }
 
     @Override
+    public String findDocumentRefByPackageIdAndCategory(String packageId, String category) {
+        final String documentRef = leosRepository.findDocumentRefByPackageIdAndCategory(Proposal.class, packageId, category);
+        return documentRef;
+    }
+
+    @Override
     public Integer findRecentMinorVersionsCount(String documentId, String documentRef) {
         final Proposal proposal = leosRepository.findLatestMajorVersionById(Proposal.class, documentId, documentRef);
         return leosRepository.findRecentMinorVersionsCount(Proposal.class, documentRef, proposal.getCmisVersionLabel());

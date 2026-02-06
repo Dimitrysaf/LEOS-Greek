@@ -22,6 +22,9 @@ import {CoEditionServiceWS} from './shared/services/coEdition.websocket.service'
 import {NotificationsService} from './shared/services/notifications.service';
 import {DocumentService} from "@/shared/services/document.service";
 import {DomSanitizer, Title} from '@angular/platform-browser';
+import {CreateProposalService} from "@/shared/services/create-proposal.service";
+import {ApplicationRole} from "@/shared";
+import {Router} from "@angular/router";
 import {AuthService} from "@/core/services/auth.service";
 
 @Component({
@@ -52,13 +55,18 @@ export class AppComponent implements OnInit, OnDestroy {
   userPreferencesState: Observable<UserPreferences>;
   profile: Profile;
   isNotificationsShown$: Observable<boolean>;
+  userRoles: ApplicationRole[];
   listSupportButtons = [
     { id: 1, label: 'app.support.contact-us' },
     { id: 2, label: 'app.support.learn' },
     { id: 3, label: 'app.support.go-pro' },
     { id: 4, label: 'app.support.decide' },
   ];
+  listAdministrationButtoms =[
+    { id: 1, label: 'app.administration.catalog' }
+  ];
 
+  showAdminOption =true;
   notifications: Notification[];
 
   private destroy$ = new Subject<void>();
@@ -74,6 +82,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private documentService: DocumentService,
     private titleService: Title,
     private domSanitizer: DomSanitizer,
+    protected createProposalService: CreateProposalService,
+    private router: Router,
     private authService: AuthService
   ) {
     this.isNotificationsShown$ = this.notificationsService.isShown$;
@@ -96,6 +106,8 @@ export class AppComponent implements OnInit, OnDestroy {
       this.headerTitleHtml = config.headerTitle;
       const plainTextTitle = this.stripHtmlTags(this.headerTitleHtml);
       this.titleService.setTitle(plainTextTitle);
+      this.userRoles =  config.user.roles;
+      this.showAdminOption = config.userAppPermissions.includes('CAN_CREATE_TEMPLATE');
     });
 
     this.documentService.documentConfig$
@@ -158,6 +170,15 @@ export class AppComponent implements OnInit, OnDestroy {
       case 4: {
         window.location.href =
           'https://intragate.ec.europa.eu/decide/sep/entrance';
+        break;
+      }
+    }
+  }
+
+  onAdminListItemClicked(item) {
+    switch (item.id) {
+      case 1: {
+        this.router.navigate(['/admin']);
         break;
       }
     }

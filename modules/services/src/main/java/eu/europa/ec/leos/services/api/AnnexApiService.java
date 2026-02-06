@@ -16,15 +16,15 @@ package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
-import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 
 import java.io.IOException;
-import java.util.List;
 
 public interface AnnexApiService extends BaseDocumentService<Annex> {
 
     public DocumentViewResponse changeAnnexStructureType(String documentRef) throws IOException;
 
     public DocumentViewResponse renumberAnnex(String annexRef);
+
+    byte[] renumberAnnexContent(Annex annex, byte[] xmlContent);
 
 }

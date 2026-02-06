@@ -22,6 +22,7 @@ import eu.europa.ec.leos.services.dto.request.CreateProposalRequest;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +33,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.Collections;
 import java.util.List;
+
 
 @RestController
 @RequestMapping(value = "/secured")
@@ -72,8 +76,8 @@ public class WorkspaceApiController {
     public ResponseEntity<Object> createPackage(@RequestBody CreateProposalRequest request) {
         CreateCollectionResult createCollectionResult;
         try {
-            createCollectionResult = apiService.createProposal(request.getTemplateId(), request.getTemplateName(),
-                    request.getLangCode(), request.getDocPurpose(), request.isEeaRelevance(), request.getKey());
+            createCollectionResult = apiService.createProposal(request.getTemplateId(), request.getTemplateName(), request.getLangCode(),
+                    request.getDocPurpose(), request.isEeaRelevance(), request.isCustomTemplateAct(), request.getKey());
             LOG.info("A package with proposal is created with proposal ref {} by the user {}", createCollectionResult.getProposalId(),
                     securityContext.getUser().getLogin());
             return new ResponseEntity<>(createCollectionResult, HttpStatus.OK);
@@ -97,6 +101,24 @@ public class WorkspaceApiController {
             LOG.error("Error occurred while retrieving list of proposals " + ex.getMessage());
             return new ResponseEntity<>("Error occurred while retrieving list of proposals " + ex.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/getCustomTemplates/{entityName}", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<Object> getCustomTemplates(@PathVariable String entityName) {
+        try {
+            List<CatalogItem> catalogItems = apiService.getCustomTemplates(entityName);
+            return new ResponseEntity<>(catalogItems, HttpStatus.OK);
+        } catch (IllegalArgumentException ex) {
+            if (StringUtils.startsWith(ex.getMessage(), "404 NOT_FOUND")) {
+                return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
+            }
+            LOG.error("Error occurred while retrieving custom templates catalog: {}", ex.getMessage());
+            return new ResponseEntity<>("Error occurred while retrieving custom templates catalog: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception ex) {
+            LOG.error("Error occurred while retrieving custom templates catalog: {}", ex.getMessage());
+            return new ResponseEntity<>("Error occurred while retrieving custom templates catalog: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

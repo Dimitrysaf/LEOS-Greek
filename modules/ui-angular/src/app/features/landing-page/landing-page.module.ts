@@ -9,6 +9,9 @@ import { SharedModule } from '@/shared/shared.module';
 import { ProposalHomeCardComponent } from './components/proposal-home-card/proposal-home-card.component';
 import { LandingPageComponent } from './containers/landing-page/landing-page.component';
 import { LandingPageRoutingModule } from './landing-page-routing.module';
+import {
+  ProposalViewCustomTemplateComponent
+} from "@/shared/components/proposal-view-custom-template/proposal-view-custom-template.component";
 
 @NgModule({
   imports: [
@@ -16,6 +19,7 @@ import { LandingPageRoutingModule } from './landing-page-routing.module';
     ReactiveFormsModule,
     LandingPageRoutingModule,
     CommonModule,
+    ProposalViewCustomTemplateComponent,
   ],
   declarations: [
     ProposalHomeCardComponent,

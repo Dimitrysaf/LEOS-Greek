@@ -23,6 +23,7 @@ import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.MemorandumService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.utils.LanguageMapUtils;
@@ -56,6 +57,7 @@ public class MemorandumContextService {
     private final XmlNodeConfigProcessor xmlNodeConfigProcessor;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
     private final PostProcessingDocumentService postProcessingDocumentService;
+    private final XmlContentProcessor xmlContentProcessor;
 
     private LeosPackage leosPackage = null;
     private Memorandum memorandum = null;
@@ -65,6 +67,7 @@ public class MemorandumContextService {
     private String type = null;
     private String template = null;
     private boolean eeaRelevance;
+    private boolean customTemplateAct;
     private boolean cloneProposal = false;
     private String originRef;
 
@@ -75,16 +78,33 @@ public class MemorandumContextService {
     private boolean translated;
     private String packageRef = null;
     private Map<String, String> mapOldAndNewRefs;
+    private byte[] existingContent = null;
 
     @Autowired
     MemorandumContextService(MemorandumService memorandumService, XmlNodeProcessor xmlNodeProcessor,
-                             XmlNodeConfigProcessor xmlNodeConfigProcessor, RepositoryPropertiesMapper repositoryPropertiesMapper, PostProcessingDocumentService postProcessingDocumentService) {
+                             XmlNodeConfigProcessor xmlNodeConfigProcessor, RepositoryPropertiesMapper repositoryPropertiesMapper,
+                             PostProcessingDocumentService postProcessingDocumentService, XmlContentProcessor xmlContentProcessor) {
         this.memorandumService = memorandumService;
         this.postProcessingDocumentService = postProcessingDocumentService;
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.xmlNodeProcessor = xmlNodeProcessor;
         this.xmlNodeConfigProcessor = xmlNodeConfigProcessor;
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
+        this.xmlContentProcessor = xmlContentProcessor;
+    }
+
+    public void useExistingContent(byte[] sourceContent, boolean cleanTrackChanges) {
+        Validate.notNull(sourceContent, "Exsting content must not be null!");
+        LOG.trace("Using Memorandum source content...");
+        if (cleanTrackChanges){
+//            To be replaced by https://code.europa.eu/leos/core/-/issues/2364
+//            byte[] cleaned = xmlContentProcessor.cleanTrackChanges(sourceContent);
+//            this.existingContent = xmlContentProcessor.cleanSoftActions(cleaned);
+            this.existingContent = sourceContent;
+        }
+        else {
+            this.existingContent = sourceContent;
+        }
     }
 
     public void usePackage(LeosPackage leosPackage) {
@@ -143,6 +163,11 @@ public class MemorandumContextService {
         this.eeaRelevance = eeaRelevance;
     }
 
+    public void useCustomTemplateAct(boolean customTemplateAct) {
+        LOG.trace("Using Proposal customTemplateAct... [customTemplateAct={}]", customTemplateAct);
+        this.customTemplateAct = customTemplateAct;
+    }
+
     public void useCloneProposal(boolean cloneProposal) {
         this.cloneProposal = cloneProposal;
     }
@@ -178,10 +203,17 @@ public class MemorandumContextService {
                 .withType(type)
                 .withTemplate(template)
                 .withPackageRef(packageRef)
+                .withCustomTemplateAct(customTemplateAct)
+                .withRef(originRef)
                 .build();
 
         Memorandum memorandumCreated = memorandumService.createMemorandum(memorandum.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED),
-                getContent(memorandum));
+                getContent(memorandum, existingContent));
+
+        if (existingContent != null) {
+            memorandumService.updateMemorandum(memorandumCreated, memorandumCreated.getMetadata().get(), VersionType.MINOR, actionMsgMap.get(ContextActionService.COPY_CONTENT));
+        }
+
         return memorandumService.createVersion(memorandumCreated.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
@@ -285,7 +317,11 @@ public class MemorandumContextService {
         this.originRef = originRef;
     }
 
-    private byte[] getContent(Memorandum memorandum) {
+    private byte[] getContent(Memorandum memorandum, byte[] sourceContent) {
+        if(sourceContent != null) {
+            return sourceContent;
+        }
+
         final Content content = memorandum.getContent().getOrError(() -> "Memorandum content is required!");
         return content.getSource().getBytes();
     }

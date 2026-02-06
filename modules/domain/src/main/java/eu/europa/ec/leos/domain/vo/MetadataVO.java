@@ -34,6 +34,7 @@ public class MetadataVO {
     private SecurityLevel securityLevel = SecurityLevel.STANDARD;
     private String language; // always should be set to language Code
     private boolean eeaRelevance;
+    private boolean customTemplateAct;
     private String templateName;
     private String template;
     private String docTemplateCategory;
@@ -63,17 +64,20 @@ public class MetadataVO {
 
     private String docTranslationFromLanguage;
     private String docTranslationFromHref;
+    private String availableLangs;
+    private Boolean isPublished;
 
     public MetadataVO() {
     }// added for early binding
 
-    public MetadataVO(String docStage, String docType, String docPurpose, String template, String language, boolean eeaRelevance) {
+    public MetadataVO(String docStage, String docType, String docPurpose, String template, String language, boolean eeaRelevance, boolean customTemplateAct) {
         this.docStage = docStage;
         this.docType = docType;
         this.docPurpose = docPurpose;
         this.template = template;
         this.language = language;
         this.eeaRelevance = eeaRelevance;
+        this.customTemplateAct = customTemplateAct;
     }
 
     public enum SecurityLevel {
@@ -96,6 +100,7 @@ public class MetadataVO {
         this.setIndex(null);
         this.setNumber(null);
         this.setEeaRelevance(false);
+        this.setCustomTemplateAct(false);
         this.setCallbackAddress(null);
         this.setImported(false);
         this.setAuthenticLang(null);
@@ -113,5 +118,7 @@ public class MetadataVO {
         this.setStamp(null);
         this.setDocTranslationFromLanguage(null);
         this.setDocTranslationFromHref(null);
+        this.setAvailableLangs(null);
+        this.setIsPublished(null);
     }
 }

@@ -110,6 +110,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.ACT_AUTO_COM;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
 
 public abstract class BillApiServiceImpl implements BillApiService {
@@ -224,7 +225,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
         proposal = proposalService.populateProposalMetadataFromXml(proposal);
         List<TocItem> tocItems = billService.fetchTocItems(bill, this.structureContext.get(), profile,
-                proposal.getMetadata().get().getDocumentCollectionName().equals("ACT_AUTO_COM"));
+                proposal.getMetadata().get().getDocumentCollectionName().equals(ACT_AUTO_COM));
         return billService.getTableOfContent(updatedBill, tocMode, tocItems, true);
     }
 
@@ -520,7 +521,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
         proposal = proposalService.populateProposalMetadataFromXml(proposal);
         List<TocItem> tocItems = billService.fetchTocItems(bill, this.structureContext.get(), profile,
-                proposal.getMetadata().get().getDocumentCollectionName().equals("ACT_AUTO_COM"));
+                proposal.getMetadata().get().getDocumentCollectionName().equals(ACT_AUTO_COM));
         return this.billService.getTableOfContent(bill, tocMode, tocItems, false);
     }
 
@@ -685,7 +686,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
         proposal = proposalService.populateProposalMetadataFromXml(proposal);
         return billService.fetchTocItems(bill, this.structureContext.get(), null,
-                proposal.getMetadata().get().getDocumentCollectionName().equals("ACT_AUTO_COM"));
+                proposal.getMetadata().get().getDocumentCollectionName().equals(ACT_AUTO_COM));
     }
 
     @Override
@@ -696,7 +697,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
         proposal = proposalService.populateProposalMetadataFromXml(proposal);
         return billService.fetchTocItems(bill, this.structureContext.get(), profile,
-                proposal.getMetadata().get().getDocumentCollectionName().equals("ACT_AUTO_COM"));
+                proposal.getMetadata().get().getDocumentCollectionName().equals(ACT_AUTO_COM));
     }
 
     private String getImportXml(String content) {

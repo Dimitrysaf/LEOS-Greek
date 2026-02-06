@@ -20,6 +20,7 @@ export interface ProposalFilter {
   acts?: string[];
   templates?: string[];
   roles?: Role[];
+  customTemplates?: string;
 }
 
 export const DEFAULT_SEARCH = '';

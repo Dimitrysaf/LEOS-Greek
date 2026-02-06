@@ -91,6 +91,7 @@ public class DocumentApiUtil {
                         documentVO.getId(),
                         documentVO.getVersionSeriesId(),
                         metadataVO.isEeaRelevance(),
+                        metadataVO.isCustomTemplateAct(),
                         documentVO.getRef());
                 break;
             case BILL:
@@ -103,7 +104,8 @@ public class DocumentApiUtil {
                         docRef,
                         documentVO.getId(),
                         documentVO.getVersionSeriesId(),
-                        metadataVO.isEeaRelevance());
+                        metadataVO.isEeaRelevance(),
+                        metadataVO.isCustomTemplateAct());
                 break;
             case MEMORANDUM:
                 metaData = new MemorandumMetadata(metadataVO.getDocStage(),
@@ -115,7 +117,8 @@ public class DocumentApiUtil {
                         docRef,
                         documentVO.getId(),
                         documentVO.getVersionSeriesId(),
-                        metadataVO.isEeaRelevance());
+                        metadataVO.isEeaRelevance(),
+                        metadataVO.isCustomTemplateAct());
                 break;
             case STAT_DIGIT_FINANC_LEGIS:
                 metaData = new FinancialStatementMetadata(metadataVO.getDocStage(),
@@ -128,7 +131,8 @@ public class DocumentApiUtil {
                         documentVO.getTitle(),
                         documentVO.getId(),
                         documentVO.getVersionSeriesId(),
-                        metadataVO.isEeaRelevance());
+                        metadataVO.isEeaRelevance(),
+                        metadataVO.isCustomTemplateAct());
                 break;
             case PROPOSAL:
                 metaData = new ProposalMetadata(metadataVO.getDocStage(),
@@ -140,7 +144,8 @@ public class DocumentApiUtil {
                         docRef,
                         documentVO.getTitle(),
                         documentVO.getId(),
-                        metadataVO.isEeaRelevance());
+                        metadataVO.isEeaRelevance(),
+                        metadataVO.isCustomTemplateAct());
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + documentVO.getDocumentType().name());

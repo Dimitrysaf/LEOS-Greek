@@ -61,6 +61,8 @@ public class DocumentCategories implements Serializable {
     private LocalDateTime auditLastMDate;
     @Column(name = "AUDIT_LAST_M_BY", length = 30)
     private String auditLastMBy;
+    @Column(name = "CONFIG_CATEGORY_ID")
+    private BigDecimal configCategoryId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "docCategoryId")
     private Collection<DocumentProperties> documentPropertiesCollection;
 
@@ -133,6 +135,14 @@ public class DocumentCategories implements Serializable {
 
     public void setAuditLastMBy(String auditLastMBy) {
         this.auditLastMBy = auditLastMBy;
+    }
+
+    public BigDecimal getConfigCategoryId() {
+        return configCategoryId;
+    }
+
+    public void setConfigCategoryId(BigDecimal configCategoryId) {
+        this.configCategoryId = configCategoryId;
     }
 
     @XmlTransient

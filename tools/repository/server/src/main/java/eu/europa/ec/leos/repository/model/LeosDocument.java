@@ -234,6 +234,8 @@ public class LeosDocument {
                 containedDocuments.add(milestone.getContainedDocuments());
             }
             this.metadata.put("containedDocuments", containedDocuments);
+
+            this.metadata.put("customTemplateAct", documentMilestoneV.getCustomTemplateAct());
         }
     }
 
@@ -273,6 +275,8 @@ public class LeosDocument {
                 containedDocuments.add(milestone.getContainedDocuments());
             }
             this.metadata.put("containedDocuments", containedDocuments);
+
+            this.metadata.put("customTemplateAct", documentMilestoneV.getCustomTemplateAct());
         }
     }
 
