@@ -14,6 +14,7 @@ import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.SecurityService;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.TemplateService;
@@ -51,6 +52,7 @@ public class FinancialStatementContextService {
     private final SecurityService securityService;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
     private final PostProcessingDocumentService postProcessingDocumentService;
+    private final XmlContentProcessor xmlContentProcessor;
 
     private LeosPackage leosPackage;
     private FinancialStatement financialStatement;
@@ -67,16 +69,19 @@ public class FinancialStatementContextService {
     private String milestoneComment;
     private String financialStatementId;
     private boolean eeaRelevance;
+    private boolean customTemplateAct;
     private boolean cloneProposal = false;
     private String originRef;
     private String language;
     private boolean translated;
     private String packageRef = null;
     private Map<String, String> mapOldAndNewRefs;
+    private byte[] existingContent = null;
 
     public FinancialStatementContextService(TemplateService templateService, FinancialStatementService financialStatementService,
                                             ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper,
-                                            XmlNodeProcessor xmlNodeProcessor, XmlNodeConfigProcessor xmlNodeConfigProcessor, PostProcessingDocumentService postProcessingDocumentService) {
+                                            XmlNodeProcessor xmlNodeProcessor, XmlNodeConfigProcessor xmlNodeConfigProcessor, PostProcessingDocumentService postProcessingDocumentService,
+                                            XmlContentProcessor xmlContentProcessor) {
         this.templateService = templateService;
         this.financialStatementService = financialStatementService;
         this.proposalService = proposalService;
@@ -86,6 +91,22 @@ public class FinancialStatementContextService {
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
         this.xmlNodeProcessor = xmlNodeProcessor;
         this.xmlNodeConfigProcessor = xmlNodeConfigProcessor;
+        this.xmlContentProcessor = xmlContentProcessor;
+    }
+
+    public void useExistingContent(byte[] sourceContent, boolean cleanTrackChanges) {
+        Validate.notNull(sourceContent, "Source content must not be null!");
+        LOG.trace("Using FinancialStatement source content...");
+
+        if (cleanTrackChanges){
+//            To be replaced by https://code.europa.eu/leos/core/-/issues/2364
+//            byte[] cleaned = xmlContentProcessor.cleanTrackChanges(sourceContent);
+//            this.existingContent = xmlContentProcessor.cleanSoftActions(cleaned);
+            this.existingContent = sourceContent;
+        }
+        else {
+            this.existingContent = sourceContent;
+        }
     }
 
     public void useDocTemplate(String docTemplate) {
@@ -218,13 +239,19 @@ public class FinancialStatementContextService {
                 .withDocTemplate(docTemplate)
                 .withTitle(title)
                 .withPackageRef(packageRef)
+                .withCustomTemplateAct(customTemplateAct)
+                .withRef(originRef)
                 .build();
 
         if (cloneProposal) {
             CloneDocumentMetadataVO cloneDocumentMetadataVO = new CloneDocumentMetadataVO("USER_ADDED_IN_CLONE_PROPOSAL", originRef);
             financialStatement = financialStatementService.createClonedFinancialStatement(financialStatement.getId(), leosPackage.getPath(), metadata, cloneDocumentMetadataVO, actionMsgMap.get(ContextActionService.STAT_DIGIT_FINANC_LEGIS_METADATA_UPDATED), null);
         } else {
-            financialStatement = financialStatementService.createFinancialStatement(financialStatement.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.STAT_DIGIT_FINANC_LEGIS_METADATA_UPDATED), null);
+            financialStatement = financialStatementService.createFinancialStatement(financialStatement.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.STAT_DIGIT_FINANC_LEGIS_METADATA_UPDATED), existingContent);
+
+            if (existingContent != null) {
+                financialStatementService.updateFinancialStatement(financialStatement, financialStatement.getMetadata().get(), VersionType.MINOR, actionMsgMap.get(ContextActionService.COPY_CONTENT));
+            }
         }
 
         financialStatement = securityService.updateCollaborators(financialStatement.getMetadata().get().getRef(), financialStatement.getId(), collaborators, FinancialStatement.class);
@@ -365,6 +392,11 @@ public class FinancialStatementContextService {
     public void useEeaRelevance(boolean eeaRelevance) {
         LOG.trace("Using Proposal eeaRelevance... [eeaRelevance={}]", eeaRelevance);
         this.eeaRelevance = eeaRelevance;
+    }
+
+    public void useCustomTemplateAct(boolean customTemplateAct) {
+        LOG.trace("Using Proposal customTemplateAct... [customTemplateAct={}]", customTemplateAct);
+        this.customTemplateAct = customTemplateAct;
     }
 
     public void useOriginRef(String originRef) {

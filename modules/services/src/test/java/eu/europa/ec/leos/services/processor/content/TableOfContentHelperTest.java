@@ -84,7 +84,7 @@ public class TableOfContentHelperTest extends LeosTest {
     protected LanguageMapHolder languageMapHolder;
     protected LanguageGroupService languageGroupService;
     @InjectMocks
-    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext(languageHelper));
 
     private List<TocItem> tocItems;
     private List<NumberingConfig> numberingConfigs;

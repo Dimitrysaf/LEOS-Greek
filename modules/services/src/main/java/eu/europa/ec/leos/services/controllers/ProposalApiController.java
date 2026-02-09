@@ -23,6 +23,7 @@ import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.dto.request.CreateExplanatoryDocumentRequest;
+import eu.europa.ec.leos.services.dto.request.CreateProposalCopyRequest;
 import eu.europa.ec.leos.services.dto.request.ExplanatoryRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
@@ -72,6 +73,30 @@ public class ProposalApiController {
         this.apiService = Objects.requireNonNull(apiService);
         this.financialStatementService = Objects.requireNonNull(financialStatementService);
         this.conValidatorService = Objects.requireNonNull(conValidatorService);
+    }
+
+    @PostMapping(value = "/copyAct")
+    public ResponseEntity<Object> copyAct(@RequestBody CreateProposalCopyRequest request) {
+        CreateCollectionResult createCollectionResult;
+        try {
+            createCollectionResult = apiService.copyAct(request);
+            return new ResponseEntity<>(createCollectionResult, HttpStatus.OK);
+        } catch (CreateCollectionException ex) {
+            LOG.error("Error occurred while creating proposal {}", ex.getMessage());
+            return new ResponseEntity<>("Error occurred while creating proposal", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "/{legFileId}/linguistic-versions")
+    public ResponseEntity<Object> createLinguisticVersions(@PathVariable String legFileId, @RequestBody List<String> linguisticVersions) {
+        try {
+            List<String> notFoundLinguisticVersions = apiService.createLinguisticVersionsFromMilestone(legFileId, linguisticVersions);
+            return new ResponseEntity<>(notFoundLinguisticVersions, HttpStatus.OK);
+        } catch (CreateCollectionException ex) {
+            LOG.error("Error occurred while creating linguistic versions for the proposal {}", ex.getMessage());
+            return new ResponseEntity<>("Error occurred while creating linguistic versions for the proposal: " + ex.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @RequestMapping(value = "/{proposalRef}", method = RequestMethod.PUT)

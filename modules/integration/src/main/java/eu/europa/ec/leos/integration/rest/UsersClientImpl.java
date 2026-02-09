@@ -136,6 +136,20 @@ class UsersClientImpl implements UsersProvider {
     }
 
     @Override
+    public List<String> getAllOrganizations() {
+        final String uri = repositoryUrl + "/entities";
+
+        List<String> results;
+        try {
+            results = restTemplate.exchange(uri, HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {}).getBody();
+        } catch (RestClientException e) {
+            throw new RuntimeException("Unable to get organizations. Failed calling: " + uri, e);
+        }
+
+        return results;
+    }
+
+    @Override
     public List<UserJSON> searchUsersByJobTitle(String jobTitle) {
         Validate.notNull(jobTitle, "Job title must not be null");
         final String uri = repositoryUrl + findByJobTitleUri;

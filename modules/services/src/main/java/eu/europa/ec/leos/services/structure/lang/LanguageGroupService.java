@@ -53,13 +53,15 @@ public class LanguageGroupService {
     }
 
     public void getLanguageMap() {
-        byte[] languageDocument = getLangGroupDocument();
-        final LanguageGroup languageGroup = loadLanguageGroupFromFile(languageDocument);
-        Map<String, List<String>> languageMap = new HashMap<>();
-        languageGroup.getGroups().getGroups().forEach(group -> {
-            languageMap.put(group.getName(), group.getLangs());
-        });
-        languageMapHolder.loadLanguageMap(languageMap);
+        if (LanguageMapHolder.getLanguageMap() == null) {
+            byte[] languageDocument = getLangGroupDocument();
+            final LanguageGroup languageGroup = loadLanguageGroupFromFile(languageDocument);
+            Map<String, List<String>> languageMap = new HashMap<>();
+            languageGroup.getGroups().getGroups().forEach(group -> {
+                languageMap.put(group.getName(), group.getLangs());
+            });
+            languageMapHolder.loadLanguageMap(languageMap);
+        }
     }
 
     public List<String> getLanguageList() {

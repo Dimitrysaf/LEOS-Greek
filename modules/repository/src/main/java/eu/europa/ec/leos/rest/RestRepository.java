@@ -44,6 +44,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.UnsupportedEncodingException;
@@ -112,6 +114,8 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestGetAllVersionsURI;
     @Value("${leos.rest.repository.count.recent.minor.versions}")
     private String leosRestGetRecentMinorVersionsCountURI;
+    @Value("${leos.rest.repository.document.ref.package.id}")
+    private String leosRestGetDocumentRefURI;
     @Value("${leos.rest.repository.find.document.first.version}")
     private String leosRestFindFirstVersionURI;
     @Value("${leos.rest.repository.find.document.by.version}")
@@ -138,6 +142,14 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestArchiveDocumentURI;
     @Value("${leos.rest.repository.archive.document.version}")
     private String leosRestArchiveDocumentVersionURI;
+    @Value("${leos.rest.repository.publish.custom.template}")
+    private String leosRestPublishCustomTemplateURI;
+    @Value("${leos.rest.repository.update.custom.template}")
+    private String leosRestupdateCustomTemplateURI;
+    @Value("${leos.rest.repository.un-publish.custom.template}")
+    private String leosRestUnPublishCustomTemplateURI;
+    @Value("${leos.rest.repository.info.custom.template}")
+    private String leosRestInfoCustomTemplateURI;
     @Value("${leos.rest.repository.find.document.search.versions}")
     private String leosRestSearchVersionsURI;
     @Value("${leos.rest.repository.find.recent.packages.uri}")
@@ -334,16 +346,15 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
-    LeosDocumentList findDocumentsByPackageId(final String id, final Set<LeosCategory> categories, final boolean allVersion, final boolean fetchContent) {
-        LOGGER.trace("Finding documents by package Id... [pkgId=" + id + ", categories=" + categories + ", allVersion=" + allVersion + ']');
+    LeosDocumentList findDocumentsByPackageId(final String id, final Set<LeosCategory> categories, final boolean descendants, final boolean fetchContent) {
+        LOGGER.trace("Finding documents by package Id... [pkgId=" + id + ", categories=" + categories + ", allVersion=" + descendants + ']');
 
         Set<String> cats = categories.stream().map(c -> c.name()).collect(Collectors.toSet());
         FindDocumentsRequest findDocumentsRequest = new FindDocumentsRequest();
         findDocumentsRequest.setCategories(cats);
 
         String url = getUrl(leosRestFindDocumentsbyPackageIdURI);
-        LeosDocumentList resp = postEntity(url, findDocumentsRequest, LeosDocumentList.class, id, fetchContent);
-        return resp;
+        return postEntity(url, findDocumentsRequest, LeosDocumentList.class, id, descendants, fetchContent);
     }
 
     Optional<LeosDocument> findDocumentByName(final String name) {
@@ -531,6 +542,13 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
+    String findDocumentRefByPackageIdAndCategory(String packageId, String category) {
+        LOGGER.trace("Get document reference by package Id and Category [packageId={}, category={} ]", packageId, category);
+        String url = getUrl(leosRestGetDocumentRefURI + "?category={category}");
+        String resp = getEntity(url, String.class, packageId, category);
+        return resp;
+    }
+
     LeosDocument findFirstVersion(final String ref) {
         LOGGER.trace("Finding document version by ref... [ref={}]", ref);
         String url = getUrl(leosRestFindFirstVersionURI);
@@ -695,6 +713,51 @@ public class RestRepository extends AbstractRestClient {
         String url = getUrl(leosRestArchiveDocumentVersionURI);
         LeosDocument resp = putEntity(url, null, LeosDocument.class, docRef, version);
         return resp;
+    }
+
+    public void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId, String originalDg) {
+        LOGGER.trace("Publish Custom Template [{}]", legFileId);
+        String url = getUrl(leosRestPublishCustomTemplateURI);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("legFileId", legFileId);
+        params.add("templateName", templateName);
+        params.add("userId", userId);
+        params.add("originalDg", originalDg);
+        dgs.forEach(dg -> params.add("dgs", dg));
+
+        postEntity(url, params, Object.class);
+    }
+
+    public void updateCustomTemplate(String packageId, String templateName, List<String> dgs, String userId, String originalDg) {
+        LOGGER.trace("Update Custom Template [{}]", packageId);
+        String url = getUrl(leosRestupdateCustomTemplateURI);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("packageId", packageId);
+        params.add("templateName", templateName);
+        params.add("userId", userId);
+        params.add("originalDg", originalDg);
+        dgs.forEach(dg -> params.add("dgs", dg));
+
+        postEntity(url, params, Object.class);
+    }
+
+    public Boolean unPublishCustomTemplate(String packageId, String userId) {
+        LOGGER.trace("Un Publish Custom Template [{}]", packageId);
+        String url = getUrl(leosRestUnPublishCustomTemplateURI);
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("packageId", packageId);
+        params.add("userId", userId);
+
+        return postEntity(url, params, Boolean.class);
+    }
+
+    public Map<String, Object> getTemplateInfo(String packageId) {
+        LOGGER.trace("Get Template Info [{}]", packageId);
+        String url = getUrl(leosRestInfoCustomTemplateURI);
+        return getEntity(url, Map.class, packageId);
     }
 
     public List<String> findPackagesForValidation() {

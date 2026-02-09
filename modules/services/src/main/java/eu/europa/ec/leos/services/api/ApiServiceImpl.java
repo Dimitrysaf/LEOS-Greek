@@ -49,6 +49,7 @@ import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.domain.vo.MilestonesVO;
 import eu.europa.ec.leos.domain.vo.ProposalDetailsVO;
 import eu.europa.ec.leos.domain.vo.ValidationVO;
+import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.model.detailstab.DetailsTabExclusions;
@@ -77,6 +78,7 @@ import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.models.AnnexType;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
+import eu.europa.ec.leos.services.dto.request.CreateProposalCopyRequest;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
@@ -103,14 +105,17 @@ import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.model.proposal.ProposalDetailsLists;
 import eu.europa.ec.leos.services.structure.details.ProposalDetailsService;
+import eu.europa.ec.leos.services.template.CustomTemplateService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
+import eu.europa.ec.leos.services.utils.LanguageMapUtils;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -120,7 +125,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import jakarta.inject.Provider;
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -128,6 +132,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -147,6 +152,7 @@ import java.util.stream.Collectors;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_ADDED;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_DELETED;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.PROCESSED;
+import static eu.europa.ec.leos.services.converter.ProposalConverterServiceImpl.createFileFromXmlSource;
 import static eu.europa.ec.leos.services.support.LeosXercesUtils.getTitleValue;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml10;
@@ -167,6 +173,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private static final String COLLECTION_BLOCK_ANNEX_METADATA_UPDATED = "collection.block.annex.metadata.updated";
     protected final ProposalService proposalService;
     protected final ExportService exportService;
+    private final CustomTemplateService customTemplateService;
     private final TemplateService templateService;
     private final WorkspaceService workspaceService;
     private final UserService userService;
@@ -199,14 +206,16 @@ public abstract class ApiServiceImpl implements ApiService {
     protected LeosRepository leosRepository;
     private TrackChangesContext trackChangesContext;
     protected final TemplateConfigurationService templateConfigurationService;
+    private final LanguageHelper languageHelper;
     protected PackageRepository packageRepository;
 
-    private DocumentViewService documentViewService;
+    protected DocumentViewService documentViewService;
     @Value("${leos.clone.originRef}")
     private String cloneOriginRef;
 
     @Autowired
-    public ApiServiceImpl(TemplateService templateService,
+    public ApiServiceImpl(CustomTemplateService customTemplateService,
+                          TemplateService templateService,
                           WorkspaceService workspaceService,
                           UserService userService,
                           CreateCollectionService createCollectionService,
@@ -235,7 +244,8 @@ public abstract class ApiServiceImpl implements ApiService {
                           TrackChangesContext trackChangesContext, DocumentViewService documentViewService,
                           GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
                           ProposalDetailsService proposalDetailsService,
-                          TemplateConfigurationService templateConfigurationService, PackageRepository packageRepository) {
+                          TemplateConfigurationService templateConfigurationService, LanguageHelper languageHelper, PackageRepository packageRepository) {
+        this.customTemplateService = customTemplateService;
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -270,6 +280,7 @@ public abstract class ApiServiceImpl implements ApiService {
         this.coverPageApiService = coverPageApiService;
         this.proposalDetailsService = proposalDetailsService;
         this.templateConfigurationService = templateConfigurationService;
+        this.languageHelper = languageHelper;
         this.packageRepository = packageRepository;
     }
 
@@ -284,8 +295,19 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public CreateCollectionResult createProposal(String templateId, String templateName, String langCode,
-                                                 String docPurpose, boolean eeaRelevance, String templateKey) throws CreateCollectionException {
+    public List<CatalogItem> getCustomTemplates(String entityName) throws IOException {
+        return customTemplateService.getCustomTemplatesCatalog(entityName);
+    }
+
+    @Override
+    public CreateCollectionResult copyAct(CreateProposalCopyRequest request) throws CreateCollectionException {
+        List<XmlDocument> documents = getAllDocuments(request.getProposalRef());
+        return createProposalFromExisting(request.getTemplateId(), request.getTemplateName(),
+                    request.getLangCode(), request.getDocPurpose(), request.isEeaRelevance(), request.isCustomTemplateAct(), request.getKey(), documents);
+    }
+
+    private CreateCollectionResult createProposalFromExisting(String templateId, String templateName, String langCode,
+                                                 String docPurpose, boolean eeaRelevance, boolean customTemplate, String templateKey, List<XmlDocument> documents) throws CreateCollectionException {
         DocumentVO documentVO = new DocumentVO(LeosCategory.PROPOSAL);
         documentVO.getMetadata().setDocTemplate(templateId);
         documentVO.getMetadata().setTemplateName(templateName);
@@ -293,7 +315,136 @@ public abstract class ApiServiceImpl implements ApiService {
         documentVO.getMetadata().setDocPurpose(docPurpose);
         documentVO.getMetadata().setEeaRelevance(eeaRelevance);
         documentVO.getMetadata().setTemplate(templateKey);
-        return createCollectionService.createCollection(documentVO);
+        documentVO.getMetadata().setCustomTemplateAct(customTemplate);
+        return createCollectionService.createCollectionFromExisting(documentVO, documents);
+    }
+
+    private List<XmlDocument> getAllDocuments(String proposalRef) {
+        return getAllDocuments(proposalRef, false, true);
+    }
+
+    private List<XmlDocument> getAllDocuments(String proposalRef, boolean allVersions, boolean fetchContent) {
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+        return packageService.findDocumentsByPackageId(leosPackage.getId(), XmlDocument.class, allVersions, fetchContent);
+    }
+
+    @Override
+    public CreateCollectionResult createProposal(String templateId, String templateName, String langCode,
+                                                 String docPurpose, boolean eeaRelevance, boolean customTemplateAct,
+                                                 String templateKey) throws CreateCollectionException {
+        if (customTemplateAct) {
+            userHelper.validateTemplateManager("This user is not allowed to create custom templates.");
+        }
+
+        DocumentVO documentVO = new DocumentVO(LeosCategory.PROPOSAL);
+        documentVO.getMetadata().setDocTemplate(templateId);
+        documentVO.getMetadata().setTemplateName(templateName);
+        documentVO.getMetadata().setLanguage(langCode);
+        documentVO.getMetadata().setDocPurpose(docPurpose);
+        documentVO.getMetadata().setEeaRelevance(eeaRelevance);
+        documentVO.getMetadata().setTemplate(templateKey);
+        documentVO.getMetadata().setCustomTemplateAct(customTemplateAct);
+        return createCollectionService.createCollection(documentVO, false);
+    }
+
+    @Override
+    public List<String> createLinguisticVersionsFromMilestone(String legFileId, List<String> linguisticVersions) throws CreateCollectionException {
+        try {
+            LegDocument legDocument = legService.findLegDocumentById(legFileId);
+            validateCustomTemplate(legDocument);
+            LeosFile legFile = createFileFromXmlSource(legDocument.getContent().get().getSource().getBytes(), "lastMilestone.leg");
+            DocumentVO documentVO = proposalConverterService.createProposalFromLegFile(legFile, false);
+            validateAutonomousAct(documentVO);
+            documentVO.getMetadata().setCustomTemplateAct(true);
+            linguisticVersions = linguisticVersions.stream().map(StringUtils::upperCase).collect(Collectors.toList());
+            validateLinguisticVersionsExist(documentVO.getRef(), linguisticVersions);
+            return this.createLinguisticVersions(linguisticVersions, documentVO);
+        } catch (XmlValidationException e) {
+            LOG.error("Xml validation error occurred while creating proposal from leg file: ", e);
+            throw new CreateCollectionException("Languages are not aligned. An error occurred obtaining the act file of the main language");
+        } catch (Exception e) {
+            throw new CreateCollectionException(e.getMessage());
+        }
+    }
+
+    private void validateCustomTemplate(LegDocument legDocument) {
+        if (legDocument.isCustomTemplateAct()) {
+            userHelper.validateTemplateManager("This user is not allowed to create linguistic versions in custom templates.");
+        } else {
+            throw new IllegalStateException("This is not a custom template. Linguistic versions are not allowed in this proposal.");
+        }
+    }
+
+    private void validateAutonomousAct(DocumentVO document) {
+        if (!ACT_AUTO_COM.equals(document.getMetadata().getDocCollectionName())) {
+            throw new IllegalStateException("This custom template is not an autonomous act. Linguistic versions are not allowed in this proposal.");
+        }
+    }
+
+    private void validateLinguisticVersionsExist(String proposalRef, List<String> linguisticVersions) {
+        List<String> existingLinguisticVersions = new ArrayList<>();;
+        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+        linguisticVersions.forEach(version -> {
+            if (StringUtils.contains(proposal.getMetadata().get().getAvailableLangs(), version)) {
+                existingLinguisticVersions.add(version);
+            }
+        });
+        if (CollectionUtils.isNotEmpty(existingLinguisticVersions)) {
+            throw new IllegalStateException(
+                    "The following linguistic versions are already present in this proposal: " + String.join(", ", existingLinguisticVersions));
+        }
+    }
+
+    private List<String> createLinguisticVersions(List<String> linguisticVersions, DocumentVO documentVO) throws Exception {
+        List<String> notFoundLinguisticVersions = new ArrayList<>();
+        List<String> createdProposalRefs = new ArrayList<>();
+        for (String language : linguisticVersions) {
+            String newLinguisticProposalRef = createLinguisticVersion(documentVO, language, notFoundLinguisticVersions);
+            if (newLinguisticProposalRef != null) {
+                createdProposalRefs.add(newLinguisticProposalRef);
+            }
+        }
+        alignIds(documentVO, createdProposalRefs);
+        return notFoundLinguisticVersions;
+    }
+
+    private String createLinguisticVersion(DocumentVO documentVO, String language, List<String> notFoundLinguisticVersions) throws Exception {
+        documentVO.getMetadata().setLanguage(language);
+        try {
+            CreateCollectionResult createCollectionResult = createCollectionService.createCollection(documentVO, true);
+            String proposalRef = createCollectionResult.getProposalId();
+            createLinguisticAnnexIfExistsInMainLanguage(documentVO, proposalRef);
+            return proposalRef;
+        } catch (IllegalArgumentException e) {
+            if (StringUtils.startsWith(e.getMessage(), "404 NOT_FOUND")) {
+                notFoundLinguisticVersions.add(language);
+            }
+        }
+        return null;
+    }
+
+    private void createLinguisticAnnexIfExistsInMainLanguage(DocumentVO documentVO, String proposalRef) throws IOException {
+        DocumentVO mainLanguageAnnex = documentVO.getChildDocument(LeosCategory.BILL).getChildDocument(LeosCategory.ANNEX);
+        if (mainLanguageAnnex != null) {
+            String mainLanguageAnnexRef = mainLanguageAnnex.getRef();
+            createProposalAnnex(proposalRef, mainLanguageAnnexRef);
+            if (hasChangedAnnexTitle(null, mainLanguageAnnex, true)) {
+                String language = proposalRef.substring(proposalRef.lastIndexOf("-") + 1);
+                String linguisticAnnexRef = LanguageMapUtils.getTranslatedProposalReference(mainLanguageAnnexRef, language);
+                Annex linguisticAnnex = annexService.findAnnexByRef(linguisticAnnexRef);
+                updateAnnexTitle(proposalRef, linguisticAnnex.getId(), mainLanguageAnnex.getMetadata().getTitle());
+            }
+        }
+    }
+
+    private void alignIds(DocumentVO documentVO, List<String> linguisticRefs) {
+        if (CollectionUtils.isNotEmpty(linguisticRefs)) {
+            List<XmlDocument> originalXmlDocs = getAllDocuments(documentVO.getRef(), true, false);
+            for (String linguisticRef : linguisticRefs) {
+                List<XmlDocument> linguisticXmlDocs = getAllDocuments(linguisticRef);
+                this.customTemplateService.alignDocumentsFromBaseVersion(originalXmlDocs, linguisticXmlDocs, documentVO, linguisticRef);
+            }
+        }
     }
 
     @Override
@@ -363,11 +514,7 @@ public abstract class ApiServiceImpl implements ApiService {
         LegPackage legPackage = null;
         try {
             CollectionContextService context = collectionContextProvider.get();
-            LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
-            if (leosPackage.getTranslated() != null && leosPackage.getTranslated()) {
-                LinkedPackage linkedPackage = packageService.findLinkedPackageByLinkedPkgId(leosPackage.getId());
-                leosPackage = packageService.findPackageByPackageId(linkedPackage.getPackageId());
-            }
+            LeosPackage leosPackage = getLeosPackage(proposalRef);
             Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
             proposal = proposalService.populateProposalMetadataFromXml(proposal);
             String proposalComment = generateProposalComment(request);
@@ -444,6 +591,15 @@ public abstract class ApiServiceImpl implements ApiService {
             LOG.error("Unexpected error occurred while updating proposal metadata ", e);
             throw e;
         }
+    }
+
+    private LeosPackage getLeosPackage(String proposalRef) {
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+        if (leosPackage.getTranslated() != null && leosPackage.getTranslated()) {
+            LinkedPackage linkedPackage = packageService.findLinkedPackageByLinkedPkgId(leosPackage.getId());
+            leosPackage = packageService.findPackageByPackageId(linkedPackage.getPackageId());
+        }
+        return leosPackage;
     }
 
     private String generateProposalComment(UpdateProposalRequest request) throws Exception {
@@ -674,17 +830,15 @@ public abstract class ApiServiceImpl implements ApiService {
             proposal = proposalService.populateProposalMetadataFromXml(proposal);
         }
         if (proposal != null) {
+            String language = proposal.getMetadata().get().getLanguage();
+            languageHelper.setProposalLanguageTag(language.toLowerCase());
             String proposalId = proposal.getId();
             proposalXmlContent = proposal.getContent().exists(c -> c.getSource() != null)
                     ? proposal.getContent().get().getSource().getBytes()
                     : new byte[0];
 
             try {
-                LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
-                if (leosPackage.getTranslated()) {
-                    LinkedPackage linkedPackage = packageService.findLinkedPackageByLinkedPkgId(leosPackage.getId());
-                    leosPackage = packageService.findPackageByPackageId(linkedPackage.getPackageId());
-                }
+                LeosPackage leosPackage = getLeosPackage(proposalRef);
                 List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
                 proposalDetailsLists = proposalDetailsService.populateTemplateSignatures(proposalDetailsLists, documents);
                 List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, true);
@@ -993,7 +1147,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private MetadataVO createMetadataVO(Proposal proposal) {
         ProposalMetadata metadata = proposal.getMetadata().getOrError(() -> "Proposal metadata is not available!");
         MetadataVO metadataVO = new MetadataVO(metadata.getStage(), metadata.getType(), metadata.getPurpose(), metadata.getTemplate(), metadata.getLanguage(),
-            metadata.getEeaRelevance());
+            metadata.getEeaRelevance(), metadata.isCustomTemplateAct());
         metadataVO.setAuthenticLang(proposal.getMetadata().get().getAuthenticLang());
         metadataVO.setIsAuthenticLang(proposal.getMetadata().get().getIsAuthenticLang());
         metadataVO.setPackageTitle(proposal.getMetadata().get().getPackageTitle());
@@ -1018,8 +1172,12 @@ public abstract class ApiServiceImpl implements ApiService {
         return packageService.findDocumentsByPackagePath(leosPackage.getPath(), FinancialStatement.class, false);
     }
 
+    public void createProposalAnnex(String proposalRef, String originRef) throws IOException {
+        createProposalAnnex(proposalRef, originRef, AnnexType.NORMAL, null, null, null);
+    }
+
     @Override
-    public void createProposalAnnex(String proposalRef, AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) throws IOException {
+    public void createProposalAnnex(String proposalRef, String originRef, AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) throws IOException {
         LOG.trace("Creating annex...");
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
@@ -1031,6 +1189,13 @@ public abstract class ApiServiceImpl implements ApiService {
                 boolean annexExistWithSameName = StringUtils.isEmpty(originalFilename) ? false : documents.stream().filter(xmlDocument -> xmlDocument.getCategory().equals(LeosCategory.ANNEX) && StringUtils.isNotEmpty(xmlDocument.getOriginalFilename()) && xmlDocument.getOriginalFilename().toUpperCase().equals(originalFilename.toUpperCase())).findAny().isPresent();
                 if (annexExistWithSameName) {
                     throw new CreateAnnexException("page.collection.drafts.annex.same.name.error");
+                }
+                if (proposal.getMetadata() != null && proposal.getMetadata().get().isCustomTemplateAct()){
+                    documents.forEach(document -> {
+                        if (document.getCategory().equals(LeosCategory.ANNEX)){
+                            throw new RuntimeException("You cannot add more than one Annex to a Custom Template.");
+                        }
+                    });
                 }
                 Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
                 BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
@@ -1044,9 +1209,12 @@ public abstract class ApiServiceImpl implements ApiService {
 
                 CatalogItem templateItem = templateService.getTemplateItem(metadata.getDocTemplate());
                 String annexTemplate = templateItem.getItems().get(annexType.ordinal()).getId();
-                billContext.useAnnexTemplate(annexTemplate);
+                String language = metadata.getLanguage();
+                billContext.useAnnexTemplate(annexTemplate + LanguageMapUtils.getLanguageTemplateSuffix(language));
+                billContext.useLanguage(language);
+                billContext.useCustomTemplateAct(metadata.isCustomTemplateAct());
                 billContext.useCloneProposal(isClonedProposal);
-                billContext.useOriginRef(cloneOriginRef);
+                billContext.useOriginRef(isClonedProposal ? cloneOriginRef : originRef);
                 billContext.usePackageRef(proposalRef);
                 billContext.executeCreateBillAnnex(annexType, binaryContent, originalFilename, binaryContentSize);
                 billService.updateExternalReferencesAsync(leosPackage);
@@ -1148,11 +1316,7 @@ public abstract class ApiServiceImpl implements ApiService {
         if (isClonedProposal) {
             populateCloneProposalMetadataVO(proposalXmlContent);
         }
-        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
-        if (leosPackage.getTranslated()) {
-            LinkedPackage linkedPackage = packageService.findLinkedPackageByLinkedPkgId(leosPackage.getId());
-            leosPackage = packageService.findPackageByPackageId(linkedPackage.getPackageId());
-        }
+        LeosPackage leosPackage = getLeosPackage(proposalRef);
         List<LegDocument> legDocuments = new ArrayList<>();
         String translatedProposalRef = proposalRef;
         if (leosPackage.getLanguage().equalsIgnoreCase(language)) {
@@ -1412,6 +1576,10 @@ public abstract class ApiServiceImpl implements ApiService {
         LOG.trace(("Creating new milestone..."));
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
+            if (proposal.getMetadata().get().isCustomTemplateAct()) {
+                userHelper.validateTemplateManager("This user is not allowed to create milestones in custom templates.");
+            }
+            String correctedMilestone = new String(milestoneComment.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             String proposalId = proposal.getId();
             byte[] proposalXmlContent = proposal.getContent().exists(c -> c.getSource() != null) ?
                     proposal.getContent().get().getSource().getBytes() : new byte[0];
@@ -1422,11 +1590,113 @@ public abstract class ApiServiceImpl implements ApiService {
             if (hasNotChanged(proposal)) {
                 throw new CreateMilestoneException();
             }
+            LegDocument previousLegDocument = null;
+            String packageId = getPackageIdForCustomTemplateMainLanguage(proposal);
+            if (packageId != null) {
+                previousLegDocument = packageService.findDocumentsByPackageId(packageId, LegDocument.class, false, true).stream()
+                        .max(Comparator.comparing(LegDocument::getInitialCreationInstant)).orElse(null);
+            }
             final String versionComment = messageHelper.getMessage("milestone.versionComment");
-            createMajorVersions(proposalRef, milestoneComment, versionComment, collectionContextProvider.get());
-            milestoneService.createMilestone(proposalId, milestoneComment);
+            createMajorVersions(proposalRef, correctedMilestone, versionComment, collectionContextProvider.get());
+            LegDocument legDocument = milestoneService.createMilestone(proposalId, correctedMilestone);
+            alignLinguisticVersionsForCustomTemplateMainLanguage(previousLegDocument, legDocument, packageId);
         }
         return null;
+    }
+
+    private String getPackageIdForCustomTemplateMainLanguage(Proposal proposal) {
+        ProposalMetadata proposalMetadata = proposal.getMetadata().getOrError(() -> "Proposal metadata not found!");
+        if (proposalMetadata.isCustomTemplateAct() && StringUtils.isNotBlank(proposalMetadata.getAvailableLangs()) && !proposal.isClonedProposal()) {
+            LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+            return leosPackage.getTranslated() ? null : leosPackage.getId();
+        }
+        return null;
+    }
+
+    private void alignLinguisticVersionsForCustomTemplateMainLanguage(LegDocument previousLegDocument, LegDocument newLegDocument, String packageId)
+            throws Exception {
+        try {
+            if (previousLegDocument != null) {
+                LeosFile newLegFile = createFileFromXmlSource(newLegDocument.getContent().get().getSource().getBytes(), "newMilestone.leg");
+                LeosFile previousLegFile = createFileFromXmlSource(previousLegDocument.getContent().get().getSource().getBytes(), "lastMilestone.leg");
+                DocumentVO newDocumentVO = proposalConverterService.createProposalFromLegFile(newLegFile, false);
+                DocumentVO previousDocumentVO = proposalConverterService.createProposalFromLegFile(previousLegFile, false);
+                List<LinkedPackage> linkedPackages = packageService.findLinkedPackagesByPackageId(packageId);
+                for (LinkedPackage linkedPackage : linkedPackages) {
+                    String linguisticPackageId = linkedPackage.getLinkedPackageId();
+                    List<XmlDocument> linguisticDocuments = packageService.findDocumentsByPackageId(linguisticPackageId, XmlDocument.class, false, true);
+                    linguisticDocuments = handleAnnexCreationDeletion(previousDocumentVO, newDocumentVO, linguisticDocuments, linguisticPackageId);
+                    customTemplateService.alignDocument(previousDocumentVO, newDocumentVO, linguisticDocuments);
+                }
+            }
+        } catch (XmlValidationException e) {
+            LOG.error("Xml validation error occurred while creating proposal from leg file: ", e);
+            throw new Exception("Languages are not aligned. An error occurred obtaining the act file of the main language");
+        }
+    }
+
+    private List<XmlDocument> handleAnnexCreationDeletion(DocumentVO baseSourceDoc, DocumentVO finalSourceDoc, List<XmlDocument> linguisticDocuments,
+            String linguisticPackageId) throws IOException {
+        boolean linguisticBillAttachmentsUpdated = false;
+        DocumentVO baseSourceAnnex = baseSourceDoc != null ? baseSourceDoc.getChildDocument(LeosCategory.BILL).getChildDocument(LeosCategory.ANNEX) : null;
+        DocumentVO finalSourceAnnex = finalSourceDoc.getChildDocument(LeosCategory.BILL).getChildDocument(LeosCategory.ANNEX);
+        String linguisticProposalRef = getProposalRef(linguisticDocuments);
+        XmlDocument linguisticAnnex = getLinguisticAnnex(linguisticDocuments);
+        if (hasDeletedAnnex(baseSourceAnnex, finalSourceAnnex)) {
+            deleteAnnex(linguisticProposalRef, linguisticAnnex.getMetadata().get().getRef());
+            linguisticBillAttachmentsUpdated = true;
+        }
+        if (hasAddedAnnex(baseSourceAnnex, finalSourceAnnex)) {
+            String finalSourceAnnexRef = finalSourceAnnex.getRef();
+            createProposalAnnex(linguisticProposalRef, finalSourceAnnexRef);
+            linguisticBillAttachmentsUpdated = true;
+            String language = linguisticDocuments.get(0).getMetadata().get().getLanguage();
+            String newLinguisticAnnexRef = LanguageMapUtils.getTranslatedProposalReference(finalSourceAnnexRef, language);
+            Annex linguisticAnnexDoc = annexService.findAnnexByRef(newLinguisticAnnexRef);
+            checkAndUpdateAnnexTitle(baseSourceAnnex, finalSourceAnnex, true, linguisticProposalRef, linguisticAnnexDoc);
+            List<Annex> sourceAnnexDocs = annexService.findVersions(finalSourceAnnexRef);
+            List<Annex> linguisticAnnexDocs = Collections.singletonList(annexService.findAnnexByRef(newLinguisticAnnexRef));
+            customTemplateService.alignDocumentsFromBaseVersion(sourceAnnexDocs, linguisticAnnexDocs, finalSourceDoc, newLinguisticAnnexRef);
+        } else {
+            checkAndUpdateAnnexTitle(baseSourceAnnex, finalSourceAnnex, false, linguisticProposalRef, linguisticAnnex);
+        }
+        return linguisticBillAttachmentsUpdated ?
+                packageService.findDocumentsByPackageId(linguisticPackageId, XmlDocument.class, false, true) :
+                linguisticDocuments;
+    }
+
+    private static String getProposalRef(List<XmlDocument> linguisticDocuments) {
+        return linguisticDocuments.stream().filter(doc -> LeosCategory.PROPOSAL.equals(doc.getCategory()))
+                .map(doc -> doc.getMetadata().get().getRef()).findAny()
+                .orElseThrow(() -> new IllegalStateException(LeosCategory.PROPOSAL + " not found for some of the linguistic version/s."));
+    }
+
+    private static XmlDocument getLinguisticAnnex(List<XmlDocument> linguisticDocuments) {
+        return linguisticDocuments.stream().filter(doc -> LeosCategory.ANNEX.equals(doc.getCategory())).findAny().orElse(null);
+    }
+
+    private boolean hasDeletedAnnex(DocumentVO baseAnnex, DocumentVO finalAnnex) {
+        return baseAnnex != null && (finalAnnex == null || !baseAnnex.getRef().equals(finalAnnex.getRef()));
+    }
+
+    private boolean hasAddedAnnex(DocumentVO baseAnnex, DocumentVO finalAnnex) {
+        return finalAnnex != null && (baseAnnex == null || !baseAnnex.getRef().equals(finalAnnex.getRef()));
+    }
+
+    private void checkAndUpdateAnnexTitle(DocumentVO baseAnnex, DocumentVO finalAnnex, boolean isNewAnnex, String linguisticProposalRef,
+            XmlDocument linguisticAnnex) {
+        if (hasChangedAnnexTitle(baseAnnex, finalAnnex, isNewAnnex)) {
+            updateAnnexTitle(linguisticProposalRef, linguisticAnnex.getId(), finalAnnex.getMetadata().getTitle());
+        }
+    }
+
+    private boolean hasChangedAnnexTitle(DocumentVO baseAnnex, DocumentVO finalAnnex, boolean isNewAnnex) {
+        if (finalAnnex != null) {
+            String finalAnnexTitle = finalAnnex.getMetadata().getTitle();
+            String baseAnnexTitle = baseAnnex != null ? baseAnnex.getMetadata().getTitle() : null;
+            return isNewAnnex && !ANNEX.equals(finalAnnexTitle) || !isNewAnnex && !StringUtils.equals(baseAnnexTitle, finalAnnexTitle);
+        }
+        return false;
     }
 
     private boolean hasNotChanged(Proposal proposal) {
@@ -1442,9 +1712,9 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public LegDocument addLegDocument(String packageName, String legFileName, List<String> milestoneComments, byte[] content, LeosLegStatus status,
-                                      List<String> containedDocuments) throws Exception {
-        return legService.addLegDocument(packageName, legFileName, milestoneComments, content, status, containedDocuments);
+    public void addLegDocument(String packageName, String legFileName, List<String> milestoneComments, byte[] content, LeosLegStatus status,
+            List<String> containedDocuments, boolean isCustomTemplate) {
+        legService.addLegDocument(packageName, legFileName, milestoneComments, content, status, containedDocuments, isCustomTemplate);
     }
 
     @Override
@@ -1766,5 +2036,10 @@ public abstract class ApiServiceImpl implements ApiService {
     private void populateCloneProposalMetadataVO(byte[] xmlContent) {
         CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(xmlContent);
         cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+    }
+
+    @Override
+    public String findDocumentRefByPackageIdAndCategory(String packageId, String category) {
+        return proposalService.findDocumentRefByPackageIdAndCategory(packageId, category);
     }
 }

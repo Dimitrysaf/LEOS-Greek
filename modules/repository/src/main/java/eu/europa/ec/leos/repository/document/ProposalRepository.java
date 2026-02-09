@@ -196,4 +196,6 @@ public interface ProposalRepository {
 
     LeosDocument findConfigByName(String name);
 
+    String findDocumentRefByPackageIdAndCategory(String packageId, String category);
+
 }

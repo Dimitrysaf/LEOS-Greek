@@ -4,5 +4,5 @@
   "interInstitionalRefsTypes": ["COD", "SYN", "AVC", "CNS", "ACC", "PRT", "CNB", "CNC", "NLE", "APP", "BUD", "DEC"],
   "adoptionPlaces": ["Brussels", "Strasbourg", "Luxembourg"],
   "specialMentions": ["COM", "EP", "CONSIL"],
-  "commissionerTitles": ["PRESID", "PRESID_VICE", "MEMBER_COM", "DIR_GEN"]
+  "commissionerTitles": ["PRESID", "PRESID_VICE", "MEMBER_COM", "DIR_GEN", "HEAD_SERV", "HEAD_UNIT", "DIRECTOR"]
 }

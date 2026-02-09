@@ -56,6 +56,15 @@
   padding: 0 20px;
 }
 
+.cards-containers-large {
+  display: flex;
+  justify-content: left;
+  align-items: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 0 20px;
+}
+
 .search-container {
   display: flex;
   justify-content: center;
@@ -89,6 +98,10 @@
 
 .card-container {
   width: 40.1%;
+}
+
+.card-container-large {
+  width: 75%;
 }
 
 .search-card-container {

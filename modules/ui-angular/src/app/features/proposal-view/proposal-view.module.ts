@@ -19,6 +19,12 @@ import { ProposalViewComponent } from "./containers/proposal-view/proposal-view.
 import { ProposalViewRoutingModule } from "./proposal-view-routing.module";
 import {MatFormField, MatHint, MatLabel, MatSuffix} from "@angular/material/form-field";
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/material/datepicker";
+import {
+  ProposalMilestonePublishToCatalogDialogComponent
+} from "@/features/proposal-view/containers/proposal-milestone-publish-to-dg-template-catalog/proposal-milestone-publish-to-catalog-dialog.component";
+import {
+  ProposalLinguisticVersionsDialogComponent
+} from "@/features/proposal-view/containers/proposal-linguistic-versions-dialog/proposal-linguistic-versions-dialog.component";
 
 
 @NgModule({
@@ -35,7 +41,9 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/m
     ProposalExportsComponent,
     AddMilestoneDialogComponent,
     ProposalMilestoneSendCopyDialogComponent,
+    ProposalMilestonePublishToCatalogDialogComponent,
     MilestoneAnnotationWarningModalComponent,
+    ProposalLinguisticVersionsDialogComponent
   ],
   imports: [
     ProposalViewRoutingModule,
@@ -51,5 +59,8 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from "@angular/m
     MatSuffix,
   ],
   providers: [ProposalService],
+  exports: [
+    ProposalMilestonePublishToCatalogDialogComponent
+  ]
 })
 export class ProposalViewModule {}

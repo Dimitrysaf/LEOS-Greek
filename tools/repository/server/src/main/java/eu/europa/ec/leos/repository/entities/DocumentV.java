@@ -93,6 +93,8 @@ public class DocumentV implements Serializable {
     private String categoryCode;
     @Column(name = "CATEGORY_DESC", updatable = false)
     private String categoryDesc;
+    @Column(name = "CONFIG_CATEGORY_ID", updatable = false)
+    private BigDecimal configCategoryId;
     @Column(name = "NAME", updatable = false)
     private String name;
     @Column(name = "CLONED_FROM", updatable = false)
@@ -165,6 +167,14 @@ public class DocumentV implements Serializable {
     private int numProps;
     @Column(name = "IS_VERSION_ARCHIVED", updatable = false)
     private Boolean isVersionArchived;
+    @Column(name = "CUSTOM_TEMPLATE_ACT", updatable = false)
+    private Boolean customTemplateAct;
+
+    @Column(name = "AVAILABLE_LANGS", updatable = false)
+    private String availableLangs;
+
+    @Column(name = " IS_PUBLISHED", updatable = false)
+    private Boolean  isPublished;
 
     public DocumentV() {
     }
@@ -235,6 +245,14 @@ public class DocumentV implements Serializable {
 
     public void setCategoryDesc(String categoryDesc) {
         this.categoryDesc = categoryDesc;
+    }
+
+    public BigDecimal getConfigCategoryId() {
+        return configCategoryId;
+    }
+
+    public void setConfigCategoryId(BigDecimal configCategoryId) {
+        this.configCategoryId = configCategoryId;
     }
 
     public String getComments() {
@@ -491,5 +509,29 @@ public class DocumentV implements Serializable {
 
     public void setVersionArchived(Boolean versionArchived) {
         isVersionArchived = versionArchived;
+    }
+
+    public Boolean getCustomTemplateAct() {
+        return customTemplateAct;
+    }
+
+    public void setCustomTemplateAct(Boolean customTemplateAct) {
+        this.customTemplateAct = customTemplateAct;
+    }
+
+    public String getAvailableLangs() {
+        return availableLangs;
+    }
+
+    public void setAvailableLangs(String availableLangs) {
+        this.availableLangs = availableLangs;
+    }
+
+    public Boolean getPublished() {
+        return isPublished;
+    }
+
+    public void setPublished(Boolean published) {
+        isPublished = published;
     }
 }

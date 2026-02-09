@@ -17,28 +17,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.controllers.requests.QueryFilter;
-import eu.europa.ec.leos.repository.entities.Document;
-import eu.europa.ec.leos.repository.entities.DocumentCategories;
-import eu.europa.ec.leos.repository.entities.DocumentContent;
-import eu.europa.ec.leos.repository.entities.DocumentProperties;
-import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
-import eu.europa.ec.leos.repository.entities.DocumentV;
-import eu.europa.ec.leos.repository.entities.DocumentVersion;
+import eu.europa.ec.leos.repository.entities.*;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.Collaborator;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.model.PackageInfo;
-import eu.europa.ec.leos.repository.repositories.DocumentCategoriesRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentContentRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentPropertiesRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentPropertyValuesRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
-import eu.europa.ec.leos.repository.repositories.DocumentVersionRepository;
-import eu.europa.ec.leos.repository.repositories.PackageRepository;
+import eu.europa.ec.leos.repository.repositories.*;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import eu.europa.ec.leos.repository.utils.PropertiesMetadata;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.tika.Tika;
@@ -51,9 +40,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -75,6 +63,8 @@ import java.util.stream.Collectors;
 public class DocumentServiceImpl implements DocumentService {
     private static final Logger LOG = LoggerFactory.getLogger(DocumentServiceImpl.class);
     private static final int MAX_RESULT_DEFAULT = 100;
+    private static final String XML_DOC_EXT = ".xml";
+    private static final String CUSTOM_TEMPLATE_COMMENT = "Custom Template";
     private static final String SENT_FOR_VALIDATION = "SENT_FOR_VALIDATION";
 
     private final DocumentRepository documentRepository;
@@ -95,14 +85,14 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Autowired
     public DocumentServiceImpl(DocumentRepository documentRepository, DocumentVRepository documentVRepository,
-            DocumentVersionRepository documentVersionRepository, DocumentContentRepository documentContentRepository,
-            DocumentCategoriesRepository documentCategoriesRepository,
-            DocumentPropertiesRepository documentPropertiesRepository,
-            DocumentPropertyValuesRepository documentPropertyValuesRepository,
-            PackageRepository packageRepository, PackageService packageService,
-            CollaboratorsService collaboratorsService,
-            MilestoneDocumentService milestoneDocumentService,
-            ConfigService configService, EntityManager entityManager) {
+                               DocumentVersionRepository documentVersionRepository, DocumentContentRepository documentContentRepository,
+                               DocumentCategoriesRepository documentCategoriesRepository,
+                               DocumentPropertiesRepository documentPropertiesRepository,
+                               DocumentPropertyValuesRepository documentPropertyValuesRepository,
+                               PackageRepository packageRepository, PackageService packageService,
+                               CollaboratorsService collaboratorsService,
+                               MilestoneDocumentService milestoneDocumentService,
+                               ConfigService configService, EntityManager entityManager) {
         this.documentRepository = documentRepository;
         this.documentVRepository = documentVRepository;
         this.documentVersionRepository = documentVersionRepository;
@@ -184,6 +174,7 @@ public class DocumentServiceImpl implements DocumentService {
             if (metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()) != null) {
                 doc.setContributionStatus((String) metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()));
             }
+            doc.setCustomTemplateAct((Boolean) metadata.get(PropertiesMetadata.CUSTOM_TEMPLATE_ACT.getLeosName()));
             doc = documentRepository.save(doc);
 
             Tika tika = new Tika();
@@ -929,6 +920,16 @@ public class DocumentServiceImpl implements DocumentService {
                     queryBuild.append(" IN ( ");
                     queryBuild.append(":valueList_").append(i);
                     queryBuild.append(")");
+                } else if (filter.isBoolean){
+                    if (filter.nullCheck) {
+                        queryBuild.append(" OR ");
+                    }
+                    else {
+                        queryBuild.append(" AND ");
+                    }
+                    queryBuild.append(columnName);
+                    queryBuild.append(" ").append(filter.operator).append(" ");
+                    queryBuild.append(":keyValue_").append(i);
                 } else {
                     if (filter.nullCheck) {
                         queryBuild.append(" OR ");
@@ -964,6 +965,8 @@ public class DocumentServiceImpl implements DocumentService {
                 }
                 if ("IN".equalsIgnoreCase(filter.operator)) {
                     query.setParameter("valueList_" + i, Arrays.asList(filter.value));
+                } else if(filter.isBoolean) {
+                    query.setParameter("keyValue_" + i, Boolean.parseBoolean(filter.value[0]));
                 } else {
                     query.setParameter("keyValue_" + i, Arrays.asList(filter.value));
                 }
@@ -1294,4 +1297,16 @@ public class DocumentServiceImpl implements DocumentService {
             }
         }
     }
+
+    public String findDocumentRefByPackageIdAndCategory(final String pkgId, final String categoryCode) {
+        String docRef = "";
+        BigDecimal packageId = new BigDecimal(Long.parseLong(pkgId));
+        List<DocumentV> documentVS =  documentVRepository.findDocumentsByPackageIdAndCategory(packageId,categoryCode);
+        if (!CollectionUtils.isEmpty(documentVS)) {
+            docRef = documentVS.get(0).getRef();
+        }
+        return docRef;
+
+    }
+
 }

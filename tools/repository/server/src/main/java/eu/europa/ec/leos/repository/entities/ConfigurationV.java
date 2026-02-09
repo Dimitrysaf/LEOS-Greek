@@ -91,7 +91,7 @@ public class ConfigurationV implements Serializable {
     private Boolean isVersionSeriesCheckedOut;
     @Lob
     @Column(name = "CONTENT", updatable = false)
-    private byte[] content;
+    private String content;
 
     public ConfigurationV() {
     }
@@ -240,11 +240,11 @@ public class ConfigurationV implements Serializable {
         this.isVersionSeriesCheckedOut = isVersionSeriesCheckedOut;
     }
 
-    public byte[] getContent() {
+    public String getContent() {
         return content;
     }
 
-    public void setContent(byte[] content) {
+    public void setContent(String content) {
         this.content = content;
     }
 }
