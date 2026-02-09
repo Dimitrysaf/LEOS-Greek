@@ -21,6 +21,7 @@ public class CloneProposalMetadataVO {
     private String clonedFromObjectId;
     private String originRef;
     private String cloneProposalRef;
+    private boolean externalClone;
 
     public String getLegFileName() {
         return legFileName;
@@ -90,6 +91,10 @@ public class CloneProposalMetadataVO {
 
     public void setCloneProposalRef(String cloneProposalRef) {
         this.cloneProposalRef = cloneProposalRef;
+    }
+
+    public void setExternalClone(boolean externalClone) {
+        this.externalClone = externalClone;
     }
 
     @Override

@@ -66,6 +66,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.support.ScopeNotActiveException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -99,6 +100,9 @@ import static eu.europa.ec.leos.util.LeosDomainUtil.getLeosDateFromString;
 public abstract class ProposalServiceImpl implements ProposalService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProposalServiceImpl.class);
+
+    @Value("${leos.clone.originRef}")
+    private static String cloneOriginRef;
 
     protected final ProposalRepository proposalRepository;
     private final XmlNodeProcessor xmlNodeProcessor;
@@ -482,12 +486,14 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 String legFileName = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneOriginalMilestone(), true);
                 String iscRef = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneIscRef(), true);
                 String clonedFromObjectId = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneObjectId(), true);
+                boolean isExternalClone = !cloneOriginRef.equals(iscRef);
 
                 cloneProposalMetadataVO.setClonedFromRef(clonedFromRef);
                 cloneProposalMetadataVO.setClonedFromObjectId(clonedFromObjectId);
                 cloneProposalMetadataVO.setLegFileName(legFileName);
                 cloneProposalMetadataVO.setOriginRef(iscRef);
                 cloneProposalMetadataVO.setClonedProposal(true);
+                cloneProposalMetadataVO.setExternalClone(isExternalClone);
             }
         } catch (Exception e) {
             LOG.error("Error occurred while evaluation xpath expression", e);
