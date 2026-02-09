@@ -862,6 +862,10 @@ When('user select {string} from the context menu', function (menuItemLabel) {
     ckEditorWindow.clickOnContextMenuItem(menuItemLabel);
 });
 
+When(/^click on li (\d+) with attribute name "([^"]*)" with value "([^"]*)" and attribute name "([^"]*)" with value "([^"]*)" of li (\d+) with attribute name "([^"]*)" with value "([^"]*)" of paragraph in edition mode$/,     function(         liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue,liTag, attributeName, attributeValue,     )
+{         ckEditorWindow.clickOnFirstLayerElementOfParagraph(liFirstLayerTag, firstLayerAttributeName, firstLayerAttributeValue,liTag, attributeName, attributeValue);
+});
+
 Then ('the clause inside ck editor is not editable and contains attribute {string} with value {string}', function (attributeName, attributeValue) {
     ckEditorWindow.elements.ckEditableInline()
         .should('have.attr', attributeName, attributeValue);
@@ -903,3 +907,8 @@ When ('click on role from the dropdown button which contains text {string}', fun
 When(/^click at offset (\d+) of pTag (\d+) of citation in edition mode$/, function (offSet, pTagNumber) {
     ckEditorWindow.clickAtSpecificOffsetInPTagOfLevel(offSet, pTagNumber);
 });
+
+When('click at offset {int} in li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode', function (offset, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3) {
+    ckEditorWindow.moveCursorToSpecificOffsetInSecondLayerPointOfParagraphOfArticle(offset, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3);
+});
+
