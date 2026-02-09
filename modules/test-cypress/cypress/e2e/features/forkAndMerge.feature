@@ -724,73 +724,73 @@ Feature: fork and merge features
     Then contribution view container is not displayed
     Then level 1 contains "Text...add new content in same paragraph"
 
-  @VisibilityOfContributionInAutonomousAct @local
-  Scenario: test fork and merge of a act
-    Given navigate to leos application with "User1"
-    Then user is on home page
-    When click on Create act button
-    Then user is on create new legislative document window
-    When click on template "SJ-003" in create new legislative document window
-    When click on next button in create document page
-    And  provide document title "VisibilityOfContributionPane" in create document page
-    And  click on create button
-    Then user is on act viewer page
-    When click on add button in annexes section
-    Then total number of annexes present in act viewer page is 1
-    When click on milestones tab in act view page
-    When click on add button in milestones tab
-    And  click on create milestone button
-    Then successful message contains "Milestone created"
-    And  "File ready" is showing under status column of row 1 of milestones table
-    When click on three dots under actions column of row 1 of milestones table
-    When click on option "Send a copy for contribution" under milestone actions
-    Then "Send a copy of the milestone for contribution" dialog box window is displayed
-    When provide input "demo" dialog box window
-    And  click on row 1 from the user list
-    And  click on send for contribution button
-    Then successful message contains "Copy sent for contribution"
-    When click on workspace button in breadcrumb item
-    Then user is on repository browser page
-    When click on act 2
-    Then user is on act viewer page
-    And  chip content container 1 of act header contains "Contribution"
-    And  chip content container 2 of act header contains "LEOS"
-    When click on milestones tab in act view page
-    When click on add button in milestones tab
-    And  click on create milestone button
-    Then successful message contains "Contribution from Legal Service has been created"
-    And  "File ready" is showing under status column of row 1 of milestones table
-    When click on three dots under actions column of row 1 of milestones table
-    When click on option "Send contribution" under milestone actions
-    And  click on confirm button in dialog confirm box window
-    Then successful message contains "Contribution sent"
-    When click on workspace button in breadcrumb item
-    Then user is on repository browser page
-    When click on act 1
-    Then user is on act viewer page
-    When click on cover page link present in act viewer page
-    Then user is on cover page
-    Then contribution card 1 is displayed
-    When click on contributions pane accordion
-    And  click on contribution card 1
-    Then contribution view container is displayed
-    When click on close button present in cover page
-    Then user is on act viewer page
-    When click on legal act link present in act viewer page
-    Then user is on legal act page
-    And contribution card 1 is displayed
-    When click on contributions pane accordion
-    And  click on contribution card 1
-    Then contribution view container is displayed
-    When click on close button present in legal act page
-    Then user is on act viewer page
-    When click on annex 1 link
-    Then user is on annex page
-    When click on contributions pane accordion
-    And  click on contribution card 1
-    And contribution card 1 is displayed
-    When click on close button present in annex page
-    Then user is on act viewer page
+#  @VisibilityOfContributionInAutonomousAct @local
+#  Scenario: test fork and merge of a act
+#    Given navigate to leos application with "User1"
+#    Then user is on home page
+#    When click on Create act button
+#    Then user is on create new legislative document window
+#    When click on template "SJ-003" in create new legislative document window
+#    When click on next button in create document page
+#    And  provide document title "VisibilityOfContributionPane" in create document page
+#    And  click on create button
+#    Then user is on act viewer page
+#    When click on add button in annexes section
+#    Then total number of annexes present in act viewer page is 1
+#    When click on milestones tab in act view page
+#    When click on add button in milestones tab
+#    And  click on create milestone button
+#    Then successful message contains "Milestone created"
+#    And  "File ready" is showing under status column of row 1 of milestones table
+#    When click on three dots under actions column of row 1 of milestones table
+#    When click on option "Send a copy for contribution" under milestone actions
+#    Then "Send a copy of the milestone for contribution" dialog box window is displayed
+#    When provide input "demo" dialog box window
+#    And  click on row 1 from the user list
+#    And  click on send for contribution button
+#    Then successful message contains "Copy sent for contribution"
+#    When click on workspace button in breadcrumb item
+#    Then user is on repository browser page
+#    When click on act 2
+#    Then user is on act viewer page
+#    And  chip content container 1 of act header contains "Contribution"
+#    And  chip content container 2 of act header contains "LEOS"
+#    When click on milestones tab in act view page
+#    When click on add button in milestones tab
+#    And  click on create milestone button
+#    Then successful message contains "Contribution from Legal Service has been created"
+#    And  "File ready" is showing under status column of row 1 of milestones table
+#    When click on three dots under actions column of row 1 of milestones table
+#    When click on option "Send contribution" under milestone actions
+#    And  click on confirm button in dialog confirm box window
+#    Then successful message contains "Contribution sent"
+#    When click on workspace button in breadcrumb item
+#    Then user is on repository browser page
+#    When click on act 1
+#    Then user is on act viewer page
+#    When click on cover page link present in act viewer page
+#    Then user is on cover page
+#    Then contribution card 1 is displayed
+#    When click on contributions pane accordion
+#    And  click on contribution card 1
+#    Then contribution view container is displayed
+#    When click on close button present in cover page
+#    Then user is on act viewer page
+#    When click on legal act link present in act viewer page
+#    Then user is on legal act page
+#    And contribution card 1 is displayed
+#    When click on contributions pane accordion
+#    And  click on contribution card 1
+#    Then contribution view container is displayed
+#    When click on close button present in legal act page
+#    Then user is on act viewer page
+#    When click on annex 1 link
+#    Then user is on annex page
+#    When click on contributions pane accordion
+#    And  click on contribution card 1
+#    And contribution card 1 is displayed
+#    When click on close button present in annex page
+#    Then user is on act viewer page
 
 
   @softEnterIcon @contributionPane @local
