@@ -167,6 +167,8 @@ a.cke_dialog_tab {
     font-weight: 500;
     line-height: 16px;
     border-radius: 5px 5px 0 0;
+    display: flex;
+    align-items: center;
 }
 
 a.cke_dialog_tab:hover {
