@@ -33,6 +33,7 @@
                     <heading xml:id="tblock_2__tblock_2__heading">Subsidiarity (for non-exclusive competence)</heading>
                     <blockContainer leos:editable="true" xml:id="tblock_2__tblock_2__blockcontainer">
                         <p xml:id="tblock_2__tblock_2__blockcontainer__p">Simple content</p>
+                        <p xml:id="tblock_2__tblock_2__blockcontainer__p2">Simple content</p>
                     </blockContainer>
                 </tblock>
             </tblock>
