@@ -1,33 +1,32 @@
 package eu.europa.ec.leos.services.aspect.aspect;
 
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.audit.service.AuditService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
-import static eu.europa.ec.leos.services.utils.LogMarkers.SECURITY;
-
 @Component
 @Aspect
 @Slf4j
 public class SecurityAuditTrailAspect {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityAuditTrailAspect.class);
     private static final String LOG_SUCCESS_FORMAT = "Completed {} ms - {}.{}({}) for user {}";
     private static final String LOG_ERROR_FORMAT   = "ERROR after {} ms - {}.{}({}) - Exception: {}, failed for user {}";
 
     @Autowired
     private SecurityContext securityContext;
+    
+    @Autowired(required = false)
+    private AuditService auditService;
 
     @Pointcut("execution(* eu.europa.ec.leos.services.collection.CollaboratorServiceImpl.addCollaborator(..)) || " +
             "execution(* eu.europa.ec.leos.services.collection.CollaboratorServiceImpl.removeCollaborator(..)) ||" +
@@ -82,27 +81,17 @@ public class SecurityAuditTrailAspect {
         try {
             Object result = joinPoint.proceed();
             long durationMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
-            LOGGER.info(SECURITY,
-                    LOG_SUCCESS_FORMAT,
-                    durationMs,
-                    className,
-                    methodName,
-                    Arrays.toString(args),
-                    securityContext.getUser().getLogin()
-            );
+            String message = String.format(LOG_SUCCESS_FORMAT, durationMs, className, methodName, Arrays.toString(args), securityContext.getUser().getLogin());
+            if (auditService != null) {
+                auditService.logSecurityEvent(message, "INFO", className, methodName, securityContext.getUser().getLogin());
+            }
             return result;
         } catch (Exception ex) {
             long durationMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
-            LOGGER.error(SECURITY,
-                    LOG_ERROR_FORMAT,
-                    durationMs,
-                    className,
-                    methodName,
-                    Arrays.toString(args),
-                    ex.getMessage(),
-                    securityContext.getUser().getLogin(),
-                    ex
-            );
+            String message = String.format(LOG_ERROR_FORMAT, durationMs, className, methodName, Arrays.toString(args), ex.getMessage(), securityContext.getUser().getLogin());
+            if (auditService != null) {
+                auditService.logSecurityEvent(message, "ERROR", className, methodName, securityContext.getUser().getLogin(), ex);
+            }
             throw ex;
         }
     }
