@@ -754,8 +754,9 @@
             <input
               id="cross-ref-number"
               [(ngModel)]="crossReferenceProposalNumber"
-              type="text"
+              type="number"
               (keypress)="checkCrossRefNumberInput($event)"
+              placeholder="Reference Numer"
               euiInputText
               class="eui-input-text--clearable eui-input-text small-textarea"
             />
@@ -767,6 +768,7 @@
               id="cross-ref-text"
               [(ngModel)]="crossReferenceProposalText"
               type="text"
+              placeholder="Reference Text"
               euiInputText
               class="eui-input-text--clearable eui-input-text small-textarea"
             />
