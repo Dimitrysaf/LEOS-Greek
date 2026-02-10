@@ -63,7 +63,7 @@ Feature: milestone section regression features
         When click on milestones tab in act view page
         Then "File ready" is showing under status column of row 1 of milestones table
 
-    @exportBtnInMilestoneExplorer @nonlocal
+    @exportBtnInMilestoneExplorer @nonlocal @focus
     Scenario: navigate to legal act page
         Given navigate to edit application with "User1"
         Then user is on home page
