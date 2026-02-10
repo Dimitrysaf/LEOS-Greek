@@ -61,8 +61,9 @@ import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Option;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,13 +97,13 @@ import static eu.europa.ec.leos.services.utils.LanguageMapUtils.getTranslatedPro
 import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 import static eu.europa.ec.leos.util.LeosDomainUtil.getLeosDateFromString;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class ProposalServiceImpl implements ProposalService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProposalServiceImpl.class);
 
     @Value("${leos.clone.originRef}")
-    private static String cloneOriginRef;
+    private String cloneOriginRef;
 
     protected final ProposalRepository proposalRepository;
     private final XmlNodeProcessor xmlNodeProcessor;
@@ -113,12 +114,12 @@ public abstract class ProposalServiceImpl implements ProposalService {
     private final TableOfContentProcessor tableOfContentProcessor;
     private final MessageHelper messageHelper;
     protected final TrackChangesContext trackChangesContext;
-    protected DocumentLanguageContext documentLanguageContext;
-    protected SecurityContext securityContext;
-    protected WorkflowCollaboratorService workflowCollaboratorService;
-    protected ExternalSystemACLService externalSystemACLService;
-    protected PackageService packageService;
-    protected MetadataService metadataService;
+    protected final DocumentLanguageContext documentLanguageContext;
+    protected final SecurityContext securityContext;
+    protected final WorkflowCollaboratorService workflowCollaboratorService;
+    protected final ExternalSystemACLService externalSystemACLService;
+    protected final PackageService packageService;
+    protected final MetadataService metadataService;
 
     protected static final String PROPOSAL_NAME_PREFIX = "main";
 
@@ -486,7 +487,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 String legFileName = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneOriginalMilestone(), true);
                 String iscRef = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneIscRef(), true);
                 String clonedFromObjectId = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneObjectId(), true);
-                boolean isExternalClone = !cloneOriginRef.equals(iscRef);
+                boolean isExternalClone = !Strings.CS.equals(cloneOriginRef, iscRef);
 
                 cloneProposalMetadataVO.setClonedFromRef(clonedFromRef);
                 cloneProposalMetadataVO.setClonedFromObjectId(clonedFromObjectId);

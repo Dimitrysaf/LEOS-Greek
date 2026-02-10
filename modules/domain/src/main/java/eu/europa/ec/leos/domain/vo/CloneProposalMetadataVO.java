@@ -93,6 +93,10 @@ public class CloneProposalMetadataVO {
         this.cloneProposalRef = cloneProposalRef;
     }
 
+    public boolean isExternalClone() {
+        return externalClone;
+    }
+
     public void setExternalClone(boolean externalClone) {
         this.externalClone = externalClone;
     }
