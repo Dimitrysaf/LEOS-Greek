@@ -38,13 +38,11 @@ public class AuditConfig {
     public DataSource auditDataSource() throws NamingException {
         // 1. Check for JNDI first (usually preferred in Tomcat)
         if (auditJndiName != null && !auditJndiName.trim().isEmpty()) {
-            System.out.println("Using JNDI DataSource: " + auditJndiName);
             return (DataSource) new JndiTemplate().lookup(auditJndiName);
         }
 
         // 2. Fallback to H2 if URL is provided
         if (auditDbUrl != null && !auditDbUrl.trim().isEmpty()) {
-            System.out.println("Using H2 DataSource: " + auditDbUrl);
             DriverManagerDataSource dataSource = new DriverManagerDataSource();
             dataSource.setDriverClassName(auditDbDriver);
             dataSource.setUrl(auditDbUrl);
