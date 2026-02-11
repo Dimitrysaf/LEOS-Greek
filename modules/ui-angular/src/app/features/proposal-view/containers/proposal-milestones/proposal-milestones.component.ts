@@ -67,6 +67,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   translated = false;
   isAutonomousAct = false;
   linguisticVersionsEnabled = false;
+  canSendContribution = false;
 
   private milestonesCheckTimer: ReturnType<typeof setTimeout>;
   private milestonesStatus = {
@@ -141,7 +142,11 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
     this.proposalDetailsService.permissions$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((perms) => (this.permissions = perms));
+      .subscribe((perms) => {
+        this.permissions = perms;
+        this.canSendContribution = this.permissions.includes('CAN_UPDATE') &&
+          (!this.proposal.cloneProposalMetadataVO?.externalClone || this.permissions.includes('CAN_SEND_EXTERNAL_CONTRIBUTION'));
+      });
 
     this.translated = this.proposalDetailsService.getTranslated();
     this.isAutonomousAct = this.proposal.metadata.documentCollectionName == 'ACT_AUTO_COM';
