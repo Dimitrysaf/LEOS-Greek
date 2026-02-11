@@ -31,6 +31,7 @@ import {DocumentActionsService} from "@/features/akn-document/services/document-
 export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
   @Input() version: Version;
   @Input() isMilestone?: boolean;
+  @Input() versionsPaneGroupComponent!: VersionsPaneGroupComponent;
   @Output() exploreMilestone = new EventEmitter<Version>();
   @ViewChild('versionRevertDialog') versionRevertDialog: EuiDialogComponent;
   @ViewChild('versionArchiveDialog') versionArchiveDialog: EuiDialogComponent;
@@ -54,7 +55,6 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
     @Inject(DOCUMENT_ACTIONS_SERVICE)
     private documentActions: DocumentActionsService,
     public viewVersionService: ViewVersionService,
-    public versionsPaneGroupComponent: VersionsPaneGroupComponent
   ) {}
 
   ngOnInit(): void {
@@ -161,11 +161,11 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
   }
 
   isLatestRecentVersion(version: Version) {
-    return this.versionsPaneGroupComponent.isLatestRecentVersion(version);
+    return this.versionsPaneGroupComponent?.isLatestRecentVersion(version);
   }
 
   isMinorVersion(version: Version) {
-    return this.versionsPaneGroupComponent.isMinorVersion(version);
+    return this.versionsPaneGroupComponent?.isMinorVersion(version);
   }
 
   private setArchivePermission() {
