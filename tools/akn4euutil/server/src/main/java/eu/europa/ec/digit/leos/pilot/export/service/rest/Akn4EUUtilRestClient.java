@@ -53,11 +53,10 @@ public class Akn4EUUtilRestClient {
         return leosRestCoreApiURL + resourceUrl;
     }
 
-    public LeosRenditionOutputList generateHtmlRenditions(MultipartFile multipartFile) throws IOException {
+    public LeosRenditionOutputList generateHtmlRenditions(ByteArrayResource inputFile) throws IOException {
         String url = getUrl(leosRestCoreApiHtmlRenditionsURI);
         MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-        ByteArrayResource byteArrayResource = convertFileToByteArray(multipartFile);
-        map.add("document", byteArrayResource);
+        map.add("document", inputFile);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -73,11 +72,10 @@ public class Akn4EUUtilRestClient {
         return output;
     }
 
-    public void callLeosValidation(MultipartFile inputFile, String email) throws IOException {
+    public void callLeosValidation(ByteArrayResource inputFile, String email) throws IOException {
         String url = getUrl(leosRestCoreApiConValidationURI);
         MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-        ByteArrayResource byteArrayResource = convertFileToByteArray(inputFile);
-        map.add("zipFile", byteArrayResource);
+        map.add("zipFile", inputFile);
         map.add("email", email);
 
         HttpHeaders headers = new HttpHeaders();
@@ -88,14 +86,5 @@ public class Akn4EUUtilRestClient {
         } catch (RestClientException e) {
             log.error("EdiT/Core module is not available for validation - {}", e.getMessage());
         }
-    }
-
-    private ByteArrayResource convertFileToByteArray(MultipartFile multipartFile) throws IOException {
-        return new ByteArrayResource(multipartFile.getBytes()) {
-            @Override
-            public String getFilename() {
-                return multipartFile.getOriginalFilename();
-            }
-        };
     }
 }

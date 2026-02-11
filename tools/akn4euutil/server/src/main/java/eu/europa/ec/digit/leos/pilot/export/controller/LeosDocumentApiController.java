@@ -98,13 +98,13 @@ public class LeosDocumentApiController {
     public ResponseEntity<Object> applyMetadata(@RequestParam MultipartFile inputFile,
                                                 @RequestParam(name = "email", required = false) String email) {
         try {
+            byte[] documentOutput = leosDocumentService.applyMetadata(inputFile);
             if (!StringUtil.isEmpty(email)) {
                 if (!StringUtil.isEmailValid(email)) {
                     return ResponseEntity.badRequest().body("Email format is not valid");
                 }
                 leosDocumentService.callLeosValidation(inputFile, email);
             }
-            byte[] documentOutput = leosDocumentService.applyMetadata(inputFile);
             return buildValidZipResponse(documentOutput);
         } catch (LeosDocumentException e) {
             return buildErrorResponse("Issue processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR);
