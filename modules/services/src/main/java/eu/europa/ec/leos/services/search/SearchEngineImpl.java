@@ -9,6 +9,7 @@ import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.parser.Tag;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -42,8 +43,10 @@ public class SearchEngineImpl implements SearchEngine {
     private static final String AUTHORIAL_NOTE = "authorialNote";
     private static final String META = "meta";
     private static final String DELETED_START_ID_VALUE = "deleted" + IdGenerator.PREFIX_DELIMITER;
-    private static List<String> tagsToExclude = Arrays.asList(META, AUTHORIAL_NOTE, DELETE_TAG);
-    private static List<String> tagsToExcludeHighlight = Arrays.asList(META, AUTHORIAL_NOTE);
+    private static final String DOC_PURPOSE = "docPurpose";
+    private static final String DOC_TYPE = "docType";
+    private static List<String> tagsToExclude = Arrays.asList(META, AUTHORIAL_NOTE, DELETE_TAG, DOC_PURPOSE, DOC_TYPE);
+    private static List<String> tagsToExcludeHighlight = Arrays.asList(META, AUTHORIAL_NOTE, DOC_PURPOSE, DOC_TYPE);
     private static List<String> tagsTrackChanges = Arrays.asList(DELETE_TAG);
     private static List<String> customInlineTags = Arrays.asList(AUTHORIAL_NOTE, "signature", "placeholder", "omissis", "date", "mref");
 
@@ -112,7 +115,7 @@ public class SearchEngineImpl implements SearchEngine {
         for (int i = 0; i < nodeList.getLength(); i++) {
             int contentLength;
             Node childNode = nodeList.item(i);
-            if (childNode.getNodeType() == Node.TEXT_NODE) {
+            if (childNode.getNodeType() == Node.TEXT_NODE && XmlContentProcessorImpl.isStrictEditableElement(childNode)) {
                 String content = childNode.getTextContent();
                 addElementNode(node, elements, content, textStartIndex);
                 contentLength = content.length();

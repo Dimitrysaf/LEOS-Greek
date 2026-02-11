@@ -2095,6 +2095,17 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return EditableAttributeValue.UNDEFINED.equals(editableAttrVal) ? true : Boolean.parseBoolean(editableAttrVal.name());
     }
 
+    public static boolean isStrictEditableElement(Node node) {
+        Validate.isTrue(node != null, "Node can not be null");
+        Validate.isTrue(node.getParentNode() != null, "Parent Node can not be null");
+        EditableAttributeValue editableAttrVal = getEditableAttributeForNode(node);
+        while (EditableAttributeValue.UNDEFINED.equals(editableAttrVal) && node.getParentNode() != null) {
+            editableAttrVal = getEditableAttributeForNode(node.getParentNode());
+            node = node.getParentNode();
+        }
+        return EditableAttributeValue.UNDEFINED.equals(editableAttrVal) ? false : Boolean.parseBoolean(editableAttrVal.name());
+    }
+
     private static EditableAttributeValue getEditableAttributeForNode(Node node) {
         Map<String, String> attrs = XercesUtils.getAttributes(node);
         String tagName = node.getNodeName();

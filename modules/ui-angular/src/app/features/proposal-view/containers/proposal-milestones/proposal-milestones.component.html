@@ -131,7 +131,7 @@
                 euiDropdownItem
                 (click)="openAnnotationWarningModal(row)"
                 [disabled]="row.legFileStatus !== milestoneStatus.Ready"
-                *ngIf="proposal.cloneProposalMetadataVO?.clonedProposal && permissions.includes('CAN_UPDATE')"
+                *ngIf="proposal.cloneProposalMetadataVO?.clonedProposal && !proposal.cloneProposalMetadataVO?.externalClone && permissions.includes('CAN_UPDATE')"
               >
                 {{
                   'page.collection.milestones.actions.send-revision-for-merge'

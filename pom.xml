@@ -180,6 +180,7 @@
         <cxf.version>4.0.5</cxf.version>
         <angus.version>2.0.2</angus.version>
         <jetbrains-annotations.version>24.1.0</jetbrains-annotations.version>
+        <spring-boot-actuator.version>3.4.3</spring-boot-actuator.version>
         <!-- Default authentication -->
         <leos.web.auth.method>BASIC</leos.web.auth.method>
     </properties>
@@ -281,47 +282,6 @@
                 <artifactId>hibernate-core</artifactId>
                 <version>${hibernate-orm.version}</version>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.jboss.logging</groupId>-->
-<!--                <artifactId>jboss-logging</artifactId>-->
-<!--                <version>${jboss-logging.version}</version>-->
-<!--                <scope>runtime</scope>-->
-<!--            </dependency>-->
-            <!-- Apache Chemistry framework -->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.chemistry.opencmis</groupId>-->
-<!--                <artifactId>chemistry-opencmis-client-api</artifactId>-->
-<!--                <version>${chemistry-opencmis.version}</version>-->
-<!--                <scope>compile</scope>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.chemistry.opencmis</groupId>-->
-<!--                <artifactId>chemistry-opencmis-client-impl</artifactId>-->
-<!--                <version>${chemistry-opencmis.version}</version>-->
-<!--                <scope>runtime</scope>-->
-<!--                <exclusions>-->
-<!--                    <exclusion>-->
-<!--                        <groupId>asm</groupId>-->
-<!--                        <artifactId>asm</artifactId>-->
-<!--                    </exclusion>-->
-<!--                </exclusions>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.chemistry.opencmis</groupId>-->
-<!--                <artifactId>chemistry-opencmis-commons-api</artifactId>-->
-<!--                <version>${chemistry-opencmis.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.chemistry.opencmis</groupId>-->
-<!--                <artifactId>chemistry-opencmis-commons-impl</artifactId>-->
-<!--                <version>${chemistry-opencmis.version}</version>-->
-<!--                <scope>runtime</scope>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.chemistry.opencmis</groupId>-->
-<!--                <artifactId>chemistry-opencmis-client-bindings</artifactId>-->
-<!--                <version>${chemistry-opencmis.version}</version>-->
-<!--            </dependency>-->
             <!-- Libraries -->
             <dependency>
                 <groupId>jakarta.servlet</groupId>
@@ -461,19 +421,6 @@
                 <artifactId>commons-codec</artifactId>
                 <version>${commons-codec.version}</version>
             </dependency>
-            <!-- Testing frameworks -->
-<!--            <dependency>-->
-<!--                <groupId>junit</groupId>-->
-<!--                <artifactId>junit</artifactId>-->
-<!--                <version>${junit.version}</version>-->
-<!--                <scope>test</scope>-->
-<!--                <exclusions>-->
-<!--                    <exclusion>-->
-<!--                        <groupId>org.hamcrest</groupId>-->
-<!--                        <artifactId>hamcrest-core</artifactId>-->
-<!--                    </exclusion>-->
-<!--                </exclusions>-->
-<!--            </dependency>-->
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
@@ -691,6 +638,16 @@
                 <groupId>com.fasterxml.woodstox</groupId>
                 <artifactId>woodstox-core</artifactId>
                 <version>6.6.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-actuator</artifactId>
+                <version>${spring-boot-actuator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-actuator-autoconfigure</artifactId>
+                <version>${spring-boot-actuator.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
