@@ -37,15 +37,11 @@ public class ForwardSlashFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 
         String uri = httpServletRequest.getHeader("X-Forwarded-Path");
-        
         if (uri == null) {
             uri = httpServletRequest.getHeader("X-Original-URI");
         }
         if (uri == null) {
             uri = httpServletRequest.getHeader("X-Forwarded-URI");
-        }
-        if (uri == null) {
-            uri = httpServletRequest.getHeader("Referer");
         }
         if (uri == null) {
             uri = httpServletRequest.getRequestURI();

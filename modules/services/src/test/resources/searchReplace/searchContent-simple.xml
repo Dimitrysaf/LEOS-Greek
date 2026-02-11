@@ -55,7 +55,7 @@
                     <num xml:id="tblock_2__tblock_2__num">•</num>
                     <heading xml:id="tblock_2__tblock_2__heading">Subsidiarity (for non-exclusive competence)</heading>
                     <blockContainer leos:editable="true" xml:id="tblock_2__tblock_2__blockcontainer">
-                        <p xml:id="tblock_2__tblock_2__blockcontainer__p">This is my search content</p>
+                        <p xml:id="tblock_2__tblock_2__blockcontainer__p">This is my search content with SUBSIDIARITY</p>
                     </blockContainer>
                 </tblock>
             </tblock>

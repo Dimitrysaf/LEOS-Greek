@@ -148,6 +148,7 @@ export interface ClonedProposalMetadata {
   clonedFromObjectId: string;
   originRef: string;
   cloneProposalRef: string;
+  externalClone: boolean;
 }
 
 export interface DocumentConfig {

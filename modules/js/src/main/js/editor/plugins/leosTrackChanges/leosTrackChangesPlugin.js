@@ -78,7 +78,9 @@ define(function leosTrackChangesPluginModule(require) {
                     },
 
                     init: function () {
-                        this.add('acceptAll', 'Accept All', 'Accept All');
+                        if (canUserAcceptChanges) {
+                            this.add('acceptAll', 'Accept All', 'Accept All');
+                        }
                         this.add('rejectAll', 'Reject All', 'Reject All');
                         if($(editor.getData()).attr('leos\:action') === 'insert'){
                             this.disable();
