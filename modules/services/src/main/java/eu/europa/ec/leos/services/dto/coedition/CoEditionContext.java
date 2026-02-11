@@ -39,6 +39,11 @@ public class CoEditionContext {
             IMap<String, UpdateElementsEvent> map = hazelcastInstance.getMap("updateElementsCache");
             map.put(documentRef + "-" + System.currentTimeMillis(), 
                    new UpdateElementsEvent(documentRef, presenterId, updatedElement, alternateElementId));
+            for (Element elt: this.getUpdatedElements()) {
+                map.put(documentRef + "-" + System.currentTimeMillis(),
+                        new UpdateElementsEvent(documentRef, presenterId, new SaveElementResponse(elt.getElementId(), elt.getElementTagName(),
+                                elt.getElementFragment()), alternateElementId));
+            }
         } else {
             processUpdatedElements(documentRef, presenterId, updatedElement, alternateElementId);
         }
