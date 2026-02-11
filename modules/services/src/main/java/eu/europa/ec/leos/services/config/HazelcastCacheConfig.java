@@ -38,8 +38,6 @@ public class HazelcastCacheConfig {
 
         // Network configuration for clustering (replaces JGroups)
         NetworkConfig networkConfig = config.getNetworkConfig();
-        networkConfig.setPort(hazelcastPort);
-        networkConfig.setPortAutoIncrement(true);
 
         // Join configuration
         JoinConfig joinConfig = networkConfig.getJoin();
@@ -48,10 +46,15 @@ public class HazelcastCacheConfig {
         joinConfig.getAwsConfig().setEnabled(false);
 
         if (Boolean.TRUE.equals(kubernetesEnabled)) {
+            networkConfig.setPort(hazelcastPort);
+            networkConfig.setPortAutoIncrement(true);
             joinConfig.getKubernetesConfig()
                     .setEnabled(true)
                     .setProperty("namespace", k8sNamespace);
         } else {
+            joinConfig.getAutoDetectionConfig().setEnabled(false);
+            networkConfig.setPort(0);
+            networkConfig.setPortAutoIncrement(false);
             joinConfig.getKubernetesConfig().setEnabled(false);
         }
 
