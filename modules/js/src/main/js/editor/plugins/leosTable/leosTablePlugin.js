@@ -261,15 +261,68 @@ define(function leosTablePluginModule(require) {
             if (children.count() === 1) {
                 const child = children.getItem(0);
                 if (child.type === Node.ELEMENT_NODE && child.getName() === 'table') {
+                    if(child.getAttribute("leos:predefinedtable") === 'true'
+                        && editor.LEOS.type === 'stat_digit_financ_legis'){
+                        cancelAndEnable();
+                        return;
+                    }
+
                     if(firstElement.getAttribute("data-akn-attr-editable") === "true"){
                         const range = editor.createRange();
                         addParagraphForEmptyEditor(editor, child, range);
                     }
                     child.remove();
                     cancelAndEnable();
+                    return;
                 }
             }
         }
+        const range = editor.getSelection().getRanges()[0];
+        if (range.collapsed !== true && !isSelectionInsideSingleTableCell(editor) && !!firstElement.getAscendant('table')
+                &&  firstElement.getAscendant('table').getAttribute("leos:predefinedtable") === 'true'
+                && editor.LEOS.type === 'stat_digit_financ_legis'){
+            cancelAndEnable();
+            return;
+        }
+    }
+
+    function isSelectionInsideSingleTableCell(editor) {
+        var selection = editor.getSelection();
+        if (!selection || selection.isFake) {
+            return false;
+        }
+
+        var ranges = selection.getRanges();
+        if (!ranges || ranges.length === 0) {
+            return false;
+        }
+
+        // Most real-world selections have exactly one range
+        // (multi-range happens mostly in Firefox with table row selections)
+        var range = ranges[0];
+
+        // Get deepest elements containing start & end
+        var startNode = range.startContainer;
+        if (startNode.type === CKEDITOR.NODE_TEXT) {
+            startNode = startNode.getParent();
+        }
+
+        var endNode = range.endContainer;
+        if (endNode.type === CKEDITOR.NODE_TEXT) {
+            endNode = endNode.getParent();
+        }
+
+        // Find closest <td> or <th> ancestor for start and end
+        var startCell = startNode.getAscendant(function(el) {
+            return el.is('td') || el.is('th');
+        }, true);
+
+        var endCell = endNode.getAscendant(function(el) {
+            return el.is('td') || el.is('th');
+        }, true);
+
+        // Both must exist and be exactly the same cell
+        return !!(startCell && endCell && startCell.equals(endCell));
     }
 
     function _tableDelete(editor) {// This is a copy of ckeditor plugins/table/plugin.js 'tableDelete' exec command function and modified
@@ -436,6 +489,15 @@ define(function leosTablePluginModule(require) {
                     }, {
                         akn : 'class',
                         html : 'class'
+                    },{
+                        akn: "leos:action",
+                        html : "data-akn-action"
+                    }, {
+                        akn : "leos:uid",
+                        html : "data-akn-uid"
+                    }, {
+                        akn : "leos:title",
+                        html : "title"
                     }]
                 }
             }

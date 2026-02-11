@@ -882,6 +882,15 @@ define(function leosTrackChangesModule(require) {
                 }
             }
 
+            var colElements = listElementToProcess.find(`table tr td[${core.ACTION_ATTR}]`);
+            for (var i = colElements.count() - 1; i >= 0; i--) {
+                var colElementToProcess = colElements.getItem(i);
+                this.processElement(editor, colElementToProcess, processedElements, actionName, isStructureTooComplex);
+                if(isStructureTooComplex[0]){
+                    break;
+                }
+            }
+
             // Process Soft Enter Inserts
             var softEnterElements = listElementToProcess.find(`p[${core.DATA_AKN_ACTION_ENTER}], li[${core.DATA_AKN_ACTION_ENTER}], li[${core.DATA_AKN_ACTION_NUMBER}]`);
             for (var j = softEnterElements.count() - 1; j >= 0; j--) {
@@ -1578,6 +1587,29 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
+        rejectColumnChange: function(editor, element, numberModule) {
+            if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
+                var liParentElement = element.getAscendant("li");
+                var pParentElement = element.getAscendant("p");
+                var table = element.getAscendant("table");
+                if (table.$.cols.length == 1) {
+                    this.removeElementAndEmptySubflow(table);
+                } else {
+                    element.remove();
+                }
+                if (pParentElement && !pParentElement.getText().trim()) {
+                    pParentElement.remove();
+                }
+                if(liParentElement) {
+                    editor.getSelection().fake(liParentElement);
+                    if (this.checkIfEmptyListElement(liParentElement)) {
+                        this.removeEmptyElement(liParentElement, numberModule, editor);
+                    }
+                }
+            } else if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
+                core.removeTrackChangesAttributes(element);
+            }
+        },
         removeElementAndEmptySubflow(element) {
             var parent = element.getParent();
             if (parent.getName && parent.getName() === "div" && parent.getAttribute && parent.getAttribute(core.DATA_AKN_NAME) === leosPluginUtils.SUBFLOW_NAME
