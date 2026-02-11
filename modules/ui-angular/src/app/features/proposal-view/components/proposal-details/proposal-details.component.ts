@@ -713,11 +713,12 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       && !this.institutionalReferenceFinalVersion
       && !this.interInstitutionalRef
       && !this.stamp) {
-      for (let i = 0; i < this.signatures.length; i++) {
+      for (let i = 0; i < this.proposalDetails.templateSignatures.length; i++) {
+        let templateSignature = this.proposalDetails.templateSignatures[i];
         let signature = this.signatures[i];
-        if (signature.commissionerTitle != this.proposalDetails.templateSignatures[i].commissionerTitle
-            || signature.signingCommissioner != this.proposalDetails.templateSignatures[i].signingCommissioner
-            || signature.specialMention != this.proposalDetails.templateSignatures[i].specialMention) {
+        if (signature.commissionerTitle != templateSignature.commissionerTitle
+            || signature.signingCommissioner != templateSignature.signingCommissioner
+            || signature.specialMention != templateSignature.specialMention) {
           return true;
         }
       }

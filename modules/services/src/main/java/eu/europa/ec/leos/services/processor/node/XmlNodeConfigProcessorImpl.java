@@ -118,13 +118,22 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
         billConfigMap.put(SIGNATURE_PERSON, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:person",
                 false,
                 Collections.emptyList()));
-        billConfigMap.put(SIGNATURE_ORG_TC, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:organization[akn:ins]/@refersTo",
+        billConfigMap.put(SIGNATURE_ORG_TC_INS, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:organization[akn:ins]/@refersTo",
                 false,
                 Collections.emptyList()));
-        billConfigMap.put(SIGNATURE_ROLE_TC, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:role[akn:ins]/@refersTo",
+        billConfigMap.put(SIGNATURE_ROLE_TC_INS, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:role[akn:ins]/@refersTo",
                 false,
                 Collections.emptyList()));
-        billConfigMap.put(SIGNATURE_PERSON_TC, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:person[akn:ins]",
+        billConfigMap.put(SIGNATURE_PERSON_TC_INS, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:person[akn:ins]",
+                false,
+                Collections.emptyList()));
+        billConfigMap.put(SIGNATURE_ORG_TC_DEL, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:organization[akn:del]/@refersTo",
+                false,
+                Collections.emptyList()));
+        billConfigMap.put(SIGNATURE_ROLE_TC_DEL, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:role[akn:del]/@refersTo",
+                false,
+                Collections.emptyList()));
+        billConfigMap.put(SIGNATURE_PERSON_TC_DEL, new XmlNodeConfig("//akn:conclusions/akn:block[@name='signatory']/akn:signature/akn:person[akn:del]",
                 false,
                 Collections.emptyList()));
 
