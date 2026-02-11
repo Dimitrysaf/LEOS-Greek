@@ -304,7 +304,8 @@ public abstract class ProposalServiceImpl implements ProposalService {
             billMetadata = xmlNodeProcessor.getValuesFromXml(billContent, new String[]{XmlNodeConfigProcessor.STAMP},
                     xmlNodeConfigProcessor.getConfig(LeosCategory.BILL));
             signatures = xmlNodeProcessor.getMultipleValuesFromXml(billContent,
-                    new String[]{XmlNodeConfigProcessor.SIGNATURE_ORG, XmlNodeConfigProcessor.SIGNATURE_ROLE, XmlNodeConfigProcessor.SIGNATURE_PERSON},
+                    new String[]{XmlNodeConfigProcessor.SIGNATURE_ORG, XmlNodeConfigProcessor.SIGNATURE_ROLE, XmlNodeConfigProcessor.SIGNATURE_PERSON,
+                            XmlNodeConfigProcessor.SIGNATURE_ORG_TC, XmlNodeConfigProcessor.SIGNATURE_ROLE_TC, XmlNodeConfigProcessor.SIGNATURE_PERSON_TC},
                     xmlNodeConfigProcessor.getConfig(LeosCategory.BILL));
         }
         metadataVO.setPackageTitle(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE));
@@ -337,11 +338,26 @@ public abstract class ProposalServiceImpl implements ProposalService {
         metadataVO.setDiffusionVersion(finalCote != null && finalCote.contains("/") ? finalCote.substring(finalCote.indexOf("/")) : "");
         metadataVO.setInterInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE));
         metadataVO.setStamp(billMetadata.get(XmlNodeConfigProcessor.STAMP) != null);
+        metadataVO.setSignatures(extractSignaturesMetadata(signatures));
+        return metadataVO;
+    }
+
+    private Map<String, List<String>> getSignaturesFromBillContent(byte[] billContent) {
+        String[] keys = {XmlNodeConfigProcessor.SIGNATURE_ORG_TC, XmlNodeConfigProcessor.SIGNATURE_ORG,
+                XmlNodeConfigProcessor.SIGNATURE_ROLE_TC, XmlNodeConfigProcessor.SIGNATURE_ROLE,
+                XmlNodeConfigProcessor.SIGNATURE_PERSON_TC, XmlNodeConfigProcessor.SIGNATURE_PERSON};
+        
+        Map<String, List<String>> signatures = xmlNodeProcessor.getMultipleValuesFromXml(billContent, keys,
+                xmlNodeConfigProcessor.getConfig(LeosCategory.BILL));
+        return signatures;
+    }
+
+    private List<SignatureMetadata> extractSignaturesMetadata(Map<String, List<String>> signatures) {
         List<SignatureMetadata> signaturesMetadata = new ArrayList<>();
         if (signatures != null) {
-            List<String> signaturesOrg = signatures.get(XmlNodeConfigProcessor.SIGNATURE_ORG);
-            List<String> signaturesRole = signatures.get(XmlNodeConfigProcessor.SIGNATURE_ROLE);
-            List<String> signaturesPerson = signatures.get(XmlNodeConfigProcessor.SIGNATURE_PERSON);
+            List<String> signaturesOrg = getSignatureList(signatures, XmlNodeConfigProcessor.SIGNATURE_ORG, XmlNodeConfigProcessor.SIGNATURE_ORG_TC);
+            List<String> signaturesRole = getSignatureList(signatures, XmlNodeConfigProcessor.SIGNATURE_ROLE, XmlNodeConfigProcessor.SIGNATURE_ROLE_TC);
+            List<String> signaturesPerson = getSignatureList(signatures, XmlNodeConfigProcessor.SIGNATURE_PERSON, XmlNodeConfigProcessor.SIGNATURE_PERSON_TC);
             for (int index = 0; index < signaturesOrg.size(); index++) {
                 SignatureMetadata signatureMetadata = new SignatureMetadata();
                 signatureMetadata.setSpecialMention(signaturesOrg.get(index) != null ? signaturesOrg.get(index).replaceAll("~","") : null);
@@ -350,8 +366,12 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 signaturesMetadata.add(signatureMetadata);
             }
         }
-        metadataVO.setSignatures(signaturesMetadata);
-        return metadataVO;
+        return signaturesMetadata;
+    }
+
+    private List<String> getSignatureList(Map<String, List<String>> signatures, String primaryKey, String fallbackKey) {
+        List<String> result = signatures.getOrDefault(primaryKey, new ArrayList<>());
+        return result.isEmpty() ? signatures.getOrDefault(fallbackKey, new ArrayList<>()) : result;
     }
 
     private Date convertToDate(String dateStr) {

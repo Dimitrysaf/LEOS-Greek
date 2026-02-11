@@ -92,6 +92,9 @@ public interface XmlNodeConfigProcessor {
     String SIGNATURE_ORG = "organisation";
     String SIGNATURE_ROLE = "role";
     String SIGNATURE_PERSON = "person";
+    String SIGNATURE_ORG_TC = "organisationTrackChanges";
+    String SIGNATURE_ROLE_TC = "roleTrackChanges";
+    String SIGNATURE_PERSON_TC = "personTrackChanges";
 
     List<String> docEEATagList = Arrays.asList(DOC_EEA_RELEVANCE_COVER, DOC_EEA_RELEVANCE_PREFACE, DOC_EEA_RELEVANCE_META);
 
