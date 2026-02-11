@@ -201,6 +201,7 @@
   "page.collection.details.card.coverpage.cross.reference.header.label": "Cross reference",
   "page.collection.details.coverpage.cross.reference.tooltip": "Cross reference",
   "page.collection.details.invalid.number.label": "Invalid number",
+  "page.collection.details.number.range.label": "Number should be in 1-9999 range",
   "page.collection.details.invalid.institutional.ref.number.empty": "Please, fill the institutional reference using digits",
   "page.collection.details.invalid.institutional.ref.year": "Please, select a year for the institutional reference",
   "page.collection.details.invalid.institutional.ref.type": "Please, select one of the types for the institutional reference",

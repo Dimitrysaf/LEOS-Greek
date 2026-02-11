@@ -206,6 +206,7 @@
   "page.collection.details.card.coverpage.cross.reference.header.label": "Référence croisée",
   "page.collection.details.coverpage.cross.reference.tooltip": "Référence croisée",
   "page.collection.details.invalid.number.label": "Numéro invalide",
+  "page.collection.details.number.range.label": "Le numéro doit être dans la plage 1-9999",
   "page.collection.details.invalid.inter.institutional.ref": "Veuillez remplir correctement la référence inter-institutionnelle",
   "page.collection.details.invalid.inter.institutional.ref.number.empty": "Veuillez remplir la référence inter-institutionnelle en utilisant exclusivement des chiffres",
   "page.collection.details.invalid.inter.institutional.ref.year": "Veuillez sélectionner une année pour la référence inter-institutionnelle",
