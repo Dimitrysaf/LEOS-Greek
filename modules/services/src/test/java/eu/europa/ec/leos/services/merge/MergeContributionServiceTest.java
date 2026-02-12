@@ -1929,7 +1929,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc9, this.tocItemList,
                 new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
-        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_addChapterWithUpdatesAndMovesAndLowerWithoutTC.xml"));
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_addChapterWithUpdatesAndMovesAndUpperWithoutTC.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
     }
 
