@@ -18,6 +18,7 @@ import com.google.common.eventbus.EventBus;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
+import eu.europa.ec.leos.domain.repository.common.ConvalValidationResponse;
 import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
@@ -865,12 +866,16 @@ public class LeosApiController {
             receivedFile.setName(zipFile.getOriginalFilename());
             receivedFile.setOriginalFileName(zipFile.getOriginalFilename());
             LeosFile legFile = ZipPackageUtil.unzipFile(receivedFile, ZipPackageUtil.unzipFiles(receivedFile).entrySet().stream().filter(entry -> entry.getKey().toLowerCase().endsWith(".leg")).findFirst().get().getKey());
-            String validationResult = conValidatorService.validate(legFile);
+            ConvalValidationResponse validationResult = conValidatorService.validate(legFile);
             Map<String, Object> contentToZip = new HashMap<>();
-            contentToZip.put("result.xml", validationResult);
+            contentToZip.put("result.xml", validationResult.getResult());
             contentToZip.put(legFile.getOriginalFileName(), legFile);
             LeosFile resultZipFile = ZipPackageUtil.zipLeosFiles("validation.zip", contentToZip, "");
-            notificationService.sendNotification(new DocumentExternalValidationNotification(email, "", new Date(), "", legFile.getOriginalFileName(), resultZipFile.getBytes()));
+
+            if (!validationResult.isValid()){
+                notificationService.sendNotification(new DocumentExternalValidationNotification(email, "", new Date(), "", legFile.getOriginalFileName(), resultZipFile.getBytes()));
+            }
+
             return new ResponseEntity<>(HttpStatus.OK);
         }
         catch (Exception e) {
