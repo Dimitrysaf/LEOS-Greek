@@ -19,8 +19,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class SecurityAuditTrailAspect {
 
-    private static final String LOG_SUCCESS_FORMAT = "Completed {} ms - {}.{}({}) for user {}";
-    private static final String LOG_ERROR_FORMAT   = "ERROR after {} ms - {}.{}({}) - Exception: {}, failed for user {}";
+    private static final String LOG_SUCCESS_FORMAT = "Completed %d ms - %s.%s(%s) for user %s";
+    private static final String LOG_ERROR_FORMAT   = "ERROR after %d ms - %s.%s(%s) - Exception: %s, failed for user %s";
 
     @Autowired
     private SecurityContext securityContext;
