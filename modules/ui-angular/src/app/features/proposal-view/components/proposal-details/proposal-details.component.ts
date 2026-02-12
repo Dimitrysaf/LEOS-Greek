@@ -712,8 +712,9 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       && !this.institutionalRef
       && !this.institutionalReferenceFinalVersion
       && !this.interInstitutionalRef
-      && !this.stamp) {
-      for (let i = 0; i < this.proposalDetails.templateSignatures.length; i++) {
+      && !this.stamp
+      && this.signatures.length === this.proposalDetails.templateSignatures.length) {
+      for (let i = 0; i < this.signatures.length; i++) {
         let templateSignature = this.proposalDetails.templateSignatures[i];
         let signature = this.signatures[i];
         if (signature.commissionerTitle != templateSignature.commissionerTitle

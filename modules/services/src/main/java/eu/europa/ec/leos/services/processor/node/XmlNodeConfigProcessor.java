@@ -92,9 +92,6 @@ public interface XmlNodeConfigProcessor {
     String SIGNATURE_ORG = "organisation";
     String SIGNATURE_ROLE = "role";
     String SIGNATURE_PERSON = "person";
-    String SIGNATURE_ORG_TC_INS = "organisationInsertTrackChange";
-    String SIGNATURE_ROLE_TC_INS = "roleInsertTrackChange";
-    String SIGNATURE_PERSON_TC_INS = "personInsertTrackChange";
     String SIGNATURE_ORG_TC_DEL = "organisationDeleteTrackChange";
     String SIGNATURE_ROLE_TC_DEL = "roleDeleteTrackChange";
     String SIGNATURE_PERSON_TC_DEL = "personDeleteTrackChange";

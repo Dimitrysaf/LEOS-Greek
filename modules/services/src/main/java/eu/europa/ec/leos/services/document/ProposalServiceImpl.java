@@ -305,7 +305,6 @@ public abstract class ProposalServiceImpl implements ProposalService {
                     xmlNodeConfigProcessor.getConfig(LeosCategory.BILL));
             signatures = xmlNodeProcessor.getMultipleValuesFromXml(billContent,
                     new String[]{XmlNodeConfigProcessor.SIGNATURE_ORG, XmlNodeConfigProcessor.SIGNATURE_ROLE, XmlNodeConfigProcessor.SIGNATURE_PERSON,
-                            XmlNodeConfigProcessor.SIGNATURE_ORG_TC_INS, XmlNodeConfigProcessor.SIGNATURE_ROLE_TC_INS, XmlNodeConfigProcessor.SIGNATURE_PERSON_TC_INS,
                             XmlNodeConfigProcessor.SIGNATURE_ORG_TC_DEL, XmlNodeConfigProcessor.SIGNATURE_ROLE_TC_DEL, XmlNodeConfigProcessor.SIGNATURE_PERSON_TC_DEL},
                     xmlNodeConfigProcessor.getConfig(LeosCategory.BILL));
         }
@@ -346,15 +345,13 @@ public abstract class ProposalServiceImpl implements ProposalService {
     private List<SignatureMetadata> extractSignaturesMetadata(Map<String, List<String>> signatures) {
         List<SignatureMetadata> signaturesMetadata = new ArrayList<>();
         if (signatures != null) {
-            List<String> signaturesOrg = getSignatureList(signatures, XmlNodeConfigProcessor.SIGNATURE_ORG, XmlNodeConfigProcessor.SIGNATURE_ORG_TC_INS,
-                    XmlNodeConfigProcessor.SIGNATURE_ORG_TC_DEL);
-            List<String> signaturesRole = getSignatureList(signatures, XmlNodeConfigProcessor.SIGNATURE_ROLE, XmlNodeConfigProcessor.SIGNATURE_ROLE_TC_INS,
-                    XmlNodeConfigProcessor.SIGNATURE_ROLE_TC_DEL);
-            List<String> signaturesPerson = getSignatureList(signatures, XmlNodeConfigProcessor.SIGNATURE_PERSON,
-                    XmlNodeConfigProcessor.SIGNATURE_PERSON_TC_INS, XmlNodeConfigProcessor.SIGNATURE_PERSON_TC_DEL);
-            for (int index = 0; index < signaturesOrg.size(); index++) {
+            List<String> signaturesOrg = getSignatureList(signatures, XmlNodeConfigProcessor.SIGNATURE_ORG, XmlNodeConfigProcessor.SIGNATURE_ORG_TC_DEL);
+            List<String> signaturesRole = getSignatureList(signatures, XmlNodeConfigProcessor.SIGNATURE_ROLE, XmlNodeConfigProcessor.SIGNATURE_ROLE_TC_DEL);
+            List<String> signaturesPerson = getSignatureList(signatures, XmlNodeConfigProcessor.SIGNATURE_PERSON, XmlNodeConfigProcessor.SIGNATURE_PERSON_TC_DEL);
+            int size = Math.max(Math.max(signaturesOrg.size(), signaturesRole.size()), signaturesPerson.size());
+            for (int index = 0; index < size; index++) {
                 SignatureMetadata signatureMetadata = new SignatureMetadata();
-                signatureMetadata.setSpecialMention(signaturesOrg.get(index) != null ? signaturesOrg.get(index).replaceAll("~","") : null);
+                signatureMetadata.setSpecialMention(index < signaturesOrg.size() && signaturesOrg.get(index) != null ? signaturesOrg.get(index).replaceAll("~","") : null);
                 signatureMetadata.setCommissionerTitle(index < signaturesRole.size() && signaturesRole.get(index) != null ? signaturesRole.get(index).replaceAll("~","") : null);
                 signatureMetadata.setSigningCommissioner(index < signaturesPerson.size() ? signaturesPerson.get(index) : null);
                 signaturesMetadata.add(signatureMetadata);
@@ -363,14 +360,10 @@ public abstract class ProposalServiceImpl implements ProposalService {
         return signaturesMetadata;
     }
 
-    private List<String> getSignatureList(Map<String, List<String>> signatures, String... keys) {
-        for (String key : keys) {
-            List<String> result = signatures.getOrDefault(key, new ArrayList<>());
-            if (!result.isEmpty()) {
-                return result;
-            }
-        }
-        return new ArrayList<>();
+    private List<String> getSignatureList(Map<String, List<String>> signatures, String key, String delKey) {
+        List<String> result = signatures.getOrDefault(key, new ArrayList<>());
+        signatures.getOrDefault(delKey, new ArrayList<>()).forEach(result::remove);
+        return result;
     }
 
     private Date convertToDate(String dateStr) {
