@@ -34,8 +34,7 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
 
   isShown = false;
   trackChangesDr: NodeListOf<Element>;
-  canAcceptTrackChanges: boolean;
-  canRejectTrackChanges: boolean;
+  permissions: Permission[] = [];
   currentElement: HTMLElement;
   trackChangeAction: TrackChangeAction;
   movedToId: string;
@@ -64,7 +63,7 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.doc.permissions$.subscribe((perms) => this.setMenuState(perms));
+    this.doc.permissions$.subscribe((perms) => this.permissions = perms);
     this.doc.documentConfig$
       .pipe(takeUntil(this.destroy$))
       .subscribe((config) => {
@@ -75,15 +74,6 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
       .subscribe((config) => {
         this.leosConfig = config;
       });
-  }
-
-  setMenuState(permissions: Permission[]) {
-    this.canAcceptTrackChanges =
-      permissions.includes('CAN_ACCEPT_CHANGES') &&
-      (!this.documentConfig?.clonedProposal ||
-        (this.documentConfig?.clonedProposal &&
-          this.leosConfig?.user.roles.includes('SUPPORT')));
-    this.canRejectTrackChanges = permissions.includes('CAN_REJECT_CHANGES');
   }
 
   seeTrackChanges() {
@@ -145,11 +135,14 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   }
 
   canUserAcceptChanges() {
-    return this.canAcceptTrackChanges;
+    return this.permissions.includes('CAN_ACCEPT_CHANGES') &&
+      (!this.documentConfig?.clonedProposal ||
+        (this.documentConfig?.clonedProposal &&
+          this.leosConfig?.user.roles.includes('SUPPORT')));
   }
 
   canUserRejectChanges() {
-    return this.canRejectTrackChanges;
+    return this.permissions.includes('CAN_REJECT_CHANGES');
   }
 
   onAccept() {
