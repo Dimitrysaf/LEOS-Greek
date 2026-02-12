@@ -358,6 +358,7 @@ public class LegServiceImpl implements LegService {
     private LegDocumentVO populateLegDocumentVO(Proposal proposal, LegDocument leg) {
         LegDocumentVO legDocumentVO = new LegDocumentVO();
         legDocumentVO.setProposalId(proposal.getMetadata().getOrError(() -> "Proposal metadata is not available!").getRef());
+        legDocumentVO.setLanguage(proposal.getMetadata().get().getLanguage());
         legDocumentVO.setDocumentTitle(proposal.getTitle());
         legDocumentVO.setLegFileId(leg.getId());
         legDocumentVO.setLegFileName(leg.getName());
