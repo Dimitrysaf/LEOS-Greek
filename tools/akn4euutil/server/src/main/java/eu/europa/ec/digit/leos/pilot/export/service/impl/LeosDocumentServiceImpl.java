@@ -112,8 +112,7 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
 
     public String applyMetadataAsync(MultipartFile inputFile, String callbackUrl, String email) throws IOException {
         Map<String, Object> zipContent = ZipUtil.unzipByteArray(inputFile.getBytes());
-        String recipient = (StringUtil.isEmpty(email) || !StringUtil.isEmailValid(email)) ? notificationRecipient : email;
-        return this.leosPrefinalisationService.applyMetadataAsync(zipContent, callbackUrl, inputFile.getOriginalFilename(), recipient);
+        return this.leosPrefinalisationService.applyMetadataAsync(zipContent, callbackUrl, inputFile.getOriginalFilename(), email);
     }
 
     private ByteArrayResource convertFileToByteArray(MultipartFile multipartFile) throws IOException {
