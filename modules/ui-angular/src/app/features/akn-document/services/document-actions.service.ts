@@ -780,13 +780,13 @@ export abstract class DocumentActionsService {
   }
 
   private buildMergeContributionsSectionItems(): IRibbonToolbarItem[] {
-    return [
+    return [/*
       {
         type: IRibbonToolbarType.GROUP,
         id: MERGE_CONTRIBUTION_GROUP_PREV_NEXT_ID,
         cssClasses: 'eui-u-flex eui-u-flex-row app-u-gap-xs merge-button-group',
         children: [
-          /*{
+          {
             type: IRibbonToolbarType.BUTTON,
             id: MERGE_CONTRIBUTION_PREV_CHANGE_ID,
             icon: 'chevron-up',
@@ -814,9 +814,9 @@ export abstract class DocumentActionsService {
             description: this.translateService.instant(
               'page.editor.versions.compare.actions.next-change',
             ),
-          },*/
+          },
         ],
-      },
+      }*/
       {
         type: IRibbonToolbarType.CHECKBOX,
         id: COMPARE_SYNC_PANELS_ACTION,
