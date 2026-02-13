@@ -1333,7 +1333,7 @@ Feature: Legal Act Page Regression Features
     And recital section count is 0
 
 
-  @OutdentScenerio @local @focus
+  @OutdentScenerio @local
   Scenario: Outdent Scenerio for article #2982
     Given navigate to leos application with "User1"
     Then user is on home page
@@ -1341,7 +1341,7 @@ Feature: Legal Act Page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
-    And  provide document title "Automation Testing for OutdentScenerio" in create document page
+    And  provide document title "Automation Testing for Outdent Scenerio" in create document page
     And  click on create button
     Then user is on act viewer page
     When click on legal act link present in act viewer page
