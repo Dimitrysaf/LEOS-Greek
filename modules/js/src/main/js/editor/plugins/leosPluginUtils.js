@@ -1738,6 +1738,42 @@ define(function leosPluginUtilsModule(require) {
             refNode = child;
         }
     }
+
+    // Restore missing table cells after deletion to maintain table structure
+    function _restoreTableStructure(table) {
+        if (!table) return;
+
+        var rows = table.find('tr');
+        if (rows.count() === 0) return;
+
+        // Find the maximum column count across all rows
+        var maxColCount = 0;
+        for (var i = 0; i < rows.count(); i++) {
+            var row = rows.getItem(i);
+            var cells = row.find('td');
+            var colCount = cells.count();
+            if (colCount > maxColCount) {
+                maxColCount = colCount;
+            }
+        }
+
+        if (maxColCount === 0) return;
+
+        // Restore all rows to have maxColCount columns
+        for (var i = 0; i < rows.count(); i++) {
+            var row = rows.getItem(i);
+            var cells = row.find('td');
+            var actualColCount = cells.count();
+
+            while (actualColCount < maxColCount) {
+                var newCell = new CKEDITOR.dom.element('td');
+                newCell.appendBogus();
+                row.append(newCell);
+                actualColCount++;
+            }
+        }
+    }
+
     // Check if the entire table/list contents is selected.
     function _mergeBlocksNonCollapsedSelection( editor, range, startPath ) {
         var startBlock = startPath.block,
@@ -1747,6 +1783,36 @@ define(function leosPluginUtilsModule(require) {
         // Selection must be anchored in two different blocks.
         if ( !startBlock || !endBlock || startBlock.equals( endBlock ) )
             return false;
+
+        // If selection crosses table boundary, handle it specially
+        var startInTable = startBlock.getAscendant('table', true);
+        var endInTable = endBlock.getAscendant('table', true);
+        
+        // Check if range contains a table even if start/end blocks are outside
+        var rangeContainsTable = false;
+        if (!startInTable && !endInTable) {
+            var commonAncestor = range.getCommonAncestor();
+            rangeContainsTable = !!commonAncestor.find('table').count();
+        }
+
+        if ((startInTable && !endInTable) ||
+            (!startInTable && endInTable) ||
+            (startInTable && endInTable && !startInTable.equals(endInTable)) ||
+            rangeContainsTable) {
+
+            editor.fire('saveSnapshot');
+
+            range.deleteContents();
+
+            // Find and restore all tables in the selection
+            var tables = range.getCommonAncestor().find('table');
+            for (var i = 0; i < tables.count(); i++) {
+                _restoreTableStructure(tables.getItem(i));
+            }
+
+            range.select();
+            return true;
+        }
 
         editor.fire( 'saveSnapshot' );
 

@@ -14,6 +14,7 @@ public class LegDocumentVO {
     private String legFileStatus;
     private String creationDate;
     private boolean clonedProposal;
+    private String language;
 
     public String getProposalId() { return proposalId; }
 
@@ -68,6 +69,14 @@ public class LegDocumentVO {
     public boolean isClonedProposal() { return clonedProposal; }
 
     public void setClonedProposal(boolean clonedProposal) { this.clonedProposal = clonedProposal; }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
 
     @Override
     public boolean equals(Object o) {

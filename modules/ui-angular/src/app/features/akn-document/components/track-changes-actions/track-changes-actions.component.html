@@ -7,7 +7,7 @@
     euiBasicButton
     [title]="'page.editor.track.changes.actions.accept' | translate"
     [attr.aria-label]="'page.editor.track.changes.actions.accept' | translate"
-    [disabled]="!this.canAcceptTrackChanges"
+    [disabled]="!canUserAcceptChanges()"
     (click)="onAccept()"
   >
     <img src="assets/images/ok.png" alt="" />
@@ -23,7 +23,7 @@
     euiBasicButton
     [title]="'page.editor.track.changes.actions.reject' | translate"
     [attr.aria-label]="'page.editor.track.changes.actions.reject' | translate"
-    [disabled]="!this.canRejectTrackChanges"
+    [disabled]="!canUserRejectChanges()"
     (click)="onReject()"
   >
     <img src="assets/images/remove.png" alt="" />
