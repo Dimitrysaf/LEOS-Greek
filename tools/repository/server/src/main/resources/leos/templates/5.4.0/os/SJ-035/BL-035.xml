@@ -28,10 +28,10 @@
                     <FRBRuri value=""/>
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
-                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
-                        <akn4eu:akn4euVersion value="4.2 AA"/>
-                        <akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
-                    </preservation>
+					<preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                		<akn4eu:akn4euVersion value="4.2 AA"/>
+						<akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
+                	</preservation>
                 </FRBRManifestation>
             </identification>
             <references source="~COM">
@@ -55,7 +55,7 @@
                 <p>
                     <docketNumber class="template" />
                 </p>
-            </container>
+            </container>  
             <longTitle>
                 <p>
                     <docType refersTo="~DEC_IMPL">COMMISSION DECISION</docType> of <date date="2999-01-01">XXX</date>
@@ -111,7 +111,7 @@
                     </content>
                 </paragraph>
             </article>
-
+           
         </body>
         <conclusions>
             <p>Done at <location refersTo="~BEL_BRU">Brussels</location>, <date class="template" date="2999-01-01"/></p>
