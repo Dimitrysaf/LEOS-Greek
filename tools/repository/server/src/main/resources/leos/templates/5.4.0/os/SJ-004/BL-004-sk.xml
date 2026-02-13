@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?>
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+    <bill name="REG_IMPL">
+        <meta>
+            <identification source="~COM">
+                <FRBRWork>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:fileCUID value="yyyyyyy"/>
+                        <akn4eu:docCUID value="xxxxxx"/>
+                    </preservation>
+                    <FRBRcountry value="EU"/>
+                    <FRBRprescriptive value="true"/>
+                </FRBRWork>
+                <FRBRExpression>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <FRBRlanguage language="sk"/>
+                </FRBRExpression>
+                <FRBRManifestation>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+					<preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                		<akn4eu:akn4euVersion value="4.2 AA"/>
+						<akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
+                	</preservation>
+                </FRBRManifestation>
+            </identification>
+            <references source="~COM">
+                <TLCLocation xml:id="BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
+                <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
+                <TLCRole xml:id="PRESID" href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
+                <TLCReference xml:id="REG_IMPL" href="http://publications.europa.eu/resource/authority/resource-type/REG_IMPL" name="docType" showAs="Implementing regulation"/>
+                <TLCReference xml:id="legalBasis" href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis"/>
+                <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/SLK" name="language" showAs="sk"/>
+                <TLCConcept xml:id="ART_DEF" href="http://publications.europa.eu/resource/authority/subdivision-content/ART_DEF" showAs="Article on definitions"/>
+            </references>
+            <proprietary source="~COM">
+                <leos:templateVersion>1.0.0</leos:templateVersion>
+                <leos:docVersion>0.1.0</leos:docVersion>
+                <leos:template>SJ-004</leos:template>
+                <leos:docTemplate>BL-004</leos:docTemplate>
+            </proprietary>
+        </meta>
+        <preface>
+            <container name="procedureIdentifier" class="template">
+                <p>
+                    <docketNumber class="template"/>
+                </p>
+            </container>
+            <longTitle>
+                <p>
+                    <docType refersTo="~REG_IMPL">VYKONÁVACIE NARIADENIE KOMISIE (EÚ) .../...</docType> z <date date="2999-01-01">XXX</date>
+                    <docPurpose>o ...</docPurpose>
+                </p>
+            </longTitle>
+        </preface>
+        <preamble>
+            <formula name="actingEntity">
+                <p>EURÓPSKA KOMISIA,</p>
+            </formula>
+            <citations leos:editable="false">
+                <citation leos:editable="true">
+                    <p>so zreteľom na Zmluvu o fungovaní Európskej únie,</p>
+                </citation>
+                <citation leos:editable="true">
+                    <p>so zreteľom na […]<authorialNote marker="1" placement="bottom"><p>OJ L [...], [...], p. [...].</p></authorialNote>, a najmä na [jeho/jej] článok […],</p>
+                </citation>
+                <citation leos:editable="true">
+                    <p>po porade s [názov výboru],</p>
+                </citation>
+            </citations>
+            <recitals leos:editable="false">
+                <intro><p>keďže:</p></intro>
+                <recital leos:editable="true">
+                    <num>(1)</num>
+                    <p>Odôvodnenie...</p>
+                </recital>
+                <recital leos:editable="true">
+                    <num>(2)</num>
+                    <p>Odôvodnenie...</p>
+                </recital>
+                <recital leos:editable="true">
+                    <num>(3)</num>
+                    <p>Opatrenia stanovené v tomto nariadení sú v súlade so stanoviskom […] výboru,</p>
+                </recital>
+            </recitals>
+            <formula name="enactingFormula">
+                <p>PRIJALA TOTO NARIADENIE:</p>
+            </formula>
+        </preamble>
+        <body>
+            <article leos:editable="true" leos:deletable="true" leos:autonumbering="true">
+                <num leos:editable="false">Článok 1</num>
+                <heading>Nadpis článku...</heading>
+                <paragraph>
+                    <num>1.</num>
+                    <content>
+                        <p>Text...</p>
+                    </content>
+                </paragraph>
+				<paragraph>
+                    <num>2.</num>
+                    <content>
+                        <p>Text...</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article leos:editable="true" leos:deletable="true" leos:autonumbering="true">
+                <num leos:editable="false">Článok 2</num>
+                <heading>Nadpis článku...</heading>
+                <paragraph>
+                    <content>
+                        <p>Toto nariadenie nadobúda účinnosť […] dňom po jeho uverejnení v <i>Úradnom vestníku Európskej únie</i>.</p>
+                    </content>
+                </paragraph>
+            </article>
+            <clause leos:editable="true" leos:deletable="true" leos:alternative="true" leos:optionlist="listOption1" leos:selectedoption="1">
+                <content>
+                    <p>Toto nariadenie je záväzné v celom rozsahu a priamo uplatniteľné vo všetkých členských štátoch.</p>
+                </content>
+            </clause>
+        </body>
+        <conclusions>
+            <p>Done at <location refersTo="~BEL_BRU">V Bruseli</location>, <date class="template" date="2999-01-01"/></p>
+            <block name="signatory" leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption2" leos:selectedoption="1">
+                <signature leos:optionlist="listOption2">
+                    <organization refersTo="~_COM">Za Komisiu</organization>
+                    <role refersTo="~_PRESID">predsedníčka</role>
+                    <person refersTo="">[...]</person>
+                </signature>
+            </block>
+        </conclusions>
+    </bill>
+</akomaNtoso>
