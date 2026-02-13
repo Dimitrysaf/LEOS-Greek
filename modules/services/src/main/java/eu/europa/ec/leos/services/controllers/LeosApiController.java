@@ -42,7 +42,6 @@ import eu.europa.ec.leos.services.collection.CreateCollectionService;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.TransformationService;
-import eu.europa.ec.leos.services.dto.request.PublishTemplateRequest;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.dto.response.LeosRenditionOutputResponseList;
@@ -150,6 +149,9 @@ public class LeosApiController {
 
     @Value("${leos.api.jwt.auth.access.token.expire.min}")
     private String accessTokenExpirationInMin;
+
+    @Value("${notification.functional.mailbox}")
+    private String notificationRecipient;
 
     @Autowired
     public LeosApiController(LegService legService, WorkspaceService workspaceService, TokenService tokenService,
@@ -872,8 +874,13 @@ public class LeosApiController {
             contentToZip.put(legFile.getOriginalFileName(), legFile);
             LeosFile resultZipFile = ZipPackageUtil.zipLeosFiles("validation.zip", contentToZip, "");
 
-            if (!validationResult.isValid()){
-                notificationService.sendNotification(new DocumentExternalValidationNotification(email, "", new Date(), "", legFile.getOriginalFileName(), resultZipFile.getBytes()));
+            if (!validationResult.isValid()) {
+                if (email != null) {
+                    notificationService.sendNotification(new DocumentExternalValidationNotification(email, "", new Date(), "", legFile.getOriginalFileName(), resultZipFile.getBytes()));
+                }
+                if (email == null || !notificationRecipient.equals(email)) {
+                    notificationService.sendNotification(new DocumentExternalValidationNotification(notificationRecipient, "", new Date(), "", legFile.getOriginalFileName(), resultZipFile.getBytes()));
+                }
             }
 
             return new ResponseEntity<>(HttpStatus.OK);

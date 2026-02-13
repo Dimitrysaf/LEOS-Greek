@@ -17,7 +17,6 @@ import eu.europa.ec.digit.leos.pilot.export.exception.LeosDocumentException;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosDocumentService;
-import eu.europa.ec.digit.leos.pilot.export.util.StringUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,14 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -101,13 +93,8 @@ public class LeosDocumentApiController {
                                                 @RequestParam(name = "email", required = false) String email) {
         try {
             byte[] documentOutput = leosDocumentService.applyMetadata(inputFile);
-            if (!StringUtil.isEmpty(email)) {
-                if (!StringUtil.isEmailValid(email)) {
-                    return ResponseEntity.badRequest().body("Email format is not valid");
-                }
-                MultipartFile preFinalizedFile = new MockMultipartFile(Objects.requireNonNull(inputFile.getOriginalFilename()), documentOutput);
-                leosDocumentService.callLeosValidation(preFinalizedFile, email);
-            }
+            MultipartFile preFinalizedFile = new MockMultipartFile(Objects.requireNonNull(inputFile.getOriginalFilename()), documentOutput);
+            leosDocumentService.callLeosValidation(preFinalizedFile, email);
             return buildValidZipResponse(documentOutput);
         } catch (LeosDocumentException e) {
             return buildErrorResponse("Issue processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR);

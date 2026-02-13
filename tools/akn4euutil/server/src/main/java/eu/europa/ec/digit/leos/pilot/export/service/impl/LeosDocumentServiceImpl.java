@@ -22,11 +22,13 @@ import eu.europa.ec.digit.leos.pilot.export.service.LeosLegDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosPrefinalisationService;
 import eu.europa.ec.digit.leos.pilot.export.service.XmlDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.rest.Akn4EUUtilRestClient;
+import eu.europa.ec.digit.leos.pilot.export.util.StringUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,6 +46,9 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
     private final XmlDocumentService xmlDocumentService;
     private final LeosPrefinalisationService leosPrefinalisationService;
     private final Akn4EUUtilRestClient restClient;
+
+    @Value("${notification.functional.mailbox}")
+    private String notificationRecipient;
 
     @Autowired
     public LeosDocumentServiceImpl(LeosLegDocumentService leosLegDocumentService,
@@ -92,7 +97,8 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
 
     public void callLeosValidation(MultipartFile inputFile, String email) {
         try {
-            restClient.callLeosValidation(convertFileToByteArray(inputFile), email);
+            String recipient = (StringUtil.isEmpty(email) || !StringUtil.isEmailValid(email)) ? notificationRecipient : email;
+            restClient.callLeosValidation(convertFileToByteArray(inputFile), recipient);
         } catch (IOException e) {
             LOG.error("Error while calling leos validation - {}", e.getMessage());
             throw new RuntimeException(e);
@@ -106,7 +112,8 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
 
     public String applyMetadataAsync(MultipartFile inputFile, String callbackUrl, String email) throws IOException {
         Map<String, Object> zipContent = ZipUtil.unzipByteArray(inputFile.getBytes());
-        return this.leosPrefinalisationService.applyMetadataAsync(zipContent, callbackUrl, inputFile.getOriginalFilename(), email);
+        String recipient = (StringUtil.isEmpty(email) || !StringUtil.isEmailValid(email)) ? notificationRecipient : email;
+        return this.leosPrefinalisationService.applyMetadataAsync(zipContent, callbackUrl, inputFile.getOriginalFilename(), recipient);
     }
 
     private ByteArrayResource convertFileToByteArray(MultipartFile multipartFile) throws IOException {
