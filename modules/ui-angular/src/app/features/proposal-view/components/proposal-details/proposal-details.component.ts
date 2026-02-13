@@ -1158,7 +1158,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       var key = event.keyCode || event.which;
       key = String.fromCharCode(key);
     }
-    var regex = /[0-9]|\./;
+    var regex = /[0-9]/;
     return regex.test(key);
   }
 }
