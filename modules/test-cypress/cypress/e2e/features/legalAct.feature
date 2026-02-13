@@ -1333,7 +1333,7 @@ Feature: Legal Act Page Regression Features
     And recital section count is 0
 
 
-  @OutdentScenerio @local
+  @OutdentScenerio @local @focus
   Scenario: Outdent Scenerio for article #2982
     Given navigate to leos application with "User1"
     Then user is on home page

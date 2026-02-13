@@ -4,7 +4,7 @@
 @ForkAndMergeScenarios
 Feature: fork and merge features
 
-  @nonSupportUserAccessToCloneProposal @local
+  @nonSupportUserAccessToCloneProposal @local @focus
   Scenario: test fork and merge of a act
     Given navigate to leos application with "User1"
     Then user is on home page
@@ -75,7 +75,7 @@ Feature: fork and merge features
     And  enable track changes is disabled
     And  see track changes is enabled
 
-  @moveLabelWithTrackChanges @local
+  @moveLabelWithTrackChanges @local @focus
   Scenario: Basic test to move element inside legal act when track changes is on
     Given navigate to leos application with "User1"
     Then user is on home page
@@ -759,7 +759,7 @@ Feature: fork and merge features
     Then level 1 contains "Text...add new content in same paragraph"
 
   @VisibilityOfContributionInAutonomousAct @local
-  Scenario: test fork and merge of a act
+  Scenario: Visibility of contribution pane in autonomous act
     Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
@@ -1007,3 +1007,49 @@ Feature: fork and merge features
     And ins tag with attribute "leos\:action-number" and value "insert" of num tag of point 2 of list 1 of paragraph 2 of article 2 contains "(2)"
     And content of point 2 of list 1 of paragraph 2 of article 2 contains "point 3"
 
+
+
+  @softEnterIcon2 @contributionPane @local
+  Scenario: softEnterIcon2 should not be visible when we add appoint (#3055)
+    Given navigate to leos application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "3055" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on milestones tab in act view page
+    When click on add button in milestones tab
+    And  click on create milestone button
+    Then successful message contains "Milestone created"
+    And  "File ready" is showing under status column of row 1 of milestones table
+    When click on three dots under actions column of row 1 of milestones table
+    When click on option "Send a copy for contribution" under milestone actions
+    Then "Send a copy of the milestone for contribution" dialog box window is displayed
+    When provide input "demo" dialog box window
+    And  click on row 1 from the user list
+    And  click on send for contribution button
+    Then successful message contains "Copy sent for contribution"
+    When click on workspace button in breadcrumb item
+    Then user is on repository browser page
+    When click on act 2
+    Then user is on act viewer page
+    And  chip content container 1 of act header contains "Contribution"
+    And  chip content container 2 of act header contains "LEOS"
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    When mouseover and click on article 1
+    Then ck editor window is displayed
+    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+    And click on table icon present in ck editor panel
+    Then cke dialog window is displayed with title "Table Properties"
+    When click on ok button in cke dialog window
+    And  click save and close button of ck editor
+    Then ck editor window is not displayed
+    Then content of subparagraph 1 of paragraph 1 of article 1 contains "Text..."
+    And subparagraph 2 of paragraph 1 of article 1 should contain a table
+    And subparagraph 3 of paragraph 1 of article 1 should not exist
+    When click on close button present in legal act page
+    Then user is on act viewer page
