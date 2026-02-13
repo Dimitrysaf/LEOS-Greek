@@ -41,6 +41,7 @@ import eu.europa.ec.digit.leos.pilot.export.util.metadata.ApplyMetadataResponseC
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.mock.web.MockMultipartFile;
@@ -67,7 +68,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
     private final LeosDocumentService leosDocumentService;
 
     @Autowired
-    public LeosPrefinalisationServiceImpl(final MetadataService metadataService, final LeosDocumentService leosDocumentService) {
+    public LeosPrefinalisationServiceImpl(final MetadataService metadataService, @Lazy final LeosDocumentService leosDocumentService) {
         this.metadataService = metadataService;
         this.leosDocumentService = leosDocumentService;
     }
