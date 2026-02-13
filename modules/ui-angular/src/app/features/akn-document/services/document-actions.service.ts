@@ -786,7 +786,7 @@ export abstract class DocumentActionsService {
         id: MERGE_CONTRIBUTION_GROUP_PREV_NEXT_ID,
         cssClasses: 'eui-u-flex eui-u-flex-row app-u-gap-xs merge-button-group',
         children: [
-          {
+          /*{
             type: IRibbonToolbarType.BUTTON,
             id: MERGE_CONTRIBUTION_PREV_CHANGE_ID,
             icon: 'chevron-up',
@@ -814,7 +814,7 @@ export abstract class DocumentActionsService {
             description: this.translateService.instant(
               'page.editor.versions.compare.actions.next-change',
             ),
-          },
+          },*/
         ],
       },
       {
@@ -829,7 +829,7 @@ export abstract class DocumentActionsService {
         cssClasses:
           'eui-u-flex eui-u-flex-align-items-start eui-u-flex-column eui-u-flex-justify-content-center',
       },
-      {
+      /*{
         type: IRibbonToolbarType.DROPDOWN,
         id: MERGE_CONTRIBUTION_APPLY_CHANGES_SECTION_ID,
         euiSize: 's',
@@ -840,7 +840,7 @@ export abstract class DocumentActionsService {
         icon: 'eui-ellipsis-vertical',
         items: this.mergeContributionApplyDropdownOptions,
         disabled: this.mergeContributionService.isContributionDeclinedOrProcessed$,
-      },
+      },*/
       {
         type: IRibbonToolbarType.BUTTON,
         id: 'apply-id',
