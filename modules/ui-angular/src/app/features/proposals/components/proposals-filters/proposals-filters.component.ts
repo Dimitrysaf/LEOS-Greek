@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormGroup  } from '@angular/forms';
 import { getI18nState } from '@eui/core';
-import { CatalogItem} from '@leos/shared';
+import {ApplicationRole, CatalogItem} from '@leos/shared';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -71,6 +71,7 @@ export class ProposalsFiltersComponent
   private destroy$ = new Subject<void>();
   private canCreateTemplate: boolean = false;
   treeNodes: TreeDataModel = null;
+  userRoles: ApplicationRole[];
   filteredNodes: TreeDataModel = null;
   isExpanded: boolean;
   private templates: Map<string, CatalogItem> = new Map();
@@ -121,6 +122,7 @@ export class ProposalsFiltersComponent
 
     this.appConfig.config.subscribe((config) => {
       this.canCreateTemplate = config.userAppPermissions.includes('CAN_CREATE_TEMPLATE');
+      this.userRoles = config.user.roles;
     });
   }
 
@@ -172,7 +174,7 @@ export class ProposalsFiltersComponent
 
     catalogItems = catalogItems.filter(item =>
       !item.hidden && (!item.visibleTo || item.visibleTo.trim() === ''
-       /* ||(!this.userRoles?.length || item.visibleTo.split(',').some(role => this.userRoles.includes(role.toUpperCase().trim() as ApplicationRole)))*/
+        ||(!this.userRoles?.length || item.visibleTo.split(',').some(role => this.userRoles.includes(role.toUpperCase().trim() as ApplicationRole)))
         )
     );
     return catalogItems.map((item) => this.catalogItemToTreeItem(item));
@@ -186,17 +188,16 @@ export class ProposalsFiltersComponent
       type === 'CATEGORY' ? iconClassCategory : iconClassTemplate;
     let disabled = !enabled;
     const children =
-      type === 'CATEGORY' && !hidden && enabled
+      ( item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE' ) && !hidden && enabled
         ? items
           .filter((child) => !child.hidden &&
-            (!child.visibleTo || child.visibleTo.trim() === ''
-             /* || (!this.userRoles?.length ||
-                child.visibleTo.split(',').some(role => this.userRoles.includes(role.toUpperCase().trim() as ApplicationRole)))*/
-            ))
+            (!child.visibleTo || child.visibleTo.trim() === '' ||
+              (!this.userRoles?.length ||
+                child.visibleTo.split(',').some(role => this.userRoles.includes(role.toUpperCase().trim() as ApplicationRole)))))
           .map((child) => this.catalogItemToTreeItem(child))
         : [];
     const isEmptyCategory = type === 'CATEGORY' && !children.length;
-    const isTemplate = type !== 'CATEGORY';
+    const isTemplate = type === 'TEMPLATE';
     const node: TreeNode = {
       isExpanded: this.isExpanded,
       selectable: isTemplate,

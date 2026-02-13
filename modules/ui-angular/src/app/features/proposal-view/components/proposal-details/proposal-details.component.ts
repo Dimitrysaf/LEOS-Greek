@@ -100,6 +100,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   crossReferenceProposalListing: string[] = [];
   selectedIndex: number | null = null;
   invalidCrossRefNumberInput: boolean;
+  crossRefErrorKey: string = '';
   invalidInstitutionalNumberInput: boolean;
   invalidInterInstitutionalNumberInput: boolean;
   invalidTargetProposalReferenceInput: boolean;
@@ -711,12 +712,14 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       && !this.institutionalRef
       && !this.institutionalReferenceFinalVersion
       && !this.interInstitutionalRef
-      && !this.stamp) {
+      && !this.stamp
+      && this.signatures.length === this.proposalDetails.templateSignatures.length) {
       for (let i = 0; i < this.signatures.length; i++) {
+        let templateSignature = this.proposalDetails.templateSignatures[i];
         let signature = this.signatures[i];
-        if (signature.commissionerTitle != this.proposalDetails.templateSignatures[i].commissionerTitle
-            || signature.signingCommissioner != this.proposalDetails.templateSignatures[i].signingCommissioner
-            || signature.specialMention != this.proposalDetails.templateSignatures[i].specialMention) {
+        if (signature.commissionerTitle != templateSignature.commissionerTitle
+            || signature.signingCommissioner != templateSignature.signingCommissioner
+            || signature.specialMention != templateSignature.specialMention) {
           return true;
         }
       }
@@ -1025,22 +1028,81 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     this.handleChange();
   }
 
-  checkCrossRefNumberInput(event: KeyboardEvent) {
-    if (this.checkNumberInput(event)) {
+  preventInvalidChars(event: KeyboardEvent) {
+    const char = event.key;
+    const currentValue = (event.target as HTMLInputElement).value;
+
+    // Allow control keys (backspace, delete, arrow keys, etc.)
+    if (event.ctrlKey || event.altKey || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(char)) {
+      return;
+    }
+
+    // Check for non-digits (letters, special chars)
+    if (!/^\d$/.test(char)) {
+      event.preventDefault();
       this.invalidCrossRefNumberInput = true;
+      this.crossReferenceProposalNumber = '';
+      this.crossRefErrorKey = 'page.collection.details.invalid.number.label';
       setTimeout(() => {
         this.invalidCrossRefNumberInput = false;
-      }, 1500)
+      }, 1500);
+      return;
+    }
+
+    // Prevent starting with 0
+    if (currentValue === '' && char === '0') {
+      event.preventDefault();
+      this.invalidCrossRefNumberInput = true;
+      this.crossRefErrorKey = 'page.collection.details.number.range.label';
+      setTimeout(() => {
+        this.invalidCrossRefNumberInput = false;
+      }, 1500);
+      return;
+    }
+
+    // Check if new value would exceed 9999
+    const newValue = currentValue + char;
+    if (parseInt(newValue) > 9999) {
+      event.preventDefault();
+      this.invalidCrossRefNumberInput = true;
+      this.crossRefErrorKey = 'page.collection.details.number.range.label';
+      setTimeout(() => {
+        this.invalidCrossRefNumberInput = false;
+      }, 1500);
     }
   }
 
-  checkNumberInput(event: KeyboardEvent): boolean {
-    const char = event.key;
-    if (!/^\d$/.test(char)) {
-      event.preventDefault();
-      return true;
+
+  checkCrossRefNumberInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+
+    if (value !== '') {
+      // Check if value contains any non-numeric characters
+      if (!/^\d+$/.test(value)) {
+        this.invalidCrossRefNumberInput = true;
+        this.crossRefErrorKey = 'page.collection.details.invalid.number.label';
+        input.value = '';
+        this.crossReferenceProposalNumber = '';
+        setTimeout(() => {
+          this.invalidCrossRefNumberInput = false;
+        }, 1500);
+        return;
+      }
+
+      const numValue = parseInt(value);
+
+      // Check for invalid range
+      if (numValue < 1 || numValue > 9999) {
+        this.invalidCrossRefNumberInput = true;
+        this.crossRefErrorKey = 'page.collection.details.number.range.label';
+        input.value = '';
+        this.crossReferenceProposalNumber = '';
+        setTimeout(() => {
+          this.invalidCrossRefNumberInput = false;
+        }, 1500);
+      }
     }
-    return false;
   }
 
   enableAddCrossRef() {
@@ -1096,7 +1158,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       var key = event.keyCode || event.which;
       key = String.fromCharCode(key);
     }
-    var regex = /[0-9]|\./;
+    var regex = /[0-9]/;
     return regex.test(key);
   }
 }

@@ -220,6 +220,15 @@ define(function leosTablePluginModule(require) {
         }
     }
 
+    function addParagraphForEmptyEditor(editor, removedElement, range) {
+        var newParagraph = editor.document.createElement('p');
+        newParagraph.insertBefore(removedElement);
+        range.selectNodeContents(newParagraph);
+        range.collapse(true);
+        editor.getSelection().selectRanges([range]);
+        editor.focus();
+    }
+
     function _handleTableRemoval(context) {
         const editor = context.event.editor;
         const firstElement = editor.elementPath().elements[0];
@@ -233,6 +242,16 @@ define(function leosTablePluginModule(require) {
         };
 
         if (firstElement.getName() === 'table') {
+            if(firstElement.getAttribute("leos:predefinedtable") === 'true'
+                    && editor.LEOS.type === 'stat_digit_financ_legis'){
+                cancelAndEnable();
+                return;
+            }
+            if(firstElement.getParent().getAttribute("data-akn-attr-editable") === "true"
+                && firstElement.getParent().getChildCount() ===1){
+                const range = editor.createRange();
+                addParagraphForEmptyEditor(editor, firstElement, range);
+            }
             firstElement.remove();
             cancelAndEnable();
             return;
@@ -242,6 +261,10 @@ define(function leosTablePluginModule(require) {
             if (children.count() === 1) {
                 const child = children.getItem(0);
                 if (child.type === Node.ELEMENT_NODE && child.getName() === 'table') {
+                    if(firstElement.getAttribute("data-akn-attr-editable") === "true"){
+                        const range = editor.createRange();
+                        addParagraphForEmptyEditor(editor, child, range);
+                    }
                     child.remove();
                     cancelAndEnable();
                 }
@@ -279,20 +302,11 @@ define(function leosTablePluginModule(require) {
         var range = editor.createRange();
 
         if (isOnlyElement) {
-            // Create paragraph before removing table to maintain cursor position
-            var newParagraph = editor.document.createElement('p');
-            newParagraph.insertBefore(table);
-            table.remove();
-
-            range.selectNodeContents(newParagraph);
-            range.collapse(true);
-            editor.getSelection().selectRanges([range]);
-            editor.focus();
+            addParagraphForEmptyEditor(editor, table, range);
         } else {
-            // Move range before table, remove it, then select the range
             range.moveToPosition(table, CKEDITOR.POSITION_BEFORE_START);
-            table.remove();
         }
+        table.remove();
         range.select();
     }
 

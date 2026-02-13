@@ -1972,7 +1972,7 @@ Feature: Track Changes Feature
     When click on cancel button in cke dialog window
     And  click close button of ck editor
 
-  @validationOfRecitalSectionWithTrackChangesInAutonomousAct @local @focus
+  @validationOfRecitalSectionWithTrackChangesInAutonomousAct @local
   Scenario: Recital section in autonomous act
     Given navigate to leos application with "User1"
     Then user is on home page

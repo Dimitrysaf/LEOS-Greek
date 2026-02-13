@@ -1230,7 +1230,9 @@ export class DocumentService {
         .get<Version[]>(
           `${apiBaseUrl}/secured/${documentType}/${documentRef}/search-versions?authorKey=${authorKey}&type=${vType}`,
         )
-        .pipe(finalize(() => this.loadingService.setLoading(false)));
+        .pipe(finalize(() => {
+          this.loadingService.setLoading(false);
+        }));
     } else {
       return new Observable<Version[]>((observer) => {
         observer.next([]);
