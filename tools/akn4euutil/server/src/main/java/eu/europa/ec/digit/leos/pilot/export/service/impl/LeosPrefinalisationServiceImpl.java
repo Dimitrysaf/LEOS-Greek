@@ -28,9 +28,11 @@ import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MetadataFie
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.MultipleReferencesFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.ReferenceFieldInfo;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.SimpleFieldInfo;
+import eu.europa.ec.digit.leos.pilot.export.service.LeosDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosPrefinalisationService;
 import eu.europa.ec.digit.leos.pilot.export.service.MetadataService;
 import eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil;
+import eu.europa.ec.digit.leos.pilot.export.util.StringUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.XmlFile;
 import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
@@ -40,14 +42,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 
 import javax.xml.transform.stream.StreamSource;
@@ -55,12 +56,7 @@ import javax.xml.validation.Validator;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -68,10 +64,12 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
     private static final Logger LOG = LoggerFactory.getLogger(LeosPrefinalisationServiceImpl.class);
 
     private final MetadataService metadataService;
+    private final LeosDocumentService leosDocumentService;
 
     @Autowired
-    public LeosPrefinalisationServiceImpl(final MetadataService metadataService) {
+    public LeosPrefinalisationServiceImpl(final MetadataService metadataService, final LeosDocumentService leosDocumentService) {
         this.metadataService = metadataService;
+        this.leosDocumentService = leosDocumentService;
     }
 
     public byte[] applyMetadata(Map<String, Object> zipContent) {
@@ -100,9 +98,9 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         }
     }
 
-    public String applyMetadataAsync(Map<String, Object> zipContent, String callbackUrl) {
+    public String applyMetadataAsync(Map<String, Object> zipContent, String callbackUrl, String originalFileName, String email) {
         String asyncId = UUID.randomUUID().toString();
-        CompletableFuture.runAsync(ApplyMetadataRunnable.create(asyncId, zipContent, callbackUrl, this));
+        CompletableFuture.runAsync(ApplyMetadataRunnable.create(asyncId, zipContent, callbackUrl, this, originalFileName, email, this.leosDocumentService));
         return asyncId;
     }
 
@@ -458,18 +456,33 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         private final String callbackUrl;
         private final Map<String, Object> zipContent;
         private final LeosPrefinalisationService leosPrefinalisationService;
+        private final String originalFileName;
+        private final String email;
+        private final LeosDocumentService leosDocumentService;
 
-        public ApplyMetadataRunnable(String id, Map<String, Object> zipContent, String callbackUrl, LeosPrefinalisationService leosPrefinalisationService) {
+        public ApplyMetadataRunnable(String id, Map<String, Object> zipContent, String callbackUrl,
+                                     LeosPrefinalisationService leosPrefinalisationService, String originalFileName,
+                                     String email, LeosDocumentService leosDocumentService) {
             this.id = id;
             this.zipContent = zipContent;
             this.callbackUrl = callbackUrl;
             this.leosPrefinalisationService = leosPrefinalisationService;
+            this.originalFileName = originalFileName;
+            this.email = email;
+            this.leosDocumentService = leosDocumentService;
         }
 
         @Override
         public void run() {
             LOG.debug("Start apply metadata async");
             final byte[] content = this.leosPrefinalisationService.applyMetadata(this.zipContent);
+
+            if (!StringUtil.isEmpty(email)) {
+                if (StringUtil.isEmailValid(email)) {
+                    MultipartFile preFinalizedFile = new MockMultipartFile(Objects.requireNonNull(originalFileName), content);
+                    leosDocumentService.callLeosValidation(preFinalizedFile, email);
+                }
+            }
 
             LOG.debug("Send ZIP to callback url");
             HttpHeaders headers = new HttpHeaders();
@@ -496,8 +509,8 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
             }
         }
 
-        public static Runnable create(String id, Map<String, Object> zipContent, String callbackUrl, LeosPrefinalisationService leosPrefinalisationService) {
-            return new ApplyMetadataRunnable(id, zipContent, callbackUrl, leosPrefinalisationService);
+        public static Runnable create(String id, Map<String, Object> zipContent, String callbackUrl, LeosPrefinalisationService leosPrefinalisationService, String originalFileName, String email, LeosDocumentService leosDocumentService) {
+            return new ApplyMetadataRunnable(id, zipContent, callbackUrl, leosPrefinalisationService, originalFileName, email, leosDocumentService);
         }
     }
 }

@@ -104,9 +104,9 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
         return this.leosPrefinalisationService.applyMetadata(zipContent);
     }
 
-    public String applyMetadataAsync(MultipartFile inputFile, String callbackUrl) throws IOException {
+    public String applyMetadataAsync(MultipartFile inputFile, String callbackUrl, String email) throws IOException {
         Map<String, Object> zipContent = ZipUtil.unzipByteArray(inputFile.getBytes());
-        return this.leosPrefinalisationService.applyMetadataAsync(zipContent, callbackUrl);
+        return this.leosPrefinalisationService.applyMetadataAsync(zipContent, callbackUrl, inputFile.getOriginalFilename(), email);
     }
 
     private ByteArrayResource convertFileToByteArray(MultipartFile multipartFile) throws IOException {

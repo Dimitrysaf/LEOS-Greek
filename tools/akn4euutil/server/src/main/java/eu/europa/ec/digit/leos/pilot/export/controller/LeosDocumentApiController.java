@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 import static eu.europa.ec.digit.leos.pilot.export.util.DocumentApiUtil.buildErrorResponse;
 import static eu.europa.ec.digit.leos.pilot.export.util.DocumentApiUtil.buildValidZipResponse;
@@ -103,7 +105,8 @@ public class LeosDocumentApiController {
                 if (!StringUtil.isEmailValid(email)) {
                     return ResponseEntity.badRequest().body("Email format is not valid");
                 }
-                leosDocumentService.callLeosValidation(inputFile, email);
+                MultipartFile preFinalizedFile = new MockMultipartFile(Objects.requireNonNull(inputFile.getOriginalFilename()), documentOutput);
+                leosDocumentService.callLeosValidation(preFinalizedFile, email);
             }
             return buildValidZipResponse(documentOutput);
         } catch (LeosDocumentException e) {
@@ -119,13 +122,7 @@ public class LeosDocumentApiController {
                                                 @RequestParam("callbackUrl") String callbackUrl,
                                                 @RequestParam(name = "email", required = false) String email) {
         try {
-            if (!StringUtil.isEmpty(email)) {
-                if (!StringUtil.isEmailValid(email)) {
-                    return ResponseEntity.badRequest().body("Email format is not valid");
-                }
-                leosDocumentService.callLeosValidation(inputFile, email);
-            }
-            String asyncId = leosDocumentService.applyMetadataAsync(inputFile, callbackUrl);
+            String asyncId = leosDocumentService.applyMetadataAsync(inputFile, callbackUrl, email);
             return new ResponseEntity<>(asyncId, HttpStatus.OK);
         } catch (Exception e) {
             return buildErrorResponse("Error found while processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR, true);
