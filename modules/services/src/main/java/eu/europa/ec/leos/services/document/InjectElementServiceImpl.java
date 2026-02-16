@@ -1,15 +1,14 @@
 package eu.europa.ec.leos.services.document;
 
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.services.document.operation.OperationStrategy;
+import eu.europa.ec.leos.services.document.operation.OperationStrategyFactory;
 import eu.europa.ec.leos.services.dto.request.*;
-import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,11 +25,15 @@ public class InjectElementServiceImpl implements InjectElementService {
 
     private final WorkspaceService workspaceService;
     private final DocumentContentService documentContentService;
+    private final OperationStrategyFactory strategyFactory;
 
     @Autowired
-    public InjectElementServiceImpl(WorkspaceService workspaceService, DocumentContentService documentContentService) {
+    public InjectElementServiceImpl(WorkspaceService workspaceService, 
+                                   DocumentContentService documentContentService,
+                                   OperationStrategyFactory strategyFactory) {
         this.workspaceService = workspaceService;
         this.documentContentService = documentContentService;
+        this.strategyFactory = strategyFactory;
     }
 
     @Override
@@ -44,36 +47,16 @@ public class InjectElementServiceImpl implements InjectElementService {
             Document doc = builder.parse(new ByteArrayInputStream(content));
 
             for (SectionRequest section : request.getSections()) {
-                if (section.getOperation() == Operation.CLEAN) {
-                    cleanSection(doc, section.getSectionType());
-                }
+                OperationStrategy strategy = strategyFactory.getStrategy(section.getOperation());
+                strategy.execute(doc, section);
             }
 
             content = documentToBytes(doc);
-            documentContentService.updateDocument(document, content, "Inject elements - CLEAN operation");
+            documentContentService.updateDocument(document, content, 
+                "Inject elements - " + request.getSections().get(0).getOperation());
         } catch (Exception e) {
             log.error("Error injecting elements: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to inject elements", e);
-        }
-    }
-
-    private void cleanSection(Document doc, SectionType sectionType) {
-        String tagName = getSectionTagName(sectionType);
-        Node sectionNode = doc.getElementsByTagName(tagName).item(0);
-        
-        if (sectionNode != null) {
-            while (sectionNode.hasChildNodes()) {
-                sectionNode.removeChild(sectionNode.getFirstChild());
-            }
-        }
-    }
-
-    private String getSectionTagName(SectionType sectionType) {
-        switch (sectionType) {
-            case CITATIONS: return "citations";
-            case RECITALS: return "recitals";
-            case ENACTING_TERMS: return "body";
-            default: throw new IllegalArgumentException("Unknown section type: " + sectionType);
         }
     }
 
