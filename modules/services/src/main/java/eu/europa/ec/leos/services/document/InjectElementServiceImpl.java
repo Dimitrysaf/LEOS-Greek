@@ -67,6 +67,7 @@ public class InjectElementServiceImpl implements InjectElementService {
             byte[] content = document.getContent().get().getSource().getBytes();
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(new ByteArrayInputStream(content));
 

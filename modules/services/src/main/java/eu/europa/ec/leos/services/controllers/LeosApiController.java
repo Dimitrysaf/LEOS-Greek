@@ -910,6 +910,13 @@ public class LeosApiController {
         }
     }
 
+    /**
+     * API endpoint for injecting elements into EdiT documents.
+     * Handles requests from external applications (e.g., DG SANTE EMP2) to modify document content.
+     * 
+     * @param request the DocumentLinesRequest containing document ID and section operations
+     * @return ResponseEntity with InjectElementResponse indicating success/failure
+     */
     @RequestMapping(value = "/secured/injectElement", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> injectElement(@RequestBody DocumentLinesRequest request) {
