@@ -35,15 +35,16 @@ public class CoEditionContext {
     private List<Element> updatedElements = new ArrayList<Element>();
 
     public void sendUpdatedElements(String documentRef, String presenterId, SaveElementResponse updatedElement, String alternateElementId) {
-        if (Boolean.TRUE.equals(kubernetesEnabled) && hazelcastInstance != null) {
+        if (/*Boolean.TRUE.equals(kubernetesEnabled) &&*/ hazelcastInstance != null) {
             IMap<String, UpdateElementsEvent> map = hazelcastInstance.getMap("updateElementsCache");
-            map.put(documentRef + "-" + System.currentTimeMillis(), 
+            List<Element> movedElements = new ArrayList<>();
+            movedElements.addAll(updatedElement.getElementsMoved());
+            movedElements.addAll(this.getUpdatedElements());
+            updatedElement = new SaveElementResponse(updatedElement.getElementId(), updatedElement.getElementTagName(), updatedElement.getElementFragment(),
+                    updatedElement.getElementToEditAfterClose(), updatedElement.getSplittedContentIsEmpty(), movedElements);
+            map.put(documentRef + "-" + System.currentTimeMillis(),
                    new UpdateElementsEvent(documentRef, presenterId, updatedElement, alternateElementId));
-            for (Element elt: this.getUpdatedElements()) {
-                map.put(documentRef + "-" + System.currentTimeMillis(),
-                        new UpdateElementsEvent(documentRef, presenterId, new SaveElementResponse(elt.getElementId(), elt.getElementTagName(),
-                                elt.getElementFragment()), alternateElementId));
-            }
+            updatedElements.clear();
         } else {
             processUpdatedElements(documentRef, presenterId, updatedElement, alternateElementId);
         }
