@@ -17,9 +17,11 @@ import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.ContributionVO;
+import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
+import eu.europa.ec.leos.services.dto.request.MergeActionVO;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.LegService;
@@ -309,5 +311,20 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
 
     private String getClonedMilestoneId(String proposalRef, String legDocumentName) {
         return proposalRef + CMIS_PROPERTY_SPLITTER + legDocumentName;
+    }
+
+    @Override
+    public List<Element> extractElementsFromMergeActions(byte[] xmlContent, List<MergeActionVO> mergeActions) {
+        List<Element> updatedElements = new ArrayList<>();
+        for (MergeActionVO mergeAction : mergeActions) {
+            String id = mergeAction.getElementId();
+            Element element = xmlContentProcessor.getElementById(xmlContent, id);
+            if (element != null) {
+                updatedElements.add(element);
+            } else {
+                updatedElements.add(new Element(id, mergeAction.getElementTagName(), null));
+            }
+        }
+        return updatedElements;
     }
 }

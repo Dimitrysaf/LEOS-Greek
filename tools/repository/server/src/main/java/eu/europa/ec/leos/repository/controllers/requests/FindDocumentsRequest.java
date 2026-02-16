@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.repository.controllers.requests;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.Set;
 
 public class FindDocumentsRequest {

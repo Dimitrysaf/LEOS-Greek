@@ -35,6 +35,8 @@ public class DocumentVO {
     private Date createdOn;
     private String updatedBy;
     private Date updatedOn;
+    private Date pkgLastUpdatedOn;
+    private String pkgLastUpdatedBy;
     private String language;
     private String template;
     private int docNumber;// optional
@@ -64,6 +66,7 @@ public class DocumentVO {
     private String correctionInformation;
     private Boolean showCorrigendumAddendum;
     private Boolean finalVersion;
+    private String diffusionVersion;
     private Boolean allTargetLangSelected;
     private List<String> proposalTargetLang;
     private DetailsTabExclusions detailsTabExclusions;
@@ -454,6 +457,14 @@ public class DocumentVO {
         this.finalVersion = finalVersion;
     }
 
+    public String getDiffusionVersion() {
+        return diffusionVersion;
+    }
+
+    public void setDiffusionVersion(String diffusionVersion) {
+        this.diffusionVersion = diffusionVersion;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -503,6 +514,8 @@ public class DocumentVO {
         this.setProcedureType(null);
         this.getChildDocuments().clear();
         this.getCollaborators().clear();
+        this.setPkgLastUpdatedBy(null);
+        this.setPkgLastUpdatedOn(null);
     }
 
     public void setName(String name) {
@@ -585,5 +598,21 @@ public class DocumentVO {
 
     public void setDetailsTabExclusions(DetailsTabExclusions detailsTabExclusions) {
         this.detailsTabExclusions = detailsTabExclusions;
+    }
+
+    public Date getPkgLastUpdatedOn() {
+        return pkgLastUpdatedOn;
+    }
+
+    public void setPkgLastUpdatedOn(Date pkgLastUpdatedOn) {
+        this.pkgLastUpdatedOn = pkgLastUpdatedOn;
+    }
+
+    public String getPkgLastUpdatedBy() {
+        return pkgLastUpdatedBy;
+    }
+
+    public void setPkgLastUpdatedBy(String pkgLastUpdatedBy) {
+        this.pkgLastUpdatedBy = pkgLastUpdatedBy;
     }
 }

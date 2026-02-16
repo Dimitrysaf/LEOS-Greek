@@ -57,7 +57,6 @@ import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.LeosRepository;
-import eu.europa.ec.leos.repository.document.ProposalRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -115,9 +114,8 @@ import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.Validate;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,10 +123,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -232,7 +231,7 @@ public abstract class ApiServiceImpl implements ApiService {
                           TrackChangesContext trackChangesContext, DocumentViewService documentViewService,
                           GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
                           ProposalDetailsService proposalDetailsService,
-                          TemplateConfigurationService templateConfigurationService, LanguageHelper languageHelper, PackageRepository packageRepository, ProposalRepository proposalRepository) {
+                          TemplateConfigurationService templateConfigurationService, LanguageHelper languageHelper, PackageRepository packageRepository) {
         this.customTemplateService = customTemplateService;
         this.templateService = templateService;
         this.workspaceService = workspaceService;
@@ -541,7 +540,6 @@ public abstract class ApiServiceImpl implements ApiService {
             } else {
                 context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
             }
-            context.useAiValues(proposal.getMetadata().get().getAiValues());
             String comment = messageHelper.getMessage("operation.metadata.updated");
             context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
             context.useActionComment(comment);
@@ -1077,7 +1075,35 @@ public abstract class ApiServiceImpl implements ApiService {
                 legalText.addChildDocument(annexVO);
             }
         }
+        setLastUpdateOnAndBy(documents, proposalVO);
         return proposalVO;
+    }
+
+    // this method checks the last updateOn and lastUpdateBy of all child documents and sets it in the proposal
+    // it fixes the issue #2609
+    private void setLastUpdateOnAndBy(List<XmlDocument> documents, DocumentVO proposalVO) {
+        if (documents == null || documents.isEmpty() || proposalVO == null) {
+            return;
+        }
+        Date lastUpdatedOn = null;
+        String lastUpdatedBy = null;
+
+        for (XmlDocument document : documents) {
+            if(document.getLastModificationInstant() != null) {
+                Date updatedOn = Date.from(document.getLastModificationInstant());
+                if (lastUpdatedOn == null || updatedOn.after(lastUpdatedOn)) {
+                    lastUpdatedOn = updatedOn;
+                    lastUpdatedBy = document.getLastModifiedBy();
+                }
+            }
+        }
+        if(StringUtils.isNotBlank(lastUpdatedBy)) {
+            proposalVO.setPkgLastUpdatedOn(lastUpdatedOn);
+            proposalVO.setPkgLastUpdatedBy(userHelper.convertToPresentation(lastUpdatedBy));
+        } else {
+            proposalVO.setPkgLastUpdatedOn(proposalVO.getUpdatedOn());
+            proposalVO.setPkgLastUpdatedBy(proposalVO.getUpdatedBy());
+        }
     }
 
     private DocumentVO createFinancialStatementVO(FinancialStatement financialStatement) {
@@ -1408,7 +1434,7 @@ public abstract class ApiServiceImpl implements ApiService {
             milestonesVO.setClonedMilestones(clonedMilestonesVOS);
         }
         try {
-            String title = java.net.URLDecoder.decode(milestonesVO.getTitle(), StandardCharsets.UTF_8.toString());
+            String title = URLDecoder.decode(milestonesVO.getTitle(), StandardCharsets.UTF_8.toString());
             milestonesVO.setTitle(title);
         } catch (UnsupportedEncodingException e) {
             LOG.error("Encoding error occurred while retrieving the milestone", e);

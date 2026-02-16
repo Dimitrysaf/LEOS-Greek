@@ -4,8 +4,8 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlRemovingAttrib
 import static integration.saveToc.TocVOCreateLegalServiceUtils.createMoveFromElement;
 import static integration.saveToc.TocVOCreateLegalServiceUtils.createMoveToElement;
 import static integration.saveToc.TocVOCreateUtils.getElementById;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import eu.europa.ec.leos.security.SecurityContext;
 
@@ -31,7 +31,7 @@ public class SaveTocBillMoveClonedProposalTest_IT extends SaveTocBillProposalTes
     @Mock
     private TrackChangesContext trackChangesContext;
 
-    @Before
+    @BeforeEach
     public void onSetUp() throws Exception {
         super.onSetUp();
         final User user = getJaneDigitUser();

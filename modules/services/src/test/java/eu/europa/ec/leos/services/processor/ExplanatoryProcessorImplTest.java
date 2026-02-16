@@ -42,17 +42,18 @@ import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Option;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -79,8 +80,8 @@ public class ExplanatoryProcessorImplTest extends LeosTest {
     private TableOfContentProcessor tableOfContentProcessor;
     @Mock
     private TemplateStructureService templateStructureService;
-    @InjectMocks
-    private LanguageHelper languageHelper = Mockito.spy(new LanguageHelper());
+    @Spy
+    private LanguageHelper languageHelper = new LanguageHelper();
     @InjectMocks
     protected MessageHelper messageHelper = Mockito.spy(getMessageHelper());
     @Mock
@@ -152,7 +153,7 @@ public class ExplanatoryProcessorImplTest extends LeosTest {
 
     protected final static String PREFIX_CONTENT_PROCESSOR = "/contentProcessor";
 
-    @Before
+    @BeforeEach
     public void setUp() {
         super.setup();
 

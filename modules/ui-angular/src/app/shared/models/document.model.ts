@@ -10,6 +10,8 @@ export interface Document {
   createdOn: number; // TimestampMs
   updatedBy: string; // Username
   updatedOn: number; // TimestampMs
+  pkgLastUpdatedBy: string; // Username
+  pkgLastUpdatedOn: number; // TimestampMs
   language: string; // LanguageCode - eg "EN"
   template: string; // TemplateKey
   docNumber: number;
@@ -96,6 +98,7 @@ export interface Metadata {
   customTemplateAct: boolean;
   availableLangs: string;
   isPublished: boolean;
+  diffusionVersion: string | null;
 }
 //used in document-config.documentsmetadata
 export interface DocumentsMetadata {
@@ -143,6 +146,7 @@ export interface ClonedProposalMetadata {
   clonedFromObjectId: string;
   originRef: string;
   cloneProposalRef: string;
+  externalClone: boolean;
 }
 
 export interface DocumentConfig {

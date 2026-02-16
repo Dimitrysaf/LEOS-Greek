@@ -16,9 +16,9 @@ package eu.europa.ec.leos.services.filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class ForwardSlashFilter implements Filter {
@@ -37,15 +37,11 @@ public class ForwardSlashFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 
         String uri = httpServletRequest.getHeader("X-Forwarded-Path");
-        
         if (uri == null) {
             uri = httpServletRequest.getHeader("X-Original-URI");
         }
         if (uri == null) {
             uri = httpServletRequest.getHeader("X-Forwarded-URI");
-        }
-        if (uri == null) {
-            uri = httpServletRequest.getHeader("Referer");
         }
         if (uri == null) {
             uri = httpServletRequest.getRequestURI();

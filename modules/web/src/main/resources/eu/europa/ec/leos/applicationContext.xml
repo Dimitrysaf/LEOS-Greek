@@ -35,6 +35,8 @@
         </property>
     </bean>
 
+    <bean id="mvcHandlerMappingIntrospector" class="org.springframework.web.servlet.handler.HandlerMappingIntrospector"/>
+
     <!-- Event Bus -->
     <bean id="eventBus" class="com.google.common.eventbus.EventBus" scope="vaadin-ui">
         <constructor-arg>

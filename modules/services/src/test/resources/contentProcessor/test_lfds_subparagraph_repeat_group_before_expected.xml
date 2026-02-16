@@ -61,7 +61,7 @@
             <level class="landscape" leos:deletable="false" leos:depth="4" xml:id="ectwWeVashW71F9Bs">
                 <num xml:id="ecu2VLxJe2WhdRWvk">3.2.1.2.</num>
                 <heading leos:editable="false" leos:optional="true" xml:id="ec5OSm3dK4ZGrfkTR">
-                    <i xml:id="ecfyhNuMaP6vVO4p1">Appropriations from external assigned revenues</i>
+                    <i>Appropriations from external assigned revenues</i>
                 </heading>
                 <subparagraph leos:editable="true" leos:group="3" leos:optional="true" leos:repeatable="true" leos:repeated="true" style="text-align: right;padding-right:4%;" xml:id="ec5GkcFtiqW7HvfoD">
                     <content xml:id="ecjHkClysbkBLqs2I">
@@ -70,10 +70,10 @@
                             <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; mso-yfti-lastrow: yes;" xml:id="ecbQcxpUqtpT3oqNU">
                                 <td style="width: 34.78%; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; background: #F1F1F1; mso-shading: windowtext; mso-pattern: thin-diag-stripe silver; padding: 0cm 5.4pt 0cm 5.4pt;" xml:id="ecqS5yb266traySlz">
                                     <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;" xml:id="ecAcR5q6d6ns4D0Ph">
-                                        <b style="mso-bidi-font-weight: normal;" xml:id="ecPDE7K3osgCu1FzY">Heading of multiannual financial</b>
+                                        <b style="mso-bidi-font-weight: normal;">Heading of multiannual financial</b>
                                     </p>
                                     <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;" xml:id="ecrq1FUGKuThrS1gs">
-                                        <b style="mso-bidi-font-weight: normal;" xml:id="ec3877LsRgBqqxvv9">framework</b>
+                                        <b style="mso-bidi-font-weight: normal;">framework</b>
                                     </p>
                                 </td>
                                 <td style="width: 7.92%; border: solid windowtext 1.0pt; border-left: none; mso-border-left-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0cm 5.4pt 0cm 5.4pt;" xml:id="ecuScLwLgqikIrcV8">
@@ -109,32 +109,32 @@
                                 </td>
                                 <td rowspan="2" style="width: 11.8%; border-top: solid windowtext 1.0pt; border-left: none; border-bottom: none; border-right: solid windowtext 1.0pt; mso-border-left-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" xml:id="ecwl9zmcMHRPqfeyS">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecQq8MGES8fcCRxuF">
-                                        <b xml:id="eck274tzpsm7m1P0D">TOTAL MFF</b>
+                                        <b>TOTAL MFF</b>
                                     </p>
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecx9Lu7kqlbUi0QAL">
-                                        <b xml:id="ecgyGDj9Eu4FnTwaE">2021-2027</b>
+                                        <b>2021-2027</b>
                                     </p>
                                 </td>
                             </tr>
                             <tr style="mso-yfti-irow: 1; height: 14.4pt;" xml:id="ec47GSdqnn7ba2CsI">
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecZtjsAYKPKqWsdTH">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecCaON1TikiKPmh69">
-                                        <b xml:id="ecmCo6UqPOy1FpQsr">2024</b>
+                                        <b>2024</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec5r0DkShvGbno507">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecpW0WxHfBBTsR00G">
-                                        <b xml:id="ecv6xiPFqbbhQOdMO">2025</b>
+                                        <b>2025</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="eci0vP5xuCGCuOm8D">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecrCueNU6VeW2RREA">
-                                        <b xml:id="ecwLUc93jgMknGf1K">2026</b>
+                                        <b>2026</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecW9pCLiB3iNxDfhW">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecNx7teLfZyYkjoex">
-                                        <b xml:id="ecrmmfZK0gR9wI220">2027</b>
+                                        <b>2027</b>
                                     </p>
                                 </td>
                             </tr>
@@ -167,7 +167,7 @@
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecDeciqUb3Sh6jxhw">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecgbkicFA4xngRbi2">
-                                        <b xml:id="eclxG8c06Tx0Go1B3">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -192,7 +192,7 @@
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecSqMsY4rLcmlm1tZ">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecIbCHujHKncYUQ8y">
-                                        <b xml:id="ec8rkLoWt8M0q1dpc">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -220,7 +220,7 @@
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecnoWp377jNIa7EQq">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecdSfcB3pduWG7iR2">
-                                        <b xml:id="ecP0Q8xS0LIVPaOAe">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -245,7 +245,7 @@
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecZ1PRRKph2somEwI">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ec2Sh0x4EWepyVA6q">
-                                        <b xml:id="ecvYSW70mDM8nYYi0">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -267,37 +267,37 @@
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecj0ue2JIsg1zdkZL">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ece0lHbMvtbjc0RJS">
-                                        <b xml:id="ecMBxFo0h9D7Vyf5d"/>
+                                        <b/>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecjDNo0waIeL1J2bZ">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ec2IjmwA6audvfBO7">
-                                        <b xml:id="ecFWE8g2yvD29kncc"/>
+                                        <b/>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecDMA5ioppEHI0kyu">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecSWmz86B2Mx8KpJC">
-                                        <b xml:id="ecG5Pxb82ynrQye0D"/>
+                                        <b/>
                                     </p>
                                 </td>
                                 <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecsa3pHwFbTWkeyuy">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecTP1RazJSNofh9NO">
-                                        <b xml:id="ecHSlMjgfIhfkkcpe"/>
+                                        <b/>
                                     </p>
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec4QB0LxNeZ4YN9pe">
                                     <p style="margin: 0cm; text-align: right;" xml:id="eccxI1JU3qSh5sR2e">
-                                        <b xml:id="ecIR02fJqSKiQpK6Y">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
                             <tr style="mso-yfti-irow: 9; height: 14.4pt;" xml:id="eciE00teeqvZjoIAP">
                                 <td rowspan="2" style="width: 28.38%; border-top: none; border-left: solid windowtext 1.0pt; border-bottom: none; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecMV03Hd9py0OK7x2">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecbDyPlexnAE7tELe">
-                                        <b xml:id="ec57eftSr5wxvn20c">TOTAL appropriations</b>
+                                        <b>TOTAL appropriations</b>
                                     </p>
                                     <p style="margin: 0cm; text-align: center;" xml:id="ec44e75iEhJn0JFKW">
-                                        <b xml:id="ecppFh3r0hVspYehW">for DG</b>
+                                        <b>for DG</b>
                                         ...
                                     </p>
                                 </td>
@@ -309,27 +309,27 @@
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="eck1COOTTd0DReOfU">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecrJAAoVbDWW4FhiL">
-                                        <b xml:id="ecOU4Cc04xl22IQlR">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecOz7rODUT88ilNMF">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ech3cZqZQaWWTv4Zo">
-                                        <b xml:id="eciO9gwz3P2yWo2vG">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec3aYkkaN4nigrCwy">
                                     <p style="margin: 0cm; text-align: right;" xml:id="eco0wwkrUdUH7IS0u">
-                                        <b xml:id="ecm3Ta0jZuYZGuzyL">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecojd60LjOpoa1mEJ">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecx21Q2ip4yyqIZlV">
-                                        <b xml:id="eczQIgSpQsF069mA2">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecWVtfgpn7BPoidz6">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ec051FR02jGyjKj2d">
-                                        <b xml:id="ec1Abg3gJ7UGFaMin">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -342,27 +342,27 @@
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecqIx8x2WKLEHBE9r">
                                     <p style="margin: 0cm; text-align: right;" xml:id="eco0NRN6gVrJ3nEsD">
-                                        <b xml:id="ectLLacVQ7oRez3Ts">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecoNhwibt030zUDcE">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecasUxw9QpyUZ5gm7">
-                                        <b xml:id="ecpUWOgJ1Km0FpuuB">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecf8SUNCK58Be4cgp">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecFCba8vkHKbms8P5">
-                                        <b xml:id="ecTe4jOBSkk6HlYgl">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecUCl3WOtBI9SRwAA">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecba8ouQwZTq2Peef">
-                                        <b xml:id="ecGAxZsYGJZYrRFYq">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecHZ2Qp7M1NcsEGFd">
                                     <p style="margin: 0cm; text-align: right;" xml:id="eceOrIvk0ZF3VMqD0">
-                                        <b xml:id="ecPNS0xPyy8G2OIlw">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -377,10 +377,10 @@
                             <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; mso-yfti-lastrow: yes;" xml:id="ecbQcxpUqtpT3oqNU">
                                 <td style="width: 34.78%; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; background: #F1F1F1; mso-shading: windowtext; mso-pattern: thin-diag-stripe silver; padding: 0cm 5.4pt 0cm 5.4pt;" xml:id="ecqS5yb266traySlz">
                                     <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;" xml:id="ecAcR5q6d6ns4D0Ph">
-                                        <b style="mso-bidi-font-weight: normal;" xml:id="ecPDE7K3osgCu1FzY">Heading of multiannual financial</b>
+                                        <b style="mso-bidi-font-weight: normal;">Heading of multiannual financial</b>
                                     </p>
                                     <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;" xml:id="ecrq1FUGKuThrS1gs">
-                                        <b style="mso-bidi-font-weight: normal;" xml:id="ec3877LsRgBqqxvv9">framework</b>
+                                        <b style="mso-bidi-font-weight: normal;">framework</b>
                                     </p>
                                 </td>
                                 <td style="width: 7.92%; border: solid windowtext 1.0pt; border-left: none; mso-border-left-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0cm 5.4pt 0cm 5.4pt;" xml:id="ecuScLwLgqikIrcV8">
@@ -416,32 +416,32 @@
                                 </td>
                                 <td rowspan="2" style="width: 11.8%; border-top: solid windowtext 1.0pt; border-left: none; border-bottom: none; border-right: solid windowtext 1.0pt; mso-border-left-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" xml:id="ecwl9zmcMHRPqfeyS">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecQq8MGES8fcCRxuF">
-                                        <b xml:id="eck274tzpsm7m1P0D">TOTAL MFF</b>
+                                        <b>TOTAL MFF</b>
                                     </p>
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecx9Lu7kqlbUi0QAL">
-                                        <b xml:id="ecgyGDj9Eu4FnTwaE">2021-2027</b>
+                                        <b>2021-2027</b>
                                     </p>
                                 </td>
                             </tr>
                             <tr style="mso-yfti-irow: 1; height: 14.4pt;" xml:id="ec47GSdqnn7ba2CsI">
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecZtjsAYKPKqWsdTH">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecCaON1TikiKPmh69">
-                                        <b xml:id="ecmCo6UqPOy1FpQsr">2024</b>
+                                        <b>2024</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec5r0DkShvGbno507">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecpW0WxHfBBTsR00G">
-                                        <b xml:id="ecv6xiPFqbbhQOdMO">2025</b>
+                                        <b>2025</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="eci0vP5xuCGCuOm8D">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecrCueNU6VeW2RREA">
-                                        <b xml:id="ecwLUc93jgMknGf1K">2026</b>
+                                        <b>2026</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecW9pCLiB3iNxDfhW">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecNx7teLfZyYkjoex">
-                                        <b xml:id="ecrmmfZK0gR9wI220">2027</b>
+                                        <b>2027</b>
                                     </p>
                                 </td>
                             </tr>
@@ -474,7 +474,7 @@
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecDeciqUb3Sh6jxhw">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecgbkicFA4xngRbi2">
-                                        <b xml:id="eclxG8c06Tx0Go1B3">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -499,7 +499,7 @@
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecSqMsY4rLcmlm1tZ">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecIbCHujHKncYUQ8y">
-                                        <b xml:id="ec8rkLoWt8M0q1dpc">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -527,7 +527,7 @@
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecnoWp377jNIa7EQq">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecdSfcB3pduWG7iR2">
-                                        <b xml:id="ecP0Q8xS0LIVPaOAe">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -552,7 +552,7 @@
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecZ1PRRKph2somEwI">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ec2Sh0x4EWepyVA6q">
-                                        <b xml:id="ecvYSW70mDM8nYYi0">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -574,37 +574,37 @@
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecj0ue2JIsg1zdkZL">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ece0lHbMvtbjc0RJS">
-                                        <b xml:id="ecMBxFo0h9D7Vyf5d"/>
+                                        <b/>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecjDNo0waIeL1J2bZ">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ec2IjmwA6audvfBO7">
-                                        <b xml:id="ecFWE8g2yvD29kncc"/>
+                                        <b/>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecDMA5ioppEHI0kyu">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecSWmz86B2Mx8KpJC">
-                                        <b xml:id="ecG5Pxb82ynrQye0D"/>
+                                        <b/>
                                     </p>
                                 </td>
                                 <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecsa3pHwFbTWkeyuy">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecTP1RazJSNofh9NO">
-                                        <b xml:id="ecHSlMjgfIhfkkcpe"/>
+                                        <b/>
                                     </p>
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec4QB0LxNeZ4YN9pe">
                                     <p style="margin: 0cm; text-align: right;" xml:id="eccxI1JU3qSh5sR2e">
-                                        <b xml:id="ecIR02fJqSKiQpK6Y">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
                             <tr style="mso-yfti-irow: 9; height: 14.4pt;" xml:id="eciE00teeqvZjoIAP">
                                 <td rowspan="2" style="width: 28.38%; border-top: none; border-left: solid windowtext 1.0pt; border-bottom: none; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecMV03Hd9py0OK7x2">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecbDyPlexnAE7tELe">
-                                        <b xml:id="ec57eftSr5wxvn20c">TOTAL appropriations</b>
+                                        <b>TOTAL appropriations</b>
                                     </p>
                                     <p style="margin: 0cm; text-align: center;" xml:id="ec44e75iEhJn0JFKW">
-                                        <b xml:id="ecppFh3r0hVspYehW">for DG</b>
+                                        <b>for DG</b>
                                         ...
                                     </p>
                                 </td>
@@ -616,27 +616,27 @@
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="eck1COOTTd0DReOfU">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecrJAAoVbDWW4FhiL">
-                                        <b xml:id="ecOU4Cc04xl22IQlR">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecOz7rODUT88ilNMF">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ech3cZqZQaWWTv4Zo">
-                                        <b xml:id="eciO9gwz3P2yWo2vG">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec3aYkkaN4nigrCwy">
                                     <p style="margin: 0cm; text-align: right;" xml:id="eco0wwkrUdUH7IS0u">
-                                        <b xml:id="ecm3Ta0jZuYZGuzyL">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecojd60LjOpoa1mEJ">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecx21Q2ip4yyqIZlV">
-                                        <b xml:id="eczQIgSpQsF069mA2">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecWVtfgpn7BPoidz6">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ec051FR02jGyjKj2d">
-                                        <b xml:id="ec1Abg3gJ7UGFaMin">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -649,27 +649,27 @@
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecqIx8x2WKLEHBE9r">
                                     <p style="margin: 0cm; text-align: right;" xml:id="eco0NRN6gVrJ3nEsD">
-                                        <b xml:id="ectLLacVQ7oRez3Ts">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecoNhwibt030zUDcE">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecasUxw9QpyUZ5gm7">
-                                        <b xml:id="ecpUWOgJ1Km0FpuuB">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecf8SUNCK58Be4cgp">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecFCba8vkHKbms8P5">
-                                        <b xml:id="ecTe4jOBSkk6HlYgl">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecUCl3WOtBI9SRwAA">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecba8ouQwZTq2Peef">
-                                        <b xml:id="ecGAxZsYGJZYrRFYq">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecHZ2Qp7M1NcsEGFd">
                                     <p style="margin: 0cm; text-align: right;" xml:id="eceOrIvk0ZF3VMqD0">
-                                        <b xml:id="ecPNS0xPyy8G2OIlw">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -684,10 +684,10 @@
                             <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; mso-yfti-lastrow: yes;" xml:id="ecbQcxpUqtpT3oqNU">
                                 <td style="width: 34.78%; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; background: #F1F1F1; mso-shading: windowtext; mso-pattern: thin-diag-stripe silver; padding: 0cm 5.4pt 0cm 5.4pt;" xml:id="ecqS5yb266traySlz">
                                     <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;" xml:id="ecAcR5q6d6ns4D0Ph">
-                                        <b style="mso-bidi-font-weight: normal;" xml:id="ecPDE7K3osgCu1FzY">Heading of multiannual financial</b>
+                                        <b style="mso-bidi-font-weight: normal;">Heading of multiannual financial</b>
                                     </p>
                                     <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;" xml:id="ecrq1FUGKuThrS1gs">
-                                        <b style="mso-bidi-font-weight: normal;" xml:id="ec3877LsRgBqqxvv9">framework</b>
+                                        <b style="mso-bidi-font-weight: normal;">framework</b>
                                     </p>
                                 </td>
                                 <td style="width: 7.92%; border: solid windowtext 1.0pt; border-left: none; mso-border-left-alt: solid windowtext .5pt; mso-border-alt: solid windowtext .5pt; padding: 0cm 5.4pt 0cm 5.4pt;" xml:id="ecuScLwLgqikIrcV8">
@@ -723,32 +723,32 @@
                                 </td>
                                 <td rowspan="2" style="width: 11.8%; border-top: solid windowtext 1.0pt; border-left: none; border-bottom: none; border-right: solid windowtext 1.0pt; mso-border-left-alt: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" xml:id="ecwl9zmcMHRPqfeyS">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecQq8MGES8fcCRxuF">
-                                        <b xml:id="eck274tzpsm7m1P0D">TOTAL MFF</b>
+                                        <b>TOTAL MFF</b>
                                     </p>
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecx9Lu7kqlbUi0QAL">
-                                        <b xml:id="ecgyGDj9Eu4FnTwaE">2021-2027</b>
+                                        <b>2021-2027</b>
                                     </p>
                                 </td>
                             </tr>
                             <tr style="mso-yfti-irow: 1; height: 14.4pt;" xml:id="ec47GSdqnn7ba2CsI">
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecZtjsAYKPKqWsdTH">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecCaON1TikiKPmh69">
-                                        <b xml:id="ecmCo6UqPOy1FpQsr">2024</b>
+                                        <b>2024</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec5r0DkShvGbno507">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecpW0WxHfBBTsR00G">
-                                        <b xml:id="ecv6xiPFqbbhQOdMO">2025</b>
+                                        <b>2025</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="eci0vP5xuCGCuOm8D">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecrCueNU6VeW2RREA">
-                                        <b xml:id="ecwLUc93jgMknGf1K">2026</b>
+                                        <b>2026</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecW9pCLiB3iNxDfhW">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecNx7teLfZyYkjoex">
-                                        <b xml:id="ecrmmfZK0gR9wI220">2027</b>
+                                        <b>2027</b>
                                     </p>
                                 </td>
                             </tr>
@@ -781,7 +781,7 @@
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecDeciqUb3Sh6jxhw">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecgbkicFA4xngRbi2">
-                                        <b xml:id="eclxG8c06Tx0Go1B3">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -806,7 +806,7 @@
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecSqMsY4rLcmlm1tZ">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecIbCHujHKncYUQ8y">
-                                        <b xml:id="ec8rkLoWt8M0q1dpc">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -834,7 +834,7 @@
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecnoWp377jNIa7EQq">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecdSfcB3pduWG7iR2">
-                                        <b xml:id="ecP0Q8xS0LIVPaOAe">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -859,7 +859,7 @@
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.75pt;" xml:id="ecZ1PRRKph2somEwI">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ec2Sh0x4EWepyVA6q">
-                                        <b xml:id="ecvYSW70mDM8nYYi0">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -881,37 +881,37 @@
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecj0ue2JIsg1zdkZL">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ece0lHbMvtbjc0RJS">
-                                        <b xml:id="ecMBxFo0h9D7Vyf5d"/>
+                                        <b/>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecjDNo0waIeL1J2bZ">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ec2IjmwA6audvfBO7">
-                                        <b xml:id="ecFWE8g2yvD29kncc"/>
+                                        <b/>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecDMA5ioppEHI0kyu">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecSWmz86B2Mx8KpJC">
-                                        <b xml:id="ecG5Pxb82ynrQye0D"/>
+                                        <b/>
                                     </p>
                                 </td>
                                 <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecsa3pHwFbTWkeyuy">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecTP1RazJSNofh9NO">
-                                        <b xml:id="ecHSlMjgfIhfkkcpe"/>
+                                        <b/>
                                     </p>
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec4QB0LxNeZ4YN9pe">
                                     <p style="margin: 0cm; text-align: right;" xml:id="eccxI1JU3qSh5sR2e">
-                                        <b xml:id="ecIR02fJqSKiQpK6Y">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
                             <tr style="mso-yfti-irow: 9; height: 14.4pt;" xml:id="eciE00teeqvZjoIAP">
                                 <td rowspan="2" style="width: 28.38%; border-top: none; border-left: solid windowtext 1.0pt; border-bottom: none; border-right: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecMV03Hd9py0OK7x2">
                                     <p style="margin: 0cm; text-align: center;" xml:id="ecbDyPlexnAE7tELe">
-                                        <b xml:id="ec57eftSr5wxvn20c">TOTAL appropriations</b>
+                                        <b>TOTAL appropriations</b>
                                     </p>
                                     <p style="margin: 0cm; text-align: center;" xml:id="ec44e75iEhJn0JFKW">
-                                        <b xml:id="ecppFh3r0hVspYehW">for DG</b>
+                                        <b>for DG</b>
                                         ...
                                     </p>
                                 </td>
@@ -923,27 +923,27 @@
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="eck1COOTTd0DReOfU">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecrJAAoVbDWW4FhiL">
-                                        <b xml:id="ecOU4Cc04xl22IQlR">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecOz7rODUT88ilNMF">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ech3cZqZQaWWTv4Zo">
-                                        <b xml:id="eciO9gwz3P2yWo2vG">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ec3aYkkaN4nigrCwy">
                                     <p style="margin: 0cm; text-align: right;" xml:id="eco0wwkrUdUH7IS0u">
-                                        <b xml:id="ecm3Ta0jZuYZGuzyL">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecojd60LjOpoa1mEJ">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecx21Q2ip4yyqIZlV">
-                                        <b xml:id="eczQIgSpQsF069mA2">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecWVtfgpn7BPoidz6">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ec051FR02jGyjKj2d">
-                                        <b xml:id="ec1Abg3gJ7UGFaMin">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>
@@ -956,27 +956,27 @@
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecqIx8x2WKLEHBE9r">
                                     <p style="margin: 0cm; text-align: right;" xml:id="eco0NRN6gVrJ3nEsD">
-                                        <b xml:id="ectLLacVQ7oRez3Ts">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecoNhwibt030zUDcE">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecasUxw9QpyUZ5gm7">
-                                        <b xml:id="ecpUWOgJ1Km0FpuuB">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.92%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecf8SUNCK58Be4cgp">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecFCba8vkHKbms8P5">
-                                        <b xml:id="ecTe4jOBSkk6HlYgl">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 9.56%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecUCl3WOtBI9SRwAA">
                                     <p style="margin: 0cm; text-align: right;" xml:id="ecba8ouQwZTq2Peef">
-                                        <b xml:id="ecGAxZsYGJZYrRFYq">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                                 <td style="width: 11.8%; border-top: none; border-left: none; border-bottom: solid windowtext 1.0pt; border-right: solid windowtext 1.0pt; background: #D9D9D9; mso-background-themecolor: background1; mso-background-themeshade: 217; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" xml:id="ecHZ2Qp7M1NcsEGFd">
                                     <p style="margin: 0cm; text-align: right;" xml:id="eceOrIvk0ZF3VMqD0">
-                                        <b xml:id="ecPNS0xPyy8G2OIlw">0.000</b>
+                                        <b>0.000</b>
                                     </p>
                                 </td>
                             </tr>

@@ -44,34 +44,6 @@
         </encoder>
     </appender>
 
-    <appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
-        <connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
-            <driverClass>org.h2.Driver</driverClass>
-            <!-- In-memory DB (clears on restart). Use jdbc:h2:./logdb for file-based -->
-            <!--<url>jdbc:h2:file:D:/Tools/apache-tomcat-9.0.73/temp/leoslogdb;AUTO_SERVER=TRUE;Mode=Oracle;INIT=RUNSCRIPT FROM 'classpath:logback-h2.sql'</url>-->
-            <url>jdbc:h2:mem:leoslogdb;DB_CLOSE_DELAY=-1;MODE=Oracle;INIT=RUNSCRIPT FROM 'classpath:logback-h2.sql'</url>
-            <user>sa</user>
-            <password></password>
-        </connectionSource>
-
-        <filter class="ch.qos.logback.classic.filter.MarkerFilter">
-            <marker>SECURITY</marker>
-            <onMatch>ACCEPT</onMatch>
-            <onMismatch>DENY</onMismatch>
-        </filter>
-
-        <filter class="ch.qos.logback.core.filter.EvaluatorFilter">
-            <evaluator>
-                <expression>return !logger.startsWith("eu.europa.ec.leos")
-                    || logger.startsWith("eu.europa.ec.leos.rest.aop.aspect.LoggingAspect")
-                    || logger.startsWith("eu.europa.ec.leos.services.support.scheduler.LeosSchedulerService")
-                    || logger.startsWith("eu.europa.ec.leos.security.JwtTokenService");</expression>
-            </evaluator>
-            <OnMatch>DENY</OnMatch>
-            <OnMismatch>NEUTRAL</OnMismatch>
-        </filter>
-    </appender>
-
     <logger name="eu.europa.ec.leos" level="${leos.log.level}"/>
 
     <logger name="freemarker" level="WARN"/>
@@ -79,14 +51,9 @@
     <logger name="org.apache.cxf" level="WARN"/>
     <logger name="net.sf.ehcache" level="WARN"/>
 
-    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
-        <appender-ref ref="DB" />
-        <includeCallerData>true</includeCallerData>
-    </appender>
 
     <root level="${leos.log.level}">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
-        <appender-ref ref="ASYNC"/>
     </root>
 </configuration>

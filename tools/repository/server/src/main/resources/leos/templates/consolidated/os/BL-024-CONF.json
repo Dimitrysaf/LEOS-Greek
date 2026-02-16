@@ -40,6 +40,15 @@
     {
       "targets": [
         {
+          "destinationPath": "//preamble/formula[2]/aknp",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_preamble__formula_2__p\" class=\"guidance-green-block\"><span id=\"_preamble__formula_2__p-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Enacting+terms\" target=\"_blank\">Enacting terms</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
           "destinationPath": "//article[1]/heading",
           "position": "AFTER-WRAPPER"
         }
@@ -59,7 +68,7 @@
       "targets": [
         {
           "destinationPath": "//article[3]/heading",
-          "position": "BEFORE-WRAPPER"
+          "position": "AFTER-WRAPPER"
         }
       ],
       "content": "<guidance id=\"guidance2-art_n1_4CzCN4\" class=\"guidance-green-block\"><span id=\"art_n1_4CzCN4-guidance2\">[Alternative 2 is only used to be used where it is essential that the national provisions be applied from the same date in all Member States]</span></guidance>"

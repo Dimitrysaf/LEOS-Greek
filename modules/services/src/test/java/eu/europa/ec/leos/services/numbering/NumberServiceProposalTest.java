@@ -11,7 +11,7 @@ import eu.europa.ec.leos.services.numbering.processor.NumberProcessorParagraphAn
 import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDefault;
 import eu.europa.ec.leos.services.structure.profile.ProfileContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -59,7 +59,7 @@ public abstract class NumberServiceProposalTest extends NumberServiceTest {
     protected final static String FILE_PREFIX = "/numbering/bill/";
     protected final static String FILE_PREFIX_OJ = "/numbering/bill/import/";
 
-    @Before
+    @BeforeEach
     public void setup() {
         super.setup();
         getStructureFile();

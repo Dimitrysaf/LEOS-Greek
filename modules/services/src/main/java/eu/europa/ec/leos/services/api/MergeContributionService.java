@@ -22,7 +22,7 @@ import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.LangNumConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Pair;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -1602,13 +1602,15 @@ public class MergeContributionService {
                                 }
                                 String toBeReplacedBy = !nodeToString(child).contains(prevContent) ? prevContent.trim() : prevContent;
                                 int positionOfToBeReplacedBy = nodeToString(child).lastIndexOf(toBeReplacedBy);
-                                int sizeOfToBeReplacedBy = toBeReplacedBy.length();
-                                String endOfString = "";
-                                if (positionOfToBeReplacedBy + sizeOfToBeReplacedBy + 1 < nodeToString(child).length()) {
-                                    endOfString = nodeToString(child).substring(positionOfToBeReplacedBy + toBeReplacedBy.length());
+                                if (positionOfToBeReplacedBy > -1) {
+                                    int sizeOfToBeReplacedBy = toBeReplacedBy.length();
+                                    String endOfString = "";
+                                    if (positionOfToBeReplacedBy + sizeOfToBeReplacedBy + 1 < nodeToString(child).length()) {
+                                        endOfString = nodeToString(child).substring(positionOfToBeReplacedBy + toBeReplacedBy.length());
+                                    }
+                                    XercesUtils.replaceElement(child, nodeToString(child).substring(0, positionOfToBeReplacedBy) + toReplace + endOfString);
+                                    found = true;
                                 }
-                                XercesUtils.replaceElement(child, nodeToString(child).substring(0, positionOfToBeReplacedBy) + toReplace + endOfString);
-                                found = true;
                                 break;
                             }
                         }
@@ -2914,7 +2916,7 @@ public class MergeContributionService {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             return cleanContent(getContentNodeAsXmlFragment(node));
         } else {
-            return cleanContent(node.getTextContent());
+            return cleanContent(node.getTextContent().replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
         }
     }
 

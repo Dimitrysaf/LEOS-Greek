@@ -62,7 +62,9 @@ define(function aknSubParagraphTableFSProfileModule(require) {
 
     var pluginNames=[];
     var specificConfig={
-        addPreventElementDeletionWidgetToFirstChild : true
+        addPreventElementDeletionWidgetToFirstChild : true,
+        // for editor fields with only tables (content not updatable outside the table)
+        tableOnlyMode: true
     };
     $.each(plugins, function( index, value ) {
         pluginNames.push(value.name);

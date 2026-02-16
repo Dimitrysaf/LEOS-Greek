@@ -21,6 +21,7 @@
       <app-version-actions-dropdown
         [version]="majorVersion"
         [isMilestone]="isMilestone"
+        [versionsPaneGroupComponent]="this"
         (exploreMilestone)="exploreMilestone.emit($event)"
         *ngIf="
           !isRecent &&
@@ -56,6 +57,7 @@
         <div class="title">{{ formatTitle(version) }}</div>
         <div class="">
           <app-version-actions-dropdown
+            [versionsPaneGroupComponent]="this"
             [version]="version"
             *ngIf="
               (versionCompareService.compareModeEnabled$ | async) === false

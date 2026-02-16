@@ -28,7 +28,6 @@ import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.document.BillRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
-import eu.europa.ec.leos.services.ai.AIService;
 import eu.europa.ec.leos.services.document.util.DocumentVOProvider;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
@@ -86,7 +85,6 @@ public abstract class BillServiceImpl implements BillService {
     protected final XPathCatalog xPathCatalog;
     protected final TrackChangesContext trackChangesContext;
     private final DocumentLanguageContext documentLanguageContext;
-    protected final AIService aiService;
     private final ProposalService proposalService;
 
     @Autowired
@@ -97,7 +95,7 @@ public abstract class BillServiceImpl implements BillService {
                     ValidationService validationService, DocumentVOProvider documentVOProvider, NumberService numberService,
                     MessageHelper messageHelper, TableOfContentProcessor tableOfContentProcessor,
                     XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext,
-                    DocumentLanguageContext documentLanguageContext, AIService aiService, ProposalService proposalService) {
+                    DocumentLanguageContext documentLanguageContext, ProposalService proposalService) {
         this.billRepository = billRepository;
         this.packageRepository = packageRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
@@ -113,7 +111,6 @@ public abstract class BillServiceImpl implements BillService {
         this.xPathCatalog = xPathCatalog;
         this.trackChangesContext = trackChangesContext;
         this.documentLanguageContext = documentLanguageContext;
-        this.aiService = aiService;
         this.proposalService = proposalService;
     }
 
@@ -238,7 +235,6 @@ public abstract class BillServiceImpl implements BillService {
         try {
             xmlDocumentService.updateInternalReferencesAsync(new UpdateInternalReferencesMessage(bill.getId(),
                     bill.getMetadata().get().getRef()));
-            LOG.debug("updateExternalReferences processed for {}: ", bill.getMetadata().get().getRef());
         } catch (Exception e) {
             LOG.error("Error while updating internal references", e);
         }

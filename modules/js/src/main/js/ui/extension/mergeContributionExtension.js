@@ -67,8 +67,9 @@ define(function mergeContributionExtensionModule(require) {
 
     function _registerActionTriggers(connector) {
         //const $levels = $('level')
-        let changed_element = $.makeArray($("[leos\\:indent-origin-type], [leos\\:action='" + DELETE + "'], del, [leos\\:action='" + INSERT + "'], ins," +
-            " [leos\\:softaction='" + MOVE_FROM + "']"));
+        const SELECTOR_CHANGED_ELEMENT = "[leos\\:indent-origin-type], [leos\\:action='" + DELETE + "'], del, [leos\\:action='" + INSERT + "'], ins," +
+            " [leos\\:softaction='" + MOVE_FROM + "']";
+        let changed_element = $.makeArray($(SELECTOR_CHANGED_ELEMENT));
         const $annexes = $('preface > container > block[name="heading"], mainbody > level, mainbody > paragraph, body > level, body > paragraph');
         for (let i = 0; i < $annexes.length; i++) {
             const $element = $annexes.eq(i);
@@ -134,7 +135,20 @@ define(function mergeContributionExtensionModule(require) {
             var $element = $(changed_element[i]);
             if ($element.length > 0 && $element.attr(UTILS.ID) && $element.attr(UTILS.ID).includes(REVISION_PREFIX) && UTILS.getElementTagName($element).toLowerCase() !== UTILS.NUM) {
                 var $main_element = $element.closest(MAIN_ELEMENT_SELECTOR);
-                if ($main_element.length > 0 && UTILS.getElementTagName($main_element).toLowerCase() !== UTILS.NUM) {
+                // check for parent of num if it has leos:softdate and/or leos:softuser attribute
+                var $main_parent =  $main_element.length > 0 && $main_element.get()[0] ?  $($main_element.get()[0]).parent() : null;
+                var mainParentHasSoftAttributes = !!$main_parent && ( $main_parent.attr("leos:softdate") || $main_parent.attr("leos:softuser"));
+
+                var isSoftAttributesAvailable = $main_element.length > 0 &&
+                    UTILS.getElementTagName($main_element).toLowerCase() == UTILS.NUM &&
+                    mainParentHasSoftAttributes;
+                // if the sibling does not contain a change
+                var isIndentOnly = ($main_element.length > 0 && $($main_element.get()[0]).next().find(SELECTOR_CHANGED_ELEMENT).length == 0);
+                if (isIndentOnly && isSoftAttributesAvailable){
+                    $main_element = $main_element.parents(MAIN_ELEMENT_SELECTOR);
+                }
+
+               if ($main_element.length > 0 && UTILS.getElementTagName($main_element).toLowerCase() !== UTILS.NUM) {
                     const mainEltTag = UTILS.getElementTagName($main_element).toLowerCase();
                     if ($main_element.attr(UTILS.ID) != $element.attr(UTILS.ID)) {
                         $main_element.attr(PARENT_AFFECTED, "true");
@@ -149,7 +163,8 @@ define(function mergeContributionExtensionModule(require) {
                 } else if (HIGHER_ELTS.indexOf(UTILS.getElementTagName($element).toLowerCase()) !== -1) {
                     _attachWrapperActionEvents(connector, $element);
                 }
-                if ($main_element.length > 0 && UTILS.getElementTagName($main_element).toLowerCase() !== UTILS.NUM) {
+                if (($main_element.length > 0 && UTILS.getElementTagName($main_element).toLowerCase() !== UTILS.NUM)
+                        || (isIndentOnly && isSoftAttributesAvailable)) {
                     $parent_element = $main_element.parents(MAIN_ELEMENT_SELECTOR);
                     if ($parent_element.length > 0) {
                         for (let j = 0; j < $parent_element.length; j++) {

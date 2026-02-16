@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.repository.services;
 
+import eu.europa.ec.leos.repository.H2TestBase;
 import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
@@ -20,26 +21,26 @@ import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.DocumentRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import org.assertj.core.util.Sets;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class PackageServiceTests {
+class PackageServiceTests extends H2TestBase {
 
     @Autowired
     private PackageService packageService;
@@ -50,7 +51,7 @@ public class PackageServiceTests {
 
     @Test
     @Transactional
-    public void test_createAndDeletePackage() throws RepositoryException {
+    void test_createAndDeletePackage() throws RepositoryException {
         eu.europa.ec.leos.repository.model.Package pkg = packageService.createPackage("test", false,null, "EN", false, "demo");
         Optional<Package> pkgO = packageRepository.findPackageByName( "test");
         assertTrue(pkgO.isPresent());
@@ -65,7 +66,7 @@ public class PackageServiceTests {
 
     @Test
     @Transactional(readOnly = true)
-    public void test_documentsByPackageId() {
+    void test_documentsByPackageId() {
         List<LeosDocument> docs = packageService.findDocumentsByPackageId(BigDecimal.valueOf(1), Sets.set("PROPOSAL", "BILL"), false, false);
         assertEquals(2, docs.size());
         docs = packageService.findDocumentsByPackageId(BigDecimal.valueOf(1), Sets.set("PROPOSAL", "ANNEX"), false, false);
@@ -74,7 +75,7 @@ public class PackageServiceTests {
 
     @Test
     @Transactional(readOnly = true)
-    public void test_documentsByPackageName() throws RepositoryException {
+    void test_documentsByPackageName() throws RepositoryException {
         List<LeosDocument> docs = packageService.findDocumentsByPackageName( "%",
                 Sets.set(
                 "PROPOSAL", "BILL"), true, false);
@@ -88,14 +89,14 @@ public class PackageServiceTests {
 
     @Test
     @Transactional(readOnly = true)
-    public void test_findPackageByName() {
+    void test_findPackageByName() {
         Optional<Package> pkg = packageRepository.findPackageByName("package_leos");
         assertTrue(pkg.isPresent());
     }
 
     @Test
     @Transactional(readOnly = true)
-    public void test_findDocumentsByPackageName() {
+    void test_findDocumentsByPackageName() {
         Optional<Package> pkg = packageRepository.findPackageByName("package_leos");
         assertTrue(pkg.isPresent());
         List<Document> docs = documentRepository.findAllDocumentsByPackageId(pkg.get());

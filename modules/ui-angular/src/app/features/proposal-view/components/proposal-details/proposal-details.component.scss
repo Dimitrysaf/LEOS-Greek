@@ -17,6 +17,12 @@
   padding-bottom: 6px;
 }
 
+.sticky {
+  position: fixed;
+  top: 250px;
+  right: 0%;
+}
+
 @media (max-width: 914px) {
   .label-column {
     text-align: start;
@@ -161,6 +167,20 @@
 .grid-adoption-info-adoption-date {
   grid-column: 2;
   grid-row: 1;
+  display: grid;
+}
+
+.grid-adoption-info-diffusion-bar {
+  grid-row: 2;
+  grid-column-start: 3;
+  grid-column-end: 5;
+  display: grid;
+}
+
+.grid-adoption-info-diffusion-bar-input {
+  grid-row: 3;
+  grid-column-start: 3;
+  grid-column-end: 5;
   display: grid;
 }
 

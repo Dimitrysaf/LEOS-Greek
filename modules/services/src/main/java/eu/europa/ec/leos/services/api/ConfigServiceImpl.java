@@ -25,6 +25,7 @@ import eu.europa.ec.leos.services.structure.profile.ProfileService;
 import eu.europa.ec.leos.services.utils.HttpUtils;
 import eu.europa.ec.leos.vo.light.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -48,9 +49,9 @@ public class ConfigServiceImpl implements ConfigService {
     private String decisionClientId;
 
     @Autowired
-    public ConfigServiceImpl(Properties applicationProperties, Properties integrationProperties, SecurityContext securityContext, LeosPermissionAuthorityMapHelper authorityMapHelper,
-            MessageHelper messageHelper, ProfileService profileService,
-            TokenService tokenService, LanguageGroupService languageGroupService) {
+    public ConfigServiceImpl(@Qualifier("applicationProperties") Properties applicationProperties, @Qualifier("integrationProperties") Properties integrationProperties, SecurityContext securityContext, LeosPermissionAuthorityMapHelper authorityMapHelper,
+                             MessageHelper messageHelper, ProfileService profileService,
+                             TokenService tokenService, LanguageGroupService languageGroupService) {
         this.applicationProperties = applicationProperties;
         this.integrationProperties = integrationProperties;
         this.securityContext = securityContext;
@@ -97,6 +98,7 @@ public class ConfigServiceImpl implements ConfigService {
         int minSearchChar = Integer.parseInt(applicationProperties.getProperty("leos.search.on.minimum.characters"));
         int maxSearchLimit = Integer.parseInt(applicationProperties.getProperty("leos.maximum.search.limit"));
         boolean repetitiveActsEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.repetitive.acts.enabled"));
+        boolean linguisticVersionsEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.custom.template.linguistic.versions.enabled"));
 
         appConfigResponse.setMappingUrl(mappingUrl);
         appConfigResponse.setImplicitSaveAndClose(implicitSaveEnabled);
@@ -128,6 +130,7 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setSearchOnMinimumCharacter(minSearchChar);
         appConfigResponse.setMaxSearchLimit(maxSearchLimit);
         appConfigResponse.setRepetitiveActsEnabled(repetitiveActsEnabled);
+        appConfigResponse.setLinguisticVersionsEnabled(linguisticVersionsEnabled);
         appConfigResponse.setLanguages(languages);
 
         return appConfigResponse;

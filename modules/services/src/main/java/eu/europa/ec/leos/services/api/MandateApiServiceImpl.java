@@ -21,7 +21,6 @@ import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.repository.LeosRepository;
-import eu.europa.ec.leos.repository.document.ProposalRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
@@ -62,7 +61,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
+import java.io.File;
 import java.util.Collections;
 import java.util.Properties;
 
@@ -94,13 +94,13 @@ public class MandateApiServiceImpl extends ApiServiceImpl {
                                  CoverPageApiService coverPageApiService,
                                  ProposalDetailsService proposalDetailsService,
                                  TemplateConfigurationService templateConfigurationService,
-                                 LanguageHelper languageHelper, PackageRepository packageRepository, ProposalRepository proposalRepository) {
+                                 LanguageHelper languageHelper, PackageRepository packageRepository) {
         super(customTemplateService, templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap,
                 exportService, collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService,
                 xmlContentProcessor, archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService,
                 validationService, applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository,
                 trackChangesContext, documentViewService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService,
-                templateConfigurationService, languageHelper, packageRepository, proposalRepository);
+                templateConfigurationService, languageHelper, packageRepository);
     }
 
     @Override

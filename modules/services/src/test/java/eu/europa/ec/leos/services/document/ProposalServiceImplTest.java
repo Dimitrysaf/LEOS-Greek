@@ -30,12 +30,12 @@ import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
 import io.atlassian.fugue.Option;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.spy;
 
 import java.io.ByteArrayInputStream;
@@ -153,7 +153,7 @@ public class ProposalServiceImplTest {
         Proposal leosProposal = new Proposal(proposalId, "Proposal", "login", Instant.now(), "login", Instant.now(), "", "", "", "", VersionType.MAJOR, true,
                 "REGULATION for EC", collaborators,
                 Arrays.asList(""), "login", Instant.now(), Option.some(proposalContent), Option.some(proposalMetadata), true, "", "", "", null,
-                ContributionVO.ContributionStatus.CONTRIBUTION_DONE.name(), false, null);
+                ContributionVO.ContributionStatus.CONTRIBUTION_DONE.name(), false, null, null, null);
 
         UpdateProposalRequest updateProposalRequest = new UpdateProposalRequest();
         updateProposalRequest.setAuthenticLang(Arrays.asList("en", "fr"));

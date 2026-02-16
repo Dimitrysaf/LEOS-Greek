@@ -749,9 +749,39 @@ Then('citation {int} contains text {string}', function (citationNumber,text) {
     legalActPage.getAknpTagOfCitation(citationNumber).should('have.text', text);
 });
 
-
-
-
 Then ('recital section {int} contains {string} tag with value {string}', (recitalSectionNumber, tagName, tagValue) => {
   legalActPage.elements.recitalSection().eq(recitalSectionNumber - 1).children(tagName).should('have.text', tagValue);
 });
+
+Then('ins tag of content of subparagraph {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}',
+    function (subparagraphNumber, subParagraphListNumber, pointNumber, pointListNumber, paragraphNumber, articleNumber, value
+    ) {
+        legalActPage
+            .getContentOfSubParagraphOfPointOfParagraphOfArticle(
+                subparagraphNumber,
+                subParagraphListNumber,
+                pointNumber,
+                pointListNumber,
+                paragraphNumber,
+                articleNumber
+            )
+            .find('ins')
+            .should('have.text', value);
+    }
+);
+
+Then('del tag with attribute {string} and value {string} of point {int} of list {int} of paragraph {int} of article {int} contains {string}', function (attrName,attrValue, pointNumber, listNumber,paragraphNumber, articleNumber, expectedText)
+         {legalActPage
+            .getPointOfParagraphFromArticle(pointNumber,listNumber, paragraphNumber, articleNumber)
+            .find(`del[${attrName}="${attrValue}"]`)
+            .should('have.text', expectedText);
+    }
+);
+
+Then('ins tag with attribute {string} and value {string} of point {int} of list {int} of paragraph {int} of article {int} contains {string}', function (attrName,attrValue, pointNumber,listNumber,paragraphNumber, articleNumber, expectedText)
+    {legalActPage
+        .getPointOfParagraphFromArticle(pointNumber,listNumber, paragraphNumber, articleNumber)
+        .find(`ins[${attrName}="${attrValue}"]`)
+        .should('have.text', expectedText);
+    }
+);

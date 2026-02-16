@@ -424,6 +424,11 @@ public class MetadataServiceImpl implements MetadataService {
         this.addCote(fieldInfo, diffusionVersion, false, xmlFile);
     }
 
+    @Override
+    public void processDiffusionVersion(String diffusionVersion, XmlUtil.XmlFile xmlFile) {
+        this.addDiffusionVersion(diffusionVersion, xmlFile);
+    }
+
     private void processCote(ReferenceFieldInfo fieldInfo, String diffusionVersion, boolean isFinal, XmlUtil.XmlFile xmlFile) {
         if (StringUtil.isEmpty(fieldInfo.getDisplayValue())) {
             this.removeCote(fieldInfo, xmlFile);
@@ -467,6 +472,13 @@ public class MetadataServiceImpl implements MetadataService {
         }
     }
 
+    private void addDiffusionVersion(String diffusionVersion, XmlUtil.XmlFile xmlFile) {
+        if (!StringUtil.isEmpty(diffusionVersion)) {
+            addVersionNumberToCoverPage("/" + diffusionVersion, xmlFile);
+            addVersionNumberToFilename("_" + diffusionVersion, xmlFile);
+        }
+    }
+
     private void addVersionNumberToFilename(String versionNumber, XmlUtil.XmlFile xmlFile) {
         final String fileName = xmlFile.getName();
         final String[] splitFileName = fileName.split("-");
@@ -495,12 +507,13 @@ public class MetadataServiceImpl implements MetadataService {
             return;
         }
         MetadataUtil.removeClassAttribute(xmlNodeDocNumber);
-        xmlNodeDocNumber.setTextContent(xmlNodeDocNumber.getTextContent() + " ");
         final Node inline = xmlFile.getNodeOrCreateIfNotExists(xmlNodeDocNumber, MetadataUtil.ELEMENT_INLINE);
-        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
-        XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_NAME, MetadataUtil.VALUE_VERSION);
-        inline.setTextContent(versionNumber);
-        xmlNodeDocNumber.appendChild(inline);
+        if (!StringUtil.isEmpty(xmlNodeDocNumber.getTextContent())) {
+            XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+            XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_NAME, MetadataUtil.VALUE_VERSION);
+            inline.setTextContent(" " + versionNumber);
+            xmlNodeDocNumber.appendChild(inline);
+        }
     }
 
     /**
@@ -1135,7 +1148,7 @@ public class MetadataServiceImpl implements MetadataService {
             if (disclaimer) {
                 Element coverPageTypeElement = insertElementInCoverPage(xmlFile, MetadataUtil.ELEMENT_DISCLAIMER);
                 if (verticalShift != null) {
-                    XmlUtil.setNodeAttributeValue(coverPageTypeElement, MetadataUtil.STYLE, String.format("bottom: %scm", 7.0f + verticalShift));
+                    XmlUtil.setNodeAttributeValue(coverPageTypeElement, MetadataUtil.STYLE, String.format("bottom: %scm", 4.0f + verticalShift));
                 }
                 Element coverPageTypePElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
                 XmlUtil.setNodeAttributeValue(coverPageTypePElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());

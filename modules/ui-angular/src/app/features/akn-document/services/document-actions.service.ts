@@ -70,10 +70,6 @@ import {
   STRUCTURE_SECTION_ID,
   VIEW_SYNC_PANELS_ACTION,
   VIEW_VERSION_SECTION_ID,
-  AI_SECTION_ID,
-  AI_DROPDOWN_ID,
-  AI_ALL_SECTIONS_ID,
-  AI_FIRST_SECTION_ID, AI_SECOND_SECTION_ID, AI_THIRD_SECTION_ID, AI_FOURTH_SECTION_ID, AI_FIFTH_SECTION_ID, AI_BUTTON_ID,
   MERGE_CONTRIBUTION_APPLY_CHANGES_SECTION_ID, MERGE_CONTRIBUTION_CANCEL_CHANGES_ID,
 } from '@/shared/constants/document-actions.constants';
 import { DocumentService } from '@/shared/services/document.service';
@@ -206,10 +202,10 @@ export abstract class DocumentActionsService {
     ];
   }
 
-  existMergeChanges(exists: boolean) {
-    this.mergeContributionApplyDropdownOptions[0].disabled = !this.canAcceptTrackChanges();
-    this.mergeContributionApplyDropdownOptions[1].disabled = !this.canAcceptTrackChanges();
-    this.mergeContributionApplyDropdownOptions[2].disabled = !(exists && this.canAcceptTrackChanges());
+  existMergeChanges(existsMerged: boolean, existsNotProcessed: boolean) {
+    this.mergeContributionApplyDropdownOptions[0].disabled = !(existsNotProcessed && this.canAcceptTrackChanges());
+    this.mergeContributionApplyDropdownOptions[1].disabled = !(existsNotProcessed && this.canAcceptTrackChanges());
+    this.mergeContributionApplyDropdownOptions[2].disabled = !(existsMerged && this.canAcceptTrackChanges());
     this.mergeContributionApplyDropdownOptions[3].disabled = !this.canRejectTrackChanges();
   }
 
@@ -303,7 +299,6 @@ export abstract class DocumentActionsService {
   private buildCommonItems(): IRibbonToolbarSection[] {
     const saveSection = !this.isMandateMemorandum() && this.hasUpdatePermission && this.buildSaveSection();
     const searchSection = this.buildSearchSection();
-    const aiResultsSection = this.isDocumentTypeTheSame(this.documentService.documentType, 'STAT_DIGIT_FINANC_LEGIS') && this.hasUpdatePermission && this.buildAISection();
     const importOJSection =
       (!this.profile || this.profile.importOJ) &&
       this.isDocumentTypeTheSame(this.documentService.documentType, 'BILL') &&
@@ -332,7 +327,6 @@ export abstract class DocumentActionsService {
       saveSection,
       importOJSection,
       searchSection,
-      aiResultsSection,
       exportSection,
       displaySection,
       trackChangesSection,
@@ -493,88 +487,6 @@ export abstract class DocumentActionsService {
         },
       ],
     };
-  }
-
-  private buildAISection(): IRibbonToolbarSection {
-    return {
-      type: IRibbonToolbarType.SECTION,
-      id: AI_SECTION_ID,
-      order: 5,
-      resizeOrder: 4,
-      children: [
-        {
-          type: IRibbonToolbarType.BUTTON,
-          id: AI_BUTTON_ID,
-          actionFn: () => this.documentService.prepareAnalysis(),
-          euiSize: 's',
-          euiStyle: 'secondary',
-          label: this.translateService.instant(
-            'page.editor.ai.prefill.digital.dimensions.lfds.start.analysis',
-          ),
-          icon: 'analytics',
-          disabled: !this.permissions?.includes('CAN_UPDATE'),
-        },
-        {
-          type: IRibbonToolbarType.DROPDOWN,
-          id: AI_DROPDOWN_ID,
-          euiSize: 's',
-          euiStyle: 'secondary',
-          label: this.translateService.instant(
-            'page.editor.ai.prefill.digital.dimensions.lfds.button',
-          ),
-          icon: 'eui-ellipsis-vertical',
-          disabled: !this.permissions?.includes('CAN_UPDATE') || !this.documentService.shouldDisplayAI(),
-          items: this.buildAIOptions(),
-        },
-      ],
-    };
-  }
-
-  private buildAIOptions(): DropdownModel[] {
-    return [
-      {
-        id: AI_ALL_SECTIONS_ID,
-        label: this.translateService.instant(
-          'page.editor.ai.prefill.digital.dimensions.lfds.all.button',
-        ),
-        command: () => this.documentService.aiDisplayText(),
-      },
-      {
-        id: AI_FIRST_SECTION_ID,
-        label: this.translateService.instant(
-          'page.editor.ai.prefill.digital.dimensions.lfds.first.button',
-        ),
-        command: () => this.documentService.aiDisplayText('DESCRIPTION_GENERATION'),
-      },
-      {
-        id: AI_SECOND_SECTION_ID,
-        label: this.translateService.instant(
-          'page.editor.ai.prefill.digital.dimensions.lfds.second.button',
-        ),
-        command: () => this.documentService.aiDisplayText('DATA_GENERATION'),
-      },
-      {
-        id: AI_THIRD_SECTION_ID,
-        label: this.translateService.instant(
-          'page.editor.ai.prefill.digital.dimensions.lfds.third.button',
-        ),
-        command: () => this.documentService.aiDisplayText('DIGITAL_SOLUTIONS'),
-      },
-      {
-        id: AI_FOURTH_SECTION_ID,
-        label: this.translateService.instant(
-          'page.editor.ai.prefill.digital.dimensions.lfds.fourth.button',
-        ),
-        command: () => this.documentService.aiDisplayText('INTEROPERABILITY_ASSESSMENT'),
-      },
-      {
-        id: AI_FIFTH_SECTION_ID,
-        label: this.translateService.instant(
-          'page.editor.ai.prefill.digital.dimensions.lfds.fifth.button',
-        ),
-        command: () => this.documentService.aiDisplayText('DATA_FLOW_ANALYSIS'),
-      },
-    ];
   }
 
   private buildDisplaySection(): IRibbonToolbarSection {
@@ -868,7 +780,7 @@ export abstract class DocumentActionsService {
   }
 
   private buildMergeContributionsSectionItems(): IRibbonToolbarItem[] {
-    return [
+    return [/*
       {
         type: IRibbonToolbarType.GROUP,
         id: MERGE_CONTRIBUTION_GROUP_PREV_NEXT_ID,
@@ -904,7 +816,7 @@ export abstract class DocumentActionsService {
             ),
           },
         ],
-      },
+      }*/
       {
         type: IRibbonToolbarType.CHECKBOX,
         id: COMPARE_SYNC_PANELS_ACTION,
@@ -917,7 +829,7 @@ export abstract class DocumentActionsService {
         cssClasses:
           'eui-u-flex eui-u-flex-align-items-start eui-u-flex-column eui-u-flex-justify-content-center',
       },
-      {
+      /*{
         type: IRibbonToolbarType.DROPDOWN,
         id: MERGE_CONTRIBUTION_APPLY_CHANGES_SECTION_ID,
         euiSize: 's',
@@ -927,7 +839,8 @@ export abstract class DocumentActionsService {
         ),
         icon: 'eui-ellipsis-vertical',
         items: this.mergeContributionApplyDropdownOptions,
-      },
+        disabled: this.mergeContributionService.isContributionDeclinedOrProcessed$,
+      },*/
       {
         type: IRibbonToolbarType.BUTTON,
         id: 'apply-id',

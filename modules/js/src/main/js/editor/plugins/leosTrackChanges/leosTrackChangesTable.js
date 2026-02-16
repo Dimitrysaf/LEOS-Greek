@@ -16,6 +16,7 @@ define(function leosTrackChangesTableModule(require) {
     "use strict";
 
     var log = require("logger");
+    var leosPluginUtils = require("../leosPluginUtils");
     var trackChanges = require("./leosTrackChanges"), core = trackChanges.core;
     var trackChangesStyle = require("./leosTrackChangesStyle"), style = trackChangesStyle.style;
 
@@ -275,7 +276,7 @@ define(function leosTrackChangesTableModule(require) {
             // Check if table is the only element in the editor (ignoring whitespace nodes)
             var isOnlyElement = editable.getChildCount() === 1 ||
                     (
-                        (editable.getFirst().is('table') &&
+                        (leosPluginUtils.findFirstChild(editable).is('table') &&
                             editable.getLast().type === CKEDITOR.NODE_TEXT &&
                             editable.getLast().getText().trim() === '') ||
                         (editable.getChild(1).equals(parent) && parent.getChildCount() === 1)
@@ -449,14 +450,20 @@ define(function leosTrackChangesTableModule(require) {
                         if (key === 13 && !(keystroke === 13 || keystroke === CKEDITOR.SHIFT + 13)) {
                             return;
                         }
+                        if (editor.LEOS.isTrackChangesEnabled
+                                || firstCell?.getAscendant('table')?.getAttribute("leos:predefinedtable") === 'true'
+                                || editor.LEOS.type === 'stat_digit_financ_legis') {
+                            var deleteTcStyle = new CKEDITOR.style({
+                                element: core.TRACKCHANGES_ELEMENT,
+                                attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION)
+                            });
 
-                        var deleteTcStyle = new CKEDITOR.style({
-                            element: core.TRACKCHANGES_ELEMENT,
-                            attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION)
-                        });
-
-                        style.apply(editor, deleteTcStyle);
-
+                            style.apply(editor, deleteTcStyle);
+                        }else{
+                            for (i = 0; i < ranges.length; i++) {
+                                clearCellInRange(ranges[i]);
+                            }
+                        }
                         /*for (i = 0; i < ranges.length; i++) {
                             clearCellInRange(ranges[i]);
                         }*/

@@ -39,6 +39,11 @@ public class CoEditionContext {
             IMap<String, UpdateElementsEvent> map = hazelcastInstance.getMap("updateElementsCache");
             map.put(documentRef + "-" + System.currentTimeMillis(), 
                    new UpdateElementsEvent(documentRef, presenterId, updatedElement, alternateElementId));
+            for (Element elt: this.getUpdatedElements()) {
+                map.put(documentRef + "-" + System.currentTimeMillis(),
+                        new UpdateElementsEvent(documentRef, presenterId, new SaveElementResponse(elt.getElementId(), elt.getElementTagName(),
+                                elt.getElementFragment()), alternateElementId));
+            }
         } else {
             processUpdatedElements(documentRef, presenterId, updatedElement, alternateElementId);
         }
@@ -58,6 +63,28 @@ public class CoEditionContext {
             }
             simpMessagingTemplate.convertAndSend(CoEditionContext.TOPIC_DOCUMENT_SLASH + documentRef,
                     new UpdateCoEditionResponse(user, presenterIdFinal, documentRefFinal, InfoType.DOCUMENT_UPDATED,
+                            getUpdatedElements()));
+        }).start();
+    }
+
+    public void sendUpdatedElements(String documentRef, String presenterId) {
+        final String presenterIdFinal = encodeParam(presenterId);
+        final String documentRefFinal = encodeParam(documentRef);
+        new Thread(() -> {
+            User user = securityContext.getUser();
+            simpMessagingTemplate.convertAndSend(CoEditionContext.TOPIC_DOCUMENT_SLASH + documentRef,
+                    new UpdateCoEditionResponse(user, presenterIdFinal, documentRefFinal, InfoType.DOCUMENT_UPDATED,
+                            getUpdatedElements()));
+        }).start();
+    }
+
+    public void sendUpdatedElements(String documentRef, String presenterId, InfoType infoType) {
+        final String presenterIdFinal = encodeParam(presenterId);
+        final String documentRefFinal = encodeParam(documentRef);
+        new Thread(() -> {
+            User user = securityContext.getUser();
+            simpMessagingTemplate.convertAndSend(CoEditionContext.TOPIC_DOCUMENT_SLASH + documentRef,
+                    new UpdateCoEditionResponse(user, presenterIdFinal, documentRefFinal, infoType,
                             getUpdatedElements()));
         }).start();
     }

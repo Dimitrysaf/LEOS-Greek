@@ -55,6 +55,7 @@ export class ProposalDetailsService implements OnDestroy {
   clonedProposalCount: number;
   exceptionResponseVO: ExceptionResponseVO = null;
   private repetitiveActsEnabled: boolean;
+  private linguisticVersionsEnabled: boolean;
 
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private userInputFieldChangeBS = new BehaviorSubject('');
@@ -105,6 +106,7 @@ export class ProposalDetailsService implements OnDestroy {
         const permissions = this.resolvePermissions(collaborators, config);
         this.permissionsBS.next(permissions);
         this.repetitiveActsEnabled = config.repetitiveActsEnabled;
+        this.linguisticVersionsEnabled = config.linguisticVersionsEnabled;
       });
 
     this.clonedProposalCount = 0;
@@ -114,6 +116,10 @@ export class ProposalDetailsService implements OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
     this.clonedProposalCount = 0;
+  }
+
+  refreshProposalDetails(proposal: Document) {
+    this.proposalDetailsRefreshedBS.next(proposal);
   }
 
   setUserAutocompleteInputChange(name: string) {
@@ -137,6 +143,10 @@ export class ProposalDetailsService implements OnDestroy {
   }
   isRepetitiveActsEnabled(): boolean{
     return this.repetitiveActsEnabled;
+  }
+
+  isLinguisticVersionsEnabled(): boolean{
+    return this.linguisticVersionsEnabled;
   }
 
   createAnnex() {
@@ -208,7 +218,7 @@ export class ProposalDetailsService implements OnDestroy {
                          correctionInformation?: string, finalVersion?: boolean, crossReferences?: string[],
                          adoptionPlace?: string, adoptionDate?: Date, institutionalReference?: string,
                          institutionalReferenceFinalVersion?: Boolean,interInstitutionalReference?: string, stamp?: Boolean,
-                         signatures?: SignatureMetadata[]) {
+                         signatures?: SignatureMetadata[], diffusionVersion?: string) {
     const internalRef = null;
     this.loadingService.setLoading(true);
     return this.http
@@ -235,7 +245,8 @@ export class ProposalDetailsService implements OnDestroy {
         institutionalReferenceFinalVersion,
         interInstitutionalReference,
         stamp,
-        signatures
+        signatures,
+        diffusionVersion
       });
   }
 

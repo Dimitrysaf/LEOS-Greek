@@ -72,6 +72,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -91,9 +92,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.w3c.dom.Document;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -105,6 +106,9 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTEN
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
+import static eu.europa.ec.leos.services.support.XmlHelper.isValidFileNameForZipFile;
+import static eu.europa.ec.leos.services.support.XmlHelper.isValidSizeFileForBinaryFile;
+import static eu.europa.ec.leos.services.support.XmlHelper.isValidMimeTypeForLegFile;
 
 @RestController
 @RequestMapping
@@ -153,8 +157,8 @@ public class LeosApiController {
     @Autowired
     public LeosApiController(LegService legService, WorkspaceService workspaceService, TokenService tokenService,
                              TransformationService transformationService, ContentComparatorService comparatorService,
-                             EventBus leosApplicationEventBus, ExportService exportService,
-                             CreateCollectionService createCollectionService, Properties applicationProperties,
+                             @Qualifier("leosApplicationEventBus") EventBus leosApplicationEventBus, ExportService exportService,
+                             CreateCollectionService createCollectionService, @Qualifier("applicationProperties") Properties applicationProperties,
                              ExportPackageService exportPackageService, ApiService apiService, ConfigService configService,
                              SecurityContext securityContext, UserService userService, CoEditionInfoHandler coEditionInfoHandler,
                              DocumentContentService documentContentService, ConValidatorService conValidatorService,
@@ -856,19 +860,23 @@ public class LeosApiController {
 
     @RequestMapping(value = "/conValidation", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> conValidation(@RequestParam("legFile") MultipartFile legFile, @RequestParam(name = "email", required = true) String email) {
+    public ResponseEntity<Object> conValidation(@RequestParam("zipFile") MultipartFile zipFile, @RequestParam(name = "email", required = true) String email) {
         try {
-            // Security file and email
-            LeosFile validationFile = new LeosFile();
-            validationFile.setBytes(legFile.getBytes());
-            validationFile.setName(legFile.getOriginalFilename());
-            validationFile.setOriginalFileName(legFile.getOriginalFilename());
-            String validationResult = conValidatorService.validate(validationFile);
+            validatePath(FilenameUtils.normalize(zipFile.getOriginalFilename()));
+            if (!isValidFileNameForZipFile(zipFile.getOriginalFilename()) || !isValidSizeFileForBinaryFile(zipFile.getSize()) || !isValidMimeTypeForLegFile(zipFile.getBytes())) {
+                return new ResponseEntity<>("Invalid file", HttpStatus.BAD_REQUEST);
+            }
+            LeosFile receivedFile = new LeosFile();
+            receivedFile.setBytes(zipFile.getBytes());
+            receivedFile.setName(zipFile.getOriginalFilename());
+            receivedFile.setOriginalFileName(zipFile.getOriginalFilename());
+            LeosFile legFile = ZipPackageUtil.unzipFile(receivedFile, ZipPackageUtil.unzipFiles(receivedFile).entrySet().stream().filter(entry -> entry.getKey().toLowerCase().endsWith(".leg")).findFirst().get().getKey());
+            String validationResult = conValidatorService.validate(legFile);
             Map<String, Object> contentToZip = new HashMap<>();
             contentToZip.put("result.xml", validationResult);
-            contentToZip.put(validationFile.getOriginalFileName(), validationFile);
+            contentToZip.put(legFile.getOriginalFileName(), legFile);
             LeosFile resultZipFile = ZipPackageUtil.zipLeosFiles("validation.zip", contentToZip, "");
-            notificationService.sendNotification(new DocumentExternalValidationNotification(email, "", new Date(), "", validationFile.getOriginalFileName(), resultZipFile.getBytes()));
+            notificationService.sendNotification(new DocumentExternalValidationNotification(email, "", new Date(), "", legFile.getOriginalFileName(), resultZipFile.getBytes()));
             return new ResponseEntity<>(HttpStatus.OK);
         }
         catch (Exception e) {

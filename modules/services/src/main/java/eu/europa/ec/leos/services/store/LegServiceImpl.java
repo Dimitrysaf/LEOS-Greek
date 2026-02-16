@@ -86,7 +86,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -358,6 +358,7 @@ public class LegServiceImpl implements LegService {
     private LegDocumentVO populateLegDocumentVO(Proposal proposal, LegDocument leg) {
         LegDocumentVO legDocumentVO = new LegDocumentVO();
         legDocumentVO.setProposalId(proposal.getMetadata().getOrError(() -> "Proposal metadata is not available!").getRef());
+        legDocumentVO.setLanguage(proposal.getMetadata().get().getLanguage());
         legDocumentVO.setDocumentTitle(proposal.getTitle());
         legDocumentVO.setLegFileId(leg.getId());
         legDocumentVO.setLegFileName(leg.getName());
@@ -365,6 +366,8 @@ public class LegServiceImpl implements LegService {
         legDocumentVO.setMilestoneComments(leg.getMilestoneComments());
         legDocumentVO.setCreationDate(new SimpleDateFormat(FORMAT_DATE_TIME_ISO_8601).
                 format(Date.from(leg.getInitialCreationInstant())));
+        legDocumentVO.setUpdatedDate(new SimpleDateFormat(FORMAT_DATE_TIME_ISO_8601).
+                format(Date.from(leg.getLastModificationInstant())));
         legDocumentVO.setClonedProposal(proposal.isClonedProposal());
         return legDocumentVO;
     }

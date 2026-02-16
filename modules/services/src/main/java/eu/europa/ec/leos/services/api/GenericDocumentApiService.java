@@ -76,24 +76,18 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Maybe;
 import io.atlassian.fugue.Option;
 import io.atlassian.fugue.Pair;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -154,7 +148,7 @@ public class GenericDocumentApiService {
                                      @NotNull ComparisonDelegateAPI<XmlDocument> comparisonDelegate,
                                      @NotNull ExportService exportService,
                                      @NotNull UserService userService,
-                                     @NotNull Properties applicationProperties,
+                                     @NotNull @Qualifier("applicationProperties") Properties applicationProperties,
                                      @NotNull LanguageGroupService languageGroupService,
                                      @NotNull DocumentLanguageContext documentLanguageContext,
                                      @NotNull TokenService tokenService,
@@ -375,16 +369,18 @@ public class GenericDocumentApiService {
 
     public List<VersionVO> searchVersions(@NotNull String docRef, String authorKey, String versionType) {
         List<String> authorLogins = new ArrayList<>();
+        boolean usersEmpty = false;
         if (StringUtils.hasText(authorKey)) {
             List<UserJSON> users = userService.searchUsersByKey(authorKey);
+            usersEmpty = users.isEmpty();
             authorLogins = users.stream().map(user -> user.getLogin()).collect(Collectors.toList());
         }
-        List<XmlDocument> foundVersions = this.leosRepository.searchVersions(XmlDocument.class, docRef, authorLogins,
-                versionType);
-        List<VersionVO> versions = VersionsUtil.buildVersionVO(foundVersions, messageHelper);
-
-        for (VersionVO version : versions) {
-            version.setCreatedBy(userHelper.convertToPresentation(version.getUsername()));
+        List<VersionVO> versions = new ArrayList<>();
+        if (!usersEmpty) {
+            List<XmlDocument> foundVersions = this.leosRepository.searchVersions(XmlDocument.class, docRef, authorLogins,
+                    versionType);
+            versions = VersionsUtil.buildVersionVO(foundVersions, messageHelper);
+            versions.forEach(v -> v.setCreatedBy(userHelper.convertToPresentation(v.getUsername())));
         }
         return versions;
     }

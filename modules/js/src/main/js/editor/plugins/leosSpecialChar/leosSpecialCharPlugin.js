@@ -36,7 +36,13 @@ define(function leosSpecialCharPluginModule(require) {
     };
 
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event.editor, 'specialchar', changeStateElements, true);
+        var selection = event.editor.getSelection();
+        var isTableOnlyMode = event.editor.config.tableOnlyMode;
+        if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
+            event.editor.getCommand('specialchar').setState(CKEDITOR.TRISTATE_DISABLED);
+        } else {
+            leosCommandStateHandler.changeCommandState(event.editor, 'specialchar', changeStateElements, true);
+        }
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);

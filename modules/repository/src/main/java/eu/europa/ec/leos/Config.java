@@ -2,10 +2,12 @@ package eu.europa.ec.leos;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.rest.handlers.RestTemplateResponseErrorHandler;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -32,12 +34,12 @@ public class Config {
 
         RequestConfig requestConfig = RequestConfig
                 .custom()
-                .setConnectionRequestTimeout(120_000) // timeout to get connection from pool
-                .setSocketTimeout(120_000) // standard connection timeout
-                .setConnectTimeout(120_000) // standard connection timeout
+                .setConnectionRequestTimeout(Timeout.ofSeconds(120)) // timeout to get connection from pool
+                .setResponseTimeout(Timeout.ofSeconds(120)) // standard connection timeout
+                .setConnectTimeout(Timeout.ofSeconds(120)) // standard connection timeout
                 .build();
 
-        HttpClient httpClient = HttpClientBuilder.create()
+        CloseableHttpClient httpClient = HttpClientBuilder.create()
                 .setConnectionManager(connectionManager)
                 .setDefaultRequestConfig(requestConfig).build();
 

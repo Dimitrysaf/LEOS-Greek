@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -103,6 +104,8 @@ class WorkspaceServiceImpl implements WorkspaceService {
                 DocumentVO documentVO = new DocumentVO(proposal);
                 documentVO.setUpdatedBy(userHelper.convertToPresentation(documentVO.getUpdatedBy()));
                 documentVO.setCreatedBy(userHelper.convertToPresentation(documentVO.getCreatedBy()));
+                documentVO.setPkgLastUpdatedBy(userHelper.convertToPresentation(proposal.getPkgLastUpdatedBy()));
+                documentVO.setPkgLastUpdatedOn(Date.from(proposal.getPkgLastUpdatedOn()));
                 proposalList.add(documentVO);
             });
             Integer count = findDocumentCount(Proposal.class, workspaceFilter);

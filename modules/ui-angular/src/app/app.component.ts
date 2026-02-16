@@ -43,6 +43,10 @@ export class AppComponent implements OnInit, OnDestroy {
     process.env.NG_APP_LEOS_INSTANCE === 'cn'
       ? 'assets/images/logo-cn-w.svg'
       : '';
+  polarisLogoImgUrl =
+    process.env.NG_APP_LEOS_INSTANCE === 'ec'
+      ? 'assets/images/logo-polaris-ec.svg'
+      : '';
   userInfos: UserState;
   // Observe state changes
   userState: Observable<UserState>;

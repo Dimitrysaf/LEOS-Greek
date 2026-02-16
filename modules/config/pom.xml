@@ -20,7 +20,7 @@
     <parent>
         <groupId>eu.europa.ec.leos.pilot</groupId>
         <artifactId>leos-modules</artifactId>
-        <version>5.5.0-SNAPSHOT</version>
+        <version>5.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>leos-config</artifactId>
@@ -96,30 +96,38 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>com.coderplus.maven.plugins</groupId>
-                <artifactId>copy-rename-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
                         <id>rename-file</id>
-                        <phase>compile</phase>
+                        <!-- You can keep process-resources, or go back to compile; both are fine
+                             as long as resources have already run. With process-resources and the
+                             plugin order you have, it's OK. -->
+                        <phase>process-resources</phase>
                         <goals>
-                            <goal>rename</goal>
+                            <goal>run</goal>
                         </goals>
                         <configuration>
-                            <fileSets>
-                                <fileSet>
-                                    <sourceFile>${project.output.directory}/application.properties</sourceFile>
-                                    <destinationFile>${project.output.directory}/application_leos.properties</destinationFile>
-                                </fileSet>
-                                <fileSet>
-                                    <sourceFile>${project.output.directory}/integration.properties</sourceFile>
-                                    <destinationFile>${project.output.directory}/integration_leos.properties</destinationFile>
-                                </fileSet>
-                                <fileSet>
-                                    <sourceFile>${project.output.directory}/message.properties</sourceFile>
-                                    <destinationFile>${project.output.directory}/message_leos.properties</destinationFile>
-                                </fileSet>
-                            </fileSets>
+                            <target>
+                                <!-- application.properties -> application_leos.properties -->
+                                <move
+                                        file="${project.output.directory}/application.properties"
+                                        tofile="${project.output.directory}/application_leos.properties"
+                                        overwrite="true" />
+
+                                <!-- integration.properties -> integration_leos.properties -->
+                                <move
+                                        file="${project.output.directory}/integration.properties"
+                                        tofile="${project.output.directory}/integration_leos.properties"
+                                        overwrite="true" />
+
+                                <!-- message.properties -> message_leos.properties -->
+                                <move
+                                        file="${project.output.directory}/message.properties"
+                                        tofile="${project.output.directory}/message_leos.properties"
+                                        overwrite="true" />
+                            </target>
                         </configuration>
                     </execution>
                 </executions>

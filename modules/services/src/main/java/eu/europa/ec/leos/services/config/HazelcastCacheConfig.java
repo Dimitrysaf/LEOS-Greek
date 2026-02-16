@@ -38,20 +38,23 @@ public class HazelcastCacheConfig {
 
         // Network configuration for clustering (replaces JGroups)
         NetworkConfig networkConfig = config.getNetworkConfig();
-        networkConfig.setPort(hazelcastPort);
-        networkConfig.setPortAutoIncrement(true);
 
         // Join configuration
         JoinConfig joinConfig = networkConfig.getJoin();
         joinConfig.getMulticastConfig().setEnabled(false);
         joinConfig.getTcpIpConfig().setEnabled(false);
         joinConfig.getAwsConfig().setEnabled(false);
-        
+
         if (Boolean.TRUE.equals(kubernetesEnabled)) {
+            networkConfig.setPort(hazelcastPort);
+            networkConfig.setPortAutoIncrement(true);
             joinConfig.getKubernetesConfig()
                     .setEnabled(true)
                     .setProperty("namespace", k8sNamespace);
         } else {
+            joinConfig.getAutoDetectionConfig().setEnabled(false);
+            networkConfig.setPort(0);
+            networkConfig.setPortAutoIncrement(false);
             joinConfig.getKubernetesConfig().setEnabled(false);
         }
 
@@ -232,7 +235,7 @@ public class HazelcastCacheConfig {
         coEditionCache.addEntryListenerConfig(listenerConfig);
 
         config.addMapConfig(coEditionCache);
-        
+
         // Update elements broadcast cache
         MapConfig updateElementsCache = new MapConfig("updateElementsCache");
         updateElementsCache.setBackupCount(0);
@@ -243,7 +246,7 @@ public class HazelcastCacheConfig {
         );
         updateElementsCache.addEntryListenerConfig(updateListener);
         config.addMapConfig(updateElementsCache);
-        
+
         // Update document broadcast cache
         MapConfig updateDocumentCache = new MapConfig("updateDocumentCache");
         updateDocumentCache.setBackupCount(0);

@@ -61,7 +61,7 @@ abstract class DataUploadService {
 
             for (String versionFolder : versionFolders) {
                 LOG.info("Processing version folder: {}", versionFolder);
-                Resource[] fileResources = resourcePatternResolver.getResources("classpath*:" + configFolderPath + "/" + versionFolder + "/" + subdirectory + "/*");
+                Resource[] fileResources = resourcePatternResolver.getResources("classpath*:" + configFolderPath + "/" + versionFolder + "/" + subdirectory + "/**/*");
                 loadConfigDataFromFilesInVersionFolder(versionFolder, fileResources);
             }
         } catch (IOException e) {

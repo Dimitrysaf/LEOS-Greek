@@ -17,8 +17,8 @@ export class ProposalItemHomeCardComponent implements OnInit {
   @Input() status: string | null;
   @Input() originRef: string | null;
 
-  updatedBy;
-  updatedOn;
+  pkgLastUpdatedBy;
+  pkgLastUpdatedOn;
   title: string;
   isClonedProposal = false;
 
@@ -39,8 +39,8 @@ export class ProposalItemHomeCardComponent implements OnInit {
         .subscribe((proposal) => {
           if (!!proposal.document) {
             const document = proposal.document;
-            this.updatedBy = document.updatedBy;
-            this.updatedOn = document.updatedOn;
+            this.pkgLastUpdatedBy = document.pkgLastUpdatedBy;
+            this.pkgLastUpdatedOn = document.pkgLastUpdatedOn;
             this.originRef = this.determineOriginRefFromDocument(document);
             this.status = this.determineStatusFromDocument(document);
           }

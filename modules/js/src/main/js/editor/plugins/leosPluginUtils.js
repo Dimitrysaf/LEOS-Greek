@@ -17,8 +17,6 @@ define(function leosPluginUtilsModule(require) {
 
     var CKEDITOR = require("promise!ckEditor");
 
-    var AI_USER = "ai";
-
     var TEXT = "text";
     var BOGUS = "br";
     var TD = "td";
@@ -71,8 +69,8 @@ define(function leosPluginUtilsModule(require) {
     var DATA_AKN_HCONTAINER = "data-akn-hcontainer";
     var DATA_AKN_SUB_HCONTAINER = "data-akn-sub-hcontainer";
     var DATA_AKN_MEDIA_CONTAINER = "data-akn-media-container";
-    var HCONTAINER_TABLE = "BLOCK_TAB";
-    var SUB_HCONTAINER_TABLE = "TAB";
+    var HCONTAINER_TABLE = "TAB";
+    var SUB_HCONTAINER_TABLE = "TAB_CONTAINER";
     var HCONTAINER_IMAGE = "FGR";
     var SUB_HCONTAINER_IMAGE = "IMG";
     var ARTICLE = "article";
@@ -1740,6 +1738,42 @@ define(function leosPluginUtilsModule(require) {
             refNode = child;
         }
     }
+
+    // Restore missing table cells after deletion to maintain table structure
+    function _restoreTableStructure(table) {
+        if (!table) return;
+
+        var rows = table.find('tr');
+        if (rows.count() === 0) return;
+
+        // Find the maximum column count across all rows
+        var maxColCount = 0;
+        for (var i = 0; i < rows.count(); i++) {
+            var row = rows.getItem(i);
+            var cells = row.find('td');
+            var colCount = cells.count();
+            if (colCount > maxColCount) {
+                maxColCount = colCount;
+            }
+        }
+
+        if (maxColCount === 0) return;
+
+        // Restore all rows to have maxColCount columns
+        for (var i = 0; i < rows.count(); i++) {
+            var row = rows.getItem(i);
+            var cells = row.find('td');
+            var actualColCount = cells.count();
+
+            while (actualColCount < maxColCount) {
+                var newCell = new CKEDITOR.dom.element('td');
+                newCell.appendBogus();
+                row.append(newCell);
+                actualColCount++;
+            }
+        }
+    }
+
     // Check if the entire table/list contents is selected.
     function _mergeBlocksNonCollapsedSelection( editor, range, startPath ) {
         var startBlock = startPath.block,
@@ -1749,6 +1783,36 @@ define(function leosPluginUtilsModule(require) {
         // Selection must be anchored in two different blocks.
         if ( !startBlock || !endBlock || startBlock.equals( endBlock ) )
             return false;
+
+        // If selection crosses table boundary, handle it specially
+        var startInTable = startBlock.getAscendant('table', true);
+        var endInTable = endBlock.getAscendant('table', true);
+        
+        // Check if range contains a table even if start/end blocks are outside
+        var rangeContainsTable = false;
+        if (!startInTable && !endInTable) {
+            var commonAncestor = range.getCommonAncestor();
+            rangeContainsTable = !!commonAncestor.find('table').count();
+        }
+
+        if ((startInTable && !endInTable) ||
+            (!startInTable && endInTable) ||
+            (startInTable && endInTable && !startInTable.equals(endInTable)) ||
+            rangeContainsTable) {
+
+            editor.fire('saveSnapshot');
+
+            range.deleteContents();
+
+            // Find and restore all tables in the selection
+            var tables = range.getCommonAncestor().find('table');
+            for (var i = 0; i < tables.count(); i++) {
+                _restoreTableStructure(tables.getItem(i));
+            }
+
+            range.select();
+            return true;
+        }
 
         editor.fire( 'saveSnapshot' );
 
@@ -1905,6 +1969,19 @@ define(function leosPluginUtilsModule(require) {
         return originalRange;
     }
 
+    function _findFirstChild(element) {
+        if (element && element instanceof CKEDITOR.dom.element) {
+            let children = element.getChildren();
+            for (let i=0; i < children.count(); i++) {
+                let child = children.getItem(i);
+                if (child.type !== Node.TEXT_NODE) {
+                    return child;
+                }
+            }
+        }
+        return null;
+    }
+
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -2002,6 +2079,7 @@ define(function leosPluginUtilsModule(require) {
         copyAllAttributes: _copyAllAttributes,
         isContentEditable: _isContentEditable,
         clearSelection: _clearSelection,
+        findFirstChild: _findFirstChild,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
@@ -2075,6 +2153,7 @@ define(function leosPluginUtilsModule(require) {
         HCONTAINER_IMAGE: HCONTAINER_IMAGE,
         SUB_HCONTAINER_IMAGE: SUB_HCONTAINER_IMAGE,
         AKN_ORDERED_LIST: AKN_ORDERED_LIST,
-        AI_USER: AI_USER,
+        BLOCKCONTAINER: BLOCKCONTAINER,
+        REG_EXP_FOR_UNICODE_ZERO_WIDTH_SPACE_IN_HEX: REG_EXP_FOR_UNICODE_ZERO_WIDTH_SPACE_IN_HEX,
     };
 });

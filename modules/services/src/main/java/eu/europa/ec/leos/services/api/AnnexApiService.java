@@ -17,9 +17,11 @@ package eu.europa.ec.leos.services.api;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 
+import java.io.IOException;
+
 public interface AnnexApiService extends BaseDocumentService<Annex> {
 
-    public DocumentViewResponse changeAnnexStructureType(String documentRef);
+    public DocumentViewResponse changeAnnexStructureType(String documentRef) throws IOException;
 
     public DocumentViewResponse renumberAnnex(String annexRef);
 

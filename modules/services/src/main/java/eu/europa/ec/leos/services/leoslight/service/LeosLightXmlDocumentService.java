@@ -16,7 +16,7 @@ package eu.europa.ec.leos.services.leoslight.service;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.structure.StructureContext;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.io.IOException;
 import java.util.Map;
 

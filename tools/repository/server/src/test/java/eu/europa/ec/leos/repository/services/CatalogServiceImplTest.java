@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.repository.services;
 
+import eu.europa.ec.leos.repository.H2TestBase;
 import eu.europa.ec.leos.repository.common.CustomTemplateMilestoneStatus;
 import eu.europa.ec.leos.repository.entities.*;
 import eu.europa.ec.leos.repository.entities.Package;
@@ -7,13 +8,13 @@ import eu.europa.ec.leos.repository.exceptions.CatalogException;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.*;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,14 +23,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CatalogServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+public class CatalogServiceImplTest extends H2TestBase {
 
     @Mock private DocumentRepository documentRepository;
     @Mock private DocumentMilestoneRepository documentMilestoneRepository;
@@ -67,8 +67,8 @@ public class CatalogServiceImplTest {
     private ConfigVersion mockCustomTemplateConfigVersion;
     private ConfigCategory mockCustomTemplateConfigCategory;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         mockLeosDocument = new LeosDocument();
         mockLeosDocument.setDocumentId(BigDecimal.valueOf(100));
 
@@ -101,7 +101,7 @@ public class CatalogServiceImplTest {
     }
 
     @Test
-    public void testPublishCustomTemplate_ExistingEntities_Success() throws CatalogException {
+    void testPublishCustomTemplate_ExistingEntities_Success() throws CatalogException {
         // Arrange - Test scenario where entities already exist (no catalog creation)
         String legFileId = "123";
         String templateName = "Test Template";
@@ -141,7 +141,7 @@ public class CatalogServiceImplTest {
     }
 
     @Test
-    public void testPublishCustomTemplate_NewEntities_CatalogCreation() throws CatalogException {
+    void testPublishCustomTemplate_NewEntities_CatalogCreation() throws CatalogException {
         // Arrange - Test first-time publishing (catalog creation scenario)
         String legFileId = "123";
         List<String> dgs = Arrays.asList("DG1");
@@ -173,7 +173,7 @@ public class CatalogServiceImplTest {
     }
 
     @Test
-    public void testPublishCustomTemplate_EmptyDgsList() throws CatalogException {
+    void testPublishCustomTemplate_EmptyDgsList() throws CatalogException {
         // Arrange - Test edge case with empty DGs list
         String legFileId = "123";
         List<String> emptyDgs = Collections.emptyList();
@@ -183,7 +183,6 @@ public class CatalogServiceImplTest {
         setupBasicMocks(legFileId, userId);
         when(customTemplateEntitiesRepository.findByPackageId(mockPackage))
             .thenReturn(Optional.empty());
-        setupCatalogCreationMocks();
 
         // Act
         catalogService.publishCustomTemplate(legFileId, "Template", emptyDgs, userId, originalDg);
@@ -197,8 +196,8 @@ public class CatalogServiceImplTest {
         assertNotNull(entitiesCaptor.getValue().getAuditCDate());
     }
 
-    @Test(expected = CatalogException.class)
-    public void testPublishCustomTemplate_MilestoneAlreadyPublished() throws CatalogException {
+    @Test
+    void testPublishCustomTemplate_MilestoneAlreadyPublished() {
         // Arrange - Test milestone validation
         DocumentMilestone publishedMilestone = new DocumentMilestone();
         publishedMilestone.setStatus(CustomTemplateMilestoneStatus.PUBLISHED.getValue());
@@ -213,12 +212,13 @@ public class CatalogServiceImplTest {
             .thenReturn(publishedMilestone);
 
         String originalDg = "DG1";
-        // Act - Should throw CatalogException
-        catalogService.publishCustomTemplate("123", "Template", Arrays.asList("DG1"), "user", originalDg);
+        // Act & Assert
+        assertThrows(CatalogException.class, () -> 
+            catalogService.publishCustomTemplate("123", "Template", List.of("DG1"), "user", originalDg));
     }
 
-    @Test(expected = CatalogException.class)
-    public void testPublishCustomTemplate_MilestoneNotFound() throws CatalogException {
+    @Test
+    void testPublishCustomTemplate_MilestoneNotFound() {
         // Arrange - Test null milestone validation
         when(milestoneDocumentService.findMilestoneById(new BigDecimal("123")))
             .thenReturn(Optional.of(mockLeosDocument));
@@ -230,31 +230,34 @@ public class CatalogServiceImplTest {
             .thenReturn(null);
 
         String originalDg = "DG1";
-        // Act - Should throw CatalogException
-        catalogService.publishCustomTemplate("123", "Template", Arrays.asList("DG1"), "user",originalDg);
+        // Act & Assert
+        assertThrows(CatalogException.class, () -> 
+            catalogService.publishCustomTemplate("123", "Template", List.of("DG1"), "user", originalDg));
     }
 
-    @Test(expected = NumberFormatException.class)
-    public void testPublishCustomTemplate_InvalidLegFileId() throws CatalogException {
+    @Test
+    void testPublishCustomTemplate_InvalidLegFileId() {
         String originalDg = "DG1";
-        // Act - Should throw NumberFormatException for invalid BigDecimal
-        catalogService.publishCustomTemplate("invalid", "Template", Arrays.asList("DG1"), "user", originalDg);
+        // Act & Assert
+        assertThrows(NumberFormatException.class, () -> 
+            catalogService.publishCustomTemplate("invalid", "Template", List.of("DG1"), "user", originalDg));
     }
 
-    @Test(expected = CatalogException.class)
-    public void testPublishCustomTemplate_LegFileNotFound() throws CatalogException {
+    @Test
+    void testPublishCustomTemplate_LegFileNotFound() {
         // Arrange - Test early return when milestone not found
         String legFileId = "999";
         when(milestoneDocumentService.findMilestoneById(new BigDecimal(legFileId)))
             .thenReturn(Optional.empty());
 
         String originalDg = "DG1";
-        // Act
-        catalogService.publishCustomTemplate(legFileId, "Template", Arrays.asList("DG1"), "user", originalDg);
+        // Act & Assert
+        assertThrows(CatalogException.class, () -> 
+            catalogService.publishCustomTemplate(legFileId, "Template", List.of("DG1"), "user", originalDg));
     }
 
-    @Test(expected = CatalogException.class)
-    public void testPublishCustomTemplate_DocumentNotFound() throws CatalogException {
+    @Test
+    void testPublishCustomTemplate_DocumentNotFound() {
         // Arrange - Test early return when document not found
         String legFileId = "123";
         when(milestoneDocumentService.findMilestoneById(new BigDecimal(legFileId)))
@@ -263,12 +266,13 @@ public class CatalogServiceImplTest {
                 .thenReturn(Optional.empty());
 
         String originalDg = "DG1";
-        // Act
-        catalogService.publishCustomTemplate(legFileId, "Template", Arrays.asList("DG1"), "user", originalDg);
+        // Act & Assert
+        assertThrows(CatalogException.class, () -> 
+            catalogService.publishCustomTemplate(legFileId, "Template", List.of("DG1"), "user", originalDg));
     }
 
     @Test
-    public void testPublishCustomTemplate_MilestoneHandling() throws CatalogException {
+    void testPublishCustomTemplate_MilestoneHandling() throws CatalogException {
         // Arrange - Test milestone unpublishing and publishing logic
         DocumentMilestone previousMilestone = new DocumentMilestone();
         previousMilestone.setStatus(CustomTemplateMilestoneStatus.PUBLISHED.getValue());
@@ -355,11 +359,10 @@ public class CatalogServiceImplTest {
             .thenReturn(new ConfigContent());
     }
     @Test
-    public void testUnpublishCustomTemplate_Success() throws CatalogException {
+    void testUnpublishCustomTemplate_Success() throws CatalogException {
         // Arrange
         String packageId = "123";
         String userId = "testUser";
-        List<String> dgs = Arrays.asList("DG1", "DG2");
         String VALID_XML =
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                         "<catalog>" +
@@ -406,19 +409,20 @@ public class CatalogServiceImplTest {
         verify(customTemplateEntitiesRepository, times(1)).save(any(CustomTemplateEntities.class));
     }
 
-    @Test(expected = CatalogException.class)
-    public void testUnpublishCustomTemplate_PackageNotFound() throws CatalogException {
+    @Test
+    void testUnpublishCustomTemplate_PackageNotFound() {
         // Arrange
         String packageId = "999";
         when(packageRepository.findById(new BigDecimal(packageId)))
                 .thenReturn(Optional.empty());
 
-        // Act
-        catalogService.unpublishCustomTemplate(packageId, "testUser");
+        // Act & Assert
+        assertThrows(CatalogException.class, () -> 
+            catalogService.unpublishCustomTemplate(packageId, "testUser"));
     }
 
     @Test
-    public void testUnpublishCustomTemplate_NoEntitiesToUnpublish() throws CatalogException {
+    void testUnpublishCustomTemplate_NoEntitiesToUnpublish() throws CatalogException {
         // Arrange
         String packageId = "123";
         String userId = "testUser";
@@ -435,7 +439,7 @@ public class CatalogServiceImplTest {
     }
 
     @Test
-    public void testUpdateCustomTemplate_EntitiesUpdatedSuccessfully() throws CatalogException {
+    void testUpdateCustomTemplate_EntitiesUpdatedSuccessfully() throws CatalogException {
         // Arrange
         String packageId = "123";
         List<String> newEntities = Arrays.asList("DG3", "DG4");
@@ -443,7 +447,6 @@ public class CatalogServiceImplTest {
         String templateName = "Updated Template";
         String originalDg = "DG3";
 
-        setupBasicMocks(packageId, userId);
         when(packageRepository.findById(new BigDecimal(packageId)))
                 .thenReturn(Optional.of(mockPackage));
         when(customTemplateEntitiesRepository.findByPackageId(mockPackage))
@@ -460,20 +463,19 @@ public class CatalogServiceImplTest {
     }
 
 
-    @Test(expected = CatalogException.class)
-    public void testUpdateCustomTemplate_PackageNotFound() throws CatalogException {
+    @Test
+    void testUpdateCustomTemplate_PackageNotFound() {
         // Arrange
         when(packageRepository.findById(new BigDecimal("999")))
                 .thenReturn(Optional.empty());
 
-        // Act
-        catalogService.updateCustomTemplate("999", "Template", Arrays.asList("DG1"), "user", "DG1");
-
-        // Assert: CatalogException is thrown
+        // Act & Assert
+        assertThrows(CatalogException.class, () -> 
+            catalogService.updateCustomTemplate("999", "Template", List.of("DG1"), "user", "DG1"));
     }
 
-    @Test(expected = CatalogException.class)
-    public void testUpdateCustomTemplate_ExceptionPropagation() throws CatalogException {
+    @Test
+    void testUpdateCustomTemplate_ExceptionPropagation() {
         // Arrange
         String packageId = "123";
         String templateName = "Fail Template";
@@ -481,11 +483,8 @@ public class CatalogServiceImplTest {
         String userId = "testUser";
         String originalDg = "DG1";
 
-        setupBasicMocks(packageId, userId);
-
-        // Act
-        catalogService.updateCustomTemplate(packageId, templateName, dgs, userId, originalDg);
-
-        // Assert: Exception propagates correctly
+        // Act & Assert
+        assertThrows(CatalogException.class, () -> 
+            catalogService.updateCustomTemplate(packageId, templateName, dgs, userId, originalDg));
     }
 }

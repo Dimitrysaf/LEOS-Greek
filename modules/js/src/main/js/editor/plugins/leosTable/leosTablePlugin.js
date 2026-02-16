@@ -28,6 +28,8 @@ define(function leosTablePluginModule(require) {
     var $ = require('jquery');
 
     var pluginName = 'leosTable';
+    var DELETE_KEY = 46;
+    var BACKSPACE_KEY = 8;
     var ENTER_KEY = 13;
     var SHIFT_ENTER = CKEDITOR.SHIFT + ENTER_KEY;
     var HTML_CAPTION = "caption";
@@ -71,12 +73,12 @@ define(function leosTablePluginModule(require) {
                 ck.editor.removeMenuItem('tablecell_insertBefore'); 
                 ck.editor.removeMenuItem('tablecell_insertAfter'); 
                 ck.editor.removeMenuItem('tablecell_delete'); 
-                ck.editor.removeMenuItem('tablecell_properties'); 
+                ck.editor.removeMenuItem('tablecell_properties');
                 ck.editor.getCommand('tableDelete').exec = _tableDelete.bind(undefined, ck.editor);
 
                 if (ck.editor.contextMenu) {
                     ck.editor.contextMenu.addListener(function(element) {
-                        if (element && element.getAscendant('table', true) && element.getAscendant('table', true).getAttribute('leos:deletable') === 'false') {
+                        if (element && element.getAscendant('table', true) && (element.getAscendant('table', true).getAttribute('leos:deletable') === 'false' || element.getAscendant('table', true).getAttribute('leos:predefinedTable') ==="true")){
                             ck.editor.contextMenu.items.map(function(item) {
                                 if(item.command === 'tableDelete'){
                                     item.state = CKEDITOR.TRISTATE_DISABLED;
@@ -91,7 +93,7 @@ define(function leosTablePluginModule(require) {
             editor.on("toHtml", _removeEmptyTableHeading, null, null, 15);
 
             editor.on( 'insertElement', _onInsertElement, this, null, 1 );
-
+            editor.on( 'afterCommandExec' , _checkEmptyCKEditor, null, null, 100);
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',
@@ -105,8 +107,60 @@ define(function leosTablePluginModule(require) {
                 key : SHIFT_ENTER,
                 action : _onShiftEnterKey
             });
+
+            leosKeyHandler.on({
+                editor : editor,
+                eventType : 'key',
+                key : BACKSPACE_KEY,
+                action : _handleTableRemoval
+            });
+
+            leosKeyHandler.on({
+                editor : editor,
+                eventType : 'key',
+                key : DELETE_KEY,
+                action : _handleTableRemoval
+            });
+
+            // Prevent typing outside table (only in table-only mode)
+            editor.on('key', function(evt) {
+                if (!editor.config.tableOnlyMode) return;
+                
+                var selection = evt.editor.getSelection();
+                if (!selection) return;
+                
+                var startElement = selection.getStartElement();
+                var isInTable = startElement && startElement.getAscendant('table', true) !== null;
+                
+                if (!isInTable) {
+                    evt.cancel();
+                }
+            });
         }
     };
+
+    function _checkEmptyCKEditor(evt) {
+        const editor = evt.editor;
+
+        const editable = editor.editable().find("[leos\\:editable='true']");
+        const firstEditable = editable.getItem(0);
+
+        if (!firstEditable
+            || firstEditable.getChildCount() > 0
+            || firstEditable.getAttribute(leosPluginUtils.DATA_AKN_NAME)?.toLowerCase()
+                !== leosPluginUtils.BLOCKCONTAINER) {
+            return;
+        }
+
+        const newParagraph = new CKEDITOR.dom.element('p');
+        newParagraph.appendBogus();
+        firstEditable.append(newParagraph);
+
+        editor.getSelection().selectElement(newParagraph);
+
+        editor.fire('saveSnapshot');
+        editor.focus();
+    }
 
     function _onInsertElement(event) {
         if(event.data.getName() === 'table'){
@@ -166,6 +220,58 @@ define(function leosTablePluginModule(require) {
         }
     }
 
+    function addParagraphForEmptyEditor(editor, removedElement, range) {
+        var newParagraph = editor.document.createElement('p');
+        newParagraph.insertBefore(removedElement);
+        range.selectNodeContents(newParagraph);
+        range.collapse(true);
+        editor.getSelection().selectRanges([range]);
+        editor.focus();
+    }
+
+    function _handleTableRemoval(context) {
+        const editor = context.event.editor;
+        const firstElement = editor.elementPath().elements[0];
+
+        if (!firstElement || firstElement.type !== Node.ELEMENT_NODE) return;
+
+        const cancelAndEnable = () => {
+            context.event.cancel();
+            editor.commands.inlinesave.enable();
+            editor.commands.inlinesaveclose.enable();
+        };
+
+        if (firstElement.getName() === 'table') {
+            if(firstElement.getAttribute("leos:predefinedtable") === 'true'
+                    && editor.LEOS.type === 'stat_digit_financ_legis'){
+                cancelAndEnable();
+                return;
+            }
+            if(firstElement.getParent().getAttribute("data-akn-attr-editable") === "true"
+                && firstElement.getParent().getChildCount() ===1){
+                const range = editor.createRange();
+                addParagraphForEmptyEditor(editor, firstElement, range);
+            }
+            firstElement.remove();
+            cancelAndEnable();
+            return;
+        }
+        if (firstElement.getName() === 'li') {
+            const children = firstElement.getChildren();
+            if (children.count() === 1) {
+                const child = children.getItem(0);
+                if (child.type === Node.ELEMENT_NODE && child.getName() === 'table') {
+                    if(firstElement.getAttribute("data-akn-attr-editable") === "true"){
+                        const range = editor.createRange();
+                        addParagraphForEmptyEditor(editor, child, range);
+                    }
+                    child.remove();
+                    cancelAndEnable();
+                }
+            }
+        }
+    }
+
     function _tableDelete(editor) {// This is a copy of ckeditor plugins/table/plugin.js 'tableDelete' exec command function and modified
         // to avoid remove 'li' parent table element (check parent condition, 'li' element was added)
 
@@ -196,20 +302,11 @@ define(function leosTablePluginModule(require) {
         var range = editor.createRange();
 
         if (isOnlyElement) {
-            // Create paragraph before removing table to maintain cursor position
-            var newParagraph = editor.document.createElement('p');
-            newParagraph.insertBefore(table);
-            table.remove();
-
-            range.selectNodeContents(newParagraph);
-            range.collapse(true);
-            editor.getSelection().selectRanges([range]);
-            editor.focus();
+            addParagraphForEmptyEditor(editor, table, range);
         } else {
-            // Move range before table, remove it, then select the range
             range.moveToPosition(table, CKEDITOR.POSITION_BEFORE_START);
-            table.remove();
         }
+        table.remove();
         range.select();
     }
 

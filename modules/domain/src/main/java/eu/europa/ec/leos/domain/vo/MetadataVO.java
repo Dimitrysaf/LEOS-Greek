@@ -57,6 +57,7 @@ public class MetadataVO {
     private Date adoptionDate;
     private String institutionalReference;
     private Boolean institutionalReferenceFinalVersion;
+    private String diffusionVersion;
     private String interInstitutionalReference;
     private List<SignatureMetadata> signatures;
     private Boolean stamp;
@@ -111,6 +112,7 @@ public class MetadataVO {
         this.setAdoptionPlace(null);
         this.setInstitutionalReference(null);
         this.setInstitutionalReferenceFinalVersion(null);
+        this.setDiffusionVersion(null);
         this.setInterInstitutionalReference(null);
         this.setSignatures(null);
         this.setStamp(null);

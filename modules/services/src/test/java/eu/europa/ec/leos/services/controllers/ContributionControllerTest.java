@@ -1,37 +1,34 @@
 package eu.europa.ec.leos.services.controllers;
 
-import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.api.ContributionApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
+import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.response.DeclineContributionResponse;
 import eu.europa.ec.leos.services.response.MergeContributionResponse;
-import eu.europa.ec.leos.services.user.UserService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import jakarta.servlet.http.HttpServletRequest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ContributionControllerTest {
     private static final String PROPOSAL_REF = "proposal";
     private static final String DOCUMENT_REF = "DOCUMENT_REF";
@@ -43,12 +40,15 @@ public class ContributionControllerTest {
     @Mock
     private ContributionApiService contributionApiService;
 
+    @Mock
+    private CoEditionContext coEditionContext;
+
     @InjectMocks
     private ContributionController contributionController;
 
-    @Before
+    @BeforeEach
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -160,10 +160,11 @@ public class ContributionControllerTest {
         String TEST_DOCUMENT_CONTENT = "test content";
         ApplyContributionsRequest TEST_REQUEST = new ApplyContributionsRequest();
 
+        when(contributionApiService.extractElementsFromMergeActions(any(), any())).thenReturn(new ArrayList<>());
         when(this.contributionApiService.mergeContribution(anyString(), any(ApplyContributionsRequest.class))).thenReturn(new MergeContributionResponse(true,
                 TEST_DOCUMENT_CONTENT.getBytes(StandardCharsets.UTF_8)));
 
-        ResponseEntity<MergeContributionResponse> response = this.contributionController.mergeContribution(TEST_DOCUMENT_REF, TEST_REQUEST);
+        ResponseEntity<MergeContributionResponse> response = this.contributionController.mergeContribution(TEST_DOCUMENT_REF, "presenterId", TEST_REQUEST);
 
         verify(this.contributionApiService).mergeContribution(TEST_DOCUMENT_REF, TEST_REQUEST);
         assertEquals(HttpStatus.OK, response.getStatusCode());
