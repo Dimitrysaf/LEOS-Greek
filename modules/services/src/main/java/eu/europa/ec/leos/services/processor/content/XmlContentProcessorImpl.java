@@ -1336,10 +1336,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             Node subpara = nodeList.item(i);
             Node subparaParent = subpara.getParentNode();
             Node subparaParentSibbling = subparaParent.getNextSibling();
-            String textOfSubparagraph = getTextOfSubparagraph(subpara);
             if (subpara.getAttributes().getNamedItem(REFERS_TO_ATTR) != null
                     && subpara.getAttributes().getNamedItem(REFERS_TO_ATTR).getNodeValue().equals(ENDING_PART)
-                    && (StringUtils.isNotEmpty(textOfSubparagraph) && StringUtils.isNotEmpty(textOfSubparagraph.trim()) && !Character.isLowerCase(textOfSubparagraph.trim().charAt(0)))) {
+                    && !Character.isLowerCase(subpara.getTextContent().trim().charAt(0))) {
                 if (subparaParentSibbling != null) {
                     subparaParent.getParentNode().insertBefore(subpara, subparaParentSibbling);
                 } else {
@@ -1363,9 +1362,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     moved = true;
                 }
             }
-            String textOfSubparagraph = getTextOfSubparagraph(subpara);
             if (!moved && (subpara.getTextContent().isEmpty()
-                    || (StringUtils.isNotEmpty(textOfSubparagraph) && StringUtils.isNotEmpty(textOfSubparagraph.trim()) && Character.isLowerCase(textOfSubparagraph.trim().charAt(0))))) {
+                    || Character.isLowerCase(subpara.getTextContent().trim().charAt(0)))
+                    && getFirstElementByXPath(subpara, "akn:content/akn:p") != null) {
                 Node previousSiblingList = XercesUtils.getPrevSibling(subpara);
                 if (previousSiblingList != null && is(previousSiblingList, LIST)
                         && ((!isSoftDeletedOrMovedTo(subpara) && !isSoftDeletedOrMovedTo(previousSiblingList))
@@ -1399,11 +1398,6 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 removeAttribute(subpara, REFERS_TO_ATTR);
             }
         }
-    }
-
-    private static String getTextOfSubparagraph(Node subpara) {
-        Node pText = XercesUtils.getFirstElementByXPath(subpara, "akn:content/akn:p/text()[1]");
-        return pText != null ? pText.getNodeValue() : "";
     }
 
     private void injectTagIdsInNode(Node node) {
