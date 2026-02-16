@@ -17,22 +17,22 @@ import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import eu.europa.ec.leos.vo.catalog.CatalogItem.ItemType;
 import org.apache.commons.io.IOUtils;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class TemplateServiceImplTest {
 
 //    private TemplateServiceImpl templateServiceImpl = new TemplateServiceImpl();
 
     @Test
-    @Ignore
+    @Disabled
     public void testGetTemplatesCatalog() throws Exception {
 
         InputStream fileContent = IOUtils.toInputStream(new String(TestUtils.getFileContent("/catalogTest.xml")));

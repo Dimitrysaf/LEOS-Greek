@@ -10,7 +10,6 @@ import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.repository.document.BillRepository;
 import eu.europa.ec.leos.repository.document.BillRepositoryImpl;
 import eu.europa.ec.leos.repository.store.PackageRepository;
-import eu.europa.ec.leos.services.ai.AIService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
@@ -30,8 +29,8 @@ import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Option;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -39,7 +38,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -96,8 +95,6 @@ public class BillServiceImplTest {
     @Mock
     private XPathCatalog xPathCatalog;
     @Mock
-    private AIService aiService;
-    @Mock
     private ProposalService proposalService;
 
     @InjectMocks
@@ -107,14 +104,14 @@ public class BillServiceImplTest {
     private List<TocItem> tocItems;
     private List<NumberingConfig> numberingConfigs;
 
-    @Before
+    @BeforeEach
    	public void onSetUp(){
         docTemplate = "BL-023";
         MockitoAnnotations.initMocks(this); //without this you will get NPE
         billRepository =  new BillRepositoryImpl(leosRepository);
         billService = new BillServiceProposalImpl(billRepository, packageRepository, xmlNodeProcessor, xmlContentProcessor, xmlDocumentService,
                 xmlNodeConfigProcessor, attachmentProcessor, validationService, documentVOProvider, numberService, messageHelper,
-                tableOfContentProcessor, xPathCatalog, trackChangesContext, documentLanguageContext, aiService, proposalService);
+                tableOfContentProcessor, xPathCatalog, trackChangesContext, documentLanguageContext, proposalService);
         byte[] bytesFile = getFileContent("/structure-test-bill-EC.xml");
         when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
         ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "schema/structure/structure_1.xsd");

@@ -33,9 +33,7 @@ import {LoadingService} from "@/shared/services/loading.service";
 import {CoEditionUpdate} from "@/shared/models/coEditionVO.model";
 import {getUserDetails, UserDetails} from "@eui/base";
 import {Store} from "@ngrx/store";
-import {AnalysisResults} from "@/shared/models/leos.ai.model";
-import {TableOfContentItemVO} from "@/shared/models/toc.model";
-import {scrollInParent} from "@/shared/utils";
+import {MergeContributionsService} from "@/features/akn-document/services/merge-contributions.service";
 
 const MAIN_CONTAINER_WIDTH = 500.6;
 
@@ -86,7 +84,8 @@ export class DocumentComponent
     private milestoneService: ProposalMilestonesService,
     private domSanitizer: DomSanitizer,
     private loadingService: LoadingService,
-    private store: Store<any>
+    private store: Store<any>,
+    private mergeContributionService: MergeContributionsService,
   ) {
     this.waitUntil = (condition) => {
       return new Promise<void>((resolve, reject) => {
@@ -156,18 +155,12 @@ export class DocumentComponent
   }
 
   ngOnInit(): void {
-    this.documentService.aiAnalysisResults$.subscribe((docView) => {
-      this.documentService.refreshView(docView, true);
-    });
     if (!this.readonly) {
       this.documentService.refreshView$
         .pipe(takeUntil(this.destroy$))
         .subscribe((documentView) => {
-          if (documentView && documentView.data && !this.contributionView) {
-            this.loadDocument(documentView.data.editableXml);
-          }
-          if (documentView.scroll) {
-            this.scrollToTable('4.2.');
+          if (documentView && !this.contributionView) {
+            this.loadDocument(documentView.editableXml);
           }
         });
 
@@ -211,8 +204,16 @@ export class DocumentComponent
         .pipe(takeUntil(this.destroy$))
         .subscribe((coEditionUpdate) => {
           if (coEditionUpdate) {
-            if (coEditionUpdate.infoType === 'DOCUMENT_UPDATED') {
+            if (coEditionUpdate.infoType === 'DOCUMENT_UPDATED' || coEditionUpdate.infoType === 'DOCUMENT_CONTRIBUTION_UPDATED') {
               this.docUpdating = true;
+            }
+            if (coEditionUpdate.infoType === 'DOCUMENT_CONTRIBUTION_UPDATED') {
+              const newElement = coEditionUpdate.updatedElements.find((elt) => this.document.getElementById(elt.elementId) == null);
+              if (newElement || coEditionUpdate.updatedElements.length === 0) {
+                this.documentService.reloadDocument();
+              } else {
+                this.mergeContributionService.getContributions();
+              }
             }
             if (
               coEditionUpdate.updatedElements &&
@@ -490,7 +491,7 @@ export class DocumentComponent
     elementType: string;
     elementFragment: string;
   }) {
-    return ['leos:id-to-be-restored', 'leos:id-to-be-removed'].some(attr => data.elementFragment.includes(attr));
+    return !data.elementFragment || ['leos:id-to-be-restored', 'leos:id-to-be-removed'].some(attr => data.elementFragment.includes(attr));
   }
 
   private isAnnexParagraphUpdated(data: {
@@ -690,44 +691,4 @@ export class DocumentComponent
       subtree: true,
     });
   }
-
-  private findElementByXPath(doc: Document, xpath: string): Element {
-    return <Element>new XPathEvaluator()
-      .createExpression(xpath)
-      .evaluate(doc, XPathResult.FIRST_ORDERED_NODE_TYPE)
-      .singleNodeValue;
-  }
-
-  private findNthTableInElement(levelNode: Element, n: number) {
-    const tables = levelNode.querySelectorAll('table');
-    if (n<tables.length) {
-      return tables.item(n);
-    } else {
-      return null;
-    }
-  }
-
-  private findNthTableInLevel(doc: Document, levelNumber: string, n: number) {
-    let xpath : string = "//num[text()='" + levelNumber + "']";
-    let level = this.findElementByXPath(doc, xpath);
-    if (level) {
-      return this.findNthTableInElement(level.parentElement, n);
-    }
-    return null;
-  }
-
-  private scrollToTable(
-    levelNumber: string
-  ) {
-    const el = this.findNthTableInLevel(document, levelNumber, 0);
-    if (el instanceof HTMLElement) {
-      el.style.background = 'cornsilk';
-      setTimeout(() => {
-        el.style.background = '';
-      }, 1000);
-
-      scrollInParent(el, { topOffset: 100, behavior: 'smooth', left: null });
-    }
-  }
-
 }

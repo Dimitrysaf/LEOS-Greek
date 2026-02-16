@@ -21,7 +21,7 @@
     <parent>
         <groupId>eu.europa.ec.leos</groupId>
         <artifactId>repository</artifactId>
-        <version>5.5.0-SNAPSHOT</version>
+        <version>5.4.0-SNAPSHOT</version>
     </parent>
 
     <groupId>eu.europa.ec.leos.repository</groupId>
@@ -90,6 +90,12 @@
                     <mainClass>eu.europa.ec.leos.repository.Application</mainClass>
                     <jvmArguments>-Dfile.encoding=UTF8</jvmArguments>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>repackage</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

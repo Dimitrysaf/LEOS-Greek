@@ -18,11 +18,18 @@ define(function aknHtmlItalicPluginModule(require) {
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
     var pluginName = "aknHtmlItalic";
+    var commandName = "italic";
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
+    var aknHTMLPluginsUtils = require("plugins/aknHTMLPluginUtils");
 
     var pluginDefinition = {
         init: function init(editor) {
             editor.on('selectionChange', _onSelectionChange, null, null, 11);
+            editor.on("afterCommandExec", function (event) {
+                if (event.data.command.name === commandName) {
+                    aknHTMLPluginsUtils.removeAttributeFromElement(event, 'id');
+                }
+            }, null, null, 99);
         }
     };
 
@@ -32,9 +39,6 @@ define(function aknHtmlItalicPluginModule(require) {
         akn:  "i",
         html: "em",
         attr: [{
-            akn: "xml:id",
-            html: "id"
-        }, {
             akn : "leos:origin",
             html : "data-origin"
         }, {

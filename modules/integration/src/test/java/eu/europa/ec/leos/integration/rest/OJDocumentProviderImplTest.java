@@ -14,14 +14,14 @@
 package eu.europa.ec.leos.integration.rest;
 
 import eu.europa.ec.leos.test.support.LeosTest;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestOperations;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 public class OJDocumentProviderImplTest extends LeosTest {
@@ -35,7 +35,7 @@ public class OJDocumentProviderImplTest extends LeosTest {
     private String ojUrl = "http://publications.europa.eu";
     private String sparqlUri = "/webapi/rdf/sparql";
 
-    @Before
+    @BeforeEach
     public void init() {
         ReflectionTestUtils.setField(ojDocumentProviderImpl, "ojUrl", ojUrl);
         ReflectionTestUtils.setField(ojDocumentProviderImpl, "sparqlUri", sparqlUri);

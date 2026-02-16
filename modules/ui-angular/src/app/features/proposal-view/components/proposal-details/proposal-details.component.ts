@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {
   Document,
   Permission,
@@ -8,7 +8,7 @@ import {
   Metadata,
   DetailsTabExclusions,
   LeosConfig,
-  User, SignatureMetadata
+  SignatureMetadata
 } from '@leos/shared';
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 import {Subject, takeUntil} from "rxjs";
@@ -49,11 +49,11 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   institutionalRefActingEntities = [];
   institutionalRefActingEntity: string | null;
   institutionalRefVersions = [];
-  institutionalRefNumber: number | null;
+  institutionalRefNumber: string | null;
   institutionalReferenceFinalVersion: Boolean;
   interInstitutionalRef: boolean;
   interInstitutionalRefYear: number | null;
-  interInstitutionalRefNumber: number | null;
+  interInstitutionalRefNumber: string | null;
   interInstitutionalRefType: string | null;
   interInstitutionalRefTypes = [];
   signatures: SignatureMetadata[] | null;
@@ -100,12 +100,18 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   crossReferenceProposalListing: string[] = [];
   selectedIndex: number | null = null;
   invalidCrossRefNumberInput: boolean;
+  crossRefErrorKey: string = '';
   invalidInstitutionalNumberInput: boolean;
   invalidInterInstitutionalNumberInput: boolean;
   invalidTargetProposalReferenceInput: boolean;
   invalidTargetProposalDateInput: boolean;
   invalidCorrectionInfoInput: boolean;
   greffeUser: boolean;
+  diffusionVersion: string = '';
+  diffusionBarOptions: string[] = Array.from(
+    { length: 20 },
+    (_, i) => `/${i + 1}`
+  );
 
   constructor(
     private appConfigService: AppConfigService,
@@ -133,7 +139,8 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       || this.isCommissionerChanged()
       || this.isCorrigendumChanged()
       || this.isAdoptionPlaceChanged()
-      || this.isAdoptionDateChanged());
+      || this.isAdoptionDateChanged()
+      || this.isDiffusionVersionChanged());
   }
 
   isValid(): boolean {
@@ -220,6 +227,10 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   isAdoptionDateChanged(): boolean {
     return ((this.adoptionDate == null && this.proposalMetadata.adoptionDate !== null) || (this.adoptionDate !== null && this.proposalMetadata.adoptionDate == null))
       || (this.adoptionDate !== null && this.proposalMetadata.adoptionDate !== null && new Date(this.proposalMetadata.adoptionDate).getTime()/1000 != this.adoptionDate.unix());
+  }
+
+  isDiffusionVersionChanged(): boolean {
+    return this.diffusionVersion != this.proposalMetadata.diffusionVersion;
   }
 
   isCorrigendumChanged(): boolean {
@@ -314,7 +325,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   getInstitutionalReference(): string {
     if (this.institutionalRef && !!this.institutionalRefActingEntity && !!this.institutionalRefYear && !!this.institutionalRefNumber) {
       const institutionalRef = this.institutionalRefActingEntity + '(' + this.institutionalRefYear + ')' + this.institutionalRefNumber;
-      if (this.institutionalRefRegEx.test(institutionalRef) && !isNaN(Number(this.institutionalRefNumber))) {
+      if (this.institutionalRefRegEx.test(institutionalRef) && !isNaN(Number(this.institutionalRefNumber)) && Number(this.institutionalRefNumber)>=0) {
         return institutionalRef;
       }
     } else if (!this.institutionalRef) {
@@ -334,6 +345,9 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   getInstitutionalRefNonValidMsg(): string {
+    if (this.invalidInstitutionalNumberInput) {
+      return this.translateService.instant("page.collection.details.invalid.institutional.ref.number.empty");
+    }
     if (!this.isInstitutionalRefValid()) {
       if (this.institutionalRefActingEntity == null || this.institutionalRefActingEntity == undefined) {
         return this.translateService.instant("page.collection.details.invalid.institutional.ref.type");
@@ -371,6 +385,9 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   getTargetProposalRefNonValidMsg(): string {
+    if (this.invalidTargetProposalReferenceInput) {
+      return this.translateService.instant("page.collection.details.invalid.target.proposal.ref.number.empty");
+    }
     if (!this.isTargetProposalReferenceValid() && this.showCorrigendumAddendum) {
       if (this.targetProposalReferenceYear == null || this.targetProposalReferenceYear == undefined) {
         return this.translateService.instant("page.collection.details.invalid.target.proposal.ref.year");
@@ -442,6 +459,9 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   getInterInstitutionalRefNonValidMsg(): string {
+    if (this.invalidInterInstitutionalNumberInput) {
+      return this.translateService.instant("page.collection.details.invalid.inter.institutional.ref.number.empty");
+    }
     if (!this.isInterInstitutionalRefValid()) {
       if (this.interInstitutionalRefYear == null || this.interInstitutionalRefYear == undefined) {
         return this.translateService.instant("page.collection.details.invalid.inter.institutional.ref.year");
@@ -465,6 +485,11 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   initializeAdoptionInfo() {
+    this.institutionalRef = false;
+    this.institutionalRefActingEntity = null;
+    this.institutionalRefYear = null;
+    this.institutionalRefNumber = null;
+
     this.adoptionPlace = this.proposal.metadata.adoptionPlace;
     this.adoptionDate = this.proposal.metadata.adoptionDate != null ? moment(this.proposal.metadata.adoptionDate) : null;
     let institutionalRef = this.proposal.metadata.institutionalReference;
@@ -473,16 +498,22 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.institutionalRef = true;
       this.institutionalRefActingEntity = myArray[1];
       this.institutionalRefYear = parseInt(myArray[2]);
-      this.institutionalRefNumber = parseInt(myArray[3]);
+      this.institutionalRefNumber = myArray[3];
     }
     this.institutionalReferenceFinalVersion = this.proposal.metadata.institutionalReferenceFinalVersion;
+    this.diffusionVersion = this.proposal.metadata.diffusionVersion;
+
+    this.interInstitutionalRef = false;
+    this.interInstitutionalRefYear = null;
+    this.interInstitutionalRefNumber = null;
+    this.interInstitutionalRefType = null;
 
     let interInstitutionalRef = this.proposal.metadata.interInstitutionalReference;
     if (interInstitutionalRef != null && this.interInstitutionalRefRegEx.test(interInstitutionalRef)) {
       let myArray = interInstitutionalRef.match(this.interInstitutionalRefRegEx);
       this.interInstitutionalRef = true;
       this.interInstitutionalRefYear = parseInt(myArray[1]);
-      this.interInstitutionalRefNumber = parseInt(myArray[2]);
+      this.interInstitutionalRefNumber = myArray[2];
       this.interInstitutionalRefType = myArray[3];
     }
     this.signatures = cloneDeep(this.proposal.metadata.signatures);
@@ -509,6 +540,13 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
         } else {
           this.proposal = proposal;
         }
+        this.enableSave = false;
+        this.invalidCorrectionInfoInput = false;
+        this.invalidInstitutionalNumberInput = false;
+        this.invalidCrossRefNumberInput = false;
+        this.invalidInterInstitutionalNumberInput = false;
+        this.invalidTargetProposalDateInput = false;
+        this.invalidTargetProposalReferenceInput = false;
         this.initializeLists();
         this.initializeGeneral();
         this.initializeCoverPageType();
@@ -627,7 +665,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
 
   handleCoverPageTypeChange(covertype: string) {
     this.isVerticalShift = covertype != 'STANDARD';
-    if (!this.isVerticalShift) this.verticalShift = 6.0;
+    if (!this.isVerticalShift) this.verticalShift = 2.0;
     this.handleChange();
   }
 
@@ -674,12 +712,14 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       && !this.institutionalRef
       && !this.institutionalReferenceFinalVersion
       && !this.interInstitutionalRef
-      && !this.stamp) {
+      && !this.stamp
+      && this.signatures.length === this.proposalDetails.templateSignatures.length) {
       for (let i = 0; i < this.signatures.length; i++) {
+        let templateSignature = this.proposalDetails.templateSignatures[i];
         let signature = this.signatures[i];
-        if (signature.commissionerTitle != this.proposalDetails.templateSignatures[i].commissionerTitle
-            || signature.signingCommissioner != this.proposalDetails.templateSignatures[i].signingCommissioner
-            || signature.specialMention != this.proposalDetails.templateSignatures[i].specialMention) {
+        if (signature.commissionerTitle != templateSignature.commissionerTitle
+            || signature.signingCommissioner != templateSignature.signingCommissioner
+            || signature.specialMention != templateSignature.specialMention) {
           return true;
         }
       }
@@ -765,6 +805,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.isInterInstitutionalReferenceChanged() ? this.getInterInstitutionalReference() : null,
       this.isStampChanged() ? this.stamp : null,
       this.isCommissionerChanged() ? this.signatures : null,
+      this.diffusionVersion.replace("/", "")
     ).subscribe({
       next: () => {
         if (!this.showCorrigendumAddendum) {
@@ -815,7 +856,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   decrease() {
-    if (this.verticalShift > 2.0) {
+    if (this.verticalShift > 0.0) {
       this.verticalShift = Math.round((this.verticalShift - 0.1) * 10) / 10;
       this.handleChange();
     }
@@ -882,6 +923,19 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   }
 
   private initializeCorrigendumAddendumFields(): void {
+    this.showCorrigendumAddendum = false;
+    this.targetProposalReferenceActingEntity = null;
+    this.targetProposalReferenceYear = null;
+    this.targetProposalReferenceNumber = null;
+    this.correctionInformation = null;
+    this.targetProposalDate = null;
+    this.isTargetLang = false;
+    this.allTargetLangSelected = false;
+    this.languages.forEach(lang => {
+      this.selectedTargetLanguages[lang.toUpperCase()] = false;
+    });
+    this.proposalTargetLang = null;
+
     if (this.proposal.showCorrigendumAddendum) {
       const proposal = this.proposal;
       this.showCorrigendumAddendum = proposal.showCorrigendumAddendum;
@@ -974,22 +1028,81 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     this.handleChange();
   }
 
-  checkCrossRefNumberInput(event: KeyboardEvent) {
-    if (this.checkNumberInput(event)) {
+  preventInvalidChars(event: KeyboardEvent) {
+    const char = event.key;
+    const currentValue = (event.target as HTMLInputElement).value;
+
+    // Allow control keys (backspace, delete, arrow keys, etc.)
+    if (event.ctrlKey || event.altKey || ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(char)) {
+      return;
+    }
+
+    // Check for non-digits (letters, special chars)
+    if (!/^\d$/.test(char)) {
+      event.preventDefault();
       this.invalidCrossRefNumberInput = true;
+      this.crossReferenceProposalNumber = '';
+      this.crossRefErrorKey = 'page.collection.details.invalid.number.label';
       setTimeout(() => {
         this.invalidCrossRefNumberInput = false;
-      }, 1500)
+      }, 1500);
+      return;
+    }
+
+    // Prevent starting with 0
+    if (currentValue === '' && char === '0') {
+      event.preventDefault();
+      this.invalidCrossRefNumberInput = true;
+      this.crossRefErrorKey = 'page.collection.details.number.range.label';
+      setTimeout(() => {
+        this.invalidCrossRefNumberInput = false;
+      }, 1500);
+      return;
+    }
+
+    // Check if new value would exceed 9999
+    const newValue = currentValue + char;
+    if (parseInt(newValue) > 9999) {
+      event.preventDefault();
+      this.invalidCrossRefNumberInput = true;
+      this.crossRefErrorKey = 'page.collection.details.number.range.label';
+      setTimeout(() => {
+        this.invalidCrossRefNumberInput = false;
+      }, 1500);
     }
   }
 
-  checkNumberInput(event: KeyboardEvent): boolean {
-    const char = event.key;
-    if (!/^\d$/.test(char)) {
-      event.preventDefault();
-      return true;
+
+  checkCrossRefNumberInput(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+
+    if (value !== '') {
+      // Check if value contains any non-numeric characters
+      if (!/^\d+$/.test(value)) {
+        this.invalidCrossRefNumberInput = true;
+        this.crossRefErrorKey = 'page.collection.details.invalid.number.label';
+        input.value = '';
+        this.crossReferenceProposalNumber = '';
+        setTimeout(() => {
+          this.invalidCrossRefNumberInput = false;
+        }, 1500);
+        return;
+      }
+
+      const numValue = parseInt(value);
+
+      // Check for invalid range
+      if (numValue < 1 || numValue > 9999) {
+        this.invalidCrossRefNumberInput = true;
+        this.crossRefErrorKey = 'page.collection.details.number.range.label';
+        input.value = '';
+        this.crossReferenceProposalNumber = '';
+        setTimeout(() => {
+          this.invalidCrossRefNumberInput = false;
+        }, 1500);
+      }
     }
-    return false;
   }
 
   enableAddCrossRef() {
@@ -1003,5 +1116,50 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     return true;
   }
 
+  checkInstitutionalNumberInput(event) {
+    if (!this.validateDigits(event)) {
+      this.invalidInstitutionalNumberInput = true;
+      setTimeout(() => {
+        this.invalidInstitutionalNumberInput= !this.isInstitutionalRefValid();
+      }, 1500)
+      event.returnValue = false;
+      if(event.preventDefault) event.preventDefault();
+    }
+  }
+
+  checkInterInstitutionalNumberInput(event) {
+    if (!this.validateDigits(event)) {
+      this.invalidInterInstitutionalNumberInput = true;
+      setTimeout(() => {
+        this.invalidInterInstitutionalNumberInput= !this.isInterInstitutionalRefValid();
+      }, 1500)
+      event.returnValue = false;
+      if(event.preventDefault) event.preventDefault();
+    }
+  }
+
+  checkTargetProposalNumberInput(event) {
+    if (!this.validateDigits(event)) {
+      this.invalidTargetProposalReferenceInput = true;
+      setTimeout(() => {
+        this.invalidTargetProposalReferenceInput = false;
+      }, 1500)
+      event.returnValue = false;
+      if(event.preventDefault) event.preventDefault();
+    }
+  }
+
+  validateDigits(event) {
+    // Handle paste
+    if (event.type === 'paste') {
+      key = event.clipboardData.getData('text/plain');
+    } else {
+      // Handle key press
+      var key = event.keyCode || event.which;
+      key = String.fromCharCode(key);
+    }
+    var regex = /[0-9]/;
+    return regex.test(key);
+  }
 }
 

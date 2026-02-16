@@ -7,7 +7,7 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
 import io.atlassian.fugue.Pair;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

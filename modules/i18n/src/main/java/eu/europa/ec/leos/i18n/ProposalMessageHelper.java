@@ -15,6 +15,7 @@ package eu.europa.ec.leos.i18n;
 
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,7 @@ public class ProposalMessageHelper extends MessageHelper{
     /**
      * ATTENTION: Explicit constructor used only for tests.
      */
-    public ProposalMessageHelper(MessageSource messageSource){
+    public ProposalMessageHelper(@Qualifier("webMessageSource") MessageSource messageSource){
         super.messageSource = messageSource;
     }
 

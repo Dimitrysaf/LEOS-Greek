@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.common.LeosFile;

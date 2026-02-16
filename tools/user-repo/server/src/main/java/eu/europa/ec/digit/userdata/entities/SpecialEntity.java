@@ -15,13 +15,22 @@ package eu.europa.ec.digit.userdata.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.io.Serializable;
 
-@javax.persistence.Entity
+@jakarta.persistence.Entity
 @Table(name = "LEOS_SPECIAL_ENTITY")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SpecialEntity implements Serializable {
 
     private static final long serialVersionUID = -242509624358432413L;
@@ -38,31 +47,4 @@ public class SpecialEntity implements Serializable {
 
     @Column(name = "ENTITY_ORG_NAME", nullable = false)
     private String organizationName;
-
-    public SpecialEntity() {
-    }
-
-    public SpecialEntity(String id, String name, String parentId,
-                         String organizationName) {
-        this.id = id;
-        this.name = name;
-        this.parentId = parentId;
-        this.organizationName = organizationName;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getParentId() {
-        return parentId;
-    }
-
-    public String getOrganizationName() {
-        return organizationName;
-    }
 }

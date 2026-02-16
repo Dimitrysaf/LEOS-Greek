@@ -664,6 +664,8 @@ public class MetadataUtil {
 
         Optional<ApplyMetadataRequest.FieldNode> coteField = action.get().getFieldWithKey(MetadataFieldType.COTE.toString());
         Optional<ApplyMetadataRequest.FieldNode> finalCote = action.get().getFieldWithKey(MetadataFieldType.FINAL_COTE.toString());
+        Optional<ApplyMetadataRequest.FieldNode> diffusionVersionField = MetadataUtil.getDiffusionVersion(action.get());
+        String diffusionVersion = diffusionVersionField.isPresent() ? diffusionVersionField.get().getValue() : null;
         if (!coteField.isPresent() && !finalCote.isPresent()) {
             return documentFilename;
         }
@@ -672,6 +674,8 @@ public class MetadataUtil {
         }
 
         final String coteValue = coteField.get().getValue().replace(" ", "_");
+                //+(diffusionVersion != null ? diffusionVersion : "");
+
         String prefinalisationName = "";
         int pos = documentFilename.indexOf("-");
         if (pos == -1) {
@@ -687,16 +691,15 @@ public class MetadataUtil {
         if (pos == -1) {
             return documentFilename;
         }
-        String diffusionVersion = getDiffusionVersion(action.get());
         return prefinalisationName + (StringUtil.isEmpty(diffusionVersion) ? "" : "_" + diffusionVersion) + documentFilename.substring(pos);
     }
 
-    public static String getDiffusionVersion(ApplyMetadataRequest.ActionNode action) {
+    public static Optional<ApplyMetadataRequest.FieldNode> getDiffusionVersion(ApplyMetadataRequest.ActionNode action) {
         final Optional<ApplyMetadataRequest.FieldNode> optField = action.getFields()
                 .stream()
                 .filter((field) -> field.getKey().equals(MetadataFieldType.DIFFUSION_VERSION.toString()))
                 .findFirst();
-        return optField.isPresent() ? optField.get().getValue() : null;
+        return optField.isPresent() ? optField : Optional.empty();
     }
 
     public static void addRefersToAttribute(Node xmlNode, final String id) {

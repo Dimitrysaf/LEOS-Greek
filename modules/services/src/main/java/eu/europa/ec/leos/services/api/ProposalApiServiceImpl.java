@@ -25,7 +25,6 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.integration.ConValidatorService;
 import eu.europa.ec.leos.model.notification.validation.DocumentExternalValidationNotification;
 import eu.europa.ec.leos.repository.LeosRepository;
-import eu.europa.ec.leos.repository.document.ProposalRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.security.LeosPermission;
@@ -70,10 +69,11 @@ import eu.europa.ec.leos.services.validation.ValidationService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -92,34 +92,33 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
 
     private ConValidatorService conValidatorService;
 
-    public ProposalApiServiceImpl(CustomTemplateService customTemplateService,
-                                  TemplateService templateService,
-                                  WorkspaceService workspaceService,
-                                  UserService userService, CreateCollectionService createCollectionService,
-                                  ProposalService proposalService, SecurityContext securityContext,
-                                  LeosPermissionAuthorityMap authorityMap, ExportService exportService,
-                                  Provider<CollectionContextService> collectionContextProvider,
-                                  DocumentContentService documentContentService, MessageHelper messageHelper,
-                                  Provider<BillContextService> billContextProvider, PackageService packageService,
-                                  BillService billService, XmlContentProcessor xmlContentProcessor,
-                                  ArchiveService archiveService, AnnexService annexService,
-                                  CloneContext cloneContext, MilestoneService milestoneService,
-                                  ProposalConverterService proposalConverterService,
-                                  PostProcessingDocumentService postProcessingDocumentService,
-                                  ValidationService validationService, Properties applicationProperties,
-                                  ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
-                                  NotificationService notificationService, LegService legService, UserHelper userHelper,
-                                  LeosRepository leosRepository, TrackChangesContext trackChangesContext,
-                                  DocumentViewService documentViewService, ConValidatorService conValidatorService,
-                                  GenericDocumentTocApiService genericDocumentTocApiService,
-                                  CoverPageApiService coverPageApiService, ProposalDetailsService proposalDetailsService,
-                                  TemplateConfigurationService templateConfigurationService, LanguageHelper languageHelper, PackageRepository packageRepository, ProposalRepository proposalRepository) {
-        super(customTemplateService, templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap,
-                exportService, collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService,
-                xmlContentProcessor, archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService,
-                validationService, applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository,
-                trackChangesContext, documentViewService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService,
-                templateConfigurationService,languageHelper, packageRepository, proposalRepository);
+    public ProposalApiServiceImpl(CustomTemplateService customTemplateService, TemplateService templateService,
+            WorkspaceService workspaceService,
+            UserService userService, CreateCollectionService createCollectionService,
+            ProposalService proposalService, SecurityContext securityContext,
+            LeosPermissionAuthorityMap authorityMap, ExportService exportService,
+            Provider<CollectionContextService> collectionContextProvider,
+            DocumentContentService documentContentService, MessageHelper messageHelper,
+            Provider<BillContextService> billContextProvider, PackageService packageService,
+            BillService billService, XmlContentProcessor xmlContentProcessor,
+            ArchiveService archiveService, AnnexService annexService,
+            CloneContext cloneContext, MilestoneService milestoneService,
+            ProposalConverterService proposalConverterService,
+            PostProcessingDocumentService postProcessingDocumentService,
+            ValidationService validationService, @Qualifier("applicationProperties") Properties applicationProperties,
+            ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
+            NotificationService notificationService, LegService legService, UserHelper userHelper,
+            LeosRepository leosRepository, TrackChangesContext trackChangesContext,
+            DocumentViewService documentViewService, ConValidatorService conValidatorService,
+            GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
+            ProposalDetailsService proposalDetailsService, TemplateConfigurationService templateConfigurationService,
+            LanguageHelper languageHelper, PackageRepository packageRepository) {
+        super(customTemplateService, templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap, exportService,
+                collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService, xmlContentProcessor,
+                archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService, validationService,
+                applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository, trackChangesContext,
+                documentViewService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService, templateConfigurationService,
+                languageHelper, packageRepository);
         this.conValidatorService = conValidatorService;
     }
 

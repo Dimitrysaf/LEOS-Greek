@@ -67,6 +67,7 @@ export type LeosConfig = {
   searchOnMinimumCharacter: number;
   maxSearchLimit: number;
   repetitiveActsEnabled: boolean;
+  linguisticVersionsEnabled: boolean;
   languages: string[];
 };
 

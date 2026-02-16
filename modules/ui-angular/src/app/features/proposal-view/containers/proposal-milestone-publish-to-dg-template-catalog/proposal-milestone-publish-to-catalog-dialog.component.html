@@ -46,7 +46,7 @@
             <li class="dg-selection-item" *ngFor="let dg of selectedDgs; let i = index">
               <span class="chip">
                 {{ dg.label }}
-                <span class="chip-x" (click)="removeDg(i)" title="Remove">✖</span>
+                <span *ngIf = "this.defaultEntity !== dg.code"class="chip-x" (click)="removeDg(i)" title="Remove">✖</span>
               </span>
             </li>
             <li class="dg-filter-input">

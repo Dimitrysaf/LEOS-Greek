@@ -20,8 +20,10 @@ import eu.europa.ec.leos.vo.structure.OptionsType;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Pair;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.tika.Tika;
+import org.apache.tika.io.TikaInputStream;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
 import org.slf4j.Logger;
@@ -29,8 +31,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.util.UriUtils;
 
 import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.stream.XMLInputFactory;
@@ -40,6 +42,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -93,9 +96,6 @@ public class XmlHelper {
     public static final String INTRO = "intro";
     public static final String HEADING = "heading";
     public static final String NUM = "num";
-    public static final String TABLE = "table";
-    public static final String TR = "tr";
-    public static final String TD = "td";
     public static final String P = "p";
     public static final String COVERPAGE = "coverPage";
     public static final String ATTACHMENTS = "attachments";
@@ -124,6 +124,7 @@ public class XmlHelper {
     public static final String POINT = "point";
     public static final String INDENT = "indent";
     public static final String SUBPOINT = "alinea";
+    public static final String TABLE = "table";
     public static final String SUBPOINT_LABEL = "subparagraph";
     public static final String CLAUSE = "clause";
     public static final String CONCLUSIONS = "conclusions";
@@ -167,7 +168,9 @@ public class XmlHelper {
     public static final String LEOS_INITIAL_NUM = "leos:initial-num";
     public static final String LEOS_DELETABLE_ATTR = "leos:deletable";
     public static final String LEOS_EDITABLE_ATTR = "leos:editable";
-    public static final String LEOS_REPEATABLE_ATTR = "leos:repeatable";
+    public static final String LEOS_ALTERNATIVE_ATTR = "leos:alternative";
+    public static final String LEOS_OPTION_LIST_ATTR = "leos:optionlist";
+    public static final String LEOS_SELECTED_OPTION_ATTR = "leos:selectedoption";
     public static final String LEOS_REPEATED_ATTR = "leos:repeated";
     public static final String LEOS_AFFECTED_ATTR = "leos:affected";
     public static final String LEOS_CROSS_HEADING_BLOCK_NAME = "leos:name";
@@ -270,7 +273,7 @@ public class XmlHelper {
                                                                     LEVEL, CROSSHEADING, DIVISION);
     public static final List<String> ELEMENTS_TO_BE_PROCESSED_FOR_NUMBERING = Arrays.asList(ARTICLE, PARAGRAPH, SUBPARAGRAPH, POINT, SUBPOINT, INDENT, LEVEL);
     public static final List<String> ELEMENTS_TO_BE_NUMBERED = Arrays.asList(ARTICLE, PARAGRAPH, POINT, LEVEL);
-    public static final List<String> POINT_ROOT_PARENT_ELEMENTS = Arrays.asList(ARTICLE, LEVEL);
+    public static final List<String> STYLING_ELEMENTS = Arrays.asList(BOLD, ITALICS, UNDERLINE, SUP, SUB);
     public static final List<String> INLINE_ELEMENTS = Arrays.asList(AUTHORIAL_NOTE, MATHJAX, MREF, REF, BOLD, ITALICS, UNDERLINE, SUP, SUB, INLINE);
     private static final List<String> ELEMENTS_TO_REMOVE_FROM_CONTENT = Arrays.asList(INLINE, AUTHORIAL_NOTE);
     public static final List<String> ELEMENTS_TO_HIDE_CONTENT = Arrays.asList(PREFACE, PREAMBLE, CITATIONS, RECITALS, BODY, MAIN_BODY);
@@ -480,7 +483,7 @@ public class XmlHelper {
         return nodeToSkip.contains(tagName) ? true : false;
     }
 
-    private static final ArrayList<String> tagNamesToSkip = new ArrayList<String>(Arrays.asList(AKOMANTOSO, BILL, "documentCollection", "doc", "attachments"));
+    private static final ArrayList<String> tagNamesToSkip = new ArrayList<String>(Arrays.asList(AKOMANTOSO, BILL, "documentCollection", "doc", "attachments",BOLD,ITALICS,UNDERLINE,SUB,SUP));
 
     public static boolean skipNodeOnly(String tagName) {
         return tagNamesToSkip.contains(tagName) ? true : false;
@@ -871,6 +874,30 @@ public class XmlHelper {
             return false;
         }
         return pattern.matcher(fileName).matches();
+    }
+
+    public static boolean isValidFileNameForZipFile(String fileName) {
+        Pattern pattern = Pattern.compile("^[A-Za-z0-9\\.\\-_]+\\.zip$");
+        if (fileName.length() > 400) {
+            return false;
+        }
+        return pattern.matcher(fileName).matches();
+    }
+
+    public static boolean isValidSizeFileForBinaryFile(long sizeofBinaryFile) {
+        // Max 50 MB
+        if (sizeofBinaryFile > (50 * 1024 * 1024)) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean isValidMimeTypeForLegFile(byte[] binaryContent) throws IOException {
+        Tika tika = new Tika();
+        String mimeType = tika.detect(TikaInputStream.get(binaryContent));
+        List<String> allowedTypes = Arrays.asList(
+                "application/zip");
+        return allowedTypes.contains(mimeType);
     }
 
     public static boolean isValidDocumentRef(String documentRef) {

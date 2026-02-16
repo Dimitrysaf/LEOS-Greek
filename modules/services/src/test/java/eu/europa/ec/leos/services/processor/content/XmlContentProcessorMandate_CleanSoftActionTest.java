@@ -14,14 +14,14 @@
 package eu.europa.ec.leos.services.processor.content;
 
 import eu.europa.ec.leos.services.util.TestUtils;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@Ignore
+@Disabled
 public class XmlContentProcessorMandate_CleanSoftActionTest extends XmlContentProcessorProposalTest {
 
     private final static String FOLDER = "/cleanSoftActions/";

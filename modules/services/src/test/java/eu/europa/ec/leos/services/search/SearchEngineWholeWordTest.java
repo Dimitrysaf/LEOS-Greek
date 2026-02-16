@@ -11,15 +11,15 @@ import eu.europa.ec.leos.services.search.SearchEngineImpl;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
 import java.util.List;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
 
 public class SearchEngineWholeWordTest extends LeosTest {
 
     protected final static String PREFIX_SEARCH_REPLACE = "/searchReplace";
 
-    @Before
+    @BeforeEach
     public void setup() {
         super.setup();
         MockitoAnnotations.initMocks(this);
@@ -81,7 +81,7 @@ public class SearchEngineWholeWordTest extends LeosTest {
         assertThat(results.size(), is(1));
         List<ElementMatchVO> matchedElements = results.get(0).getMatchedElements();
         assertThat(matchedElements.size(), is(1));
-        assertThat(matchedElements, hasItem(new ElementMatchVO("tblock_2__heading", 13, 25)));
+        assertThat(matchedElements, hasItem(new ElementMatchVO("tblock_2__tblock_2__blockcontainer__p", 31, 43)));
 
         results = se.searchTextToReplace("subsidiarity", true, true);
 
@@ -101,13 +101,13 @@ public class SearchEngineWholeWordTest extends LeosTest {
     public void testForContent_2words_withCrossElementMatch() {
         byte[] docContent = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-crossElements.xml");
         SearchEngine se = SearchEngineImpl.forContent(docContent);
-        List<SearchMatchVO> results = se.searchTextToReplace("regulation on", false, true);
+        List<SearchMatchVO> results = se.searchTextToReplace("content simple", false, true);
 
         assertThat(results.size(), is(1));
         List<ElementMatchVO> matchedElements = results.get(0).getMatchedElements();
         assertThat(matchedElements.size(), is(2));
-        assertThat(matchedElements, hasItem(new ElementMatchVO("em_coverpage__longTitle__docTitle__p__docType", 8, 18)));
-        assertThat(matchedElements, hasItem(new ElementMatchVO("em_coverpage__longTitle__docTitle__p__docPurpose", 0, 2)));
+        assertThat(matchedElements, hasItem(new ElementMatchVO("tblock_2__tblock_2__blockcontainer__p", 7, 14)));
+        assertThat(matchedElements, hasItem(new ElementMatchVO("tblock_2__tblock_2__blockcontainer__p2", 0, 6)));
     }
     @Test
     public void testForContent_halfword_withCrossElementMatch() {
@@ -209,12 +209,12 @@ public class SearchEngineWholeWordTest extends LeosTest {
     public void testForContent_1word_withMultipleHits() {
         byte[] docContent = TestUtils.getFileContent(PREFIX_SEARCH_REPLACE + "/searchContent-multipleHits.xml");
         SearchEngine se = SearchEngineImpl.forContent(docContent);
-        List<SearchMatchVO> results = se.searchTextToReplace("Subsidiarity", false, true);
+        List<SearchMatchVO> results = se.searchTextToReplace("my search content", false, true);
 
-        assertThat(results.size(), is(4));
+        assertThat(results.size(), is(2));
         List<ElementMatchVO> matchedElements = results.get(0).getMatchedElements();
         assertThat(matchedElements.size(), is(1));
-        assertThat(matchedElements, hasItem(new ElementMatchVO("tblock_2__heading", 13, 25)));
+        assertThat(matchedElements, hasItem(new ElementMatchVO("tblock_2__tblock_2__blockcontainer__p", 8, 25)));
     }
     @Test
     public void testForContent_halfwords_withMultipleHits() {

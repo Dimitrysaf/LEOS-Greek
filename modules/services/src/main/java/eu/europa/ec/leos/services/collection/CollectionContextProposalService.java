@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 import java.io.IOException;
 import java.util.Comparator;

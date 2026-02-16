@@ -6,13 +6,16 @@ import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.api.ContributionApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
+import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
+import eu.europa.ec.leos.services.dto.request.MergeActionVO;
 import eu.europa.ec.leos.services.dto.request.SendFeedbackRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.MilestoneViewResponse;
 import eu.europa.ec.leos.services.response.DeclineContributionResponse;
 import eu.europa.ec.leos.services.response.MergeContributionResponse;
+import eu.europa.ec.leos.vo.coedition.InfoType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
@@ -35,7 +37,8 @@ public class ContributionController {
 
     @Autowired
     ContributionApiService contributionApiService;
-
+    @Autowired
+    private CoEditionContext coEditionContext;
     @Autowired
     ApiService apiService;
 
@@ -102,9 +105,13 @@ public class ContributionController {
     @PostMapping(value = "/merge-contributions/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<MergeContributionResponse> mergeContribution(@PathVariable("documentRef") String documentRef,
+                                                                       @RequestHeader("presenterId") String presenterId,
                                                                        @RequestBody ApplyContributionsRequest applyContributionsRequest) throws Exception {
         documentRef = encodeParam(documentRef);
         MergeContributionResponse mergeResult = this.contributionApiService.mergeContribution(documentRef, applyContributionsRequest);
+
+        coEditionContext.setUpdatedElements(contributionApiService.extractElementsFromMergeActions(mergeResult.getMergedContent(), applyContributionsRequest.getMergeActions()));
+        coEditionContext.sendUpdatedElements(documentRef, presenterId, InfoType.DOCUMENT_CONTRIBUTION_UPDATED);
         return ResponseEntity.ok(mergeResult);
     }
 

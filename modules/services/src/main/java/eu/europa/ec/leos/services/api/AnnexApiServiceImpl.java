@@ -20,9 +20,11 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -46,6 +48,7 @@ import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.document.AnnexService;
+import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
@@ -71,12 +74,14 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.user.UserHelper;
+import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Option;
@@ -87,7 +92,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
+
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.rmi.UnexpectedException;
 import java.time.ZoneId;
@@ -154,6 +161,10 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     LanguageGroupService languageGroupService;
     @Autowired
     DocumentLanguageContext documentLanguageContext;
+    @Autowired
+    TemplateService templateService;
+    @Autowired
+    BillService billService;
     @Autowired
     @Qualifier("applicationProperties")
     private Properties applicationProperties;
@@ -505,24 +516,50 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public DocumentViewResponse changeAnnexStructureType(String documentRef) {
+    public DocumentViewResponse changeAnnexStructureType(String documentRef) throws IOException {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        StructureContext structureContext1 = structureContext.get();
-        structureContext1.useDocumentTemplate(
+        // set initial context to search for te current type
+        StructureContext structureCtx = structureContext.get();
+        structureCtx.useDocumentTemplate(
                 annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
-        AnnexStructureType currAnnexStructureType = getStructureType(structureContext1);
-        AnnexStructureType newAnnexStructureType = (currAnnexStructureType.equals(AnnexStructureType.LEVEL))
+
+        // 1. Get bill
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(annex.getMetadata().get().getRef(),
+                Annex.class);
+        Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
+        BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
+
+        // 2. Determine current & target structure type
+        CatalogItem templateItem = templateService.getTemplateItem(metadata.getDocTemplate());
+        String originalAnnexTemplate = templateItem.getItems().get(0).getId();
+
+        AnnexStructureType currentType = getStructureType(structureCtx);
+        AnnexStructureType targetType = (currentType.equals(AnnexStructureType.LEVEL))
                 ? AnnexStructureType.ARTICLE
                 : AnnexStructureType.LEVEL;
-        String template = applicationProperties.getProperty(
-                "leos.annex." + newAnnexStructureType.getType() + ".template");
-        structureContext1.useDocumentTemplate(template);
-        AnnexContextService service = annexContext.get();
-        service.useTemplate(template);
-        service.useAnnexId(annex.getId());
-        service.useActionMessage(ContextActionService.ANNEX_STRUCTURE_UPDATED,
-                messageHelper.getMessage("operation.annex.switch." + newAnnexStructureType.getType() + ".structure"));
-        service.executeUpdateAnnexStructure();
+
+        // 3. Decide which template to use for the transformation
+        String targetTemplate;
+        if (targetType == AnnexStructureType.LEVEL) {
+            targetTemplate = originalAnnexTemplate;
+        } else {
+            String key = "leos.annex." + targetType.getType() + ".template";
+            targetTemplate = applicationProperties.getProperty(key);
+        }
+
+        // 4. Prepare context & execute transformation
+        structureCtx.useDocumentTemplate(targetTemplate);
+
+        AnnexContextService annexCtxService = annexContext.get();
+        annexCtxService.useTemplate(targetTemplate);
+        annexCtxService.useAnnexId(annex.getId());
+
+        String messageKey = "operation.annex.switch." + targetType.getType() + ".structure";
+        annexCtxService.useActionMessage(
+                ContextActionService.ANNEX_STRUCTURE_UPDATED,
+                messageHelper.getMessage(messageKey) );
+        annexCtxService.executeUpdateAnnexStructure();
+
         Annex updatedAnnex = this.annexService.findAnnexByRef(documentRef);
         return this.documentViewService.updateDocumentView(updatedAnnex);
     }

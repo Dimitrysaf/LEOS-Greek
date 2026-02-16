@@ -440,6 +440,12 @@ export class DocumentEditorComponent
     this.documentService.setVersionSearchParams(values);
   }
 
+  toggleVersionsSearchPane(){
+    this.versionSearchForm.setValue({type: 'all', author: ''});
+    this.documentService.toggleVersionsSearchPane();
+  }
+
+
   ngOnDestroy() {
     this.tocService.setIsEditMode(false);
     // called on every document view page destruction in order to avoid multiple instances of ckeditor
@@ -866,7 +872,7 @@ export class DocumentEditorComponent
       : [];
     const elemList = nodeList ? [...nodeList] : [];
     this.contributionChangesBS.next(elemList);
-    this.documentActions.existMergeChanges(this.cdkEditor.existAcceptedChanges());
+    this.documentActions.existMergeChanges(this.cdkEditor.existAcceptedChanges(), this.cdkEditor.existNotProcessedChanges());
   }
 
   private reloadComponent() {

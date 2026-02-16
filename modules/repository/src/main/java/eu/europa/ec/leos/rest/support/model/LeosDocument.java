@@ -45,6 +45,9 @@ public class LeosDocument {
 
     private String packageId;
 
+    private Date pkgLastUpdatedOn;
+    private String pkgLastUpdatedBy;
+
     private String category;
 
     private Map<String, Object> metadata = new HashMap<>();
@@ -213,6 +216,8 @@ public class LeosDocument {
         this.setCreatedOn(null);
         this.setUpdatedBy(null);
         this.setUpdatedOn(null);
+        this.setPkgLastUpdatedBy(null);
+        this.setPkgLastUpdatedOn(null);
     }
 
     public void setName(String name) {
@@ -221,6 +226,22 @@ public class LeosDocument {
 
     public String getName() {
         return name;
+    }
+
+    public Date getPkgLastUpdatedOn() {
+        return pkgLastUpdatedOn;
+    }
+
+    public void setPkgLastUpdatedOn(Date pkgLastUpdatedOn) {
+        this.pkgLastUpdatedOn = pkgLastUpdatedOn;
+    }
+
+    public String getPkgLastUpdatedBy() {
+        return pkgLastUpdatedBy;
+    }
+
+    public void setPkgLastUpdatedBy(String pkgLastUpdatedBy) {
+        this.pkgLastUpdatedBy = pkgLastUpdatedBy;
     }
 
 }

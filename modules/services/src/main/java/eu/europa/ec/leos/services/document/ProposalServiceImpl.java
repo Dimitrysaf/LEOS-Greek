@@ -61,11 +61,13 @@ import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Option;
-import lombok.AllArgsConstructor;
-import org.apache.commons.lang.StringUtils;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.support.ScopeNotActiveException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -95,10 +97,13 @@ import static eu.europa.ec.leos.services.utils.LanguageMapUtils.getTranslatedPro
 import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 import static eu.europa.ec.leos.util.LeosDomainUtil.getLeosDateFromString;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class ProposalServiceImpl implements ProposalService {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProposalServiceImpl.class);
+
+    @Value("${leos.clone.originRef}")
+    private String cloneOriginRef;
 
     protected final ProposalRepository proposalRepository;
     private final XmlNodeProcessor xmlNodeProcessor;
@@ -109,12 +114,12 @@ public abstract class ProposalServiceImpl implements ProposalService {
     private final TableOfContentProcessor tableOfContentProcessor;
     private final MessageHelper messageHelper;
     protected final TrackChangesContext trackChangesContext;
-    protected DocumentLanguageContext documentLanguageContext;
-    protected SecurityContext securityContext;
-    protected WorkflowCollaboratorService workflowCollaboratorService;
-    protected ExternalSystemACLService externalSystemACLService;
-    protected PackageService packageService;
-    protected MetadataService metadataService;
+    protected final DocumentLanguageContext documentLanguageContext;
+    protected final SecurityContext securityContext;
+    protected final WorkflowCollaboratorService workflowCollaboratorService;
+    protected final ExternalSystemACLService externalSystemACLService;
+    protected final PackageService packageService;
+    protected final MetadataService metadataService;
 
     protected static final String PROPOSAL_NAME_PREFIX = "main";
 
@@ -262,8 +267,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         proposal.getMetadata().get().setAdoptionDate(convertToDate(adoptionDateStr));
         proposal.getMetadata().get().setAdoptionPlace(detailsMetadata.get(XmlNodeConfigProcessor.ADOPTION_PLACE));
         proposal.getMetadata().get().setInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.COTE));
-        proposal.getMetadata().get().setInstitutionalReferenceFinalVersion(detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE) == null ? false :
-                detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE).equals("final"));
+        proposal.getMetadata().get().setInstitutionalReferenceFinalVersion(detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE) != null && detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE).trim().startsWith("final"));
         proposal.getMetadata().get().setInterInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE));
         return proposal;
     }
@@ -280,7 +284,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         while(matcher.find())
         {
             float verticalShift = Float.parseFloat(matcher.group().replaceAll("cm", ""));
-            return verticalShift - 7.0f;
+            return verticalShift - 4.0f;
         }
         return null;
     }
@@ -300,7 +304,8 @@ public abstract class ProposalServiceImpl implements ProposalService {
             billMetadata = xmlNodeProcessor.getValuesFromXml(billContent, new String[]{XmlNodeConfigProcessor.STAMP},
                     xmlNodeConfigProcessor.getConfig(LeosCategory.BILL));
             signatures = xmlNodeProcessor.getMultipleValuesFromXml(billContent,
-                    new String[]{XmlNodeConfigProcessor.SIGNATURE_ORG, XmlNodeConfigProcessor.SIGNATURE_ROLE, XmlNodeConfigProcessor.SIGNATURE_PERSON},
+                    new String[]{XmlNodeConfigProcessor.SIGNATURE_ORG, XmlNodeConfigProcessor.SIGNATURE_ROLE, XmlNodeConfigProcessor.SIGNATURE_PERSON,
+                            XmlNodeConfigProcessor.SIGNATURE_ORG_TC_DEL, XmlNodeConfigProcessor.SIGNATURE_ROLE_TC_DEL, XmlNodeConfigProcessor.SIGNATURE_PERSON_TC_DEL},
                     xmlNodeConfigProcessor.getConfig(LeosCategory.BILL));
         }
         metadataVO.setPackageTitle(detailsMetadata.get(XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE));
@@ -327,27 +332,38 @@ public abstract class ProposalServiceImpl implements ProposalService {
         }
         metadataVO.setAdoptionPlace(detailsMetadata.get(XmlNodeConfigProcessor.ADOPTION_PLACE));
         metadataVO.setInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.COTE));
-        metadataVO.setInstitutionalReferenceFinalVersion(detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE) == null ? false :
-                detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE).equals("final"));
+        String finalCote = detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE);
+        metadataVO.setInstitutionalReferenceFinalVersion(finalCote != null
+                && detailsMetadata.get(XmlNodeConfigProcessor.FINAL_COTE).trim().startsWith("final"));
+        metadataVO.setDiffusionVersion(finalCote != null && finalCote.contains("/") ? finalCote.substring(finalCote.indexOf("/")) : "");
         metadataVO.setInterInstitutionalReference(detailsMetadata.get(XmlNodeConfigProcessor.INTERINSTITUTIONAL_COTE));
         metadataVO.setStamp(billMetadata.get(XmlNodeConfigProcessor.STAMP) != null);
+        metadataVO.setSignatures(extractSignaturesMetadata(signatures));
+        return metadataVO;
+    }
+
+    private List<SignatureMetadata> extractSignaturesMetadata(Map<String, List<String>> signatures) {
         List<SignatureMetadata> signaturesMetadata = new ArrayList<>();
         if (signatures != null) {
-            List<String> signaturesOrg = signatures.get(XmlNodeConfigProcessor.SIGNATURE_ORG);
-            List<String> signaturesRole = signatures.get(XmlNodeConfigProcessor.SIGNATURE_ROLE);
-            List<String> signaturesPerson = signatures.get(XmlNodeConfigProcessor.SIGNATURE_PERSON);
-            for (int index = 0; signaturesOrg != null && index < signaturesOrg.size(); index++) {
+            List<String> signaturesOrg = getSignatureList(signatures, XmlNodeConfigProcessor.SIGNATURE_ORG, XmlNodeConfigProcessor.SIGNATURE_ORG_TC_DEL);
+            List<String> signaturesRole = getSignatureList(signatures, XmlNodeConfigProcessor.SIGNATURE_ROLE, XmlNodeConfigProcessor.SIGNATURE_ROLE_TC_DEL);
+            List<String> signaturesPerson = getSignatureList(signatures, XmlNodeConfigProcessor.SIGNATURE_PERSON, XmlNodeConfigProcessor.SIGNATURE_PERSON_TC_DEL);
+            int size = Math.max(Math.max(signaturesOrg.size(), signaturesRole.size()), signaturesPerson.size());
+            for (int index = 0; index < size; index++) {
                 SignatureMetadata signatureMetadata = new SignatureMetadata();
-                signatureMetadata.setSpecialMention(signaturesOrg.get(index) != null ? signaturesOrg.get(index).replaceAll("~","") : null);
+                signatureMetadata.setSpecialMention(index < signaturesOrg.size() && signaturesOrg.get(index) != null ? signaturesOrg.get(index).replaceAll("~","") : null);
                 signatureMetadata.setCommissionerTitle(index < signaturesRole.size() && signaturesRole.get(index) != null ? signaturesRole.get(index).replaceAll("~","") : null);
                 signatureMetadata.setSigningCommissioner(index < signaturesPerson.size() ? signaturesPerson.get(index) : null);
                 signaturesMetadata.add(signatureMetadata);
             }
         }
-        if(!signaturesMetadata.isEmpty()) {
-            metadataVO.setSignatures(signaturesMetadata);
-        }
-        return metadataVO;
+        return signaturesMetadata;
+    }
+
+    private List<String> getSignatureList(Map<String, List<String>> signatures, String key, String delKey) {
+        List<String> result = signatures.getOrDefault(key, new ArrayList<>());
+        signatures.getOrDefault(delKey, new ArrayList<>()).forEach(result::remove);
+        return result;
     }
 
     private Date convertToDate(String dateStr) {
@@ -483,12 +499,14 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 String legFileName = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneOriginalMilestone(), true);
                 String iscRef = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneIscRef(), true);
                 String clonedFromObjectId = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneObjectId(), true);
+                boolean isExternalClone = !Strings.CS.equals(cloneOriginRef, iscRef);
 
                 cloneProposalMetadataVO.setClonedFromRef(clonedFromRef);
                 cloneProposalMetadataVO.setClonedFromObjectId(clonedFromObjectId);
                 cloneProposalMetadataVO.setLegFileName(legFileName);
                 cloneProposalMetadataVO.setOriginRef(iscRef);
                 cloneProposalMetadataVO.setClonedProposal(true);
+                cloneProposalMetadataVO.setExternalClone(isExternalClone);
             }
         } catch (Exception e) {
             LOG.error("Error occurred while evaluation xpath expression", e);
@@ -796,6 +814,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 || Boolean.FALSE.equals(request.getInstitutionalReferenceFinalVersion()))) {
             fields.add(new MetadataOptions.FieldNode("cote", request.getInstitutionalReference()));
         }
+        if (request.getDiffusionVersion() != null) {
+            fields.add(new MetadataOptions.FieldNode("diffusionVersion", request.getDiffusionVersion()));
+        }
         if (request.getInstitutionalReference() != null
                 && request.getInstitutionalReferenceFinalVersion() != null
                 && Boolean.TRUE.equals(request.getInstitutionalReferenceFinalVersion())) {
@@ -818,6 +839,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
             }
             fields.add(new MetadataOptions.FieldNode("corrigendumAddendum", collectionToJson(corrigendumAddendumMetadata)));
         }
+
         metadataOptions.addTask(legFileName, proposal, fields);
         return metadataOptions;
     }

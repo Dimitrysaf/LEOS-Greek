@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.support.url;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
@@ -10,7 +11,7 @@ public class CollectionUrlBuilder {
 
     private Properties applicationProperties;
 
-    public CollectionUrlBuilder(Properties applicationProperties) {
+    public CollectionUrlBuilder(@Qualifier("applicationProperties") Properties applicationProperties) {
         this.applicationProperties = applicationProperties;
     }
 

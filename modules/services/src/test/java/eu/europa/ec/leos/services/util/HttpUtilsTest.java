@@ -1,8 +1,9 @@
 package eu.europa.ec.leos.services.util;
 
 import eu.europa.ec.leos.services.utils.HttpUtils;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 
@@ -17,7 +18,7 @@ public class HttpUtilsTest {
     @Test
     public void test_extractSystemClientIdFromToken() {
         final Optional<String> systemClientId = HttpUtils.extractSystemClientIdFromAuthorizationHeader(mockToken);
-        Assert.assertTrue(systemClientId.isPresent());
+        assertTrue(systemClientId.isPresent());
         assertThat(systemClientId.get(), is(equalTo("ngLeosClientId")));
     }
 }

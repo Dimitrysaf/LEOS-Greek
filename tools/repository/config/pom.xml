@@ -21,7 +21,7 @@
     <parent>
         <groupId>eu.europa.ec.leos</groupId>
         <artifactId>repository</artifactId>
-        <version>5.5.0-SNAPSHOT</version>
+        <version>5.4.0-SNAPSHOT</version>
     </parent>
 
     <groupId>eu.europa.ec.leos.repository</groupId>
@@ -39,8 +39,8 @@
         </dependency>
         <!-- Security framework -->
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
     </dependencies>
 

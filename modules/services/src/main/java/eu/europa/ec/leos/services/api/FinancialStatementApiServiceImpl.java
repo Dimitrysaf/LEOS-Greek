@@ -3,7 +3,6 @@ package eu.europa.ec.leos.services.api;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
@@ -15,7 +14,6 @@ import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
-import eu.europa.ec.leos.services.ai.AIService;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
@@ -40,13 +38,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
 
 @Service
 public class FinancialStatementApiServiceImpl implements FinancialStatementApiService {
@@ -76,8 +72,6 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     GenericDocumentApiService genericDocumentApiService;
     @Autowired
     TemplateConfigurationService templateConfigurationService;
-    @Autowired
-    AIService aiService;
 
     @Override
     public boolean toggleTrackChangeEnabled(boolean isTrackChangeEnabled, String documentRef) {
@@ -260,22 +254,8 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     }
 
     @Override
-    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType trackChangeAction, String presenterId) throws Exception {
-        String op = "accepted";
-        String msg = "operation.element.track.change." + trackChangeAction.getTrackChangeAction() + "." + op;
-
-        FinancialStatement financialStatement = this.financialStatementService.findFinancialStatementByRef(documentRef);
-        this.setStructureContext(financialStatement.getMetadata().getOrError(() -> FINANCIAL_STATEMENT_METADATA_IS_REQUIRED).getDocTemplate());
-        documentLanguageContext.setDocumentLanguage(financialStatement.getMetadata().get().getLanguage());
-        byte[] newXmlContent = trackChangesProcessor.acceptChange(financialStatement, elementId, trackChangeAction);
-        this.structureContext.get().useDocumentTemplate(financialStatement.getMetadata().getOrError(() -> "Document metadata is required!").getDocTemplate());
-
-        final String updatedLabel = generateLabel(elementId, financialStatement);
-        final String comment = messageHelper.getMessage(msg, updatedLabel);
-        financialStatement = financialStatementService.updateFinancialStatement(financialStatement, newXmlContent, comment);
-
-        trackChangesProcessor.handleCoEdition(newXmlContent, documentRef, elementId, elementTagName, trackChangeAction, presenterId, false);
-        return documentViewService.updateDocumentView(financialStatement);
+    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType, String presenterId) throws Exception {
+        return null;
     }
 
     @Override
@@ -295,11 +275,6 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
 
         trackChangesProcessor.handleCoEdition(newXmlContent, documentRef, elementId, elementTagName, trackChangeAction, presenterId, false);
         return documentViewService.updateDocumentView(financialStatement);
-    }
-
-    @Override
-    public DocumentViewResponse prefillDigitalDimensionsLFDS(final String proposalRef, final String analysisType) throws Exception {
-        return documentViewService.updateDocumentView(aiService.prefillDigitalDimensionsLFDS(proposalRef, analysisType));
     }
 
     private void setStructureContext(String docTemplate) {

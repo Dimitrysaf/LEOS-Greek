@@ -5,6 +5,8 @@ import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.model.action.ContributionVO;
+import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.services.dto.request.MergeActionVO;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,4 +22,6 @@ public interface ContributionService {
                                         byte[] xmlContent) throws Exception;
 
     <T extends LeosDocument> T findVersionByVersionedReference(String versionedReference, Class<T> filterType);
+
+    List<Element> extractElementsFromMergeActions(byte[] xmlContent, List<MergeActionVO> mergeActions);
 }

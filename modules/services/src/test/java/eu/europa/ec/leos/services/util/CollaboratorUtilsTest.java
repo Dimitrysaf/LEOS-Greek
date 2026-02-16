@@ -1,18 +1,11 @@
 package eu.europa.ec.leos.services.util;
 
 import eu.europa.ec.leos.model.user.Collaborator;
-import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.services.utils.CollaboratorUtils;
-import eu.europa.ec.leos.services.utils.HttpUtils;
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.util.Optional;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 
 public class CollaboratorUtilsTest {
 

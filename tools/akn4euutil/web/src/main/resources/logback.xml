@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration debug="false" scan="true" scanPeriod="5 minutes">
 
-    <property resource="application.properties" />
+    <property name="leos.log.contextName" value="${leos.log.contextName:-akn4euutils}"/>
+    <property name="leos.log.path" value="${leos.log.path:-./logs}"/>
+    <property name="leos.log.filePrefix" value="${leos.log.filePrefix:-akn4euutils}"/>
+    <property name="leos.log.level" value="${leos.log.level:-INFO}"/>
+
     <!-- Ignore or print logback internal status messages on the console -->
     <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
     <!--<statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener"/>-->
@@ -11,33 +15,30 @@
         <resetJUL>true</resetJUL>
     </contextListener>
 
-    <contextName>${leos.log.contextName}</contextName>
+    <property name="akn4eu.log.contextName" value="akn4euutils"/>
+    <property name="akn4eu.log.path" value="./logs"/>
+    <property name="akn4eu.log.filePrefix" value="customer_application_akn4euutils"/>
+    <property name="akn4eu.log.level" value="${akn4eu.log.level:-INFO}"/>
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%-5level] %logger{36} .%M:%L - %msg%n%rEx</pattern>
-        </encoder>
-    </appender>
+    <contextName>${akn4eu.log.contextName}</contextName>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- daily rollover -->
-            <fileNamePattern>${leos.log.path}/${leos.log.filePrefix}-%d{yyyy-MM-dd}.log</fileNamePattern>
-            <!-- keep 15 days' worth of history -->
-            <maxHistory>15</maxHistory>
+        <file>${akn4eu.log.path}/${akn4eu.log.filePrefix}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${akn4eu.log.filePrefix}-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+            <maxFileSize>1MB</maxFileSize>
+            <maxHistory>0</maxHistory>
+            <totalSizeCap>0</totalSizeCap>
         </rollingPolicy>
         <append>true</append>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%-5level] %logger{36} .%M:%L - %msg%n%rEx</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [${akn4eu.log.contextName}] %logger{36} .%M:%L - %msg%n%rEx</pattern>
         </encoder>
     </appender>
 
-    <logger name="eu.europa.ec.digit.leos" level="${leos.log.level}"/>
+    <logger name="eu.europa.ec.digit.leos" level="${akn4eu.log.level:-INFO}"/>
 
-    <logger name="freemarker" level="WARN"/>
-
-    <root level="${leos.log.level}">
-        <appender-ref ref="STDOUT"/>
+    <root level="${akn4eu.log.level:-INFO}">
         <appender-ref ref="FILE"/>
     </root>
 </configuration>

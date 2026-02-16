@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.repository.entities;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

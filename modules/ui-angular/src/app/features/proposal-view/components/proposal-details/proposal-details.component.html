@@ -159,7 +159,7 @@
     </eui-card>
   </div>
 
-  <div class="col-md-1 d-flex align-items-start pt-2">
+  <div class="col-md-1 d-flex align-items-start pt-2 sticky">
     <button euiButton euiPrimary (click)="saveGeneralDetails()" [disabled]="!enableSave">
       {{ 'global.actions.save' | translate }}
     </button>
@@ -241,14 +241,14 @@
                 </select>
                 (<select euiSelect [(ngModel)]="institutionalRefYear" (ngModelChange)="handleChange()" name="institutionalRefYear" id="institutionalRefYear"
                          class="details-tab-select" [disabled]="!institutionalRef">
-                  <option *ngFor="let institutionalRefYear of years">{{ institutionalRefYear }}</option>
-                </select>)
-                <input type="number"
+                <option *ngFor="let institutionalRefYear of years">{{ institutionalRefYear }}</option>
+              </select>)
+                <input type="text" (keypress)="this.checkInstitutionalNumberInput($event)"
                        [(ngModel)]="institutionalRefNumber"
                        (ngModelChange)="handleChange()"
                        [disabled]="!institutionalRef"
                        class="details-tab-text"/>
-                <div *ngIf="!isInstitutionalRefValid()" class="tooltip">
+                <div *ngIf="!isInstitutionalRefValid() || this.invalidInstitutionalNumberInput" class="tooltip">
                   {{ this.getInstitutionalRefNonValidMsg() }}
                 </div>
 
@@ -262,6 +262,29 @@
                 />
                 <label
                   class="details-tab-inline">{{'page.collection.details.institutional.reference.final' | translate}}</label>
+              </div>
+            </div>
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-diffusion-bar">
+              <label
+                euiLabel
+                translate="page.collection.details.diffusion.bar"
+              ></label>
+            </div>
+            <div euiInputGroup class="eui-u-width-auto grid-adoption-info-diffusion-bar-input">
+              <div class="adoption-info-institutional-reference">
+                <select
+                  euiSelect
+                  [(ngModel)]="diffusionVersion"
+                  (ngModelChange)="handleChange()"
+                  [disabled]="!institutionalRef"
+                  name="institutionalDiffusionBar"
+                  id="institutionalDiffusionBar"
+                  class="details-tab-first-select">
+                  <option value="">(none)</option>
+                  <option *ngFor="let option of diffusionBarOptions" [ngValue]="option">
+                    {{ option }}
+                  </option>
+                </select>
               </div>
             </div>
             <div euiInputGroup class="eui-u-width-auto grid-adoption-info-institutional-reference-version" *ngIf="false && !greffeUser">
@@ -295,7 +318,7 @@
                         [disabled]="!interInstitutionalRef">
                   <option *ngFor="let interInstitutionalRefYear of years">{{ interInstitutionalRefYear }}</option>
                 </select>/
-                <input type="number"
+                <input type="text" (keypress)="this.checkInterInstitutionalNumberInput($event)"
                        [(ngModel)]="interInstitutionalRefNumber"
                        (ngModelChange)="handleChange()"
                        [disabled]="!interInstitutionalRef"
@@ -303,8 +326,8 @@
                 (<select euiSelect [(ngModel)]="interInstitutionalRefType" (ngModelChange)="handleChange()" name="interInstitutionalRefType"
                          id="interInstitutionalRefType"
                          class="details-tab-select" [disabled]="!interInstitutionalRef">
-                  <option *ngFor="let interInstitutionalRefType of interInstitutionalRefTypes">{{ interInstitutionalRefType }}</option>
-                </select>)
+                <option *ngFor="let interInstitutionalRefType of interInstitutionalRefTypes">{{ interInstitutionalRefType }}</option>
+              </select>)
                 <div *ngIf="invalidInterInstitutionalNumberInput" class="tooltip">
                   {{ this.getInterInstitutionalRefNonValidMsg() }}
                 </div>
@@ -321,7 +344,7 @@
                         class="details-tab-first-select-250" [disabled]="false">
                   <option *ngFor="let specialMention of specialMentions" [value]="specialMention">{{
                       'page.collection.details.adoption.special.mention.' +
-                  specialMention.toLowerCase() | translate }}</option>
+                      specialMention.toLowerCase() | translate }}</option>
                 </select>
               </div>
               <div euiInputGroup class="eui-u-width-auto grid-adoption-info-commissioner-title">
@@ -336,8 +359,8 @@
                         id="commissionerTitle"
                         class="details-tab-first-select-250"
                         required [disabled]="false">
-                <option *ngFor="let commissionerTitle of commissionerTitles" [value]="commissionerTitle">{{
-                    'page.collection.details.adoption.commissioner.title.' + commissionerTitle.toLowerCase() | translate }}</option>
+                  <option *ngFor="let commissionerTitle of commissionerTitles" [value]="commissionerTitle">{{
+                      'page.collection.details.adoption.commissioner.title.' + commissionerTitle.toLowerCase() | translate }}</option>
                 </select>
               </div>
               <div euiInputGroup class="eui-u-width-auto grid-adoption-info-signing-commissioner">
@@ -583,11 +606,11 @@
                   <select #targetProposalReferenceYearElt euiSelect [required]="showCorrigendumAddendum" [(ngModel)]="targetProposalReferenceYear"
                           (ngModelChange)="handleChange()"
                           name="targetProposalReferenceYear" id="targetProposalReferenceYear"
-                           class="details-tab-select">
+                          class="details-tab-select">
                     <option *ngFor="let targetProposalReferenceYear of years">{{ targetProposalReferenceYear }}</option>
                   </select>
                   <label style="font-size: x-large; margin-top: 5px;">)</label>
-                  <input type="number"
+                  <input type="text" (keypress)="this.checkTargetProposalNumberInput($event)"
                          [(ngModel)]="targetProposalReferenceNumber"
                          (ngModelChange)="handleChange()"
                          [required]="showCorrigendumAddendum"
@@ -713,46 +736,51 @@
       </eui-card-header>
       <eui-card-content>
         <div class="row details-gen-rows">
-          <div class="col-sm-8 label-column inline-field-group">
-            <label style="font-weight: bold;">{{'{'}}</label>
-            <select [(ngModel)]="selectedProposalRefType" class="details-tab-first-select" >
-              <option *ngFor="let type of proposalRefTypeList" [value]="type">
-                {{ type }}
-              </option>
-            </select>
-            <label style="font-weight: bold;">{{'('}}</label>
+          <div class="col-sm-12 label-column">
+            <div class="inline-field-group" style="display: flex; align-items: center; flex-wrap: nowrap; white-space: nowrap;">
+              <label style="font-weight: bold;">{{'{'}}</label>
+              <select [(ngModel)]="selectedProposalRefType" class="details-tab-first-select" >
+                <option *ngFor="let type of proposalRefTypeList" [value]="type">
+                  {{ type }}
+                </option>
+              </select>
+              <label style="font-weight: bold;">{{'('}}</label>
 
-            <select [(ngModel)]="selectedYear" class="year-selector details-tab-select" size="1">
-              <option *ngFor="let year of years" [value]="year">{{ year }}</option>
-            </select>
+              <select [(ngModel)]="selectedYear" class="year-selector details-tab-select" size="1">
+                <option *ngFor="let year of years" [value]="year">{{ year }}</option>
+              </select>
 
-            <label style="font-weight: bold;">{{')'}}</label>
+              <label style="font-weight: bold;">{{')'}}</label>
 
-            <input
-              id="cross-ref-number"
-              [(ngModel)]="crossReferenceProposalNumber"
-              type="text"
-              (keypress)="checkCrossRefNumberInput($event)"
-              euiInputText
-              class="eui-input-text--clearable eui-input-text small-textarea"
-            />
-            <div *ngIf="invalidCrossRefNumberInput" class="tooltip">
-            {{ 'page.collection.details.invalid.number.label' | translate}}
+              <input
+                id="cross-ref-number"
+                [(ngModel)]="crossReferenceProposalNumber"
+                type="text"
+                (input)="checkCrossRefNumberInput($event)"
+                (keypress)="preventInvalidChars($event)"
+                placeholder="Reference Number"
+                euiInputText
+                class="eui-input-text--clearable eui-input-text small-textarea"
+              />
+              <div *ngIf="invalidCrossRefNumberInput" class="tooltip" style="display: inline-block; margin: 0 5px; white-space: nowrap;">
+                {{ crossRefErrorKey | translate }}
+              </div>
+
+              <input
+                id="cross-ref-text"
+                [(ngModel)]="crossReferenceProposalText"
+                type="text"
+                placeholder="Reference Text"
+                euiInputText
+                class="eui-input-text--clearable eui-input-text small-textarea"
+              />
+
+              <label style="font-weight: bold;">{{'}'}}</label>
+
+              <button (click)="addCrossRef()" [disabled]="!enableAddCrossRef()" class="cross-ref-edit-button">
+                <span class="eui-icon eui-icon-add"></span>
+              </button>
             </div>
-
-            <input
-              id="cross-ref-text"
-              [(ngModel)]="crossReferenceProposalText"
-              type="text"
-              euiInputText
-              class="eui-input-text--clearable eui-input-text small-textarea"
-            />
-
-            <label style="font-weight: bold;">{{'}'}}</label>
-
-            <button (click)="addCrossRef()" [disabled]="!enableAddCrossRef()" class="cross-ref-edit-button">
-              <span class="eui-icon eui-icon-add"></span>
-            </button>
           </div>
         </div>
         <div class="row details-gen-rows">

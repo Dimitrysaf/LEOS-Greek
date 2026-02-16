@@ -34,10 +34,11 @@ import eu.europa.ec.leos.services.validation.handlers.AkomantosoXsdValidator;
 import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -47,7 +48,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -81,8 +82,8 @@ public abstract class SaveTocTest_IT extends LeosTest {
     protected StructureContext structureContext;
     @Mock
     protected TemplateStructureService templateStructureService;
-    @InjectMocks
-    private LanguageHelper languageHelper = Mockito.spy(new LanguageHelper());
+    @Spy
+    private LanguageHelper languageHelper = new LanguageHelper();
     @Mock
     private eu.europa.ec.leos.security.SecurityContext leosSecurityContext;
     @Mock
@@ -120,7 +121,7 @@ public abstract class SaveTocTest_IT extends LeosTest {
     protected Map<TocItem, List<TocItem>> tocRules;
     protected Map<String, List<String>> languageMap = new HashMap<>();
 
-    @Before
+    @BeforeEach
     public void onSetUp() throws Exception {
         languageMap.put("greek", Arrays.asList("el"));
         languageMap.put("latin", Arrays.asList("cs", "da", "de", "en", "es", "et", "fi", "fr", "ga", "hr", "hu", "it", "lt", "lv", "mt", "nl", "pl", "pt", "ro", "sk", "sl", "sv"));

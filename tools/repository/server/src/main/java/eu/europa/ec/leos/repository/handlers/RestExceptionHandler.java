@@ -14,7 +14,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<?> dataNotFoundExceptionHandling(ResponseStatusException exception) {
-        return new ResponseEntity<>(new ExceptionResponse(exception.getMessage(), ExceptionResponse.ExceptionType.WARNING),exception.getStatus());
+        return new ResponseEntity<>(new ExceptionResponse(exception.getMessage(), ExceptionResponse.ExceptionType.WARNING),exception.getStatusCode());
     }
 
     @ExceptionHandler(RepositoryException.class)

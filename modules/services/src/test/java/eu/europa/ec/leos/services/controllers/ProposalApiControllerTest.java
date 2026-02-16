@@ -4,14 +4,13 @@ import eu.europa.ec.leos.integration.ConValidatorService;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.api.CoverPageApiService;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.MockitoAnnotations;
 
-@RunWith(MockitoJUnitRunner.class)
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class ProposalApiControllerTest {
 
     @Mock
@@ -20,20 +19,23 @@ public class ProposalApiControllerTest {
     private ApiService apiService;
     @Mock
     private ConValidatorService conValidatorService;
-    @Mock
-    private CoverPageApiService coverPageApiService;
-    @InjectMocks
     private ProposalApiController proposalApiController;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+        proposalApiController = new ProposalApiController(apiService, financialStatementService, conValidatorService);
+    }
 
     @Test
     public void createFinancialStatement() {
         this.proposalApiController.createFinancialStatement("proposalRef");
-        Assert.assertTrue(true);
+        assertTrue(true);
     }
 
     @Test
     public void deleteFinancialStatement() {
         this.proposalApiController.deleteFinancialStatement("proposalRef", "finStateRef");
-        Assert.assertTrue(true);
+        assertTrue(true);
     }
 }

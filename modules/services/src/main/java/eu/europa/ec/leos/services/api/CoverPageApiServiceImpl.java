@@ -81,7 +81,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -223,15 +223,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
 
             proposal = proposalService.updateProposal(proposal, newXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.docpurpose.updated"));
 
-            CollectionContextService context = proposalContextProvider.get();
-            context.useProposal(proposal);
-            context.usePurpose(docPurpose);
-            context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
-            String comment = messageHelper.getMessage("operation.docpurpose.updated");
-            context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
-            context.useActionComment(comment);
-            context.useVersionType(VersionType.MINOR);
-            context.executeUpdateDocumentsAssociatedToProposal();
+            this.contextExecuteUpdateDocumentsAssociatedToProposal(proposal, docPurpose);
 
             String newContent = elementProcessor.getElement(proposal, elementName, elementId);
             return new SaveCoverPageElementResponse(elementId, elementName, newContent, proposal.getTitle());
@@ -309,7 +301,27 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         byte[] resultXmlContent = getContent(targetVersion);
         Proposal updatedProposal = proposalService.updateProposal(sourceVersion, resultXmlContent, VersionType.MINOR,
                 messageHelper.getMessage("operation.restore.version", targetVersion.getVersionLabel()));
+
+        byte[] proposalContent = updatedProposal.getContent().get().getSource().getBytes();
+        List<Element> docPurposeElements = xmlContentProcessor.getElementsByTagName(proposalContent,
+                Arrays.asList("docPurpose"), true);
+        String elementFragment = docPurposeElements.get(0).getElementFragment();
+        String docPurpose = proposalService.getPurposeFromXml(elementFragment.getBytes());
+        this.contextExecuteUpdateDocumentsAssociatedToProposal(updatedProposal,  docPurpose);
+
         return this.documentViewService.updateDocumentView(updatedProposal);
+    }
+
+    private void contextExecuteUpdateDocumentsAssociatedToProposal(Proposal proposal, String docPurpose) {
+        CollectionContextService context = proposalContextProvider.get();
+        context.useProposal(proposal);
+        context.usePurpose(docPurpose);
+        context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
+        String comment = messageHelper.getMessage("operation.docpurpose.updated");
+        context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
+        context.useActionComment(comment);
+        context.useVersionType(VersionType.MINOR);
+        context.executeUpdateDocumentsAssociatedToProposal();
     }
 
     @Override

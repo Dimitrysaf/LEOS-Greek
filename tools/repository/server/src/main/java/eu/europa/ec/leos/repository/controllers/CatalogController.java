@@ -16,11 +16,6 @@ package eu.europa.ec.leos.repository.controllers;
 import eu.europa.ec.leos.repository.model.CustomTemplateInfo;
 import eu.europa.ec.leos.repository.exceptions.CatalogException;
 import eu.europa.ec.leos.repository.services.CatalogService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +29,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-@Tag(name = "Catalog API", description = "Catalog API")
 public class CatalogController {
 
     @Autowired
@@ -42,10 +36,6 @@ public class CatalogController {
 
     @PostMapping(path = "/catalog/publish-template",
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "Publish a custom template")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Template published successfully", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<Object> publishCustomTemplate(
             @RequestParam String legFileId,
             @RequestParam String templateName,
@@ -58,10 +48,6 @@ public class CatalogController {
 
     @PostMapping(path = "/catalog/update-template",
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "Update custom template name and Visibility")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Template updated successfully", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<Object> updateCustomTemplate(
             @RequestParam String packageId,
             @RequestParam String templateName,
@@ -74,10 +60,6 @@ public class CatalogController {
 
     @PostMapping(path = "/catalog/un-publish-template",
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "un-publish custom template")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Template unpublished successfully", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<Boolean> updateCustomTemplate(
             @RequestParam String packageId,
             @RequestParam String userId) throws CatalogException {
@@ -87,10 +69,6 @@ public class CatalogController {
 
     @GetMapping(path = "/catalog/template/{packageId}",
             produces = {MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "Get template information by package ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Template information retrieved successfully", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
-            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<CustomTemplateInfo> getTemplateInfo(@PathVariable BigDecimal packageId) throws CatalogException {
         CustomTemplateInfo templateInfo = catalogService.getTemplateInfo(packageId);
         return ResponseEntity.ok(templateInfo);

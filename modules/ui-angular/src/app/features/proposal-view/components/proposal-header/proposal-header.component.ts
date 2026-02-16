@@ -41,6 +41,7 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy, OnChanges {
   @Input() proposalLanguage!: string;
   @Input() documentCollectionName!: string;
   @Input() customTemplateAct: boolean;
+  @Input() translatedLanguages: string[];
   @Input() isPublished: boolean;
 
   title: string;

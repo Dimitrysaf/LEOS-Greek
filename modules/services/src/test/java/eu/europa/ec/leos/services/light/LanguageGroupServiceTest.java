@@ -8,8 +8,8 @@ import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.test.support.LeosTest;
 import io.atlassian.fugue.Option;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,7 +35,7 @@ public class LanguageGroupServiceTest extends LeosTest {
     @InjectMocks
     private LanguageGroupService languageGroupService;
 
-    @Before
+    @BeforeEach
     public void init() {
         byte[] bytesFile = getFileContent("/light/languageGroupTest.xml");
         Content content = mock(Content.class);

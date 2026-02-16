@@ -28,19 +28,20 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
+        <version>3.5.7</version>
         <relativePath/>
     </parent>
 
     <properties>
+        <buildnumber-maven-plugin.version>3.2.0</buildnumber-maven-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
-        <wagon-ftp-extension.version>2.2</wagon-ftp-extension.version>
-        <commons-io.version>2.7</commons-io.version>
-        <tomcat.version>9.0.36</tomcat.version>
-        <lombok.version>1.18.34</lombok.version>
+        <java.version>21</java.version>
+        <wagon-ftp-extension.version>3.5.3</wagon-ftp-extension.version>
+        <commons-io.version>2.21.0</commons-io.version>
+        <lombok.version>1.18.38</lombok.version>
         <cuid.version>0.1.1</cuid.version>
+        <xalan.version>2.7.3</xalan.version>
     </properties>
 
     <modules>
@@ -50,6 +51,29 @@
     </modules>
 
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>${buildnumber-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>build-timestamp</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create-timestamp</goal>
+                        </goals>
+                        <configuration>
+                            <timestampPropertyName>buildnumber.timestamp</timestampPropertyName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
         <extensions>
             <!-- Enabling the use of FTP for deployment -->
             <extension>

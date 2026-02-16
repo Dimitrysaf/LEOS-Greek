@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.repository.controllers.requests;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 public class CreatePackageRequest {
     private Boolean isCloned;

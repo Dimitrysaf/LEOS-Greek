@@ -178,7 +178,9 @@ public class LeosDocumentExtensions {
                 getClonedMilestoneId(d),
                 getContributionStatus(d),
                 isTrackChangesEnabled(d),
-                getValidationStatus(d));
+                getValidationStatus(d),
+                getPackageLastUpdatedOn(d),
+                getPackageLastUpdatedBy(d));
     }
 
     private static Explanatory toCouncilExplanatory(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
@@ -546,5 +548,18 @@ public class LeosDocumentExtensions {
 
     private static String getValidationStatus(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
         return document.getValidationStatus();
+    }
+
+    private static Instant getPackageLastUpdatedOn(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
+        if (document.getPkgLastUpdatedOn() != null) {
+            GregorianCalendar packageDate = new GregorianCalendar();
+            packageDate.setTime(document.getPkgLastUpdatedOn());
+            return packageDate.toInstant();
+        }
+        return null;
+    }
+
+    private static String getPackageLastUpdatedBy(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
+        return document.getPkgLastUpdatedBy();
     }
 }

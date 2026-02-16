@@ -2,7 +2,7 @@ package eu.europa.ec.leos.services.compare;
 
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.test.support.LeosTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -10,7 +10,7 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_N
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE_COMPARE_ADDED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE_COMPARE_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LeosComparatorImplTest extends LeosTest {
 

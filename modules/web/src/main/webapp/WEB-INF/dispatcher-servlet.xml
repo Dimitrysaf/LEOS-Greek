@@ -9,12 +9,15 @@
 
     <mvc:annotation-driven/>
 
+
     <context:component-scan base-package="eu.europa.ec.leos.services.controllers" />
 
     <mvc:default-servlet-handler/>
 
-    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <property name="maxUploadSize" value="20971520"/>
-    </bean>
+<!--    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">-->
+<!--        <property name="maxUploadSize" value="20971520"/>-->
+<!--    </bean>-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>
+
 
 </beans>

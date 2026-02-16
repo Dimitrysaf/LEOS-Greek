@@ -92,7 +92,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     private loadingService: LoadingService,
     private environmentService: EnvironmentService,
     private setEditorOpenState: (state: EditorOpenState) => void,
-    private actionManagerConnector: ActionManagerConnector,
+    private actionManagerConnector: ActionManagerConnector
   ) {
     super(
       {
