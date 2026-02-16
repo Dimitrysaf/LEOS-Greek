@@ -316,6 +316,146 @@ define(function leosTrackChangesTableModule(require) {
             editor.focus();
         },
 
+        deleteColumns: function ( selection, editor ) {
+            function processSelection( selection ) {
+                // If selection leak to next td/th cell, then preserve it in previous cell.
+
+                var ranges,
+                    range,
+                    endNode,
+                    endNodeName,
+                    previous;
+
+                ranges = selection.getRanges();
+                if ( ranges.length !== 1 ) {
+                    return selection;
+                }
+
+                range = ranges[0];
+                if ( range.collapsed || range.endOffset !== 0 ) {
+                    return selection;
+                }
+
+                endNode = range.endContainer;
+                endNodeName = endNode.getName().toLowerCase();
+                if ( !( endNodeName === 'td' || endNodeName === 'th' ) ) {
+                    return selection;
+                }
+
+                // Get previous td/th element or the last from previous row.
+                previous = endNode.getPrevious();
+                if ( !previous ) {
+                    previous = endNode.getParent().getPrevious().getLast();
+                }
+
+                // Get most inner text node or br in case of empty cell.
+                while ( previous.type !== CKEDITOR.NODE_TEXT && previous.getName().toLowerCase() !== 'br' ) {
+                    previous = previous.getLast();
+                    // Generraly previous should never be null, if statement is just for possible weird edge cases.
+                    if ( !previous ) {
+                        return selection;
+                    }
+                }
+
+                range.setEndAt( previous, CKEDITOR.POSITION_BEFORE_END );
+                return range.select();
+            }
+
+            // Problem occures only on webkit in case of native selection (#577).
+            // Upstream: https://bugs.webkit.org/show_bug.cgi?id=175131, https://bugs.chromium.org/p/chromium/issues/detail?id=752091
+            if ( CKEDITOR.env.webkit && !selection.isFake ) {
+                selection = processSelection( selection );
+            }
+
+            var ranges = selection.getRanges(),
+                cells = this.getSelectedCells( selection ),
+                firstCell = cells[ 0 ],
+                lastCell = cells[ cells.length - 1 ],
+                table = firstCell.getAscendant( 'table' ),
+                map = CKEDITOR.tools.buildTableMap( table ),
+                startColIndex, endColIndex,
+                rowsToDelete = [];
+
+            selection.reset();
+
+            // Figure out selected cells' column indices.
+            for ( var i = 0, rows = map.length; i < rows; i++ ) {
+                for ( var j = 0, cols = map[ i ].length; j < cols; j++ ) {
+                    // #577
+                    // Map might contain multiple times this same element, because of existings collspan.
+                    // We don't want to overwrite startIndex in such situation and take first one.
+                    if ( startColIndex === undefined && map[ i ][ j ] == firstCell.$ ) {
+                        startColIndex = j;
+                    }
+                    if ( map[ i ][ j ] == lastCell.$ ) {
+                        endColIndex = j;
+                    }
+                }
+            }
+
+            // Delete cell or reduce cell spans by checking through the table map.
+            for ( i = startColIndex; i <= endColIndex; i++ ) {
+                for ( j = 0; j < map.length; j++ ) {
+                    var mapRow = map[ j ],
+                        row = new CKEDITOR.dom.element( table.$.rows[ j ] ),
+                        cell = new CKEDITOR.dom.element( mapRow[ i ] );
+
+                    if ( cell.$ ) {
+                        if ( cell.$.colSpan == 1 ) {
+                            if (!cell.hasAttribute(core.UID_ATTR)) {
+                                core.addTrackChangesAttributes(editor, cell, core.DELETE_ACTION);
+                            }else{
+                                cell.remove();
+                            }
+                        } else {
+                            // Reduce the col spans.
+                            cell.$.colSpan -= 1;
+                        }
+
+                        j += cell.$.rowSpan - 1;
+
+                        if ( !row.$.cells.length ) {
+                            rowsToDelete.push( row );
+                        }
+                    }
+                }
+            }
+
+            // Where to put the cursor after columns been deleted?
+            // 1. Into next cell of the first row if any;
+            // 2. Into previous cell of the first row if any;
+            // 3. Into table's parent element;
+            var cursorPosition;
+            if ( map[ 0 ].length - 1 > endColIndex ) {
+                cursorPosition = new CKEDITOR.dom.element( map[ 0 ][ endColIndex + 1 ] );
+            } else if ( startColIndex && map[ 0 ][ startColIndex - 1 ].cellIndex !== -1 ) {
+                cursorPosition = new CKEDITOR.dom.element( map[ 0 ][ startColIndex - 1 ] );
+            } else {
+                cursorPosition = new CKEDITOR.dom.element( table.$.parentNode );
+            }
+
+            // Delete table rows only if all columns are gone (do not remove empty row).
+            if ( rowsToDelete.length == rows ) {
+                // After deleting whole table, the selection would be broken,
+                // therefore it's safer to move it outside the table first.
+                ranges[ 0 ].moveToPosition( table, CKEDITOR.POSITION_AFTER_END );
+                ranges[ 0 ].select();
+
+                table.remove();
+            }
+
+            return cursorPosition;
+        },
+
+        columnDelete: function(editor) {
+            var selection = editor.getSelection();
+            var element = this.deleteColumns( selection, editor );
+
+            if ( element ) {
+                this.placeCursorInCell( element, true );
+            }
+        },
+
         execCustomCommand: function(editor, command) {
             this[command](editor);
         },
