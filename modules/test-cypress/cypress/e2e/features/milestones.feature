@@ -4,7 +4,7 @@
 @milestoneSectionScenarios
 Feature: milestone section regression features
 
-    @validateMilestoneExplorer @local @focus
+    @validateMilestoneExplorer @local
     Scenario: validate milestone explorer
         Given navigate to leos application with "User1"
         Then user is on home page
