@@ -77,22 +77,6 @@ public class InjectElementServiceImpl implements InjectElementService {
         }
     }
 
-    private String getElementTagName(AknType type) {
-        switch (type) {
-            case CITATION: return "citation";
-            case RECITAL: return "recital";
-            case TITLE: return "title";
-            case CHAPTER: return "chapter";
-            case SECTION: return "section";
-            case NUMBERED_ARTICLE: return "article";
-            case UNNUMBERED_ARTICLE: return "article";
-            case PARAGRAPH: return "paragraph";
-            case LIST: return "list";
-            case POINT: return "point";
-            default: throw new IllegalArgumentException("Unknown AKN type: " + type);
-        }
-    }
-
     private byte[] documentToBytes(Document doc) throws Exception {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
