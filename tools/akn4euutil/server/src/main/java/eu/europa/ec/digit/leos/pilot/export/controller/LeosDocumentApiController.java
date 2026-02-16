@@ -17,25 +17,19 @@ import eu.europa.ec.digit.leos.pilot.export.exception.LeosDocumentException;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosDocumentService;
-import eu.europa.ec.digit.leos.pilot.export.util.StringUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 import static eu.europa.ec.digit.leos.pilot.export.util.DocumentApiUtil.buildErrorResponse;
 import static eu.europa.ec.digit.leos.pilot.export.util.DocumentApiUtil.buildValidZipResponse;
@@ -98,13 +92,9 @@ public class LeosDocumentApiController {
     public ResponseEntity<Object> applyMetadata(@RequestParam MultipartFile inputFile,
                                                 @RequestParam(name = "email", required = false) String email) {
         try {
-            if (!StringUtil.isEmpty(email)) {
-                if (!StringUtil.isEmailValid(email)) {
-                    return ResponseEntity.badRequest().body("Email format is not valid");
-                }
-                leosDocumentService.callLeosValidation(inputFile, email);
-            }
             byte[] documentOutput = leosDocumentService.applyMetadata(inputFile);
+            MultipartFile preFinalizedFile = new MockMultipartFile(Objects.requireNonNull(inputFile.getOriginalFilename()), documentOutput);
+            leosDocumentService.callLeosValidation(preFinalizedFile, email);
             return buildValidZipResponse(documentOutput);
         } catch (LeosDocumentException e) {
             return buildErrorResponse("Issue processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -119,13 +109,7 @@ public class LeosDocumentApiController {
                                                 @RequestParam("callbackUrl") String callbackUrl,
                                                 @RequestParam(name = "email", required = false) String email) {
         try {
-            if (!StringUtil.isEmpty(email)) {
-                if (!StringUtil.isEmailValid(email)) {
-                    return ResponseEntity.badRequest().body("Email format is not valid");
-                }
-                leosDocumentService.callLeosValidation(inputFile, email);
-            }
-            String asyncId = leosDocumentService.applyMetadataAsync(inputFile, callbackUrl);
+            String asyncId = leosDocumentService.applyMetadataAsync(inputFile, callbackUrl, email);
             return new ResponseEntity<>(asyncId, HttpStatus.OK);
         } catch (Exception e) {
             return buildErrorResponse("Error found while processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR, true);

@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.integration.rest;
 
+import eu.europa.ec.leos.domain.repository.common.ConvalValidationResponse;
 import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ public class LeosConValidatorServiceImpl implements ConValidatorService {
     private static final Logger LOG = LoggerFactory.getLogger(LeosConValidatorServiceImpl.class);
 
     @Override
-    public String validate(LeosFile file) {
+    public ConvalValidationResponse validate(LeosFile file) {
         LOG.info("This feature is not available for this distribution");
         throw new IllegalStateException("This feature is not available for this distribution");
     }
