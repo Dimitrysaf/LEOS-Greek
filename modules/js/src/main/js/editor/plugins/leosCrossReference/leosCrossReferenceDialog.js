@@ -61,6 +61,9 @@ define(function leosCrossReferenceDialog(require) {
             },
             onShow: function() {
                 tabHandlers.reset();
+                $('a.cke_dialog_tab').each(function() {
+                    this.title = this.title.substring(this.title.lastIndexOf("--")+2);
+                });
                 if (!editor.LEOS.documentRef.includes('STAT_DIGIT_FINANC_LEGIS')) {
                     this.selectPage(editor.LEOS.documentRef);
                 }
@@ -209,7 +212,7 @@ define(function leosCrossReferenceDialog(require) {
                 if (tlcReferenceNameFormatId) {
                     icon = `<span euiiconcolored='' style='display: flex;align-items: center;justify-content: center;' class='eui-icon eui-icon-2xs eui-icon-filetype-${tlcReferenceNameFormatId.substring(0, 3).toLowerCase()} eui-icon-color ng-star-inserted' _ngcontent-ng-c2742287287=''><span><span class='path1 ng-star-inserted'></span><span class='path2 ng-star-inserted'></span><span class='path3 ng-star-inserted'></span><span class='path4 ng-star-inserted'></span><span class='path5 ng-star-inserted'></span><span class='path6 ng-star-inserted'></span><span class='path7 ng-star-inserted'></span><span class='path8 ng-star-inserted'></span><span class='path9 ng-star-inserted'></span><span class='path10 ng-star-inserted'></span><span class='path11 ng-star-inserted'></span><span class='path12 ng-star-inserted'></span><span class='path13 ng-star-inserted'></span><span class='path14 ng-star-inserted'></span><span class='path15 ng-star-inserted'></span><span class='path16 ng-star-inserted'></span><span class='path17 ng-star-inserted'></span><span class='path18 ng-star-inserted'></span><span class='path19 ng-star-inserted'></span><span class='path20 ng-star-inserted'></span><!----></span></span>`;
                 }
-                return icon + editor.lang.leosCrossReference.annex + " " + annexIndex;
+                return icon + "--" + editor.lang.leosCrossReference.annex + " " + annexIndex;
             case "STAT_DIGIT_FINANC_LEGIS":
                 return editor.lang.leosCrossReference.financialStatement;
             default:
