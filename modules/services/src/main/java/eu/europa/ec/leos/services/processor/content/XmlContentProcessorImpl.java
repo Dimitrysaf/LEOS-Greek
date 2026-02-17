@@ -56,6 +56,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -1330,20 +1332,22 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private void moveSubparagraphsInList(Node node) {
         NodeList nodeList = XercesUtils.getElementsByName(node, SUBPARAGRAPH);
-        if (nodeList.getLength() > 0) {
-            Node lastSubpar = nodeList.item(nodeList.getLength() - 1);
-            Node lastSubparParent = lastSubpar.getParentNode();
-            Node lastSubparParentSibbling = lastSubparParent.getNextSibling();
-            if (lastSubpar.getAttributes().getNamedItem(REFERS_TO_ATTR) != null
-                    && lastSubpar.getAttributes().getNamedItem(REFERS_TO_ATTR).getNodeValue().equals(ENDING_PART)
-                    && Character.isUpperCase(lastSubpar.getTextContent().trim().charAt(0))) {
-                if (lastSubparParentSibbling != null) {
-                    lastSubparParent.getParentNode().insertBefore(lastSubpar, lastSubparParentSibbling);
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node subpara = nodeList.item(i);
+            Node subparaParent = subpara.getParentNode();
+            Node subparaParentSibbling = subparaParent.getNextSibling();
+            Node pOfSubparagraph = getPOfSubparagraph(subpara);
+            if (subpara.getAttributes().getNamedItem(REFERS_TO_ATTR) != null
+                    && subpara.getAttributes().getNamedItem(REFERS_TO_ATTR).getNodeValue().equals(ENDING_PART)
+                    && pOfSubparagraph != null && !Character.isLowerCase(pOfSubparagraph.getTextContent().trim().charAt(0))) {
+                if (subparaParentSibbling != null) {
+                    subparaParent.getParentNode().insertBefore(subpara, subparaParentSibbling);
                 } else {
-                    lastSubparParent.getParentNode().appendChild(lastSubpar);
+                    subparaParent.getParentNode().appendChild(subpara);
                 }
             }
         }
+        nodeList = XercesUtils.getElementsByName(node, SUBPARAGRAPH);
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node subpara = nodeList.item(i);
             Node nextSiblingList = getNextSibling(subpara);
@@ -1359,8 +1363,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     moved = true;
                 }
             }
-            if (!moved && (subpara.getTextContent().isEmpty() || !Character.isUpperCase(subpara.getTextContent().trim().charAt(0)))
-                    && XercesUtils.getElementsByName(subpara, "table").getLength() == 0) {
+            Node pOfSubparagraph = getPOfSubparagraph(subpara);
+            if (!moved && pOfSubparagraph != null
+                    && (subpara.getTextContent().isEmpty()
+                    || Character.isLowerCase(pOfSubparagraph.getTextContent().trim().charAt(0)))) {
                 Node previousSiblingList = XercesUtils.getPrevSibling(subpara);
                 if (previousSiblingList != null && is(previousSiblingList, LIST)
                         && ((!isSoftDeletedOrMovedTo(subpara) && !isSoftDeletedOrMovedTo(previousSiblingList))
@@ -1394,6 +1400,11 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 removeAttribute(subpara, REFERS_TO_ATTR);
             }
         }
+    }
+
+    private static Node getPOfSubparagraph(Node subpara) {
+        Node pText = XercesUtils.getFirstElementByXPath(subpara, "akn:content/akn:p");
+        return pText != null ? pText : null;
     }
 
     private void injectTagIdsInNode(Node node) {
