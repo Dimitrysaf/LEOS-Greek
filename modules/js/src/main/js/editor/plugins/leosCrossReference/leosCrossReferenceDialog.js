@@ -64,7 +64,7 @@ define(function leosCrossReferenceDialog(require) {
                 $('a.cke_dialog_tab').each(function() {
                     if (this.title.lastIndexOf("--") !== -1) {
                         this.title = this.title.substring(this.title.lastIndexOf("--") + 2);
-                        this.textContent = this.textContent.substring(0, this.textContent.lastIndexOf("</span>") + 7) + this.textContent.substring(this.textContent.lastIndexOf("--") + 2);
+                        this.innerHTML = this.innerHTML.substring(0, this.innerHTML.lastIndexOf("</span>") + 7) + this.innerHTML.substring(this.innerHTML.lastIndexOf("--") + 2);
                     }
                 });
                 if (!editor.LEOS.documentRef.includes('STAT_DIGIT_FINANC_LEGIS')) {
