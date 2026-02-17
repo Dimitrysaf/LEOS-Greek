@@ -17,5 +17,5 @@ import java.util.Map;
 
 public interface LeosPrefinalisationService {
     byte[] applyMetadata(Map<String, Object> zipContent);
-    String applyMetadataAsync(Map<String, Object> zipContent, String callbackUrl);
+    String applyMetadataAsync(Map<String, Object> zipContent, String callbackUrl, String originalFileName, String email);
 }

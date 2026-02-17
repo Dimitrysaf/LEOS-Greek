@@ -780,7 +780,7 @@ export abstract class DocumentActionsService {
   }
 
   private buildMergeContributionsSectionItems(): IRibbonToolbarItem[] {
-    return [
+    return [/*
       {
         type: IRibbonToolbarType.GROUP,
         id: MERGE_CONTRIBUTION_GROUP_PREV_NEXT_ID,
@@ -816,7 +816,7 @@ export abstract class DocumentActionsService {
             ),
           },
         ],
-      },
+      }*/
       {
         type: IRibbonToolbarType.CHECKBOX,
         id: COMPARE_SYNC_PANELS_ACTION,
@@ -829,7 +829,7 @@ export abstract class DocumentActionsService {
         cssClasses:
           'eui-u-flex eui-u-flex-align-items-start eui-u-flex-column eui-u-flex-justify-content-center',
       },
-      {
+      /*{
         type: IRibbonToolbarType.DROPDOWN,
         id: MERGE_CONTRIBUTION_APPLY_CHANGES_SECTION_ID,
         euiSize: 's',
@@ -840,7 +840,7 @@ export abstract class DocumentActionsService {
         icon: 'eui-ellipsis-vertical',
         items: this.mergeContributionApplyDropdownOptions,
         disabled: this.mergeContributionService.isContributionDeclinedOrProcessed$,
-      },
+      },*/
       {
         type: IRibbonToolbarType.BUTTON,
         id: 'apply-id',

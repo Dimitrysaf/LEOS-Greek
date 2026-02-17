@@ -22,31 +22,32 @@
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
                     <FRBRlanguage language="en"
-                                  xml:id="FRBRlanguage"/>
+                     xml:id="FRBRlanguage"/>
                 </FRBRExpression>
                 <FRBRManifestation>
                     <FRBRthis value=""/>
                     <FRBRuri value=""/>
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
-                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
-                        <akn4eu:akn4euVersion value="4.2 AA"/>
-                        <akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
-                    </preservation>
+					<preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                		<akn4eu:akn4euVersion value="4.2 AA"/>
+						<akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
+                	</preservation>
                 </FRBRManifestation>
             </identification>
             <references source="~COM">
                 <TLCLocation xml:id="BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
                 <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
                 <TLCReference xml:id="ACT_AUTO_COM" href="http://publications.europa.eu/resource/authority/resource-type/ACT_AUTO_COM" name="docType" showAs="Commission autonomous act"/>
-                <TLCReference xml:id="DEC_IMPL" href="http://publications.europa.eu/resource/authority/resource-type/DEC_IMPL" name="docType" showAs="Implementing decision"/>
+                <TLCReference xml:id="EXPL_MEMORANDUM" href="http://publications.europa.eu/resource/authority/resource-type/EXPL_MEMORANDUM" name="docType" showAs="Explanatory memorandum"/>
+                <TLCReference xml:id="DEC" href="http://publications.europa.eu/resource/authority/resource-type/DEC" name="docType" showAs="Decision"/>
                 <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en"/>
             </references>
             <proprietary source="~COM">
                 <leos:templateVersion>1.0.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
-                <leos:template>SJ-035</leos:template>
-                <leos:docTemplate>PR-035</leos:docTemplate>
+                <leos:template>SJ-011</leos:template>
+                <leos:docTemplate>PR-011</leos:docTemplate>
             </proprietary>
         </meta>
         <coverPage>
@@ -65,17 +66,17 @@
                 </block>
                 <block name="reference" class="template">
                     <docNumber class="template"/>
-                </block>
+                </block>  
             </container>
             <longTitle>
                 <p>
-                    <docType refersTo="~DEC_IMPL">COMMISSION DECISION</docType> of <date date="2999-01-01">XXX</date>
+                    <docType refersTo="~DEC">COMMISSION DECISION</docType> of <date date="2999-01-01">XXX</date>
                     <docPurpose  leos:editable="true" leos:deletable="false">on ...</docPurpose>
                 </p>
             </longTitle>
             <container class="template" name="associatedReferences">
-                <p/>
-            </container>
+				<p/>
+			</container>
             <container name="mainDocLanguage">
                 <p><inline name="language" refersTo="~FRBRlanguage">EN</inline></p>
             </container>

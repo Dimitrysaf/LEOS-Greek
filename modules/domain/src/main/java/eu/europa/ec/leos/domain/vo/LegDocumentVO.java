@@ -13,6 +13,7 @@ public class LegDocumentVO {
     private String legFileName;
     private String legFileStatus;
     private String creationDate;
+    private String updatedDate;
     private boolean clonedProposal;
     private String language;
 
@@ -76,6 +77,14 @@ public class LegDocumentVO {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    public String getUpdatedDate() {
+        return updatedDate;
+    }
+
+    public void setUpdatedDate(String updatedDate) {
+        this.updatedDate = updatedDate;
     }
 
     @Override
