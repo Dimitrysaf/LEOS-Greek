@@ -84,14 +84,9 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
             List<XmlFile> documentXmlFiles = readDocumentXmlFiles(documentZipContent);
             Map<String, Object> documentFurtherContent = readFurtherDocumentContent(documentZipContent);
 
-            validateDocumentXmlFiles(documentXmlFiles);
             String prefinalizedLegName = MetadataUtil.buildPrefinalizationLegName(request);
             ApplyMetadataResponse response = processApplyMetadataRequest(request, documentXmlFiles);
             return buildResponse(response, documentXmlFiles, documentFurtherContent, prefinalizedLegName);
-        }
-        catch(XmlValidationException ex) {
-            LOG.error("One or more xml files do not match the xml schema", ex);
-            return buildXmlValidationErrorResponse(request);
         }
         catch(Exception ex){
             LOG.error("Error applying metadata", ex);
@@ -180,25 +175,6 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         }
 
         return furtherContent;
-    }
-
-    private void validateDocumentXmlFiles(List<XmlFile> xmlFiles) throws XmlValidationException {
-        Validator schemaValidator = XmlUtil.getAknSchemaValidator();
-        for (XmlFile xmlFile : xmlFiles) {
-            ByteArrayInputStream inputStream = null;
-            try {
-                inputStream = new ByteArrayInputStream(xmlFile.getBytes());
-                schemaValidator.validate(new StreamSource(inputStream));
-            } catch (XmlUtilException ex) {
-                LOG.error("Error reading xml file", ex);
-                throw new XmlValidationException("Error reading xml file", ex);
-            } catch (IOException | SAXException ex) {
-                LOG.error("Error validate xml file '" + xmlFile.getName() + "'", ex);
-                throw new XmlValidationException("Error validate xml file '" + xmlFile.getName() + "'", ex);
-            } finally {
-                closeInputStream(inputStream);
-            }
-        }
     }
 
     private ApplyMetadataResponse processApplyMetadataRequest(ApplyMetadataRequest request, List<XmlFile> documentXmlFiles) {
