@@ -62,7 +62,7 @@ define(function leosCrossReferenceDialog(require) {
             onShow: function() {
                 tabHandlers.reset();
                 $('a.cke_dialog_tab').each(function() {
-                    this.title = this.title.substring(this.title.lastIndexOf("--")+2);
+                    this.title = this.title.substring(0, this.title.lastIndexOf("</span>")+7, this.title.lastIndexOf("--")) + this.title.substring(this.title.lastIndexOf("--")+2);
                     this.textContent = this.textContent.substring(this.textContent.lastIndexOf("--")+2);
                 });
                 if (!editor.LEOS.documentRef.includes('STAT_DIGIT_FINANC_LEGIS')) {
