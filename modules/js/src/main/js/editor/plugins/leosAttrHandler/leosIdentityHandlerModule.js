@@ -351,6 +351,7 @@ define(function leosIdentityHandler(require) {
                 element.removeAttribute(leosPluginUtils.DATA_AKN_CONTENT_ID);
                 element.removeAttribute(leosPluginUtils.DATA_AKN_WRAPPED_CONTENT_ID);
                 element.removeAttribute(leosPluginUtils.DATA_AKN_MP_ID);
+                element.removeAttribute(leosPluginUtils.REFERS_TO);
             }
         }
 
