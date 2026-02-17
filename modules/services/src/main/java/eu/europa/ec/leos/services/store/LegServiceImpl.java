@@ -366,6 +366,8 @@ public class LegServiceImpl implements LegService {
         legDocumentVO.setMilestoneComments(leg.getMilestoneComments());
         legDocumentVO.setCreationDate(new SimpleDateFormat(FORMAT_DATE_TIME_ISO_8601).
                 format(Date.from(leg.getInitialCreationInstant())));
+        legDocumentVO.setUpdatedDate(new SimpleDateFormat(FORMAT_DATE_TIME_ISO_8601).
+                format(Date.from(leg.getLastModificationInstant())));
         legDocumentVO.setClonedProposal(proposal.isClonedProposal());
         return legDocumentVO;
     }

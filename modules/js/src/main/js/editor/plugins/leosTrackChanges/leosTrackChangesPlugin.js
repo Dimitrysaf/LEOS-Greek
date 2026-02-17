@@ -118,6 +118,8 @@ define(function leosTrackChangesPluginModule(require) {
                     exec: function(editor, element) {
                         if(element.getName() === 'tr') {
                             actions.rejectRowChange(editor, element, numberModule);
+                        } else  if(element.getName() === 'td') {
+                                actions.rejectColumnChange(editor, element, numberModule);
                         } else {
                             actions.rejectChange(editor, element, numberModule);
                         }
@@ -751,7 +753,13 @@ define(function leosTrackChangesPluginModule(require) {
                     case "rowDelete":
                     case "rowInsertBefore":
                     case "rowInsertAfter":
-                        if (isTrackChangesEnabled) {
+                    case "columnDelete":
+                        var rightClickElement = editor.getSelection().getRanges()[0].startContainer;
+                        if (isTrackChangesEnabled
+                            || (rightClickElement && rightClickElement.getAscendant('table', true)
+                                && (rightClickElement.getAscendant('table', true).getAttribute('leos:deletable') === 'false'
+                                    || rightClickElement.getAscendant('table', true).getAttribute('leos:predefinedTable') ==="true"))
+                            ) {
                             if (editor.getSelection().isCollapsed() && originalSelectedElement) {
                                 editor.getSelection().fake(originalSelectedElement);
                                 originalSelectedElement = null;

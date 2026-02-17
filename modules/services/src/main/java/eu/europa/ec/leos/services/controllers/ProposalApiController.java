@@ -14,6 +14,7 @@
 
 package eu.europa.ec.leos.services.controllers;
 
+import eu.europa.ec.leos.domain.repository.common.ConvalValidationResponse;
 import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.integration.ConValidatorService;
@@ -375,8 +376,8 @@ public class ProposalApiController {
             LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        String result = conValidatorService.validate(content);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+        ConvalValidationResponse result = conValidatorService.validate(content);
+        return new ResponseEntity<>(result.getResult(), HttpStatus.OK);
     }
 
     @PostMapping(value = "{proposalRef}/create-financial-statement", produces = MediaType.APPLICATION_JSON_VALUE)
