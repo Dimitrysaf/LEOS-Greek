@@ -95,7 +95,11 @@ public class JwtTokenService implements TokenService {
         String keyPrefix = "leos.api.jwt.auth.client.";
         for (String clientName : clientsNames) {
             String clientId = applicationProperties.getProperty(keyPrefix + clientName + ".id");
-            String clientSecret = env.getProperty(keyPrefix + clientName + ".secret");
+            String clientSecret = applicationProperties.getProperty(keyPrefix + clientName + ".secret");
+
+            if (clientSecret == null){
+                clientSecret = env.getProperty(keyPrefix + clientName + ".secret");
+            }
 
             if (clientId == null || clientSecret == null) {
                 LOG.error("the key 'leos.api.jwt.auth.clients' and its corresponding clientId/secret is not configured correctly for each single client");
