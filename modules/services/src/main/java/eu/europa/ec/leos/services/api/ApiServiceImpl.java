@@ -66,6 +66,7 @@ import eu.europa.ec.leos.services.collection.CollectionContextService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
+import eu.europa.ec.leos.services.collection.ExtPackageResult;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper;
@@ -104,6 +105,7 @@ import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.model.proposal.ProposalDetailsLists;
 import eu.europa.ec.leos.services.structure.details.ProposalDetailsService;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.template.CustomTemplateService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
@@ -195,6 +197,7 @@ public abstract class ApiServiceImpl implements ApiService {
     protected final TemplateConfigurationService templateConfigurationService;
     private final LanguageHelper languageHelper;
     protected PackageRepository packageRepository;
+    private final LanguageGroupService languageGroupService;
 
     protected DocumentViewService documentViewService;
     @Value("${leos.clone.originRef}")
@@ -231,7 +234,8 @@ public abstract class ApiServiceImpl implements ApiService {
                           TrackChangesContext trackChangesContext, DocumentViewService documentViewService,
                           GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
                           ProposalDetailsService proposalDetailsService,
-                          TemplateConfigurationService templateConfigurationService, LanguageHelper languageHelper, PackageRepository packageRepository) {
+                          TemplateConfigurationService templateConfigurationService, LanguageHelper languageHelper, PackageRepository packageRepository,
+                          LanguageGroupService languageGroupService) {
         this.customTemplateService = customTemplateService;
         this.templateService = templateService;
         this.workspaceService = workspaceService;
@@ -269,6 +273,7 @@ public abstract class ApiServiceImpl implements ApiService {
         this.templateConfigurationService = templateConfigurationService;
         this.languageHelper = languageHelper;
         this.packageRepository = packageRepository;
+        this.languageGroupService = languageGroupService;
     }
 
     @Override
@@ -370,22 +375,47 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public List<String> createExtProposal(String templateKey, String[] languageCodes, String docPurpose) throws CreateCollectionException {
+    public ExtPackageResult createExtProposal(String templateKey, String[] languageCodes, String docPurpose) {
+        try {
+            List<String> languages = (languageCodes == null || languageCodes.length == 0)
+                    ? new ArrayList<>(Collections.singletonList("EN"))
+                    : Arrays.stream(languageCodes).map(StringUtils::upperCase).collect(Collectors.toList());
 
-        DocumentVO documentVO = new DocumentVO(LeosCategory.PROPOSAL);
-        documentVO.getMetadata().setTemplate(templateKey);
-        documentVO.getMetadata().setDocPurpose(docPurpose);
-        documentVO.getMetadata().setEeaRelevance(false);
-        documentVO.getMetadata().setCustomTemplateAct(false);
-        List<String> proposalURLs = new ArrayList<>();
-        for(String langCode : languageCodes) {
-            documentVO.setLanguage(langCode);
-            CreateCollectionResult result = createCollectionService.createCollection(documentVO, false);
-            if(result != null) {
-                proposalURLs.add(result.getProposalUrl());
+            if (languages.size() == 1 && "ALL".equals(languages.getFirst())) {
+                languages = languageGroupService.getLanguageList().stream().map(StringUtils::upperCase).collect(Collectors.toList());
+            } else if (!languages.contains("EN")) {
+                return new ExtPackageResult("Language list must include EN", 400);
             }
+
+
+            DocumentVO documentVO = new DocumentVO(LeosCategory.PROPOSAL);
+            documentVO.getMetadata().setTemplate(templateKey);
+            documentVO.getMetadata().setDocPurpose(docPurpose);
+            documentVO.getMetadata().setEeaRelevance(false);
+            documentVO.getMetadata().setCustomTemplateAct(false);
+
+            documentVO.setLanguage("EN");
+            CreateCollectionResult enResult = createCollectionService.createCollection(documentVO, false);
+            languages.remove("EN");
+
+            documentVO.setRef(enResult.getProposalId());
+            try {
+                for (String langCode : languages) {
+                    documentVO.setLanguage(langCode);
+                    createCollectionService.createCollection(documentVO, true);
+                }
+            } catch (Exception ex) {
+                LeosPackage mainPackage = packageService.findPackageByDocumentRef(enResult.getProposalId(), Proposal.class);
+                packageService.deletePackage(mainPackage);
+                
+                LOG.error("Error occurred while creating linguistic versions: {}", ex.getMessage());
+                return new ExtPackageResult(ex.getMessage());
+            }
+            return new ExtPackageResult(enResult);
+        } catch (Exception e) {
+            LOG.error("Error occurred while creating ext proposal: {}", e.getMessage());
+            return new ExtPackageResult(e.getMessage());
         }
-        return proposalURLs;
     }
 
 

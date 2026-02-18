@@ -19,6 +19,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
+import eu.europa.ec.leos.services.collection.ExtPackageResult;
 import eu.europa.ec.leos.services.dto.request.CreateProposalRequest;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
@@ -29,9 +30,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -88,6 +91,17 @@ public class WorkspaceApiController {
             LOG.error("Error occurred while creating proposal " + ex.getMessage());
             return new ResponseEntity<>("Error occurred while creating proposal", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @RequestMapping(value = "/createExtPackage", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> createExtPackage(@RequestParam("templateId") String templateId,
+                                                   @RequestParam("langCodes") String[] langCodes,
+                                                   @RequestParam("docPurpose") String docPurpose) throws CreateCollectionException {
+        ExtPackageResult result = apiService.createExtProposal(templateId, langCodes, docPurpose);
+        LOG.info("Ext package created with proposal ref {} by user {}", result.getProposalId(), securityContext.getUser().getLogin());
+        HttpStatus status = HttpStatus.valueOf(result.getHttpStatus());
+        return new ResponseEntity<>(result, status);
     }
 
     @RequestMapping(value = "/getTemplates", method = RequestMethod.GET)
