@@ -137,6 +137,12 @@ public class ProposalRepositoryImpl implements ProposalRepository {
     }
 
     @Override
+    public List<Proposal> findClonedProposal(String proposalRef) {
+        logger.debug("Finding Proposal versions... [proposalRef=" + proposalRef + "]");
+        return leosRepository.findClonedProposalsForOriginalProposal(proposalRef, Proposal.class);
+    }
+
+    @Override
     public List<Proposal> findAllMinorsForIntermediate(String docRef, String currIntVersion, int startIndex, int maxResults) {
         logger.debug("Finding Proposal versions between intermediates...");
         return leosRepository.findAllMinorsForIntermediate(Proposal.class, docRef, currIntVersion, startIndex, maxResults);

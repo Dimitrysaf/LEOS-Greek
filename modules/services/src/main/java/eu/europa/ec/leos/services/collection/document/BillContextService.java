@@ -373,7 +373,7 @@ public class BillContextService {
 
         final String oldRef;
         if(cloneProposal) {
-            oldRef = xmlContentProcessor.getElementValue(billDocument.getSource(), xPathCatalog.getXPathRefOriginForCloneRefAttr(), true);
+            oldRef = billDocument.getRef();
         } else {
             oldRef = xmlContentProcessor.getElementValue(billDocument.getSource(), xPathCatalog.getXPathRefOrigin(), true);
         }

@@ -1077,6 +1077,17 @@ public class DocumentServiceImpl implements DocumentService {
         return true;
     }
 
+    @Override
+    public List<LeosDocument> searchClonesOfOriginalDocument(String proposalRef) throws RepositoryException {
+        List<Document> documentsList = documentRepository.findByClonedFrom(proposalRef);
+        if (documentsList == null || documentsList.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return documentsList.stream()
+                .map(LeosDocument::new)
+                .collect(Collectors.toList());
+    }
+
     private Map<DocumentContent, DocumentVersion> createDocument(final Document doc, Map<String, ?> metadata, final String labelVersion,
             int versionType, byte[] contentBytes, String comments, String userId) throws RepositoryException {
         DocumentVersion docVersion = updateDocumentVersion(doc, userId, versionType, labelVersion, comments);

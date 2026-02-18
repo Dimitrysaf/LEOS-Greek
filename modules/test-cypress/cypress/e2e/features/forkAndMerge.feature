@@ -892,7 +892,7 @@ Feature: fork and merge features
     Then successful message contains "Copy sent for contribution"
     When click on workspace button in breadcrumb item
     Then user is on repository browser page
-    When click on act 2
+    When click on act 1
     Then user is on act viewer page
     And  chip content container 1 of act header contains "Contribution"
     And  chip content container 2 of act header contains "LEOS"

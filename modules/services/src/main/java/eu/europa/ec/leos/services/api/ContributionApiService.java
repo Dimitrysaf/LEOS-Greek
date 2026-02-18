@@ -2,12 +2,14 @@ package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.MergeActionVO;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.exception.NotFoundException;
 import eu.europa.ec.leos.services.response.MergeContributionResponse;
 
 import java.io.IOException;

@@ -458,4 +458,5 @@ public interface LeosRepository {
 
     Package findPackageByName(String packageName);
 
+    <D extends LeosDocument> List<D> findClonedProposalsForOriginalProposal(String proposalRef, Class<? extends D> type);
 }

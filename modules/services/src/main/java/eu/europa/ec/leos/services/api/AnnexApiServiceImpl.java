@@ -66,6 +66,7 @@ import eu.europa.ec.leos.services.export.FileHelper;
 import eu.europa.ec.leos.services.processor.AnnexProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.processor.TrackChangesProcessor;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -79,6 +80,7 @@ import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
+import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
@@ -168,6 +170,10 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Autowired
     @Qualifier("applicationProperties")
     private Properties applicationProperties;
+    @Autowired
+    private XmlContentProcessor xmlContentProcessor;
+    @Autowired
+    private XPathCatalog xPathCatalog;
 
     private Provider<CloneContext> cloneContext;
     private Provider<AnnexContextService> annexContext;
@@ -652,8 +658,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
 
     protected void populateCloneProposalMetadata(XmlDocument document) {
-        CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(
-                this.getContent(document));
+        CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(document);
         this.cloneContext.get().setCloneProposalMetadataVO(cloneProposalMetadataVO);
     }
 

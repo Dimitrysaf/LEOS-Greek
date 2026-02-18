@@ -1239,4 +1239,12 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         return package1;
     }
 
+    @Override
+    public <D extends LeosDocument> List<D> findClonedProposalsForOriginalProposal(String proposalRef, Class<? extends D> type) {
+        logger.info("Finding versions. [docRef={}, versionType={}]", proposalRef);
+        LeosDocumentList docs = repository.searchClonesOfOriginalDocument(proposalRef);
+        logger.info("-- #1975 -- LeosDocumentList : {} ", docs);
+        return toLeosDocuments(docs.getLeosDocumentList(), type, false);
+    }
+
 }

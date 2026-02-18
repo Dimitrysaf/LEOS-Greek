@@ -97,4 +97,7 @@ public interface DocumentService {
     String findDocumentRefByPackageIdAndCategory(final String pkgId, final String categoryCode);
 
     boolean setDocumentValidationStatus(List<String> documentIDs) throws RepositoryException;
+
+    List<LeosDocument> searchClonesOfOriginalDocument(String proposalRef) throws RepositoryException;
+
 }

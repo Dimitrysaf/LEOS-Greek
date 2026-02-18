@@ -173,6 +173,8 @@ public interface ProposalRepository {
      */
     List<Proposal> findProposalVersions(String id, boolean fetchContent);
 
+    public List<Proposal> findClonedProposal(String proposalRef);
+
     List<Proposal> findAllMinorsForIntermediate(String docRef, String currIntVersion, int startIndex, int maxResults);
 
     int findAllMinorsCountForIntermediate(String docRef, String currIntVersion);
