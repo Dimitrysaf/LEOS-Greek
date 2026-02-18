@@ -13,13 +13,12 @@
  */
 package eu.europa.ec.leos.repository.security.service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.Claim;
+import eu.europa.ec.leos.repository.security.config.UsernameAuthenticationToken;
+import eu.europa.ec.leos.repository.security.model.AuthClient;
 import jakarta.annotation.PostConstruct;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +29,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.Claim;
-
-import eu.europa.ec.leos.repository.config.PasswordConfigurator;
-import eu.europa.ec.leos.repository.security.config.UsernameAuthenticationToken;
-import eu.europa.ec.leos.repository.security.model.AuthClient;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtTokenService {
@@ -60,9 +56,6 @@ public class JwtTokenService {
 	private Environment environment;
 
 	@Autowired
-	private PasswordConfigurator passwordConfigurator;
-
-	@Autowired
 	private AuthenticationManager authenticationManager;
 
 	@PostConstruct
@@ -71,7 +64,7 @@ public class JwtTokenService {
 		String keyPrefix = "repository.jwt.auth.client.";
 		for (String clientName : clientsNames) {
 			String clientId = environment.getProperty(keyPrefix + clientName + ".id");
-			String clientSecret = passwordConfigurator.getProperty(keyPrefix + clientName + ".secret");
+			String clientSecret = ""; //fetch from Vault
 			if (!StringUtils.hasText(clientId) || !StringUtils.hasText(clientSecret)) {
 				LOG.error("Key 'repository.jwt.auth.clients' and its corresponding clientId/secret is not configured correctly for each single client!!!");
 			} else {
