@@ -35,7 +35,7 @@ public class CoEditionContext {
     private List<Element> updatedElements = new ArrayList<Element>();
 
     public void sendUpdatedElements(String documentRef, String presenterId, SaveElementResponse updatedElement, String alternateElementId) {
-        if (/*Boolean.TRUE.equals(kubernetesEnabled) &&*/ hazelcastInstance != null) {
+        if (Boolean.TRUE.equals(kubernetesEnabled) && hazelcastInstance != null) {
             IMap<String, UpdateElementsEvent> map = hazelcastInstance.getMap("updateElementsCache");
             List<Element> movedElements = new ArrayList<>();
             movedElements.addAll(updatedElement.getElementsMoved());
