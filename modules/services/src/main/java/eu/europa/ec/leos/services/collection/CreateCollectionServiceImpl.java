@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import eu.europa.ec.leos.services.utils.LegUtils;
 import jakarta.inject.Provider;
 
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
@@ -224,12 +225,12 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             CreateCollectionError error = new CreateCollectionError(e.getErrorCode().ordinal(), e.getMessage());
             return new CreateCollectionResult(idsAndUrlsHolder, false, error);
         }
-
+        String docVersion = LegUtils.fetchMilestoneVersion(propDocument);
         //set metadata to cloned proposal
         CloneProposalMetadataVO cloneProposalMetadataVO = new CloneProposalMetadataVO();
         cloneProposalMetadataVO.setClonedProposal(Boolean.TRUE);
         cloneProposalMetadataVO.setOriginRef(originRef);
-        cloneProposalMetadataVO.setClonedFromRef(propDocument.getRef());
+        cloneProposalMetadataVO.setClonedFromRef(propDocument.getRef()+"_"+docVersion);
         cloneProposalMetadataVO.setClonedFromObjectId(propDocument.getId());
         cloneProposalMetadataVO.setLegFileName(legDocument.getName());
         cloneProposalMetadataVO.setTargetUser(targetUser);

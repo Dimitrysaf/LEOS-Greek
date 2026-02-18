@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import jakarta.inject.Provider;
+import java.util.Optional;
 
 @Service("proposalBill")
 @Instance(instances = {InstanceType.COMMISSION, InstanceType.OS})
@@ -40,7 +41,8 @@ public class ProposalBillApiServiceImpl extends BillApiServiceImpl {
 
     private Provider<CloneContext> cloneContext;
 
-    ProposalBillApiServiceImpl(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context) {
+    ProposalBillApiServiceImpl(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext
+            , Provider<BillContextService> context, GenericDocumentApiService genericDocumentApiService) {
         super(structureContext, context);
         this.cloneContext = cloneContext;
     }
@@ -52,8 +54,8 @@ public class ProposalBillApiServiceImpl extends BillApiServiceImpl {
 
     @Override
     public void populateCloneProposalMetadata(XmlDocument document) {
-        CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(
-                this.getContent(document));
+        Proposal proposal = genericDocumentApiService.getDocProposal(document);
+        CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(proposal);
         this.cloneContext.get().setCloneProposalMetadataVO(cloneProposalMetadataVO);
         this.trackChangesContext.setTrackChangesEnabled(document.isTrackChangesEnabled());
     }

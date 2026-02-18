@@ -56,6 +56,18 @@ public class LeosDocument {
 
     @Setter
     @Getter
+    private String clonedFrom;
+
+    @Setter
+    @Getter
+    private String originRef;
+
+    @Setter
+    @Getter
+    private String revisionStatus;
+
+    @Setter
+    @Getter
     private String validationStatus;
 
     public LeosDocument() {}

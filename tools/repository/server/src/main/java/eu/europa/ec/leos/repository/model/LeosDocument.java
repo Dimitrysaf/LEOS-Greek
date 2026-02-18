@@ -78,11 +78,57 @@ public class LeosDocument {
 
     @Setter
     @Getter
+    private String clonedFrom;
+
+    @Setter
+    @Getter
+    private String originRef;
+
+    @Setter
+    @Getter
+    private String revisionStatus;
+
+    @Setter
+    @Getter
     private String validationStatus;
 
     private Map<String, Object> metadata = new HashMap<>();
 
     public LeosDocument() {}
+
+    public LeosDocument(Document document) {
+        if (document == null) {
+            return;
+        }
+        this.clonedFrom = document.getClonedFrom();
+        this.originRef = document.getOriginRef();
+        this.revisionStatus = document.getRevisionStatus();
+
+
+        this.documentId = document.getId();
+        this.ref = document.getRef();
+        this.name = document.getName();
+
+        this.packageId = document.getPackageId() != null
+                ? document.getPackageId().getId().toString()
+                : null;
+
+        this.category = document.getCategoryCode();
+
+        this.createdBy = document.getAuditCBy();
+        this.createdOn = document.getAuditCDate() != null
+                ? Date.from(document.getAuditCDate()
+                .atZone(ZoneId.systemDefault()).toInstant())
+                : null;
+
+        this.updatedBy = document.getAuditLastMBy();
+        this.updatedOn = document.getAuditLastMDate() != null
+                ? Date.from(document.getAuditLastMDate()
+                .atZone(ZoneId.systemDefault()).toInstant())
+                : null;
+
+        this.isVersionArchived = Boolean.TRUE.equals(document.isArchived());
+    }
 
     public LeosDocument(DocumentV doc, List<Collaborator> collaborators, List<DocumentPropertyValues> otherMetadata) {
         Validate.notNull(doc, "Document must not be null");
