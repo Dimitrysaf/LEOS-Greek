@@ -64,7 +64,7 @@ public class JwtTokenService {
 		String keyPrefix = "repository.jwt.auth.client.";
 		for (String clientName : clientsNames) {
 			String clientId = environment.getProperty(keyPrefix + clientName + ".id");
-			String clientSecret = ""; //fetch from Vault
+			String clientSecret = environment.getProperty(keyPrefix + clientName + ".secret");
 			if (!StringUtils.hasText(clientId) || !StringUtils.hasText(clientSecret)) {
 				LOG.error("Key 'repository.jwt.auth.clients' and its corresponding clientId/secret is not configured correctly for each single client!!!");
 			} else {
