@@ -55,6 +55,8 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   private proposalLanguage: string;
   documentCollectionName: string;
   private destroy$ = new Subject();
+  dgList: string[] = [];
+  selectedDg: string;
 
   public activeTabIndex = 0;
 
@@ -92,9 +94,26 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     }
     if (!this.isCopyChangeAct) {
       this.appConfig.config.subscribe((config) => {
-          this.proposalService.loadCustomTemplateCatalog(config.user.defaultEntity.organizationName);
+        this.proposalService.loadCustomTemplateCatalog(config.user.defaultEntity.organizationName);
+        this.getDgList(config);
+        //this.proposalService.loadCustomTemplateCatalog(this.appConfig.user.defaultEntity.organizationName);
       });
-  ``}
+      ``}
+  }
+
+  getDgList(config) {
+    let isSupportRole :boolean =config.user.roles?.includes('SUPPORT');
+    if (isSupportRole) {
+      this.detailsService.getAllOrganizations()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(organizations => {
+          this.dgList = organizations;
+          this.selectedDg = this.dgList.find(dg => dg === config.user.defaultEntity.organizationName);
+        });
+    } else {
+      this.dgList = config.user.entities.map(entity => entity.organizationName);
+      this.selectedDg = this.dgList.find(dg => dg === config.user.defaultEntity.organizationName);
+    }
   }
 
   ngAfterViewInit() {
@@ -324,6 +343,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         { validators: Validators.required },
       ),
       documentLanguage: new FormControl({ value: '', disabled: true }),
+      linguisticVersions: new FormControl({ value: [], disabled: true }),
       confidentialityLevel: new FormControl({
         value: this.translateService.instant(
           'page.workspace.create-form.document.confidentiality-level-predefined-value',
@@ -331,9 +351,9 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         disabled: true,
       }),
       docPurpose: new FormControl(  this.isCopyChangeAct ? this.editableTitle :
-        this.translateService.instant(
-          'page.workspace.create-form.document.document-title-predefined-value',
-        ),
+          this.translateService.instant(
+            'page.workspace.create-form.document.document-title-predefined-value',
+          ),
         {
           validators: [Validators.required, noWhitespaceValidator],
         },
