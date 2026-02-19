@@ -453,7 +453,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         public void run() {
             LOG.debug("Start apply metadata async");
             final byte[] content = this.leosPrefinalisationService.applyMetadata(this.zipContent);
-            MultipartFile preFinalizedFile = new MockMultipartFile(Objects.requireNonNull(originalFileName), content);
+            MultipartFile preFinalizedFile = new MockMultipartFile(Objects.requireNonNull(originalFileName), Objects.requireNonNull(originalFileName), null,  content);
             leosDocumentService.callLeosValidation(preFinalizedFile, email);
 
             LOG.debug("Send ZIP to callback url");
