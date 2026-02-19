@@ -9,7 +9,7 @@
                     "xml":"http://www.w3.org/XML/1998/namespace"}>
 
 <#--
-    Copyright 2024 European Union
+    Copyright 2026 European Union
 
     Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
     You may not use this work except in compliance with the Licence.
@@ -34,6 +34,7 @@
 }>
 
 <#assign authorialNoteList = []>
+
 <#-- Sequence of ignored Akoma Ntoso XML elements -->
 <#assign aknIgnored=[
     'meta'
@@ -41,19 +42,19 @@
 
 
 <#macro akomaNtoso>
-<akomaNtoso id="${getLeosRef(.node)}" xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+<akomaNtoso id="${getLeosRef()}" xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
    <#recurse/>
 </akomaNtoso>
 </#macro>
 
 <#macro bill>
-    <#local nodeName=.node?node_name>
-    <${nodeName}${handleAttributes(.node.@@)?no_esc}><@coverPage/><#recurse><@printAuthorialNotes/></${nodeName}><#t>
+    <#local nodeName = .node?node_name>
+    <${nodeName}<@handleAttributes/>><@coverPage/><#recurse><@printAuthorialNotes/></${nodeName}><#t>
 </#macro>
 
 <#macro doc>
-    <#local nodeName=.node?node_name>
-    <${nodeName}${handleAttributes(.node.@@)?no_esc}><@coverPage/><#recurse><@printAuthorialNotes/></${nodeName}><#t>
+    <#local nodeName = .node?node_name>
+    <${nodeName}<@handleAttributes/>><@coverPage/><#recurse><@printAuthorialNotes/></${nodeName}><#t>
 </#macro>
 
 <#-----------------------------------------------------------------------------
@@ -75,13 +76,13 @@
 <#macro container>
     <#local language = (.node["@name"][0]!'') == 'language'>
     <#if (language)>
-    <container id="${.node["@xml:id"][0]!}" name="language" data-lang="${.node.p}"></container>
+        <container id="${.node["@xml:id"][0]!}" name="language" data-lang="${.node.p}"></container><#t>
     <#else>
         <#local language = (.node["@name"][0]!'') == 'mainDocLanguage'>
         <#if (language)>
-            <container id="${.node["@xml:id"][0]!}" name="mainDocLanguage" data-lang="${.node.p.inline}"></container>
+            <container id="${.node["@xml:id"][0]!}" name="mainDocLanguage" data-lang="${.node.p.inline}"></container><#t>
         <#else>
-            <@@element/>
+            <@@element/><#t>
         </#if>
     </#if>
 </#macro>
@@ -90,13 +91,13 @@
 ------------------------------------------------------------------------------>
 <#macro authorialNote>
 	<#assign authorialNoteList = authorialNoteList + [.node]>
-    <#local noteId=.node["@xml:id"][0]!''>
+    <#local noteId = .node["@xml:id"][0]!''>
     <#if (noteId?length gt 0)>
-        <authorialNote${handleAttributes(.node.@@)?no_esc} onClick="LEOS.scrollTo('endNote_${noteId}')"><#t>
+        <authorialNote<@handleAttributes/> onClick="LEOS.scrollTo('endNote_${noteId}')"><#t>
         <#recurse><#t>
         </authorialNote><#t>
     <#else>
-    	<authorialNote${handleAttributes(.node.@@)?no_esc}><#recurse></authorialNote><#t>
+        <authorialNote<@handleAttributes/>><#recurse></authorialNote><#t>
     </#if>
 </#macro>
 
@@ -104,11 +105,11 @@
 Cross Reference handler
 ------------------------------------------------------------------------------>
 <#macro ref>
-    <#local href=.node.@href[0]!''>
-    <#local refId=href?substring(href?index_of("/") + 1)>
+    <#local href = .node.@href[0]!''>
+    <#local refId = href?substring(href?index_of("/") + 1)>
     <#-- For now we can navigate only through the same document.
         In the future we should read ducumentRef=href?substring(0, href?index_of("/")) for beeing able to navigate in a different document-->
-    <ref${handleAttributes(.node.@@)?no_esc} onClick="LEOS.scrollTo('${refId}')"><#recurse></ref><#t>
+    <ref<@handleAttributes/> onClick="LEOS.scrollTo('${refId}')"><#recurse></ref><#t>
 </#macro>
 
 <#-- AKN end-of-line handler -->
@@ -119,27 +120,27 @@ Cross Reference handler
 <#-- print the footnotes in document -->
 <#macro printAuthorialNotes>
     <#list authorialNoteList>
-        <span id="leos-authnote-table-id" class="leos-authnote-table">
-            <hr size="2"/>
+        <span id="leos-authnote-table-id" class="leos-authnote-table"><#t>
+            <hr size="2"/><#t>
         <#items as authNote>
-            <#local noteMarker=authNote.@marker[0]!'*'>
-            <#local noteText=authNote.@@text?trim>
-            <#local noteId=authNote["@xml:id"][0]!''>
+            <#local noteMarker = authNote.@marker[0]!'*'>
+            <#local noteText = authNote.@@text?trim>
+            <#local noteId = authNote["@xml:id"][0]!''>
             <#if (!noteId?contains("deletedX"))>
                 <#if (noteId?length gt 0)>
-                    <span id="endNote_${noteId}" class="leos-authnote" onClick="LEOS.scrollTo('${noteId}')">
-                    <marker id="marker_${noteId}">${noteMarker}</marker>
-                    <text id="text_${noteId}">${noteText}</text>
-                </span>
+                    <span id="endNote_${noteId}" class="leos-authnote" onClick="LEOS.scrollTo('${noteId}')"><#t>
+                        <marker id="marker_${noteId}">${noteMarker}</marker><#t>
+                        <text id="text_${noteId}">${noteText}</text><#t>
+                    </span><#t>
                 <#else>
-                    <span class="leos-authnote">
-                    <marker>${noteMarker}</marker>
-                    <text>${noteText}</text>
-                </span>
+                    <span class="leos-authnote"><#t>
+                        <marker>${noteMarker}</marker><#t>
+                        <text>${noteText}</text><#t>
+                    </span><#t>
                 </#if>
             </#if>
         </#items>
-        </span>
+        </span><#t>
     </#list>
 </#macro>
 
@@ -148,10 +149,10 @@ Cross Reference handler
 ------------------------------------------------------------------------------>
 <#-- default handler for element nodes -->
 <#macro @element>
-    <#local nodeName=.node?node_name>
+    <#local nodeName = .node?node_name>
     <#if (!aknIgnored?seq_contains(nodeName))>
-        <#local nodeTag=aknMapped[nodeName]!nodeName>
-        <${nodeTag}${handleAttributes(.node.@@)?no_esc}><#recurse></${nodeTag}><#t>
+        <#local nodeTag = aknMapped[nodeName]!nodeName>
+        <${nodeTag}<@handleAttributes/>><#recurse></${nodeTag}><#t>
     </#if>
 </#macro>
 
@@ -165,18 +166,16 @@ Cross Reference handler
 <#-----------------------------------------------------------------------------
     Common function to generate updated attributes for XML nodes
 ------------------------------------------------------------------------------>
-<#function handleAttributes attrList auto_esc=false>
-    <#assign str = ''>
-    <#if (attrList?size gt 0)>
-        <#list attrList as attr>
-            <#local attrName=aknMapped[attr.@@qname]!attr.@@qname>
-            <#assign str += ' ${attrName}="${attr}"'>
+<#macro handleAttributes>
+    <#if (.node.@@?size gt 0)>
+        <#list .node.@@ as attr>
+            <#local attrName = aknMapped[attr.@@qname]!attr.@@qname>
+            ${attrName}="${attr}"<#rt>
         </#list>
     </#if>
-    <#return str>
-</#function>
+</#macro>
 
-<#function getLeosRef node auto_esc=false>
+<#function getLeosRef>
     <#assign refNode = .node["//leos:ref"]>
     <#return refNode?has_content?then(refNode.@@text, 'akomaNtoso')>
 </#function>
