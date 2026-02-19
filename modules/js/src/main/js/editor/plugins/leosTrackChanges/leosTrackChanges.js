@@ -1149,10 +1149,18 @@ define(function leosTrackChangesModule(require) {
             if (liParentElementToCheckText && liParentElementToCheckText.getText().trim() === ''
                 && liParentElementToCheckNumber && liParentElementToCheckNumber.getParent()
                 && (liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_NUM)
-                    || liParentElementToCheckNumber.getParent().getAttribute(leosPluginUtils.DATA_AKN_NUM))) {
+                    || (this.isElementOrderedOrUnordered(liParentElementToCheckNumber) &&
+                        liParentElementToCheckNumber.getParent().getAttribute(leosPluginUtils.DATA_AKN_NUM)))) {
                 return true;
             }
             return false;
+        },
+
+        // not for annexOrderedList here as it has its own workflow to merge and rearrange
+        isElementOrderedOrUnordered: function(element) {
+            const name = element && element.getAttribute(leosPluginUtils.DATA_AKN_NAME);
+            return name === leosPluginUtils.AKN_ORDERED_LIST ||
+                name === leosPluginUtils.AKN_UNORDERED_LIST;
         },
 
         removeEmptyElement: function (liParentElement, numberModule, editor) {
@@ -1162,9 +1170,14 @@ define(function leosTrackChangesModule(require) {
                 }
             });
 
-            var liParentElementToCheckNumber = liParentElement;
-            liParentElementToCheckNumber = this.getParentToCheckAndRemove(liParentElementToCheckNumber);
-            var isFirstOfAll = numberModule.isFistElement(liParentElementToCheckNumber.getParent().$, liParentElementToCheckNumber.getAttribute(leosPluginUtils.DATA_AKN_NUM));
+            // always normalize to the container (POINT / INDENT / PARAGRAPH)
+            var liParentElementToCheck = this.getParentToCheckAndRemove(liParentElement);
+
+            // find key code for deletion
+            var isFirstOfAll = numberModule.isFistElement(
+                liParentElementToCheck.getParent().$,
+                liParentElementToCheck.getAttribute(leosPluginUtils.DATA_AKN_NUM)
+            );
             var keyCodeToUse = isFirstOfAll ? 46 : 8;
 
             var ckEditorEvent = new CKEDITOR.dom.event(
@@ -1177,14 +1190,102 @@ define(function leosTrackChangesModule(require) {
                     }
                 })
             );
-            liParentElement.setAttribute(leosPluginUtils.DATA_AKN_EMPTY, 'true');
-            if(liParentElement.getParent()) {
-                core.setToPosition(editor, liParentElement, CKEDITOR.POSITION_AFTER_START);
+
+            var isOrderedOrUnordered = liParentElement.getParent() && this.isElementOrderedOrUnordered(liParentElement.getParent());
+            var liParentElToUse = liParentElement;
+            if(isOrderedOrUnordered) {
+                liParentElToUse = liParentElementToCheck;
+            }
+
+            var parentOl = liParentElToUse.getParent();
+
+            // this part is done because sometimes the ckeditor inserts an empty <p> at the end that needs to be cleanedup
+            const debug = false;
+            var topOl = this._findTopmostOl(parentOl, debug);
+            var existingEmptyPIds = this._getExistingEmptyPIds(topOl);
+
+            liParentElToUse.setAttribute(leosPluginUtils.DATA_AKN_EMPTY, 'true');
+            if(parentOl) {
+                core.setToPosition(editor, liParentElToUse, CKEDITOR.POSITION_AFTER_START);
             }
             editor.fire('key', {keyCode: ckEditorEvent.getKey(), domEvent: ckEditorEvent});
-            // removing the empty li element as its not removed by the event
-            if(liParentElement.getParent() && !liParentElement.getText().trim()) {
-                liParentElement.remove();
+
+            this._cleanupEmptyPAndLiElements(topOl, existingEmptyPIds, editor, debug);
+        },
+
+        _findTopmostOl: function(parentOl, debug) {
+            // Find the outermost ol element by traversing up
+            var topOl = parentOl;
+            if(debug) console.log('Starting topOl:', topOl.getAttribute('id'));
+
+            while(topOl) {
+                var parent = topOl.getParent();
+                if(debug) console.log('parent:', parent ? parent.getName() + ' id=' + parent.getAttribute('id') : 'null');
+
+                if(!parent) {
+                    break;
+                }
+                if(parent.getName() === 'li') {
+                    var grandParent = parent.getParent();
+                    if(debug) console.log('grandParent:', grandParent ? grandParent.getName() + ' id=' + grandParent.getAttribute('id') : 'null');
+                    if(grandParent && grandParent.getName() === 'ol') {
+                        topOl = grandParent;
+                        if(debug) console.log('Updated topOl to:', topOl.getAttribute('id'));
+                    } else {
+                        break;
+                    }
+                } else if(parent.getName() === 'ol') {
+                    topOl = parent;
+                    if(debug) console.log('Updated topOl to:', topOl.getAttribute('id'));
+                } else {
+                    break;
+                }
+            }
+
+            if(debug) console.log('Final topOl:', topOl.getAttribute('id'));
+            return topOl;
+        },
+
+        _getExistingEmptyPIds: function(topOl) {
+            var existingEmptyPIds = new Set();
+            if(topOl) {
+                var allPs = topOl.find('p');
+                for(var i = 0; i < allPs.count(); i++) {
+                    var p = allPs.getItem(i);
+                    if(!p.getText().trim() && p.getAttribute('id')) {
+                        existingEmptyPIds.add(p.getAttribute('id'));
+                    }
+                }
+            }
+            return existingEmptyPIds;
+        },
+
+        _cleanupEmptyPAndLiElements: function(topOl, existingEmptyPIds, editor, debug) {
+            // Clean up newly created empty p and li elements
+            if(topOl) {
+                var topOlId = topOl.getAttribute('id');
+                var topOlAfter = topOlId ? editor.editable().find('#' + topOlId).getItem(0) : null;
+                if(topOlAfter) {
+                    // Remove newly created empty p elements
+                    var allPsAfter = topOlAfter.find('p');
+                    for(var i = allPsAfter.count() - 1; i >= 0; i--) {
+                        var p = allPsAfter.getItem(i);
+                        var pId = p.getAttribute('id');
+                        if(!p.getText().trim() && pId && !existingEmptyPIds.has(pId)) {
+                            if(debug) console.log('Removing empty p:', pId);
+                            p.remove();
+                        }
+                    }
+                    // Remove empty li elements (including those with just <br>)
+                    var allLisAfter = topOlAfter.find('li');
+                    for(var i = allLisAfter.count() - 1; i >= 0; i--) {
+                        var li = allLisAfter.getItem(i);
+                        if(!li.getText().trim()) {
+                            if(debug) console.log('Removing empty li:', li.getAttribute('id'));
+                            li.remove();
+                        }
+                    }
+                }
             }
         },
 
