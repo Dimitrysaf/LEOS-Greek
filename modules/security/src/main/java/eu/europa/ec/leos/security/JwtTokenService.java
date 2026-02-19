@@ -97,7 +97,7 @@ public class JwtTokenService implements TokenService {
             String clientId = applicationProperties.getProperty(keyPrefix + clientName + ".id");
             String clientSecret = applicationProperties.getProperty(keyPrefix + clientName + ".secret");
 
-            if (clientSecret == null){
+            if (clientSecret == null || StringUtils.isEmpty(clientSecret)){
                 clientSecret = env.getProperty(keyPrefix + clientName + ".secret");
             }
 
