@@ -182,6 +182,7 @@
         <jetbrains-annotations.version>24.1.0</jetbrains-annotations.version>
         <spring-boot-actuator.version>3.4.3</spring-boot-actuator.version>
         <h2.version>2.3.232</h2.version>
+        <hikari.version>7.0.2</hikari.version>
         <!-- Default authentication -->
         <leos.web.auth.method>BASIC</leos.web.auth.method>
     </properties>
@@ -654,6 +655,11 @@
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${h2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>${hikari.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
