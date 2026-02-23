@@ -556,10 +556,14 @@ define(function leosTrackChangesModule(require) {
 
         hasTrackChanges: function(elementId, editor) {
             var element = editor.document.find('.leos-placeholder').getItem(0).find(`#${elementId}`).getItem(0);
+            var hasPredefinedTableAsAncestor = element && element.getAscendant('table', true)
+                && (element.getAscendant('table', true).getAttribute('leos:deletable') === 'false'
+                    || element.getAscendant('table', true).getAttribute('leos:predefinedTable') ==="true");
             return element && element.getAttribute(core.DATA_AKN_ELEMENT) != core.LEVEL &&
                 (element.hasAttribute(this.ACTION_ATTR)
                     || element.hasAttribute(this.DATA_AKN_ACTION_NUMBER)
-                    || element.hasAttribute(this.DATA_AKN_ACTION_ENTER));
+                    || element.hasAttribute(this.DATA_AKN_ACTION_ENTER))
+                && !hasPredefinedTableAsAncestor;
         },
 
         getLastTCElement: function(elementId, editor, processedElements) {
@@ -873,7 +877,7 @@ define(function leosTrackChangesModule(require) {
 
         processListElement: function (editor, listElementToProcess, processedElements, actionName, isStructureTooComplex) {
             // Process table rows
-            var rowElements = listElementToProcess.find(`table tr[${core.ACTION_ATTR}]`);
+            var rowElements = listElementToProcess.find(`table:not([leos\\:predefinedtable="true"]) tr[${core.ACTION_ATTR}]`);
             for (var i = rowElements.count() - 1; i >= 0; i--) {
                 var rowElementToProcess = rowElements.getItem(i);
                 this.processElement(editor, rowElementToProcess, processedElements, actionName, isStructureTooComplex);
@@ -882,7 +886,7 @@ define(function leosTrackChangesModule(require) {
                 }
             }
 
-            var colElements = listElementToProcess.find(`table tr td[${core.ACTION_ATTR}]`);
+            var colElements = listElementToProcess.find(`table:not([leos\\:predefinedtable="true"]) tr td[${core.ACTION_ATTR}]`);
             for (var i = colElements.count() - 1; i >= 0; i--) {
                 var colElementToProcess = colElements.getItem(i);
                 this.processElement(editor, colElementToProcess, processedElements, actionName, isStructureTooComplex);
