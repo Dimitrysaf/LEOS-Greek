@@ -107,7 +107,7 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
   ) {
     if (
       (!this.tocService.isClonedProposal ||
-        (moveFromItem.originAttr !== null &&
+        (moveFromItem.originAttr &&
           moveFromItem.originAttr.toLowerCase() === EC)) &&
       (moveFromItem.softActionAttr == null ||
         (!this.hasTocItemSoftAction(moveFromItem, MOVE_FROM) &&

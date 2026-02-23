@@ -30,13 +30,16 @@ public final class Proposal extends XmlDocument {
     @Getter
     private final String validationStatus;
 
+    @Getter
+    private final String documentRef;
+
     public Proposal(String id, String name, String createdBy, Instant creationInstant, String lastModifiedBy, Instant lastModificationInstant,
                     String versionSeriesId, String cmisVersionLabel, String versionLabel, String versionComment, VersionType versionType,
                     boolean isLatestVersion, String title, List<Collaborator> collaborators, List<String> milestoneComments,
                     String initialCreatedBy, Instant initialCreationInstant, Option<Content> content, Option<ProposalMetadata> metadata,
                     boolean clonedProposal, String originRef, String clonedFrom, String revisionStatus,
                     List<String> clonedMilestoneIds, String contributionStatus, boolean trackChangesEnabled, String validationStatus,
-                    Instant pkgLastUpdatedOn, String pkgLastUpdatedBy) {
+                    Instant pkgLastUpdatedOn, String pkgLastUpdatedBy,  String documentRef) {
         super(LeosCategory.PROPOSAL, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
                 versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title,
                 collaborators, milestoneComments, content, trackChangesEnabled, false);
@@ -52,6 +55,7 @@ public final class Proposal extends XmlDocument {
         this.pkgLastUpdatedOn = pkgLastUpdatedOn;
         this.pkgLastUpdatedBy = pkgLastUpdatedBy;
         this.validationStatus = validationStatus;
+        this.documentRef = documentRef;
     }
 
     public final String getInitialCreatedBy() {

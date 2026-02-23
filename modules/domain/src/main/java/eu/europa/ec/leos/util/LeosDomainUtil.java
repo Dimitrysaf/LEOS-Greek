@@ -14,6 +14,8 @@
 package eu.europa.ec.leos.util;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -35,6 +37,13 @@ public class LeosDomainUtil {
     private static final String WRAP_FRAGMENT_END = "</aknFragment>";
 
     private static final String WRAP_FRAGMENT_START_REGEX =  "<aknFragment(.*?)>";
+
+
+    public static Date getLeosDateFromInstant(Instant instant) {
+        ZonedDateTime zdt = instant.atZone(ZoneId.systemDefault());
+        String formatted = zdt.format(LEOS_REPO_DATE_FORMAT);
+        return getLeosDateFromString(formatted);
+    }
 
     public static Date getLeosDateFromString(String dateStr) {
         return getDateFromString(dateStr, LEOS_REPO_DATE_FORMAT);

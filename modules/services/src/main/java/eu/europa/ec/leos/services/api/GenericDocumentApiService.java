@@ -585,21 +585,11 @@ public class GenericDocumentApiService {
         return this.cloneContextProvider.get();
     }
 
-    private Proposal getDocProposal(XmlDocument document) {
-        return Optional.of(document)
-                .map(XmlDocument::getMetadata)
-                .map(metadata -> this.packageService.findPackageByDocumentRef(metadata.get().getRef(),
-                        XmlDocument.class))
-                .map(pack -> this.proposalService.findProposalByPackagePath(pack.getPath()))
-                .orElse(null);
-    }
-
     private void populateCloneProposalMetadata(@NotNull XmlDocument document) {
         Proposal proposal = this.getDocProposal(document);
         if (proposal != null && proposal.isClonedProposal()) {
             byte[] xmlContent = this.getDocumentContent(proposal);
-            CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(
-                    xmlContent);
+            CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(proposal);
             this.getCloneContext().setCloneProposalMetadataVO(cloneProposalMetadataVO);
         }
     }
@@ -721,6 +711,15 @@ public class GenericDocumentApiService {
     public VersionVO getDocumentByVersion(LeosCategoryClass documentType, String docRef, String version) {
         XmlDocument leosDocument = (XmlDocument) leosRepository.findDocumentByVersion( LeosCategoryClass.valueOf(documentType.name()).getClazz(), docRef, version);
         return VersionsUtil.getVersionVO(messageHelper, userHelper, leosDocument);
+    }
+
+    public Proposal getDocProposal(XmlDocument document) {
+        return Optional.of(document)
+                .map(XmlDocument::getMetadata)
+                .map(metadata -> this.packageService.findPackageByDocumentRef(metadata.get().getRef(),
+                        XmlDocument.class))
+                .map(pack -> this.proposalService.findProposalByPackagePath(pack.getPath()))
+                .orElse(null);
     }
 
     private List<String> getAncestorsIdsForElementId(XmlDocument xmlDocument, List<String> elementIds) {

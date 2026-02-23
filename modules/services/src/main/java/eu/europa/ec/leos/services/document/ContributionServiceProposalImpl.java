@@ -31,6 +31,7 @@ import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.contribution.ContributionLegDocumentVO;
 import io.atlassian.fugue.Pair;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -233,7 +234,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
         LegDocument updatedLegDocument;
         try {
             Proposal clonedProposal = proposalService.getProposalByRef(cloneProposalRef);
-            Proposal originalProposal = proposalService.getProposalByRef(clonedProposal.getClonedFrom());
+            Proposal originalProposal = proposalService.getProposalByRef(removeVersion(clonedProposal.getClonedFrom()));
             LegDocument legDocument = legService.findLegDocumentById(cloneLegFileId);
             List<String> containedDocuments = legDocument.getContainedDocuments();
 
@@ -326,5 +327,9 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
             }
         }
         return updatedElements;
+    }
+
+    public static String removeVersion(String input) {
+        return StringUtils.isNotEmpty(input) ? input.replaceFirst("_\\d+(\\.\\d+)+$", "") : input;
     }
 }
