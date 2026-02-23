@@ -8,16 +8,9 @@
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
 
     <mvc:annotation-driven/>
-
-
     <context:component-scan base-package="eu.europa.ec.leos.services.controllers" />
-
+    <context:property-placeholder properties-ref="applicationProperties" ignore-unresolvable="true"/>
     <mvc:default-servlet-handler/>
-
-<!--    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">-->
-<!--        <property name="maxUploadSize" value="20971520"/>-->
-<!--    </bean>-->
     <bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>
-
 
 </beans>

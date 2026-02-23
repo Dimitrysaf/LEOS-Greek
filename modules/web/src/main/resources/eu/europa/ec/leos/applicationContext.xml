@@ -8,7 +8,12 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <!-- Scan classpath for annotation-based configuration of Spring beans. -->
-    <context:component-scan base-package="eu.europa.ec.leos"/>
+    <context:component-scan base-package="eu.europa.ec.leos">
+        <context:exclude-filter type="annotation"
+                                expression="org.springframework.stereotype.Controller"/>
+        <context:exclude-filter type="annotation"
+                                expression="org.springframework.web.bind.annotation.RestController"/>
+    </context:component-scan>
 
     <!-- Property Placeholder -->
     <context:property-placeholder properties-ref="applicationProperties" ignore-unresolvable="true"/> <!-- TODO ..this should be false  due to other modules -->
