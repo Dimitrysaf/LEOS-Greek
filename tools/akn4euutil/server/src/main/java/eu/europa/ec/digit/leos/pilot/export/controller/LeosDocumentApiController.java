@@ -93,7 +93,7 @@ public class LeosDocumentApiController {
                                                 @RequestParam(name = "email", required = false) String email) {
         try {
             byte[] documentOutput = leosDocumentService.applyMetadata(inputFile);
-            MultipartFile preFinalizedFile = new MockMultipartFile(Objects.requireNonNull(inputFile.getOriginalFilename()), documentOutput);
+            MultipartFile preFinalizedFile = new MockMultipartFile(Objects.requireNonNull(inputFile.getOriginalFilename()), Objects.requireNonNull(inputFile.getOriginalFilename()), null,  documentOutput);
             leosDocumentService.callLeosValidation(preFinalizedFile, email);
             return buildValidZipResponse(documentOutput);
         } catch (LeosDocumentException e) {

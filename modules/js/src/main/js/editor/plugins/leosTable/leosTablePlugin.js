@@ -94,6 +94,7 @@ define(function leosTablePluginModule(require) {
 
             editor.on( 'insertElement', _onInsertElement, this, null, 1 );
             editor.on( 'afterCommandExec' , _checkEmptyCKEditor, null, null, 100);
+            editor.on( 'beforeCommandExec' , _mergeCellsFunctionality, null, null, 1);
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',
@@ -397,7 +398,188 @@ define(function leosTablePluginModule(require) {
             }
         }
     }
-    
+
+    /*
+    This code is adjusted and replicated from tabletools/plugin of ckeditor_4.12.1
+    Purpose is to make sure that cells merge are working fine.
+    With plugin code cell merge is incorrect or fails intermittently.
+     */
+    //merge cells functionality starts
+    function _mergeCellsFunctionality(evt) {
+        const editor = evt.editor;
+        if (evt.data.name === 'cellMerge') {
+            evt.data.cell = _mergeCells(editor.getSelection(), false);
+            placeCursorInCell(evt.data.cell, true);
+            editor.getCommand('inlinesave').setState(CKEDITOR.TRISTATE_OFF);
+            editor.getCommand('inlinesaveclose').setState(CKEDITOR.TRISTATE_OFF);
+            evt.cancel();
+        }
+    }
+
+    function placeCursorInCell( cell, placeAtEnd ) {
+        var docInner = cell.getDocument(),
+            docOuter = CKEDITOR.document;
+        if ( CKEDITOR.env.ie && CKEDITOR.env.version == 10 ) {
+            docOuter.focus();
+            docInner.focus();
+        }
+        var range = new CKEDITOR.dom.range( docInner );
+        if ( !range[ 'moveToElementEdit' + ( placeAtEnd ? 'End' : 'Start' ) ]( cell ) ) {
+            range.selectNodeContents( cell );
+            range.collapse( placeAtEnd ? false : true );
+        }
+        range.select( true );
+    }
+
+    function _mergeCells( selection, isDetect ) {
+        var cells = getSelectedCells( selection );
+        var commonAncestor;
+        if (( commonAncestor = selection.getCommonAncestor() ) && commonAncestor.type == CKEDITOR.NODE_ELEMENT && commonAncestor.is( 'table' ) )
+            return false;
+        var cell,
+            firstCell = cells[ 0 ],
+            table = firstCell.getAscendant( 'table' ),
+            map = CKEDITOR.tools.buildTableMap( table ),
+            mapHeight = map.length,
+            mapWidth = map[ 0 ].length,
+            startRow = firstCell.getParent().$.rowIndex,
+            startColumn = cellInRow( map, startRow, firstCell );
+
+        var doc = firstCell.getDocument(),
+            lastRowIndex = startRow,
+            totalRowSpan = 0,
+            totalColSpan = 0,
+            frag = !isDetect && new CKEDITOR.dom.documentFragment( doc ),
+            dimension = 0;
+
+        for ( var i = 0; i < cells.length; i++ ) {
+            cell = cells[ i ];
+
+            var tr = cell.getParent(),
+                cellFirstChild = cell.getFirst(),
+                colSpan = cell.$.colSpan,
+                rowSpan = cell.$.rowSpan,
+                rowIndex = tr.$.rowIndex,
+                colIndex = cellInRow( map, rowIndex, cell );
+            dimension += colSpan * rowSpan;
+            totalColSpan = Math.max( totalColSpan, colIndex - startColumn + colSpan );
+            totalRowSpan = Math.max( totalRowSpan, rowIndex - startRow + rowSpan );
+            if ( !isDetect ) {
+                if ( trimCell( cell ), cell.getChildren().count() ) {
+                    if ( rowIndex != lastRowIndex && cellFirstChild && !( cellFirstChild.isBlockBoundary && cellFirstChild.isBlockBoundary( { br: 1 } ) ) ) {
+                        var last = frag.getLast( CKEDITOR.dom.walker.whitespaces( true ) );
+                        if ( last && !( last.is && last.is( 'br' ) ) )
+                            frag.append( 'br' );
+                    }
+                    cell.moveChildren( frag );
+                }
+                i ? cell.remove() : cell.setHtml( '' );
+            }
+            lastRowIndex = rowIndex;
+        }
+        if ( !isDetect ) {
+            frag.moveChildren( firstCell );
+            firstCell.appendBogus();
+            if ( totalColSpan >= mapWidth )
+                firstCell.removeAttribute( 'rowSpan' );
+            else
+                firstCell.$.rowSpan = totalRowSpan;
+            if ( totalRowSpan >= mapHeight )
+                firstCell.removeAttribute( 'colSpan' );
+            else
+                firstCell.$.colSpan = totalColSpan;
+            var trs = new CKEDITOR.dom.nodeList( table.$.rows ),
+                count = trs.count();
+
+            for ( i = count - 1; i >= 0; i-- ) {
+                var tailTr = trs.getItem( i );
+                if ( !tailTr.$.cells.length ) {
+                    tailTr.remove();
+                    count++;
+                    continue;
+                }
+            }
+            return firstCell;
+        }
+        else {
+            return ( totalRowSpan * totalColSpan ) == dimension;
+        }
+    }
+
+    function getSelectedCells( selection, table ) {
+        var retval = [],
+            database = {};
+        if ( !selection ) {
+            return retval;
+        }
+        var ranges = selection.getRanges();
+
+        function isInTable( cell ) {
+            if ( !table ) {
+                return true;
+            }
+            return table.contains( cell ) && cell.getAscendant( 'table', true ).equals( table );
+        }
+
+        function moveOutOfCellGuard( node ) {
+            var cellNodeRegex = /^(?:td|th)$/;
+            // Apply to the first cell only.
+            if ( retval.length > 0 )
+                return;
+            if ( node.type == CKEDITOR.NODE_ELEMENT && cellNodeRegex.test( node.getName() ) && !node.getCustomData( 'selected_cell' ) ) {
+                CKEDITOR.dom.element.setMarker( database, node, 'selected_cell', true );
+                retval.push( node );
+            }
+        }
+
+        for ( var i = 0; i < ranges.length; i++ ) {
+            var range = ranges[ i ];
+            if ( range.collapsed ) {
+                // Walker does not handle collapsed ranges yet - fall back to old API.
+                var startNode = range.getCommonAncestor();
+                var nearestCell = startNode.getAscendant( { td: 1, th: 1 }, true );
+                if ( nearestCell && isInTable( nearestCell ) ) {
+                    retval.push( nearestCell );
+                }
+            } else {
+                var walker = new CKEDITOR.dom.walker( range );
+                var node;
+                walker.guard = moveOutOfCellGuard;
+                while ( ( node = walker.next() ) ) {
+                    if ( node.type != CKEDITOR.NODE_ELEMENT || !node.is( CKEDITOR.dtd.table ) ) {
+                        var parent = node.getAscendant( { td: 1, th: 1 }, true );
+                        if ( parent && !parent.getCustomData( 'selected_cell' ) && isInTable( parent ) ) {
+                            CKEDITOR.dom.element.setMarker( database, parent, 'selected_cell', true );
+                            retval.push( parent );
+                        }
+                    }
+                }
+            }
+        }
+        CKEDITOR.dom.element.clearAllMarkers( database );
+        return retval;
+    }
+
+    function cellInRow( tableMap, rowIndex, cell ) {
+        var oRow = tableMap[ rowIndex ];
+        if ( typeof cell == 'undefined' )
+            return oRow;
+        for ( var c = 0; oRow && c < oRow.length; c++ ) {
+            if ( cell.is && oRow[ c ] == cell.$ )
+                return c;
+            else if ( c == cell )
+                return new CKEDITOR.dom.element( oRow[ c ] );
+        }
+        return cell.is ? -1 : null;
+    }
+
+    function trimCell( cell ) {
+        var bogus = cell.getBogus();
+        bogus && bogus.remove();
+        cell.trim();
+    }
+    //merge cells functionality end
+
     pluginTools.addPlugin(pluginName, pluginDefinition);
 
     var leosTableTransformer = leosTableTransformerStamp({

@@ -198,12 +198,8 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         context.useTemplate(template);
         context.usePurpose(metadata.getPurpose());
         context.useProposalId(proposal.getId());
-        boolean useCloneProposal = Optional.of(proposal.getContent())
-                .filter(content -> content.exists(c -> Objects.nonNull(c.getSource())))
-                .map(content -> content.get().getSource().getBytes())
-                .map(this.proposalService::getClonedProposalMetadata)
-                .filter(CloneProposalMetadataVO::isClonedProposal)
-                .isPresent();
+        CloneProposalMetadataVO vo = this.proposalService.getClonedProposalMetadata(proposal);
+        boolean useCloneProposal = vo.isClonedProposal();
         context.useCloneProposal(useCloneProposal);
         context.useOriginRef(cloneOriginRef);
         String actionMessage = messageHelper.getMessage("collection.block.financial.statement.added");

@@ -629,14 +629,16 @@ public abstract class ApiServiceImpl implements ApiService {
     public void deleteCollection(String proposalRef) {
         CollectionContextService context = collectionContextProvider.get();
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
-        populateCloneProposalMetadataVO(proposal.getContent().get().getSource().getBytes());
+        populateCloneProposalMetadataVO(proposal);
         context.useProposal(proposal);
         context.executeDeleteProposal();
         if (cloneContext != null && cloneContext.isClonedProposal()) {
             CloneProposalMetadataVO cloneProposalMetadataVO = cloneContext.getCloneProposalMetadataVO();
             String originalProposalId = cloneProposalMetadataVO.getClonedFromObjectId();
-            proposalService.removeClonedProposalMetadata(originalProposalId, proposalRef, cloneProposalMetadataVO);
-            LOG.info("Cloned proposal metadata with proposal ref {} is cleaned up from original proposal with id {}", proposalRef, originalProposalId);
+            if (!StringUtils.isEmpty(originalProposalId)) {
+                proposalService.removeClonedProposalMetadata(originalProposalId, proposalRef, cloneProposalMetadataVO);
+                LOG.info("Cloned proposal metadata with proposal ref {} is cleaned up from original proposal with id {}", proposalRef, originalProposalId);
+            }
         }
     }
 
@@ -864,7 +866,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 }
 
                 if (proposal.isClonedProposal()) {
-                    populateCloneProposalMetadataVO(proposalXmlContent);
+                    populateCloneProposalMetadataVO(proposal);
                     proposalVO.setCloneProposalMetadataVO(cloneContext.getCloneProposalMetadataVO());
                 }
                 StampedLock milestonesVOsLock = new StampedLock();
@@ -1265,21 +1267,16 @@ public abstract class ApiServiceImpl implements ApiService {
     public List<MilestonesVO> getProposalMilestones(String proposalRef) {
         List<MilestonesVO> milestonesVOS = new ArrayList<>();
         String proposalId = null;
-        byte[] proposalXmlContent = new byte[0];
-        boolean isClonedProposal = false;
         if (proposalRef != null) {
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
             if (proposal != null) {
                 proposalId = proposal.getId();
-                proposalXmlContent = proposal.getContent().exists(c -> c.getSource() != null) ?
-                        proposal.getContent().get().getSource().getBytes() :
-                        new byte[0];
-                isClonedProposal = proposal.isClonedProposal();
+                if (proposal.isClonedProposal()) {
+                    populateCloneProposalMetadataVO(proposal);
+                }
             }
         }
-        if (isClonedProposal) {
-            populateCloneProposalMetadataVO(proposalXmlContent);
-        }
+
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
         List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, true);
         legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
@@ -1301,20 +1298,14 @@ public abstract class ApiServiceImpl implements ApiService {
     public List<MilestonesVO> getProposalMilestones(String proposalRef, String language) throws Exception {
         List<MilestonesVO> milestonesVOS = new ArrayList<>();
         String proposalId = null;
-        byte[] proposalXmlContent = new byte[0];
-        boolean isClonedProposal = false;
         if (proposalRef != null) {
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
             if (proposal != null) {
                 proposalId = proposal.getId();
-                proposalXmlContent = proposal.getContent().exists(c -> c.getSource() != null) ?
-                        proposal.getContent().get().getSource().getBytes() :
-                        new byte[0];
-                isClonedProposal = proposal.isClonedProposal();
+                if (proposal.isClonedProposal()) {
+                    populateCloneProposalMetadataVO(proposal);
+                }
             }
-        }
-        if (isClonedProposal) {
-            populateCloneProposalMetadataVO(proposalXmlContent);
         }
         LeosPackage leosPackage = getLeosPackage(proposalRef);
         List<LegDocument> legDocuments = new ArrayList<>();
@@ -1365,7 +1356,7 @@ public abstract class ApiServiceImpl implements ApiService {
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
         String docVersion = userHelper.fetchMilestoneVersion(legDocument);
-        List<CloneProposalMetadataVO> cloneProposalMetadataVOs = proposalService.getClonedProposalMetadataVOs(proposalId, legDocument.getName(), docVersion);
+        List<CloneProposalMetadataVO> cloneProposalMetadataVOs = proposalService.getClonedProposalMetadataVOs(proposalRef, proposalId, docVersion, legDocument.getName());
         MilestonesVO milestonesVO = new MilestonesVO(legDocument.getMilestoneComments(),
                 Date.from(legDocument.getCreationInstant()),
                 Date.from(legDocument.getLastModificationInstant()),
@@ -1581,11 +1572,9 @@ public abstract class ApiServiceImpl implements ApiService {
             }
             String correctedMilestone = new String(milestoneComment.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
             String proposalId = proposal.getId();
-            byte[] proposalXmlContent = proposal.getContent().exists(c -> c.getSource() != null) ?
-                    proposal.getContent().get().getSource().getBytes() : new byte[0];
             boolean isClonedProposal = proposal.isClonedProposal();
             if (isClonedProposal) {
-                populateCloneProposalMetadataVO(proposalXmlContent);
+                populateCloneProposalMetadataVO(proposal);
             }
             if (hasNotChanged(proposal)) {
                 throw new CreateMilestoneException();
@@ -1757,7 +1746,7 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     private MilestoneViewResponse doListMilestoneDocumentsFromClonedProposal(LegDocument clonedLegDoc, Proposal clonedProposal, String clonedProposalRef) throws Exception {
-        populateCloneProposalMetadataVO(clonedProposal.getContent().get().getSource().getBytes());
+        populateCloneProposalMetadataVO(clonedProposal);
         Proposal originalProposal = proposalService.findProposal(this.cloneContext.getCloneProposalMetadataVO().getClonedFromObjectId(), false);
         LeosPackage originalPackage = packageService.findPackageByDocumentRef(originalProposal.getMetadata().get().getRef(), Proposal.class);
         LegDocument legDocument =  this.legService.findLastLegByVersionedReference(originalPackage.getPath(), originalProposal.getVersionedReference());
@@ -1929,8 +1918,8 @@ public abstract class ApiServiceImpl implements ApiService {
                                 if (clonedFS.isPresent() && clonedFS.get().contains(PROCESSED)) {
                                     milestoneView.setContentStatus("Rejected_Added");
                                 }
-                                byte[] xmlBytes = ((LeosFile) unzippedFiles.get(contentFileName + XML)).getBytes();
-                                populateCloneProposalMetadataVO(xmlBytes);
+                                Proposal clonedProposal = this.proposalService.findProposalByRef(clonedProposalRef);
+                                populateCloneProposalMetadataVO(clonedProposal);
                                 List<FinancialStatement> fs = getFinancialStatements(originalPackage);
                                 if (!fs.isEmpty() && !fs.get(0).getMetadata().get().getRef().equals(cloneContext.getCloneProposalMetadataVO().getClonedFromRef())) {
                                     milestoneView.setContentStatus("Accepted_Added");
@@ -2033,8 +2022,8 @@ public abstract class ApiServiceImpl implements ApiService {
         this.trackChangesContext.setTrackChangesEnabled(document.isTrackChangesEnabled());
     }
 
-    private void populateCloneProposalMetadataVO(byte[] xmlContent) {
-        CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(xmlContent);
+    private void populateCloneProposalMetadataVO(Proposal proposal) {
+        CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(proposal);
         cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
     }
 

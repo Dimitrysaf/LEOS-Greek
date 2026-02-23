@@ -280,17 +280,6 @@ public class XmlUtil {
         return xmlFile;
     }
 
-    public static Validator getAknSchemaValidator() throws XmlValidationException {
-        try {
-            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            URL resource = XmlUtil.class.getClassLoader().getResource("metadata/schema/akomantoso30.xsd");
-            Schema schema = factory.newSchema(resource);
-            return schema.newValidator();
-        } catch (SAXException ex) {
-            throw new XmlValidationException("Error creating schema validator", ex);
-        }
-    }
-
     public static XmlFile parseXml(byte[] xmlContent) throws XmlUtilException {
         InputStream inputStream = new ByteArrayInputStream(xmlContent);
         return parseXml(inputStream, "");

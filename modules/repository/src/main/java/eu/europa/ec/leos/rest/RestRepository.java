@@ -188,6 +188,9 @@ public class RestRepository extends AbstractRestClient {
     @Value("${leos.rest.repository.documents.set.validation.status}")
     private String leosRestSetDocumentsValidationStatus;
 
+    @Value("${leos.rest.repository.documents.search.clones}")
+    private String leosRestSearchClonedDocumentsURI;
+
     @Autowired
     private RepositoryPropertiesMapper repositoryPropertiesMapper;
 
@@ -778,5 +781,12 @@ public class RestRepository extends AbstractRestClient {
         LOGGER.trace("Set validation status for documents");
         String url = getUrl(leosRestSetDocumentsValidationStatus);
         putEntity(url, documentsIDs, Boolean.class);
+    }
+
+    public LeosDocumentList searchClonesOfOriginalDocument(String proposalRef) {
+        LOGGER.info("Search in all versions. [docRef={}, logins={}, versionType={}]", proposalRef);
+        String url = getUrl(leosRestSearchClonedDocumentsURI);
+        LOGGER.info("Search in url={}]", url);
+        return getEntity(url, LeosDocumentList.class, proposalRef);
     }
 }

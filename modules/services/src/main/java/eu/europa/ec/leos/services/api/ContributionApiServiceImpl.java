@@ -352,7 +352,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     protected void populateCloneProposalMetadata(Proposal proposal) {
         if (proposal != null && proposal.isClonedProposal()) {
             byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
-            CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(xmlContent);
+            CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(proposal);
             cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
         }
     }

@@ -331,4 +331,12 @@ public class DocumentController {
         return ResponseEntity.ok(documentService.setDocumentValidationStatus(versionIDs));
     }
 
+
+    @GetMapping(path = "/documents/clones/find-by-original-ref/{proposalRef}",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Object> searchClonesOfOriginalDocument(@PathVariable("proposalRef") String proposalRef) throws RepositoryException {
+        List<LeosDocument> clonedProposals =  documentService.searchClonesOfOriginalDocument(proposalRef);
+        return ResponseEntity.ok(new LeosDocumentList(clonedProposals));
+    }
+
 }
