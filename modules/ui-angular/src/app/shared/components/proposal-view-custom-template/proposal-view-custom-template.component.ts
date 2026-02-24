@@ -129,7 +129,7 @@ export class ProposalViewCustomTemplateComponent implements OnInit{
 
   private extractTemplatesFromCatalog(catalogItems: CatalogItem[]) {
     const getChildTemplates = (item: CatalogItem): CatalogItem[] =>
-      item.type === 'CATEGORY' ? item.items.flatMap(getChildTemplates) : [item];
+      (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') ? item.items.flatMap(getChildTemplates) : [item];
     const templates = catalogItems.flatMap(getChildTemplates).reduce(
       (map, item) => map.set(item.key, item),
       new Map<string, CatalogItem>(),
@@ -159,7 +159,7 @@ export class ProposalViewCustomTemplateComponent implements OnInit{
       type === 'CATEGORY' ? iconClassCategory : iconClassTemplate;
     let disabled = !enabled;
     const children =
-      type === 'CATEGORY' && !hidden && enabled
+      ( item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') && !hidden && enabled
         ? items
           .filter((child) => !child.hidden &&
             (!child.visibleTo || child.visibleTo.trim() === '' ||
@@ -168,7 +168,7 @@ export class ProposalViewCustomTemplateComponent implements OnInit{
           .map((child) => this.catalogItemToTreeItem(child))
         : [];
     const isEmptyCategory = type === 'CATEGORY' && !children.length;
-    const isTemplate = type !== 'CATEGORY';
+    const isTemplate = type === 'TEMPLATE';
     const isOriginalDg = item.originalDg === this.defaultEntity;
     const sameTemplate = (this.proposalTemplate && key === this.proposalTemplate);
     const isSameDocCollection = (!this.isCopyChangeAct || documentCollection == this.documentCollectionName);

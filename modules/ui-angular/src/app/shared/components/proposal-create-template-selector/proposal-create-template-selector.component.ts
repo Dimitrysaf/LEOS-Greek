@@ -21,7 +21,7 @@ import {
   TreeNode,
 } from '@eui/components/eui-tree';
 import { EuiTreeSelectionChanges } from '@eui/components/eui-tree/eui-tree.model';
-import {AppConfigService} from "@/core/services/app-config.service";
+
 import {TranslateService} from "@ngx-translate/core";
 
 const defaultLanguage =
@@ -45,6 +45,8 @@ export class ProposalCreateTemplateSelectorComponent
   @Input() documentCollectionName!: string;
   @Input() proposalTemplate!: string;
   @Input() userRoles!: ApplicationRole[];
+  @Input() dgList: string[];
+  @Input() selectedDg: string;
   @Output() navigationClick = new EventEmitter<void>();
   @Output() selectTemplate = new EventEmitter<CatalogItem | null>();
   @Output() selectLanguage = new EventEmitter<string>();
@@ -58,8 +60,7 @@ export class ProposalCreateTemplateSelectorComponent
   doubleClickTimer: any;
   filteredNodes: TreeDataModel = null;
 
-  selectedDg: string;
-  dgList: UserEntity[] = [];
+
 
 
   private destroy$ = new Subject<void>();
@@ -68,7 +69,6 @@ export class ProposalCreateTemplateSelectorComponent
   constructor(
     private cd: ChangeDetectorRef,
     private proposalService: ProposalService,
-    private appConfig: AppConfigService,
     private translateService: TranslateService
   ) {
     this.setInitialState();
@@ -76,18 +76,10 @@ export class ProposalCreateTemplateSelectorComponent
 
   ngOnInit() {
     this.initialize(this.isCopyChangeAct); // if isCopyChangeAct then default true for disabling the tree selection
-    this.getDgList();
+
   }
 
-  getDgList() {
-    this.appConfig.config.subscribe((config) => {
-      if (config.user.entities.length > 1) {
-        this.dgList = config.user.entities;
-        const selectedDg = this.dgList.find(dg => dg.organizationName === config.user.defaultEntity.organizationName);
-        this.selectedDg = selectedDg.organizationName ;
-      }
-    });
-  }
+
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -221,7 +213,7 @@ export class ProposalCreateTemplateSelectorComponent
 
     catalogItems = catalogItems.filter(item =>
       !item.hidden && (!item.visibleTo || item.visibleTo.trim() === '' ||
-      (!this.userRoles?.length || item.visibleTo.split(',').some(role => this.userRoles.includes(role.toUpperCase().trim() as ApplicationRole))))
+        (!this.userRoles?.length || item.visibleTo.split(',').some(role => this.userRoles.includes(role.toUpperCase().trim() as ApplicationRole))))
     );
     return catalogItems.map((item) => this.catalogItemToTreeItem(item));
   }
@@ -236,11 +228,11 @@ export class ProposalCreateTemplateSelectorComponent
     const children =
       (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') && !hidden && enabled
         ? items
-            .filter((child) => !child.hidden &&
-              (!child.visibleTo || child.visibleTo.trim() === '' ||
-                (!this.userRoles?.length ||
-                  child.visibleTo.split(',').some(role => this.userRoles.includes(role.toUpperCase().trim() as ApplicationRole)))))
-            .map((child) => this.catalogItemToTreeItem(child))
+          .filter((child) => !child.hidden &&
+            (!child.visibleTo || child.visibleTo.trim() === '' ||
+              (!this.userRoles?.length ||
+                child.visibleTo.split(',').some(role => this.userRoles.includes(role.toUpperCase().trim() as ApplicationRole)))))
+          .map((child) => this.catalogItemToTreeItem(child))
         : [];
     const isEmptyCategory = (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') && !children.length;
     const isTemplate = type === 'TEMPLATE';
