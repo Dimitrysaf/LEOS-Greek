@@ -165,7 +165,19 @@ public abstract class CollectionContextService {
 
     public void useTemplate(String name) {
         Validate.notNull(name, "Template name is required!");
-        XmlDocument template = templateService.getTemplate(name);
+        XmlDocument template = null;
+        try {
+            template = templateService.getTemplate(name);
+        } catch (IllegalArgumentException e) {
+            LOG.error("Template [name={}] not found!", name);
+            if (StringUtils.isNotEmpty(this.languageTemplateSuffix)) {
+                // TODO: To be removed.
+                // Not all languages versions exists for all templates now. If a template for a language not exists default version is loaded.
+                String defaultTemplateName = name.replaceFirst(this.languageTemplateSuffix + "$", "");
+                template = templateService.getTemplate(defaultTemplateName);
+                LOG.info("Default template [name={}] loaded!", defaultTemplateName);
+            }
+        }
         Validate.notNull(template, "Template not found! [name=%s]", name);
 
         LOG.trace("Using {} template... [id={}, name={}]", template.getCategory(), template.getId(), template.getName());
@@ -352,11 +364,7 @@ public abstract class CollectionContextService {
         MetadataVO propMeta = propDocument.getMetadata();
         Validate.notNull(propMeta, PROPOSAL_METADATA_IS_REQUIRED);
         Validate.notNull(propDocument.getChildDocuments(), "Proposal must contain child documents to import!");
-        // create package
-        this.packageService.useLanguage(this.language);
-        this.packageService.useTranslated(this.translated);
-        this.packageService.useOriginRef(this.originRef);
-        LeosPackage leosPckg = packageService.createPackage();
+
         // use template
         Proposal proposalTemplate = cast(categoryTemplateMap.get(PROPOSAL));
         Validate.notNull(proposalTemplate, "Proposal template is required!");
@@ -392,14 +400,30 @@ public abstract class CollectionContextService {
         String creationOptions = createJsonCreationOptions(templatePropertiesMap);
         metadata.setCreationOptions(creationOptions);
 
-        if (cloneProposal) {
-            setConnectedEntity();
-            proposal = proposalService.createClonedProposalFromContent(leosPckg.getPath(), metadata, cloneProposalMetadataVO, propDocument.getSource());
-        } else {
-            Validate.notNull(propDocument.getSource(), "Proposal xml is required!");
-            proposal = proposalService.createProposalFromContent(leosPckg.getPath(), metadata, propDocument, translated);
+        LeosPackage leosPckg = null;
+        try {
+            // create package
+            this.packageService.useLanguage(this.language);
+            this.packageService.useTranslated(this.translated);
+            this.packageService.useOriginRef(this.originRef);
+            leosPckg = packageService.createPackage();
+
+            // create proposal
+            if (cloneProposal) {
+                setConnectedEntity();
+                proposal = proposalService.createClonedProposalFromContent(leosPckg.getPath(), metadata, cloneProposalMetadataVO, propDocument.getSource());
+            } else {
+                Validate.notNull(propDocument.getSource(), "Proposal xml is required!");
+                proposal = proposalService.createProposalFromContent(leosPckg.getPath(), metadata, propDocument, translated);
+            }
+            Validate.notNull(proposal.getContent().getOrNull(), "Proposal not created!");
+            idsAndUrlsHolder.setPackageName(leosPckg.getName());
+        } catch (Exception e) {
+            if (leosPckg != null) {
+                packageService.deletePackage(leosPckg);
+            }
+            throw e;
         }
-        idsAndUrlsHolder.setPackageName(leosPckg.getName());
 
         HashMap<String, XmlDocument> refsMatching = new HashMap<>();
         // create child element
