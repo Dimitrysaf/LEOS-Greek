@@ -833,6 +833,8 @@ public abstract class ApiServiceImpl implements ApiService {
                 FavouritePackageResponse favouritePackageResponse = packageService.getFavouritePackage(proposalRef, userId);
                 legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
                 DocumentVO proposalVO = this.createViewObject(documents, proposalXmlContent, favouritePackageResponse.isFavourite());
+                proposalVO.setPkgLastUpdatedOn(leosPackage.getUpdatedOn());
+                proposalVO.setPkgLastUpdatedBy(userHelper.convertToPresentation(leosPackage.getUpdatedBy()));
                 proposalVO.getMetadata().setDocumentCollectionName(proposal.getMetadata().get().getDocumentCollectionName());
                 proposalVO.setCreationOptions(documents.stream().filter(doc -> doc.getCategory().name().equals("PROPOSAL")).findFirst().get().getMetadata().get().getCreationOptions());
                 List<LinkedPackage> linkedPackageList = packageService.findLinkedPackagesByPackageId(leosPackage.getId());
@@ -1021,35 +1023,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 legalText.addChildDocument(annexVO);
             }
         }
-        setLastUpdateOnAndBy(documents, proposalVO);
         return proposalVO;
-    }
-
-    // this method checks the last updateOn and lastUpdateBy of all child documents and sets it in the proposal
-    // it fixes the issue #2609
-    private void setLastUpdateOnAndBy(List<XmlDocument> documents, DocumentVO proposalVO) {
-        if (documents == null || documents.isEmpty() || proposalVO == null) {
-            return;
-        }
-        Date lastUpdatedOn = null;
-        String lastUpdatedBy = null;
-
-        for (XmlDocument document : documents) {
-            if(document.getLastModificationInstant() != null) {
-                Date updatedOn = Date.from(document.getLastModificationInstant());
-                if (lastUpdatedOn == null || updatedOn.after(lastUpdatedOn)) {
-                    lastUpdatedOn = updatedOn;
-                    lastUpdatedBy = document.getLastModifiedBy();
-                }
-            }
-        }
-        if(StringUtils.isNotBlank(lastUpdatedBy)) {
-            proposalVO.setPkgLastUpdatedOn(lastUpdatedOn);
-            proposalVO.setPkgLastUpdatedBy(userHelper.convertToPresentation(lastUpdatedBy));
-        } else {
-            proposalVO.setPkgLastUpdatedOn(proposalVO.getUpdatedOn());
-            proposalVO.setPkgLastUpdatedBy(proposalVO.getUpdatedBy());
-        }
     }
 
     private DocumentVO createFinancialStatementVO(FinancialStatement financialStatement) {
