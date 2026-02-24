@@ -342,8 +342,6 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
             updateMemorandum(doc.getId(), xmlContent);
         } catch (Exception e) {
             LOG.error("Error while updating references on import: " + e.getMessage(), e);
-        } finally {
-            trackChangesContext.clear();
         }
     }
 }

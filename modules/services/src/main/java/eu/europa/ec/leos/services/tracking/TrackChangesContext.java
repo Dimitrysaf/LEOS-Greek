@@ -1,20 +1,19 @@
 package eu.europa.ec.leos.services.tracking;
 
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
 
 @Component
+@RequestScope
 public class TrackChangesContext {
-    private static final ThreadLocal<Boolean> trackChanges = new ThreadLocal<>();
+    private boolean trackChangesEnabled;
 
     public boolean isTrackChangesEnabled() {
-        return Boolean.TRUE.equals(trackChanges.get());
+        return trackChangesEnabled;
     }
 
-    public void setTrackChangesEnabled(boolean enabled) {
-        trackChanges.set(enabled);
-    }
-
-    public void clear() {
-        trackChanges.remove();
+    public void setTrackChangesEnabled(boolean trackChangesEnabled) {
+        this.trackChangesEnabled = trackChangesEnabled;
     }
 }
