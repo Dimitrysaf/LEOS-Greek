@@ -1,18 +1,20 @@
 package eu.europa.ec.leos.services.tracking;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.RequestScope;
 
 @Component
-@RequestScope
 public class TrackChangesContext {
-    private boolean trackChangesEnabled;
+    private static final ThreadLocal<Boolean> trackChanges = new ThreadLocal<>();
 
     public boolean isTrackChangesEnabled() {
-        return trackChangesEnabled;
+        return Boolean.TRUE.equals(trackChanges.get());
     }
 
-    public void setTrackChangesEnabled(boolean trackChangesEnabled) {
-        this.trackChangesEnabled = trackChangesEnabled;
+    public void setTrackChangesEnabled(boolean enabled) {
+        trackChanges.set(enabled);
+    }
+
+    public void clear() {
+        trackChanges.remove();
     }
 }
