@@ -400,14 +400,13 @@ public abstract class CollectionContextService {
         String creationOptions = createJsonCreationOptions(templatePropertiesMap);
         metadata.setCreationOptions(creationOptions);
 
-        LeosPackage leosPckg = null;
-        try {
-            // create package
-            this.packageService.useLanguage(this.language);
-            this.packageService.useTranslated(this.translated);
-            this.packageService.useOriginRef(this.originRef);
-            leosPckg = packageService.createPackage();
+        // create package
+        this.packageService.useLanguage(this.language);
+        this.packageService.useTranslated(this.translated);
+        this.packageService.useOriginRef(this.originRef);
+        LeosPackage leosPckg = packageService.createPackage();
 
+        try {
             // create proposal
             if (cloneProposal) {
                 setConnectedEntity();
@@ -419,9 +418,7 @@ public abstract class CollectionContextService {
             Validate.notNull(proposal.getContent().getOrNull(), "Proposal not created!");
             idsAndUrlsHolder.setPackageName(leosPckg.getName());
         } catch (Exception e) {
-            if (leosPckg != null) {
-                packageService.deletePackage(leosPckg);
-            }
+            packageService.deletePackage(leosPckg);
             throw e;
         }
 
