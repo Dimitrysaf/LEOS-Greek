@@ -142,33 +142,4 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
         }
         return new Result<>("OK", null);
     }
-
-    @Override
-    public Result<?> saveClonedProposalIdToOriginalProposal(DocumentVO documentVO, CollectionIdsAndUrlsHolder
-            idsAndUrlsHolder, CloneProposalMetadataVO cloneProposalMetadataVO) {
-        if (documentVO.getCategory().equals(LeosCategory.PROPOSAL)) {
-            User loggedUser = securityContext.getUser();
-            Collection<? extends GrantedAuthority> loggedInUserAuthorities = SecurityContextHolder.getContext().
-                    getAuthentication().getAuthorities();
-            try {
-                //Switch user to sysadmin
-                userService.switchUser(repositorySysadmin);
-                Proposal originalProposal = proposalService.findProposal(documentVO.getId());
-                byte[] xmlContent = originalProposal.getContent().getOrThrow(() ->
-                        new IllegalArgumentException("Proposal not found")).getSource().getBytes();
-                String docVersion = LegUtils.fetchMilestoneVersion(documentVO);
-                //update original proposal with cloned metadata properties
-                final String versionComment = messageHelper.getMessage("milestone.versionComment");
-                // updating the version type to Major and also versionComment to fix issue #2987
-                proposalService.updateProposal(originalProposal.getId(), xmlContent, VersionType.MAJOR, versionComment);
-            } catch (Exception e) {
-                LOG.error("Error occurred while saving cloned metadata to original proposal", e);
-                return new Result<>(e.getMessage(), ErrorCode.EXCEPTION);
-            } finally {
-                //Switch back to logged-in user
-                userService.switchUserWithAuthorities(loggedUser.getLogin(), loggedInUserAuthorities);
-            }
-        }
-        return new Result<>("OK", null);
-    }
 }

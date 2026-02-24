@@ -394,10 +394,6 @@ public interface XmlContentProcessor {
 
     String getOriginalMilestoneName(String docName, byte[] xmlContent);
 
-    boolean isClonedDocument(byte[] xmlContent);
-
-    String getOriginalDocRefFromClonedContent(byte[] xmlContent);
-
     byte[] updateInitialNumberForArticles(byte[] xmlContent);
     
     byte[] insertSoftAddedClassAttribute(byte[] contentBytes);
