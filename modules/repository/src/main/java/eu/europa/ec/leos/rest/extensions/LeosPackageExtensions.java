@@ -24,7 +24,7 @@ public class LeosPackageExtensions {
         if (pkg.getTranslated() == null) {
             pkg.setTranslated(false);
         }
-        return new LeosPackage(pkg.getId(), pathNames[pathNames.length - 1], pkg.getName(), pkg.getLanguage(), pkg.getTranslated());
+        return new LeosPackage(pkg.getId(), pathNames[pathNames.length - 1], pkg.getName(), pkg.getLanguage(), pkg.getTranslated(), pkg.getUpdatedBy(), pkg.getUpdatedOn());
     }
 
     public static LinkedPackage toLinkedPackage(eu.europa.ec.leos.rest.support.model.LinkedPackage pkg) {

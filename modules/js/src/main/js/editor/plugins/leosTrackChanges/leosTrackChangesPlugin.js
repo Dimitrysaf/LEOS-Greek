@@ -242,8 +242,11 @@ define(function leosTrackChangesPluginModule(require) {
                         var tcElement = element.$.closest(core.TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR);
                         if (tcElement) { // Is a track change deleted row
                             selectedElement = new CKEDITOR.dom.element(tcElement);
+                            var hasPredefinedTableAsAncestor = selectedElement && selectedElement.getAscendant('table', true)
+                                && (selectedElement.getAscendant('table', true).getAttribute('leos:deletable') === 'false'
+                                    || selectedElement.getAscendant('table', true).getAttribute('leos:predefinedTable') ==="true");
                             return {
-                                acceptRowChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                acceptRowChangeItem: canUserAcceptChanges && !hasPredefinedTableAsAncestor ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
                                 rejectRowChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
                             };
                         } else if (editor.getSelection().isCollapsed() && (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION)
