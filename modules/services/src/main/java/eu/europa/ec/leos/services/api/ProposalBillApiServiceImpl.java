@@ -26,6 +26,7 @@ import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportVersions;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +43,8 @@ public class ProposalBillApiServiceImpl extends BillApiServiceImpl {
     private Provider<CloneContext> cloneContext;
 
     ProposalBillApiServiceImpl(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext
-            , Provider<BillContextService> context, GenericDocumentApiService genericDocumentApiService) {
-        super(structureContext, context);
+            , Provider<BillContextService> context, GenericDocumentApiService genericDocumentApiService, XmlContentProcessor xmlContentProcessor) {
+        super(structureContext, context, xmlContentProcessor);
         this.cloneContext = cloneContext;
     }
 
