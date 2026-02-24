@@ -145,6 +145,7 @@ public class CoverPageController {
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {
             LOG.error("Error occurred while getting coverPage element - " + e.getMessage());
+            LOG.error("Error occurred while getting coverPage element", e);
             return new ResponseEntity<>("Unexpected error occured while getting coverPage element",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
