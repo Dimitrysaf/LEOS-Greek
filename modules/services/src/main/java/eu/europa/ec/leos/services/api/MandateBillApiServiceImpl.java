@@ -24,6 +24,7 @@ import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.export.ExportDW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportVersions;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +37,8 @@ import jakarta.inject.Provider;
 public class MandateBillApiServiceImpl extends BillApiServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(MandateBillApiServiceImpl.class);
 
-    MandateBillApiServiceImpl(Provider<StructureContext> structureContext, Provider<BillContextService> context) {
-        super(structureContext, context);
+    MandateBillApiServiceImpl(Provider<StructureContext> structureContext, Provider<BillContextService> context, XmlContentProcessor xmlContentProcessor) {
+        super(structureContext, context, xmlContentProcessor);
     }
 
     @Override

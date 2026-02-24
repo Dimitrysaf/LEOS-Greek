@@ -65,6 +65,7 @@ import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.BillProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.processor.TrackChangesProcessor;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -78,12 +79,10 @@ import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XercesUtils;
-import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
-import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.light.Profile;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -92,10 +91,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import jakarta.inject.Provider;
 import java.io.ByteArrayInputStream;
@@ -103,7 +99,6 @@ import java.nio.charset.StandardCharsets;
 import java.rmi.UnexpectedException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -177,7 +172,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
 
 
     protected Provider<BillContextService> context;
-
+    protected XmlContentProcessor xmlContentProcessor;
     private static final String LEOS_ALTERNATIVE_ATTR = "leos:alternative";
     private static final Logger LOG = LoggerFactory.getLogger(BillApiServiceImpl.class);
 
@@ -187,9 +182,10 @@ public abstract class BillApiServiceImpl implements BillApiService {
     private Provider<StructureContext> structureContext;
 
     @Autowired
-    BillApiServiceImpl(Provider<StructureContext> structureContext, Provider<BillContextService> context) {
+    BillApiServiceImpl(Provider<StructureContext> structureContext, Provider<BillContextService> context, XmlContentProcessor xmlContentProcessor) {
         this.structureContext = structureContext;
         this.context = context;
+        this.xmlContentProcessor = xmlContentProcessor;
     }
 
     @Override
@@ -263,7 +259,47 @@ public abstract class BillApiServiceImpl implements BillApiService {
         byte[] resultXmlContent = getContent(targetVersion);
         Bill updatedBill = billService.updateBill(sourceVersion, resultXmlContent,
                 messageHelper.getMessage("operation.restore.version", targetVersion.getVersionLabel()), true);
+
+
+        this.saveCoverPageTitle(updatedBill);
         return this.documentViewService.updateDocumentView(updatedBill);
+    }
+
+
+    private void saveCoverPageTitle(Bill updatedBill) {
+        //get the new docPurpose content from the bill
+        byte[] billContent = updatedBill.getContent().get().getSource().getBytes();
+        List<Element> docPurposeElementsFromBill = xmlContentProcessor.getElementsByTagName(billContent,
+                Arrays.asList("docPurpose"), true);
+        String elementFragment = docPurposeElementsFromBill.get(0).getElementFragment();
+        String newDocPurpose = this.proposalService.getPurposeFromXml(elementFragment.getBytes());
+
+        // get the current docPurpose xml element from proposal so that it can be updated
+        Proposal proposal = this.documentViewService.getProposalFromPackage(updatedBill);
+        proposal = proposalService.populateProposalMetadataFromXml(proposal);
+
+        byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
+        List<Element> docPurposeElements = xmlContentProcessor.getElementsByTagName(proposalContent,
+                Arrays.asList("docPurpose"), true);
+
+        // Check if new doc purpose is not empty
+        if (newDocPurpose != null && newDocPurpose.trim().replaceAll("(^\\h*)|(\\h*$)", "").length() > 0) {
+            //replace the content of proposal's docPurpose tag
+            String newElementFragment = docPurposeElements.get(0).getElementFragment();
+            Node proposalDocPurposeNode = XercesUtils.createNodeFromXmlFragment(newElementFragment.getBytes(StandardCharsets.UTF_8));
+            newElementFragment = XercesUtils.nodeToString(XercesUtils.addContentToNode(proposalDocPurposeNode, newDocPurpose));
+
+            // save the new docPurpose tag inside the proposal content
+            byte[] newXmlContent =
+                    !docPurposeElements.isEmpty() ? xmlContentProcessor.replaceElementById(proposalContent,
+                            newElementFragment,
+                            docPurposeElements.get(0).getElementId(), true) : null;
+
+            if (newXmlContent == null) {
+                return ;
+            }
+            proposalService.updateProposal(proposal, newXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.docpurpose.updated"));
+        }
     }
 
     @Override
