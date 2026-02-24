@@ -4,6 +4,7 @@ import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XmlHelper;
@@ -58,101 +59,94 @@ public class MilestoneHelper {
         return ZipPackageUtil.unzipFilesFromByteArray(content.getSource().getBytes());
     }
 
-    public static Map<String, Object> populateAnnexAddedMap(Map<String, Object> files, LegDocument legDocument,
-                                                            List<Annex> annexList, XmlContentProcessor xmlContentProcessor) {
+    public static Map<String, Object> populateAnnexAddedMap(List<Annex> clonedAnnexesList, LegDocument legDocument,
+                                                            List<Annex> annexList) {
         Map<String, Object> annexAddedMap = new HashMap<>();
-        Map<String, Object> xmlFiles = filterAndSortFiles(files, XML);
-        xmlFiles.forEach((key, value) -> {
-            byte[] xmlBytes = ((LeosFile) value).getBytes();
-            String entryKey = key.substring(0, key.indexOf(XML));
-            if (entryKey.startsWith(ANNEX_FILE_PREFIX) && !xmlContentProcessor.isClonedDocument(xmlBytes)) {
-                final String annexFilename = key.substring(0, key.indexOf(XML));
+        for(Annex annexDocument : clonedAnnexesList) {
+            if (annexDocument.getName().startsWith(ANNEX_FILE_PREFIX) && !(annexDocument.getClonedFrom() != null && annexDocument.getClonedFrom().startsWith(ANNEX_FILE_PREFIX))) {
+                String annexFilename = annexDocument.getName();
+                final String annexName = annexFilename.substring(0, annexFilename.lastIndexOf('.'));
                 //Populate list of new annexes from contribution which are already accepted in original proposal
                 Optional<Annex> acceptedAnnex = annexList.stream().filter(annex ->
-                        annexFilename.equalsIgnoreCase(annex.getMetadata().get().getClonedRef())).findFirst();
+                        annexName.equalsIgnoreCase(annex.getMetadata().get().getClonedRef())).findFirst();
                 //Populate list of new annexes from contribution which are rejected
                 Optional<String> rejectedAnnex = legDocument.getContainedDocuments().stream().filter(
-                        fileName -> fileName.contains(PROCESSED) && fileName.startsWith(annexFilename)).findFirst();
-
+                        fileName -> fileName.contains(PROCESSED) && fileName.startsWith(annexName)).findFirst();
+                Object obj = annexDocument.getContent().get().getSource().getBytes();
                 if (rejectedAnnex.isPresent()) {
                     //Add the processed annexes with the suffix "_processed"
-                    String processedAnnexFilename = annexFilename.concat(PROCESSED);
-                    annexAddedMap.put(processedAnnexFilename, value);
+                    String processedAnnexFilename = annexName.concat(PROCESSED);
+                    annexAddedMap.put(processedAnnexFilename, obj);
                 } else if (acceptedAnnex.isPresent()) {
-                    String processedAnnexFilename = annexFilename.concat(ACCEPTED_ADDED);
-                    annexAddedMap.put(processedAnnexFilename, value);
+                    String processedAnnexFilename = annexName.concat(ACCEPTED_ADDED);
+                    annexAddedMap.put(processedAnnexFilename, obj);
                 } else {
-                    annexAddedMap.put(annexFilename, value);
+                    annexAddedMap.put(annexName, obj);
                 }
             }
-        });
+        }
         return annexAddedMap;
     }
 
-    public static Map<String, Object> populateDocsAddedMap(Map<String, Object> contributionFiles, Map<String, Object> originalFiles, LegDocument legDocument,
-                                                            List<Annex> annexList, XmlContentProcessor xmlContentProcessor) {
+    public static Map<String, Object> populateDocsAddedMap(List<XmlDocument> xmlDocuments, Map<String, Object> originalFiles, LegDocument legDocument,
+                                                            List<Annex> annexList) {
         Map<String, Object> docsAddedMap = new HashMap<>();
         Map<String, Object> xmlFiles = filterAndSortFiles(originalFiles, XML);
-        Map<String, Object> contributionXmlFiles = filterAndSortFiles(contributionFiles, XML);
-        contributionXmlFiles.forEach((key, value) -> {
-            byte[] xmlBytes = ((LeosFile) value).getBytes();
-            String entryKey = key.substring(0, key.indexOf(XML));
-            if (entryKey.startsWith(ANNEX_FILE_PREFIX) && !xmlContentProcessor.isClonedDocument(xmlBytes)) {
-                final String annexFilename = key.substring(0, key.indexOf(XML));
+        for(XmlDocument xmlDocument : xmlDocuments) {
+            String docName = xmlDocument.getName();
+            final String filename = docName.substring(0, docName.lastIndexOf("."));
+            Object obj = xmlDocument.getContent().get().getSource().getBytes();
+            if (filename.startsWith(ANNEX_FILE_PREFIX) && !(xmlDocument.getClonedFrom() != null && xmlDocument.getClonedFrom().startsWith(ANNEX_FILE_PREFIX))) {
                 //Populate list of new annexes from contribution which are already accepted in original proposal
                 Optional<Annex> acceptedAnnex = annexList.stream().filter(annex ->
-                        annexFilename.equalsIgnoreCase(annex.getMetadata().get().getClonedRef())).findFirst();
+                        filename.equalsIgnoreCase(annex.getMetadata().get().getClonedRef())).findFirst();
                 //Populate list of new annexes from contribution which are rejected
                 Optional<String> rejectedAnnex = legDocument.getContainedDocuments().stream().filter(
-                        fileName -> fileName.contains(PROCESSED) && fileName.startsWith(annexFilename)).findFirst();
+                        fileName -> fileName.contains(PROCESSED) && fileName.startsWith(filename)).findFirst();
 
                 if (rejectedAnnex.isPresent()) {
                     //Add the processed annexes with the suffix "_processed"
-                    String processedAnnexFilename = annexFilename.concat(PROCESSED);
-                    docsAddedMap.put(processedAnnexFilename, value);
+                    String processedAnnexFilename = filename.concat(PROCESSED);
+                    docsAddedMap.put(processedAnnexFilename, obj);
                 } else if (acceptedAnnex.isPresent()) {
-                    String processedAnnexFilename = annexFilename.concat(ACCEPTED_ADDED);
-                    docsAddedMap.put(processedAnnexFilename, value);
+                    String processedAnnexFilename = filename.concat(ACCEPTED_ADDED);
+                    docsAddedMap.put(processedAnnexFilename, obj);
                 } else {
-                    docsAddedMap.put(annexFilename, value);
+                    docsAddedMap.put(filename, obj);
                 }
-            } else if (entryKey.startsWith(STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX)) {
-                final String docFilename = key.substring(0, key.indexOf(XML));
+            } else if (filename.startsWith(STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX)) {
                 Optional<String> acceptedDoc = xmlFiles.keySet().stream().filter(doc -> doc.startsWith(STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX)).findFirst();
                 //Populate list of new annexes from contribution which are rejected
                 Optional<String> rejectedDoc = legDocument.getContainedDocuments().stream().filter(
-                        fileName -> fileName.contains(PROCESSED) && fileName.startsWith(docFilename)).findFirst();
+                        fileName -> fileName.contains(PROCESSED) && fileName.startsWith(filename)).findFirst();
 
                 if (rejectedDoc.isPresent()) {
                     //Add the processed docs with the suffix "_processed"
-                    String processedAnnexFilename = docFilename.concat(PROCESSED);
-                    docsAddedMap.put(processedAnnexFilename, value);
+                    String processedAnnexFilename = filename.concat(PROCESSED);
+                    docsAddedMap.put(processedAnnexFilename, obj);
                 } else if (acceptedDoc.isPresent()) {
-                    String processedAnnexFilename = docFilename.concat(ACCEPTED_ADDED);
-                    docsAddedMap.put(processedAnnexFilename, value);
+                    String processedAnnexFilename = filename.concat(ACCEPTED_ADDED);
+                    docsAddedMap.put(processedAnnexFilename, obj);
                 } else {
-                    docsAddedMap.put(docFilename, value);
+                    docsAddedMap.put(filename, obj);
                 }
             }
-        });
+        }
         return docsAddedMap;
     }
 
-    public static Map<String, Object> populateAnnexDeletedMap(Map<String, Object> originalContentFiles,
-                                                              Map<String, Object> contentFiles, LegDocument originalLegDocument,
-                                                              List<Annex> annexList, XmlContentProcessor xmlContentProcessor) {
+    public static Map<String, Object> populateAnnexDeletedMap(List<Annex> clonedAnnex
+            , LegDocument originalLegDocument, List<Annex> annexList) {
         Map<String, Object> annexDeletedMap = new HashMap<>();
-        Map<String, Object> originalXmlFiles = MilestoneHelper.filterAndSortFiles(originalContentFiles, XML);
-        Map<String, Object> xmlFiles = MilestoneHelper.filterAndSortFiles(contentFiles, XML);
-        for (Map.Entry<String, Object> entry : originalXmlFiles.entrySet()) {
+        for (Annex orgAnnex : annexList) {
             boolean found = false;
-            String originalEntryKey = entry.getKey().substring(0, entry.getKey().indexOf(XML));
+            String originalEntryKey = orgAnnex.getName().substring(0, orgAnnex.getName().lastIndexOf("."));
+            Object obj = orgAnnex.getContent().get().getSource().getBytes();
             if (originalEntryKey.startsWith(ANNEX_FILE_PREFIX)) {
-                for (Map.Entry<String, Object> entry1 : xmlFiles.entrySet()) {
-                    String entryKey = entry1.getKey();
-                    byte[] xmlBytes = ((LeosFile) entry1.getValue()).getBytes();
+                for (Annex cloneAnnex : clonedAnnex) {
+                    String entryKey = cloneAnnex.getName();
                     if (entryKey.startsWith(ANNEX_FILE_PREFIX)) {
-                        String originalDocRef = xmlContentProcessor.getOriginalDocRefFromClonedContent(xmlBytes);
+                        String originalDocRef = cloneAnnex.getClonedFrom();
                         if (originalEntryKey.equalsIgnoreCase(originalDocRef)) {
                             found = true;
                             break;
@@ -168,12 +162,12 @@ public class MilestoneHelper {
                             fileName -> fileName.contains(PROCESSED) && fileName.startsWith(originalEntryKey)).findFirst();
 
                     if (!acceptedAnnex.isPresent()) {
-                        annexDeletedMap.put(originalEntryKey.concat(ACCEPTED_DELETED), entry.getValue());
+                        annexDeletedMap.put(originalEntryKey.concat(ACCEPTED_DELETED), obj);
                     } else if (rejectedAnnex.isPresent()) {
                         //Add the processed annexes with the suffix "_processed"
-                        annexDeletedMap.put(originalEntryKey.concat(PROCESSED), entry.getValue());
+                        annexDeletedMap.put(originalEntryKey.concat(PROCESSED), obj);
                     } else {
-                        annexDeletedMap.put(originalEntryKey, entry.getValue());
+                        annexDeletedMap.put(originalEntryKey, obj);
                     }
                 }
             }
@@ -183,7 +177,7 @@ public class MilestoneHelper {
 
     public static Map<String, Object> populateDocsDeletedMap(Map<String, Object> originalContentFiles,
                                                               Map<String, Object> contentFiles, LegDocument originalLegDocument,
-                                                              List<Annex> annexList, XmlContentProcessor xmlContentProcessor) {
+                                                              List<Annex> annexList) {
         Map<String, Object> docsDeletedMap = new HashMap<>();
         Map<String, Object> originalXmlFiles = MilestoneHelper.filterAndSortFiles(originalContentFiles, XML);
         Map<String, Object> xmlFiles = MilestoneHelper.filterAndSortFiles(contentFiles, XML);
@@ -191,15 +185,10 @@ public class MilestoneHelper {
             boolean found = false;
             String originalEntryKey = entry.getKey().substring(0, entry.getKey().indexOf(XML));
             if (originalEntryKey.startsWith(ANNEX_FILE_PREFIX)) {
-                for (Map.Entry<String, Object> entry1 : xmlFiles.entrySet()) {
-                    String entryKey = entry1.getKey();
-                    byte[] xmlBytes = ((LeosFile) entry1.getValue()).getBytes();
-                    if (entryKey.startsWith(ANNEX_FILE_PREFIX)) {
-                        String originalDocRef = xmlContentProcessor.getOriginalDocRefFromClonedContent(xmlBytes);
-                        if (originalEntryKey.equalsIgnoreCase(originalDocRef)) {
-                            found = true;
-                            break;
-                        }
+                for(Annex annex : annexList) {
+                    if(annex.getClonedFrom() != null && annex.getClonedFrom().equals(originalEntryKey)) {
+                        found = true;
+                        break;
                     }
                 }
                 if (!found) {

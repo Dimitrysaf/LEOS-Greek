@@ -3089,17 +3089,6 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
-    public boolean isClonedDocument(byte[] xmlContent) {
-        String xPath = xPathCatalog.getXPathClonedProposal();
-        return evalXPath(xmlContent, xPath, true);
-    }
-
-    @Override
-    public String getOriginalDocRefFromClonedContent(byte[] xmlContent) {
-        return getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneRefAttr(), true);
-    }
-
-    @Override
     public byte[] updateInitialNumberForArticles(byte[] xmlContent) {
         Document document = createXercesDocument(xmlContent);
         NodeList nodes = XercesUtils.getElementsByName(document, ARTICLE);

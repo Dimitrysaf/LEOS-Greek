@@ -329,7 +329,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
         return updatedElements;
     }
 
-    public static String removeVersion(String input) {
+    private String removeVersion(String input) {
         return StringUtils.isNotEmpty(input) ? input.replaceFirst("_\\d+(\\.\\d+)+$", "") : input;
     }
 }

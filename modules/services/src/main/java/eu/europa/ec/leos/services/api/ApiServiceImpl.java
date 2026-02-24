@@ -1122,7 +1122,11 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     private List<Annex> getAnnexes(LeosPackage leosPackage) {
-        return packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
+        return leosPackage != null ? packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false) : null;
+    }
+
+    private List<Annex> getAnnexes(LeosPackage leosPackage, boolean fetchContent) {
+        return leosPackage != null ? packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, fetchContent) : null;
     }
 
     private List<FinancialStatement> getFinancialStatements(LeosPackage leosPackage) {
@@ -1190,15 +1194,15 @@ public abstract class ApiServiceImpl implements ApiService {
         Validate.notNull(clonedLegName, "Cloned leg file name should not be null");
         LeosPackage clonedPackage = packageService.findPackageByDocumentRef(clonedProposalRef, Proposal.class);
         LegDocument clonedLegDocument = legService.findLastContribution(clonedPackage.getPath(), clonedLegName);
+        List<XmlDocument> clonedDocuments = packageService.findDocumentsByPackagePath(clonedPackage.getPath(), XmlDocument.class, true);
         boolean contributionChanged = false;
         if (clonedLegDocument != null && originalLegDocument != null) {
             try {
                 Map<String, Object> contributionFiles = MilestoneHelper.getMilestoneFiles(clonedLegDocument);
                 Map<String, Object> originalDocumentFiles = MilestoneHelper.getMilestoneFiles(originalLegDocument);
 
-                Map<String, Object> docsAddedMap = MilestoneHelper.populateDocsAddedMap(contributionFiles, originalDocumentFiles, clonedLegDocument,
-                        getAnnexes(originalLeosPackage),
-                        xmlContentProcessor);
+                Map<String, Object> docsAddedMap = MilestoneHelper.populateDocsAddedMap(clonedDocuments, originalDocumentFiles, clonedLegDocument,
+                        getAnnexes(originalLeosPackage));
                 List<String> docsAddedList = docsAddedMap.keySet().stream().filter((n) ->
                     !n.contains(PROCESSED) && !n.contains(ACCEPTED_ADDED)
                 ).collect(Collectors.toList());
@@ -1206,7 +1210,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     contributionChanged = true;
                 }
                 Map<String, Object> docsDeletedMap = MilestoneHelper.populateDocsDeletedMap(originalDocumentFiles,
-                            contributionFiles, originalLegDocument, getAnnexes(originalLeosPackage), xmlContentProcessor);
+                            contributionFiles, originalLegDocument, getAnnexes(originalLeosPackage));
                 List<String> docsDeletedList = docsDeletedMap.keySet().stream().filter((n) ->
                         !n.contains(PROCESSED) && !n.contains(ACCEPTED_DELETED)).collect(Collectors.toList());
                 if (docsDeletedList.size() > 0) {
@@ -1673,7 +1677,7 @@ public abstract class ApiServiceImpl implements ApiService {
 
     private MilestoneViewResponse doListMilestoneDocumentsFromClonedProposal(LegDocument clonedLegDoc, Proposal clonedProposal, String clonedProposalRef) throws Exception {
         populateCloneProposalMetadataVO(clonedProposal);
-        Proposal originalProposal = proposalService.findProposal(this.cloneContext.getCloneProposalMetadataVO().getClonedFromObjectId(), false);
+        Proposal originalProposal = proposalService.findProposalByRef(removeVersion(clonedProposal.getClonedFrom()));
         LeosPackage originalPackage = packageService.findPackageByDocumentRef(originalProposal.getMetadata().get().getRef(), Proposal.class);
         LegDocument legDocument =  this.legService.findLastLegByVersionedReference(originalPackage.getPath(), originalProposal.getVersionedReference());
         return listMilestoneDocuments(legDocument, clonedLegDoc, clonedProposalRef, true);
@@ -1699,6 +1703,7 @@ public abstract class ApiServiceImpl implements ApiService {
         boolean isContributionChanged = false;
         Map<String, Object> annexAddedMap = new HashMap<>();
         LeosPackage originalPackage = packageService.findPackageByDocumentRef(legDocument.getName().replace(".leg",""), LegDocument.class);
+        LeosPackage clonedPackage = clonedLegDoc != null ? packageService.findPackageByDocumentRef(clonedLegDoc.getName().replace(".leg",""), LegDocument.class) : null;
 
         if (isToBeCompared) {
             try {
@@ -1706,9 +1711,9 @@ public abstract class ApiServiceImpl implements ApiService {
                 Map<String, Object> clonedContentFiles = MilestoneHelper.filterAndSortFiles(contributionFiles, HTML);
                 Map<String, String> docVersionOriginalMap = versionAndAnnexNumberMap.get("docVersionMap");
                 Map<String, Integer> annexKeyOriginalMap = versionAndAnnexNumberMap.get("annexKeyMap");
-                annexAddedMap = MilestoneHelper.populateAnnexAddedMap(contributionFiles, clonedLegDoc, getAnnexes(originalPackage), xmlContentProcessor);
-                Map<String, Object> annexDeletedMap = MilestoneHelper.populateAnnexDeletedMap(unzippedFiles,
-                        contributionFiles, legDocument, getAnnexes(originalPackage), xmlContentProcessor);
+                annexAddedMap = MilestoneHelper.populateAnnexAddedMap(getAnnexes(clonedPackage, true), clonedLegDoc, getAnnexes(originalPackage));
+                Map<String, Object> annexDeletedMap = MilestoneHelper.populateAnnexDeletedMap(getAnnexes(clonedPackage)
+                        , legDocument, getAnnexes(originalPackage, true));
                 try {
                     isContributionChanged = identifyContributionChanges(clonedProposalRef, originalPackage, legDocument, clonedLegDoc.getName());
                 } catch (Exception e) {
@@ -1718,7 +1723,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 for (Map.Entry<String, Object> entry : annexDeletedMap.entrySet()) {
                     String contentFileName = entry.getKey().replace(PROCESSED, "").replace(ACCEPTED_ADDED, "").replace(ACCEPTED_DELETED, "");
                     String version = docVersionOriginalMap.get(contentFileName);
-                    byte[] xmlBytes = ((LeosFile) entry.getValue()).getBytes();
+                    byte[] xmlBytes = (byte[]) entry.getValue();
                     String htmlContent = new String(xmlBytes, StandardCharsets.UTF_8);
                     MilestoneDocumentView milestoneView = new MilestoneDocumentView(htmlContent, version, contentFileName, false, null);
                     milestoneView.setVersion(version);
@@ -1847,7 +1852,10 @@ public abstract class ApiServiceImpl implements ApiService {
                                 Proposal clonedProposal = this.proposalService.findProposalByRef(clonedProposalRef);
                                 populateCloneProposalMetadataVO(clonedProposal);
                                 List<FinancialStatement> fs = getFinancialStatements(originalPackage);
-                                if (!fs.isEmpty() && !fs.get(0).getMetadata().get().getRef().equals(cloneContext.getCloneProposalMetadataVO().getClonedFromRef())) {
+                                List<FinancialStatement> clonedFs = getFinancialStatements(clonedPackage);
+
+                                if (!fs.isEmpty() && !(clonedFs != null && clonedFS.isPresent() && clonedFs.getFirst().getClonedFrom()
+                                        .equals(fs.getFirst().getMetadata().get().getRef()))) {
                                     milestoneView.setContentStatus("Accepted_Added");
                                 } else if (fs.isEmpty()) {
                                     milestoneView.setContentStatus("Added");
@@ -1951,6 +1959,10 @@ public abstract class ApiServiceImpl implements ApiService {
     private void populateCloneProposalMetadataVO(Proposal proposal) {
         CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(proposal);
         cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+    }
+
+    private String removeVersion(String input) {
+        return StringUtils.isNotEmpty(input) ? input.replaceFirst("_\\d+(\\.\\d+)+$", "") : input;
     }
 
     @Override

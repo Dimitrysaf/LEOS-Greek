@@ -83,9 +83,4 @@ public class PostProcessingMandateServiceImpl extends PostProcessingDocumentServ
         return new Result<String>("Not implemented", ErrorCode.EXCEPTION);
     }
 
-    @Override
-    public Result<?> saveClonedProposalIdToOriginalProposal(DocumentVO documentVO, CollectionIdsAndUrlsHolder idsAndUrlsHolder, CloneProposalMetadataVO cloneProposalMetadataVO) {
-        return new Result<String>("Not implemented", ErrorCode.EXCEPTION);
-    }
-
 }

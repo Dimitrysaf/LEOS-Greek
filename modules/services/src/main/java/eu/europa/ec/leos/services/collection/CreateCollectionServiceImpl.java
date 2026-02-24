@@ -272,7 +272,6 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         //set clone creation date to original proposal
         cloneProposalMetadataVO.setCreationDate(Date.from(proposal.getInitialCreationInstant()));
 
-        result = postProcessingDocumentService.saveClonedProposalIdToOriginalProposal(propDocument, idsAndUrlsHolder, cloneProposalMetadataVO);
         if (result.isError()) {
             //In case of error delete the cloned proposal.
             context.useProposal(proposal);
