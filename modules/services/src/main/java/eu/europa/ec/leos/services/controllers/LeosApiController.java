@@ -64,7 +64,6 @@ import eu.europa.ec.leos.vo.coedition.CoEditionVO;
 import eu.europa.ec.leos.vo.coedition.InfoType;
 import eu.europa.ec.leos.vo.token.JsonTokenReponse;
 import eu.europa.ec.leos.model.notification.validation.DocumentExternalValidationNotification;
-import jakarta.annotation.PostConstruct;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
