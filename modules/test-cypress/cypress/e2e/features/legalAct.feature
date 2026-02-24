@@ -147,7 +147,7 @@ Feature: Legal Act Page Regression Features
     And  click save and close button of ck editor
     Then ck editor window is not displayed
 
-  @articleEditing @local @focus
+  @articleEditing @local
   Scenario: Addition of text and removal of text from article
     Given navigate to leos application with "User1"
     Then user is on home page

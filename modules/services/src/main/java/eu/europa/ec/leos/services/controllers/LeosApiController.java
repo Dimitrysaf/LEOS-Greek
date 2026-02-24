@@ -154,14 +154,6 @@ public class LeosApiController {
     @Value("${notification.functional.mailbox}")
     private String notificationRecipient;
 
-    @PostConstruct
-    public void init() {
-        LOG.info("Initializing LeosApiController...");
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("LeosApiController initialized.");
-        }
-    }
-
     @Autowired
     public LeosApiController(LegService legService, WorkspaceService workspaceService, TokenService tokenService,
                              TransformationService transformationService, ContentComparatorService comparatorService,

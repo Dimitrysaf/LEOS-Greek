@@ -1,6 +1,5 @@
 package eu.europa.ec.leos.services.tracking;
 
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
