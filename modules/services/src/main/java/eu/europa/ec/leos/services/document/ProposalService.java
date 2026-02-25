@@ -47,6 +47,8 @@ public interface ProposalService {
 
     Proposal updateProposal(Proposal proposal, ProposalMetadata metadata, VersionType versionType, String comment);
 
+    Proposal updateProposal(Proposal proposal, ProposalMetadata metadata, byte[] xmlContent, VersionType versionType, String comment);
+
     Proposal updateProposal(Proposal proposal, ProposalMetadata metadata);
 
     Proposal updateProposal(String ref, String id, Map<String, Object> properties);
