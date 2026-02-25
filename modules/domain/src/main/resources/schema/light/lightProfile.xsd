@@ -28,6 +28,7 @@
             <xs:element name="tocEdition" type="xs:boolean" default="true" minOccurs="0"/>
             <xs:element name="tocSignatureEdition" type="xs:boolean" default="false" minOccurs="0"/>
             <xs:element name="signatureEdition" type="xs:boolean" default="true" minOccurs="0"/>
+            <xs:element name="versionUpdate" type="xs:boolean" default="true" minOccurs="0"/>
             <xs:element name="internalReference" type="xs:boolean" default="true" minOccurs="0"/>
             <xs:element name="authorialNote" type="xs:boolean" default="true" minOccurs="0"/>
             <xs:element name="showLoggedUser" type="xs:boolean" default="false" minOccurs="0"/>
@@ -50,6 +51,7 @@
             <xs:enumeration value="DECISION_EDIT"/>
             <xs:enumeration value="DGT_EDIT"/>
             <xs:enumeration value="DECISION_CORRECTION_REQUEST"/>
+            <xs:enumeration value="EDIT_MULTILINGUAL"/>
 
         </xs:restriction>
     </xs:simpleType>

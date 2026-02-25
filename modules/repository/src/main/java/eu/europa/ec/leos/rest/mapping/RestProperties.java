@@ -36,6 +36,7 @@ public class RestProperties implements RepositoryPropertiesMapper {
         ids.put(DOCUMENT_LANGUAGE, "language");
         ids.put(DOCUMENT_AVAILABLE_LANGUAGES, "availableLangs");
         ids.put(DOCUMENT_IS_PUBLISHED, "isPublished");
+        ids.put(DOCUMENT_IS_TRANSLATED, "isTranslated");
         ids.put(METADATA_REF, "ref");
         ids.put(MILESTONE_COMMENTS, "milestoneComments");
         ids.put(INITIAL_CREATED_BY, "initialCreatedBy");

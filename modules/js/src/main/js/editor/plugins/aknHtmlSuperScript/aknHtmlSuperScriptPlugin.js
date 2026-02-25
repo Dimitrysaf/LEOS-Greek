@@ -21,6 +21,13 @@ define(function aknHtmlSuperScriptPluginModule(require) {
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
     var aknHTMLPluginsUtils = require("plugins/aknHTMLPluginUtils");
 
+    var changeStateElements = {
+        imageHcontainer: {
+            elementName: 'hcontainer',
+            selector: '[name=FGR]'
+        }
+    };
+
     var pluginDefinition = {
         init: function init(editor) {
             editor.on('selectionChange', _onSelectionChange, null, null, 11);
@@ -54,7 +61,7 @@ define(function aknHtmlSuperScriptPluginModule(require) {
         if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
             event.editor.getCommand('superscript').setState(CKEDITOR.TRISTATE_DISABLED);
         } else {
-            leosCommandStateHandler.changeCommandState(event.editor, "superscript");
+            leosCommandStateHandler.changeCommandState(event.editor, "superscript", changeStateElements);
         }
     }
 

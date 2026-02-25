@@ -350,6 +350,7 @@
               </eui-card>
             </div>
             <app-versions-pane *ngIf="isVersionsPaneInit"
+              [canRevertVersion]="canUpdateVersionContent"
               (exploreMilestone)="exploreMilestone($event)"
             ></app-versions-pane>
           </eui-fieldset>

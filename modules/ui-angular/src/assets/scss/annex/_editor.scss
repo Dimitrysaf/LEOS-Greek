@@ -20,16 +20,17 @@
         @extend %editorList;
         @extend %editorAuthorialNote;
         @extend %editorTable;
+        @extend %editorAknp;
 
         @extend %editorArticle;
         @extend %editorArticleParagraph;
         @extend %editorSubParagraph;
         @extend %editorLevelSubParagraph;
         @extend %editorArticlePointSubParagraph;
-        
+
         @extend %editorContentColor;
         @extend %editorFocus;
-        
+
         @extend %editorWidget;
         @extend %editorHeading;
 

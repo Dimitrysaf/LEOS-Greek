@@ -23,6 +23,21 @@ define(function aknHtmlUnderlinePluginModule(require) {
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
     var aknHTMLPluginsUtils = require("plugins/aknHTMLPluginUtils");
 
+    var changeStateElements = {
+        citation: {
+            elementName: 'citation'
+        },
+        recital: {
+            elementName: 'recital'
+        },
+        paragraph: {
+            elementName: 'paragraph'
+        },
+        level: {
+            elementName: 'level'
+        }
+    };
+
     var pluginDefinition = {
         init: function init(editor) {
             editor.on('selectionChange', _onSelectionChange, null, null, 11);
@@ -62,7 +77,7 @@ define(function aknHtmlUnderlinePluginModule(require) {
     };
 
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event.editor, "underline", null, true);
+        leosCommandStateHandler.changeCommandState(event.editor, "underline", changeStateElements, true);
     }
     
     pluginTools.addTransformationConfigForPlugin(transformationConfig, pluginName);

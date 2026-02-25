@@ -14,7 +14,7 @@ public class ExplanatoryMetadata extends LeosMetadata{
     }
 
     public ExplanatoryMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String packageRef, String title, String objectId, String docVersion, boolean eeaRelevance, boolean customTemplateAct) {
-        super(LeosCategory.COUNCIL_EXPLANATORY, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance, customTemplateAct);
+        super(LeosCategory.COUNCIL_EXPLANATORY, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance, customTemplateAct, false);
         this.title = title;
     }
 

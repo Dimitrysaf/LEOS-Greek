@@ -21,6 +21,13 @@ define(function aknHtmlSubScriptPluginModule(require) {
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
     var aknHTMLPluginsUtils = require("plugins/aknHTMLPluginUtils");
 
+    var changeStateElements = {
+        imageHcontainer: {
+            elementName: 'hcontainer',
+            selector: '[name=FGR]'
+        }
+    };
+
     var pluginDefinition = {
         init: function init(editor) {
             editor.on('selectionChange', _onSelectionChange, null, null, 11);
@@ -54,7 +61,7 @@ define(function aknHtmlSubScriptPluginModule(require) {
         if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
             event.editor.getCommand('subscript').setState(CKEDITOR.TRISTATE_DISABLED);
         } else {
-            leosCommandStateHandler.changeCommandState(event.editor, commandName);
+            leosCommandStateHandler.changeCommandState(event.editor, commandName, changeStateElements);
         }
     }
 

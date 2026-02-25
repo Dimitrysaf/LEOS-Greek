@@ -17,6 +17,7 @@ define(function leosMathematicalFormulaPluginModule(require) {
 
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
+    var leosPluginUtils = require("plugins/leosPluginUtils");
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
 
     var pluginName = "leosMathematicalFormula";
@@ -36,6 +37,18 @@ define(function leosMathematicalFormulaPluginModule(require) {
         requires: "mathjax",
         init: function init(editor) {
             editor.on('selectionChange', _onSelectionChange);
+            editor.on('doubleclick', function(evt) {
+                var element = evt.data.element;
+                var mathJaxElement = element.getAscendant(function (el) {
+                    return el.hasClass && el.hasClass('cke_widget_wrapper_mathTex');
+                }, true);
+                var aknpEditor = element.getAscendant(function (el) {
+                    return el.getAttribute && el.getAttribute(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.AKNP;
+                });
+                if (mathJaxElement && aknpEditor) {
+                    evt.cancel();
+                }
+            }, null, null, 0);
         }
     };
     

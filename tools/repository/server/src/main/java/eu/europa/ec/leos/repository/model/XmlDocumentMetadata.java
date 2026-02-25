@@ -16,12 +16,9 @@ package eu.europa.ec.leos.repository.model;
 import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.entities.DocumentContent;
 import eu.europa.ec.leos.repository.entities.DocumentProperties;
-import eu.europa.ec.leos.repository.entities.DocumentPropertiesV;
 import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
 import eu.europa.ec.leos.repository.entities.DocumentV;
-import eu.europa.ec.leos.repository.entities.DocumentVersion;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -43,6 +40,7 @@ public class XmlDocumentMetadata {
     private String language;
     private String availableLangs;
     private Boolean isPublished;
+    private Boolean isTranslated;
     private String ref;
     private Boolean eeaRelevance;
     private Boolean customTemplateAct;
@@ -72,6 +70,7 @@ public class XmlDocumentMetadata {
         this.language = doc.getLanguage();
         this.availableLangs = doc.getAvailableLangs();
         this.isPublished = doc.getPublished();
+        this.isTranslated = doc.getTranslated();
         this.eeaRelevance = doc.getEeaRelevance();
         this.customTemplateAct = doc.getCustomTemplateAct();
         this.title = doc.getTitle();
@@ -134,6 +133,9 @@ public class XmlDocumentMetadata {
         }
         if (this.getPublished() != null) {
             metadataMap.put("isPublished", this.getPublished());
+        }
+        if (this.getTranslated() != null) {
+            metadataMap.put("isTranslated", this.getTranslated());
         }
         if (this.getEeaRelevance() != null) {
             metadataMap.put("eeaRelevance", this.getEeaRelevance());
@@ -281,6 +283,14 @@ public class XmlDocumentMetadata {
 
     public void setPublished(Boolean published) {
         isPublished = published;
+    }
+
+    public Boolean getTranslated() {
+        return isTranslated;
+    }
+
+    public void setTranslated(Boolean isTranslated) {
+        this.isTranslated = isTranslated;
     }
 
     public String getTemplateName() {

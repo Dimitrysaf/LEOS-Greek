@@ -34,7 +34,7 @@ public abstract class SaveTocExplanatoryTest_IT extends SaveTocMandateTest_IT {
     protected void getStructureFile() {
         docTemplate = "CE-001";
         byte[] bytesFile = TestUtils.getFileContent("/structure-test-explanatory-CN.xml");
-        when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
+        when(templateStructureService.getStructure(docTemplate, false)).thenReturn(bytesFile);
     }
 
     protected byte[] processSaveTocExplanatory(byte[] xmlInput, List<TableOfContentItemVO> toc) {

@@ -360,6 +360,7 @@ public class XercesUtils {
     }
 
     public static Node getElementByNameAndId(Node node, String tagName, String elementId) {
+        tagName = AKNP.equalsIgnoreCase(tagName) ? P : tagName;
         NodeList nodeList = getElementsByName(node, tagName);
         if (elementId == null && nodeList.getLength() > 0) {
             return nodeList.item(0);

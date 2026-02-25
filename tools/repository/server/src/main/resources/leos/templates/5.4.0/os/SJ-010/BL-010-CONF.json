@@ -117,7 +117,12 @@
   ],
   "structure": [
     {
+      "mode": "main",
       "name": "structure_08"
+    },
+    {
+      "mode": "translated",
+      "name": "structure_08_translated"
     }
   ]
 }

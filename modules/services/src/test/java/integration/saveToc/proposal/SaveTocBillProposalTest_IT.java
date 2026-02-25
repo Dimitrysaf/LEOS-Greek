@@ -19,7 +19,7 @@ public abstract class SaveTocBillProposalTest_IT extends SaveTocProposalTest_IT 
     protected void getStructureFile() {
         docTemplate = "BL-023";
         byte[] bytesFile = TestUtils.getFileContent("/structure-test-bill-EC.xml");
-        when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
+        when(templateStructureService.getStructure(docTemplate, false)).thenReturn(bytesFile);
     }
 
     protected byte[] processSaveTocBill(byte[] xmlInput, List<TableOfContentItemVO> toc) {

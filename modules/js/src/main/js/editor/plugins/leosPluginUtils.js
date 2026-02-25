@@ -65,7 +65,9 @@ define(function leosPluginUtilsModule(require) {
     var SUBPARAGRAPH = "subparagraph";
     var PARAGRAPH = "paragraph";
     var RECITAL = "recital";
+    var AKNP = "aknp";
     var SUBFLOW_NAME = "structuredContent";
+    var HCONTAINER = "hcontainer";
     var DATA_AKN_HCONTAINER = "data-akn-hcontainer";
     var DATA_AKN_SUB_HCONTAINER = "data-akn-sub-hcontainer";
     var DATA_AKN_MEDIA_CONTAINER = "data-akn-media-container";
@@ -2101,6 +2103,7 @@ define(function leosPluginUtilsModule(require) {
         SUBPARAGRAPH: SUBPARAGRAPH,
         PARAGRAPH: PARAGRAPH,
         LEVEL: LEVEL,
+        AKNP: AKNP,
         ORDER_LIST_ELEMENT: ORDER_LIST_ELEMENT,
         UNORDERED_LIST_ELEMENT: UNORDERED_LIST_ELEMENT,
         LIST_ELEMENTS: LIST_ELEMENTS,
@@ -2145,6 +2148,7 @@ define(function leosPluginUtilsModule(require) {
         TD: TD,
         WRP: WRP,
         SUBFLOW_NAME: SUBFLOW_NAME,
+        HCONTAINER: HCONTAINER,
         DATA_AKN_HCONTAINER: DATA_AKN_HCONTAINER,
         DATA_AKN_SUB_HCONTAINER: DATA_AKN_SUB_HCONTAINER,
         DATA_AKN_MEDIA_CONTAINER: DATA_AKN_MEDIA_CONTAINER,

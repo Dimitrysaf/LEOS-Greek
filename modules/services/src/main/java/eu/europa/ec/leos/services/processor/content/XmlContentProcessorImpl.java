@@ -3263,7 +3263,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
     }
 
-    private void alignAllIds(Node sourceDoc, Node targetDoc, String category) {
+    public void alignAllIds(Node sourceDoc, Node targetDoc, String category) {
         if (sourceDoc != null && targetDoc != null) {
             NodeList sourceNodes = getAllNodesWithId(sourceDoc);
             NodeList targetNodes = getAllNodesWithId(targetDoc);
@@ -3371,7 +3371,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             Node sourceNode = sourceNodes.item(i);
             Node targetNode = XercesUtils.getElementById(targetDoc, getId(sourceNode));
             if (targetNode != null && anyHasTextChildren(sourceNode, targetNode) && unchangedTextContentInSource(sourceNode, sourceBaseDoc)) {
-                Node alignedNode = alignChildNodes(sourceNode, targetNode, targetDoc);
+                Node alignedNode = alignChildNodes(sourceNode, targetNode);
                 importAndReplaceNodeInDocument(sourceDoc, sourceNode, alignedNode);
             }
         }
@@ -3388,20 +3388,14 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 .equals(sourceTextNodes.stream().map(Node::getTextContent).collect(Collectors.joining()));
     }
 
-    private static Node alignChildNodes(Node sourceNode, Node targetNode, Document targetDoc) {
+    private static Node alignChildNodes(Node sourceNode, Node targetNode) {
         List<Node> sourceChildNodesWithId = getNonStylingChildren(sourceNode);
-        if (sourceChildNodesWithId.stream().allMatch((Node sourceChildNodeWithId) -> {
-            Node targetChildNodeWithId = XercesUtils.getElementById(targetNode, getId(sourceChildNodeWithId));
-            if (targetChildNodeWithId != null) {
-                importAndReplaceNodeInDocument(targetDoc, targetChildNodeWithId, sourceChildNodeWithId);
-                return true;
-            }
-            // if there's no corresponding node in target document, we need to take the whole source node and overwrite the target node
-            return false;
-        })) {
+        if (sourceChildNodesWithId.stream()
+                .allMatch((Node sourceChildNodeWithId) -> XercesUtils.getElementById(targetNode, getId(sourceChildNodeWithId)) != null)) {
             removeDeletedNodes(targetNode, sourceNode);
             return targetNode;
         }
+        // if there's no corresponding node in target document (because it's new in source), we need to take the whole source node and overwrite the target node
         return sourceNode;
     }
 
