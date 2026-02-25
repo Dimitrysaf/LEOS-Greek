@@ -15,7 +15,7 @@ public abstract class SaveTocAnnexProposalTest_IT extends SaveTocProposalTest_IT
     protected void getStructureFile() {
         docTemplate = "SG-017";
         byte[] bytesFile = TestUtils.getFileContent("/structure-test-annex-EC.xml");
-        when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
+        when(templateStructureService.getStructure(docTemplate, false)).thenReturn(bytesFile);
     }
 
     protected List<TableOfContentItemVO> buildTableOfContentAnnex(byte[] xmlInput) {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Version } from '@/features/akn-document/models';
@@ -10,6 +10,7 @@ import { DocumentService } from '@/shared/services/document.service';
   styleUrls: ['./versions-pane.component.scss'],
 })
 export class VersionsPaneComponent implements OnInit {
+  @Input() canRevertVersion?: boolean;
   @Output() exploreMilestone = new EventEmitter<Version>();
 
   protected hasMore = false;

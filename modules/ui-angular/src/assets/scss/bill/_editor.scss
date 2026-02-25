@@ -17,7 +17,7 @@
     .cke_editable {
         @extend %editorCitation;
         @extend %editorRecital;
-        
+
         @extend %editorArticle;
         @extend %editorArticleParagraph;
         @extend %editorSubParagraph;
@@ -28,10 +28,11 @@
         @extend %editorAuthorialNote;
         @extend %editorHeading;
         @extend %editorSignature;
-        
+        @extend %editorAknp;
+
         @extend %editorContentColor;
         @extend %editorFocus;
-        
+
         @extend %editorWidget;
 
         @extend %editorTrackChanges;
@@ -41,7 +42,7 @@
         @extend %showblockCitation;
         @extend %showblockRecitals;
         @extend %showblockRecital;
-        
+
         @extend %showblockArticle;
         @extend %showblockArticleParagraph;
         @extend %showblockSubParagraph;

@@ -22,7 +22,7 @@ define(function leosCommandStateHandler(require) {
     var changeCommandState = function changeCommandState(editor, commandName, changeStateElements, overrideState) {
         var command = editor.getCommand(commandName);
         var selection = editor.getSelection();
-        if (!selection) return;
+        if (!command || !selection) return;
         if (!leosPluginUtils.isContentEditable(editor) || shouldDisable(selection, changeStateElements)) {
             command.disable();
         } else if (overrideState) {

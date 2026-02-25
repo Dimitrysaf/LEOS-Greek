@@ -39,7 +39,7 @@ public class StructureServiceTest extends LeosTest {
     public void init() {
         docTemplate = "BL-023";
         byte[] bytesFile = getFileContent("/structure-test-bill-EC.xml");
-        when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
+        when(templateStructureService.getStructure(docTemplate, false)).thenReturn(bytesFile);
         ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "schema/structure/structure_1.xsd");
         
     }

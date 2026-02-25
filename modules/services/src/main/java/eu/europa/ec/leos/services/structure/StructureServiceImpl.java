@@ -42,66 +42,73 @@ public class StructureServiceImpl implements StructureService {
     @Override
     @Cacheable(value = "tocStructureList")
     public List<TocItem> getTocItems(String docTemplate) {
-        loadTocStructure(docTemplate);
-        return tocStructureMap.get(docTemplate).getTocItems();
+        return getTocItems(docTemplate, false);
+    }
+    
+    @Override
+    @Cacheable(value = "tocStructureList")
+    public List<TocItem> getTocItems(String docTemplate, boolean translated) {
+        loadTocStructure(docTemplate, translated);
+        String mapKey = translated ? docTemplate + "_translated" : docTemplate;
+        return tocStructureMap.get(mapKey).getTocItems();
     }
     
     @Override
     @Cacheable(value = "tocStructureTocRulesMap")
     public Map<TocItem, List<TocItem>> getTocRules(String docTemplate) {
-        loadTocStructure(docTemplate);
+        loadTocStructure(docTemplate, false);
         return tocStructureMap.get(docTemplate).getTocRules();
     }
     @Override
     @Cacheable(value = "tocStructureTocRulesOrdersMap")
     public Map<TocItem, List<List<TocItem>>> getTocRulesOrders(String docTemplate) {
-        loadTocStructure(docTemplate);
+        loadTocStructure(docTemplate, false);
         return tocStructureMap.get(docTemplate).getTocRulesOrders();
     }
 
     @Override
     @Cacheable(value = "tocStructureDocumentRulesMap")
     public Map<String, DocumentRules.Rule> getDocumentRules(String docTemplate) {
-        loadTocStructure(docTemplate);
+        loadTocStructure(docTemplate, false);
         return tocStructureMap.get(docTemplate).getDocumentRules();
     }
     
     @Override
     @Cacheable(value = "tocStructureNumConfList")
     public List<NumberingConfig> getNumberingConfigs(String docTemplate) {
-        loadTocStructure(docTemplate);
+        loadTocStructure(docTemplate, false);
         return tocStructureMap.get(docTemplate).getNumberingConfigs();
     }
 
     @Override
     @Cacheable(value = "refConfigs")
     public List<RefConfig> getRefConfigs(String docTemplate) {
-        loadTocStructure(docTemplate);
+        loadTocStructure(docTemplate, false);
         return tocStructureMap.get(docTemplate).getRefConfigs();
     }
     
     @Override
     @Cacheable(value = "alternateConfList")
     public List<AlternateConfig> getAlternateConfigs(String docTemplate) {
-        loadTocStructure(docTemplate);
+        loadTocStructure(docTemplate, false);
         return tocStructureMap.get(docTemplate).getAlternateConfigs();
     }
     
     @Override
     public String getStructureName(String docTemplate) {
-        loadTocStructure(docTemplate);
+        loadTocStructure(docTemplate, false);
         return tocStructureMap.get(docTemplate).getStructureName();
     }
     
     @Override
     public String getStructureVersion(String docTemplate) {
-        loadTocStructure(docTemplate);
+        loadTocStructure(docTemplate, false);
         return tocStructureMap.get(docTemplate).getStructureVersion();
     }
 
     @Override
     public String getStructureDescription(String docTemplate) {
-        loadTocStructure(docTemplate);
+        loadTocStructure(docTemplate, false);
         return tocStructureMap.get(docTemplate).getStructureDescription();
     }
     
@@ -109,8 +116,8 @@ public class StructureServiceImpl implements StructureService {
      * Load from CMIS only the first time for specific template.
      * The server needs to be restarted in case the cmis xml has been changed.
      */
-    private void loadTocStructure(String docTemplate) {
-        byte[] structureXmlFile = templateStructureService.getStructure(docTemplate);
+    private void loadTocStructure(String docTemplate, boolean translated) {
+        byte[] structureXmlFile = templateStructureService.getStructure(docTemplate, translated);
         final Structure structure = loadRulesFromFile(structureXmlFile);
 
         TocStructure tocStructure = new TocStructure();
@@ -129,7 +136,8 @@ public class StructureServiceImpl implements StructureService {
         tocStructure.setTocRulesOrders(buildProposalTocRulesOrders(structure, tocItems));
         tocStructure.setDocumentRules(buildProposalDocumentRules(structure, tocItems));
 
-        tocStructureMap.put(docTemplate, tocStructure); //cache it for the next call
+        String mapKey = translated ? docTemplate + "_translated" : docTemplate;
+        tocStructureMap.put(mapKey, tocStructure); //cache it for the next call
     }
     
     private Structure loadRulesFromFile(byte[] fileBytes) {

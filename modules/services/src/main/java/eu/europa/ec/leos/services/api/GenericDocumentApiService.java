@@ -229,7 +229,9 @@ public class GenericDocumentApiService {
 
     public DocumentConfigResponse getDocumentConfig(@NotNull XmlDocument document, @NotNull StructureContext structure,
                                                     String clientContextToken) {
+        this.documentLanguageContext.setDocumentLanguage(document.getMetadata().get().getLanguage());
         structure.useDocumentTemplate(this.getDocTemplate(document));
+        structure.useTranslated(this.isCustomTemplateAct(document) && this.isTranslated(document));
         this.populateCloneProposalMetadata(document);
         LeosMetadata documentMetadata = document.getMetadata().get();
         List<LeosMetadata> documentsMetadataList = packageService.getDocumentsMetadata(documentMetadata.getRef());
@@ -251,6 +253,8 @@ public class GenericDocumentApiService {
             contextRole = tokenService.extractUserRoleFromToken(clientContextToken);
             profile = profileService.getProfile(tokenService.extractUserSystemNameFromToken(clientContextToken),
                     documentMetadata.getLanguage());
+        } else if (documentMetadata.isCustomTemplateAct() && packageService.findPackageByDocumentId(document.getId()).getTranslated()) {
+            profile = profileService.getProfile("EDIT_MULTILINGUAL", documentMetadata.getLanguage());
         }
 
         return new DocumentConfigResponse(
@@ -617,6 +621,18 @@ public class GenericDocumentApiService {
         return Optional.of(this.getDocMetadata(document))
                 .map(LeosMetadata::getRef)
                 .orElse(null);
+    }
+
+    private boolean isCustomTemplateAct(XmlDocument document) {
+        return Optional.of(this.getDocMetadata(document))
+                .map(LeosMetadata::isCustomTemplateAct)
+                .orElse(false);
+    }
+
+    private boolean isTranslated(XmlDocument document) {
+        return Optional.of(this.getDocMetadata(document))
+                .map(LeosMetadata::isTranslated)
+                .orElse(false);
     }
 
     private LeosMetadata getDocMetadata(XmlDocument document) {
