@@ -161,6 +161,8 @@ abstract class DataUploadService {
         String categoryCode;
         if (fileName.contains("-CONF")) {
             categoryCode = "CONFIG";
+        } else if (fileName.startsWith("structure")) {
+            categoryCode = "STRUCTURE";
         } else if (fileName.startsWith("BL")) {
             categoryCode = "TEMPLATE_BILL";
         } else if (fileName.startsWith("EM")) {
