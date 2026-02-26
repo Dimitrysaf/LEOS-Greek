@@ -135,13 +135,13 @@ public class MilestoneHelper {
         return docsAddedMap;
     }
 
-    public static Map<String, Object> populateAnnexDeletedMap(List<Annex> clonedAnnex
+    public static Map<String, Object> populateAnnexDeletedMap(Map<String, Object> originalContentFiles, List<Annex> clonedAnnex
             , LegDocument originalLegDocument, List<Annex> annexList) {
         Map<String, Object> annexDeletedMap = new HashMap<>();
-        for (Annex orgAnnex : annexList) {
+        Map<String, Object> originalXmlFiles = MilestoneHelper.filterAndSortFiles(originalContentFiles, XML);
+        for (Map.Entry<String, Object> entry : originalXmlFiles.entrySet()) {
             boolean found = false;
-            String originalEntryKey = orgAnnex.getName().substring(0, orgAnnex.getName().lastIndexOf("."));
-            Object obj = orgAnnex.getContent().get().getSource().getBytes();
+            String originalEntryKey = entry.getKey().substring(0, entry.getKey().indexOf(XML));
             if (originalEntryKey.startsWith(ANNEX_FILE_PREFIX)) {
                 for (Annex cloneAnnex : clonedAnnex) {
                     String entryKey = cloneAnnex.getName();
@@ -162,12 +162,12 @@ public class MilestoneHelper {
                             fileName -> fileName.contains(PROCESSED) && fileName.startsWith(originalEntryKey)).findFirst();
 
                     if (!acceptedAnnex.isPresent()) {
-                        annexDeletedMap.put(originalEntryKey.concat(ACCEPTED_DELETED), obj);
+                        annexDeletedMap.put(originalEntryKey.concat(ACCEPTED_DELETED), entry.getValue());
                     } else if (rejectedAnnex.isPresent()) {
                         //Add the processed annexes with the suffix "_processed"
-                        annexDeletedMap.put(originalEntryKey.concat(PROCESSED), obj);
+                        annexDeletedMap.put(originalEntryKey.concat(PROCESSED), entry.getValue());
                     } else {
-                        annexDeletedMap.put(originalEntryKey, obj);
+                        annexDeletedMap.put(originalEntryKey, entry.getValue());
                     }
                 }
             }
