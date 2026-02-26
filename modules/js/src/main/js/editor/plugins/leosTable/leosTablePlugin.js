@@ -620,6 +620,9 @@ define(function leosTablePluginModule(require) {
                 akn : "leos:predefinedtable",
                 html : "leos:predefinedtable"
             }, {
+                akn : "leos:tableonlymode",
+                html : "leos:tableonlymode"
+            }, {
                 html : 'data-akn-name=leosTable'
             }],
             sub : {
