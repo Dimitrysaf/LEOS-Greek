@@ -67,12 +67,7 @@
                     <docNumber class="template"/>
                 </block>
             </container>
-            <container name="procedureIdentifier" class="template">
-                <p>
-                    <docketNumber class="template"/>
-                </p>
-            </container>
-            <longTitle>
+             <longTitle>
                 <p>
                     <docType refersTo="~REG_IMPL">РЕГЛАМЕНТ ЗА ИЗПЪЛНЕНИЕ (ЕС) .../… НА КОМИСИЯТА</docType> от <date date="2999-01-01"> година</date>
                     <docPurpose leos:editable="true" leos:deletable="false">относно/за</docPurpose>
