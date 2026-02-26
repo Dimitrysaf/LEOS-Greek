@@ -369,6 +369,7 @@ public class LegServiceImpl implements LegService {
         legDocumentVO.setUpdatedDate(new SimpleDateFormat(FORMAT_DATE_TIME_ISO_8601).
                 format(Date.from(leg.getLastModificationInstant())));
         legDocumentVO.setClonedProposal(proposal.isClonedProposal());
+        legDocumentVO.setOriginalRef(proposal.getOriginRef());
         return legDocumentVO;
     }
 
