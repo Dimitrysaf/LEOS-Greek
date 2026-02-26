@@ -20,6 +20,7 @@ define(function aknHtmlSubScriptPluginModule(require) {
     var commandName = "subscript";
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
     var aknHTMLPluginsUtils = require("plugins/aknHTMLPluginUtils");
+    let leosPluginUtils = require("plugins/leosPluginUtils");
 
     var pluginDefinition = {
         init: function init(editor) {
@@ -49,9 +50,10 @@ define(function aknHtmlSubScriptPluginModule(require) {
     pluginTools.addTransformationConfigForPlugin(transformationConfig, pluginName);
 
     function _onSelectionChange(event) {
-        var selection = event.editor.getSelection();
-        var isTableOnlyMode = event.editor.config.tableOnlyMode;
-        if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
+        let selection = event.editor.getSelection();
+        let isTableOnlyMode = event.editor.config.tableOnlyMode;
+        let startElement = selection.getStartElement();
+        if (isTableOnlyMode && !leosPluginUtils.isInsideTable(startElement)) {
             event.editor.getCommand('subscript').setState(CKEDITOR.TRISTATE_DISABLED);
         } else {
             leosCommandStateHandler.changeCommandState(event.editor, commandName);

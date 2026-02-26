@@ -28,6 +28,7 @@ define(function leosShowblocksPluginModule(require) {
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
+    let leosPluginUtils = require("plugins/leosPluginUtils");
     var pluginName = "leosShowblocks";
 
     // TODO implement translations
@@ -67,9 +68,10 @@ define(function leosShowblocksPluginModule(require) {
             });
 
             editor.on('selectionChange', function(event) {
-                var selection = event.editor.getSelection();
-                var isTableOnlyMode = event.editor.config.tableOnlyMode;
-                if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
+                let selection = event.editor.getSelection();
+                let isTableOnlyMode = event.editor.config.tableOnlyMode;
+                let startElement = selection.getStartElement();
+                if (isTableOnlyMode && !leosPluginUtils.isInsideTable(startElement)) {
                     event.editor.getCommand('leosShowBlocks').setState(CKEDITOR.TRISTATE_DISABLED);
                 } else if (isTableOnlyMode) {
                     event.editor.getCommand('leosShowBlocks').setState(CKEDITOR.TRISTATE_ON);

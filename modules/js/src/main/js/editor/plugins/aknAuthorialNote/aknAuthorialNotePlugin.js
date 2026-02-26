@@ -18,7 +18,7 @@ define(function aknAuthorialNotePluginModule(require) {
     // load module dependencies
     var CKEDITOR = require("promise!ckEditor");
     var pluginTools = require("plugins/pluginTools");
-    var leosPluginUtils = require("plugins/leosPluginUtils");
+    let leosPluginUtils = require("plugins/leosPluginUtils");
     var $ = require('jquery');
 
     var authorialNoteWidgetDefinition = require("./authorialNoteWidget");
@@ -54,13 +54,14 @@ define(function aknAuthorialNotePluginModule(require) {
     };
     
     function _onSelectionChange(event) {
-        var selection = event.editor.getSelection();
-        var isTableOnlyMode = event.editor.config.tableOnlyMode;
-        if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
+        let selection = event.editor.getSelection();
+        let isTableOnlyMode = event.editor.config.tableOnlyMode;
+        let startElement = selection.getStartElement();
+        if (isTableOnlyMode && !leosPluginUtils.isInsideTable(startElement)) {
             event.editor.getCommand(widgetName).setState(CKEDITOR.TRISTATE_DISABLED);
         } else {
             leosCommandStateHandler.changeCommandState(event.editor, widgetName, changeStateElements, true);
-            var refConfig = leosPluginUtils.getRefConfig(event.editor);
+            let refConfig = leosPluginUtils.getRefConfig(event.editor);
             if(!refConfig || !refConfig.authorialNote) {
                 event.editor.getCommand(widgetName).setState(CKEDITOR.TRISTATE_DISABLED);
             }

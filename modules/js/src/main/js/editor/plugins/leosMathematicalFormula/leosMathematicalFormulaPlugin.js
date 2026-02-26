@@ -18,6 +18,7 @@ define(function leosMathematicalFormulaPluginModule(require) {
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
+    let leosPluginUtils = require("plugins/leosPluginUtils");
 
     var pluginName = "leosMathematicalFormula";
     
@@ -40,9 +41,10 @@ define(function leosMathematicalFormulaPluginModule(require) {
     };
     
     function _onSelectionChange(event) {
-        var selection = event.editor.getSelection();
-        var isTableOnlyMode = event.editor.config.tableOnlyMode;
-        if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
+        let selection = event.editor.getSelection();
+        let isTableOnlyMode = event.editor.config.tableOnlyMode;
+        let startElement = selection.getStartElement();
+        if (isTableOnlyMode && !leosPluginUtils.isInsideTable(startElement)) {
             event.editor.getCommand('mathjax').setState(CKEDITOR.TRISTATE_DISABLED);
         } else {
             leosCommandStateHandler.changeCommandState(event.editor, 'mathjax', changeStateElements, true);
