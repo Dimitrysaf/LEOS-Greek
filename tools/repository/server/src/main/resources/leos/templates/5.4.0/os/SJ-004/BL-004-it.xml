@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?>
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" xmlns:xml="http://www.w3.org/XML/1998/namespace">
     <bill name="REG_IMPL">
@@ -72,7 +72,7 @@
                     <p>visto il trattato sul funzionamento dell'Unione europea,</p>
                 </citation>
                 <citation leos:editable="true">
-                    <p>visto […]<authorialNote marker="1" placement="bottom"><p>OJ L [...], [...], p. [...].</p></authorialNote>, in particolare l'articolo […],</p>
+                    <p>visto […]<authorialNote marker="1" placement="bottom"><p>GU L [...] del [...], pag. [...]. </p></authorialNote>, in particolare l'articolo […],</p>
                 </citation>
                 <citation leos:editable="true">
                     <p>previa consultazione del comitato […]</p>

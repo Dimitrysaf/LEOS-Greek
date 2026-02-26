@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?>
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" xmlns:xml="http://www.w3.org/XML/1998/namespace">
     <bill name="REG_IMPL">
@@ -72,7 +72,7 @@
                     <p>võttes arvesse Euroopa Liidu toimimise lepingut,</p>
                 </citation>
                 <citation leos:editable="true">
-                    <p>võttes arvesse […],<authorialNote marker="1" placement="bottom"><p>OJ L [...], [...], p. [...].</p> eriti selle artiklit […],</authorialNote></p>
+                    <p>võttes arvesse […],<authorialNote marker="1" placement="bottom"><p>ELT L [...], [...], lk [...]. </p> eriti selle artiklit […],</authorialNote></p>
                 </citation>
                 <citation leos:editable="true">
                     <p>pärast konsulteerimist […] komiteega</p>
