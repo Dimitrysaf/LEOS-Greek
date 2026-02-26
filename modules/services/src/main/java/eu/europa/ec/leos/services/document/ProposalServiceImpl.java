@@ -152,6 +152,16 @@ public abstract class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
+    public Proposal updateProposal(Proposal proposal, ProposalMetadata updatedMetadata, byte[] xmlContent, VersionType versionType, String comment) {
+        LOG.trace("Updating Proposal... [id={}, metadata={}, versionType={}, comment={}]", proposal.getId(), updatedMetadata, versionType, comment);
+        this.documentLanguageContext.setDocumentLanguage(proposal.getMetadata().get().getLanguage());
+        byte[] updatedBytes = updateDataInXml(xmlContent, updatedMetadata);
+        proposal = proposalRepository.updateProposal(proposal.getId(), updatedMetadata, updatedBytes, versionType, comment);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return proposal;
+    }
+
+    @Override
     public Proposal updateProposal(Proposal proposal, ProposalMetadata metadata) {
         LOG.trace("Updating Proposal... [id={}, metadata={}]", proposal.getId(), metadata);
         proposal = proposalRepository.updateProposal(proposal.getMetadata().get().getRef(), proposal.getId(), metadata);

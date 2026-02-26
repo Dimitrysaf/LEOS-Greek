@@ -1122,11 +1122,7 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     private List<Annex> getAnnexes(LeosPackage leosPackage) {
-        return leosPackage != null ? packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false) : null;
-    }
-
-    private List<Annex> getAnnexes(LeosPackage leosPackage, boolean fetchContent) {
-        return leosPackage != null ? packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, fetchContent) : null;
+        return leosPackage != null ? packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, true) : null;
     }
 
     private List<FinancialStatement> getFinancialStatements(LeosPackage leosPackage) {
@@ -1711,9 +1707,9 @@ public abstract class ApiServiceImpl implements ApiService {
                 Map<String, Object> clonedContentFiles = MilestoneHelper.filterAndSortFiles(contributionFiles, HTML);
                 Map<String, String> docVersionOriginalMap = versionAndAnnexNumberMap.get("docVersionMap");
                 Map<String, Integer> annexKeyOriginalMap = versionAndAnnexNumberMap.get("annexKeyMap");
-                annexAddedMap = MilestoneHelper.populateAnnexAddedMap(getAnnexes(clonedPackage, true), clonedLegDoc, getAnnexes(originalPackage));
-                Map<String, Object> annexDeletedMap = MilestoneHelper.populateAnnexDeletedMap(getAnnexes(clonedPackage)
-                        , legDocument, getAnnexes(originalPackage, true));
+                annexAddedMap = MilestoneHelper.populateAnnexAddedMap(getAnnexes(clonedPackage), clonedLegDoc, getAnnexes(originalPackage));
+                Map<String, Object> annexDeletedMap = MilestoneHelper.populateAnnexDeletedMap(unzippedFiles ,getAnnexes(clonedPackage)
+                        , legDocument, getAnnexes(originalPackage));
                 try {
                     isContributionChanged = identifyContributionChanges(clonedProposalRef, originalPackage, legDocument, clonedLegDoc.getName());
                 } catch (Exception e) {
@@ -1723,7 +1719,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 for (Map.Entry<String, Object> entry : annexDeletedMap.entrySet()) {
                     String contentFileName = entry.getKey().replace(PROCESSED, "").replace(ACCEPTED_ADDED, "").replace(ACCEPTED_DELETED, "");
                     String version = docVersionOriginalMap.get(contentFileName);
-                    byte[] xmlBytes = (byte[]) entry.getValue();
+                    byte[] xmlBytes = ((LeosFile) entry.getValue()).getBytes();
                     String htmlContent = new String(xmlBytes, StandardCharsets.UTF_8);
                     MilestoneDocumentView milestoneView = new MilestoneDocumentView(htmlContent, version, contentFileName, false, null);
                     milestoneView.setVersion(version);

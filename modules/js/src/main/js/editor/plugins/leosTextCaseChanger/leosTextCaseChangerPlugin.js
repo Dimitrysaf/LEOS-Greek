@@ -18,6 +18,7 @@ define(function leosTextTransformerPluginModule(require) {
     var CKEDITOR = require("promise!ckEditor");
     var pluginTools = require("plugins/pluginTools");
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
+    let leosPluginUtils = require("plugins/leosPluginUtils");
     var pluginName = "leosTextCaseChanger";
 
 
@@ -175,9 +176,10 @@ define(function leosTextTransformerPluginModule(require) {
     };
     
     function _onSelectionChange(event) {
-        var selection = event.editor.getSelection();
-        var isTableOnlyMode = event.editor.config.tableOnlyMode;
-        if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
+        let selection = event.editor.getSelection();
+        let isTableOnlyMode = event.editor.config.tableOnlyMode;
+        let startElement = selection.getStartElement();
+        if (isTableOnlyMode && !leosPluginUtils.isInsideTable(startElement)) {
             event.editor.getCommand('transformTextSwitch').setState(CKEDITOR.TRISTATE_DISABLED);
         } else {
             leosCommandStateHandler.changeCommandState(event.editor, 'transformTextSwitch', null, true);

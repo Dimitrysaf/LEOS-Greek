@@ -18,6 +18,8 @@ define(function leosBase64ImagePluginModule(require) {
     var CKEDITOR = require("promise!ckEditor");
     var pluginTools = require("plugins/pluginTools");
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
+    let leosPluginUtils = require("plugins/leosPluginUtils");
+
     var pluginName = "leosBase64Image";
     var changeStateElements = {
         crossHeading: {
@@ -86,9 +88,10 @@ define(function leosBase64ImagePluginModule(require) {
     };
 
     function _onSelectionChange(event) {
-        var selection = event.editor.getSelection();
-        var isTableOnlyMode = event.editor.config.tableOnlyMode;
-        if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
+        let selection = event.editor.getSelection();
+        let isTableOnlyMode = event.editor.config.tableOnlyMode;
+        let startElement = selection.getStartElement();
+        if (isTableOnlyMode && !leosPluginUtils.isInsideTable(startElement)) {
             event.editor.getCommand('leosBase64ImageDialog').setState(CKEDITOR.TRISTATE_DISABLED);
         } else {
             leosCommandStateHandler.changeCommandState(event.editor, 'leosBase64ImageDialog', changeStateElements, true);

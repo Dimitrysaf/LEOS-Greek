@@ -46,7 +46,7 @@ define(function leosCommandStateHandler(require) {
                                 return true;
                             }
                         }else {
-                            return true
+                            return true;
                         }
                     }
                 }
@@ -54,14 +54,8 @@ define(function leosCommandStateHandler(require) {
         }
     }
 
-    function isInsideTable(selection) {
-        if (!selection) return false;
-        var startElement = selection.getStartElement();
-        return startElement && startElement.getAscendant('table', true) !== null;
-    }
 
     return {
-        changeCommandState: changeCommandState,
-        isInsideTable: isInsideTable
+        changeCommandState: changeCommandState
     }
 });

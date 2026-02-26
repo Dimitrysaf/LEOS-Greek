@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?>
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" xmlns:xml="http://www.w3.org/XML/1998/namespace">
     <bill name="REG_IMPL">
@@ -72,7 +72,7 @@
                     <p>Έχοντας υπόψη τη Συνθήκη για τη λειτουργία της Ευρωπαϊκής Ένωσης,</p>
                 </citation>
                 <citation leos:editable="true">
-                    <p>Έχοντας υπόψη […]<authorialNote marker="1" placement="bottom"><p>OJ L [...], [...], p. [...].</p></authorialNote>, και ιδίως το(τα) άρθρο(-α) […],</p>
+                    <p>Έχοντας υπόψη […]<authorialNote marker="1" placement="bottom"><p>EE L [...] της [...], σ. [...].</p></authorialNote>, και ιδίως το(τα) άρθρο(-α) […],</p>
                 </citation>
                 <citation leos:editable="true">
                     <p>Κατόπιν διαβούλευσης με την επιτροπή [ονομασία της επιτροπής],</p>

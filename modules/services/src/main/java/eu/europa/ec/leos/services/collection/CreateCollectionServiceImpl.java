@@ -171,6 +171,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             context.useTranslated(false);
             context.useTemplateKey(documentVO.getMetadata().getTemplate());
             context.useExistingDocuments(documents);
+            context.useIdsAndUrlsHolder(idsAndUrlsHolder);
             //create proposal
             Proposal proposal = context.executeCreateProposal();
 

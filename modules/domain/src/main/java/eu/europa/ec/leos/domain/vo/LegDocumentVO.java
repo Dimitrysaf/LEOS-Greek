@@ -5,7 +5,6 @@ import java.util.Objects;
 
 public class LegDocumentVO {
 
-
     private String proposalId;
     private String documentTitle;
     private String milestoneComments;
@@ -15,6 +14,7 @@ public class LegDocumentVO {
     private String creationDate;
     private String updatedDate;
     private boolean clonedProposal;
+    private String originalRef;
     private String language;
 
     public String getProposalId() { return proposalId; }
@@ -85,6 +85,14 @@ public class LegDocumentVO {
 
     public void setUpdatedDate(String updatedDate) {
         this.updatedDate = updatedDate;
+    }
+
+    public void setOriginalRef(String originalRef) {
+        this.originalRef = originalRef;
+    }
+
+    public String getOriginalRef() {
+        return this.originalRef;
     }
 
     @Override

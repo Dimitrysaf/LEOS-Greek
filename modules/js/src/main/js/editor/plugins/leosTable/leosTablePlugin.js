@@ -318,11 +318,11 @@ define(function leosTablePluginModule(require) {
 
         // Find closest <td> or <th> ancestor for start and end
         var startCell = startNode.getAscendant(function(el) {
-            return el.is('td') || el.is('th');
+            return el && (typeof el.is === 'function') && (el.is('td') || el.is('th'));
         }, true);
 
         var endCell = endNode.getAscendant(function(el) {
-            return el.is('td') || el.is('th');
+            return !!el && (typeof el.is === 'function') && (el.is('td') || el.is('th'));
         }, true);
 
         // Both must exist and be exactly the same cell
@@ -413,8 +413,12 @@ define(function leosTablePluginModule(require) {
         if (evt.data.name === 'cellMerge') {
             evt.data.cell = _mergeCells(editor.getSelection(), false);
             placeCursorInCell(evt.data.cell, true);
-            editor.getCommand('inlinesave').setState(CKEDITOR.TRISTATE_OFF);
-            editor.getCommand('inlinesaveclose').setState(CKEDITOR.TRISTATE_OFF);
+            if (editor.getCommand('inlinesave').state === CKEDITOR.TRISTATE_DISABLED) {
+                editor.getCommand('inlinesave').setState(CKEDITOR.ON);
+            }
+            if (editor.getCommand('inlinesaveclose').state === CKEDITOR.TRISTATE_DISABLED) {
+                editor.getCommand('inlinesaveclose').setState(CKEDITOR.ON);
+            }
             evt.cancel();
         }
     }
@@ -619,6 +623,9 @@ define(function leosTablePluginModule(require) {
             }, {
                 akn : "leos:predefinedtable",
                 html : "leos:predefinedtable"
+            }, {
+                akn : "leos:tableonlymode",
+                html : "leos:tableonlymode"
             }, {
                 html : 'data-akn-name=leosTable'
             }],
