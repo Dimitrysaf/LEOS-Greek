@@ -81,6 +81,7 @@ public class RestProperties implements RepositoryPropertiesMapper {
         ids.put(TLC_REFERENCE_NAME_FORMAT_ID, "tlcReferenceNameFormatId");
         ids.put(FOREIGN_ANNEX_NUMBER, "foreignAnnexNumber");
         ids.put(FOREIGN_ANNEX_SOURCE, "foreignAnnexSource");
+        ids.put(FOREIGN_FILE_SIZE, "foreignFileSize");
     }
 
     @Override

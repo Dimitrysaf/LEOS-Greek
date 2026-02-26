@@ -117,6 +117,24 @@ public interface LeosRepository {
                                                                                        byte[] contentBytes);
 
     /**
+     * Creates a document from a given template and with the specified characteristics.
+     *
+     * @param path     the path where to create the document.
+     * @param name     the name of the document.
+     * @param metadata the metadata of the document.
+     * @param cloneDocumentMetadataVO clone document metadata vo
+     * @param type     the type class of the document.
+     * @param binaryContent the binary content of the foreign annex.
+     * @param originalFilename the original filename of the foreign annex.
+     * @param binaryContentSize the size of the binary file of the foreign annex, in kb and in string.
+     * @return the created document.
+     */
+    <D extends LeosDocument, M extends LeosMetadata> D createClonedDocumentFromContent(String path, String name, M metadata,
+            CloneDocumentMetadataVO cloneDocumentMetadataVO,
+            Class<? extends D> type, String leosCategory,
+            byte[] contentBytes, byte[] binaryContent, String originalFilename, String binaryContentSize);
+
+    /**
      * Creates a leg document from a given content and with the specified characteristics.
      *
      * @param path              the path where to create the leg document.
@@ -187,6 +205,21 @@ public interface LeosRepository {
      * @return the updated document.
      */
     <D extends LeosDocument> D updateDocument(String id, byte[] content, VersionType versionType, String comment, Class<? extends D> type);
+
+    /**
+     * Updates a document with the given content.
+     *
+     * @param id      the ID of the document to update.
+     * @param content the content of the document.
+     * @param versionType the version type to be created
+     * @param comment the comment of the update, optional.
+     * @param type    the type class of the document.
+     * @param binaryContent the binary content of the foreign annex.
+     * @param originalFilename the original filename of the foreign annex.
+     * @param binaryContentSize the size of the binary file of the foreign annex, in kb and in string.
+     * @return the updated document.
+     */
+    <D extends LeosDocument> D updateDocument(String id, byte[] content, VersionType versionType, String comment, Class<? extends D> type, byte[] binaryContent, String originalFilename, String binaryContentSize);
 
     <D extends LeosDocument> D updateDocument(String id, byte[] content, Map<String, Object> properties,
                                               VersionType versionType, String comment, Class<? extends D> type);

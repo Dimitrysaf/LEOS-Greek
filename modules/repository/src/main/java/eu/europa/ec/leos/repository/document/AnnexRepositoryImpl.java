@@ -65,10 +65,10 @@ public abstract class AnnexRepositoryImpl implements AnnexRepository {
     }
 
     @Override
-    public Annex createClonedAnnexFromContent(String path, String name, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, byte[] content) {
+    public Annex createClonedAnnexFromContent(String path, String name, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, byte[] content, byte[] binaryContent, String originalFilename, String binaryContentSize) {
         logger.debug("Creating cloned Annex From Content... [tpath=" + path + ", name=" + name + "]");
         return leosRepository.createClonedDocumentFromContent(path, name, metadata, cloneDocumentMetadataVO, Annex.class,
-                LeosCategory.ANNEX.name(), content);
+                LeosCategory.ANNEX.name(), content, binaryContent, originalFilename, binaryContentSize);
     }
 
     @Override
@@ -87,6 +87,12 @@ public abstract class AnnexRepositoryImpl implements AnnexRepository {
     public Annex updateAnnex(String id, byte[] content, VersionType versionType, String comment) {
         logger.debug("Updating Annex content... [id=" + id + "]");
         return leosRepository.updateDocument(id, content, versionType, comment, Annex.class);
+    }
+
+    @Override
+    public Annex updateAnnex(String id, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+        logger.debug("Updating Annex content... [id=" + id + "]");
+        return leosRepository.updateDocument(id, content, versionType, comment, Annex.class, binaryContent, originalFilename, binaryContentSize);
     }
 
     @Override

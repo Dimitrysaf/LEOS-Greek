@@ -28,10 +28,12 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.w3c.dom.Node;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,9 +54,17 @@ import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.D
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_TRANSLATION_FROM_LANGUAGE;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_VERSION;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.EXPLANATORY_TITLE_PREFACE;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.FILE_FORMAT_REFERS_TO;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.FILE_FORMAT_VALUE;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.FOREIGN_ANNEX_NUMBER;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.FOREIGN_ANNEX_SOURCE;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.FOREIGN_FILE_SIZE;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.PROPOSAL_INTERNAL_REFERENCE;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.PROPOSAL_PACKAGE_TITLE;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.TLC_REFERENCE_NAME_FORMAT_HREF;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.TLC_REFERENCE_NAME_FORMAT_ID;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.TLC_REFERENCE_NAME_FORMAT_SHOW_AS;
 import static eu.europa.ec.leos.services.support.XmlHelper.PROPOSAL_FILE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 
@@ -114,12 +124,21 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                 List<DocumentVO> billChildDocs = new ArrayList<>();
                 DocumentVO billDoc = null;
                 HashMap<Integer, DocumentVO> annexes = new HashMap<>();
-                for (String docName : unzippedFiles.keySet()) {
+                for (String docName : unzippedFiles.keySet().stream().filter(elem -> elem.endsWith(XML_DOC_EXT)).toList()) {
                     if(docName.startsWith(PROPOSAL_FILE)) {
                         continue;
                     }
                     LeosFile docFile = (LeosFile) unzippedFiles.get(docName);
                     DocumentVO doc = createDocument(docName, docFile, canModifySource);
+                    Node srcOfComponentReg = XercesUtils.getFirstElementByXPath(XercesUtils.createXercesDocument(docFile.getBytes()), "//akn:mainBody/akn:annex/akn:componentRef/@src");
+                    if (srcOfComponentReg != null) {
+                        String originalFileName = srcOfComponentReg.getTextContent();
+                        LeosFile binaryFile = (LeosFile) unzippedFiles.get(originalFileName);
+                        doc.setBinaryFile(binaryFile.getBytes());
+                        doc.setOriginalFilename(originalFileName);
+                        Node binaryFileSize = XercesUtils.getFirstElementByXPath(XercesUtils.createXercesDocument(docFile.getBytes()), "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:foreignFileSize");
+                        doc.setBinaryFileSize(binaryFileSize.getTextContent());
+                    }
                     if (doc != null) {
                         if (doc.getCategory() == LeosCategory.ANNEX) {
                             annexes.put(new Integer(doc.getMetadata().getIndex()), doc);
@@ -200,7 +219,15 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                         EXPLANATORY_TITLE_PREFACE,
                         PROPOSAL_INTERNAL_REFERENCE,
                         PROPOSAL_DOC_COLLECTION,
-                        PROPOSAL_PACKAGE_TITLE
+                        PROPOSAL_PACKAGE_TITLE,
+                        FILE_FORMAT_REFERS_TO,
+                        FILE_FORMAT_VALUE,
+                        TLC_REFERENCE_NAME_FORMAT_HREF,
+                        TLC_REFERENCE_NAME_FORMAT_SHOW_AS,
+                        TLC_REFERENCE_NAME_FORMAT_ID,
+                        FOREIGN_ANNEX_NUMBER,
+                        FOREIGN_ANNEX_SOURCE,
+                        FOREIGN_FILE_SIZE
                 }, xmlNodeConfigProcessor.getConfig(document.getCategory()));
                 String docType = templateService.getDocTypeFromCatalog(templatesCatalog, metadataVOMap.get(DOC_TEMPLATE));
 
@@ -222,9 +249,17 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                     metadata.setDocCollectionName(metadataVOMap.get(PROPOSAL_DOC_COLLECTION));
                 }
 
-
                 metadata.setIndex(metadataVOMap.get(ANNEX_INDEX_META));
                 metadata.setNumber(metadataVOMap.get(ANNEX_NUMBER_META));
+
+                metadata.setFileFormatRefersTo(metadataVOMap.get(FILE_FORMAT_REFERS_TO));
+                metadata.setFileFormatValue(metadataVOMap.get(FILE_FORMAT_VALUE));
+                metadata.setTlcReferenceNameFormatHref(metadataVOMap.get(TLC_REFERENCE_NAME_FORMAT_HREF));
+                metadata.setTlcReferenceNameFormatShowAs(metadataVOMap.get(TLC_REFERENCE_NAME_FORMAT_SHOW_AS));
+                metadata.setTlcReferenceNameFormatId(metadataVOMap.get(TLC_REFERENCE_NAME_FORMAT_ID));
+                metadata.setForeignAnnexNumber(metadataVOMap.get(FOREIGN_ANNEX_NUMBER));
+                metadata.setForeignAnnexSource(metadataVOMap.get(FOREIGN_ANNEX_SOURCE));
+                metadata.setForeignFileSize(metadataVOMap.get(FOREIGN_FILE_SIZE));
 
                 // For now, only check for the existence of an eeaRelevance: text-> boolean
                 String eeaRelevanceText = metadataVOMap.get(DOC_EEA_RELEVANCE_COVER);

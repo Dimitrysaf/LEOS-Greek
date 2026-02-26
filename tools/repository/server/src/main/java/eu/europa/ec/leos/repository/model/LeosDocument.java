@@ -230,6 +230,9 @@ public class LeosDocument {
         this.updatedOn = docVersion.getAuditLastMDate() != null ? Date.from(docVersion.getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) :
                 null;
         this.source = docContent.getContent().getBytes(StandardCharsets.UTF_8);
+        this.binarySource = docContent.getBinaryContent();
+        this.originalFilename = docContent.getOriginalFilename();
+        this.binarySourceSize = docContent.getBinaryContentSize();
         this.setRef(doc.getRef());
         this.setVersionId(docVersion.getId());
 

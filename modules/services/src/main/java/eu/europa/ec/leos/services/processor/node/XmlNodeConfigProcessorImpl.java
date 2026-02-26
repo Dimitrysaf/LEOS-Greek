@@ -217,6 +217,7 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
         metadataConfig.put(DOC_LANGUAGE, new XmlNodeConfig("//akn:meta/akn:identification/akn:FRBRExpression/akn:FRBRlanguage/@language", false, Collections.emptyList()));
         metadataConfig.put(DOC_VERSION, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:docVersion", true, Collections.emptyList()));
         metadataConfig.put(DOC_EEA_RELEVANCE_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:eeaRelevance", true, Collections.emptyList(), true, "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:eeaRelevance"));
+        metadataConfig.put(FOREIGN_FILE_SIZE, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:foreignFileSize", true, Collections.emptyList()));
 
         metadataConfig.put(FILE_CUID_PRESERVATION, new XmlNodeConfig("//akn:meta/akn:identification/akn:FRBRWork/akn:preservation/akn4eu:fileCUID/@value", false, Collections.emptyList()));
         metadataConfig.put(DOC_CUID_PRESERVATION, new XmlNodeConfig("//akn:meta/akn:identification/akn:FRBRWork/akn:preservation/akn4eu:docCUID/@value", false, Collections.emptyList()));

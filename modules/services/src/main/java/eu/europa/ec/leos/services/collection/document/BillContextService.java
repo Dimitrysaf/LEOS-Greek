@@ -410,7 +410,7 @@ public class BillContextService {
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Annex not found index " + annex.getMetadata().get().getIndex()));
             byte[] updatedAnnexBytes = xmlContentProcessor.doXMLPostProcessing(docChild.getSource());  //updateRefs
-            annexService.updateAnnex(annex, updatedAnnexBytes, annex.getMetadata().get(), VersionType.MINOR, updateRefsComment, false);
+            annexService.updateAnnex(annex, updatedAnnexBytes, annex.getMetadata().get(), VersionType.MINOR, updateRefsComment, false, docChild.getBinaryFile(), docChild.getOriginalFilename(), docChild.getBinaryFileSize());
             idsAndUrlsHolder.addDocCloneAndOriginIdMap(annex.getMetadata().get().getRef(), docChild.getRef());
             refsMatching.put(docChild.getRef(), annex);
         }
@@ -752,6 +752,14 @@ public class BillContextService {
                 .withPackageRef(packageRef)
                 .withClonedRef(annexDocument.getRef())
                 .withLanguage(docLanguage)
+                .withFileFormatRefersTo(annexMetadataVO.getFileFormatRefersTo())
+                .withFileFormatValue(annexMetadataVO.getFileFormatValue())
+                .withTlcReferenceNameFormatId(annexMetadataVO.getTlcReferenceNameFormatId())
+                .withTlcReferenceNameFormatHref(annexMetadataVO.getTlcReferenceNameFormatHref())
+                .withTlcReferenceNameFormatShowAs(annexMetadataVO.getTlcReferenceNameFormatShowAs())
+                .withForeignAnnexNumber(annexMetadataVO.getForeignAnnexNumber())
+                .withForeignAnnexSource(annexMetadataVO.getForeignAnnexSource())
+                .withForeignFileSize(annexMetadataVO.getForeignFileSize())
                 .build();
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(annexDocument.getSource(), createValueMap(updatedAnnexMetadata),
                 xmlNodeConfigProcessor.getConfig(updatedAnnexMetadata.getCategory()), xmlNodeConfigProcessor.getOldPrefaceOfAnnexConfig());

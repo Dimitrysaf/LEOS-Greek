@@ -17,19 +17,20 @@ public final class AnnexMetadata extends LeosMetadata {
     private final String tlcReferenceNameFormatId;
     private final String foreignAnnexNumber;
     private final String foreignAnnexSource;
+    private final String foreignFileSize;
 
     public AnnexMetadata(String stage, String type, String purpose, String template, String language, String docTemplate,
                          String ref, int index, String number, String title, String objectId, String docVersion,
                          boolean eeaRelevance, boolean customTemplateAct, String clonedRef) {
         this(stage, type, purpose, template, language, docTemplate, ref, null, index, number, title, objectId, docVersion,
-                eeaRelevance, customTemplateAct, clonedRef, null, null, null, null, null, null, null);
+                eeaRelevance, customTemplateAct, clonedRef, null, null, null, null, null, null, null, null);
     }
 
     public AnnexMetadata(String stage, String type, String purpose, String template, String language, String docTemplate,
                          String ref, String packageRef, int index, String number, String title, String objectId, String docVersion,
                          boolean eeaRelevance, boolean customTemplateAct, String clonedRef, String fileFormatRefersTo, String fileFormatValue,
                          String tlcReferenceNameFormatHref, String tlcReferenceNameFormatShowAs, String tlcReferenceNameFormatId,
-                         String foreignAnnexNumber, String foreignAnnexSource) {
+                         String foreignAnnexNumber, String foreignAnnexSource, String foreignFileSize) {
         super(LeosCategory.ANNEX, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance, customTemplateAct);
         this.index = index;
         this.number = number;
@@ -42,6 +43,7 @@ public final class AnnexMetadata extends LeosMetadata {
         this.tlcReferenceNameFormatId = tlcReferenceNameFormatId;
         this.foreignAnnexNumber = foreignAnnexNumber;
         this.foreignAnnexSource = foreignAnnexSource;
+        this.foreignFileSize = foreignFileSize;
     }
 
     public int getIndex() {
@@ -86,6 +88,10 @@ public final class AnnexMetadata extends LeosMetadata {
 
     public String getForeignAnnexSource() {
         return foreignAnnexSource;
+    }
+
+    public String getForeignFileSize() {
+        return foreignFileSize;
     }
 
     @Override
@@ -149,6 +155,7 @@ public final class AnnexMetadata extends LeosMetadata {
         private String tlcReferenceNameFormatId;
         private String foreignAnnexNumber;
         private String foreignAnnexSource;
+        private String foreignFileSize;
         private AnnexMetadataBuilder() {
         }
         private AnnexMetadataBuilder(AnnexMetadata metadata) {
@@ -175,6 +182,7 @@ public final class AnnexMetadata extends LeosMetadata {
             this.tlcReferenceNameFormatId = metadata.tlcReferenceNameFormatId;
             this.foreignAnnexNumber = metadata.foreignAnnexNumber;
             this.foreignAnnexSource = metadata.foreignAnnexSource;
+            this.foreignFileSize = metadata.foreignFileSize;
         }
         public AnnexMetadataBuilder withStage(String stage) {
             this.stage = stage;
@@ -268,12 +276,16 @@ public final class AnnexMetadata extends LeosMetadata {
             this.foreignAnnexSource = foreignAnnexSource;
             return this;
         }
+        public AnnexMetadataBuilder withForeignFileSize(String foreignFileSize) {
+            this.foreignFileSize = foreignFileSize;
+            return this;
+        }
         public AnnexMetadata build() {
             return new AnnexMetadata(this.stage, this.type, this.purpose, this.template, this.language,
                     this.docTemplate, this.ref, this.packageRef, this.index, this.number, this.title, this.objectId, this.docVersion,
                     this.eeaRelevance, this.customTemplateAct, this.clonedRef, this.fileFormatRefersTo, this.fileFormatValue,
                     this.tlcReferenceNameFormatHref, this.tlcReferenceNameFormatShowAs, this.tlcReferenceNameFormatId,
-                    this.foreignAnnexNumber, this.foreignAnnexSource);
+                    this.foreignAnnexNumber, this.foreignAnnexSource, this.foreignFileSize);
         }
     }
 

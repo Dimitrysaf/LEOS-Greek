@@ -253,7 +253,7 @@ public class AnnexContextService {
         LOG.trace("Executing 'Update References On Annex' use case...");
         Validate.notNull(annex, "Annex is required!");
         Validate.notNull(mapOldAndNewRefs, "mapOldAndNewRefs is required!");
-        annexService.updateReferencesAsync(annex, mapOldAndNewRefs);
+        annexService.updateReferencesAsync(annex, mapOldAndNewRefs, annex.getBinaryContent(), annex.getOriginalFilename(), annex.getBinaryContentSize());
     }
 
     public Annex executeCreateAnnex(AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) {
@@ -294,6 +294,7 @@ public class AnnexContextService {
                     .withTlcReferenceNameFormatShowAs(showAs)
                     .withForeignAnnexNumber(annexNumber)
                     .withForeignAnnexSource(originalFilename)
+                    .withForeignFileSize(binaryContentSize)
                     .build();
         }
 
@@ -335,12 +336,12 @@ public class AnnexContextService {
                 .build();
         if (cloneProposal) {
             CloneDocumentMetadataVO cloneDocumentMetadataVO = new CloneDocumentMetadataVO(annexDocument.getRef(), originRef);
-            annex = annexService.createClonedAnnexFromContent(leosPackage.getPath(), metadataDocument, cloneDocumentMetadataVO, actionMessage, annexDocument.getSource(), annexDocument.getName());
+            annex = annexService.createClonedAnnexFromContent(leosPackage.getPath(), metadataDocument, cloneDocumentMetadataVO, actionMessage, annexDocument.getSource(), annexDocument.getName(), annexDocument.getBinaryFile(), annexDocument.getOriginalFilename(), annexDocument.getBinaryFileSize());
         } else {
             annex = annexService.createAnnexFromContent(leosPackage.getPath(), metadataDocument, actionMessage, annexDocument.getSource(), annexDocument.getName());
         }
         annex = securityService.updateCollaborators(annex.getMetadata().get().getRef(), annex.getId(), collaborators, Annex.class);
-        return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
+        return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED), annexDocument.getBinaryFile(), annexDocument.getOriginalFilename(), annexDocument.getBinaryFileSize());
     }
 
     public void executeUpdateAnnexMetadata() {
