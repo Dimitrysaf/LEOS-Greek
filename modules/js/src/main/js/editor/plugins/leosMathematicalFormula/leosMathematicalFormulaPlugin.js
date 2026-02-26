@@ -17,9 +17,8 @@ define(function leosMathematicalFormulaPluginModule(require) {
 
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
-    var leosPluginUtils = require("plugins/leosPluginUtils");
-    var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
     let leosPluginUtils = require("plugins/leosPluginUtils");
+    var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
 
     var pluginName = "leosMathematicalFormula";
     
