@@ -1495,6 +1495,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 .withTlcReferenceNameFormatHref("http://publications.europa.eu/resource/authority/file-type/" + extension)
                 .withTlcReferenceNameFormatShowAs(showAs)
                 .withForeignAnnexSource(originalFilename)
+                .withForeignFileSize(binaryContentSize)
                 .build();
         }
         annexService.updateAnnex(annex, metadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED), false, binaryContent, originalFilename, binaryContentSize);

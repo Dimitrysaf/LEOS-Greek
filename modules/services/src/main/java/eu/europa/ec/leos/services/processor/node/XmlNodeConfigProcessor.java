@@ -60,6 +60,7 @@ public interface XmlNodeConfigProcessor {
     String DOC_TRANSLATION_FROM_HREF = "docTranslationFromHref";
 
     String DOC_VERSION = "docVersion";
+    String FOREIGN_FILE_SIZE = "foreignFileSize";
     String DOC_REF_COVER = "coverPage";
 
     String PROPOSAL_DOC_COLLECTION = "docCollectionName";
@@ -362,6 +363,10 @@ public interface XmlNodeConfigProcessor {
         keyValueMap.put(TLC_REFERENCE_NAME_FORMAT_ID, metadata.getTlcReferenceNameFormatId());
         keyValueMap.put(FOREIGN_ANNEX_NUMBER, metadata.getForeignAnnexNumber());
         keyValueMap.put(FOREIGN_ANNEX_SOURCE, metadata.getForeignAnnexSource());
+
+        if (metadata.getForeignFileSize() != null) {
+            keyValueMap.put(FOREIGN_FILE_SIZE, metadata.getForeignFileSize());
+        }
 
         if (metadata.getPackageRef() != null) {
             keyValueMap.put(FILE_CUID_PRESERVATION, metadata.getRef().split("-")[1]);

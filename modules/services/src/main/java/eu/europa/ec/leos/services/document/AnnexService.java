@@ -35,7 +35,7 @@ public interface AnnexService {
 
     Annex createAnnexFromContent(String path, AnnexMetadata metadata, String actionMessage, byte[] content, String name);
 
-    Annex createClonedAnnexFromContent(String path, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage, byte[] content, String name);
+    Annex createClonedAnnexFromContent(String path, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage, byte[] content, String name, byte[] binaryContent, String originalFilename, String binaryContentSize);
 
     void deleteAnnex(Annex annex);
 
@@ -47,9 +47,11 @@ public interface AnnexService {
     
     Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, AnnexMetadata metadata, VersionType versionType, String comment, boolean updateInternalRefs);
 
+    Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, AnnexMetadata metadata, VersionType versionType, String comment, boolean updateInternalRefs, byte[] binaryContent, String originalFilename, String binaryContentSize);
+
     Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, String comment);
 
-    Annex updateAnnex(String id, byte[] updatedAnnexContent, boolean updateInternalRefs);
+    Annex updateAnnex(String id, byte[] updatedAnnexContent, boolean updateInternalRefs, byte[] binaryContent, String originalFilename, String binaryContentSize);
 
     /**
      * updates annex with the given content
@@ -58,9 +60,12 @@ public interface AnnexService {
      * @param updateInternalRefs to update internal references or not
      * @param versionType new version type
      * @param comment new comment
+     * @param binaryContent the binary content of the foreign annex.
+     * @param originalFilename the original filename of the foreign annex.
+     * @param binaryContentSize the size of the binary file of the foreign annex, in kb and in string.
      * @return annex object
      */
-    Annex updateAnnex(String id, byte[] updatedAnnexContent, boolean updateInternalRefs, VersionType versionType, String comment);
+    Annex updateAnnex(String id, byte[] updatedAnnexContent, boolean updateInternalRefs, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize);
 
     Annex updateAnnex(String ref, String id, Map<String, Object> properties, boolean latest);
     
@@ -106,5 +111,5 @@ public interface AnnexService {
 
     String generateAnnexReference(byte[] content, String language);
 
-    void updateReferencesAsync(Annex annex, Map<String, String> refsMatching);
+    void updateReferencesAsync(Annex annex, Map<String, String> refsMatching, byte[] binaryContent, String originalFilename, String binaryContentSize);
 }

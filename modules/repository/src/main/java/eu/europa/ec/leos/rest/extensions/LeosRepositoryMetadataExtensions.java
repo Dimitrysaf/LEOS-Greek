@@ -121,12 +121,13 @@ class LeosRepositoryMetadataExtensions {
         String tlcReferenceNameFormatId = getTlcReferenceNameFormatId(leosDocument);
         String foreignAnnexNumber = getForeignAnnexNumber(leosDocument);
         String foreignAnnexSource = getForeignAnnexSource(leosDocument);
+        String foreignFileSize = getForeignFileSize(leosDocument);
 
         return buildMetadata(leosDocument, props -> {
             AnnexMetadata metadata = new AnnexMetadata(props.stage, props.type, props.purpose, props.template,
                     props.language, props.docTemplate, props.ref, null, index, number, annexTitle, null, "0.1.0", props.eeaRelevance, props.customTemplateAct, clonedRef,
                     fileFormatRefersTo, fileFormatValue, tlcReferenceNameFormatHref, tlcReferenceNameFormatShowAs, tlcReferenceNameFormatId,
-                    foreignAnnexNumber, foreignAnnexSource);
+                    foreignAnnexNumber, foreignAnnexSource, foreignFileSize);
             metadata.setCallbackAddress(props.callbackAddress);
             metadata.setImported(props.imported);
             return Option.some(metadata);
@@ -281,6 +282,10 @@ class LeosRepositoryMetadataExtensions {
 
     private static String getForeignAnnexSource(LeosDocument leosDocument) {
         return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.FOREIGN_ANNEX_SOURCE));
+    }
+
+    private static String getForeignFileSize(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.FOREIGN_FILE_SIZE));
     }
 
     private static String getExplanatoryTitle(LeosDocument leosDocument) {

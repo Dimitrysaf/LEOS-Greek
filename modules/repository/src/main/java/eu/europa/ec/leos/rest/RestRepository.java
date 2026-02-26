@@ -218,6 +218,11 @@ public class RestRepository extends AbstractRestClient {
 
     LeosDocument createDocumentFromContent(final String packageName, final String name, Map<String, ?> properties,
                                            final String mimeType, byte[] contentBytes, String userId) {
+        return createDocumentFromContent(packageName, name, properties, mimeType, contentBytes, userId, null, null, null);
+    }
+
+    LeosDocument createDocumentFromContent(final String packageName, final String name, Map<String, ?> properties,
+            final String mimeType, byte[] contentBytes, String userId, byte[] binaryContent, String originalFilename, String binaryContentSize) {
 
         LOGGER.trace("Creating document... [packageName={}, name={}, mimeType={}]", packageName, name, mimeType);
         Map<String, Object> updatedProperties = new LinkedHashMap<>();

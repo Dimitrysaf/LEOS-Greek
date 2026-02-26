@@ -125,6 +125,7 @@ public class LeosMetadataExtensions {
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TLC_REFERENCE_NAME_FORMAT_ID), annexMetadata.getTlcReferenceNameFormatId());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.FOREIGN_ANNEX_NUMBER), annexMetadata.getForeignAnnexNumber());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.FOREIGN_ANNEX_SOURCE), annexMetadata.getForeignAnnexSource());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.FOREIGN_FILE_SIZE), annexMetadata.getForeignFileSize());
 
         return leosProperties;
     }
