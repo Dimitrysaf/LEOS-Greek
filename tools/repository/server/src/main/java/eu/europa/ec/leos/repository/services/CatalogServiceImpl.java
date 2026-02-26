@@ -592,7 +592,7 @@ public class CatalogServiceImpl implements CatalogService {
                     String type = childElement.getAttribute("type");
 
                     // Only process CATEGORY items, skip TEMPLATE and DOCUMENT items
-                    if ("CATEGORY".equals(type)) {
+                    if (isAllowedType(type)) {
                         // Create the category item element
                         Element categoryItem = targetDoc.createElement("item");
 
@@ -739,7 +739,7 @@ public class CatalogServiceImpl implements CatalogService {
         Element current = (Element) templateElement.getParentNode();
 
         // Traverse up to build the path
-        while (current != null && "item".equals(current.getTagName()) && "CATEGORY".equals(current.getAttribute("type"))) {
+        while (current != null && "item".equals(current.getTagName()) && isAllowedType(current.getAttribute("type"))) {
             String key = current.getAttribute("key");
             if (key != null && !key.isEmpty()) {
                 pathSegments.add(key);
@@ -766,7 +766,7 @@ public class CatalogServiceImpl implements CatalogService {
         NodeList items = root.getElementsByTagName("item");
         for (int i = 0; i < items.getLength(); i++) {
             Element item = (Element) items.item(i);
-            if ("CATEGORY".equals(item.getAttribute("type")) &&
+            if (isAllowedType(item.getAttribute("type")) &&
                     categoryKey.equals(item.getAttribute("key"))) {
                 return item;
             }
@@ -834,13 +834,17 @@ public class CatalogServiceImpl implements CatalogService {
             if (child.getNodeType() == Node.ELEMENT_NODE) {
                 Element childElement = (Element) child;
                 if ("item".equals(childElement.getTagName()) &&
-                        "CATEGORY".equals(childElement.getAttribute("type")) &&
+                        isAllowedType(childElement.getAttribute("type")) &&
                         categoryKey.equals(childElement.getAttribute("key"))) {
                     return childElement;
                 }
             }
         }
         return null;
+    }
+
+    private boolean isAllowedType(String type) {
+        return "CATEGORY".equals(type) || "ACT".equals(type) || "PROCEDURE".equals(type);
     }
 
     private void ensureCatalogExists(String entityName, String userId, Package pkg) throws CatalogException {
