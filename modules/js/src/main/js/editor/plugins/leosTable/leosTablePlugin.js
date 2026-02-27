@@ -412,13 +412,14 @@ define(function leosTablePluginModule(require) {
         const editor = evt.editor;
         if (evt.data.name === 'cellMerge') {
             evt.data.cell = _mergeCells(editor.getSelection(), false);
-            placeCursorInCell(evt.data.cell, true);
             if (editor.getCommand('inlinesave').state === CKEDITOR.TRISTATE_DISABLED) {
                 editor.getCommand('inlinesave').setState(CKEDITOR.ON);
             }
             if (editor.getCommand('inlinesaveclose').state === CKEDITOR.TRISTATE_DISABLED) {
                 editor.getCommand('inlinesaveclose').setState(CKEDITOR.ON);
             }
+            editor.focus();
+            placeCursorInCell(evt.data.cell, true);
             evt.cancel();
         }
     }
