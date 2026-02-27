@@ -182,7 +182,7 @@ public class ElementProcessorClonedProposalTest_IT extends LeosTest {
     protected void getStructureFile() {
         docTemplate = "BL-023";
         byte[] bytesFile = TestUtils.getFileContent("/structure-test-bill-CN.xml");
-        when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
+        when(templateStructureService.getStructure(docTemplate, false)).thenReturn(bytesFile);
     }
 
     @Test

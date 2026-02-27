@@ -24,7 +24,7 @@ define(function leosBase64ImageDialog(require) {
     };
     dialogDefinition.initializeDialog = function initializeDialog(editor) {
         var t = null,
-            selectedImg = null,
+            selectedImg = null, hiddenForm = null,
             orgWidth = null, orgHeight = null,
             imgPreview = null, imgScal = 1, lock = true, MAX_IMAGE_SRC_LENGTH = 1048575, MAX_IMAGE_SIZE_IN_KB = 700;
         // More or less a base64 is calculated Math.round(MAX_IMAGE_SRC_LENGTH*3/4) giving 767kb of image size, we'll allow 700kb.
@@ -230,6 +230,15 @@ define(function leosBase64ImageDialog(require) {
                 if (selectedImg) selectedImg = selectedImg.getSelectedElement();
                 if (!selectedImg || selectedImg.getName() !== "img") selectedImg = null;
                 
+                /* Check condition and hide elements */
+                hiddenForm = selectedImg && selectedImg.getAscendant(function (el) {
+                    return el.getAttribute && el.getAttribute(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.AKNP;
+                });
+                if (hiddenForm) {
+                    t.getContentElement("tab-source", "alt").getElement().getParent().hide();
+                    t.getContentElement("tab-source", "width").getElement().getParent().getParent().hide();
+                }
+                
                 /* Set input values */
                 t.setValueOf("tab-source", "lock", lock);
                 
@@ -266,6 +275,9 @@ define(function leosBase64ImageDialog(require) {
                 }
                 
             },
+            onHide: function () {
+                editor.setReadOnly(false);
+            },
             onOk: function () {
                 
                 /* Get image source */
@@ -282,56 +294,57 @@ define(function leosBase64ImageDialog(require) {
                 newImg.setAttribute("src", src);
                 src = null;
                 
-                /* Set attributes */
-                newImg.setAttribute("alt", t.getValueOf("tab-source", "alt").replace(/^\s+/, "").replace(/\s+$/, ""));
-                var attr = {
-                    "width": ["width", "width:#;", "integer", 1],
-                    "height": ["height", "height:#;", "integer", 1],
-                }, css = [], value, cssvalue, attrvalue, k;
-                var unit = "px";
-                for (k in attr) {
-                    
-                    value = t.getValueOf("tab-source", k);
-                    attrvalue = value;
-                    cssvalue = value;
-                    
-                    if (attr[k][2] == "integer") {
-                        if (value.indexOf("%") >= 0) unit = "%";
-                        value = parseInt(value, 10);
-                        if (isNaN(value)) value = null; else if (value < attr[k][3]) value = null;
-                        if (value != null) {
-                            if (unit == "%") {
-                                attrvalue = value + "%";
-                                cssvalue = value + "%";
-                            } else {
-                                attrvalue = value;
-                                cssvalue = value + "px";
+                if (!hiddenForm) {
+                    /* Set attributes */
+                    newImg.setAttribute("alt", t.getValueOf("tab-source", "alt").replace(/^\s+/, "").replace(/\s+$/, ""));
+                    var attr = {
+                        "width": ["width", "width:#;", "integer", 1],
+                        "height": ["height", "height:#;", "integer", 1],
+                    }, css = [], value, cssvalue, attrvalue, k;
+                    var unit = "px";
+                    for (k in attr) {
+
+                        value = t.getValueOf("tab-source", k);
+                        attrvalue = value;
+                        cssvalue = value;
+
+                        if (attr[k][2] == "integer") {
+                            if (value.indexOf("%") >= 0) unit = "%";
+                            value = parseInt(value, 10);
+                            if (isNaN(value)) value = null; else if (value < attr[k][3]) value = null;
+                            if (value != null) {
+                                if (unit == "%") {
+                                    attrvalue = value + "%";
+                                    cssvalue = value + "%";
+                                } else {
+                                    attrvalue = value;
+                                    cssvalue = value + "px";
+                                }
                             }
                         }
-                    }
-                    
-                    if (value != null) {
-                        newImg.setAttribute(attr[k][0], attrvalue);
-                        css.push(attr[k][1].replace(/#/g, cssvalue));
-                    }
-                    
-                }
-                if (css.length > 0) newImg.setAttribute("style", css.join(""));
 
-                /* Insert new image */
-                if (!selectedImg) {
-                    var selection = editor.getSelection();
-                    var selectedElement = leosKeyHandler.getSelectedElement(selection);
-                    if (leosPluginUtils.isRecitalAA(selectedElement)) {
-                        insertImgInSubflow(selection, selectedElement, newImg);
-                    } else {
-                        editor.insertElement(newImg);
-                    }
-                }
+                        if (value != null) {
+                            newImg.setAttribute(attr[k][0], attrvalue);
+                            css.push(attr[k][1].replace(/#/g, cssvalue));
+                        }
 
-                /* Resize image */
-                if (editor.plugins.imageresize) editor.plugins.imageresize.resize(editor, newImg, 800, 800);
-                
+                    }
+                    if (css.length > 0) newImg.setAttribute("style", css.join(""));
+
+                    /* Insert new image */
+                    if (!selectedImg) {
+                        var selection = editor.getSelection();
+                        var selectedElement = leosKeyHandler.getSelectedElement(selection);
+                        if (leosPluginUtils.isRecitalAA(selectedElement)) {
+                            insertImgInSubflow(selection, selectedElement, newImg);
+                        } else {
+                            editor.insertElement(newImg);
+                        }
+                    }
+
+                    /* Resize image */
+                    if (editor.plugins.imageresize) editor.plugins.imageresize.resize(editor, newImg, 800, 800);
+                }
             },
             
             /* Dialog form */

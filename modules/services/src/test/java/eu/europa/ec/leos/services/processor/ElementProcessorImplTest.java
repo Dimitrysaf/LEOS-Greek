@@ -92,7 +92,7 @@ public class ElementProcessorImplTest extends LeosTest {
         super.setup();
         String docTemplate = "BL-023";
         byte[] bytesFile = getFileContent("/structure-test-bill-EC.xml");
-        when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
+        when(templateStructureService.getStructure(docTemplate, false)).thenReturn(bytesFile);
         ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "schema/structure/structure_1.xsd");
         tocItems = structureServiceImpl.getTocItems(docTemplate);
 
@@ -106,7 +106,7 @@ public class ElementProcessorImplTest extends LeosTest {
         Content content = mock(Content.class);
         Source source = mock(Source.class);
 
-        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill-id", "", "0.1.0", false, false);
+        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill-id", "", "0.1.0", false, false, false);
         List<Collaborator> collaborators = new ArrayList<>();
         collaborators.add(new Collaborator("login", "OWNER", "SG"));
 
@@ -133,7 +133,7 @@ public class ElementProcessorImplTest extends LeosTest {
         Content content = mock(Content.class);
         Source source = mock(Source.class);
 
-        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill-id", "", "0.1.0", false, false);
+        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill-id", "", "0.1.0", false, false, false);
         List<Collaborator> collaborators = new ArrayList<>();
         collaborators.add(new Collaborator("login", "OWNER", "SG"));
 
@@ -164,7 +164,7 @@ public class ElementProcessorImplTest extends LeosTest {
         Content content = mock(Content.class);
         Source source = mock(Source.class);
 
-        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill-id", "", "0.1.0", false, false);
+        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill-id", "", "0.1.0", false, false, false);
         List<Collaborator> collaborators = new ArrayList<>();
         collaborators.add(new Collaborator("login", "OWNER", "SG"));
 
@@ -193,7 +193,7 @@ public class ElementProcessorImplTest extends LeosTest {
         Content content = mock(Content.class);
         Source source = mock(Source.class);
 
-        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill-id", "", "0.1.0", false, false);
+        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill-id", "", "0.1.0", false, false, false);
         List<Collaborator> collaborators = new ArrayList<>();
         collaborators.add(new Collaborator("login", "OWNER", "SG"));
 
@@ -224,7 +224,7 @@ public class ElementProcessorImplTest extends LeosTest {
         Content content = mock(Content.class);
         Source source = mock(Source.class);
 
-        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill-id", "", "0.1.0", false, false);
+        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill-id", "", "0.1.0", false, false, false);
         List<Collaborator> collaborators = new ArrayList<>();
         collaborators.add(new Collaborator("login", "OWNER", "SG"));
 
@@ -258,7 +258,7 @@ public class ElementProcessorImplTest extends LeosTest {
         Content content = mock(Content.class);
         Source source = mock(Source.class);
 
-        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill-id", "", "0.1.0", false, false);
+        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill-id", "", "0.1.0", false, false, false);
         List<Collaborator> collaborators = new ArrayList<>();
         collaborators.add(new Collaborator("login", "OWNER", "SG"));
 
@@ -288,7 +288,7 @@ public class ElementProcessorImplTest extends LeosTest {
         Content content = mock(Content.class);
         Source source = mock(Source.class);
 
-        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill-id", "", "0.1.0", false, false);
+        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill-id", "", "0.1.0", false, false, false);
         List<Collaborator> collaborators = new ArrayList<>();
         collaborators.add(new Collaborator("login", "OWNER", "SG"));
 
@@ -322,7 +322,7 @@ public class ElementProcessorImplTest extends LeosTest {
         Content content = mock(Content.class);
         Source source = mock(Source.class);
 
-        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill-id", "", "0.1.0", false, false);
+        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill-id", "", "0.1.0", false, false, false);
         List<Collaborator> collaborators = new ArrayList<>();
         collaborators.add(new Collaborator("login", "OWNER", "SG"));
 

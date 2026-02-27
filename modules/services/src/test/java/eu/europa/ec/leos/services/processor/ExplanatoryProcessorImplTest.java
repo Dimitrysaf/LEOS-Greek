@@ -169,7 +169,7 @@ public class ExplanatoryProcessorImplTest extends LeosTest {
         
         docTemplate = "CE-001";
         byte[] bytesFile = TestUtils.getFileContent("/structure-test-explanatory-CN.xml");
-        when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
+        when(templateStructureService.getStructure(docTemplate, false)).thenReturn(bytesFile);
         ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "schema/structure/structure_1.xsd");
         
         tocItems = structureServiceImpl.getTocItems(docTemplate);

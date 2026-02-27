@@ -30,7 +30,12 @@
   ],
   "structure": [
     {
+      "mode": "main",
       "name": "structure_03"
+    },
+    {
+      "mode": "translated",
+      "name": "structure_03_translated"
     }
   ]
 }

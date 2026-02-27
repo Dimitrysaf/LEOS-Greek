@@ -18,16 +18,12 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collection;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
@@ -175,6 +171,9 @@ public class DocumentV implements Serializable {
 
     @Column(name = " IS_PUBLISHED", updatable = false)
     private Boolean  isPublished;
+
+    @Column(name = "IS_TRANSLATED", updatable = false)
+    private Boolean isTranslated;
 
     public DocumentV() {
     }
@@ -533,5 +532,13 @@ public class DocumentV implements Serializable {
 
     public void setPublished(Boolean published) {
         isPublished = published;
+    }
+
+    public Boolean getTranslated() {
+        return isTranslated;
+    }
+
+    public void setTranslated(Boolean isTranslated) {
+        this.isTranslated = isTranslated;
     }
 }

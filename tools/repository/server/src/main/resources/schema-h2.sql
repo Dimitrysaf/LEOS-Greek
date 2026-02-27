@@ -339,7 +339,7 @@ SELECT doc.id||'_'||docver.id||'_'||doccat.id unique_id
      , docxml.act_type, docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title, docver.comments, doc.is_archived, doc.custom_template_act, docver.is_version_archived, (SELECT
                                                                                                                                                                                                               count(*) FROM document_property_values dpv WHERE dpv.version_id = docver.id) AS num_props,
     (SELECT LISTAGG(p.language, ',') WITHIN GROUP (ORDER BY p.language) FROM linked_package lp, package p WHERE p.id = lp.linked_package_id AND lp.package_id = doc.package_id ) AS available_langs,
-        doc.is_published
+        doc.is_published, pkg.is_translated
         FROM document doc, document_version docver, document_content docxml, document_categories_v doccat, "PACKAGE" pkg
         WHERE docver.DOCUMENT_ID = doc.ID
         AND docver.id = docxml.version_id

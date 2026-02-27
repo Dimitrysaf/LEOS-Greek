@@ -114,7 +114,7 @@ public abstract class XmlContentProcessorTest extends LeosTest {
         languageMapHolder.loadLanguageMap(languageMap);
 
         byte[] bytesFile = TestUtils.getFileContent(configFile);
-        when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
+        when(templateStructureService.getStructure(docTemplate, false)).thenReturn(bytesFile);
         ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "schema/structure/structure_1.xsd");
         tocItems = structureServiceImpl.getTocItems(docTemplate);
         numberingConfigs = structureServiceImpl.getNumberingConfigs(docTemplate);

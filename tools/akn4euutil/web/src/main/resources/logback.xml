@@ -22,6 +22,12 @@
 
     <contextName>${akn4eu.log.contextName}</contextName>
 
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [${akn4eu.log.contextName}] %logger{36} .%M:%L - %msg%n%rEx</pattern>
+        </encoder>
+    </appender>
+
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${akn4eu.log.path}/${akn4eu.log.filePrefix}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
@@ -39,6 +45,7 @@
     <logger name="eu.europa.ec.digit.leos" level="${akn4eu.log.level:-INFO}"/>
 
     <root level="${akn4eu.log.level:-INFO}">
+        <appender-ref ref="CONSOLE"/>
         <appender-ref ref="FILE"/>
     </root>
 </configuration>

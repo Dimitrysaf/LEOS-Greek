@@ -55,6 +55,8 @@
             [isCustomTemplatesCatalog]=false
             [isCopyChangeAct]="isCopyChangeAct"
             [userRoles]="userRoles"
+            [dgList]="dgList"
+            [selectedDg]="selectedDg"
             #templateSelector
             (navigationClick)="onNavigation(+1)"
             (selectTemplate)="handleSelectTemplate($event)"
@@ -73,6 +75,8 @@
             [isCustomTemplatesCatalog]=true
             [isCopyChangeAct]="isCopyChangeAct"
             [userRoles]="userRoles"
+            [dgList]="dgList"
+            [selectedDg]="selectedDg"
             #templateSelector
             (navigationClick)="onNavigation(+1)"
             (selectTemplate)="handleSelectTemplate($event)"
@@ -86,10 +90,10 @@
     label="Document metadata"
     [isCompleted]="createForm.valid && isStepOneCompleted"
   >
-      <app-proposal-create-form
-        [createForm]="createForm"
-        [isCustomTemplate]="!!(selectedTemplate?.customName)"
-      ></app-proposal-create-form>
+    <app-proposal-create-form
+      [createForm]="createForm"
+      [isCustomTemplate]="!!(selectedTemplate?.customName)"
+    ></app-proposal-create-form>
   </eui-wizard-step>
 </eui-wizard>
 <div class="app-dialog-footer-content">

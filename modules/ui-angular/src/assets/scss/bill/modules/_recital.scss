@@ -37,11 +37,11 @@ $RECITAL_SPACING: 32px;
             margin-left: $RECITAL_SPACING;
         }
 
-        & > aknP, & > p {
+        & aknP, & > p {
             @extend %paddedText;
             display: block;
         }
-    }    
+    }
 }
 
 %tocRecital {
@@ -64,7 +64,7 @@ $RECITAL_SPACING: 32px;
 
 //------------------------------- Editor Styles -----------------------------//
 %editorRecital {
-    p[data-akn-name="recital"] { 
+    p[data-akn-name="recital"] {
         @extend %paddedText;
         padding-left: $RECITAL_SPACING;
 

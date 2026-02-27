@@ -18,7 +18,13 @@ define(function leosOrientationPluginModule(require) {
 
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
+    var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
     var pluginName = "leosOrientation";
+    var changeStateElements = {
+        article: {
+            elementName: 'article'
+        }
+    };
     var $ = require("jquery");
     var ORIENTATION_CMD_NAME = "orientation";
     var iconOrientation =  'icons/orientation.png';
@@ -33,6 +39,7 @@ define(function leosOrientationPluginModule(require) {
         icons: pluginName.toLowerCase(),
 
         init: function(editor) {
+            editor.on('selectionChange', _onSelectionChange);
 
             editor.ui.addButton('leosOrientation', {
                 label: 'Orientation',
@@ -94,6 +101,9 @@ define(function leosOrientationPluginModule(require) {
         cmd.setState(ORIENTATION_MODE);
     }
 
+    function _onSelectionChange(event) {
+        leosCommandStateHandler.changeCommandState(event.editor, ORIENTATION_CMD_NAME, changeStateElements, true);
+    }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
 

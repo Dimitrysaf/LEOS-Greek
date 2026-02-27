@@ -3089,17 +3089,6 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
-    public boolean isClonedDocument(byte[] xmlContent) {
-        String xPath = xPathCatalog.getXPathClonedProposal();
-        return evalXPath(xmlContent, xPath, true);
-    }
-
-    @Override
-    public String getOriginalDocRefFromClonedContent(byte[] xmlContent) {
-        return getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneRefAttr(), true);
-    }
-
-    @Override
     public byte[] updateInitialNumberForArticles(byte[] xmlContent) {
         Document document = createXercesDocument(xmlContent);
         NodeList nodes = XercesUtils.getElementsByName(document, ARTICLE);
@@ -3274,7 +3263,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
     }
 
-    private void alignAllIds(Node sourceDoc, Node targetDoc, String category) {
+    public void alignAllIds(Node sourceDoc, Node targetDoc, String category) {
         if (sourceDoc != null && targetDoc != null) {
             NodeList sourceNodes = getAllNodesWithId(sourceDoc);
             NodeList targetNodes = getAllNodesWithId(targetDoc);
@@ -3372,7 +3361,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     private static void importAndReplaceNodeInDocument(Document doc, Node originalNode, Node nodeToImport) {
         if (originalNode != null && nodeToImport != null && !originalNode.isSameNode(nodeToImport)) {
             Node importedNode = importNodeInDocument(doc, nodeToImport);
-            XercesUtils.replaceElement(importedNode, originalNode);
+            String originalNodeId = getId(originalNode);
+            Node nodeToBeReplaced = originalNodeId != null ? XercesUtils.getElementById(doc, originalNodeId) : originalNode;
+            XercesUtils.replaceElement(importedNode, nodeToBeReplaced);
         }
     }
 
@@ -3382,7 +3373,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             Node sourceNode = sourceNodes.item(i);
             Node targetNode = XercesUtils.getElementById(targetDoc, getId(sourceNode));
             if (targetNode != null && anyHasTextChildren(sourceNode, targetNode) && unchangedTextContentInSource(sourceNode, sourceBaseDoc)) {
-                Node alignedNode = alignChildNodes(sourceNode, targetNode, targetDoc);
+                Node alignedNode = alignChildNodes(sourceNode, targetDoc);
                 importAndReplaceNodeInDocument(sourceDoc, sourceNode, alignedNode);
             }
         }
@@ -3399,19 +3390,23 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 .equals(sourceTextNodes.stream().map(Node::getTextContent).collect(Collectors.joining()));
     }
 
-    private static Node alignChildNodes(Node sourceNode, Node targetNode, Document targetDoc) {
+    private static Node alignChildNodes(Node sourceNode, Document targetDoc) {
+        // Clone target document to avoid replacing sourceChildNodes in the original targetDoc, which can be required when aligning children nodes
+        Document clonedTargetDoc = (Document) targetDoc.cloneNode(true);
+        Node clonedTargetNode = XercesUtils.getElementById(clonedTargetDoc, getId(sourceNode));
         List<Node> sourceChildNodesWithId = getNonStylingChildren(sourceNode);
         if (sourceChildNodesWithId.stream().allMatch((Node sourceChildNodeWithId) -> {
-            Node targetChildNodeWithId = XercesUtils.getElementById(targetNode, getId(sourceChildNodeWithId));
+            Node targetChildNodeWithId = XercesUtils.getElementById(clonedTargetNode, getId(sourceChildNodeWithId));
             if (targetChildNodeWithId != null) {
-                importAndReplaceNodeInDocument(targetDoc, targetChildNodeWithId, sourceChildNodeWithId);
+                // Target node's text will be returned to be replaced in source doc, but source node's children with ID will be kept (to be aligned later)
+                importAndReplaceNodeInDocument(clonedTargetDoc, targetChildNodeWithId, sourceChildNodeWithId);
                 return true;
             }
-            // if there's no corresponding node in target document, we need to take the whole source node and overwrite the target node
+            // If there's no corresponding node in target document (because it's new in source), we need to take the whole source node to overwrite the target node
             return false;
         })) {
-            removeDeletedNodes(targetNode, sourceNode);
-            return targetNode;
+            removeDeletedNodes(clonedTargetNode, sourceNode);
+            return clonedTargetNode;
         }
         return sourceNode;
     }

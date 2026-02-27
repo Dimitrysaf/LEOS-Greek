@@ -374,6 +374,7 @@ export class DocumentEditorComponent
         this.documentConfig = config;
         this.profile = this.documentConfig.profile;
         this.manageBreadCrumbsDocumentScreen();
+        this.setPermission();
       });
 
     this.mergeContributionService.contributions$
@@ -406,7 +407,6 @@ export class DocumentEditorComponent
           this.contribution = contribution;
         }
       });
-    this.setPermission();
   }
 
   ngAfterViewInit(): void {
@@ -1047,7 +1047,7 @@ export class DocumentEditorComponent
 
   private setPermission() {
     this.config.config.subscribe((config) => {
-      this.canUploadXml = config.userAppPermissions.includes('CAN_UPLOAD_XML_DOC');
+      this.canUploadXml = config.userAppPermissions.includes('CAN_UPLOAD_XML_DOC') && this.canUpdateVersionContent;
     });
   }
 
@@ -1097,5 +1097,9 @@ export class DocumentEditorComponent
 
   get showAnnotations() {
     return !this.profile || this.profile.annotations;
+  }
+
+  get canUpdateVersionContent() {
+    return (!this.profile || this.profile.versionUpdate) && this.hasUpdatePermission;
   }
 }

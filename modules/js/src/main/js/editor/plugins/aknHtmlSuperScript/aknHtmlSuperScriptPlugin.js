@@ -20,6 +20,14 @@ define(function aknHtmlSuperScriptPluginModule(require) {
     var commandName = "superscript";
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
     var aknHTMLPluginsUtils = require("plugins/aknHTMLPluginUtils");
+    let leosPluginUtils = require("plugins/leosPluginUtils");
+
+    var changeStateElements = {
+        imageHcontainer: {
+            elementName: 'hcontainer',
+            selector: '[name=FGR]'
+        }
+    };
 
     var pluginDefinition = {
         init: function init(editor) {
@@ -49,12 +57,13 @@ define(function aknHtmlSuperScriptPluginModule(require) {
     pluginTools.addTransformationConfigForPlugin(transformationConfig, pluginName);
 
     function _onSelectionChange(event) {
-        var selection = event.editor.getSelection();
-        var isTableOnlyMode = event.editor.config.tableOnlyMode;
-        if (isTableOnlyMode && !leosCommandStateHandler.isInsideTable(selection)) {
+        let selection = event.editor.getSelection();
+        let isTableOnlyMode = event.editor.config.tableOnlyMode;
+        let startElement = selection.getStartElement();
+        if (isTableOnlyMode && !leosPluginUtils.isInsideTable(startElement)) {
             event.editor.getCommand('superscript').setState(CKEDITOR.TRISTATE_DISABLED);
         } else {
-            leosCommandStateHandler.changeCommandState(event.editor, "superscript");
+            leosCommandStateHandler.changeCommandState(event.editor, "superscript", changeStateElements);
         }
     }
 

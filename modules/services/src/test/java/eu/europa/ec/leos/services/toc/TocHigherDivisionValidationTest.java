@@ -102,7 +102,7 @@ public class TocHigherDivisionValidationTest extends LeosTest {
         Content.Source source = new SourceImpl(new ByteArrayInputStream(xmlContent));
         Content content = new ContentImpl("BL-000.xml", "mime type", xmlContent.length, source);
         BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "BL-000.xml", "EN", "BL-000.xml",
-                "bill_ckn5qw5dr0085sv00o919q56w", "package_123", "1", "0.0.1", false, false);
+                "bill_ckn5qw5dr0085sv00o919q56w", "package_123", "1", "0.0.1", false, false, false);
         Bill bill = new Bill("27", "billForTocHigherDivisionValidation.xml", "jane", Instant.now(), "jane", Instant.now(),
                 "0.1.0", "", "0.1.0", "", VersionType.MINOR, true,
                 "title", Collections.emptyList(), Arrays.asList(""), "", "", "",
@@ -117,7 +117,7 @@ public class TocHigherDivisionValidationTest extends LeosTest {
         languageGroupService = Mockito.spy(new LanguageGroupService(configurationRepository, languageMapHolder));
         languageMapHolder.loadLanguageMap(languageMap);
         byte[] bytesFile = TestUtils.getFileContent("/structure-test-bill-EC.xml");
-        when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
+        when(templateStructureService.getStructure(docTemplate, false)).thenReturn(bytesFile);
         ReflectionTestUtils.setField(structureService, "structureSchema", "schema/structure/structure_1.xsd");
 
         tocItems = structureService.getTocItems(docTemplate);

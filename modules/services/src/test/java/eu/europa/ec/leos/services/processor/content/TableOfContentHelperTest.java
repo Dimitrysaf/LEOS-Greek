@@ -111,7 +111,7 @@ public class TableOfContentHelperTest extends LeosTest {
 
         docTemplate = template;
         byte[] bytesFile = TestUtils.getFileContent(structureFile);
-        when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
+        when(templateStructureService.getStructure(docTemplate, false)).thenReturn(bytesFile);
         ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "schema/structure/structure_1.xsd");
         tocItems = structureServiceImpl.getTocItems(docTemplate);
         numberingConfigs = structureServiceImpl.getNumberingConfigs(docTemplate);

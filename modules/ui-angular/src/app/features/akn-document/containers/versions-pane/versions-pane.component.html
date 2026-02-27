@@ -2,6 +2,7 @@
   <app-versions-pane-group
     class="eui-u-display-block eui-u-width-100"
     [subVersions]="(doc.recentChanges$ | async) ?? []"
+    [canRevertVersion]="canRevertVersion"
   ></app-versions-pane-group>
   <ng-container *ngFor="let version of versions; trackByProperty: 'cmisVersionNumber'">
     <ng-container *ngIf="!isVersionArchived(version)">
@@ -9,6 +10,7 @@
         class="eui-u-display-block eui-u-width-100"
         [majorVersion]="version"
         [subVersions]="version.subVersions ?? []"
+        [canRevertVersion]="canRevertVersion"
         (exploreMilestone)="exploreMilestone.emit($event)"
       ></app-versions-pane-group>
     </ng-container>

@@ -58,7 +58,10 @@ define(function leosUtilsModule(require) {
         "KEY_ENTER": 13,
         "KEY_BACKSPACE": 8,
         "KEY_V": 86,
-        "KEY_X": 88
+        "KEY_X": 88,
+        "ARROW_KEYS" : [37, 38, 39, 40,
+            CKEDITOR.SHIFT + 37, CKEDITOR.SHIFT + 38, CKEDITOR.SHIFT + 39, CKEDITOR.SHIFT + 40,
+            CKEDITOR.CTRL + 37, CKEDITOR.CTRL + 38, CKEDITOR.CTRL + 39, CKEDITOR.CTRL + 40]
     }
     var SPELLCHECKER = {
         disabled: "disabled",

@@ -75,6 +75,7 @@ export class ProposalDraftsComponent
   title: string;
   activeAnnexId: string;
   AUTONOMOUS_ACT_DOC_COLLECTION: string = AUTONOMOUS_ACT_DOC_COLLECTION;
+  canAddDeleteAnnex: boolean = true;
 
   private destroy$: Subject<void> = new Subject();
 
@@ -120,6 +121,8 @@ export class ProposalDraftsComponent
       .subscribe((perms) => {
         this.permissions = perms;
       });
+
+    this.canAddDeleteAnnex = !this.proposal.metadata.customTemplateAct || !this.proposalDetailsService.getTranslated();
   }
 
   handleAnnexAdd() {

@@ -23,6 +23,7 @@ public class StructureContext {
 
     private final StructureService structureService;
     private String docTemplate;
+    private boolean translated;
 
     StructureContext(StructureService structureService) {
         this.structureService = structureService;
@@ -33,10 +34,15 @@ public class StructureContext {
         this.docTemplate = docTemplate;
     }
 
+    public void useTranslated(boolean translated) {
+        LOG.trace("Using translated... [translated={}]", translated);
+        this.translated = translated;
+    }
+
     public List<TocItem> getTocItems() {
         Validate.notNull(docTemplate, "Document template is required!");
         LOG.trace("Retrieving toc items configuration...");
-        return structureService.getTocItems(docTemplate);
+        return structureService.getTocItems(docTemplate, translated);
     }
 
     public Map<TocItem, List<TocItem>> getTocRules() {

@@ -284,7 +284,7 @@
   "page.collection.milestones.table.add-milestone-dialog.title.placeholder": "Please type milestone title here",
   "page.collection.milestones.table.add-milestone-dialog.create": "Create Milestone",
   "page.collection.milestones.create-milestone-dialog.confirm-linguistic-versions.title": "Languages will be aligned",
-  "page.collection.milestones.create-milestone-dialog.confirm-linguistic-versions.body": "You are about to update existing linguistic versions. Are you sure you want to continue?",
+  "page.collection.milestones.create-milestone-dialog.confirm-linguistic-versions.body": "You are about to update existing linguistic versions. Some translated content might be overwritten. Are you sure you want to continue?",
   "page.collection.milestones.create-milestone-dialog.success": "Milestone created",
   "page.collection.milestones.create-milestone-dialog.error": "Failed creating milestone",
   "page.milestone.already.exist.for.this.major.version.error.title": "Milestone not created",

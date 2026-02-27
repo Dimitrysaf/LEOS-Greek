@@ -38,7 +38,9 @@ public class CoEditionContext {
         if (Boolean.TRUE.equals(kubernetesEnabled) && hazelcastInstance != null) {
             IMap<String, UpdateElementsEvent> map = hazelcastInstance.getMap("updateElementsCache");
             List<Element> movedElements = new ArrayList<>();
-            movedElements.addAll(updatedElement.getElementsMoved());
+            if (updatedElement.getElementsMoved() != null) {
+                movedElements.addAll(updatedElement.getElementsMoved());
+            }
             movedElements.addAll(this.getUpdatedElements());
             updatedElement = new SaveElementResponse(updatedElement.getElementId(), updatedElement.getElementTagName(), updatedElement.getElementFragment(),
                     updatedElement.getElementToEditAfterClose(), updatedElement.getSplittedContentIsEmpty(), movedElements);

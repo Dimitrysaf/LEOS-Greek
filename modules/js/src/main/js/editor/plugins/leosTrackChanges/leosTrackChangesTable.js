@@ -591,14 +591,14 @@ define(function leosTrackChangesTableModule(require) {
                             return;
                         }
                         if (editor.LEOS.isTrackChangesEnabled
-                                || firstCell?.getAscendant('table')?.getAttribute("leos:predefinedtable") === 'true'
-                                || editor.LEOS.type === 'stat_digit_financ_legis') {
-                            var deleteTcStyle = new CKEDITOR.style({
-                                element: core.TRACKCHANGES_ELEMENT,
-                                attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION)
-                            });
-
-                            style.apply(editor, deleteTcStyle);
+                                || firstCell?.getAscendant('table')?.getAttribute("leos:predefinedtable") === 'true') {
+                            if (!tableHasProtectedSpan(firstCell.getAscendant('table', true))) {
+                                var deleteTcStyle = new CKEDITOR.style({
+                                    element: core.TRACKCHANGES_ELEMENT,
+                                    attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION)
+                                });
+                                style.apply(editor, deleteTcStyle);
+                            }
                         }else{
                             for (i = 0; i < ranges.length; i++) {
                                 clearCellInRange(ranges[i]);
@@ -631,6 +631,20 @@ define(function leosTrackChangesTableModule(require) {
                         }
                     }
                 };
+            }
+
+            function tableHasProtectedSpan(tableElement) {
+                if (!tableElement) return false;
+
+                var tds = tableElement.find('td');
+                for (var i = 0; i < tds.count(); i++) {
+                    var td = tds.getItem(i);
+                    var spans = td.find('span[data-akn-action="delete"]');
+                    if (spans.count() > 0) {
+                        return true;
+                    }
+                }
+                return false;
             }
 
             function tableKeyPressListener(evt) {
