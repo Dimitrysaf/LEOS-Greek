@@ -97,6 +97,7 @@ public class XmlHelper {
     public static final String HEADING = "heading";
     public static final String NUM = "num";
     public static final String P = "p";
+    public static final String AKNP = "aknp";
     public static final String COVERPAGE = "coverPage";
     public static final String ATTACHMENTS = "attachments";
     public static final String ATTACHMENT = "attachment";

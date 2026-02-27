@@ -6,7 +6,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.SignatureVerificationException;
 import com.auth0.jwt.interfaces.Claim;
-import eu.europa.ec.leos.config.PasswordConfigurator;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -18,20 +19,9 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.Cookie;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import static org.springframework.util.StringUtils.hasLength;
 
@@ -93,8 +83,6 @@ public class JwtTokenService implements TokenService {
 
     @Autowired
     private Environment env;
-
-    PasswordConfigurator passwordConfigurator = new PasswordConfigurator();
     
     @Autowired
     JwtTokenService() {
@@ -107,9 +95,9 @@ public class JwtTokenService implements TokenService {
         String keyPrefix = "leos.api.jwt.auth.client.";
         for (String clientName : clientsNames) {
             String clientId = applicationProperties.getProperty(keyPrefix + clientName + ".id");
-            String clientSecret = passwordConfigurator.getProperty(keyPrefix + clientName + ".secret");
+            String clientSecret = applicationProperties.getProperty(keyPrefix + clientName + ".secret");
 
-            if (clientSecret == null){
+            if (clientSecret == null || StringUtils.isEmpty(clientSecret)){
                 clientSecret = env.getProperty(keyPrefix + clientName + ".secret");
             }
 

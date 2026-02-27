@@ -179,7 +179,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
     private final String FILE_PREFIX = "/merge";
 
     private XmlDocument getMockedBill(Content content) {
-        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "REG-cltmu06e80004bk281ck5uolr-en", "", "0.1.0", false, false);
+        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "REG-cltmu06e80004bk281ck5uolr-en", "", "0.1.0", false, false, false);
         return new Bill("1", "REG-cltmu06e80004bk281ck5uolr-en.xml", "demo", Instant.now(), "demo", Instant.now(),
                 "811868491", "1.0.393", "1.0.393", "Contribution merge action", VersionType.MAJOR,
                 true, "Proposal for a REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL establishing the European Union Single Window Environment for " +

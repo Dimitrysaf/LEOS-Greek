@@ -24,6 +24,7 @@ import { DocumentService } from '@/shared/services/document.service';
 export class VersionsPaneGroupComponent implements OnInit, OnChanges {
   @Input() majorVersion?: Version;
   @Input() subVersions: Version[];
+  @Input() canRevertVersion?: boolean;
   @Output() exploreMilestone = new EventEmitter<Version>();
 
   protected isRecent = false;

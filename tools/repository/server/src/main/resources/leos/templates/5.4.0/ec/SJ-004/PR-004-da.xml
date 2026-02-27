@@ -67,11 +67,6 @@
                     <docNumber class="template"/>
                 </block>
             </container>
-            <container name="procedureIdentifier" class="template">
-                <p>
-                    <docketNumber class="template"/>
-                </p>
-            </container>
             <longTitle>
                 <p>
                     <docType refersTo="~REG_IMPL">KOMMISSIONENS GENNEMFØRELSESFORORDNING (EU) …/…</docType> af <date date="2999-01-01"></date>

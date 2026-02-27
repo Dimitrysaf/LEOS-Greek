@@ -129,7 +129,7 @@ export class ProposalViewCustomTemplateComponent implements OnInit{
 
   private extractTemplatesFromCatalog(catalogItems: CatalogItem[]) {
     const getChildTemplates = (item: CatalogItem): CatalogItem[] =>
-      item.type === 'CATEGORY' ? item.items.flatMap(getChildTemplates) : [item];
+      (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') ? item.items.flatMap(getChildTemplates) : [item];
     const templates = catalogItems.flatMap(getChildTemplates).reduce(
       (map, item) => map.set(item.key, item),
       new Map<string, CatalogItem>(),
@@ -156,10 +156,10 @@ export class ProposalViewCustomTemplateComponent implements OnInit{
     let tooltipLabel = this.proposalService.getTranslation(names);
     const label = customName ? (key.substring(0, key.lastIndexOf('_')) + ' - ' + customName) : tooltipLabel;
     const iconClass =
-      type === 'CATEGORY' ? iconClassCategory : iconClassTemplate;
+      (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') ? iconClassCategory : iconClassTemplate;
     let disabled = !enabled;
     const children =
-      type === 'CATEGORY' && !hidden && enabled
+      ( item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') && !hidden && enabled
         ? items
           .filter((child) => !child.hidden &&
             (!child.visibleTo || child.visibleTo.trim() === '' ||
@@ -167,8 +167,8 @@ export class ProposalViewCustomTemplateComponent implements OnInit{
                 child.visibleTo.split(',').some(role => this.userRoles.includes(role.toUpperCase().trim() as ApplicationRole)))))
           .map((child) => this.catalogItemToTreeItem(child))
         : [];
-    const isEmptyCategory = type === 'CATEGORY' && !children.length;
-    const isTemplate = type !== 'CATEGORY';
+    const isEmptyCategory = (item.type === 'CATEGORY' || item.type === 'ACT' || item.type === 'PROCEDURE') && !children.length;
+    const isTemplate = type === 'TEMPLATE';
     const isOriginalDg = item.originalDg === this.defaultEntity;
     const sameTemplate = (this.proposalTemplate && key === this.proposalTemplate);
     const isSameDocCollection = (!this.isCopyChangeAct || documentCollection == this.documentCollectionName);
@@ -186,7 +186,7 @@ export class ProposalViewCustomTemplateComponent implements OnInit{
       }
     }
     const node: TreeNode = {
-      isExpanded: this.isExpanded,
+      isExpanded: true,
       selectable: isTemplate && !this.disabled && isSameDocCollection && !sameTemplate && isOriginalDg,
       treeContentBlock: {
         id,
@@ -211,6 +211,7 @@ export class ProposalViewCustomTemplateComponent implements OnInit{
       this.filteredNodes,
       documentType,
     );
+    this.treeComponent.expandAll();
   }
   private filterNodesByDocumentType(
     nodes: TreeDataModel | undefined,

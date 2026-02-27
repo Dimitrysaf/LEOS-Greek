@@ -67,12 +67,7 @@
                     <docNumber class="template"/>
                 </block>
             </container>
-            <container name="procedureIdentifier" class="template">
-                <p>
-                    <docketNumber class="template"/>
-                </p>
-            </container>
-            <longTitle>
+           <longTitle>
                 <p>
                     <docType refersTo="~REG_IMPL">REGLAMENTO DE EJECUCIÓN (UE) …/... DE LA COMISIÓN</docType> de <date date="2999-01-01"></date>
                     <docPurpose leos:editable="true" leos:deletable="false">relativo a […]</docPurpose>

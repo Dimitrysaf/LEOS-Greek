@@ -22,7 +22,7 @@ define(function leosCommandStateHandler(require) {
     var changeCommandState = function changeCommandState(editor, commandName, changeStateElements, overrideState) {
         var command = editor.getCommand(commandName);
         var selection = editor.getSelection();
-        if (!selection) return;
+        if (!command || !selection) return;
         if (!leosPluginUtils.isContentEditable(editor) || shouldDisable(selection, changeStateElements)) {
             command.disable();
         } else if (overrideState) {
@@ -46,7 +46,7 @@ define(function leosCommandStateHandler(require) {
                                 return true;
                             }
                         }else {
-                            return true
+                            return true;
                         }
                     }
                 }
@@ -54,14 +54,8 @@ define(function leosCommandStateHandler(require) {
         }
     }
 
-    function isInsideTable(selection) {
-        if (!selection) return false;
-        var startElement = selection.getStartElement();
-        return startElement && startElement.getAscendant('table', true) !== null;
-    }
 
     return {
-        changeCommandState: changeCommandState,
-        isInsideTable: isInsideTable
+        changeCommandState: changeCommandState
     }
 });

@@ -245,7 +245,7 @@ class LegServiceImplTest {
         //populate language map
         languageMapHolder.loadLanguageMap(languageMap);
         byte[] bytesFile = TestUtils.getFileContent("/structure-test-explanatory-CN.xml");
-        when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
+        when(templateStructureService.getStructure(docTemplate, false)).thenReturn(bytesFile);
 
         ReflectionTestUtils.setField(structureService, "structureSchema", "schema/structure/structure_1.xsd");
         tocItems = structureService.getTocItems(docTemplate);
@@ -653,7 +653,7 @@ class LegServiceImplTest {
         Source source = new SourceImpl(new ByteArrayInputStream(xmlContent));
         Content content = new ContentImpl("BL-023.xml", "mime type", xmlContent.length, source);
         BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN", "BL-023",
-                "bill_ckn97778i000zwn56esq96qet.xml", "", "0.1.0", false, false);
+                "bill_ckn97778i000zwn56esq96qet.xml", "", "0.1.0", false, false, false);
         return new Bill("555", "bill_ckn97778i000zwn56esq96qet.xml", "login", Instant.now(), "login", Instant.now(),
                 "", "", "Version 1.0.0", "", VersionType.MAJOR,
                 true, "title", collaborators, Arrays.asList(""), "", "",
@@ -665,7 +665,7 @@ class LegServiceImplTest {
         Source source = new SourceImpl(new ByteArrayInputStream(xmlContent));
         Content content = new ContentImpl("EM-LP01.xml", "mime type", xmlContent.length, source);
         MemorandumMetadata metadata = new MemorandumMetadata("555", "REGULATION", "", "EM-LP01", "EN", "EM-LP01",
-                "memorandum_ckn9773is000ywn567lsopipc.xml", "", "0.1.0", false, false);
+                "memorandum_ckn9773is000ywn567lsopipc.xml", "", "0.1.0", false, false, false);
         return new Memorandum("555", "memorandum_ckn9773is000ywn567lsopipc.xml", "login", Instant.now(), "login", Instant.now(),
                 "", "", "Version 1.0.0", "", VersionType.MAJOR, true, "title",
                 collaborators, Arrays.asList(""), Option.some(content), "", null, Option.some(metadata), false, false);
@@ -676,7 +676,7 @@ class LegServiceImplTest {
         Source source = new SourceImpl(new ByteArrayInputStream(xmlContent));
         Content content = new ContentImpl("AN-000.xml", "mime type", xmlContent.length, source);
         AnnexMetadata annexMetadata = new AnnexMetadata("", "REGULATION", "", "AN-000.xml", "EN", "AN-000.xml",
-                "annex_cl3yjnpcz0007k485t5p989mq.xml", 1, "Annex 1", "title", "", "0.0.1", false, false, STORE_DIR);
+                "annex_cl3yjnpcz0007k485t5p989mq.xml", 1, "Annex 1", "title", "", "0.0.1", false, false, false, STORE_DIR);
         return new Annex("555", "annex_cl3yjnpcz0007k485t5p989mq.xml", "login", Instant.now(), "login", Instant.now(),
                 "0.1.0", "", "0.1.0", "", VersionType.MINOR, true,
                 "title", Collections.emptyList(), Arrays.asList(""), "", false, "", "",

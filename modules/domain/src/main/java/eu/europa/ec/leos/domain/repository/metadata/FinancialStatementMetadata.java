@@ -14,7 +14,7 @@ public class FinancialStatementMetadata extends LeosMetadata{
     }
 
     public FinancialStatementMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String packageRef, String title, String objectId, String docVersion, boolean eeaRelevance, boolean customTemplateAct) {
-        super(LeosCategory.STAT_DIGIT_FINANC_LEGIS, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance, customTemplateAct);
+        super(LeosCategory.STAT_DIGIT_FINANC_LEGIS, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance, customTemplateAct, false);
         this.title = title;
     }
 

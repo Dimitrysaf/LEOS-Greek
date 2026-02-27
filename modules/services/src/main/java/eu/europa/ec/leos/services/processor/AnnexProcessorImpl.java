@@ -39,17 +39,7 @@ import jakarta.inject.Provider;
 import java.util.Arrays;
 import java.util.List;
 
-import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
-import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
-import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
-import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
-import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
-import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
-import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
-import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
-import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
-import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
+import static eu.europa.ec.leos.services.support.XmlHelper.*;
 import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getNumberingConfigByTagName;
 
 @Service
@@ -261,7 +251,7 @@ class AnnexProcessorImpl implements AnnexProcessor {
             elementId = xmlContentProcessor.getParentIdById(xmlContent, elementId);
         }
 
-        if (hasDepth(tagName)) {
+        if (!tagName.equals(AKNP) && hasDepth(tagName)) {
             xmlContent = xmlContentProcessor.insertDepthAttribute(xmlContent, tagName, elementId);
         }
         switch (tagName) {

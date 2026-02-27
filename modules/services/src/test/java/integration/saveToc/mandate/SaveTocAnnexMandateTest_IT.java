@@ -34,7 +34,7 @@ public abstract class SaveTocAnnexMandateTest_IT extends SaveTocMandateTest_IT {
     protected void getStructureFile() {
         docTemplate = "BL-017";
         byte[] bytesFile = TestUtils.getFileContent("/structure-test-annex-CN.xml");
-        when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
+        when(templateStructureService.getStructure(docTemplate, false)).thenReturn(bytesFile);
     }
 
     protected byte[] processSaveTocAnnex(byte[] xmlInput, List<TableOfContentItemVO> toc) {

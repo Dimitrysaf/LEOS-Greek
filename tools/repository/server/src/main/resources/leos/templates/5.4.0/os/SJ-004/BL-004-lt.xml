@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?>
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" xmlns:xml="http://www.w3.org/XML/1998/namespace">
     <bill name="REG_IMPL">
@@ -72,7 +72,7 @@
                     <p>atsižvelgdama į Sutartį dėl Europos Sąjungos veikimo,</p>
                 </citation>
                 <citation leos:editable="true">
-                    <p>atsižvelgdama į […]<authorialNote marker="1" placement="bottom"><p>OJ L [...], [...], p. [...].</p></authorialNote>, ypač į jo (jos) […] straipsnį,</p>
+                    <p>atsižvelgdama į […]<authorialNote marker="1" placement="bottom"><p>OL L [...], [...], p. [...].</p></authorialNote>, ypač į jo (jos) […] straipsnį,</p>
                 </citation>
                 <citation leos:editable="true">
                     <p>pasikonsultavusi su […] komitetu,</p>

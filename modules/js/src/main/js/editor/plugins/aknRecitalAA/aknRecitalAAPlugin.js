@@ -26,11 +26,7 @@ define(function aknRecitalAAPluginModule(require) {
     var MEDIA_CONTAINER = "mediacontainer";
 
     var pluginName = "aknRecitalAA";
-    var ENTER_KEY = 13;
-    var CTRL_ENTER = CKEDITOR.CTRL + ENTER_KEY;
-    var BACKSPACE =  8;
-    var DELETE = 46;
-    var ARROW_KEYS = [37, 38, 39, 40];
+    var CTRL_ENTER = CKEDITOR.CTRL + UTILS.KEYS.KEY_ENTER;
     var UNDERLINE = CKEDITOR.CTRL + 85;
     var BOLD = CKEDITOR.CTRL + 66;
     var WHITE_SPACE = '\u00A0';
@@ -116,7 +112,7 @@ define(function aknRecitalAAPluginModule(require) {
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',
-                key : ENTER_KEY,
+                key : UTILS.KEYS.KEY_ENTER,
                 action : _onEnterKey
             });
             
@@ -230,8 +226,8 @@ define(function aknRecitalAAPluginModule(require) {
                 var div = range.startContainer.getAscendant("div", true);
                 var isList = div.find(leosPluginUtils.UNORDERED_LIST_ELEMENT).$.length > 0;
                 if (isList && deleteIfEmptyList(div)
-                    || event.data.keyCode === BACKSPACE && range.checkBoundaryOfElement(div, CKEDITOR.START)
-                    || event.data.keyCode === DELETE && range.checkBoundaryOfElement(div, CKEDITOR.END)) {
+                    || event.data.keyCode === UTILS.KEYS.KEY_BACKSPACE && range.checkBoundaryOfElement(div, CKEDITOR.START)
+                    || event.data.keyCode === UTILS.KEYS.KEY_DELETE && range.checkBoundaryOfElement(div, CKEDITOR.END)) {
                     event.cancel();
                     return false;
                 }
@@ -267,7 +263,7 @@ define(function aknRecitalAAPluginModule(require) {
         }
         if (startElement?.getAttribute(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.SUBFLOW_NAME &&
             startElement?.getAttribute(leosPluginUtils.DATA_AKN_HCONTAINER) &&
-            !ARROW_KEYS.includes(e.keyCode) && e.keyCode !== BACKSPACE && e.keyCode !== DELETE && e.keyCode !== CTRL_ENTER) {
+            !UTILS.KEYS.ARROW_KEYS.includes(e.keyCode) && e.keyCode !== UTILS.KEYS.KEY_BACKSPACE && e.keyCode !== UTILS.KEYS.KEY_DELETE && e.keyCode !== CTRL_ENTER) {
             //Cancel the event
             e.stopImmediatePropagation();
             return false;
@@ -275,7 +271,7 @@ define(function aknRecitalAAPluginModule(require) {
     }
 
     function _handleKey(event) {
-        if (event.data.keyCode === BACKSPACE || event.data.keyCode === DELETE) {
+        if (event.data.keyCode === UTILS.KEYS.KEY_BACKSPACE || event.data.keyCode === UTILS.KEYS.KEY_DELETE) {
             return preventBlockMerge(event);
         }
     }
@@ -382,7 +378,7 @@ define(function aknRecitalAAPluginModule(require) {
             var range = selection.getRanges()[0];
             if (range && range.collapsed) {
                 var startElement = leosKeyHandler.getSelectedElement(selection);
-                if ((event.originalEvent.keyCode === BACKSPACE || event.originalEvent.keyCode === DELETE) &&
+                if ((event.originalEvent.keyCode === UTILS.KEYS.KEY_BACKSPACE || event.originalEvent.keyCode === UTILS.KEYS.KEY_DELETE) &&
                         (startElement.getAttribute(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.SUBFLOW_NAME ||
                         startElement.getAttribute(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.RECITAL)) {
                         checkAndRemoveEmptyElement(startElement, editor, range);

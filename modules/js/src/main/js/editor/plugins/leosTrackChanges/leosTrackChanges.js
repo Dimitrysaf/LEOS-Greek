@@ -554,15 +554,19 @@ define(function leosTrackChangesModule(require) {
             return ((mouseX >= (left - 5)) && (mouseX <= (right + 5)) && (mouseY >= (top - 5)) && (mouseY <= (bottom + 5)));
         },
 
-        hasTrackChanges: function(elementId, editor) {
+        hasTrackChanges: function(elementId, editor, actionName) {
             var element = editor.document.find('.leos-placeholder').getItem(0).find(`#${elementId}`).getItem(0);
+            var hasPredefinedTableAsAncestor = element && element.getAscendant('table', true)
+                && (element.getAscendant('table', true).getAttribute('leos:deletable') === 'false'
+                    || element.getAscendant('table', true).getAttribute('leos:predefinedTable') ==="true") && actionName === 'acceptElement';
             return element && element.getAttribute(core.DATA_AKN_ELEMENT) != core.LEVEL &&
                 (element.hasAttribute(this.ACTION_ATTR)
                     || element.hasAttribute(this.DATA_AKN_ACTION_NUMBER)
-                    || element.hasAttribute(this.DATA_AKN_ACTION_ENTER));
+                    || element.hasAttribute(this.DATA_AKN_ACTION_ENTER))
+                && !hasPredefinedTableAsAncestor;
         },
 
-        getLastTCElement: function(elementId, editor, processedElements) {
+        getLastTCElement: function(elementId, editor, processedElements, actionName) {
             var element = editor.document.find('.leos-placeholder').getItem(0).find(`#${elementId}`).getItem(0);
             if(element) {
                 for (var i = element.getChildCount()-1; i >= 0; i--) {
@@ -572,16 +576,16 @@ define(function leosTrackChangesModule(require) {
                     }
                     if(childElement.type === CKEDITOR.NODE_ELEMENT && childElement.getChildCount() > 0) {
                         var idToSend = childElement.getAttribute(core.ID);
-                        var lastTCElement = this.getLastTCElement(idToSend, editor, processedElements);
+                        var lastTCElement = this.getLastTCElement(idToSend, editor, processedElements, actionName);
                         if(lastTCElement) {
                             return lastTCElement;
                         }
                     }
-                    if (this.hasTrackChanges(childElement.getAttribute(this.ID), editor)) {
+                    if (this.hasTrackChanges(childElement.getAttribute(this.ID), editor,  actionName)) {
                         return childElement;
                     }
                 }
-                if (this.hasTrackChanges(element.getAttribute(this.ID), editor)) {
+                if (this.hasTrackChanges(element.getAttribute(this.ID), editor,  actionName)) {
                     return element;
                 }
             }
@@ -726,7 +730,7 @@ define(function leosTrackChangesModule(require) {
             var isStructureTooComplex = [false];
             this.processAllChanges(editor, 'acceptElement', processedElements, isStructureTooComplex, 0);
             if(!isStructureTooComplex[0]){
-                this.finalValidation(editor, isStructureTooComplex);
+                this.finalValidation(editor, isStructureTooComplex, 'acceptElement');
             }
             if(isStructureTooComplex[0]){
                 editor.fire("handleTcComplexStructure");
@@ -739,7 +743,7 @@ define(function leosTrackChangesModule(require) {
             var isStructureTooComplex= [false];
             this.processAllChanges(editor, 'rejectElement', processedElements, isStructureTooComplex, 0);
             if(!isStructureTooComplex[0]){
-                this.finalValidation(editor, isStructureTooComplex);
+                this.finalValidation(editor, isStructureTooComplex, 'rejectElement');
             }
             if(isStructureTooComplex[0]){
                 editor.fire("handleTcComplexStructure");
@@ -808,7 +812,7 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
-        finalValidation(editor, isStructureTooComplex){
+        finalValidation(editor, isStructureTooComplex, actionName){
             // do last check of track changes
             var element = editor.document.find('.leos-placeholder').getItem(0);
             var edElementToProcess;
@@ -835,7 +839,7 @@ define(function leosTrackChangesModule(require) {
             if(editableElements.length > 0){
                 edElementToProcess = editableElements[0];
                 var idToSend = edElementToProcess.getAttribute(core.ID);
-                var lastTCElement = core.getLastTCElement(idToSend, editor, new Set());
+                var lastTCElement = core.getLastTCElement(idToSend, editor, new Set(), actionName);
                 if(lastTCElement){
                     isStructureTooComplex[0]=true;
                 }
@@ -873,7 +877,7 @@ define(function leosTrackChangesModule(require) {
 
         processListElement: function (editor, listElementToProcess, processedElements, actionName, isStructureTooComplex) {
             // Process table rows
-            var rowElements = listElementToProcess.find(`table tr[${core.ACTION_ATTR}]`);
+            var rowElements = listElementToProcess.find(`table:not([leos\\:predefinedtable="true"]) tr[${core.ACTION_ATTR}]`);
             for (var i = rowElements.count() - 1; i >= 0; i--) {
                 var rowElementToProcess = rowElements.getItem(i);
                 this.processElement(editor, rowElementToProcess, processedElements, actionName, isStructureTooComplex);
@@ -882,7 +886,7 @@ define(function leosTrackChangesModule(require) {
                 }
             }
 
-            var colElements = listElementToProcess.find(`table tr td[${core.ACTION_ATTR}]`);
+            var colElements = listElementToProcess.find(`table:not([leos\\:predefinedtable="true"]) tr td[${core.ACTION_ATTR}]`);
             for (var i = colElements.count() - 1; i >= 0; i--) {
                 var colElementToProcess = colElements.getItem(i);
                 this.processElement(editor, colElementToProcess, processedElements, actionName, isStructureTooComplex);
@@ -918,7 +922,7 @@ define(function leosTrackChangesModule(require) {
             if (this.isElementPresentInEditor(editor, element) && !isStructureTooComplex[0]) {
                 var idToSend = element.getAttribute(core.ID) ? element.getAttribute(core.ID) :
                     (element.getAttribute(leosPluginUtils.DATA_AKN_MP_ID) ? element.getAttribute(leosPluginUtils.DATA_AKN_MP_ID) : this.findSelector(element)) ;
-                var lastTCElement = core.getLastTCElement(idToSend, editor, processedElements);
+                var lastTCElement = core.getLastTCElement(idToSend, editor, processedElements, actionName);
                 if (!lastTCElement || !processedElements || !lastTCElement.hasAttribute(core.ID)) {
                     return;
                 }

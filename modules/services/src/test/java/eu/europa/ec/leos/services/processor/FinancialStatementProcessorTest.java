@@ -93,7 +93,7 @@ public class FinancialStatementProcessorTest extends LeosTest {
         docTemplate = "FS-001";
         documentLanguageContext.setDocumentLanguage("en");
         byte[] bytesFile = TestUtils.getFileContent("/structure-test-lfds-EC.xml");
-        when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
+        when(templateStructureService.getStructure(docTemplate, false)).thenReturn(bytesFile);
         ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "schema/structure/structure_1.xsd");
 
         tocItems = structureServiceImpl.getTocItems(docTemplate);
