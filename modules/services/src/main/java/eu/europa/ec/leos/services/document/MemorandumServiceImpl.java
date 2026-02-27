@@ -169,7 +169,6 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
     public Memorandum updateMemorandum(String id, byte[] updatedMemorandumContent, VersionType versionType, String comment) {
         LOG.trace("Updating Memorandum Xml Content... [id={}, versionType={}, comment={}]", id, versionType, comment);
         Memorandum memorandum = memorandumRepository.updateMemorandum(id, updatedMemorandumContent, versionType, comment);
-        trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
         return memorandum;
     }
 
