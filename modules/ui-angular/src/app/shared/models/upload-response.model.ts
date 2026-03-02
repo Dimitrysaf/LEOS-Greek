@@ -31,5 +31,6 @@ export interface ExceptionResponseVO {
 }
 
 export enum ErrorCode {
-  CM001 = "CM001"
+  CM001 = "CM001",
+  CA001 = "CA001",
 }

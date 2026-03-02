@@ -94,7 +94,7 @@
                   (collapsed)="onToggleTocPaneCollapsed()"
                   style="flex-basis: 400px"
                 >
-                  <eui-page-column-body *ngIf="!(doc.xml.includes('TECHNICAL DOCUMENTATION</heading>') && doc.xml.includes('<componentRef showAs='))">
+                  <eui-page-column-body *ngIf="!doc.xml.includes('TECHNICAL DOCUMENTATION</heading>')">
                     <app-milestone-toc [toc]="doc.tocData"></app-milestone-toc>
                   </eui-page-column-body>
                 </eui-page-column>

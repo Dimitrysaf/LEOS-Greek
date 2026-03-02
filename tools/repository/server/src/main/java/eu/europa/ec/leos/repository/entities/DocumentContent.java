@@ -65,7 +65,7 @@ public class DocumentContent implements Serializable {
     private byte[] binaryContent;
     @Column(name = "ORIGINAL_FILE_NAME", length = 255, nullable = true)
     private String originalFilename;
-    @Column(name = "BINARY_CONTENT_SIZE", length = 10, nullable = true)
+    @Column(name = "BINARY_CONTENT_SIZE", length = 30, nullable = true)
     private String binaryContentSize;
     @Column(name = "ACT_TYPE", length = 100)
     private String actType;

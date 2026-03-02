@@ -463,6 +463,16 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     @Override
+    public Annex createAnnexFromContent(String path, AnnexMetadata metadata, String actionMessage, byte[] content, String name, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+        LOG.trace("Creating Annex From Content... [path={}, metadata={}]", path, metadata);
+        Annex annex = annexRepository.createAnnexFromContent(path, name, metadata, content);
+        annex = annexRepository.updateAnnex(annex.getId(), metadata, content, VersionType.MINOR, actionMessage, binaryContent, originalFilename, binaryContentSize);
+        trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
+        return annex;
+    }
+
+    @Override
     public Annex createClonedAnnexFromContent(String path, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage, byte[] content, String name, byte[] binaryContent, String originalFilename, String binaryContentSize) {
         LOG.trace("Creating cloned Annex From Content... [path={}, metadata={}]", path, metadata);
         Annex annex = annexRepository.createClonedAnnexFromContent(path, name, metadata, cloneDocumentMetadataVO, content, binaryContent, originalFilename, binaryContentSize);
