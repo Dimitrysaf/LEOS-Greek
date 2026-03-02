@@ -9,7 +9,6 @@ import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.parser.Tag;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -31,6 +30,7 @@ import java.util.stream.Stream;
 
 import static eu.europa.ec.leos.services.support.LeosXercesUtils.DATE_FORMAT;
 import static eu.europa.ec.leos.services.support.XmlHelper.AKOMANTOSO;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.parseXml;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
@@ -95,7 +95,8 @@ public class SearchEngineImpl implements SearchEngine {
         String tagName = node.getNodeName();
         String nodeId = XercesUtils.getId(node);
         boolean isNodeIdStartsWithDeleted = (nodeId != null && nodeId.startsWith(DELETED_START_ID_VALUE));
-        if((isHighlight ? tagsToExcludeHighlight : tagsToExclude).contains(tagName)
+        if(((isHighlight ? tagsToExcludeHighlight : tagsToExclude).contains(tagName) &&
+                !XercesUtils.hasAttributeWithValue(node, LEOS_EDITABLE_ATTR, "true"))
                 ||  isNodeIdStartsWithDeleted){
             return 0;
         }
@@ -115,7 +116,7 @@ public class SearchEngineImpl implements SearchEngine {
         for (int i = 0; i < nodeList.getLength(); i++) {
             int contentLength;
             Node childNode = nodeList.item(i);
-            if (childNode.getNodeType() == Node.TEXT_NODE && XmlContentProcessorImpl.isStrictEditableElement(childNode)) {
+            if (childNode.getNodeType() == Node.TEXT_NODE) {
                 String content = childNode.getTextContent();
                 addElementNode(node, elements, content, textStartIndex);
                 contentLength = content.length();

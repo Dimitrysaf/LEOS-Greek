@@ -221,7 +221,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
             if (newXmlContent == null) {
                 return null;
             }
-            proposal = this.updateProposalAndDocumentsAssociated(proposal, newXmlContent, docPurpose);
+            proposal = this.updateProposalAndDocumentsAssociated(proposal, newXmlContent, docPurpose, null);
             String newContent = elementProcessor.getElement(proposal, elementName, elementId);
             return new SaveCoverPageElementResponse(elementId, elementName, newContent, proposal.getTitle());
         }
@@ -305,11 +305,11 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         String elementFragment = docPurposeElements.get(0).getElementFragment();
         String docPurpose = proposalService.getPurposeFromXml(elementFragment.getBytes());
         
-        updatedProposal = this.updateProposalAndDocumentsAssociated(updatedProposal,  proposalContent, docPurpose);
+        updatedProposal = this.updateProposalAndDocumentsAssociated(updatedProposal,  proposalContent, docPurpose, null);
         return this.documentViewService.updateDocumentView(updatedProposal);
     }
 
-    private Proposal updateProposalAndDocumentsAssociated(Proposal proposal, byte[] xmlContent, String docPurpose) {
+    private Proposal updateProposalAndDocumentsAssociated(Proposal proposal, byte[] xmlContent, String docPurpose, String comment) {
         Option<ProposalMetadata> metadataOption = proposal.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), PROPOSAL_METADATA_IS_REQUIRED);
         Validate.notNull(docPurpose, PROPOSAL_PURPOSE_IS_REQUIRED);
@@ -318,13 +318,15 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
                 .withPurpose(docPurpose)
                 .withEeaRelevance(proposal.getMetadata().get().getEeaRelevance())
                 .build();
-        proposal = proposalService.updateProposal(proposal, metadata, xmlContent, VersionType.MINOR, messageHelper.getMessage("operation.docpurpose.updated"));
+        String messageDocPurposeUpdated = messageHelper.getMessage("operation.docpurpose.updated");
+        proposal = proposalService.updateProposal(proposal, metadata, xmlContent,
+                VersionType.MINOR, comment != null ? comment : messageDocPurposeUpdated);
 
         CollectionContextService context = proposalContextProvider.get();
         context.useProposal(proposal);
         context.usePurpose(docPurpose);
         context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
-        String comment = messageHelper.getMessage("operation.docpurpose.updated");
+        comment = messageDocPurposeUpdated;
         context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
         context.useActionComment(comment);
         context.useVersionType(VersionType.MINOR);
@@ -427,10 +429,16 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     @Override
     public DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event) {
         Proposal proposal = this.proposalService.findProposalByRef(event.getDocumentRef());
-        Proposal updateProposal = proposalService.updateProposal(proposal,
-                event.getUpdatedContent().getBytes(StandardCharsets.UTF_8), VersionType.MINOR,
+        List<Element> docPurposeElements = xmlContentProcessor.getElementsByTagName(event.getUpdatedContent().getBytes(),
+                Arrays.asList("docPurpose"), true);
+        String elementFragment = docPurposeElements.get(0).getElementFragment();
+        String docPurpose = proposalService.getPurposeFromXml(elementFragment.getBytes());
+
+        Proposal updatedProposal = this.updateProposalAndDocumentsAssociated(proposal,
+                event.getUpdatedContent().getBytes(StandardCharsets.UTF_8), docPurpose,
                 messageHelper.getMessage("operation.search.replace.updated"));
-        return documentViewService.updateDocumentView(updateProposal);
+
+        return documentViewService.updateDocumentView(updatedProposal);
     }
 
     @Override
