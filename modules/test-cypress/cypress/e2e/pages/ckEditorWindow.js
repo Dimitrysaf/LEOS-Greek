@@ -48,7 +48,6 @@ class ckEditorWindow {
         tcActionIcon: () => cy.get('.cke_combo__trackchangeactions'),
         tcActionDropdown: () => cy.get('ul.cke_panel_list > li.cke_panel_listItem > a'),
         insertListIcon: () => cy.get('.cke_button__leosindentlist'),
-        paragraph1: () => this.elements.ckEditableInline().find('article').find("li[data-akn-element='paragraph']"),
     }
 
     uploadImageFile(location, iframeClass) {

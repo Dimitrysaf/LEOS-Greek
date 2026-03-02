@@ -786,12 +786,12 @@ Then('ins tag with attribute {string} and value {string} of num tag of point {in
     }
 );
 
-Then ('subparagraph {int} of paragraph {int} of article {int} should contain a table',(subparagraphNumber,paragraphNumber,articleNumber) => {
-legalActPage.getParagraphFromArticle(paragraphNumber,articleNumber).find('subparagraph').eq(subparagraphNumber-1)
+Then ('subparagraph {int} of paragraph {int} of article {int} contains a table',(subparagraphNumber,paragraphNumber,articleNumber) => {
+legalActPage.getSubparagraphOfParagraphFromArticle(subparagraphNumber,paragraphNumber,articleNumber)
     .find('table').should('exist');
 
 })
 
-Then('subparagraph {int} of paragraph {int} of article {int} should not exist', function (subparagraphNumber, paragraphNumber, articleNumber, attributeName, attributeValue) {
-legalActPage.getParagraphFromArticle(paragraphNumber, articleNumber).find('subparagraph').eq(subparagraphNumber-1).should('not.exist');
+Then('subparagraph {int} of paragraph {int} of article {int} does not exist', function (subparagraphNumber, paragraphNumber, articleNumber) {
+legalActPage.getSubparagraphOfParagraphFromArticle(subparagraphNumber,paragraphNumber,articleNumber).should('not.exist');
 });
