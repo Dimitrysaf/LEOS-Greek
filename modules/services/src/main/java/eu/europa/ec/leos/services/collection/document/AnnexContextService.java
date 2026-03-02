@@ -338,7 +338,7 @@ public class AnnexContextService {
             CloneDocumentMetadataVO cloneDocumentMetadataVO = new CloneDocumentMetadataVO(annexDocument.getRef(), originRef);
             annex = annexService.createClonedAnnexFromContent(leosPackage.getPath(), metadataDocument, cloneDocumentMetadataVO, actionMessage, annexDocument.getSource(), annexDocument.getName(), annexDocument.getBinaryFile(), annexDocument.getOriginalFilename(), annexDocument.getBinaryFileSize());
         } else {
-            annex = annexService.createAnnexFromContent(leosPackage.getPath(), metadataDocument, actionMessage, annexDocument.getSource(), annexDocument.getName());
+            annex = annexService.createAnnexFromContent(leosPackage.getPath(), metadataDocument, actionMessage, annexDocument.getSource(), annexDocument.getName(), annexDocument.getBinaryFile(), annexDocument.getOriginalFilename(), annexDocument.getBinaryFileSize());
         }
         annex = securityService.updateCollaborators(annex.getMetadata().get().getRef(), annex.getId(), collaborators, Annex.class);
         return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED), annexDocument.getBinaryFile(), annexDocument.getOriginalFilename(), annexDocument.getBinaryFileSize());

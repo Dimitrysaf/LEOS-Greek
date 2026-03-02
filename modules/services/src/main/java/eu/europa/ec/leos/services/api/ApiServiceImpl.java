@@ -59,8 +59,7 @@ import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.api.exception.CreateMilestoneException;
-import eu.europa.ec.leos.services.api.exception.CreateAnnexException;
+import eu.europa.ec.leos.services.api.exception.LeosExceptionResponse;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.CollectionContextService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
@@ -149,6 +148,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static eu.europa.ec.leos.services.api.exception.ErrorCode.CM001;
+import static eu.europa.ec.leos.services.api.exception.ErrorCode.CA001;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_ADDED;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_DELETED;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.PROCESSED;
@@ -1164,7 +1165,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
                 boolean annexExistWithSameName = StringUtils.isEmpty(originalFilename) ? false : documents.stream().filter(xmlDocument -> xmlDocument.getCategory().equals(LeosCategory.ANNEX) && StringUtils.isNotEmpty(xmlDocument.getOriginalFilename()) && xmlDocument.getOriginalFilename().toUpperCase().equals(originalFilename.toUpperCase())).findAny().isPresent();
                 if (annexExistWithSameName) {
-                    throw new CreateAnnexException("page.collection.drafts.annex.same.name.error");
+                    throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.same.name.error");
                 }
                 if (proposal.getMetadata() != null && proposal.getMetadata().get().isCustomTemplateAct()){
                     documents.forEach(document -> {
@@ -1454,7 +1455,7 @@ public abstract class ApiServiceImpl implements ApiService {
         List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
         boolean annexExistWithSameName = documents.stream().filter(xmlDocument -> { return xmlDocument.getCategory().equals(LeosCategory.ANNEX) && !xmlDocument.getId().equals(annexId) && StringUtils.isNotEmpty(xmlDocument.getOriginalFilename()) && xmlDocument.getOriginalFilename().toUpperCase().equals(originalFilename.toUpperCase()); }).findAny().isPresent();
         if (annexExistWithSameName) {
-            throw new CreateAnnexException("page.collection.drafts.annex.same.name.error");
+            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.same.name.error");
         }
         Annex annex = annexService.findAnnex(annexId, true);
         AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
@@ -1552,7 +1553,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 populateCloneProposalMetadataVO(proposal);
             }
             if (hasNotChanged(proposal)) {
-                throw new CreateMilestoneException();
+                throw new LeosExceptionResponse(CM001.name(), "page.milestone.already.exist.for.this.major.version.error");
             }
             LegDocument previousLegDocument = null;
             String packageId = getPackageIdForCustomTemplateMainLanguage(proposal);

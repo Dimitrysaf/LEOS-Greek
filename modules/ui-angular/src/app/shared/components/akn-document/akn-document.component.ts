@@ -84,7 +84,7 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit, A
 
   private loadDocument(xml: string) {
     const rootEl = this.containerElRef.nativeElement;
-    if (!(xml.includes('TECHNICAL DOCUMENTATION</heading>') && xml.includes('<componentRef showAs='))) {
+    if (!xml.includes('TECHNICAL DOCUMENTATION</heading>')) {
       const akomantosoEl = this.cleanupXML(xml);
       rootEl.innerHTML = '';
       rootEl.appendChild(akomantosoEl);

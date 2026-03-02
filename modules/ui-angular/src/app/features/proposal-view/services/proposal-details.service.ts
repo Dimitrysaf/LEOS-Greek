@@ -176,9 +176,18 @@ export class ProposalDetailsService implements OnDestroy {
           this.setProposalRef(this.proposalRef);
           this.loadingService.setLoading(false);
         },
-        error: (error) => {
+        error: (res) => {
           this.setProposalRef(this.proposalRef);
           this.loadingService.setLoading(false);
+          this.exceptionResponseVO = res.error;
+          if (this.exceptionResponseVO.errorCode === ErrorCode.CA001) {
+            this.dialogService.openDialog({
+              title: this.translateService.instant(this.exceptionResponseVO.messageKey + '.title'),
+              content: this.translateService.instant(this.exceptionResponseVO.messageKey + '.message'),
+              hasDismissButton: false,
+            });
+            this.growlService.clearGrowl();
+          }
         }
       });
   }

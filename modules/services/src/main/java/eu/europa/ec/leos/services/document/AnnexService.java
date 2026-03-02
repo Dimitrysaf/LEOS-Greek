@@ -35,6 +35,8 @@ public interface AnnexService {
 
     Annex createAnnexFromContent(String path, AnnexMetadata metadata, String actionMessage, byte[] content, String name);
 
+    Annex createAnnexFromContent(String path, AnnexMetadata metadata, String actionMessage, byte[] content, String name, byte[] binaryContent, String originalFilename, String binaryContentSize);
+
     Annex createClonedAnnexFromContent(String path, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage, byte[] content, String name, byte[] binaryContent, String originalFilename, String binaryContentSize);
 
     void deleteAnnex(Annex annex);

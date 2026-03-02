@@ -1,8 +1,10 @@
 package eu.europa.ec.leos.services.api.exception;
 
 public enum ErrorCode {
+    // General
+    G001,
+    // Create Milestone
     CM001,
-    CA001,
-    SNA001,
-    G001
+    // Create Annex
+    CA001
 }

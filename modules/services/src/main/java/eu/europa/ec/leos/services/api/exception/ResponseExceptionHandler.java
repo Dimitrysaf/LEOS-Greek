@@ -32,27 +32,16 @@ public class ResponseExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(CreateMilestoneException.class)
-    public ResponseEntity<ExceptionResponse> handleException(CreateMilestoneException ex) {
+    @ExceptionHandler(LeosExceptionResponse.class)
+    public ResponseEntity<LeosExceptionResponse> handleException(LeosExceptionResponse ex) {
         String errorMessage = ex.getMessage();
         if (Arrays.stream(ex.getStackTrace()).findFirst().isPresent()) {
             LOG.error("Unexpected error occurred :" + Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);
         } else {
             LOG.error("Unexpected error occurred :" + errorMessage, ex);
         }
-        return new ResponseEntity<>(new ExceptionResponse(ex.getErrorCode().toString(), ex.getMessageKey()),
+        return new ResponseEntity<>(new LeosExceptionResponse(ex.getErrorCode().toString(), ex.getMessageKey()),
                 HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @ExceptionHandler(CreateAnnexException.class)
-    public ResponseEntity<String> handleException(CreateAnnexException ex) {
-        String errorMessage = ex.getMessage();
-        if (Arrays.stream(ex.getStackTrace()).findFirst().isPresent()) {
-            LOG.error("Unexpected error occurred :" + Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);
-        } else {
-            LOG.error("Unexpected error occurred :" + errorMessage, ex);
-        }
-        return new ResponseEntity<>(ex.getMessageKey(), HttpStatus.BAD_REQUEST);
     }
 
 }

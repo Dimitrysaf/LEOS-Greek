@@ -37,7 +37,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.security.TokenService;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.api.ConfigService;
-import eu.europa.ec.leos.services.api.exception.CreateAnnexException;
+import eu.europa.ec.leos.services.api.exception.LeosExceptionResponse;
 import eu.europa.ec.leos.services.coedition.handler.CoEditionInfoHandler;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
@@ -69,7 +69,6 @@ import eu.europa.ec.leos.vo.token.JsonTokenReponse;
 import eu.europa.ec.leos.model.notification.validation.DocumentExternalValidationNotification;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.jena.atlas.io.IO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,6 +100,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
 
+import static eu.europa.ec.leos.services.api.exception.ErrorCode.CA001;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
@@ -111,7 +111,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.isValidSizeFileForBin
 import static eu.europa.ec.leos.services.support.XmlHelper.isValidMimeTypeForBinaryFile;
 import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
 import static eu.europa.ec.leos.services.support.XmlHelper.isValidFileNameForZipFile;
-import static eu.europa.ec.leos.services.support.XmlHelper.isValidSizeFileForBinaryFile;
 import static eu.europa.ec.leos.services.support.XmlHelper.isValidMimeTypeForLegFile;
 
 @RestController
@@ -607,10 +606,10 @@ public class LeosApiController {
     public ResponseEntity<Object> createProposalForeignAnnex(@PathVariable("proposalRef") String proposalRef, @RequestParam("foreignAnnexFile") MultipartFile foreignAnnexFile) throws IOException {
         validatePath(FilenameUtils.normalize(foreignAnnexFile.getOriginalFilename()));
         if (!isValidFileNameForBinaryFile(foreignAnnexFile.getOriginalFilename()) || !isValidMimeTypeForBinaryFile(foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename())) {
-            throw new CreateAnnexException("page.collection.drafts.annex.invalid.file");
+            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.invalid.file");
         }
         if (!isValidSizeFileForBinaryFile(foreignAnnexFile.getSize())) {
-            throw new CreateAnnexException("page.collection.drafts.annex.max.size.error");
+            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.max.size.error");
         }
         proposalRef = encodeParam(proposalRef);
         this.apiService.createProposalAnnex(proposalRef, null, AnnexType.FOREIGN, foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename(), String.format("%.2f KB", foreignAnnexFile.getSize() / 1024.0));
@@ -642,10 +641,10 @@ public class LeosApiController {
             @RequestParam("foreignAnnexFile") MultipartFile foreignAnnexFile) throws IOException {
         validatePath(FilenameUtils.normalize(foreignAnnexFile.getOriginalFilename()));
         if (!isValidFileNameForBinaryFile(foreignAnnexFile.getOriginalFilename()) || !isValidMimeTypeForBinaryFile(foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename())) {
-            throw new CreateAnnexException("page.collection.drafts.annex.invalid.file");
+            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.invalid.file");
         }
         if (!isValidSizeFileForBinaryFile(foreignAnnexFile.getSize())) {
-            throw new CreateAnnexException("page.collection.drafts.annex.max.size.error");
+            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.max.size.error");
         }
         proposalRef = encodeParam(proposalRef);
         annexId = encodeParam(annexId);
