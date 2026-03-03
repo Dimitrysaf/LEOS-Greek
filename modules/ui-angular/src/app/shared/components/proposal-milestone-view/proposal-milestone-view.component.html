@@ -93,7 +93,7 @@
                   isCollapsible
                   (collapsed)="onToggleTocPaneCollapsed()"
                   style="flex-basis: 400px"
-                  *ngIf="!doc.xml.includes('TECHNICAL DOCUMENTATION</heading>')"
+                  *ngIf="!getFilenameExtension(doc.xml)"
                 >
                   <eui-page-column-body>
                     <app-milestone-toc [toc]="doc.tocData"></app-milestone-toc>
@@ -139,7 +139,7 @@
                   (collapsed)="onToggleAnnotationsPaneCollapsed()"
 
                   style="flex-basis: 580px"
-                  *ngIf="!doc.xml.includes('TECHNICAL DOCUMENTATION</heading>')"
+                  *ngIf="!getFilenameExtension(doc.xml)"
                 >
                   <eui-page-column-body class="eui-u-flex-grow">
                     <app-document-annotations
