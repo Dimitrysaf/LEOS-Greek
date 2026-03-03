@@ -506,11 +506,13 @@ export class ProposalDetailsService implements OnDestroy {
    * @param milestone The milestone to publish from.
    * @param templateName The display name of the template in the catalog.
    * @param dgCodes Array of DG codes (e.g. ['CLIMA','RTD']).
+   * @param cleanPendingTranslations Whether to clean pending translations before publishing.
    */
   publishTemplateToDgCatalog(
     milestone: MilestoneDescriptor,
     templateName: string,
     dgCodes: string[],
+    cleanPendingTranslations: boolean
   ) {
     this.loadingService.setLoading(true);
 
@@ -519,6 +521,7 @@ export class ProposalDetailsService implements OnDestroy {
       legDocumentName: milestone.legDocumentName,
       templateName,
       dgCodes,
+      cleanPendingTranslations
     };
 
     return this.http
@@ -539,16 +542,30 @@ export class ProposalDetailsService implements OnDestroy {
         },
         error: (err) => {
           console.log('PUBLISH ERROR')
-          this.growlService.growl({
-            severity: 'danger',
-            summary: this.translateService.instant('global.notifications.title.error'),
-            detail:
-              err?.error?.message ??
-              this.translateService.instant('page.collection.milestones.publish-to-catalog.error'),
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
-          });
+          this.exceptionResponseVO = err.error;
+          if (this.exceptionResponseVO.errorCode === ErrorCode.PT001) {
+            this.dialogService.openDialog({
+              title: this.translateService.instant(this.exceptionResponseVO.messageKey + '.title'),
+              content: this.translateService.instant(this.exceptionResponseVO.messageKey + '.message'),
+              hasDismissButton: true,
+              acceptLabel: this.translateService.instant(this.exceptionResponseVO.messageKey + '.clean-all'),
+              accept: () => {
+                this.publishTemplateToDgCatalog(milestone, templateName, dgCodes, true);
+              },
+            });
+            this.growlService.clearGrowl();
+          } else {
+            this.growlService.growl({
+              severity: 'danger',
+              summary: this.translateService.instant('global.notifications.title.error'),
+              detail:
+                err?.error?.message ??
+                this.translateService.instant('page.collection.milestones.publish-to-catalog.error'),
+              life: 3000,
+              isGrowlSticky: false,
+              position: 'bottom-right',
+            });
+          }
         },
       });
   }

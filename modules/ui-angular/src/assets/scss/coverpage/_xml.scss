@@ -30,7 +30,7 @@
             display: none;
         }
     }
-    
+
     // AKN styles
     coverPage {
         @extend %xmlLongTitle;
@@ -38,7 +38,7 @@
         @extend %xmlAuthorialNote;
         @extend %elementActions;
         @extend %elementUserCoEdition;
-        
+
         @extend %xmlChangeDetails;
 
         @extend %xmlGuidance;
@@ -48,6 +48,7 @@
 
         @include editor;
         @extend %xmlTrackChanges;
+        @extend %xmlUpdateTranslation;
         display: block;
     }
 

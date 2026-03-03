@@ -15,6 +15,7 @@ package eu.europa.ec.leos.services.template;
 
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
@@ -45,6 +46,8 @@ import jakarta.inject.Provider;
 import java.io.IOException;
 import java.util.*;
 
+import eu.europa.ec.leos.services.api.exception.PendingTranslationException;
+
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 @Service
@@ -74,7 +77,7 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
     }
 
     @Override
-    public void publishTemplate(String legFileId,String templateName, List<String> dgCodes) {
+    public void publishTemplate(String legFileId,String templateName, List<String> dgCodes) throws PendingTranslationException {
         // Get all valid organizations from user repository for validation
         List<String> validOrganizations = userService.getAllOrganizations();
         Set<String> validOrgSet = new HashSet<>(validOrganizations);
@@ -96,7 +99,9 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
                 throw new IllegalArgumentException("Invalid organization: " + dgCode);
             }
         }
-        
+
+        validateNoPendingTranslations(legFileId);
+
         // Publish template with validated DG codes
         leosRepository.publishCustomTemplate(legFileId, templateName, finalDgCodes, user.getLogin(), originalDg);
     }
@@ -180,6 +185,44 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         String templateName = (String) templateInfo.get("templateName");
         List<String> templateVisibility = (List<String>) templateInfo.get("templateVisibility");
         return new CustomTemplateInfoResponse(templateName, templateVisibility);
+    }
+
+    @Override
+    public void cleanPendingTranslations(String legFileId) throws Exception {
+        findPendingTranslationsInLinkedPackages(legFileId, true);
+    }
+
+    private void validateNoPendingTranslations(String legFileId) throws PendingTranslationException {
+        findPendingTranslationsInLinkedPackages(legFileId, false);
+    }
+    
+    private void findPendingTranslationsInLinkedPackages(String legFileId, boolean clean) throws PendingTranslationException {
+        LeosPackage mainPackage = packageService.findPackageByLegFileId(legFileId);
+        if (mainPackage == null) {
+            throw new IllegalArgumentException("Package not found for leg file: " + legFileId);
+        }
+
+        List<LinkedPackage> linkedPackages = packageService.findLinkedPackagesByPackageId(mainPackage.getId());
+        for (LinkedPackage linkedPackage : linkedPackages) {
+            findPendingTranslationsInPackage(linkedPackage.getLinkedPackageId(), clean);
+        }
+    }
+    
+    private void findPendingTranslationsInPackage(String packageId, boolean clean) throws PendingTranslationException {
+        List<XmlDocument> xmlDocuments = packageService.findDocumentsByPackageId(packageId, XmlDocument.class, false, true);
+        for (XmlDocument xmlDocument : xmlDocuments) {
+            byte[] cleanedContent = xmlContentProcessor.findAndCleanPendingTranslations(xmlDocument, clean);
+            if (cleanedContent != null) {
+                LOG.info("Cleaning pending translations in document: {}", xmlDocument.getName());
+                leosRepository.updateDocument(
+                    xmlDocument.getId(),
+                    cleanedContent,
+                    VersionType.TECHNICAL,
+                    "Cleaned pending translations",
+                    XmlDocument.class
+                );
+            }
+        }
     }
 
     public void alignDocumentsFromBaseVersion(List<? extends XmlDocument> sourceXmlDocs, List<? extends XmlDocument> targetXmlDocs, DocumentVO documentToAlignWith, String ref) {

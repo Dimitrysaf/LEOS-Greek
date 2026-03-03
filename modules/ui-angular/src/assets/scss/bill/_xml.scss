@@ -66,6 +66,7 @@
         @extend %documentFooter;
 
         @extend %xmlTrackChanges;
+        @extend %xmlUpdateTranslation;
 
         display: block;
     }
@@ -76,5 +77,5 @@
 
     div.leos-document-view div.leos-double-comparison-content bill {
         @extend %doubleCompare;
-    }    
+    }
 }
