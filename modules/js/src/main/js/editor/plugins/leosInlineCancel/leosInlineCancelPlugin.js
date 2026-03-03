@@ -64,7 +64,11 @@ define(function leosInlineCancelPluginModule(require) {
             .replaceAll(/\s+xml:id="\s*\w+\s*"/g, '')                      // remove xml:id attributes
             .replace(/<div\b[^>]*>.*?<\/div>/, '').replace('</div>', '')   // remove CoEdition tags
             // convert all tags to lowercase: handle cases like docPurpose -> docpurpose discrepancies
-            .replace(/<\/?(\S+)/g, (match, tagName) => match.replace(tagName, tagName.toLowerCase()))
+            .replaceAll(/<\/?(\S+)/g, (match, tagName) => match.replace(tagName, tagName.toLowerCase()))
+            // convert all attributes to lowercase: handle cases like refersTo -> refersto discrepancies
+            .replaceAll(/<([^>]+)>/g, (match, tagContent) => 
+                '<' + tagContent.replace(/(\s+)(\w+)=/g, (m, space, attr) => space + attr.toLowerCase() + '=') + '>')
+            .replaceAll(/<\/?tbody\b[^>]*>/g, '')                          // tbody tag missing in the editor data
             .trim();
     }
 
