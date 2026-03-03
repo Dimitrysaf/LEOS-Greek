@@ -282,7 +282,6 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     public FinancialStatement updateFinancialStatement(String id, byte[] updatedFinancialStatementContent, VersionType versionType, String comment) {
         LOG.trace("Updating FinancialStatement content... [id={}, versionType={}, comment={}]", id, versionType, comment);
         FinancialStatement financialStatement = financialStatementRepository.updateFinancialStatement(id, updatedFinancialStatementContent, versionType, comment);
-        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
         return financialStatement;
     }
 

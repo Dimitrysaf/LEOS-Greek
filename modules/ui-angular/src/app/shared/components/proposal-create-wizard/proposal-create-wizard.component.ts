@@ -291,7 +291,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
       this.updateTemplateAndLanguage();
       this.isNavigationAllowed = true;
     }else{
-      this.createForm.get('docPurpose').setValue(this.editableTitle);
+      this.createForm.get('docPurpose').setValue(this.editableTitle + '-copy');
       this.isNavigationAllowed = false;
     }
   }
