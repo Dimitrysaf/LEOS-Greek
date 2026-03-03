@@ -1,6 +1,8 @@
 import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import actViewerPage from "../pages/actViewerPage";
 import headerPage from "../pages/headerPage";
+import importOfficeJournalWindow from "../pages/importOfficeJournalWindow";
+import ActViewerPage from "../pages/actViewerPage";
 
 Then('user is on act viewer page', () => {
     headerPage.getCurrentPageName().should("have.text", "Act View");
@@ -183,4 +185,24 @@ Then(/^below buttons are present under actions dropdown$/, function (datatable) 
             )
         })
         .should('deep.equal', actualElementList);
+});
+
+
+When(`below options are displayed in add annex dropdown`, (datatable) => {
+    const giveTypeDropDownOptionList = [];
+    datatable.hashes().forEach((typeDropDownOption) => {
+        giveTypeDropDownOptionList.push(typeDropDownOption.TypeOptions);
+    });
+    ActViewerPage.elements.annexDropdownBtn()
+        .then(($els) => {
+            return (
+                Cypress.$.makeArray($els)
+                    .map((el) => el.innerText.trim())
+            )
+        })
+        .should('deep.equal', giveTypeDropDownOptionList);
+});
+
+When ('click on {string} option from add annex dropdown', (optionText) => {
+    actViewerPage.clickOptionFromAddAnnexDropdown(optionText);
 });
