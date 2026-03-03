@@ -1723,7 +1723,7 @@ public abstract class ApiServiceImpl implements ApiService {
 
     private MilestoneViewResponse doListMilestoneDocumentsFromClonedProposal(LegDocument clonedLegDoc, Proposal clonedProposal, String clonedProposalRef) throws Exception {
         populateCloneProposalMetadataVO(clonedProposal);
-        Proposal originalProposal = proposalService.findProposalByRef(removeVersion(clonedProposal.getClonedFrom()));
+        Proposal originalProposal = (Proposal) leosRepository.findDocumentByVersion(Proposal.class, removeVersion(clonedProposal.getClonedFrom()), getVersion(clonedProposal.getClonedFrom()));
         LeosPackage originalPackage = packageService.findPackageByDocumentRef(originalProposal.getMetadata().get().getRef(), Proposal.class);
         LegDocument legDocument =  this.legService.findLastLegByVersionedReference(originalPackage.getPath(), originalProposal.getVersionedReference());
         return listMilestoneDocuments(legDocument, clonedLegDoc, clonedProposalRef, true);
@@ -2009,6 +2009,10 @@ public abstract class ApiServiceImpl implements ApiService {
 
     private String removeVersion(String input) {
         return StringUtils.isNotEmpty(input) ? input.replaceFirst("_\\d+(\\.\\d+)+$", "") : input;
+    }
+
+    private String getVersion(String input) {
+        return StringUtils.isNotEmpty(input) ? input.substring(input.lastIndexOf("_") + 1) : input;
     }
 
     @Override
