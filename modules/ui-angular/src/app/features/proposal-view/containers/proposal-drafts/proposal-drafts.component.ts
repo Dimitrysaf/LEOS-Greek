@@ -142,7 +142,7 @@ export class ProposalDraftsComponent
       }
       const file = event.target.files[0];
       if (file && !annex) {
-        let annexWithSameName = this.proposal.childDocuments.find(e => e.category === 'BILL').childDocuments.find(e => e.category === 'ANNEX' && e.originalFilename === file.name);
+        let annexWithSameName = this.proposal?.childDocuments?.find(e => e.category === 'BILL')?.childDocuments?.find(e => e.category === 'ANNEX' && e.originalFilename === file.name);
         if (annexWithSameName) {
           this.dialogService.openDialog({
             title: this.translateService.instant(
