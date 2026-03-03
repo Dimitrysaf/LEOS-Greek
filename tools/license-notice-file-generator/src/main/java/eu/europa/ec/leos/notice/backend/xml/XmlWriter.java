@@ -4,6 +4,7 @@ import eu.europa.ec.leos.notice.common.xml.XmlDocumentPersister;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -23,7 +24,7 @@ public class XmlWriter {
         DocumentBuilder db = factory.newDocumentBuilder();
 
         // root elements
-        this.doc = docBuilder.newDocument();
+        this.doc = db.newDocument();
         this.rootElement = createElement("copyrights-lookup");
         doc.appendChild(rootElement);
     }

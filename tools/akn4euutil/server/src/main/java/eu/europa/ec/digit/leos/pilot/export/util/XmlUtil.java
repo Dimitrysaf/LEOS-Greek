@@ -68,6 +68,22 @@ public class XmlUtil {
     public static final String TAG_AKN4EU_NAME = "akn4eu:akn4euVersion";
     private static final int NO_MATCH_INDEX_VALUE = -1;
 
+    private static Transformer getTransformer() throws TransformerConfigurationException {
+        final TransformerFactory factory = TransformerFactory.newInstance();
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        factory.setURIResolver((href, base) -> {
+            throw new TransformerException("External URI resolution blocked");
+        });
+
+        try {
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        } catch (IllegalArgumentException e) {
+            // some implementations (Xalan 2.7.3 and saxon) doesn't support these attributes
+        }
+        return factory.newTransformer();
+    }
+
     public static class XmlFile {
         private Document xmlDocument;
         private String name;
@@ -209,13 +225,6 @@ public class XmlUtil {
             return node != null ? node : this.newElement(name);
         }
 
-        private static Transformer getTransformer() throws TransformerConfigurationException {
-            final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            // Secure the factory to prevent XXE attacks
-            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            return transformerFactory.newTransformer();
-        }
-
         private static Node createSecureDocumentFromNode(Node node) throws Exception {
             DocumentBuilder builder = getDocumentBuilder();
             Document secureDocument = builder.newDocument();
@@ -305,8 +314,7 @@ public class XmlUtil {
     }
 
     public static byte[] nodeToByteArray(Document document) throws Exception {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
+        Transformer transformer = getTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
