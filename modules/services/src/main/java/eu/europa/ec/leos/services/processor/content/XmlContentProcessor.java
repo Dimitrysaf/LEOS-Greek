@@ -19,6 +19,7 @@ import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.services.api.exception.PendingTranslationException;
 import eu.europa.ec.leos.services.dto.document.SpecificDocumentInformationDTO;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -420,4 +421,17 @@ public interface XmlContentProcessor {
     byte[] alignLatestVersionDocument(byte[] sourceXml, byte[] sourceBaseXml, XmlDocument targetXmlDoc) throws IllegalArgumentException;
 
     void alignAllIds(Node sourceDoc, Node targetDoc, String category);
+
+    /**
+     * Searches for pending translations.
+     *      If clean is true, it will remove the attribute from the document.
+     *      If clean is false, it will throw an exception.
+     * This is used when publishing a document.
+     *
+     * @param xmlDocument document in which pending translations are searched
+     * @param clean determines if the attribute should be removed from the document or an exception thrown
+     * @return byte[] with pending translations removed or null if none found
+     * @throws PendingTranslationException thrown if clean is false and pending translations are found
+     */
+    byte[] findAndCleanPendingTranslations(XmlDocument xmlDocument, boolean clean) throws PendingTranslationException;
 }

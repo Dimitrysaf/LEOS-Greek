@@ -13,15 +13,16 @@
  * See the Licence for the specific language governing permissions and limitations under the Licence.
 */
 
-@mixin editor() {
-    .cke_editable {
-        @extend %editorAuthorialNote;
+//------------------------------- XML Styles --------------------------------//
+%xmlUpdateTranslation {
+  [leos\:update-translation="true"] {
+    background-color: #F5F56D !important;
+  }
+}
 
-        @extend %editorContentColor;
-        @extend %editorFocus;
-
-        @extend %editorWidget;
-        @extend %editorTrackChanges;
-        @extend %editorUpdateTranslation;
-    }
+//------------------------------- Editor Styles -----------------------------//
+%editorUpdateTranslation {
+  [data-akn-update-translation="true"] {
+    background-color: #F5F56D;
+  }
 }

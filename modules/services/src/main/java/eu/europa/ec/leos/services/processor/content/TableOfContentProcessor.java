@@ -112,7 +112,5 @@ public interface TableOfContentProcessor {
     boolean isFirstElement(TableOfContentItemVO tableOfContentItemVO, String elementName);
     boolean containsElement(TableOfContentItemVO tableOfContentItemVO, String elementName);
     void convertTocItemContent(TableOfContentItemVO item, TableOfContentItemVO subelement, IndentedItemType beforeIndentedType, IndentedItemType afterIndentedType, boolean restored);
-    boolean containsInlineElement(TableOfContentItemVO item);
-    void replaceContentFromTocItem(TableOfContentItemVO tocItem, String updatedContent);
     void setContentInNodeFromTocItem(TableOfContentItemVO tocItem, Node node);
 }

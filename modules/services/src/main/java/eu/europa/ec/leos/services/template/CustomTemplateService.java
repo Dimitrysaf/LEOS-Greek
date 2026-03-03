@@ -2,6 +2,7 @@ package eu.europa.ec.leos.services.template;
 
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.services.api.exception.PendingTranslationException;
 import eu.europa.ec.leos.services.dto.response.CustomTemplateInfoResponse;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 
@@ -12,7 +13,9 @@ public interface CustomTemplateService {
 
     List<CatalogItem> getCustomTemplatesCatalog(String entityName) throws IOException;
 
-    void publishTemplate(String legFileId, String templateName, List<String> dgCodes);
+    void publishTemplate(String legFileId, String templateName, List<String> dgCodes) throws PendingTranslationException;
+
+    void cleanPendingTranslations(String legFileId) throws Exception;
 
     CustomTemplateInfoResponse getTemplateInfo(String packageId);
 

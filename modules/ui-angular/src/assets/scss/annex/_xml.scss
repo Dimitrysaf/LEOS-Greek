@@ -36,7 +36,7 @@ $border: 1px solid black;
             }
         }
     }
-    
+
     // AKN styles
     doc[name="ANNEX" i] {
         @extend %xmlAuthorialNote;
@@ -65,9 +65,10 @@ $border: 1px solid black;
         @extend %xmlChangeDetails;
 
         @extend %xmlTrackChanges;
+        @extend %xmlUpdateTranslation;
 
         @include editor;
-        
+
         display: block;
     }
 

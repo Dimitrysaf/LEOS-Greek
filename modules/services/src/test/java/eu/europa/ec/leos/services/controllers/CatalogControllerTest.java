@@ -35,7 +35,7 @@ public class CatalogControllerTest {
     }
 
     @Test
-    public void testPublishTemplateToCatalog_Success() {
+    public void testPublishTemplateToCatalog_Success() throws Exception {
         PublishTemplateRequest request = new PublishTemplateRequest();
         request.setTemplateName(TEMPLATE_NAME);
         request.setDgCodes(Arrays.asList("AGRI", "CLIMA"));
@@ -62,7 +62,7 @@ public class CatalogControllerTest {
     }
 
     @Test
-    public void testPublishTemplateToCatalog_Exception() {
+    public void testPublishTemplateToCatalog_Exception() throws Exception {
         PublishTemplateRequest request = new PublishTemplateRequest();
         request.setTemplateName(TEMPLATE_NAME);
         request.setDgCodes(Arrays.asList("AGRI"));
@@ -90,7 +90,7 @@ public class CatalogControllerTest {
     }
 
     @Test
-    public void testPublishTemplateToCatalog_EmptyDgCodes() {
+    public void testPublishTemplateToCatalog_EmptyDgCodes() throws Exception {
         PublishTemplateRequest request = new PublishTemplateRequest();
         request.setTemplateName(TEMPLATE_NAME);
         request.setDgCodes(Arrays.asList());
