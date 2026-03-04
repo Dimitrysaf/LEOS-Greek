@@ -14,7 +14,6 @@
 
 package eu.europa.ec.leos.services.controllers;
 
-import eu.europa.ec.leos.exception.LeosErrorMessage;
 import eu.europa.ec.leos.services.api.exception.PendingTranslationException;
 import eu.europa.ec.leos.services.dto.request.PublishTemplateRequest;
 import eu.europa.ec.leos.services.dto.response.CustomTemplateInfoResponse;
@@ -40,7 +39,6 @@ public class CatalogController {
     @Autowired
     private CustomTemplateService customTemplateService;
 
-    @LeosErrorMessage("Unexpected error occurred while publishing template")
     @RequestMapping(value = "/publish-template/{legFileId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> publishTemplateToCatalog(@PathVariable("legFileId") String legFileId, @RequestBody PublishTemplateRequest request)
@@ -59,7 +57,7 @@ public class CatalogController {
         } catch (PendingTranslationException e) {
             throw e;
         } catch (Exception e) {
-            LOG.error(" - " + e.getMessage(), e);
+            LOG.error("Unexpected error occurred while publishing template - " + e.getMessage(), e);
             return new ResponseEntity<>(
                     Collections.singletonMap("error", "Unexpected error occurred while publishing template"),
                     HttpStatus.INTERNAL_SERVER_ERROR
