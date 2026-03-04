@@ -36,11 +36,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>21</java.version>
+        <servlet.version>6.0.0</servlet.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <buildnumber-maven-plugin.version>3.2.1</buildnumber-maven-plugin.version>
         <spring-boot.run.jvmArguments>-Dfile.encoding=UTF-8</spring-boot.run.jvmArguments>
+        <exec-maven-plugin.version>3.6.2</exec-maven-plugin.version>
+        <springdoc-openapi.version>2.7.0</springdoc-openapi.version>
+        <poi-ooxml.version>5.3.0</poi-ooxml.version>
     </properties>
 
     <dependencyManagement>
@@ -80,6 +84,16 @@
                 <groupId>org.glassfish.jaxb</groupId>
                 <artifactId>jaxb-runtime</artifactId>
                 <version>4.0.5</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc-openapi.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${poi-ooxml.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
