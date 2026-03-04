@@ -13,14 +13,16 @@ public final class AnnexMetadata extends LeosMetadata {
 
     public AnnexMetadata(String stage, String type, String purpose, String template, String language, String docTemplate,
                          String ref, int index, String number, String title, String objectId, String docVersion,
-                         boolean eeaRelevance, boolean customTemplateAct, String clonedRef) {
-        this(stage, type, purpose, template, language, docTemplate, ref, null, index, number, title, objectId, docVersion, eeaRelevance, customTemplateAct, clonedRef);
+                         boolean eeaRelevance, boolean customTemplateAct, boolean translated, String clonedRef) {
+        this(stage, type, purpose, template, language, docTemplate, ref, null, index, number, title, objectId, docVersion, eeaRelevance, customTemplateAct,
+                translated, clonedRef);
     }
 
     public AnnexMetadata(String stage, String type, String purpose, String template, String language, String docTemplate,
                          String ref, String packageRef, int index, String number, String title, String objectId, String docVersion,
-                         boolean eeaRelevance, boolean customTemplateAct, String clonedRef) {
-        super(LeosCategory.ANNEX, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance, customTemplateAct);
+                         boolean eeaRelevance, boolean customTemplateAct, boolean translated, String clonedRef) {
+        super(LeosCategory.ANNEX, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance, customTemplateAct,
+                translated);
         this.index = index;
         this.number = number;
         this.title = title;
@@ -92,6 +94,7 @@ public final class AnnexMetadata extends LeosMetadata {
         private String docVersion;
         private boolean eeaRelevance;
         private boolean customTemplateAct;
+        private boolean translated;
         private int index;
         private String number;
         private String title;
@@ -115,6 +118,7 @@ public final class AnnexMetadata extends LeosMetadata {
             this.docVersion = metadata.docVersion;
             this.eeaRelevance = metadata.eeaRelevance;
             this.customTemplateAct = metadata.customTemplateAct;
+            this.translated = metadata.translated;
             this.packageRef = metadata.packageRef;
         }
         public AnnexMetadataBuilder withStage(String stage) {
@@ -184,7 +188,7 @@ public final class AnnexMetadata extends LeosMetadata {
         public AnnexMetadata build() {
             return new AnnexMetadata(this.stage, this.type, this.purpose, this.template, this.language,
                     this.docTemplate, this.ref, this.packageRef, this.index, this.number, this.title, this.objectId, this.docVersion,
-                    this.eeaRelevance, this.customTemplateAct, this.clonedRef);
+                    this.eeaRelevance, this.customTemplateAct, this.translated, this.clonedRef);
         }
     }
 

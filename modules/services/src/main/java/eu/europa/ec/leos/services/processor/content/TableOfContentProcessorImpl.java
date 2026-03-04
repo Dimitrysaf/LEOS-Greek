@@ -63,7 +63,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.EC;
 import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
-import static eu.europa.ec.leos.services.support.XmlHelper.INLINE_ELEMENTS;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_INDENT_ORIGIN_INDENT_LEVEL_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_INDENT_ORIGIN_NUM_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_INDENT_ORIGIN_NUM_ID_ATTR;
@@ -636,37 +635,6 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
             if (originalNumOrigin != null) {
                 XercesUtils.insertOrUpdateAttributeValue(node, LEOS_ORIGIN_ATTR, originalNumOrigin);
             }
-        }
-    }
-
-    public boolean containsInlineElement(TableOfContentItemVO item) {
-        if (item.getNode() == null) {
-            return false;
-        }
-        Node node = item.getNode();
-        List<Node> children = XercesUtils.getChildren(node, INLINE_ELEMENTS);
-        for (Node child : children) {
-            if (!isCrossheadingNum(child)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void replaceContentFromTocItem(TableOfContentItemVO tocItem, String updatedContent) {
-        Node node = tocItem.getNode();
-        if (node != null) {
-            NodeList children = node.getChildNodes();
-            Node textNode = node.getOwnerDocument().createTextNode(updatedContent);
-            for (int i = 0; i < children.getLength(); i++) {
-                Node child = children.item(i);
-                if (child.getNodeType() == Node.TEXT_NODE) {
-                    node.removeChild(child);
-                }
-            }
-            node.appendChild(textNode);
-        } else {
-            tocItem.setContent(updatedContent);
         }
     }
 

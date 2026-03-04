@@ -17,7 +17,6 @@ define(function leosInlineCancelPluginModule(require) {
 
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
-    var leosPuginUtils = require("plugins/leosPluginUtils");
     var dialogDefinition = require("./leosInlineCancelDialog");
 
     var pluginName = "leosInlineCancel";
@@ -32,15 +31,16 @@ define(function leosInlineCancelPluginModule(require) {
             
             //creates dialog command
             var dialogCommand = editor.addCommand(dialogDefinition.dialogName, new CKEDITOR.dialogCommand(dialogDefinition.dialogName));
-            
-            
+
             editor.addCommand('inlinecancel', {
                 readOnly: 1,
                 exec : function(editor) {
-                    // #3210: Unselect before check dirty
-                    editor.LEOS.originalRange = leosPuginUtils.clearSelection(editor);
-
-                    if(editor.checkDirty()) {
+                    // #3210: editor.checkDirty() is not enough here as many events mark the element as dirty;
+                    // On top of checkDirty, comparing the current content with the original one;
+                    // A cleanup is required before that to remove any irrelevant data
+                    const original = cleanup(localStorage.getItem(editor.LEOS.elementId));
+                    const current = cleanup(editor.getData());
+                    if(editor.checkDirty() && (original !== current)) {
                         dialogCommand.exec();
                     } else {
                         editor.fire("close");
@@ -55,6 +55,27 @@ define(function leosInlineCancelPluginModule(require) {
             });
         }
     };
+
+    function cleanup(elementData) {
+        return elementData
+            .replaceAll('\u00a0', ' ').replaceAll('&nbsp;', ' ')            // remove special spaces
+            .replaceAll(/\s+leos:[^=]+="[^"]+"/g, '')                       // remove leos:* attributes
+            .replaceAll(/\s+class="[^"]+"/g, '')                            // remove class attributes
+            .replaceAll(/\s+xml:id="[^"]+"/g, '')                           // remove xml:id attributes
+            .replaceAll(/\s+onclick="[^"]+"/g, '')                          // remove onclick attributes
+            .replace(/<div\b[^>]*>.*?<\/div>/, '').replace('</div>', '')    // remove CoEdition tags
+            // convert all tags to lowercase: handle cases like docPurpose -> docpurpose discrepancies
+            .replaceAll(/<\/?(\S+)/g, (match, tagName) => match.replace(tagName, tagName.toLowerCase()))
+            // convert all attributes to lowercase: handle cases like refersTo -> refersto discrepancies
+            .replaceAll(/<([^>]+)>/g, (match, tagContent) => 
+                '<' + tagContent.replace(/(\s+)(\w+)=/g, (m, space, attr) => space + attr.toLowerCase() + '=') + '>')
+            .replaceAll(/<\/?tbody\b[^>]*>/g, '')                           // tbody tag missing in the editor data
+            .replaceAll(/<td\b[^>]*>(<p><\/p>)<\/td>/g, (match, emptyParagraph) => match.replace(emptyParagraph, ''))
+            .replaceAll('<br>', '<br/>')                                    // close unclosed br tags
+            .replaceAll(/<img\b([^>]*[^/])>/g, '<img$1/>')                  // close unclosed img tags
+            .replaceAll(/\s+\/>/g, '/>')                                    // remove trailing spaces
+            .trim();
+    }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
 

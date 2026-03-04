@@ -92,6 +92,7 @@ public class DocumentApiUtil {
                         documentVO.getVersionSeriesId(),
                         metadataVO.isEeaRelevance(),
                         metadataVO.isCustomTemplateAct(),
+                        metadataVO.isTranslated(),
                         documentVO.getRef());
                 break;
             case BILL:
@@ -105,7 +106,8 @@ public class DocumentApiUtil {
                         documentVO.getId(),
                         documentVO.getVersionSeriesId(),
                         metadataVO.isEeaRelevance(),
-                        metadataVO.isCustomTemplateAct());
+                        metadataVO.isCustomTemplateAct(),
+                        metadataVO.isTranslated());
                 break;
             case MEMORANDUM:
                 metaData = new MemorandumMetadata(metadataVO.getDocStage(),
@@ -118,7 +120,8 @@ public class DocumentApiUtil {
                         documentVO.getId(),
                         documentVO.getVersionSeriesId(),
                         metadataVO.isEeaRelevance(),
-                        metadataVO.isCustomTemplateAct());
+                        metadataVO.isCustomTemplateAct(),
+                        metadataVO.isTranslated());
                 break;
             case STAT_DIGIT_FINANC_LEGIS:
                 metaData = new FinancialStatementMetadata(metadataVO.getDocStage(),

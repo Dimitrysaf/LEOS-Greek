@@ -770,7 +770,7 @@ Then('ins tag of content of subparagraph {int} of list {int} of point {int} of l
     }
 );
 
-Then('del tag with attribute {string} and value {string} of point {int} of list {int} of paragraph {int} of article {int} contains {string}', function (attrName,attrValue, pointNumber, listNumber,paragraphNumber, articleNumber, expectedText)
+Then('del tag with attribute {string} and value {string} of num tag of point {int} of list {int} of paragraph {int} of article {int} contains {string}', function (attrName,attrValue, pointNumber, listNumber,paragraphNumber, articleNumber, expectedText)
          {legalActPage
             .getPointOfParagraphFromArticle(pointNumber,listNumber, paragraphNumber, articleNumber)
             .find(`del[${attrName}="${attrValue}"]`)
@@ -778,10 +778,20 @@ Then('del tag with attribute {string} and value {string} of point {int} of list 
     }
 );
 
-Then('ins tag with attribute {string} and value {string} of point {int} of list {int} of paragraph {int} of article {int} contains {string}', function (attrName,attrValue, pointNumber,listNumber,paragraphNumber, articleNumber, expectedText)
+Then('ins tag with attribute {string} and value {string} of num tag of point {int} of list {int} of paragraph {int} of article {int} contains {string}', function (attrName,attrValue, pointNumber,listNumber,paragraphNumber, articleNumber, expectedText)
     {legalActPage
         .getPointOfParagraphFromArticle(pointNumber,listNumber, paragraphNumber, articleNumber)
         .find(`ins[${attrName}="${attrValue}"]`)
         .should('have.text', expectedText);
     }
 );
+
+Then ('subparagraph {int} of paragraph {int} of article {int} should contain a table',(subparagraphNumber,paragraphNumber,articleNumber) => {
+legalActPage.getParagraphFromArticle(paragraphNumber,articleNumber).find('subparagraph').eq(subparagraphNumber-1)
+    .find('table').should('exist');
+
+})
+
+Then('subparagraph {int} of paragraph {int} of article {int} should not exist', function (subparagraphNumber, paragraphNumber, articleNumber, attributeName, attributeValue) {
+legalActPage.getParagraphFromArticle(paragraphNumber, articleNumber).find('subparagraph').eq(subparagraphNumber-1).should('not.exist');
+});

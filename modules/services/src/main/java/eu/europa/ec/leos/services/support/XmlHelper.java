@@ -97,6 +97,8 @@ public class XmlHelper {
     public static final String HEADING = "heading";
     public static final String NUM = "num";
     public static final String P = "p";
+    public static final String AKNP = "aknp";
+    public static final String IMG = "img";
     public static final String COVERPAGE = "coverPage";
     public static final String ATTACHMENTS = "attachments";
     public static final String ATTACHMENT = "attachment";
@@ -245,6 +247,7 @@ public class XmlHelper {
     public static final String LEOS_SPLIT_CONTENT_ATTR = "leos:split-content";
     public static final String LEOS_SPLIT_PARENT = "parent";
     public static final String LEOS_SPLIT_CHILD = "child";
+    public static final String LEOS_UPDATE_TRANSLATION = "leos:update-translation";
 
     public static final String EMPTY_STRING = "";
     public static final String NON_BREAKING_SPACE = "\u00A0";

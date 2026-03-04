@@ -229,7 +229,9 @@ public class GenericDocumentApiService {
 
     public DocumentConfigResponse getDocumentConfig(@NotNull XmlDocument document, @NotNull StructureContext structure,
                                                     String clientContextToken) {
+        this.documentLanguageContext.setDocumentLanguage(document.getMetadata().get().getLanguage());
         structure.useDocumentTemplate(this.getDocTemplate(document));
+        structure.useTranslated(this.isCustomTemplateAct(document) && this.isTranslated(document));
         this.populateCloneProposalMetadata(document);
         LeosMetadata documentMetadata = document.getMetadata().get();
         List<LeosMetadata> documentsMetadataList = packageService.getDocumentsMetadata(documentMetadata.getRef());
@@ -251,6 +253,8 @@ public class GenericDocumentApiService {
             contextRole = tokenService.extractUserRoleFromToken(clientContextToken);
             profile = profileService.getProfile(tokenService.extractUserSystemNameFromToken(clientContextToken),
                     documentMetadata.getLanguage());
+        } else if (documentMetadata.isCustomTemplateAct() && packageService.findPackageByDocumentId(document.getId()).getTranslated()) {
+            profile = profileService.getProfile("EDIT_MULTILINGUAL", documentMetadata.getLanguage());
         }
 
         return new DocumentConfigResponse(
@@ -585,21 +589,11 @@ public class GenericDocumentApiService {
         return this.cloneContextProvider.get();
     }
 
-    private Proposal getDocProposal(XmlDocument document) {
-        return Optional.of(document)
-                .map(XmlDocument::getMetadata)
-                .map(metadata -> this.packageService.findPackageByDocumentRef(metadata.get().getRef(),
-                        XmlDocument.class))
-                .map(pack -> this.proposalService.findProposalByPackagePath(pack.getPath()))
-                .orElse(null);
-    }
-
     private void populateCloneProposalMetadata(@NotNull XmlDocument document) {
         Proposal proposal = this.getDocProposal(document);
         if (proposal != null && proposal.isClonedProposal()) {
             byte[] xmlContent = this.getDocumentContent(proposal);
-            CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(
-                    xmlContent);
+            CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(proposal);
             this.getCloneContext().setCloneProposalMetadataVO(cloneProposalMetadataVO);
         }
     }
@@ -627,6 +621,18 @@ public class GenericDocumentApiService {
         return Optional.of(this.getDocMetadata(document))
                 .map(LeosMetadata::getRef)
                 .orElse(null);
+    }
+
+    private boolean isCustomTemplateAct(XmlDocument document) {
+        return Optional.of(this.getDocMetadata(document))
+                .map(LeosMetadata::isCustomTemplateAct)
+                .orElse(false);
+    }
+
+    private boolean isTranslated(XmlDocument document) {
+        return Optional.of(this.getDocMetadata(document))
+                .map(LeosMetadata::isTranslated)
+                .orElse(false);
     }
 
     private LeosMetadata getDocMetadata(XmlDocument document) {
@@ -721,6 +727,15 @@ public class GenericDocumentApiService {
     public VersionVO getDocumentByVersion(LeosCategoryClass documentType, String docRef, String version) {
         XmlDocument leosDocument = (XmlDocument) leosRepository.findDocumentByVersion( LeosCategoryClass.valueOf(documentType.name()).getClazz(), docRef, version);
         return VersionsUtil.getVersionVO(messageHelper, userHelper, leosDocument);
+    }
+
+    public Proposal getDocProposal(XmlDocument document) {
+        return Optional.of(document)
+                .map(XmlDocument::getMetadata)
+                .map(metadata -> this.packageService.findPackageByDocumentRef(metadata.get().getRef(),
+                        XmlDocument.class))
+                .map(pack -> this.proposalService.findProposalByPackagePath(pack.getPath()))
+                .orElse(null);
     }
 
     private List<String> getAncestorsIdsForElementId(XmlDocument xmlDocument, List<String> elementIds) {

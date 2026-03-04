@@ -9,7 +9,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
-import java.sql.Statement;
 
 @Repository
 @ConditionalOnBean(JdbcTemplate.class)
@@ -23,7 +22,7 @@ public class LoggingEventRepository {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(sql, new String[]{"event_id"});
             ps.setLong(1, event.getTimestamp());
             ps.setString(2, event.getFormattedMessage());
             ps.setString(3, event.getLoggerName());

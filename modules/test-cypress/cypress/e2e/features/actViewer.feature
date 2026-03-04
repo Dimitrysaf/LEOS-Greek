@@ -50,7 +50,7 @@ Feature: act viewer page Regression Features
       | Export as Legiswrite |
       | Validate             |
       | Copy/Change act      |
-      | Delete               |
+      | Delete act           |
     When click on download button
     When  extract recent "zip" file present in download folder
     When  extract recent "leg" file present in download folder

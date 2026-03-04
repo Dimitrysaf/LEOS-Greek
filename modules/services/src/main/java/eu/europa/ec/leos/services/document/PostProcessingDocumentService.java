@@ -28,7 +28,6 @@ public abstract class PostProcessingDocumentService {
 
     public abstract Result<?> processDocument(DocumentVO documentVO);
     public abstract Result<?> saveOriginalProposalIdToClonedProposal(DocumentVO documentVO, String legFileName, String iscRef);
-    public abstract Result<?> saveClonedProposalIdToOriginalProposal(DocumentVO documentVO, CollectionIdsAndUrlsHolder idsAndUrlsHolder, CloneProposalMetadataVO cloneProposalMetadataVO);
 
     public byte[] preserveDocumentReference(byte[] xmlContent) {
         byte[] updatedDocContent = xmlContentProcessor.removeElement(xmlContent, xPathCatalog.getXPathRefOrigin(), true);
@@ -38,56 +37,6 @@ public abstract class PostProcessingDocumentService {
         updatedDocContent = xmlContentProcessor.removeDuplicateIds(updatedDocContent,true);
         LOG.info("Moved value '{}' of the filed <leos:ref> to <leos:refOrigin>", documentReference);
         return updatedDocContent;
-    }
-
-    public byte[] preserveOriginalDocumentProperties(byte[] xmlContent, String legFileName, String iscRef) {
-        String clonedProposalXPath = xPathCatalog.getXPathClonedProposal();
-        boolean clonedProposalsPresent = xmlContentProcessor.evalXPath(xmlContent, clonedProposalXPath, true);
-        if(clonedProposalsPresent) {
-            xmlContent = xmlContentProcessor.removeElement(xmlContent, clonedProposalXPath, true);
-        }
-
-        xmlContent = xmlContentProcessor.insertElement(xmlContent, xPathCatalog.getXPathRef(), true
-                , "<leos:clonedProposal>true</leos:clonedProposal>");
-
-        String documentReference = Strings.nullToEmpty(xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRef(), true));
-        String objectId = Strings.nullToEmpty(xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathObjectId(), true));
-        StringBuilder originRefBuilder = buildRefOriginForCloneNode(legFileName, iscRef, documentReference, objectId);
-        return xmlContentProcessor.insertElement(xmlContent, xPathCatalog.getXPathRef(), true, originRefBuilder.toString());
-    }
-
-    private StringBuilder buildRefOriginForCloneNode(String legFileName, String iscRef, String documentReference, String objectId) {
-        StringBuilder originRefBuilder = new StringBuilder();
-        originRefBuilder.append("<leos:refOriginForClone ref=\"").append(documentReference).append("\">")
-                .append("<originMilestone>").append(legFileName).append("</originMilestone>")
-                .append("<iscRef>").append(iscRef).append("</iscRef>")
-                .append("<objectId>").append(objectId).append("</objectId>")
-                .append("</leos:refOriginForClone>");
-        return originRefBuilder;
-    }
-
-    public byte[] preserveClonedDocumentProperties(byte[] xmlContent, String clonedDocumentId,
-                                                   CloneProposalMetadataVO cloneProposalMetadataVO, String docVersion) {
-        boolean clonedProposalsPresent = xmlContentProcessor.evalXPath(xmlContent, xPathCatalog.getXPathClonedProposals(), true);
-        String legFileName = cloneProposalMetadataVO.getLegFileName();
-        String newClonedRef = getNewClonedRef(clonedDocumentId, cloneProposalMetadataVO, legFileName, docVersion);
-        if (clonedProposalsPresent) {
-            boolean milestoneRefPresent = xmlContentProcessor.evalXPath(xmlContent, xPathCatalog.getXPathCPMilestoneRefByNameAndVersionAttr(legFileName, docVersion), true);
-            if (milestoneRefPresent) {
-                return xmlContentProcessor.insertElement(xmlContent, xPathCatalog.getXPathCPMilestoneRefClonedProposalRefByNameAndVersionAttr(legFileName, docVersion), true,
-                        addClonedProposalRef(clonedDocumentId, cloneProposalMetadataVO));
-            } else {
-                return xmlContentProcessor.insertElement(xmlContent, xPathCatalog.getXPathCPMilestoneRef(), true, newClonedRef);
-            }
-        } else {
-            return xmlContentProcessor.insertElement(xmlContent, xPathCatalog.getXPathRef(), true,
-                    "<leos:clonedProposals>" + newClonedRef + "</leos:clonedProposals>");
-        }
-    }
-
-    public byte[] preserveClonedDocumentProperties(byte[] xmlContent, String clonedDocumentId,
-            CloneProposalMetadataVO cloneProposalMetadataVO) {
-        return this.preserveClonedDocumentProperties(xmlContent, clonedDocumentId, cloneProposalMetadataVO, "");
     }
 
     private String getNewClonedRef(String clonedDocumentId, CloneProposalMetadataVO cloneProposalMetadataVO, String legFileName, String docVersion) {

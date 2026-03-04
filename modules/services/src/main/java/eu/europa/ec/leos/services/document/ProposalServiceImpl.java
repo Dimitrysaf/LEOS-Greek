@@ -22,6 +22,7 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.CorrigendumAddendumMetadata;
@@ -96,6 +97,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 import static eu.europa.ec.leos.services.utils.LanguageMapUtils.getTranslatedProposalReference;
 import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 import static eu.europa.ec.leos.util.LeosDomainUtil.getLeosDateFromString;
+import static eu.europa.ec.leos.util.LeosDomainUtil.getLeosDateFromInstant;
 
 @RequiredArgsConstructor
 public abstract class ProposalServiceImpl implements ProposalService {
@@ -143,6 +145,16 @@ public abstract class ProposalServiceImpl implements ProposalService {
         LOG.trace("Updating Proposal... [id={}, metadata={}, versionType={}, comment={}]", proposal.getId(), updatedMetadata, versionType, comment);
         this.documentLanguageContext.setDocumentLanguage(proposal.getMetadata().get().getLanguage());
         byte[] xmlContent = getContent(proposal);
+        byte[] updatedBytes = updateDataInXml(xmlContent, updatedMetadata);
+        proposal = proposalRepository.updateProposal(proposal.getId(), updatedMetadata, updatedBytes, versionType, comment);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return proposal;
+    }
+
+    @Override
+    public Proposal updateProposal(Proposal proposal, ProposalMetadata updatedMetadata, byte[] xmlContent, VersionType versionType, String comment) {
+        LOG.trace("Updating Proposal... [id={}, metadata={}, versionType={}, comment={}]", proposal.getId(), updatedMetadata, versionType, comment);
+        this.documentLanguageContext.setDocumentLanguage(proposal.getMetadata().get().getLanguage());
         byte[] updatedBytes = updateDataInXml(xmlContent, updatedMetadata);
         proposal = proposalRepository.updateProposal(proposal.getId(), updatedMetadata, updatedBytes, versionType, comment);
         trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
@@ -490,26 +502,122 @@ public abstract class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public CloneProposalMetadataVO getClonedProposalMetadata(byte[] xmlContent) {
-        CloneProposalMetadataVO cloneProposalMetadataVO = new CloneProposalMetadataVO();
-        try {
-            boolean isClonedProposal = xmlContentProcessor.evalXPath(xmlContent, xPathCatalog.getXPathClonedProposal(), true);
-            if (isClonedProposal) {
-                String clonedFromRef = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneRefAttr(), true);
-                String legFileName = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneOriginalMilestone(), true);
-                String iscRef = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneIscRef(), true);
-                String clonedFromObjectId = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneObjectId(), true);
-                boolean isExternalClone = !Strings.CS.equals(cloneOriginRef, iscRef);
+    public List<Proposal> searchClonesOfOriginalProposal(String proposalRef) throws Exception {
+        return proposalRepository.findClonedProposal(proposalRef);
+    }
 
-                cloneProposalMetadataVO.setClonedFromRef(clonedFromRef);
-                cloneProposalMetadataVO.setClonedFromObjectId(clonedFromObjectId);
-                cloneProposalMetadataVO.setLegFileName(legFileName);
-                cloneProposalMetadataVO.setOriginRef(iscRef);
-                cloneProposalMetadataVO.setClonedProposal(true);
-                cloneProposalMetadataVO.setExternalClone(isExternalClone);
+    public List<CloneProposalMetadataVO> getClonedProposalMetadataVOs(String proposalRef, String proposalId,  String docVersion, String legDocumentName) {
+        try {
+            Proposal originalProposal = findProposal(proposalId);
+            List<CloneProposalMetadataVO> clonedProposalMetadataVOs = new ArrayList<>();
+            byte[] xmlContent = originalProposal.getContent().get().getSource().getBytes();
+            String xPath = xPathCatalog.getXPathCPMilestoneRefByNameAndVersionAttr(legDocumentName, docVersion);
+            Node node = xmlContentProcessor.getElementByXpath(xmlContent, xPath);
+
+            if (node != null) {
+                List<Node> clonedList = getChildren(node, CLONED_PROPOSAL_REF);
+                for (int i = 0; i < clonedList.size(); i++) {
+                    CloneProposalMetadataVO cloneProposalMetadataVO = new CloneProposalMetadataVO();
+                    Node cloned = clonedList.get(i);
+                    String clonedProposalRef = cloned.getAttributes().item(0).getNodeValue();
+                    // Cloned proposals with contribution marked as done are listed in the cloned milestone ids property
+                    boolean isContributionDone = originalProposal.getClonedMilestoneIds().stream().filter(c -> {
+                        if(c.startsWith(clonedProposalRef)) {
+                            cloneProposalMetadataVO.setRevisionStatus(messageHelper.getMessage("clone.proposal.status.contribution.done"));
+                            String[] milestoneIds = c.split(CMIS_PROPERTY_SPLITTER);
+                            cloneProposalMetadataVO.setLegFileName(milestoneIds[1]);
+                            cloneProposalMetadataVO.setCloneProposalRef(clonedProposalRef);
+                            return true;
+                        } else {
+                            cloneProposalMetadataVO.setRevisionStatus(XercesUtils.getChildContent(cloned, CLONED_STATUS));
+                            return false;
+                        }
+                    }).count() > 0;
+
+                    Proposal clonedProposal = getProposalByRef(clonedProposalRef);
+                    String creationDate = XercesUtils.getChildContent(cloned, CLONED_CREATION_DATE);
+                    String status = isContributionDone ?
+                            messageHelper.getMessage("clone.proposal.status.contribution.done") :
+                            XercesUtils.getChildContent(cloned, CLONED_STATUS);
+                    cloneProposalMetadataVO.setTargetUser(clonedProposal.getCreatedBy());
+                    cloneProposalMetadataVO.setCreationDate(getLeosDateFromString(creationDate));
+                    cloneProposalMetadataVO.setRevisionStatus(status);
+
+                    clonedProposalMetadataVOs.add(cloneProposalMetadataVO);
+                }
+            } else {
+                final List<Proposal> clonedProposals = this.searchClonesOfOriginalProposal(proposalRef+"_"+docVersion);
+                for (Proposal clonedProposal : clonedProposals) {
+                    String clonedProposalRef = clonedProposal.getDocumentRef();
+                    CloneProposalMetadataVO cloneProposalMetadataVO = new CloneProposalMetadataVO();
+                    // Cloned proposals with contribution marked as done are listed in the cloned milestone ids property
+                    boolean isContributionDone = originalProposal.getClonedMilestoneIds().stream().filter(c -> {
+                        if (c.startsWith(clonedProposalRef)) {
+                            cloneProposalMetadataVO.setRevisionStatus(messageHelper.getMessage("clone.proposal.status.contribution.done"));
+                            String[] milestoneIds = c.split(CMIS_PROPERTY_SPLITTER);
+                            cloneProposalMetadataVO.setLegFileName(milestoneIds[1]);
+                            cloneProposalMetadataVO.setCloneProposalRef(clonedProposalRef);
+                            return true;
+                        } else {
+                            cloneProposalMetadataVO.setRevisionStatus(clonedProposal.getRevisionStatus());
+                            return false;
+                        }
+                    }).count() > 0;
+                    String status = isContributionDone ?
+                            messageHelper.getMessage("clone.proposal.status.contribution.done") :
+                            clonedProposal.getRevisionStatus();
+                    cloneProposalMetadataVO.setTargetUser(clonedProposal.getCreatedBy());
+                    cloneProposalMetadataVO.setCreationDate(getLeosDateFromInstant(clonedProposal.getCreationInstant()));
+                    cloneProposalMetadataVO.setRevisionStatus(status);
+                    clonedProposalMetadataVOs.add(cloneProposalMetadataVO);
+                }
             }
+            clonedProposalMetadataVOs.sort(Comparator.comparing(CloneProposalMetadataVO::getCreationDate).reversed());
+            return clonedProposalMetadataVOs;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    @Override
+    public CloneProposalMetadataVO getClonedProposalMetadata(XmlDocument xmlDocument) {
+
+        CloneProposalMetadataVO cloneProposalMetadataVO = new CloneProposalMetadataVO();
+        boolean isClonedProposal = false;
+        byte[] xmlContent = xmlDocument.getContent().get().getSource().getBytes();
+        try {
+            isClonedProposal = xmlContentProcessor.evalXPath(xmlContent, xPathCatalog.getXPathClonedProposal(), true);
         } catch (Exception e) {
             LOG.error("Error occurred while evaluation xpath expression", e);
+        }
+        if (isClonedProposal) {
+            String clonedFromRef = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneRefAttr(), true);
+            String legFileName = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneOriginalMilestone(), true);
+            String iscRef = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneIscRef(), true);
+            String clonedFromObjectId = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneObjectId(), true);
+            boolean isExternalClone = !Strings.CS.equals(cloneOriginRef, iscRef);
+
+            cloneProposalMetadataVO.setClonedFromRef(clonedFromRef);
+            cloneProposalMetadataVO.setClonedFromObjectId(clonedFromObjectId);
+            cloneProposalMetadataVO.setLegFileName(legFileName);
+            cloneProposalMetadataVO.setOriginRef(iscRef);
+            cloneProposalMetadataVO.setClonedProposal(true);
+            cloneProposalMetadataVO.setExternalClone(isExternalClone);
+        } else {
+            String docRef = xmlContentProcessor.getElementValue(xmlDocument.getContent().get().getSource().getBytes(), xPathCatalog.getXPathRef(), true);
+            LeosPackage CPlegPackage = packageService.findPackageByDocumentRef(docRef, Proposal.class);
+            List<LegDocument> CPlegDoc = packageService.findDocumentsByPackageId(CPlegPackage.getId(), LegDocument.class, false, true);
+            String CPlegDocName = null;
+            if (CPlegDoc != null && !CPlegDoc.isEmpty()) {
+                CPlegDocName = CPlegDoc.get(0).getName();
+            }
+            if (StringUtils.isNotEmpty((xmlDocument.getClonedFrom()))) {
+                cloneProposalMetadataVO.setClonedProposal(true);
+                cloneProposalMetadataVO.setClonedFromRef(xmlDocument.getClonedFrom());
+                cloneProposalMetadataVO.setLegFileName(CPlegDocName);
+                cloneProposalMetadataVO.setOriginRef(xmlDocument.getOriginRef());
+            }
         }
         return cloneProposalMetadataVO;
     }
@@ -541,51 +649,6 @@ public abstract class ProposalServiceImpl implements ProposalService {
             }
             updateProposal(proposalId, updatedProposalContent);
         }
-    }
-
-    @Override
-    public List<CloneProposalMetadataVO> getClonedProposalMetadataVOs(String proposalId, String legDocumentName, String docVersion) {
-        Proposal proposal = findProposal(proposalId);
-        List<CloneProposalMetadataVO> clonedProposalMetadataVOs = new ArrayList<>();
-        byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
-
-        String xPath = xPathCatalog.getXPathCPMilestoneRefByNameAndVersionAttr(legDocumentName, docVersion);
-        Node node = xmlContentProcessor.getElementByXpath(xmlContent, xPath);
-
-        if (node != null) {
-            List<Node> clonedList = getChildren(node, CLONED_PROPOSAL_REF);
-            for (int i = 0; i < clonedList.size(); i++) {
-                CloneProposalMetadataVO cloneProposalMetadataVO = new CloneProposalMetadataVO();
-                Node cloned = clonedList.get(i);
-                String clonedProposalRef = cloned.getAttributes().item(0).getNodeValue();
-                // Cloned proposals with contribution marked as done are listed in the cloned milestone ids property
-                boolean isContributionDone = proposal.getClonedMilestoneIds().stream().filter(c -> {
-                    if(c.startsWith(clonedProposalRef)) {
-                        cloneProposalMetadataVO.setRevisionStatus(messageHelper.getMessage("clone.proposal.status.contribution.done"));
-                        String[] milestoneIds = c.split(CMIS_PROPERTY_SPLITTER);
-                        cloneProposalMetadataVO.setLegFileName(milestoneIds[1]);
-                        cloneProposalMetadataVO.setCloneProposalRef(clonedProposalRef);
-                        return true;
-                    } else {
-                        cloneProposalMetadataVO.setRevisionStatus(XercesUtils.getChildContent(cloned, CLONED_STATUS));
-                        return false;
-                    }
-                }).count() > 0;
-
-                Proposal clonedProposal = getProposalByRef(clonedProposalRef);
-                String creationDate = XercesUtils.getChildContent(cloned, CLONED_CREATION_DATE);
-                String status = isContributionDone ?
-                        messageHelper.getMessage("clone.proposal.status.contribution.done") :
-                        XercesUtils.getChildContent(cloned, CLONED_STATUS);
-                cloneProposalMetadataVO.setTargetUser(clonedProposal.getCreatedBy());
-                cloneProposalMetadataVO.setCreationDate(getLeosDateFromString(creationDate));
-                cloneProposalMetadataVO.setRevisionStatus(status);
-
-                clonedProposalMetadataVOs.add(cloneProposalMetadataVO);
-            }
-        }
-        clonedProposalMetadataVOs.sort(Comparator.comparing(CloneProposalMetadataVO::getCreationDate).reversed());
-        return clonedProposalMetadataVOs;
     }
 
     @Override

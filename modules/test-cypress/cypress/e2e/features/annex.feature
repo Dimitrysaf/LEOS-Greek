@@ -319,7 +319,7 @@ Feature: Annex Page Regression Features
     And add "Test" at current cursor position in edition mode
     And click on increase indent icon present in ck editor panel
     And click enter from keyboard in edition mode
-    And add "Test" at current cursor position in edition mode
+    And add "test" at current cursor position in edition mode
     And click on increase indent icon present in ck editor panel
     And click save and close button of ck editor
     Then ck editor window is not displayed

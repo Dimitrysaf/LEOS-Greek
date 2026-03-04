@@ -95,7 +95,7 @@ public abstract class TableOfXmlContentProcessorTest extends LeosTest {
         languageMapHolder.loadLanguageMap(languageMap);
         
         byte[] bytesFile = TestUtils.getFileContent(configFile);
-        when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
+        when(templateStructureService.getStructure(docTemplate, false)).thenReturn(bytesFile);
         when(languageHelper.getCurrentLocale()).thenReturn(new Locale("en"));
         
         ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "schema/structure/structure_1.xsd");

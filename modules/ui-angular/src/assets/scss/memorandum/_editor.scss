@@ -19,12 +19,14 @@
         @extend %editorTable;
         @extend %editorList;
         @extend %editorAuthorialNote;
-        
+        @extend %editorAknp;
+
         @extend %editorContentColor;
         @extend %editorFocus;
-        
+
         @extend %editorWidget;
         @extend %editorTrackChanges;
+        @extend %editorUpdateTranslation;
         @extend %editorArticleParagraph;
     }
     .cke_editable.cke_show_blocks {

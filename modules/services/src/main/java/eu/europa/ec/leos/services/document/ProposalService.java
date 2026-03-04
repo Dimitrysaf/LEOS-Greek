@@ -47,6 +47,8 @@ public interface ProposalService {
 
     Proposal updateProposal(Proposal proposal, ProposalMetadata metadata, VersionType versionType, String comment);
 
+    Proposal updateProposal(Proposal proposal, ProposalMetadata metadata, byte[] xmlContent, VersionType versionType, String comment);
+
     Proposal updateProposal(Proposal proposal, ProposalMetadata metadata);
 
     Proposal updateProposal(String ref, String id, Map<String, Object> properties);
@@ -81,11 +83,9 @@ public interface ProposalService {
 
     Proposal findProposalByRef(String ref);
 
-    CloneProposalMetadataVO getClonedProposalMetadata(byte[] xmlContent);
+    CloneProposalMetadataVO getClonedProposalMetadata(XmlDocument xmlDocument);
 
     void removeClonedProposalMetadata(String proposalId, String clonedProposalId, CloneProposalMetadataVO cloneProposalMetadataVO);
-
-    List<CloneProposalMetadataVO> getClonedProposalMetadataVOs(String proposalId, String legDocumentName, String docVersion);
 
     String generateProposalName(String ref, String language);
 
@@ -140,4 +140,8 @@ public interface ProposalService {
     MetadataVO populateProposalMetadataFromXml(byte[] xmlContent, byte[] billContent, MetadataVO metadataVO);
 
     String findDocumentRefByPackageIdAndCategory(String packageId, String categoryCode);
+
+    List<Proposal> searchClonesOfOriginalProposal(String proposalRef) throws Exception;
+
+    List<CloneProposalMetadataVO> getClonedProposalMetadataVOs(String proposalRef, String proposalId, String docVersion, String legDocumentName);
 }

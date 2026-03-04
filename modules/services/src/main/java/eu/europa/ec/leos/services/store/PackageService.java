@@ -65,4 +65,6 @@ public interface PackageService {
     void useOriginRef(String originRef);
 
     List<CollaboratorVO> getPackageCollaborators(String packageId);
+
+    LeosPackage findPackageByLegFileId(String legFileId);
 }

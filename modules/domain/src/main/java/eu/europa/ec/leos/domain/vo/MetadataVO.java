@@ -35,6 +35,7 @@ public class MetadataVO {
     private String language; // always should be set to language Code
     private boolean eeaRelevance;
     private boolean customTemplateAct;
+    private boolean translated;
     private String templateName;
     private String template;
     private String docTemplateCategory;
@@ -101,6 +102,7 @@ public class MetadataVO {
         this.setNumber(null);
         this.setEeaRelevance(false);
         this.setCustomTemplateAct(false);
+        this.setTranslated(false);
         this.setCallbackAddress(null);
         this.setImported(false);
         this.setAuthenticLang(null);

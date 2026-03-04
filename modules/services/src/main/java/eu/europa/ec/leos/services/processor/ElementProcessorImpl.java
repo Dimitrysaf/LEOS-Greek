@@ -21,6 +21,7 @@ import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.vo.structure.OptionsType;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -28,11 +29,15 @@ import io.atlassian.fugue.Pair;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Node;
 
 import jakarta.inject.Provider;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
+import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XercesUtils.getId;
 import static eu.europa.ec.leos.services.support.XmlHelper.HEADING;
 
 @Service
@@ -105,8 +110,9 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
         Validate.notNull(document, "Document is required.");
         Validate.notNull(elementId, "Element id is required.");
 
-        List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         byte[] byteXmlContent = getContent(document);
+        validateNoStructuralChangesInCustomTemplateLinguisticVersion(document, elementContent, byteXmlContent);
+        List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         elementContent = removeEmptyHeading(byteXmlContent, elementContent, elementName, elementId, tocItems);
         // merge the updated content with the actual document and return updated document
         byte[] contentBytes = getContent(document);
@@ -119,6 +125,14 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
         }
         contentBytes = xmlContentProcessor.replaceElementById(contentBytes, elementContent, elementId, true);
         return contentBytes;
+    }
+
+    private void validateNoStructuralChangesInCustomTemplateLinguisticVersion(T document, String elementContent, byte[] byteXmlContent) {
+        if (document.getMetadata().get().isCustomTemplateAct() && document.getMetadata().get().isTranslated()) {
+            Node newNode = createXercesDocument(elementContent.getBytes(StandardCharsets.UTF_8), false).getFirstChild();
+            Node oldNode = XercesUtils.getElementById(byteXmlContent, getId(newNode));
+            xmlContentProcessor.alignAllIds(oldNode, newNode, document.getCategory().toString());
+        }
     }
 
     @Override

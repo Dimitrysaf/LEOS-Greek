@@ -303,7 +303,7 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
     const templateName = this.templateNameCtrl.value as string;
     const dgCodes = this.dgCtrl.value as string[];
 
-    this.detailsService.publishTemplateToDgCatalog(this.milestone, templateName, dgCodes);
+    this.detailsService.publishTemplateToDgCatalog(this.milestone, templateName, dgCodes, false);
 
     this.close();
   }

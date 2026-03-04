@@ -150,10 +150,4 @@ public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
         throw new ExportException("External system to export documents not available for this instance");
     }
 
-    private boolean isClonedProposal(XmlDocument original) {
-        byte[] xmlBytes = original.getContent().get().getSource().getBytes();
-        CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(xmlBytes);
-        return cloneProposalMetadataVO != null && cloneProposalMetadataVO.isClonedProposal();
-    }
-
 }

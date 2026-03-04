@@ -13,6 +13,8 @@ public interface StructureService {
     
     List<TocItem> getTocItems(String docTemplate);
     
+    List<TocItem> getTocItems(String docTemplate, boolean translated);
+    
     Map<TocItem, List<TocItem>> getTocRules(String docTemplate);
 
     Map<TocItem, List<List<TocItem>>> getTocRulesOrders(String docTemplate);

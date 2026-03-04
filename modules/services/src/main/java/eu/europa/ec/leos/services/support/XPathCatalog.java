@@ -27,8 +27,8 @@ public class XPathCatalog {
         return "/akn:akomaNtoso//akn:meta/akn:proprietary";
     }
 
-    public static String getXPathProprietaryPageCount() {
-        return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:pageCount";
+    public static String getXPathProprietaryDocPurpose() {
+        return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:docPurpose";
     }
 
     public String getXPathRefOriginForCloneRefAttr() {

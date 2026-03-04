@@ -34,4 +34,13 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(PendingTranslationException.class)
+    public ResponseEntity<ExceptionResponse> handleException(PendingTranslationException ex) {
+        if (Arrays.stream(ex.getStackTrace()).findFirst().isPresent()) {
+            LOG.error("Unexpected error occurred :" + Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);
+        }
+        return new ResponseEntity<>(new ExceptionResponse(ex.getErrorCode().toString(), ex.getMessageKey()),
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 }

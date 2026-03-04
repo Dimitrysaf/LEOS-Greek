@@ -22,6 +22,7 @@ import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
@@ -71,8 +72,10 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import io.atlassian.fugue.Option;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,7 +108,8 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     private static final String DELETE_ISN_T_SUPPORTED_FOR_COVER_PAGE = "Delete isn't supported for cover page";
     private static final String OCCURRED_WHILE_USING_EXPORT_SERVICE = "Unexpected error occurred while using ExportService";
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
-
+    private static final String PROPOSAL_METADATA_IS_REQUIRED = "Proposal metadata is required!";
+    private static final String PROPOSAL_PURPOSE_IS_REQUIRED = "Proposal purpose is required!";
     ProposalService proposalService;
     DocumentViewService<Proposal> documentViewService;
     DocumentContentService documentContentService;
@@ -202,7 +206,6 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     public SaveElementResponse saveElement(String documentRef, String elementId, String elementName,
                                            String elementFragment, boolean isSplit, String alternateElementId) {
         String docPurpose = proposalService.getPurposeFromXml(elementFragment.getBytes());
-
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
         this.populateCloneProposalMetadata(proposal);
         byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
@@ -210,21 +213,15 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
                 Arrays.asList("docPurpose"), false);
         // Check if new doc purpose is not empty
         if (docPurpose != null && docPurpose.trim().replaceAll("(^\\h*)|(\\h*$)", "").length() > 0) {
-
             elementFragment = elementProcessor.updateReferences(elementFragment, proposal);
             byte[] newXmlContent =
                     !docPurposeElements.isEmpty() ? xmlContentProcessor.replaceElementById(proposalContent,
                             elementFragment,
                             docPurposeElements.get(0).getElementId(), true) : null;
-
             if (newXmlContent == null) {
                 return null;
             }
-
-            proposal = proposalService.updateProposal(proposal, newXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.docpurpose.updated"));
-
-            this.contextExecuteUpdateDocumentsAssociatedToProposal(proposal, docPurpose);
-
+            proposal = this.updateProposalAndDocumentsAssociated(proposal, newXmlContent, docPurpose, null);
             String newContent = elementProcessor.getElement(proposal, elementName, elementId);
             return new SaveCoverPageElementResponse(elementId, elementName, newContent, proposal.getTitle());
         }
@@ -307,21 +304,34 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
                 Arrays.asList("docPurpose"), true);
         String elementFragment = docPurposeElements.get(0).getElementFragment();
         String docPurpose = proposalService.getPurposeFromXml(elementFragment.getBytes());
-        this.contextExecuteUpdateDocumentsAssociatedToProposal(updatedProposal,  docPurpose);
-
+        
+        updatedProposal = this.updateProposalAndDocumentsAssociated(updatedProposal,  proposalContent, docPurpose, null);
         return this.documentViewService.updateDocumentView(updatedProposal);
     }
 
-    private void contextExecuteUpdateDocumentsAssociatedToProposal(Proposal proposal, String docPurpose) {
+    private Proposal updateProposalAndDocumentsAssociated(Proposal proposal, byte[] xmlContent, String docPurpose, String comment) {
+        Option<ProposalMetadata> metadataOption = proposal.getMetadata();
+        Validate.isTrue(metadataOption.isDefined(), PROPOSAL_METADATA_IS_REQUIRED);
+        Validate.notNull(docPurpose, PROPOSAL_PURPOSE_IS_REQUIRED);
+        ProposalMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(docPurpose)
+                .withEeaRelevance(proposal.getMetadata().get().getEeaRelevance())
+                .build();
+        String messageDocPurposeUpdated = messageHelper.getMessage("operation.docpurpose.updated");
+        proposal = proposalService.updateProposal(proposal, metadata, xmlContent,
+                VersionType.MINOR, comment != null ? comment : messageDocPurposeUpdated);
+
         CollectionContextService context = proposalContextProvider.get();
         context.useProposal(proposal);
         context.usePurpose(docPurpose);
         context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
-        String comment = messageHelper.getMessage("operation.docpurpose.updated");
+        comment = messageDocPurposeUpdated;
         context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
         context.useActionComment(comment);
         context.useVersionType(VersionType.MINOR);
         context.executeUpdateDocumentsAssociatedToProposal();
+        return proposal;
     }
 
     @Override
@@ -419,10 +429,16 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     @Override
     public DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event) {
         Proposal proposal = this.proposalService.findProposalByRef(event.getDocumentRef());
-        Proposal updateProposal = proposalService.updateProposal(proposal,
-                event.getUpdatedContent().getBytes(StandardCharsets.UTF_8), VersionType.MINOR,
+        List<Element> docPurposeElements = xmlContentProcessor.getElementsByTagName(event.getUpdatedContent().getBytes(),
+                Arrays.asList("docPurpose"), true);
+        String elementFragment = docPurposeElements.get(0).getElementFragment();
+        String docPurpose = proposalService.getPurposeFromXml(elementFragment.getBytes());
+
+        Proposal updatedProposal = this.updateProposalAndDocumentsAssociated(proposal,
+                event.getUpdatedContent().getBytes(StandardCharsets.UTF_8), docPurpose,
                 messageHelper.getMessage("operation.search.replace.updated"));
-        return documentViewService.updateDocumentView(updateProposal);
+
+        return documentViewService.updateDocumentView(updatedProposal);
     }
 
     @Override
@@ -569,7 +585,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     private void populateCloneProposalMetadata(Proposal proposal) {
         if (proposal != null && proposal.isClonedProposal()) {
             byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
-            CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(xmlContent);
+            CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(proposal);
             cloneContext.get().setCloneProposalMetadataVO(cloneProposalMetadataVO);
         }
     }

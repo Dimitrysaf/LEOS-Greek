@@ -24,6 +24,7 @@ import eu.europa.ec.leos.integration.ExternalSystemACLService;
 import eu.europa.ec.leos.repository.document.ProposalRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.api.ContributionApiService;
 import eu.europa.ec.leos.services.collection.WorkflowCollaboratorService;
 import eu.europa.ec.leos.services.metadata.MetadataService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
@@ -38,6 +39,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 
@@ -78,6 +82,11 @@ public class ProposalServiceMandateImpl extends ProposalServiceImpl {
     @Override
     public String generateProposalName(String ref, String language) {
         return PROPOSAL_NAME_PREFIX + XML_DOC_EXT;
+    }
+
+    @Override
+    public List<Proposal> searchClonesOfOriginalProposal(String proposalRef) throws Exception {
+        return Collections.emptyList();
     }
 
     @Override

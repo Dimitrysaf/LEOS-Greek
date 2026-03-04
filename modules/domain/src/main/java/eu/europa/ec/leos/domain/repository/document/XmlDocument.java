@@ -8,6 +8,8 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.model.user.Collaborator;
 import io.atlassian.fugue.Option;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
 import java.util.List;
@@ -17,6 +19,15 @@ public abstract class XmlDocument extends LeosDocument implements Securable {
     private final List<String> milestoneComments;
     private SecurityData securityData;
     private final boolean trackChangesEnabled;
+    @Getter
+    @Setter
+    private String originRef;
+    @Getter
+    @Setter
+    private String clonedFrom;
+    @Getter
+    @Setter
+    private String revisionStatus;
 
     protected XmlDocument(LeosCategory category, String id, String name, String createdBy,
                           Instant creationInstant, String lastModifiedBy, Instant lastModificationInstant,

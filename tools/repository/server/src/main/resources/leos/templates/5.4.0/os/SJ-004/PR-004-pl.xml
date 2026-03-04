@@ -67,11 +67,6 @@
                     <docNumber class="template"/>
                 </block>
             </container>
-            <container name="procedureIdentifier" class="template">
-                <p>
-                    <docketNumber class="template"/>
-                </p>
-            </container>
             <longTitle>
                 <p>
                     <docType refersTo="~REG_IMPL">ROZPORZĄDZENIE WYKONAWCZE KOMISJI (UE) …/…</docType> z dnia <date date="2999-01-01">XXX</date>r.

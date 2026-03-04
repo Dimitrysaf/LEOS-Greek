@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import eu.europa.ec.leos.services.utils.LegUtils;
 import jakarta.inject.Provider;
 
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
@@ -171,6 +172,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             context.useTranslated(false);
             context.useTemplateKey(documentVO.getMetadata().getTemplate());
             context.useExistingDocuments(documents);
+            context.useIdsAndUrlsHolder(idsAndUrlsHolder);
             //create proposal
             Proposal proposal = context.executeCreateProposal();
 
@@ -225,12 +227,12 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             CreateCollectionError error = new CreateCollectionError(e.getErrorCode().ordinal(), e.getMessage());
             return new CreateCollectionResult(idsAndUrlsHolder, false, error);
         }
-
+        String docVersion = LegUtils.fetchMilestoneVersion(propDocument);
         //set metadata to cloned proposal
         CloneProposalMetadataVO cloneProposalMetadataVO = new CloneProposalMetadataVO();
         cloneProposalMetadataVO.setClonedProposal(Boolean.TRUE);
         cloneProposalMetadataVO.setOriginRef(originRef);
-        cloneProposalMetadataVO.setClonedFromRef(propDocument.getRef());
+        cloneProposalMetadataVO.setClonedFromRef(propDocument.getRef()+"_"+docVersion);
         cloneProposalMetadataVO.setClonedFromObjectId(propDocument.getId());
         cloneProposalMetadataVO.setLegFileName(legDocument.getName());
         cloneProposalMetadataVO.setTargetUser(targetUser);
@@ -272,7 +274,6 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         //set clone creation date to original proposal
         cloneProposalMetadataVO.setCreationDate(Date.from(proposal.getInitialCreationInstant()));
 
-        result = postProcessingDocumentService.saveClonedProposalIdToOriginalProposal(propDocument, idsAndUrlsHolder, cloneProposalMetadataVO);
         if (result.isError()) {
             //In case of error delete the cloned proposal.
             context.useProposal(proposal);

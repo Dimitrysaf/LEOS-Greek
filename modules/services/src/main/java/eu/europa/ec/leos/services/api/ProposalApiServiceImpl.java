@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.domain.repository.common.ConvalValidationResponse;
 import eu.europa.ec.leos.domain.repository.common.LeosFile;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.i18n.LanguageHelper;
@@ -148,10 +149,10 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
             throw new IllegalStateException("User does not have permission to perform the operation");
         }
         legPackage = legService.createLegPackage(proposal.getId(), new ExportLeos());
-        String validationResult = conValidatorService.validate(legPackage.getFile());
+        ConvalValidationResponse validationResult = conValidatorService.validate(legPackage.getFile());
 
         Map<String, Object> contentToZip = new HashMap<>();
-        contentToZip.put("result.xml", validationResult.getBytes(UTF_8));
+        contentToZip.put("result.xml", validationResult.getResult().getBytes(UTF_8));
         contentToZip.put(legPackage.getFile().getName(), legPackage.getFile().getBytes());
         resultZipFile = ZipPackageUtil.zipLeosFiles("validation.zip", contentToZip, "");
 
@@ -180,14 +181,17 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
                         String legFileName = proposalRef + ".leg";
                         validationFile.setName(legFileName);
                         validationFile.setOriginalFileName(legFileName);
-                        String validationResult = conValidatorService.validate(validationFile);
+                        ConvalValidationResponse validationResult = conValidatorService.validate(validationFile);
 
-                        if(StringUtils.isNotEmpty(validationResult)) {
+                        if(StringUtils.isNotEmpty(validationResult.getResult())) {
                             Map<String, Object> validationResultContent = new HashMap<>();
-                            validationResultContent.put("result.xml", validationResult.getBytes(UTF_8));
+                            validationResultContent.put("result.xml", validationResult.getResult().getBytes(UTF_8));
                             validationResultContent.put(legFileName, validationFile.getBytes());
                             LeosFile resultZipFile = ZipPackageUtil.zipLeosFiles("validation.zip", validationResultContent, "");
-                            sendNotification(proposalTitle, proposalRef, email, userName, resultZipFile.getBytes());
+
+                            if (!validationResult.isValid()) {
+                                sendNotification(proposalTitle, proposalRef, email, userName, resultZipFile.getBytes());
+                            }
                             setDocumentsValidationStatus(xmlDocuments);
                         }
 

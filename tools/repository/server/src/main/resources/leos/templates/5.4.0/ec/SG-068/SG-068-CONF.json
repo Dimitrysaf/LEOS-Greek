@@ -15,7 +15,12 @@
   ],
   "structure": [
     {
+      "mode": "main",
       "name": "structure_02"
+    },
+    {
+      "mode": "translated",
+      "name": "structure_02_translated"
     }
   ]
 }

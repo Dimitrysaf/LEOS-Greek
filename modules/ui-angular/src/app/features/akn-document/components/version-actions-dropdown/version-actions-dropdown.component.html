@@ -21,7 +21,7 @@
       </button>
       <button
         euiDropdownItem
-        *ngIf="(canRevertVersion | async) &&  isLatestRecentVersion(version) === false"
+        *ngIf="canRevertVersion() && isLatestRecentVersion(version) === false"
         (click)="handleVersionRevertOpenEditor(version.documentId, version.versionNumber)"
       >
         {{ 'page.editor.versions.actions.revert' | translate }}

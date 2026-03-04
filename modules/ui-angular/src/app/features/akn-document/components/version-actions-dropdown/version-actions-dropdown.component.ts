@@ -18,7 +18,7 @@ import { AppConfigService } from '@/core/services/app-config.service';
 import { VersionsPaneGroupComponent } from '@/features/akn-document/components/versions-pane-group/versions-pane-group.component';
 
 import { ViewVersionService } from '../../services/view-version.service';
-import Observable from "rxjs";
+import {of} from "rxjs";
 import {EuiMessageBoxComponent} from "@eui/components/eui-message-box";
 import {DOCUMENT_ACTIONS_SERVICE} from "@/features/akn-document/akn-document.module";
 import {DocumentActionsService} from "@/features/akn-document/services/document-actions.service";
@@ -42,7 +42,6 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
   archiveModalText: string;
   versionToRevert = '';
   isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
-  canRevertVersion: any;
   versionToArchive: Version;
 
   private removeEventListener?: () => void;
@@ -60,12 +59,11 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.interceptClicks(this.elementRef.nativeElement);
     this.disabled = this.version.mostRecentVersion;
-    this.findUpdatePermission();
     this.setArchivePermission();
   }
 
-  findUpdatePermission() {
-    this.canRevertVersion = this.doc.hasUpdatePermission();
+  canRevertVersion() {
+    return this.versionsPaneGroupComponent?.canRevertVersion;
   }
 
   ngOnDestroy(): void {

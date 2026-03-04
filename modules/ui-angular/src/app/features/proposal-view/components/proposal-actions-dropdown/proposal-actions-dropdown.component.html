@@ -31,9 +31,9 @@
         </button>
       </ng-container>
       <ng-container>
-        <button euiDropdownItem *ngIf="permissions.includes('CAN_DELETE') && !translated" (click)="handleConfirmationDelete()"
+        <button euiDropdownItem *ngIf="canDelete" (click)="handleConfirmationDelete()"
                 class=eui-u-color-danger-100>
-          {{ 'global.actions.delete' | translate }}
+          {{ deleteActionMessage }}
         </button>
         <app-confirm-delete-dialog
           #proposalDeleteConf

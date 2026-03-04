@@ -22,6 +22,15 @@ define(function aknHtmlItalicPluginModule(require) {
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
     var aknHTMLPluginsUtils = require("plugins/aknHTMLPluginUtils");
 
+    var changeStateElements = {
+        citation: {
+            elementName: 'citation'
+        },
+        recital: {
+            elementName: 'recital'
+        }
+    };
+
     var pluginDefinition = {
         init: function init(editor) {
             editor.on('selectionChange', _onSelectionChange, null, null, 11);
@@ -61,7 +70,7 @@ define(function aknHtmlItalicPluginModule(require) {
     };
 
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event.editor, "italic");
+        leosCommandStateHandler.changeCommandState(event.editor, "italic", changeStateElements);
     }
 
     pluginTools.addTransformationConfigForPlugin(transformationConfig, pluginName);

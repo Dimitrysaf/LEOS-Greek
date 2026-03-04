@@ -78,6 +78,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service("memorandum")
@@ -186,7 +187,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         byte[] newXmlContent = elementProcessor.updateElement(memorandum, elementFragment, elementName, elementId,
                 false);
         memorandum = memorandumService.updateMemorandum(memorandum, newXmlContent, VersionType.MINOR,
-                messageHelper.getMessage("operation." + elementName + ".updated"));
+                messageHelper.getMessage("operation.blockContainer.updated"));
 
         String elementContent = elementProcessor.getElement(memorandum, elementName, elementId);
         return new SaveElementResponse(elementId, elementName, elementContent);
@@ -459,8 +460,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     protected void populateCloneProposalMetadata(XmlDocument document) {
-        CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(
-                this.getContent(document));
+        Proposal proposal = genericDocumentApiService.getDocProposal(document);
+        CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(proposal);
         this.cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
     }
 

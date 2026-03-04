@@ -87,7 +87,7 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
   }
 
   handleDelete() {
-    this.proposalDetailsService.deleteProposal();
+    this.proposalDetailsService.deleteProposal(this.proposalLanguage);
   }
 
   handleConfirmationDelete() {
@@ -104,11 +104,24 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
     }
   }
 
+  get canDelete(): boolean {
+    return this.permissions?.includes('CAN_DELETE') && (!this.customTemplateAct || this.permissions?.includes('CAN_CREATE_TEMPLATE'));
+  }
+
   get confirmDeleteMessage() {
-    let message = this.translateService.instant('page.collection.proposal-header.actions.delete-dialog.desc');
-    if (this.translatedLanguages?.length > 0) {
+    let message = this.getMessage('page.collection.proposal-header.actions.delete-dialog.desc');
+    if (!this.translated && this.translatedLanguages?.length > 0) {
       message += '<br><br>' + this.translateService.instant('page.collection.proposal-header.actions.delete-dialog.linguistic-versions');
     }
     return message;
+  }
+
+  get deleteActionMessage() {
+    return this.getMessage('page.collection.proposal-header.actions.delete');
+  }
+
+  getMessage(messageKey: string) {
+    const message = messageKey + (this.translated ? '.linguistic-version' : '');
+    return this.translateService.instant(message);
   }
 }

@@ -180,7 +180,8 @@ public class LeosDocumentExtensions {
                 isTrackChangesEnabled(d),
                 getValidationStatus(d),
                 getPackageLastUpdatedOn(d),
-                getPackageLastUpdatedBy(d));
+                getPackageLastUpdatedBy(d),
+                getDocumentRef(d));
     }
 
     private static Explanatory toCouncilExplanatory(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
@@ -474,18 +475,23 @@ public class LeosDocumentExtensions {
         }
     }
 
+    private static String getDocumentRef(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
+        String documentRef =  document.getRef();
+        return documentRef != null ? documentRef : "";
+    }
+
     private static String getOriginRef(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        String originRef = (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.ORIGIN_REF));
+        String originRef =  document.getOriginRef() != null ? document.getOriginRef() : (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.ORIGIN_REF));;
         return originRef != null ? originRef : "";
     }
 
     private static String getClonedFrom(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        String clonedFrom = (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM));
+        String clonedFrom = document.getClonedFrom() != null ? document.getClonedFrom() :  (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM));
         return clonedFrom != null ? clonedFrom : "";
     }
 
     private static String getRevisionStatus(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        String revisionStatus = (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.REVISION_STATUS));
+        String revisionStatus = document.getRevisionStatus() != null ? document.getRevisionStatus() : (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.REVISION_STATUS));
         return revisionStatus != null ? revisionStatus : "";
     }
 

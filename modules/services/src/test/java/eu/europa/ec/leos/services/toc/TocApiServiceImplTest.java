@@ -103,7 +103,7 @@ public class TocApiServiceImplTest extends LeosTest {
         Content.Source source = new SourceImpl(new ByteArrayInputStream(xmlContent));
         Content content = new ContentImpl("AN-000.xml", "mime type", xmlContent.length, source);
         AnnexMetadata annexMetadata = new AnnexMetadata("", "REGULATION", "", "AN-000.xml", "EN", "AN-000.xml",
-                "ANNEX-cm03pntv70000i0886z718qdc-en.xml", 1, "Annex 1", "title", "", "0.0.1", false, false, STORE_DIR);
+                "ANNEX-cm03pntv70000i0886z718qdc-en.xml", 1, "Annex 1", "title", "", "0.0.1", false, false, false, STORE_DIR);
         Annex annex = new Annex("27", "ANNEX-cm03pntv70000i0886z718qdc-en.xml", "jane", Instant.now(), "jane", Instant.now(),
                 "0.1.0", "", "0.1.0", "", VersionType.MINOR, true,
                 "title", Collections.emptyList(), Arrays.asList(""), "", false, "", "",
@@ -118,7 +118,7 @@ public class TocApiServiceImplTest extends LeosTest {
         languageGroupService = Mockito.spy(new LanguageGroupService(configurationRepository, languageMapHolder));
         languageMapHolder.loadLanguageMap(languageMap);
         byte[] bytesFile = TestUtils.getFileContent("/structure-test-annex-EC.xml");
-        when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
+        when(templateStructureService.getStructure(docTemplate, false)).thenReturn(bytesFile);
         ReflectionTestUtils.setField(structureService, "structureSchema", "schema/structure/structure_1.xsd");
 
         tocItems = structureService.getTocItems(docTemplate);

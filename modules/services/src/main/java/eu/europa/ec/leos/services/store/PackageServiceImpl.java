@@ -17,11 +17,7 @@ import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.LinkedPackage;
-import eu.europa.ec.leos.domain.repository.document.Annex;
-import eu.europa.ec.leos.domain.repository.document.Bill;
-import eu.europa.ec.leos.domain.repository.document.LeosDocument;
-import eu.europa.ec.leos.domain.repository.document.Memorandum;
-import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.*;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CollaboratorVO;
@@ -189,5 +185,11 @@ class PackageServiceImpl implements PackageService {
     @Override
     public List<CollaboratorVO> getPackageCollaborators(String packageId) {
         return packageRepository.getPackageCollaborators(new BigDecimal(packageId));
+    }
+
+    @Override
+    public LeosPackage findPackageByLegFileId(String legFileId) {
+        LegDocument legFile = packageRepository.findLegDocumentById(legFileId, true);
+        return findPackageByPackageId(legFile.getPackageId());
     }
 }

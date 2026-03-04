@@ -14,9 +14,7 @@
 package eu.europa.ec.leos.repository.repositories;
 
 import eu.europa.ec.leos.repository.entities.Document;
-import eu.europa.ec.leos.repository.entities.DocumentVersion;
 import eu.europa.ec.leos.repository.entities.Package;
-import eu.europa.ec.leos.repository.model.LeosDocument;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -36,4 +34,5 @@ public interface DocumentRepository extends JpaRepository<Document, BigDecimal> 
 
     Optional<Document> findDocumentById(BigDecimal documentId);
 
+    List<Document> findByClonedFrom(String clonedFrom);
 }

@@ -25,6 +25,7 @@ import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.api.exception.PendingTranslationException;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.document.SpecificDocumentInformationDTO;
@@ -1330,20 +1331,22 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private void moveSubparagraphsInList(Node node) {
         NodeList nodeList = XercesUtils.getElementsByName(node, SUBPARAGRAPH);
-        if (nodeList.getLength() > 0) {
-            Node lastSubpar = nodeList.item(nodeList.getLength() - 1);
-            Node lastSubparParent = lastSubpar.getParentNode();
-            Node lastSubparParentSibbling = lastSubparParent.getNextSibling();
-            if (lastSubpar.getAttributes().getNamedItem(REFERS_TO_ATTR) != null
-                    && lastSubpar.getAttributes().getNamedItem(REFERS_TO_ATTR).getNodeValue().equals(ENDING_PART)
-                    && Character.isUpperCase(lastSubpar.getTextContent().trim().charAt(0))) {
-                if (lastSubparParentSibbling != null) {
-                    lastSubparParent.getParentNode().insertBefore(lastSubpar, lastSubparParentSibbling);
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node subpara = nodeList.item(i);
+            Node subparaParent = subpara.getParentNode();
+            Node subparaParentSibbling = subparaParent.getNextSibling();
+            Node pOfSubparagraph = getPOfSubparagraph(subpara);
+            if (subpara.getAttributes().getNamedItem(REFERS_TO_ATTR) != null
+                    && subpara.getAttributes().getNamedItem(REFERS_TO_ATTR).getNodeValue().equals(ENDING_PART)
+                    && pOfSubparagraph != null && !Character.isLowerCase(pOfSubparagraph.getTextContent().trim().charAt(0))) {
+                if (subparaParentSibbling != null) {
+                    subparaParent.getParentNode().insertBefore(subpara, subparaParentSibbling);
                 } else {
-                    lastSubparParent.getParentNode().appendChild(lastSubpar);
+                    subparaParent.getParentNode().appendChild(subpara);
                 }
             }
         }
+        nodeList = XercesUtils.getElementsByName(node, SUBPARAGRAPH);
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node subpara = nodeList.item(i);
             Node nextSiblingList = getNextSibling(subpara);
@@ -1359,8 +1362,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     moved = true;
                 }
             }
-            if (!moved && (subpara.getTextContent().isEmpty() || !Character.isUpperCase(subpara.getTextContent().trim().charAt(0)))
-                    && XercesUtils.getElementsByName(subpara, "table").getLength() == 0) {
+            Node pOfSubparagraph = getPOfSubparagraph(subpara);
+            if (!moved && pOfSubparagraph != null
+                    && (subpara.getTextContent().isEmpty()
+                    || Character.isLowerCase(pOfSubparagraph.getTextContent().trim().charAt(0)))) {
                 Node previousSiblingList = XercesUtils.getPrevSibling(subpara);
                 if (previousSiblingList != null && is(previousSiblingList, LIST)
                         && ((!isSoftDeletedOrMovedTo(subpara) && !isSoftDeletedOrMovedTo(previousSiblingList))
@@ -1394,6 +1399,11 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 removeAttribute(subpara, REFERS_TO_ATTR);
             }
         }
+    }
+
+    private static Node getPOfSubparagraph(Node subpara) {
+        Node pText = XercesUtils.getFirstElementByXPath(subpara, "akn:content/akn:p");
+        return pText != null ? pText : null;
     }
 
     private void injectTagIdsInNode(Node node) {
@@ -3078,17 +3088,6 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
-    public boolean isClonedDocument(byte[] xmlContent) {
-        String xPath = xPathCatalog.getXPathClonedProposal();
-        return evalXPath(xmlContent, xPath, true);
-    }
-
-    @Override
-    public String getOriginalDocRefFromClonedContent(byte[] xmlContent) {
-        return getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneRefAttr(), true);
-    }
-
-    @Override
     public byte[] updateInitialNumberForArticles(byte[] xmlContent) {
         Document document = createXercesDocument(xmlContent);
         NodeList nodes = XercesUtils.getElementsByName(document, ARTICLE);
@@ -3263,7 +3262,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
     }
 
-    private void alignAllIds(Node sourceDoc, Node targetDoc, String category) {
+    public void alignAllIds(Node sourceDoc, Node targetDoc, String category) {
         if (sourceDoc != null && targetDoc != null) {
             NodeList sourceNodes = getAllNodesWithId(sourceDoc);
             NodeList targetNodes = getAllNodesWithId(targetDoc);
@@ -3285,7 +3284,11 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private static NodeList getAllNodesWithId(Node node) {
-        return getElementsByXPath(node, String.format(".//*[@%s]", XMLID));
+        NodeList nodes = getElementsByXPath(node, String.format(".//*[@%s]", XMLID));
+        if (nodes.getLength() == 0) {
+            nodes = getElementsByXPath(node, String.format(".//*[@%s]", ID), false);
+        }
+        return nodes;
     }
 
     private static Document getXercesDocument(XmlDocument xmlDoc) {
@@ -3308,7 +3311,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Document targetDoc = getXercesDocument(targetXmlDoc);
 
         alignMetaNode(sourceDoc, targetDoc);
-        replaceUnchangedTextContentInSourceDocByTarget(targetDoc, sourceDoc, sourceBaseDoc);
+        replaceUnchangedContentInSourceDocByTarget(targetDoc, sourceDoc, sourceBaseDoc);
         alignAlternatives(targetXmlDoc, sourceDoc, sourceBaseDoc);
         alignAttachmentsIds(sourceDoc, targetDoc);
 
@@ -3318,11 +3321,16 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     private static void alignMetaNode(Document sourceDoc, Document targetDoc) {
         Node sourceMeta = getFirstElementByXPath(sourceDoc, XPathCatalog.getXPathElement(META));
         Node targetMeta = getFirstElementByXPath(targetDoc, XPathCatalog.getXPathElement(META));
+        Node sourceMetaDocPurpose = getFirstElementByXPath(sourceMeta, XPathCatalog.getXPathProprietaryDocPurpose());
+        Node targetMetaDocPurpose = getFirstElementByXPath(targetMeta, XPathCatalog.getXPathProprietaryDocPurpose());
 
+        // Take previous target meta node, adding/removing nodes based on source
         removeDeletedNodes(targetMeta, sourceMeta);
         addNewNodes(sourceMeta, targetMeta);
-
         importAndReplaceNodeInDocument(sourceDoc, sourceMeta, targetMeta);
+
+        // Maintain docPurpose from source to be aligned later with standard alignment depending on content changed
+        importAndReplaceNodeInDocument(sourceDoc, targetMetaDocPurpose, sourceMetaDocPurpose);
     }
 
     private static void removeDeletedNodes(Node targetRootNode, Node sourceRootNode) {
@@ -3361,48 +3369,87 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     private static void importAndReplaceNodeInDocument(Document doc, Node originalNode, Node nodeToImport) {
         if (originalNode != null && nodeToImport != null && !originalNode.isSameNode(nodeToImport)) {
             Node importedNode = importNodeInDocument(doc, nodeToImport);
-            XercesUtils.replaceElement(importedNode, originalNode);
+            String originalNodeId = getId(originalNode);
+            Node nodeToBeReplaced = originalNodeId != null ? XercesUtils.getElementById(doc, originalNodeId) : originalNode;
+            XercesUtils.replaceElement(importedNode, nodeToBeReplaced);
         }
     }
 
-    private static void replaceUnchangedTextContentInSourceDocByTarget(Document targetDoc, Document sourceDoc, Document sourceBaseDoc) {
+    private static void replaceUnchangedContentInSourceDocByTarget(Document targetDoc, Document sourceDoc, Document sourceBaseDoc) {
         NodeList sourceNodes = getAllNodesWithId(sourceDoc);
         for (int i = 0; i < sourceNodes.getLength(); i++) {
             Node sourceNode = sourceNodes.item(i);
+            highlightNodeForTranslation(sourceNode);
             Node targetNode = XercesUtils.getElementById(targetDoc, getId(sourceNode));
-            if (targetNode != null && anyHasTextChildren(sourceNode, targetNode) && unchangedTextContentInSource(sourceNode, sourceBaseDoc)) {
-                Node alignedNode = alignChildNodes(sourceNode, targetNode, targetDoc);
+            Node sourceBaseNode = XercesUtils.getElementById(sourceBaseDoc, getId(sourceNode));
+            if (targetNode != null && anyHasTextOrImgChildren(sourceNode, targetNode)
+                    && unchangedTextContentInSource(sourceNode, sourceBaseNode)
+                    && unchangedImageContentInSource(sourceNode, sourceBaseNode)) {
+                Node alignedNode = alignChildNodes(sourceNode, targetDoc);
                 importAndReplaceNodeInDocument(sourceDoc, sourceNode, alignedNode);
             }
         }
     }
 
-    private static boolean anyHasTextChildren(Node... nodes) {
-        return Arrays.stream(nodes).anyMatch(node -> !getTextChildren(node).isEmpty());
+    private static void highlightNodeForTranslation(Node node) {
+        if (!hasAscendantOfType(node, META) && !hasAscendantOfType(node, PREFACE) && !is(node, NUM) && anyHasTextOrImgChildren(node)) {
+            insertAttributeIfNotPresent(node, LEOS_UPDATE_TRANSLATION, "true");
+        }
     }
 
-    private static boolean unchangedTextContentInSource(Node sourceNode, Document sourceBaseDoc) {
-        Node sourceBaseNode = XercesUtils.getElementById(sourceBaseDoc, getId(sourceNode));
+    private static boolean anyHasTextOrImgChildren(Node... nodes) {
+        List<String> childrenTypes = new ArrayList<>(STYLING_ELEMENTS);
+        childrenTypes.add(IMG);
+        return Arrays.stream(nodes).anyMatch(node -> !getChildren(node, childrenTypes, true).isEmpty());
+    }
+
+    private static boolean unchangedTextContentInSource(Node sourceNode, Node sourceBaseNode) {
         List<Node> sourceTextNodes = getTextChildren(sourceNode);
-        return sourceBaseNode != null && getTextChildren(sourceBaseNode).stream().map(Node::getTextContent).collect(Collectors.joining())
-                .equals(sourceTextNodes.stream().map(Node::getTextContent).collect(Collectors.joining()));
+        if (!sourceTextNodes.isEmpty()) {
+            return sourceBaseNode != null && getTextChildren(sourceBaseNode).stream().map(Node::getTextContent).collect(Collectors.joining())
+                    .equals(sourceTextNodes.stream().map(Node::getTextContent).collect(Collectors.joining()));
+        }
+        return true;
     }
 
-    private static Node alignChildNodes(Node sourceNode, Node targetNode, Document targetDoc) {
+    private static boolean unchangedImageContentInSource(Node sourceNode, Node sourceBaseNode) {
+        List<Node> sourceImgChildren = getChildren(sourceNode, IMG);
+        if (!sourceImgChildren.isEmpty()) {
+            return sourceBaseNode != null && getChildren(sourceBaseNode, IMG).stream().map((node) -> getAttributeValue(node, "src")).collect(Collectors.joining())
+                    .equals(sourceImgChildren.stream().map((node) -> getAttributeValue(node, "src")).collect(Collectors.joining()));
+        }
+        return true;
+    }
+
+    private static Node alignChildNodes(Node sourceNode, Document targetDoc) {
+        // Clone target document to avoid replacing sourceChildNodes in the original targetDoc, which can be required when aligning children nodes
+        Document clonedTargetDoc = (Document) targetDoc.cloneNode(true);
+        Node clonedTargetNode = XercesUtils.getElementById(clonedTargetDoc, getId(sourceNode));
         List<Node> sourceChildNodesWithId = getNonStylingChildren(sourceNode);
         if (sourceChildNodesWithId.stream().allMatch((Node sourceChildNodeWithId) -> {
-            Node targetChildNodeWithId = XercesUtils.getElementById(targetNode, getId(sourceChildNodeWithId));
+            Node targetChildNodeWithId = XercesUtils.getElementById(clonedTargetNode, getId(sourceChildNodeWithId));
             if (targetChildNodeWithId != null) {
-                importAndReplaceNodeInDocument(targetDoc, targetChildNodeWithId, sourceChildNodeWithId);
+                highlightNodeAndDescendantsForTranslation(sourceChildNodeWithId);
+                // Target node's text will be returned to be replaced in source doc, but source node's children with ID will be kept (to be aligned later)
+                importAndReplaceNodeInDocument(clonedTargetDoc, targetChildNodeWithId, sourceChildNodeWithId);
                 return true;
             }
-            // if there's no corresponding node in target document, we need to take the whole source node and overwrite the target node
+            // If there's no corresponding node in target document (because it's new in source), we need to take the whole source node to overwrite the target node
             return false;
         })) {
-            removeDeletedNodes(targetNode, sourceNode);
-            return targetNode;
+            removeDeletedNodes(clonedTargetNode, sourceNode);
+            return clonedTargetNode;
         }
         return sourceNode;
+    }
+
+    private static void highlightNodeAndDescendantsForTranslation(Node node) {
+        highlightNodeForTranslation(node);
+        NodeList sourceNodes = getAllNodesWithId(node);
+        for (int i = 0; i < sourceNodes.getLength(); i++) {
+            Node sourceNode = sourceNodes.item(i);
+            highlightNodeForTranslation(sourceNode);
+        }
     }
 
     private void alignAlternatives(XmlDocument targetXmlDoc, Document sourceDoc, Document sourceBaseDoc) {
@@ -3443,5 +3490,22 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Node targetAttachmentsNode = getFirstElementByXPath(targetDoc, xPathCatalog.getXPathAttachments());
         alignAllIds(sourceAttachmentsNode, targetAttachmentsNode, LeosCategory.BILL.toString());
         importAndReplaceNodeInDocument(sourceDoc, sourceAttachmentsNode, targetAttachmentsNode);
+    }
+
+    @Override
+    public byte[] findAndCleanPendingTranslations(XmlDocument xmlDocument, boolean clean) throws PendingTranslationException {
+        Document document = getXercesDocument(xmlDocument);
+        NodeList nodes = getElementsByXPath(document, String.format("//*[@%s='true']", LEOS_UPDATE_TRANSLATION));
+        if (nodes.getLength() > 0) {
+            if (!clean) {
+                throw new PendingTranslationException();
+            }
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Node eachNode = nodes.item(i);
+                removeAttribute(eachNode, LEOS_UPDATE_TRANSLATION);
+            }
+            return XercesUtils.nodeToByteArray(document);
+        }
+        return null;
     }
 }

@@ -1,0 +1,96 @@
+{
+  "guidance": [
+    {
+      "targets": [
+        {
+          "destinationPath": "//preamble/formula[1]/aknp",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_preamble__formula_1__p\" class=\"guidance-green-block\"><span id=\"_preamble__formula_1__p-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Citations\" target=\"_blank\">Citations</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//recitals/intro",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_recitalsIntro\" class=\"guidance-green-block\"><span id=\"_recitalsIntro-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/x/Yxt2F\" target=\"_blank\">Recitals</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//preamble/formula[2]/aknp",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_preamble__formula_2__p\" class=\"guidance-green-block\"><span id=\"_preamble__formula_2__p-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Enacting+terms\" target=\"_blank\">Enacting terms</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//article[@refersto='~ART_DEF']/heading",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_art_definitions_heading\" class=\"guidance-green-block\"><span id=\"_art_2_definitions_heading-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Definitions\" target=\"_blank\">Definitions</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//conclusions[1]/aknp[1]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-clause-1\" class=\"guidance-green-block\"><span id=\"clause-1-guidance\">[Choose the right option, depending on Procedure and the person who signs]</span></guidance>"
+    }
+  ],
+  "alternatives": [
+    {
+      "name": "listOption1",
+      "list": [
+        {
+          "index": "1",
+          "title": "Il-President",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">Għall-Kummissjoni</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Il-President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "2",
+          "title": "F’isem il-President",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">Għall-Kummissjoni</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">F’isem il-President</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "3",
+          "title": "Direttur Ġenerali",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"3\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">Għall-Kummissjoni</organization><role refersTo=\"_DIR_GEN\" xml:id=\"conclusionsBlock1Signature1Role\">Direttur Ġenerali</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "4",
+          "title": "Direttur",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"4\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">Għall-Kummissjoni</organization><role refersTo=\"_DIRECTOR\" xml:id=\"conclusionsBlock1Signature1Role\">Direttur</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "5",
+          "title": "Kap tal-Unità",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"5\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">Għall-Kummissjoni</organization><role refersTo=\"_HEAD_UNIT\" xml:id=\"conclusionsBlock1Signature1Role\">Kap tal-Unità</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "6",
+          "title": "Kap tas-Servizz",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"6\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">Għall-Kummissjoni</organization><role refersTo=\"_HEAD_SERV\" xml:id=\"conclusionsBlock1Signature1Role\">Kap tas-Servizz</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        }
+      ]
+    }
+  ],
+  "structure": [
+    {
+      "mode": "main",
+      "name": "structure_08"
+    },
+    {
+      "mode": "translated",
+      "name": "structure_08_translated"
+    }
+  ]
+}

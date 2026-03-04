@@ -113,27 +113,24 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
     @Override
     public Result<?> saveOriginalProposalIdToClonedProposal(DocumentVO documentVO, String legFileName, String iscRef) {
         if (documentVO.getCategory().equals(LeosCategory.PROPOSAL)) {
-            byte[] updatedDocContent = preserveOriginalDocumentProperties(documentVO.getSource(), legFileName, iscRef);
+            documentVO.getSource();
 
-            documentVO.setSource(updatedDocContent);
             for (DocumentVO doc : documentVO.getChildDocuments()) {
+                byte[] updatedDocContent;
                 try {
                     if (!doc.getCategory().equals(LeosCategory.PROPOSAL)) {
-                        byte[] docContent = doc.getSource();
                         if (doc.getCategory().equals(LeosCategory.BILL)) {
-                            updatedDocContent = preserveOriginalDocumentProperties(docContent, legFileName, iscRef);
-                            updatedDocContent = xmlContentProcessor.setAttributeForAllChildren(updatedDocContent, BILL, Collections.emptyList(), LEOS_ORIGIN_ATTR, EC);
+                            updatedDocContent = xmlContentProcessor.setAttributeForAllChildren(doc.getSource(), BILL, Collections.emptyList(), LEOS_ORIGIN_ATTR, EC);
                             updatedDocContent = xmlContentProcessor.updateInitialNumberForArticles(updatedDocContent);
                             doc.setSource(updatedDocContent);
 
                             for (DocumentVO annex : doc.getChildDocuments()) {
-                                byte[] updatedDocContentAnnex = preserveOriginalDocumentProperties(annex.getSource(), legFileName, iscRef);
+                                byte[] updatedDocContentAnnex = annex.getSource();
                                 updatedDocContentAnnex = xmlContentProcessor.setAttributeForAllChildren(updatedDocContentAnnex, DOC, Collections.emptyList(), LEOS_ORIGIN_ATTR, EC);
                                 annex.setSource(updatedDocContentAnnex);
                             }
                         } else {
-                            updatedDocContent = preserveOriginalDocumentProperties(docContent, legFileName, iscRef);
-                            updatedDocContent = xmlContentProcessor.setAttributeForAllChildren(updatedDocContent, DOC, Collections.emptyList(), LEOS_ORIGIN_ATTR, EC);
+                            updatedDocContent = xmlContentProcessor.setAttributeForAllChildren(doc.getSource(), DOC, Collections.emptyList(), LEOS_ORIGIN_ATTR, EC);
                             doc.setSource(updatedDocContent);
                         }
                     }
@@ -141,82 +138,6 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
                     LOG.error("Error occurred while saving metadata to cloned proposal", e);
                     return new Result<>(e.getMessage(), ErrorCode.EXCEPTION);
                 }
-            }
-        }
-        return new Result<>("OK", null);
-    }
-
-    @Override
-    public Result<?> saveClonedProposalIdToOriginalProposal(DocumentVO documentVO, CollectionIdsAndUrlsHolder
-            idsAndUrlsHolder, CloneProposalMetadataVO cloneProposalMetadataVO) {
-        if (documentVO.getCategory().equals(LeosCategory.PROPOSAL)) {
-            User loggedUser = securityContext.getUser();
-            Collection<? extends GrantedAuthority> loggedInUserAuthorities = SecurityContextHolder.getContext().
-                    getAuthentication().getAuthorities();
-            try {
-                //Switch user to sysadmin
-                userService.switchUser(repositorySysadmin);
-                Proposal originalProposal = proposalService.findProposal(documentVO.getId());
-                byte[] xmlContent = originalProposal.getContent().getOrThrow(() ->
-                        new IllegalArgumentException("Proposal not found")).getSource().getBytes();
-                String docVersion = LegUtils.fetchMilestoneVersion(documentVO);
-                byte[] updatedProposalContent = preserveClonedDocumentProperties(xmlContent,
-                        idsAndUrlsHolder.getProposalId(), cloneProposalMetadataVO, docVersion);
-                documentVO.setSource(updatedProposalContent);
-                //update original proposal with cloned metadata properties
-                final String versionComment = messageHelper.getMessage("milestone.versionComment");
-                // updating the version type to Major and also versionComment to fix issue #2987
-                proposalService.updateProposal(originalProposal.getId(), updatedProposalContent, VersionType.MAJOR, versionComment);
-
-                //Update child documents
-                for(DocumentVO child : documentVO.getChildDocuments()) {
-                    LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(child.getCategory().name());
-                    XmlDocument xmlDocument = documentContentService.getDocumentById(child.getId(), documentCategory);
-                    xmlContent = xmlDocument.getContent().getOrThrow(() ->
-                            new IllegalArgumentException("Document not found")).getSource().getBytes();
-                    byte[] updatedContent;
-                    switch (child.getCategory()) {
-                        case BILL:
-                            updatedContent = preserveClonedDocumentProperties(xmlContent, idsAndUrlsHolder.getBillId(),
-                                    cloneProposalMetadataVO);
-                            child.setSource(updatedContent);
-                            billService.updateBill(child.getId(), updatedContent, true, VersionType.MAJOR, versionComment);
-                            break;
-                        case MEMORANDUM:
-                            updatedContent = preserveClonedDocumentProperties(xmlContent, idsAndUrlsHolder.getMemorandumId(),
-                                    cloneProposalMetadataVO);
-                            child.setSource(updatedContent);
-                            memorandumService.updateMemorandum(child.getId(), updatedContent, VersionType.MAJOR, versionComment);
-                            break;
-                        case STAT_DIGIT_FINANC_LEGIS:
-                            updatedContent = preserveClonedDocumentProperties(xmlContent, idsAndUrlsHolder.getFinancialStatementId(),
-                                    cloneProposalMetadataVO);
-                            child.setSource(updatedContent);
-                            financialStatementService.updateFinancialStatement(child.getId(), updatedContent, VersionType.MAJOR, versionComment);
-                            break;
-                        case ANNEX:
-                            String clonedAnnexId = idsAndUrlsHolder.getDocCloneAndOriginIdMap().entrySet()
-                                    .stream()
-                                    .filter(entry -> child.getRef().equals(entry.getValue()))
-                                    .map(Map.Entry::getKey)
-                                    .findFirst()
-                                    .orElse(null);
-                            updatedContent = preserveClonedDocumentProperties(xmlContent, clonedAnnexId,
-                                    cloneProposalMetadataVO);
-                            child.setSource(updatedContent);
-                            annexService.updateAnnex(child.getId(), updatedContent, true, VersionType.MAJOR, versionComment);
-                            break;
-                        default:
-                            LOG.debug("Do nothing for rest of the categories like FS, MEDIA, CONFIG & LEG");
-                            break;
-                    }
-                }
-            } catch (Exception e) {
-                LOG.error("Error occurred while saving cloned metadata to original proposal", e);
-                return new Result<>(e.getMessage(), ErrorCode.EXCEPTION);
-            } finally {
-                //Switch back to logged-in user
-                userService.switchUserWithAuthorities(loggedUser.getLogin(), loggedInUserAuthorities);
             }
         }
         return new Result<>("OK", null);

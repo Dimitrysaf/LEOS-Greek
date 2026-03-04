@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.domain.repository;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 
 public class LeosPackage implements Serializable {
@@ -9,6 +10,8 @@ public class LeosPackage implements Serializable {
     private final String path;
     private String language;
     private Boolean isTranslated;
+    private String updatedBy;
+    private Date updatedOn;
 
     public LeosPackage(String id, String name, String path) {
         this.id = id;
@@ -22,6 +25,16 @@ public class LeosPackage implements Serializable {
         this.path = path;
         this.language = language;
         this.isTranslated = isTranslated;
+    }
+
+    public LeosPackage(String id, String name, String path, String language, Boolean isTranslated, String updatedBy, Date updatedOn) {
+        this.id = id;
+        this.name = name;
+        this.path = path;
+        this.language = language;
+        this.isTranslated = isTranslated;
+        this.updatedBy = updatedBy;
+        this.updatedOn = updatedOn;
     }
 
     public String getId() {
@@ -42,6 +55,14 @@ public class LeosPackage implements Serializable {
 
     public Boolean getTranslated() {
         return isTranslated;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    public Date getUpdatedOn() {
+        return updatedOn;
     }
 
     @Override
