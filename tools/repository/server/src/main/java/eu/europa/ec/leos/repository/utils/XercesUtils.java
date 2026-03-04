@@ -21,8 +21,13 @@ public class XercesUtils {
     public static Transformer createSecureTransformer() throws TransformerConfigurationException {
         TransformerFactory factory = TransformerFactory.newInstance();
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        try {
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        } catch (IllegalArgumentException e) {
+            // Some implementations (Xerces, Xalan 2.7.3 and Saxon) doesn't support JAXP 1.5
+            //LOG.error("Error: {} - {}", factory.getClass().getName(), e.getMessage());
+        }
         return factory.newTransformer();
     }
 
@@ -33,8 +38,13 @@ public class XercesUtils {
         builderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         builderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
         builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        builderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        builderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        try {
+            builderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            builderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        } catch (IllegalArgumentException e) {
+            // Some implementations (Xerces, Xalan 2.7.3 and Saxon) doesn't support JAXP 1.5
+            //LOG.error("Error: {} - {}", builderFactory.getClass().getName(), e.getMessage());
+        }
         builderFactory.setExpandEntityReferences(false);
         builderFactory.setNamespaceAware(namespaceEnabled);
         builderFactory.setXIncludeAware(false);

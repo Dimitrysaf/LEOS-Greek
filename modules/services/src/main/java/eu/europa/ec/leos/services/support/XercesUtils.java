@@ -177,9 +177,9 @@ public class XercesUtils {
             final Source input = new DOMSource(node);
             Transformer transformer = getTransformer();
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-            if(omitXmlDeclaration){
+            if (omitXmlDeclaration) {
                 transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            }else{
+            } else {
                 transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
                 transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
             }
@@ -200,9 +200,9 @@ public class XercesUtils {
             transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
         } catch (IllegalArgumentException e) {
-            // some implementations (Xalan 2.7.3 and saxon) doesn't support these attributes
+            // Some implementations (Xerces, Xalan 2.7.3 and Saxon) doesn't support JAXP 1.5
+            //LOG.error("Error: {} - {}", transformerFactory.getClass().getName(), e.getMessage());
         }
-
         return transformerFactory.newTransformer();
     }
 
