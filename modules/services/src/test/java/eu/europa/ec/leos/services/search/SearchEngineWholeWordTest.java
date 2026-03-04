@@ -78,10 +78,10 @@ public class SearchEngineWholeWordTest extends LeosTest {
         SearchEngine se = SearchEngineImpl.forContent(docContent);
         List<SearchMatchVO> results = se.searchTextToReplace("SUBSIDIARITY", true, true);
 
-        assertThat(results.size(), is(2));
+        assertThat(results.size(), is(1));
         List<ElementMatchVO> matchedElements = results.get(0).getMatchedElements();
         assertThat(matchedElements.size(), is(1));
-        assertThat(matchedElements, hasItem(new ElementMatchVO("tblock_2__heading", 13, 25)));
+        assertThat(matchedElements, hasItem(new ElementMatchVO("tblock_2__tblock_2__blockcontainer__p", 31, 43)));
 
         results = se.searchTextToReplace("subsidiarity", true, true);
 
