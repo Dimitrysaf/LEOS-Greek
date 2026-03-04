@@ -139,6 +139,10 @@ define(function aknContentPluginModule(require) {
             {
                 akn: "style",
                 html: "style"
+            },
+            {
+                akn: "leos:update-translation",
+                html: "data-akn-update-translation"
             }
         ],
         sub: {

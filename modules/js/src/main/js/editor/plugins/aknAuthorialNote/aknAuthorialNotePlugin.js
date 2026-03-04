@@ -194,6 +194,9 @@ define(function aknAuthorialNotePluginModule(require) {
             }, {
                 akn : "leos:origin",
                 html : "data-mp-origin"
+            }, {
+                akn: "leos:update-translation",
+                html: "data-akn-update-translation"
             }],
             sub : [ {
                 akn : 'text',

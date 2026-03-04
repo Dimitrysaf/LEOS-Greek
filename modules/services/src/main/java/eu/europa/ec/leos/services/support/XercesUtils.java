@@ -20,11 +20,7 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
@@ -65,8 +61,7 @@ public class XercesUtils {
         builderFactory.setExpandEntityReferences(false);
         builderFactory.setNamespaceAware(namespaceEnabled);
         builderFactory.setXIncludeAware(false);
-        DocumentBuilder builder = builderFactory.newDocumentBuilder();
-        return builder;
+        return builderFactory.newDocumentBuilder();
     }
 
     public static Document createXercesDocument(byte[] xmlContent, boolean namespaceEnabled) {
@@ -182,9 +177,9 @@ public class XercesUtils {
             final Source input = new DOMSource(node);
             Transformer transformer = getTransformer();
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-            if(omitXmlDeclaration){
+            if (omitXmlDeclaration) {
                 transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            }else{
+            } else {
                 transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
                 transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
             }
@@ -198,9 +193,17 @@ public class XercesUtils {
         final TransformerFactory transformerFactory = TransformerFactory.newInstance();
         // Secure the factory to prevent XXE attacks
         transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-
-        Transformer transformer = transformerFactory.newTransformer();
-        return transformer;
+        transformerFactory.setURIResolver((href, base) -> {
+            throw new TransformerException("External URI resolution blocked");
+        });
+        try {
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        } catch (IllegalArgumentException e) {
+            // Some implementations (Xerces, Xalan 2.7.3 and Saxon) doesn't support JAXP 1.5
+            //LOG.error("Error: {} - {}", transformerFactory.getClass().getName(), e.getMessage());
+        }
+        return transformerFactory.newTransformer();
     }
 
     private static DOMSource createNamespaceAwareDOMSource(Node node) throws Exception {

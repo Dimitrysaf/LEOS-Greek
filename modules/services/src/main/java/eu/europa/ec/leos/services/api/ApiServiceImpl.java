@@ -630,6 +630,9 @@ public abstract class ApiServiceImpl implements ApiService {
     public void deleteCollection(String proposalRef) {
         CollectionContextService context = collectionContextProvider.get();
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
+        if (proposal.getMetadata().get().isCustomTemplateAct()) {
+            userHelper.validateTemplateManager("This user is not allowed to delete custom templates or their linguistic versions.");
+        }
         populateCloneProposalMetadataVO(proposal);
         context.useProposal(proposal);
         context.executeDeleteProposal();

@@ -29,7 +29,7 @@
             display: none;
         }
     }
-    
+
     // AKN styles
     doc[name="EXPL_MEMORANDUM"] {
         @extend %xmlAuthorialNote;
@@ -49,9 +49,10 @@
         @extend %xmlChangeDetails;
 
         @extend %xmlTrackChanges;
+        @extend %xmlUpdateTranslation;
 
         @include editor;
-        
+
         display: block;
     }
 

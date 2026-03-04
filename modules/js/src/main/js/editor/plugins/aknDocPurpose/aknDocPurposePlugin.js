@@ -139,6 +139,9 @@ define(function aknDocPurposePluginModule(require) {
             html: "data-akn-id-to-be-removed"
         }, {
             html : ["data-akn-name", DOCPURPOSE_NAME].join("=")
+        }, {
+            akn: "leos:update-translation",
+            html: "data-akn-update-translation"
         }],
         sub: {
             akn: "text",

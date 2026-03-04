@@ -26,6 +26,7 @@
 
         @extend %editorWidget;
         @extend %editorTrackChanges;
+        @extend %editorUpdateTranslation;
         @extend %editorArticleParagraph;
     }
     .cke_editable.cke_show_blocks {

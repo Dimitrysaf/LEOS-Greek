@@ -47,6 +47,7 @@ define(function aknInlineContentModule(require) {
     plugins.push(require("plugins/leosSpellChecker/leosSpellCheckerPlugin"));
     plugins.push(require("plugins/aknHtmlImage/aknHtmlImagePlugin"));
     plugins.push(require("plugins/leosBase64Image/leosBase64ImagePlugin"));
+    plugins.push(require("plugins/leosProcessTranslation/leosProcessTranslationPlugin"));
 
     var pluginNames=[];
     var specificConfig={
@@ -91,7 +92,8 @@ define(function aknInlineContentModule(require) {
             { name: 'save', items: [ 'leosInlineSave' , 'leosInlineSaveClose', 'leosInlineCancel' ] },
             { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo' ] },
             { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Subscript', 'Superscript', 'TransformTextSwitcher' ] },
-            { name: 'insert', items: [ /*'Mathjax', */'SpecialChar' ] }
+            { name: 'insert', items: [ 'SpecialChar' ] },
+            { name: 'translate', items: [ 'ProcessTranslation' ] }
         ],
         //show toolbar on startup
         startupFocus: 'end',
