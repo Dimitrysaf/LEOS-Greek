@@ -142,7 +142,32 @@ export class ProposalDraftsComponent
       }
       const file = event.target.files[0];
       if (file && !annex) {
-        this.proposalDetailsService.createForeignAnnex(file);
+        let annexWithSameName = this.proposal?.childDocuments?.find(e => e.category === 'BILL')?.childDocuments?.find(e => e.category === 'ANNEX' && e.originalFilename === file.name);
+        if (annexWithSameName) {
+          this.dialogService.openDialog({
+            title: this.translateService.instant(
+              'page.collection.drafts.annex.same.name.error.title',
+            ),
+            content: this.translateService.instant(
+              'page.collection.drafts.annex.same.name.error.warning',
+            ),
+            acceptLabel: this.translateService.instant('page.collection.drafts.annex.same.name.error.yes'),
+            dismissLabel: this.translateService.instant('page.collection.drafts.annex.same.name.error.no'),
+            accept: () => {
+              this.proposalDetailsService.updateForeignAnnex(annexWithSameName.id, file);
+            },
+            dismiss: () => {
+              this.proposalDetailsService.setProposalRef(this.proposalRef);
+              this.loadingService.setLoading(false);
+            },
+            close: () => {
+              this.proposalDetailsService.setProposalRef(this.proposalRef);
+              this.loadingService.setLoading(false);
+            }
+          });
+        } else {
+          this.proposalDetailsService.createForeignAnnex(file);
+        }
       } else if (file && annex) {
         this.proposalDetailsService.updateForeignAnnex(annex.id, file);
       }
