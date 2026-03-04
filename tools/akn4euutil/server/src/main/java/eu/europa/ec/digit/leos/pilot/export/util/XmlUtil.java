@@ -74,12 +74,12 @@ public class XmlUtil {
         factory.setURIResolver((href, base) -> {
             throw new TransformerException("External URI resolution blocked");
         });
-
         try {
             factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
         } catch (IllegalArgumentException e) {
-            // some implementations (Xalan 2.7.3 and saxon) doesn't support these attributes
+            // Some implementations (Xerces, Xalan 2.7.3 and Saxon) doesn't support JAXP 1.5
+            //LOG.error("Error: {} - {}", factory.getClass().getName(), e.getMessage());
         }
         return factory.newTransformer();
     }
@@ -104,6 +104,13 @@ public class XmlUtil {
             builderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
             builderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            try {
+                builderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                builderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+            } catch (IllegalArgumentException e) {
+                // Some implementations (Xerces, Xalan 2.7.3 and Saxon) doesn't support JAXP 1.5
+                //LOG.error("Error: {} - {}", builderFactory.getClass().getName(), e.getMessage());
+            }
             builderFactory.setExpandEntityReferences(false);
             builderFactory.setNamespaceAware(true);
             builderFactory.setXIncludeAware(false);
