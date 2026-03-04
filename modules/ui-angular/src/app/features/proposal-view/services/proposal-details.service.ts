@@ -320,13 +320,18 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
-  deleteProposal() {
+  deleteProposal(proposalLanguage: string) {
     this.loadingService.setLoading(true);
     this.http
       .delete<string>(`${apiBaseUrl}/secured/proposal/${this.proposalRef}`)
       .subscribe(() => {
         this.loadingService.setLoading(false);
-        this.router.navigate(['/workspace']);
+        if (this.translated) {
+          const mainProposalRef = this.proposalRef.slice(0, -2) + proposalLanguage.toLowerCase();
+          this.router.navigate([`/collection/${mainProposalRef}`]);
+        } else {
+          this.router.navigate(['/workspace']);
+        }
       });
   }
 
