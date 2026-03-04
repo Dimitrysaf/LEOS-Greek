@@ -129,7 +129,7 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
 
     private void validateNoStructuralChangesInCustomTemplateLinguisticVersion(T document, String elementContent, byte[] byteXmlContent) {
         if (document.getMetadata().get().isCustomTemplateAct() && document.getMetadata().get().isTranslated()) {
-            Node newNode = createXercesDocument(elementContent.getBytes(StandardCharsets.UTF_8), true).getFirstChild();
+            Node newNode = createXercesDocument(elementContent.getBytes(StandardCharsets.UTF_8), false).getFirstChild();
             Node oldNode = XercesUtils.getElementById(byteXmlContent, getId(newNode));
             xmlContentProcessor.alignAllIds(oldNode, newNode, document.getCategory().toString());
         }

@@ -14,6 +14,7 @@
 
 package eu.europa.ec.leos.services.controllers;
 
+import eu.europa.ec.leos.services.api.exception.PendingTranslationException;
 import eu.europa.ec.leos.services.dto.request.PublishTemplateRequest;
 import eu.europa.ec.leos.services.dto.response.CustomTemplateInfoResponse;
 import eu.europa.ec.leos.services.template.CustomTemplateService;
@@ -40,15 +41,21 @@ public class CatalogController {
 
     @RequestMapping(value = "/publish-template/{legFileId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> publishTemplateToCatalog(@PathVariable("legFileId") String legFileId, @RequestBody PublishTemplateRequest request) {
+    public ResponseEntity<Object> publishTemplateToCatalog(@PathVariable("legFileId") String legFileId, @RequestBody PublishTemplateRequest request)
+            throws PendingTranslationException {
         try {
             legFileId = encodeParam(legFileId);
+            if (request.isCleanPendingTranslations()) {
+                customTemplateService.cleanPendingTranslations(legFileId);
+            }
             customTemplateService.publishTemplate(
                     legFileId,
                     request.getTemplateName(),
                     request.getDgCodes()
             );
             return new ResponseEntity<>(Collections.singletonMap("message", "Template published successfully"), HttpStatus.OK);
+        } catch (PendingTranslationException e) {
+            throw e;
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while publishing template - " + e.getMessage(), e);
             return new ResponseEntity<>(

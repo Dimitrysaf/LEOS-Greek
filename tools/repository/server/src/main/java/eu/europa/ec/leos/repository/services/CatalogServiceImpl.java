@@ -22,6 +22,7 @@ import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.CustomTemplateInfo;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.*;
+import eu.europa.ec.leos.repository.utils.XercesUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,11 +35,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
@@ -532,11 +530,8 @@ public class CatalogServiceImpl implements CatalogService {
         try {
             String catalogContent = getCatalogFromDatabase();
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            org.w3c.dom.Document sourceDoc = builder.parse(new ByteArrayInputStream(catalogContent.getBytes(StandardCharsets.UTF_8)));
-
-            org.w3c.dom.Document targetDoc = builder.newDocument();
+            org.w3c.dom.Document sourceDoc = XercesUtils.createXercesDocument(catalogContent.getBytes(StandardCharsets.UTF_8), false);
+            org.w3c.dom.Document targetDoc = XercesUtils.createNewDocument(false);
 
             // Copy the root element with its attributes
             Element sourceRoot = sourceDoc.getDocumentElement();
@@ -552,16 +547,7 @@ public class CatalogServiceImpl implements CatalogService {
             targetDoc.appendChild(targetRoot);
 
             copyCategoriesOnly(sourceRoot, targetRoot, targetDoc);
-
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-
-            StringWriter writer = new StringWriter();
-            transformer.transform(new DOMSource(targetDoc), new StreamResult(writer));
-            return writer.toString();
-
+            return documentToString(targetDoc);
         } catch (Exception e) {
             throw new CatalogException(CatalogException.CatalogExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
         }
@@ -654,12 +640,9 @@ public class CatalogServiceImpl implements CatalogService {
             // Get the full catalog from DB to find the template
             String fullCatalogContent = getCatalogFromDatabase();
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-
             // Parse both documents
-            org.w3c.dom.Document existingCatalogDoc = builder.parse(new ByteArrayInputStream(existingCatalogXml.getBytes("UTF-8")));
-            org.w3c.dom.Document fullCatalogDoc = builder.parse(new ByteArrayInputStream(fullCatalogContent.getBytes(StandardCharsets.UTF_8)));
+            org.w3c.dom.Document existingCatalogDoc = XercesUtils.createXercesDocument(existingCatalogXml.getBytes(StandardCharsets.UTF_8), false);
+            org.w3c.dom.Document fullCatalogDoc = XercesUtils.createXercesDocument(fullCatalogContent.getBytes(StandardCharsets.UTF_8), false);
 
             // Find the template in the full catalog
             Element templateElement = findTemplateByKey(fullCatalogDoc, templateKey);
@@ -700,17 +683,7 @@ public class CatalogServiceImpl implements CatalogService {
             }
 
             targetCategory.appendChild(importedTemplate);
-
-            // Convert back to string
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-
-            StringWriter writer = new StringWriter();
-            transformer.transform(new DOMSource(existingCatalogDoc), new StreamResult(writer));
-            return writer.toString();
-
+            return documentToString(existingCatalogDoc);
         } catch (Exception e) {
             throw new CatalogException(CatalogException.CatalogExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
         }
@@ -945,9 +918,7 @@ public class CatalogServiceImpl implements CatalogService {
         }
 
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            org.w3c.dom.Document catalogDoc = builder.parse(new ByteArrayInputStream(catalogXml.getBytes(StandardCharsets.UTF_8)));
+            org.w3c.dom.Document catalogDoc = XercesUtils.createXercesDocument(catalogXml.getBytes(StandardCharsets.UTF_8), false);
 
             if (customKey.startsWith("*_")) {
                 // Remove all templates with matching packageId
@@ -1000,8 +971,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     private String documentToString(org.w3c.dom.Document doc) throws Exception {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
+        Transformer transformer = XercesUtils.createSecureTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 
@@ -1021,9 +991,7 @@ public class CatalogServiceImpl implements CatalogService {
     private String insertTemplateIntoCatalogAndExtractKeys(String existingCatalogXml, String templateKey, String templateName, String packageId, Set<String> extractedKeys, String originalDg) throws CatalogException {
         try {
             String fullCatalogContent = getCatalogFromDatabase();
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            org.w3c.dom.Document fullCatalogDoc = builder.parse(new ByteArrayInputStream(fullCatalogContent.getBytes(StandardCharsets.UTF_8)));
+            org.w3c.dom.Document fullCatalogDoc = XercesUtils.createXercesDocument(fullCatalogContent.getBytes(StandardCharsets.UTF_8), false);
 
             Element templateElement = findTemplateByKey(fullCatalogDoc, templateKey);
             if (templateElement != null) {
@@ -1245,15 +1213,10 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     private String clearXmlIdAttributes(String xmlString) throws Exception {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        org.w3c.dom.Document doc = builder.parse(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8)));
-
+        org.w3c.dom.Document doc = XercesUtils.createXercesDocument(xmlString.getBytes(StandardCharsets.UTF_8), true);
         clearXmlIdAttributes(doc.getDocumentElement());
 
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
+        Transformer transformer = XercesUtils.createSecureTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         StringWriter writer = new StringWriter();
         transformer.transform(new DOMSource(doc), new StreamResult(writer));
@@ -1277,11 +1240,7 @@ public class CatalogServiceImpl implements CatalogService {
 
 
     private String modifyTemplateValues(String xmlContent, String suffix) throws Exception {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        org.w3c.dom.Document doc = builder.parse(new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8)));
-
+        org.w3c.dom.Document doc = XercesUtils.createXercesDocument(xmlContent.getBytes(StandardCharsets.UTF_8), true);
         // Modify leos:template
         NodeList templateNodes = doc.getElementsByTagNameNS("urn:eu:europa:ec:leos", "template");
         for (int i = 0; i < templateNodes.getLength(); i++) {
@@ -1299,8 +1258,7 @@ public class CatalogServiceImpl implements CatalogService {
         }
 
         // Convert back to string
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
+        Transformer transformer = XercesUtils.createSecureTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 
@@ -1324,9 +1282,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     private void extractTemplateKeysFromCatalog(String catalogXml, String packageId, Set<String> templateKeys) throws CatalogException {
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            org.w3c.dom.Document catalogDoc = builder.parse(new ByteArrayInputStream(catalogXml.getBytes(StandardCharsets.UTF_8)));
+            org.w3c.dom.Document catalogDoc = XercesUtils.createXercesDocument(catalogXml.getBytes(StandardCharsets.UTF_8), false);
 
             NodeList items = catalogDoc.getElementsByTagName("item");
             for (int i = 0; i < items.getLength(); i++) {
@@ -1449,10 +1405,7 @@ public class CatalogServiceImpl implements CatalogService {
             String customKey = baseTemplate + CUSTOM_TEMPLATE_SEPARATOR + packageId;
 
             try {
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder builder = factory.newDocumentBuilder();
-                org.w3c.dom.Document catalogDoc = builder.parse(new ByteArrayInputStream(content.getContentString().getBytes(StandardCharsets.UTF_8)));
-
+                org.w3c.dom.Document catalogDoc = XercesUtils.createXercesDocument(content.getContentString().getBytes(StandardCharsets.UTF_8), false);
                 Element template = findTemplateByCustomKey(catalogDoc.getDocumentElement(), customKey);
                 if (template != null) {
                     return template.getAttribute("custom-name");

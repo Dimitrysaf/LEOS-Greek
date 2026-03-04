@@ -44,4 +44,13 @@ public class ResponseExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(PendingTranslationException.class)
+    public ResponseEntity<LeosExceptionResponse> handleException(PendingTranslationException ex) {
+        if (Arrays.stream(ex.getStackTrace()).findFirst().isPresent()) {
+            LOG.error("Unexpected error occurred :" + Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);
+        }
+        return new ResponseEntity<>(new LeosExceptionResponse(ex.getErrorCode().toString(), ex.getMessageKey()),
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 }

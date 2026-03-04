@@ -49,6 +49,7 @@ define(function aknDocPurposeModule(require) {
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
     plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
     plugins.push(require("plugins/leosDapInfo/leosDapInfo"));
+    plugins.push(require("plugins/leosProcessTranslation/leosProcessTranslationPlugin"));
 
     var pluginNames=[];
     var specificConfig={};
@@ -93,6 +94,7 @@ define(function aknDocPurposeModule(require) {
             {name: 'clipboard', items: ['Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo']},
             {name: 'basicstyles', items: ['Subscript', 'Superscript', 'TransformTextSwitcher']},
             {name: 'insert', items: ['Mathjax', 'SpecialChar']},
+            {name: 'translate', items: [ 'ProcessTranslation' ]},
             {name: 'tools', items: ['LeosShowBlocks']},
             {name: "mode", items: ['Sourcedialog', 'spellchecker']},
             {name: 'trackChanges', items: ['toggleDisplay', 'trackChangeActions']},

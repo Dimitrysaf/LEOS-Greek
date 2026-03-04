@@ -187,7 +187,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         byte[] newXmlContent = elementProcessor.updateElement(memorandum, elementFragment, elementName, elementId,
                 false);
         memorandum = memorandumService.updateMemorandum(memorandum, newXmlContent, VersionType.MINOR,
-                messageHelper.getMessage("operation." + elementName + ".updated"));
+                messageHelper.getMessage("operation.blockContainer.updated"));
 
         String elementContent = elementProcessor.getElement(memorandum, elementName, elementId);
         return new SaveElementResponse(elementId, elementName, elementContent);
