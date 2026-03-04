@@ -1744,7 +1744,7 @@ public abstract class ApiServiceImpl implements ApiService {
         Map<String, Map> versionAndAnnexNumberMap = populateVersionAndAnnexNumberMap(unzippedFiles, legDocument.getContainedDocuments());
         Map<String, String> docVersionMap = versionAndAnnexNumberMap.get("docVersionMap");
         Map<String, Integer> annexKeyMap = versionAndAnnexNumberMap.get("annexKeyMap");
-        Map<String, Object> pdfRenditions = MilestoneHelper.filterAndSortFiles(unzippedFiles, PDF);
+        Map<String, Object> pdfRenditions = MilestoneHelper.filterAndSortFiles(unzippedFiles, PDF, "renditions");
         List<MilestoneDocumentView> listDocuments = new ArrayList<>();
         boolean isContributionChanged = false;
         Map<String, Object> annexAddedMap = new HashMap<>();
@@ -1840,7 +1840,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 versionAndAnnexNumberMap = populateVersionAndAnnexNumberMap(contributionFiles, clonedLegDoc.getContainedDocuments());
                 docVersionMap = versionAndAnnexNumberMap.get("docVersionMap");
                 annexKeyMap = versionAndAnnexNumberMap.get("annexKeyMap");
-                pdfRenditions = MilestoneHelper.filterAndSortFiles(contributionFiles, PDF);
+                pdfRenditions = MilestoneHelper.filterAndSortFiles(contributionFiles, PDF, "renditions");
                 legDocument = clonedLegDoc;
             } catch (Exception e) {
                 LOG.debug("Couldn't get contribution's leg document");
@@ -1950,7 +1950,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private MilestonePDFDownloadResponse doDownloadMilestonePDF(LegDocument legDocument) throws IOException {
         byte[] content = null;
         Map<String, Object> unzippedFiles = MilestoneHelper.getMilestoneFiles(legDocument);
-        Map<String, Object> pdfRenditions = MilestoneHelper.filterAndSortFiles(unzippedFiles, PDF);
+        Map<String, Object> pdfRenditions = MilestoneHelper.filterAndSortFiles(unzippedFiles, PDF, "renditions");
         String fileName = null;
         if (!pdfRenditions.isEmpty()) {
             Map.Entry<String, Object> entry = pdfRenditions.entrySet().iterator().next();
