@@ -16,7 +16,7 @@ import {
   EuiDialogComponent,
   EuiDialogService,
 } from '@eui/components/eui-dialog';
-import { Document, DocumentType, Permission } from '@leos/shared';
+import { Document, DocumentType, Permission, LeosConfig } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -33,6 +33,7 @@ import { cleanDelInsert } from '@/shared/utils/string.utils';
 import {AUTONOMOUS_ACT_DOC_COLLECTION} from "@/shared/constants";
 import {apiBaseUrl} from "../../../../../config";
 import {downloadBlob} from "@/shared/utils";
+import { AppConfigService } from '@/core/services/app-config.service';
 
 @Component({
   selector: 'app-proposal-drafts',
@@ -59,6 +60,7 @@ export class ProposalDraftsComponent
   permissions: Permission[];
   annexCreateOption: string;
   fsCreateOption: string;
+  leosConfig: LeosConfig;
 
   @ViewChild('editAnnexTitleDialog') editAnnexTitleDialog: EuiDialogComponent;
   @ViewChild('editAnnexOrder') annexOrderDialog: EuiDialogComponent;
@@ -90,6 +92,7 @@ export class ProposalDraftsComponent
     private growlService: EuiGrowlService,
     private translateService: TranslateService,
     private http: HttpClient,
+    private appConfigService: AppConfigService,
   ) {}
 
   ngOnDestroy(): void {
@@ -121,7 +124,11 @@ export class ProposalDraftsComponent
       .subscribe((perms) => {
         this.permissions = perms;
       });
-
+    this.appConfigService.config
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((config) => {
+        this.leosConfig = config;
+      });
     this.canAddDeleteAnnex = !this.proposal.metadata.customTemplateAct || !this.proposalDetailsService.getTranslated();
   }
 
