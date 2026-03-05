@@ -92,7 +92,7 @@ define(function aknParagraphProfileModule(require) {
         // custom configuration to load (none if empty)
         customConfig: "",
         // comma-separated list of plugins to be loaded
-        plugins: "toolbar,wysiwygarea,elementspath,clipboard,undo,pastefromword,enterkey,button,dialog,dialogui,"
+        plugins: "toolbar,wysiwygarea,elementspath,clipboard,undo,enterkey,button,dialog,dialogui,"
         + "widget,lineutils,basicstyles," + "indent,"
         + "fakeobjects,specialchar,table,tableresize,tabletools,tableselection,contextmenu,menubutton,mathjax,pastetext,colorbutton",
         // comma-separated list of plugins that must not be loaded
