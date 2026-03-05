@@ -23,9 +23,13 @@ import org.springframework.web.util.UriUtils;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
@@ -80,11 +84,11 @@ public class ZipUtil {
             Object value = entry.getValue();
             if (value instanceof File) {
                 File fileValue = (File) value;
-                validatePath(fileValue.getAbsolutePath());
+                Path safePath = validatePath(fileValue, "./");
                 ZipEntry ze = new ZipEntry(key);
                 zipOutputStream.putNextEntry(ze);
-                try(FileInputStream fileInputStream = new FileInputStream(FilenameUtils.normalize(fileValue.getAbsolutePath()))){
-                    IOUtils.copy(fileInputStream, zipOutputStream);
+                try (InputStream is = Files.newInputStream(safePath)) {
+                    IOUtils.copy(is, zipOutputStream);
                 }
                 zipOutputStream.closeEntry();
             } else if (value instanceof ByteArrayOutputStream) {
@@ -124,11 +128,11 @@ public class ZipUtil {
             Object value = entry.getValue();
             if (value instanceof File) {
                 File fileValue = (File) value;
-                validatePath(fileValue.getAbsolutePath());
+                Path safePath = validatePath(fileValue, "./");
                 ZipEntry ze = new ZipEntry(key);
                 zipOutputStream.putNextEntry(ze);
-                try(FileInputStream fileInputStream = new FileInputStream(FilenameUtils.normalize(fileValue.getAbsolutePath()))){
-                    IOUtils.copy(fileInputStream, zipOutputStream);
+                try (InputStream is = Files.newInputStream(safePath)) {
+                    IOUtils.copy(is, zipOutputStream);
                 }
                 zipOutputStream.closeEntry();
             } else if (value instanceof ByteArrayOutputStream) {
@@ -340,10 +344,19 @@ public class ZipUtil {
         return UriUtils.encodePath(value, StandardCharsets.UTF_8);
     }
 
-    public static void validatePath(String path) {
-        if (path != null && path.contains("../")) {
-            path = encodeParam(path);
-            throw new SecurityException("you are not allowed to write in the path:" + path);
+    public static Path validatePath(File file, String allowedBaseDir) {
+        if (file == null || allowedBaseDir == null) {
+            throw new SecurityException("Invalid path");
+        }
+        try {
+            Path basePath = Paths.get(allowedBaseDir).toRealPath();
+            Path filePath = file.toPath().toRealPath();
+            if (!filePath.startsWith(basePath)) {
+                throw new SecurityException("Access outside allowed directory");
+            }
+            return filePath;
+        } catch (IOException e) {
+            throw new SecurityException("Invalid path", e);
         }
     }
 }
