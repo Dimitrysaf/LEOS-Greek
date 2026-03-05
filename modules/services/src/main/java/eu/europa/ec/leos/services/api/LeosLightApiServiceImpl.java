@@ -50,7 +50,6 @@ import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.light.SystemName;
 import io.atlassian.fugue.Maybe;
 import io.atlassian.fugue.Pair;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,8 +61,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.w3c.dom.Document;
 
 import jakarta.inject.Provider;
-import java.io.File;
-import java.io.FileOutputStream;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -79,9 +77,7 @@ import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getDocum
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getLeosMetaData;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.getContentByTagName;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_REF;
-import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
-import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
+import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 @Service
 public class LeosLightApiServiceImpl implements LeosLightApiService {
@@ -225,10 +221,8 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
 
     @Override
     public Pair<Object, HttpStatus> importProposal(MultipartFile file) throws IOException {
-        validateBasePath(FilenameUtils.normalize(file.getOriginalFilename()), "./");
-
-        String originalFilename = file.getOriginalFilename();
-        LeosFile content = new LeosFile(file.getOriginalFilename());
+        String sanitizedFilename = sanitizeFilename(file.getOriginalFilename());
+        LeosFile content = new LeosFile(sanitizedFilename);
         byte[] fileContent = file.getBytes();
         content.setBytes(fileContent);
 
@@ -245,7 +239,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         String originalLanguageCode = StringUtils.defaultIfEmpty(propDocument.getMetadata().getDocTranslationFromLanguage(), languageCode);
         String originalDocRef = LanguageMapUtils.getTranslatedProposalReference(propDocument.getRef(), originalLanguageCode);
         propDocument.setRef(originalDocRef);
-        String legDocRef = originalFilename.substring(0, originalFilename.lastIndexOf("."));
+        String legDocRef = sanitizedFilename.substring(0, sanitizedFilename.lastIndexOf("."));
         LegDocument savedLegDocument = (LegDocument)findLeosDocument(legDocRef, LegDocument.class);
         if (savedLegDocument == null) {
             LeosDocument originalProposal = findLeosDocument(propDocument.getRef(), Proposal.class);
