@@ -21,7 +21,7 @@
     <parent>
         <groupId>eu.europa.ec.leos</groupId>
         <artifactId>repository</artifactId>
-        <version>5.4.0-SNAPSHOT</version>
+        <version>5.5.0-SNAPSHOT</version>
     </parent>
 
     <groupId>eu.europa.ec.leos.repository</groupId>
@@ -32,10 +32,6 @@
     <description>Repository server</description>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -104,8 +100,32 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+        </dependency>
     </dependencies>
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/app-info.properties</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/app-info.properties</exclude>
+                </excludes>
+            </resource>
+        </resources>
         <plugins>
             <!-- Load properties from config file -->
             <plugin>
@@ -127,26 +147,63 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.6.2</version>
-                <executions>
-                    <execution>
-                        <id>run-consolidator</id>
-                        <phase>process-classes</phase> <!-- Run after compilation -->
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>eu.europa.ec.leos.repository.CopyFilesToConsolidatedRunner</mainClass>
-                            <arguments>
-                                <argument>${consolidator.input.path}</argument>
-                                <argument>${consolidator.output.path}</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>${exec-maven-plugin.version}</version>
+            <executions>
+                <execution>
+                    <id>run-consolidator</id>
+                    <phase>process-classes</phase>
+                    <goals>
+                        <goal>java</goal>
+                    </goals>
+                    <configuration>
+                        <mainClass>eu.europa.ec.leos.repository.CopyFilesToConsolidatedRunner</mainClass>
+                        <arguments>
+                            <argument>${consolidator.input.path}</argument>
+                            <argument>${consolidator.output.path}</argument>
+                        </arguments>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>generate-openapi</id>
+                    <phase>process-classes</phase>
+                    <goals><goal>java</goal></goals>
+                    <configuration>
+                        <mainClass>eu.europa.ec.leos.repository.openapi.OpenApiGenerator</mainClass>
+                        <arguments>
+                            <argument>${project.build.directory}\openapi\openapi.json</argument>
+                        </arguments>
+                        <includeProjectDependencies>true</includeProjectDependencies>
+                        <includePluginDependencies>true</includePluginDependencies>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>generate-api-docs</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>java</goal>
+                    </goals>
+                    <configuration>
+                        <mainClass>eu.europa.ec.leos.repository.openapi.OpenApiToDocxConverter</mainClass>
+                        <arguments>
+                            <argument>${project.build.directory}\openapi\openapi.json</argument>
+                           <!-- <argument>server/src/main/resources/openapi/openapi.json</argument>
+                            <argument>../../docs/REST/API/leos_repository_api-documentation.docx</argument>
+                            --><argument>${project.basedir}\src\main\resources\openapi/openapi.json</argument>
+                            <argument>${project.basedir}\..\..\..\docs\REST\API\leos_repository_api-documentation.docx</argument>
+                        </arguments>
+                    </configuration>
+                </execution>
+            </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>jakarta.servlet</groupId>
+                        <artifactId>jakarta.servlet-api</artifactId>
+                        <version>${servlet.version}</version>
+                    </dependency>
+                </dependencies>
+        </plugin>
         </plugins>
     </build>
 </project>

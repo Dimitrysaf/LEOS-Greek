@@ -29,7 +29,6 @@ import eu.europa.ec.leos.services.dto.request.ExplanatoryRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
 import eu.europa.ec.leos.services.export.ExportPackageVO;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,9 +52,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
-import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
-import static eu.europa.ec.leos.services.support.XmlHelper.isValidFileName;
-import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
+import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 @RestController
 @RequestMapping(value = "/secured/proposal")
@@ -326,14 +323,8 @@ public class ProposalApiController {
     public ResponseEntity<Object> uploadProposal(@RequestParam("legFile") MultipartFile legFile) {
         CreateCollectionResult createCollectionResult;
         try {
-            String legFileName = legFile.getName();
-            validateBasePath(FilenameUtils.normalize(legFileName), "./");
-
-            // Validate and normalize the upload directory path
-            if (legFileName == null || legFileName.contains("..")) {
-                throw new IllegalArgumentException("Invalid upload directory path: " + legFileName);
-            }
-            LeosFile content = new LeosFile(legFileName);
+            String sanitizedFilename = sanitizeFilename(legFile.getName());
+            LeosFile content = new LeosFile(sanitizedFilename);
             try {
                 content.setBytes(legFile.getBytes());
             } catch (IOException ioe) {
@@ -351,8 +342,8 @@ public class ProposalApiController {
     @RequestMapping(value = "/validateLegFile", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<LegFileValidation> validateLegFile(@RequestParam("legFile") MultipartFile legFile) {
-        validateBasePath(FilenameUtils.normalize(legFile.getName()), "./");
-        LeosFile content = new LeosFile(legFile.getName());
+        String sanitizedFilename = sanitizeFilename(legFile.getName());
+        LeosFile content = new LeosFile(sanitizedFilename);
         try {
             content.setBytes(legFile.getBytes());
         } catch (IOException ioe) {
@@ -365,11 +356,11 @@ public class ProposalApiController {
 
     @RequestMapping(value = "/conValidateLegFile", method = RequestMethod.POST)
     public ResponseEntity<String> conValidateLegFile(@RequestParam("legFile") MultipartFile legFile) throws IOException {
-        validateBasePath(FilenameUtils.normalize(legFile.getName()), "./");
-        if (!isValidFileName(legFile.getOriginalFilename())) {
+        String sanitizedFilename = sanitizeFilename(legFile.getName());
+        if (!isValidFileName(sanitizedFilename)) {
             new ResponseEntity<>("Invalid file name", HttpStatus.BAD_REQUEST);
         }
-        LeosFile content = new LeosFile(legFile.getName());
+        LeosFile content = new LeosFile(sanitizedFilename);
         try {
             content.setBytes(legFile.getBytes());
         } catch (IOException ioe) {

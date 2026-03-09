@@ -20,19 +20,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import static eu.europa.ec.leos.services.support.XmlHelper.DOC_FILE_NAME_SEPARATOR;
-import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
+import static eu.europa.ec.leos.services.support.XmlHelper.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class ZipPackageUtil {
@@ -74,13 +71,12 @@ public class ZipPackageUtil {
         for (Map.Entry<String, Object> entry : contentToZip.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
-            if (value instanceof File) {
-                File fileValue = (File) value;
-                validatePath(fileValue.getAbsolutePath());
+            if (value instanceof File fileValue) {
+                Path safePath = validateBasePath(fileValue.toPath(), "./");
                 ZipEntry ze = new ZipEntry(key);
                 zipOutputStream.putNextEntry(ze);
-                try(FileInputStream fileInputStream = new FileInputStream(FilenameUtils.normalize(fileValue.getAbsolutePath()))){
-                    IOUtils.copy(fileInputStream, zipOutputStream);
+                try (InputStream is = Files.newInputStream(safePath)) {
+                    IOUtils.copy(is, zipOutputStream);
                 }
                 zipOutputStream.closeEntry();
             } else if (value instanceof ByteArrayOutputStream) {
@@ -118,13 +114,12 @@ public class ZipPackageUtil {
         for (Map.Entry<String, Object> entry : contentToZip.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
-            if (value instanceof File) {
-                File fileValue = (File) value;
-                validatePath(fileValue.getAbsolutePath());
+            if (value instanceof File fileValue) {
+                Path safePath = validateBasePath(fileValue.toPath(), "./");
                 ZipEntry ze = new ZipEntry(key);
                 zipOutputStream.putNextEntry(ze);
-                try(FileInputStream fileInputStream = new FileInputStream(FilenameUtils.normalize(fileValue.getAbsolutePath()))){
-                    IOUtils.copy(fileInputStream, zipOutputStream);
+                try (InputStream is = Files.newInputStream(safePath)) {
+                    IOUtils.copy(is, zipOutputStream);
                 }
                 zipOutputStream.closeEntry();
             } else if (value instanceof ByteArrayOutputStream) {
