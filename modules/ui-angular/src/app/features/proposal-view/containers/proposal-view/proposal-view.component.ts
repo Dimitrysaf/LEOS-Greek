@@ -135,18 +135,16 @@ export class ProposalViewComponent
   }
 
   private setActiveTabIndex() {
-    if (this.translatedDocs?.length > 0) {
-      if (this.proposalRef === this.proposal.ref) {
-        this.activeTabIndex = 0;
-        this.proposalDetailsService.setTranslasted(false);
-      } else {
-        this.translatedDocs.forEach((doc, index) => {
-          if (this.proposalRef === doc.ref) {
-            this.activeTabIndex = index + 1;
-            this.proposalDetailsService.setTranslasted(true);
-          }
-        });
-      }
+    if (this.translatedDocs?.length > 0 && this.proposalRef !== this.proposal.ref) {
+      this.translatedDocs.forEach((doc, index) => {
+        if (this.proposalRef === doc.ref) {
+          this.activeTabIndex = index + 1;
+          this.proposalDetailsService.setTranslasted(true);
+        }
+      });
+    } else {
+      this.activeTabIndex = 0;
+      this.proposalDetailsService.setTranslasted(false);
     }
   }
 

@@ -1041,8 +1041,8 @@ Feature: Legal Act Page Regression Features
     When click search button in ribbon toolbar
     Then document search bar is displayed
     When put keyword "the" in document search input box
-    Then search result is showing "1 of 24"
-    Then total occurrences of keyword "the" is "24"
+    Then search result is showing "1 of 17"
+    Then total occurrences of keyword "the" is "17"
     When click on the replace button from search bar
     Then document replace bar is displayed
     When put keyword "that" in replace document search input box

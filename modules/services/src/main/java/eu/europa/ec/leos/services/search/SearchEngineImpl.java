@@ -116,7 +116,7 @@ public class SearchEngineImpl implements SearchEngine {
         for (int i = 0; i < nodeList.getLength(); i++) {
             int contentLength;
             Node childNode = nodeList.item(i);
-            if (childNode.getNodeType() == Node.TEXT_NODE) {
+            if (childNode.getNodeType() == Node.TEXT_NODE && XmlContentProcessorImpl.isEditableElement(childNode, false)) {
                 String content = childNode.getTextContent();
                 addElementNode(node, elements, content, textStartIndex);
                 contentLength = content.length();
@@ -148,7 +148,7 @@ public class SearchEngineImpl implements SearchEngine {
         Element element = new Element(
                 elementId,
                 content,
-                XmlContentProcessorImpl.isEditableElement(node),
+                XmlContentProcessorImpl.isEditableElement(node, true),
                 tag,
                 textStartIndex);
         elements.add(element);
