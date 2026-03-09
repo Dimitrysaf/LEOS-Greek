@@ -70,7 +70,8 @@ define(function leosInlineCancelPluginModule(require) {
             .replaceAll(/<([^>]+)>/g, (match, tagContent) => 
                 '<' + tagContent.replace(/(\s+)(\w+)=/g, (m, space, attr) => space + attr.toLowerCase() + '=') + '>')
             .replaceAll(/<\/?tbody\b[^>]*>/g, '')                           // tbody tag missing in the editor data
-            .replaceAll(/<td\b[^>]*>(<p><\/p>)<\/td>/g, (match, emptyParagraph) => match.replace(emptyParagraph, ''))
+            .replaceAll(/<td\b[^>]*>(\s*<p>\s*<\/p>\s*)<\/td>/g, (match, emptyParagraph) => match.replace(emptyParagraph, ''))
+            .replaceAll(/<td\b[^>]*>(\s*)<\/td>/g, (match, spaceInCell) => match.replace(spaceInCell, ''))
             .replaceAll('<br>', '<br/>')                                    // close unclosed br tags
             .replaceAll(/<img\b([^>]*[^/])>/g, '<img$1/>')                  // close unclosed img tags
             .replaceAll(/\s+\/>/g, '/>')                                    // remove trailing spaces
