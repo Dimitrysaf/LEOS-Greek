@@ -75,6 +75,7 @@ define(function leosInlineCancelPluginModule(require) {
             .replaceAll('<br>', '<br/>')                                    // close unclosed br tags
             .replaceAll(/<img\b([^>]*[^/])>/g, '<img$1/>')                  // close unclosed img tags
             .replaceAll(/\s+\/>/g, '/>')                                    // remove trailing spaces
+            .replaceAll(/(\S)\s+</g, '$1<')                                // remove trailing spaces in text nodes
             .trim();
     }
 
