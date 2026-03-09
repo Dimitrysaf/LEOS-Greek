@@ -40,8 +40,38 @@ public class LeosPreDiffingProcessor {
             }
         }
 
-        return new String(XercesUtils.nodeToByteArray(document));
+        String xmlContent = new String(XercesUtils.nodeToByteArray(document));
+        return this.removeEmptyTablesMultiPass(xmlContent);
 
     }
 
+
+    // More strict version - only removes if truly empty (recommended)
+    private String removeTrulyEmptyTables(String xmlContent) {
+        if (xmlContent == null || xmlContent.isEmpty()) {
+            return xmlContent;
+        }
+
+        // (?s) = dotall mode → . matches newlines
+        // (?i) = case insensitive (for TABLE/table/Table...)
+        String regexStrict = "(?is)<table\\b[^>]*>" +
+                "(?:\\s*|\\s*<\\!--.*?-->\\s*)" +     // allow only whitespace or comments
+                "</table>|" +
+                "<table\\b[^>]*\\s*/>";
+
+        return xmlContent.replaceAll(regexStrict, "");
+    }
+
+    // For chaining / multiple passes (sometimes needed with nested cases)
+    private String removeEmptyTablesMultiPass(String input) {
+        String result = input;
+        String previous;
+
+        do {
+            previous = result;
+            result = this.removeTrulyEmptyTables(result);
+        } while (!result.equals(previous));
+
+        return result;
+    }
 }

@@ -41,6 +41,7 @@ import eu.europa.ec.leos.services.annotate.AnnotateService;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.compare.processor.LeosPostDiffingProcessor;
+import eu.europa.ec.leos.services.compare.processor.LeosPreDiffingProcessor;
 import eu.europa.ec.leos.services.converter.ProposalConverterService;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
@@ -1101,6 +1102,11 @@ public class LegServiceImpl implements LegService {
                 .getSource().toString();
         String currentXml = new String(currentXmlContent, UTF_8);
 
+        LeosPreDiffingProcessor leosPreDiffingProcessor = new LeosPreDiffingProcessor();
+        originalXml = leosPreDiffingProcessor.adjustTrackChanges(originalXml);
+        intermediateMajorXml = leosPreDiffingProcessor.adjustTrackChanges(intermediateMajorXml);
+        currentXml = leosPreDiffingProcessor.adjustTrackChanges(currentXml);
+
         String diffResult =  compareService.compareContents(new ContentComparatorContext.Builder(originalXml, currentXml, intermediateMajorXml)   .withAttrName(ATTR_NAME)
                 .withRemovedValue(DOUBLE_COMPARE_REMOVED_CLASS)
                 .withAddedValue(DOUBLE_COMPARE_ADDED_CLASS)
@@ -1125,6 +1131,10 @@ public class LegServiceImpl implements LegService {
     public String simpleCompareXmlContents(XmlDocument versionToCompare, XmlDocument currentXmlContent, boolean isDocuwrite) {
         String versionToCompareXml = versionToCompare.getContent().get().getSource().toString();
         String currentXmlContentXml = currentXmlContent.getContent().get().getSource().toString();
+
+        LeosPreDiffingProcessor leosPreDiffingProcessor = new LeosPreDiffingProcessor();
+        versionToCompareXml = leosPreDiffingProcessor.adjustTrackChanges(versionToCompareXml);
+        currentXmlContentXml = leosPreDiffingProcessor.adjustTrackChanges(currentXmlContentXml);
 
         String diffResult =  compareService.compareContents(new ContentComparatorContext.Builder(versionToCompareXml, currentXmlContentXml)
                 .withAttrName(ATTR_NAME)

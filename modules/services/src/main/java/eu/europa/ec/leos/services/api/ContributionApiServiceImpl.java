@@ -81,7 +81,6 @@ import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -116,13 +115,7 @@ import java.util.stream.Collectors;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
 import static eu.europa.ec.leos.services.api.exception.ErrorCode.CA001;
 import static eu.europa.ec.leos.services.converter.ProposalConverterServiceImpl.createFileFromXmlSource;
-import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
-import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
-import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ELEMENT_NAME;
-import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
-import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
-import static eu.europa.ec.leos.services.support.XmlHelper.removeEnclosingTags;
+import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 @Service
 public class ContributionApiServiceImpl implements ContributionApiService {
@@ -243,12 +236,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         CreateCollectionResult createCollectionResult = null;
         Collection<? extends GrantedAuthority> loggedInUserAuthorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
         try {
-            validateBasePath(FilenameUtils.normalize(legDocumentName), "./");
-            // Validate and normalize the upload directory path
-            if (legDocumentName == null || legDocumentName.contains("..")) {
-                throw new IllegalArgumentException("Invalid upload directory path: " + legDocumentName);
-            }
-            LeosFile content = new LeosFile(legDocumentName);
+            String sanitizedFilename = sanitizeFilename(legDocumentName);
+            LeosFile content = new LeosFile(sanitizedFilename);
             writeContentToFile(legDocument, content);
             userService.switchUser(user.getLogin());
             String userDefaultEntity = user.getDefaultEntity() != null ? user.getDefaultEntity().getOrganizationName() : "";

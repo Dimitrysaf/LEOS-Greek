@@ -2055,7 +2055,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node child = nodeList.item(i);
             String content = child.getTextContent();
-            if (content != null && isEditableElement(child)) {
+            if (content != null && isEditableElement(child, true)) {
                 String updatedContent = content.replaceAll("(?i)" + Pattern.quote(searchText), Matcher.quoteReplacement(replaceText));
                 child.setTextContent(escapeXml10(updatedContent));
                 found = true;
@@ -2094,7 +2094,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return coverPageContent;
     }
 
-    public static boolean isEditableElement(Node node) {
+    public static boolean isEditableElement(Node node, boolean allowUndefined) {
         Validate.isTrue(node != null, "Node can not be null");
         Validate.isTrue(node.getParentNode() != null, "Parent Node can not be null");
         EditableAttributeValue editableAttrVal = getEditableAttributeForNode(node);
@@ -2102,18 +2102,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             editableAttrVal = getEditableAttributeForNode(node.getParentNode());
             node = node.getParentNode();
         }
-        return EditableAttributeValue.UNDEFINED.equals(editableAttrVal) ? true : Boolean.parseBoolean(editableAttrVal.name());
-    }
-
-    public static boolean isStrictEditableElement(Node node) {
-        Validate.isTrue(node != null, "Node can not be null");
-        Validate.isTrue(node.getParentNode() != null, "Parent Node can not be null");
-        EditableAttributeValue editableAttrVal = getEditableAttributeForNode(node);
-        while (EditableAttributeValue.UNDEFINED.equals(editableAttrVal) && node.getParentNode() != null) {
-            editableAttrVal = getEditableAttributeForNode(node.getParentNode());
-            node = node.getParentNode();
-        }
-        return EditableAttributeValue.UNDEFINED.equals(editableAttrVal) ? false : Boolean.parseBoolean(editableAttrVal.name());
+        return EditableAttributeValue.UNDEFINED.equals(editableAttrVal) ? allowUndefined : Boolean.parseBoolean(editableAttrVal.name());
     }
 
     private static EditableAttributeValue getEditableAttributeForNode(Node node) {

@@ -1,0 +1,336 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "LEOS AKN4EU UTIL API",
+    "description" : "API documentation for LEOS akn4eu util service",
+    "version" : "1.3.0-SNAPSHOT"
+  },
+  "paths" : {
+    "/" : {
+      "get" : {
+        "tags" : [ "Akn4euutilsAppInfoController" ],
+        "operationId" : "getAppInfo",
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "Map",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          },
+          "500" : {
+            "description" : "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/test" : {
+      "get" : {
+        "tags" : [ "LeosDocumentApiController" ],
+        "operationId" : "test",
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "string",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          },
+          "500" : {
+            "description" : "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/applyMetadataAsync" : {
+      "post" : {
+        "tags" : [ "LeosDocumentApiController" ],
+        "operationId" : "applyMetadata",
+        "parameters" : [ {
+          "name" : "inputFile",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "MultipartFile",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "callbackUrl",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "email",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "Object",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          },
+          "500" : {
+            "description" : "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/applyMetadata" : {
+      "post" : {
+        "tags" : [ "LeosDocumentApiController" ],
+        "operationId" : "applyMetadata",
+        "parameters" : [ {
+          "name" : "inputFile",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "MultipartFile",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "email",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "Object",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          },
+          "500" : {
+            "description" : "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/getRenditions" : {
+      "post" : {
+        "tags" : [ "LeosDocumentApiController" ],
+        "operationId" : "getRenditions",
+        "parameters" : [ {
+          "name" : "inputFile",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "MultipartFile",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "main",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "MultipartFile",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "isWithAnnotations",
+          "in" : "query",
+          "required" : false,
+          "schema" : {
+            "type" : "boolean",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "Object",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          },
+          "500" : {
+            "description" : "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/prefinalization-callback" : {
+      "post" : {
+        "tags" : [ "LeosDocumentApiController" ],
+        "operationId" : "processPrefinalization",
+        "parameters" : [ {
+          "name" : "token",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "inputFile",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "MultipartFile",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "202" : {
+            "description" : "Accepted",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "void",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          },
+          "500" : {
+            "description" : "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/updateWithTranslations" : {
+      "post" : {
+        "tags" : [ "LeosDocumentApiController" ],
+        "operationId" : "updateWithTranslations",
+        "parameters" : [ {
+          "name" : "inputFile",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "MultipartFile",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "translationsFile",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "type" : "MultipartFile",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "Object",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad Request"
+          },
+          "401" : {
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "description" : "Not Found"
+          },
+          "500" : {
+            "description" : "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/**" : { }
+  }
+}
