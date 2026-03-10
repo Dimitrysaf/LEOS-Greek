@@ -59,6 +59,7 @@ define(function aknSubParagraphTableFSProfileModule(require) {
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesInsPlugin"));
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
     plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
+    plugins.push(require("plugins/leosDisableCut/leosDisableCutPlugin"));
 
     var pluginNames=[];
     var specificConfig={
