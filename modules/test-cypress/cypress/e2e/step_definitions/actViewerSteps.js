@@ -3,9 +3,9 @@ import actViewerPage from "../pages/actViewerPage";
 import headerPage from "../pages/headerPage";
 
 Then('user is on act viewer page', () => {
-    headerPage .getCurrentPageName() .should((el) => { expect(el.text().trim()).to.eq("Act View"); });
-    //headerPage.getCurrentPageName().should("have.text", "Act View");
-   // cy.wait(2000);
+    //headerPage .getCurrentPageName() .should((el) => { expect(el.text().trim()).to.eq("Act View"); });
+    headerPage.getCurrentPageName().should("have.text", "Act View");
+    cy.wait(2000);
 })
 
 Then('click on legal act link present in act viewer page', () => {

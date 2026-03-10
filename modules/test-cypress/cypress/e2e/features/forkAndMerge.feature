@@ -829,14 +829,14 @@ Feature: fork and merge features
 # Ticket LEOS#3049 :Soft enter icon is showing when insert a table into an in a clone proposal .
   #Ticket LEOS#3055:Soft enter icon appears if we add any point in an article in a clone proposal
  @softEnterIcon @contributionPane @local
- Scenario: softEnterIcon should not be visible when we add appoint
+ Scenario: softEnterIcon should not be visible when we add a point
    Given navigate to leos application with "User1"
    Then user is on home page
    When click on Create act button
    Then user is on create new legislative document window
    When click on template "SJ-023" in create new legislative document window
    When click on next button in create document page
-   And  provide document title "3055" in create document page
+   And  provide document title "Soft Enter Icon should not be visible when we any point. " in create document page
    And  click on create button
    Then user is on act viewer page
    When click on legal act link present in act viewer page
@@ -893,7 +893,7 @@ Feature: fork and merge features
    Then successful message contains "Copy sent for contribution"
    When click on workspace button in breadcrumb item
    Then user is on repository browser page
-   When click on act 2
+   When click on act 1
    Then user is on act viewer page
    And  chip content container 1 of act header contains "Contribution"
    And  chip content container 2 of act header contains "LEOS"
@@ -930,7 +930,7 @@ Feature: fork and merge features
    Then user is on act viewer page
 
 # Ticket LEOS#3081: Clone Proposal : Wrong structure is creating when we outdent an unnumbered paragraph
-  @IndentAndOutdentScenarios @local
+  @IndentAndOutdentScenarios @local 
  Scenario: Indent/Outdent Scenario
     Given navigate to leos application with "User1"
     Then user is on home page
@@ -989,7 +989,7 @@ Feature: fork and merge features
     Then successful message contains "Copy sent for contribution"
     When click on workspace button in breadcrumb item
     Then user is on repository browser page
-    When click on act 2
+    When click on act 1
     Then user is on act viewer page
     And  chip content container 1 of act header contains "Contribution"
     And  chip content container 2 of act header contains "LEOS"
