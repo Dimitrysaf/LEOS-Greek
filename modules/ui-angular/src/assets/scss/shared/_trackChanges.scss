@@ -55,7 +55,7 @@
   ins, [leos\:action="insert"] {
     text-decoration: underline;
     white-space: break-spaces;
-    mref, authorialnote, span.MathJax_CHTML {
+    img, mref, authorialnote, span.MathJax_CHTML {
       box-shadow: inset 0 0 0 2px rgba(0, 255, 0, 0.5);
       span.mjx-char {
         text-decoration: underline;
@@ -99,6 +99,13 @@
     }
   }
 
+  del {
+    img {
+      outline: 2px solid rgba(255, 0, 0, 0.5);
+      outline-offset: -2px;
+    }
+  }
+
   del[leos\:action-enter="delete"] {
     text-decoration: none;
   }
@@ -128,6 +135,9 @@
         text-decoration: underline;
       }
     }
+    img {
+      outline: 4px inset rgba(0, 255, 0, 0.5);
+    }
   }
 
   [data-akn-action="delete"] {
@@ -137,6 +147,9 @@
       span.mjx-char {
         text-decoration: line-through;
       }
+    }
+    img {
+      outline: 4px inset rgba(255, 0, 0, 0.5);
     }
   }
 

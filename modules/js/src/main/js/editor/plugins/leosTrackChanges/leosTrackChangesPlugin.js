@@ -261,7 +261,7 @@ define(function leosTrackChangesPluginModule(require) {
                                 acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
                                 rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
                             };
-                        }else if ((editor.getSelection().isCollapsed() || element.$.classList.contains("cke_widget_inline")) && !core.isInsideTrackedDeletedOrSoftMovedToElement(editor)) {
+                        }else if ((editor.getSelection().isCollapsed() || element.getName() === 'img' || element.$.classList.contains("cke_widget_inline")) && !core.isInsideTrackedDeletedOrSoftMovedToElement(editor)) {
                             tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
                             if (tcElement) {
                                 editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
@@ -742,6 +742,7 @@ define(function leosTrackChangesPluginModule(require) {
                     case "leosCrossReferenceWidget":
                     case "mathjax":
                     case "table":
+                    case "img":
                         if (isTrackChangesEnabled && ((editor.getSelection().isCollapsed() && (core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)
                                 || core.isInsideTrackedDeletedOrSoftMovedToElement(editor))) || !editor.getSelection().isCollapsed())) {
                             return false;
