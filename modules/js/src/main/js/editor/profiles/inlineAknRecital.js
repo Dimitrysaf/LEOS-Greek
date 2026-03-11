@@ -78,10 +78,10 @@ define(function aknRecitalProfileModule(require) {
         customConfig: "",
         // comma-separated list of plugins to be loaded
         plugins: "toolbar,wysiwygarea,elementspath," +
-                 "clipboard,undo,pastefromword,basicstyles,enterkey," +
+                 "clipboard,undo,basicstyles,enterkey," +
                  "specialchar,button,dialog,dialogui,contextmenu,menubutton,widget,colorbutton",
         // comma-separated list of toolbar button names that must not be rendered
-        removeButtons: "Bold,Underline,Strike,TextColor,PasteFromWord",
+        removeButtons: "Bold,Underline,Strike,TextColor",
         // comma-separated list of additional plugins to be loaded
         extraPlugins: extraPlugins,
         // disable Advanced Content Filter (allow all content)
