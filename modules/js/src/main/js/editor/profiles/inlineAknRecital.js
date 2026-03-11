@@ -81,7 +81,7 @@ define(function aknRecitalProfileModule(require) {
                  "clipboard,undo,basicstyles,enterkey," +
                  "specialchar,button,dialog,dialogui,contextmenu,menubutton,widget,colorbutton",
         // comma-separated list of toolbar button names that must not be rendered
-        removeButtons: "Bold,Underline,Strike,TextColor",
+        removeButtons: "Bold,Underline,Strike,TextColor,PasteFromWord",
         // comma-separated list of additional plugins to be loaded
         extraPlugins: extraPlugins,
         // disable Advanced Content Filter (allow all content)
