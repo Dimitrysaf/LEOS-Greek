@@ -936,6 +936,10 @@ public class LeosApiController {
         try {
             injectElementService.injectElements(request);
             return new ResponseEntity<>(new InjectElementResponse(true, "Elements injected successfully"), HttpStatus.OK);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(new InjectElementResponse(false, ex.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (SecurityException ex) {
+            return new ResponseEntity<>(new InjectElementResponse(false, ex.getMessage()), HttpStatus.FORBIDDEN);
         } catch (Exception ex) {
             LOG.error("Error occurred while injecting elements: {}", ex.getMessage());
             return new ResponseEntity<>(new InjectElementResponse(false, "Error occurred while injecting elements: " + ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
