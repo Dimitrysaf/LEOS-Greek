@@ -3,6 +3,7 @@ package eu.europa.ec.leos.services.utils;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.model.user.User;
 import lombok.experimental.UtilityClass;
+import java.util.Objects;
 
 @UtilityClass
 public class CollaboratorUtils {
@@ -11,7 +12,7 @@ public class CollaboratorUtils {
         return c == null
                 || c.getLogin() == null
                 || (c.getLogin().equals(user.getLogin())
-                && (   c.getEntity() == null
+                && (c.getEntity() == null
                 || selectedEntity == null
                 || c.getEntity().equals(selectedEntity))
                 && matchLeosClientId(c, systemClientId)
@@ -19,12 +20,7 @@ public class CollaboratorUtils {
     }
 
     public static boolean matchLeosClientId(Collaborator collaborator, String leosClientId) {
-        if (leosClientId==null && collaborator.getLeosClientId()==null) {
-            return true;
-        } else if (leosClientId!=null && collaborator.getLeosClientId()!=null) {
-            return leosClientId.equals(collaborator.getLeosClientId());
-        }
-        return false;
+        return Objects.equals(collaborator.getLeosClientId(), leosClientId);
     }
 
 }
