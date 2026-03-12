@@ -16,6 +16,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import eu.europa.ec.leos.services.document.operation.builder.*;
@@ -80,13 +81,15 @@ public class ElementInjectionHelperTest {
         ), higherDivisionBuilder);
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
+        factory.setValidating(false);
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         DocumentBuilder builder = factory.newDocumentBuilder();
-        citationsDoc = builder.parse(new ByteArrayInputStream(CITATIONS_XML.getBytes()));
-        recitalsDoc = builder.parse(new ByteArrayInputStream(RECITALS_XML.getBytes()));
-        bodyDoc = builder.parse(new ByteArrayInputStream(BODY_XML.getBytes()));
+        citationsDoc = builder.parse(new ByteArrayInputStream(CITATIONS_XML.getBytes(StandardCharsets.UTF_8)));
+        recitalsDoc = builder.parse(new ByteArrayInputStream(RECITALS_XML.getBytes(StandardCharsets.UTF_8)));
+        bodyDoc = builder.parse(new ByteArrayInputStream(BODY_XML.getBytes(StandardCharsets.UTF_8)));
     }
 
     private LineItem paragraph(String content) {
@@ -96,18 +99,25 @@ public class ElementInjectionHelperTest {
         return p;
     }
 
-    private LineItem paragraphWithNote(String content, int position, String noteRefId, String noteContent) {
+    private LineItem note(String refId, int position, String content) {
         LineItem note = new LineItem();
         note.setType(AknType.AUTHORIAL_NOTE);
-        note.setRefId(noteRefId);
+        note.setRefId(refId);
         note.setPosition(position);
-        note.setContent(noteContent);
+        note.setContent(content);
+        return note;
+    }
 
+    private LineItem paragraphWithNotes(String content, LineItem... notes) {
         LineItem p = new LineItem();
         p.setType(AknType.PARAGRAPH);
         p.setContent(content);
-        p.setChildren(List.of(note));
+        p.setChildren(List.of(notes));
         return p;
+    }
+
+    private LineItem paragraphWithNote(String content, int position, String noteRefId, String noteContent) {
+        return paragraphWithNotes(content, note(noteRefId, position, noteContent));
     }
 
     private LineItem citation(LineItem... children) {
@@ -121,6 +131,8 @@ public class ElementInjectionHelperTest {
         StringWriter sw = new StringWriter();
         TransformerFactory tf = TransformerFactory.newInstance();
         tf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        try { tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, ""); } catch (IllegalArgumentException ignored) {}
+        try { tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, ""); } catch (IllegalArgumentException ignored) {}
         Transformer t = tf.newTransformer();
         t.transform(new DOMSource(d), new StreamResult(sw));
         return sw.toString();
@@ -160,25 +172,9 @@ public class ElementInjectionHelperTest {
     void testCitationWithTwoAuthorialNotesAtDifferentPositions() throws Exception {
         String text = "At vero eos et accusamus et iusto odio dignissimos ducimus,";
         // pos 47 = after "dignissimos", pos 57 = after "ducimus"
-
-        LineItem note1 = new LineItem();
-        note1.setType(AknType.AUTHORIAL_NOTE);
-        note1.setRefId("2");
-        note1.setPosition(47);
-        note1.setContent("First footnote.");
-
-        LineItem note2 = new LineItem();
-        note2.setType(AknType.AUTHORIAL_NOTE);
-        note2.setRefId("3");
-        note2.setPosition(57);
-        note2.setContent("Second footnote.");
-
-        LineItem p = new LineItem();
-        p.setType(AknType.PARAGRAPH);
-        p.setContent(text);
-        p.setChildren(List.of(note1, note2));
-
-        helper.insertCitations(citationsDoc, List.of(citation(p)));
+        helper.insertCitations(citationsDoc, List.of(
+                citation(paragraphWithNotes(text, note("2", 47, "First footnote."), note("3", 57, "Second footnote.")))
+        ));
 
         String xml = serialize(citationsDoc);
         assertTrue(xml.contains("<authorialNote marker=\"2\""), "Missing first note");
@@ -278,7 +274,6 @@ public class ElementInjectionHelperTest {
     }
 
     private LineItem recitalsGroup(String heading, LineItem... children) {
-        if (heading == null || heading.isEmpty()) throw new IllegalArgumentException("RECITALS group requires a heading");
         LineItem g = new LineItem();
         g.setType(AknType.RECITALS);
         g.setContent(heading);
@@ -322,17 +317,9 @@ public class ElementInjectionHelperTest {
     @Test
     void testArticleWithNumberedParagraphAndFootnote() throws Exception {
         String text = "This Regulation establishes a framework for the submission of reports,";
-        LineItem note = new LineItem();
-        note.setType(AknType.AUTHORIAL_NOTE);
-        note.setRefId("1");
-        note.setPosition(58);
-        note.setContent("OJ L 123, 1.1.2024, p. 1.");
-        LineItem para = new LineItem();
-        para.setType(AknType.NUMBERED_PARAGRAPH);
-        para.setContent(text);
-        para.setChildren(List.of(note));
-
-        helper.insertEnactingTerms(bodyDoc, List.of(numberedArticle(articleHeading("Scope"), para)));
+        helper.insertEnactingTerms(bodyDoc, List.of(
+                numberedArticle(articleHeading("Scope"), numberedParagraphWithNote(text, 58, "1", "OJ L 123, 1.1.2024, p. 1."))
+        ));
 
         String xml = serialize(bodyDoc);
         assertTrue(xml.contains("This Regulation establishes a framework for the submission" +
@@ -375,12 +362,12 @@ public class ElementInjectionHelperTest {
     }
 
     @Test
-    void testArticleWithoutHeading() throws Exception {
+    void testArticleWithoutHeadingBuildsValidXmlWhenCalledDirectly() throws Exception {
+        // The validator rejects headingless articles before they reach the helper.
+        // This test verifies the helper itself does not break when called without one.
         helper.insertEnactingTerms(bodyDoc, List.of(
                 numberedArticle(numberedParagraph("Paragraph without heading."))
         ));
-        // heading is now required — validator rejects this before reaching the helper,
-        // but the helper itself still builds valid XML if called directly
         String xml = serialize(bodyDoc);
         assertFalse(xml.contains("<heading>"));
         assertTrue(xml.contains("<content><p>Paragraph without heading.</p></content>"));
@@ -599,19 +586,12 @@ public class ElementInjectionHelperTest {
     private LineItem section(String heading, LineItem... children) { return higherDivision(AknType.SECTION, heading, children); }
 
     private LineItem numberedParagraphWithNote(String content, int position, String refId, String noteContent) {
-        LineItem note = new LineItem();
-        note.setType(AknType.AUTHORIAL_NOTE);
-        note.setRefId(refId);
-        note.setPosition(position);
-        note.setContent(noteContent);
         LineItem p = new LineItem();
         p.setType(AknType.NUMBERED_PARAGRAPH);
         p.setContent(content);
-        p.setChildren(List.of(note));
+        p.setChildren(List.of(note(refId, position, noteContent)));
         return p;
     }
-
-    // --- Enacting terms helpers ---
 
     private LineItem articleHeading(String content) {
         LineItem h = new LineItem();

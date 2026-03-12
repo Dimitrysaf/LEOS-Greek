@@ -54,11 +54,15 @@ public class CleanOperationStrategy implements OperationStrategy {
         this.documentLanguageContext = documentLanguageContext;
         this.documentBuilderFactory = DocumentBuilderFactory.newInstance();
         this.documentBuilderFactory.setNamespaceAware(true);
+        this.documentBuilderFactory.setValidating(false);
+        this.documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         this.documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         this.documentBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         this.documentBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         this.transformerFactory = TransformerFactory.newInstance();
         this.transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        try { this.transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, ""); } catch (IllegalArgumentException ignored) {}
+        try { this.transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, ""); } catch (IllegalArgumentException ignored) {}
     }
 
     @Override
@@ -83,6 +87,8 @@ public class CleanOperationStrategy implements OperationStrategy {
             injectItems(doc, section);
             return postProcess(doc, section.getSectionType());
         } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -125,9 +131,11 @@ public class CleanOperationStrategy implements OperationStrategy {
     }
 
     private byte[] postProcess(Document doc, SectionType sectionType) throws Exception {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        transformerFactory.newTransformer().transform(new DOMSource(doc), new StreamResult(outputStream));
-        byte[] result = outputStream.toByteArray();
+        byte[] result;
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            transformerFactory.newTransformer().transform(new DOMSource(doc), new StreamResult(outputStream));
+            result = outputStream.toByteArray();
+        }
         if (sectionType == SectionType.RECITALS) {
             result = numberService.renumberRecitals(result);
         } else if (sectionType == SectionType.ENACTING_TERMS) {

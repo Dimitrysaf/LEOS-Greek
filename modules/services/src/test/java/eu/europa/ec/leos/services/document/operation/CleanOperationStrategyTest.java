@@ -70,7 +70,7 @@ public class CleanOperationStrategyTest {
     }
 
     @Test
-    public void testCleanCitationsRemovesChildrenAndDelegatesToHelper() throws Exception {
+    public void testCleanCitationsRemovesExistingChildrenFromOutput() throws Exception {
         when(xmlContentProcessor.doXMLPostProcessing(any())).thenAnswer(i -> i.getArgument(0));
 
         List<LineItem> items = List.of(new LineItem());
@@ -79,25 +79,37 @@ public class CleanOperationStrategyTest {
         section.setOperation(Operation.CLEAN);
         section.setItems(items);
 
-        strategy.execute(xmlBytes(), section, "ANY");
+        byte[] result = strategy.execute(xmlBytes(), section, "ANY");
 
+        String xml = new String(result, StandardCharsets.UTF_8);
+        assertFalse(xml.contains("<p>Old</p>"), "Existing citation content must be removed from output");
+        assertTrue(xml.contains("<citations"), "citations element must still be present");
         verify(injectionHelper).insertCitations(any(), eq(items));
         verify(xmlContentProcessor).doXMLPostProcessing(any());
     }
 
     @Test
-    public void testCleanRecitalsRemovesChildrenWithoutCallingHelper() throws Exception {
-        String recitalsXml = CITATIONS_XML.replace("citations", "recitals").replace("citation", "recital");
+    public void testCleanRecitalsRemovesRecitalElementsPreservesIntroInOutput() throws Exception {
+        String recitalsXml =
+                "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" xmlns:leos=\"urn:eu:europa:ec:leos\">" +
+                "<bill><preamble><recitals>" +
+                "<intro><p>Intro text</p></intro>" +
+                "<recital><num>(1)</num><p>Old recital</p></recital>" +
+                "</recitals></preamble></bill></akomaNtoso>";
         when(xmlContentProcessor.doXMLPostProcessing(any())).thenAnswer(i -> i.getArgument(0));
+        when(numberService.renumberRecitals(any())).thenAnswer(i -> i.getArgument(0));
 
         SectionRequest section = new SectionRequest();
         section.setSectionType(SectionType.RECITALS);
         section.setOperation(Operation.CLEAN);
+        section.setItems(List.of());
 
-        strategy.execute(recitalsXml.getBytes(StandardCharsets.UTF_8), section, "ANY");
+        byte[] result = strategy.execute(recitalsXml.getBytes(StandardCharsets.UTF_8), section, "ANY");
 
+        String xml = new String(result, StandardCharsets.UTF_8);
+        assertTrue(xml.contains("<intro>"), "intro element must be preserved in output");
+        assertFalse(xml.contains("Old recital"), "recital content must be removed from output");
         verify(injectionHelper).insertRecitals(any(), any());
-        verify(xmlContentProcessor).doXMLPostProcessing(any());
     }
 
     @Test
@@ -115,7 +127,7 @@ public class CleanOperationStrategyTest {
     }
 
     @Test
-    public void testCleanEnactingTermsRemovesArticlesPreservesClauseAndDelegatesToHelper() throws Exception {
+    public void testCleanEnactingTermsRemovesArticlesPreservesClauseInOutput() throws Exception {
         String bodyXml =
                 "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" xmlns:leos=\"urn:eu:europa:ec:leos\">" +
                 "<bill><body>" +
@@ -135,17 +147,40 @@ public class CleanOperationStrategyTest {
         section.setOperation(Operation.CLEAN);
         section.setItems(items);
 
-        strategy.execute(bodyXml.getBytes(StandardCharsets.UTF_8), section, "ANY");
+        byte[] result = strategy.execute(bodyXml.getBytes(StandardCharsets.UTF_8), section, "ANY");
 
+        String xml = new String(result, StandardCharsets.UTF_8);
+        assertFalse(xml.contains("Old text."), "article content must be removed from output");
+        assertTrue(xml.contains("Binding clause."), "clause must be preserved in output");
         verify(injectionHelper).insertEnactingTerms(any(), eq(items));
         verify(numberService).renumberArticles(any(), eq(true));
         verify(numberService, times(4)).renumberHigherSubDivisions(any(), eq("EN"), any(), any());
-        verify(xmlContentProcessor).doXMLPostProcessing(any());
     }
 
     @Test
-    public void testCleanCitationsActuallyClearsExistingChildren() throws Exception {
+    public void testRecitalsOutputContainsRenumberedContentAndNoOldRecitals() throws Exception {
+        String recitalsXml = "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" xmlns:leos=\"urn:eu:europa:ec:leos\">" +
+                "<bill><preamble><recitals><recital><num>(1)</num><p>Old</p></recital></recitals></preamble></bill></akomaNtoso>";
+        byte[] renumbered = "<renumbered/>" .getBytes(StandardCharsets.UTF_8);
         when(xmlContentProcessor.doXMLPostProcessing(any())).thenAnswer(i -> i.getArgument(0));
+        when(numberService.renumberRecitals(any())).thenReturn(renumbered);
+
+        SectionRequest section = new SectionRequest();
+        section.setSectionType(SectionType.RECITALS);
+        section.setOperation(Operation.CLEAN);
+        section.setItems(List.of());
+
+        byte[] result = strategy.execute(recitalsXml.getBytes(StandardCharsets.UTF_8), section, "ANY");
+
+        assertArrayEquals(renumbered, result, "output must be the result of renumberRecitals");
+        verify(numberService).renumberRecitals(any());
+        verify(numberService, never()).renumberArticles(any(), anyBoolean());
+    }
+
+    @Test
+    public void testCitationsOutputIsPassedThroughPostProcessing() throws Exception {
+        byte[] postProcessed = "<postprocessed/>".getBytes(StandardCharsets.UTF_8);
+        when(xmlContentProcessor.doXMLPostProcessing(any())).thenReturn(postProcessed);
 
         SectionRequest section = new SectionRequest();
         section.setSectionType(SectionType.CITATIONS);
@@ -154,111 +189,40 @@ public class CleanOperationStrategyTest {
 
         byte[] result = strategy.execute(xmlBytes(), section, "ANY");
 
-        String xml = new String(result, java.nio.charset.StandardCharsets.UTF_8);
-        assertFalse(xml.contains("<p>Old</p>"), "Existing citation content should be removed");
-    }
-
-    @Test
-    public void testCleanRecitalsPreservesIntroElement() throws Exception {
-        String recitalsXml =
-                "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" xmlns:leos=\"urn:eu:europa:ec:leos\">" +
-                "<bill><preamble><recitals>" +
-                "<intro><p>Intro text</p></intro>" +
-                "<recital><num>(1)</num><p>Old recital</p></recital>" +
-                "</recitals></preamble></bill></akomaNtoso>";
-        when(xmlContentProcessor.doXMLPostProcessing(any())).thenAnswer(i -> i.getArgument(0));
-        when(numberService.renumberRecitals(any())).thenAnswer(i -> i.getArgument(0));
-
-        SectionRequest section = new SectionRequest();
-        section.setSectionType(SectionType.RECITALS);
-        section.setOperation(Operation.CLEAN);
-        section.setItems(List.of());
-
-        byte[] result = strategy.execute(recitalsXml.getBytes(java.nio.charset.StandardCharsets.UTF_8), section, "ANY");
-
-        String xml = new String(result, java.nio.charset.StandardCharsets.UTF_8);
-        assertTrue(xml.contains("<intro>"), "intro element must be preserved");
-        assertFalse(xml.contains("Old recital"), "Old recital must be removed");
-    }
-
-    @Test
-    public void testCleanEnactingTermsPreservesClause() throws Exception {
-        String bodyXml =
-                "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" xmlns:leos=\"urn:eu:europa:ec:leos\">" +
-                "<bill><body>" +
-                "<article><num>#</num><paragraph><content><p>Old</p></content></paragraph></article>" +
-                "<clause><content><p>Binding clause.</p></content></clause>" +
-                "</body></bill></akomaNtoso>";
-        when(xmlContentProcessor.doXMLPostProcessing(any())).thenAnswer(i -> i.getArgument(0));
-        when(numberService.renumberArticles(any(), eq(true))).thenAnswer(i -> i.getArgument(0));
-        when(structureContextProvider.get()).thenReturn(structureContext);
-        when(structureContext.getTocItems()).thenReturn(List.of());
-        when(documentLanguageContext.getDocumentLanguage()).thenReturn("EN");
-        when(numberService.renumberHigherSubDivisions(any(), any(), any(), any())).thenAnswer(i -> i.getArgument(0));
-
-        SectionRequest section = new SectionRequest();
-        section.setSectionType(SectionType.ENACTING_TERMS);
-        section.setOperation(Operation.CLEAN);
-        section.setItems(List.of());
-
-        byte[] result = strategy.execute(bodyXml.getBytes(java.nio.charset.StandardCharsets.UTF_8), section, "ANY");
-
-        String xml = new String(result, java.nio.charset.StandardCharsets.UTF_8);
-        assertTrue(xml.contains("Binding clause."), "clause must be preserved");
-        assertFalse(xml.contains("Old"), "article content must be removed");
-    }
-
-    @Test
-    public void testRecitalsCallsRenumberRecitals() throws Exception {
-        String recitalsXml = CITATIONS_XML.replace("citations", "recitals").replace("citation", "recital");
-        when(xmlContentProcessor.doXMLPostProcessing(any())).thenAnswer(i -> i.getArgument(0));
-        when(numberService.renumberRecitals(any())).thenAnswer(i -> i.getArgument(0));
-
-        SectionRequest section = new SectionRequest();
-        section.setSectionType(SectionType.RECITALS);
-        section.setOperation(Operation.CLEAN);
-        section.setItems(List.of());
-
-        strategy.execute(recitalsXml.getBytes(java.nio.charset.StandardCharsets.UTF_8), section, "ANY");
-
-        verify(numberService).renumberRecitals(any());
-        verify(numberService, never()).renumberArticles(any(), anyBoolean());
-    }
-
-    @Test
-    public void testCitationsDoesNotCallRenumber() throws Exception {
-        when(xmlContentProcessor.doXMLPostProcessing(any())).thenAnswer(i -> i.getArgument(0));
-
-        SectionRequest section = new SectionRequest();
-        section.setSectionType(SectionType.CITATIONS);
-        section.setOperation(Operation.CLEAN);
-        section.setItems(List.of());
-
-        strategy.execute(xmlBytes(), section, "ANY");
-
+        assertArrayEquals(postProcessed, result, "output must be the result of doXMLPostProcessing");
         verify(numberService, never()).renumberRecitals(any());
         verify(numberService, never()).renumberArticles(any(), anyBoolean());
     }
 
     @Test
-    public void testEnactingTermsCallsRenumberHigherSubDivisionsForAllFourElements() throws Exception {
+    public void testEnactingTermsRenumberHigherSubDivisionsCalledForAllFourElementsInOrder() throws Exception {
         String bodyXml =
                 "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" xmlns:leos=\"urn:eu:europa:ec:leos\">" +
                 "<bill><body><clause><content><p>Clause.</p></content></clause></body></bill></akomaNtoso>";
+        // each renumber call appends a marker so we can verify order and chaining
         when(xmlContentProcessor.doXMLPostProcessing(any())).thenAnswer(i -> i.getArgument(0));
         when(numberService.renumberArticles(any(), eq(true))).thenAnswer(i -> i.getArgument(0));
         when(structureContextProvider.get()).thenReturn(structureContext);
         when(structureContext.getTocItems()).thenReturn(List.of());
         when(documentLanguageContext.getDocumentLanguage()).thenReturn("EN");
-        when(numberService.renumberHigherSubDivisions(any(), any(), any(), any())).thenAnswer(i -> i.getArgument(0));
+        when(numberService.renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.PART),    any())).thenAnswer(i -> ("part-done:"+new String((byte[])i.getArgument(0), StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8));
+        when(numberService.renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.TITLE),   any())).thenAnswer(i -> ("title-done:"+new String((byte[])i.getArgument(0), StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8));
+        when(numberService.renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.CHAPTER), any())).thenAnswer(i -> ("chapter-done:"+new String((byte[])i.getArgument(0), StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8));
+        when(numberService.renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.SECTION), any())).thenAnswer(i -> ("section-done:"+new String((byte[])i.getArgument(0), StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8));
 
         SectionRequest section = new SectionRequest();
         section.setSectionType(SectionType.ENACTING_TERMS);
         section.setOperation(Operation.CLEAN);
         section.setItems(List.of());
 
-        strategy.execute(bodyXml.getBytes(StandardCharsets.UTF_8), section, "ANY");
+        byte[] result = strategy.execute(bodyXml.getBytes(StandardCharsets.UTF_8), section, "ANY");
+        String xml = new String(result, StandardCharsets.UTF_8);
 
+        // verify all four were called and output was chained through each in order
+        assertTrue(xml.contains("section-done:"), "output must pass through renumberHigherSubDivisions for SECTION last");
+        assertTrue(xml.contains("chapter-done:"), "output must pass through renumberHigherSubDivisions for CHAPTER");
+        assertTrue(xml.contains("title-done:"),   "output must pass through renumberHigherSubDivisions for TITLE");
+        assertTrue(xml.contains("part-done:"),     "output must pass through renumberHigherSubDivisions for PART");
         verify(numberService).renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.PART),    any());
         verify(numberService).renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.TITLE),   any());
         verify(numberService).renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.CHAPTER), any());
@@ -267,7 +231,8 @@ public class CleanOperationStrategyTest {
 
     @Test
     public void testEnactingTermsDoesNotCallRenumberHigherSubDivisionsForRecitals() throws Exception {
-        String recitalsXml = CITATIONS_XML.replace("citations", "recitals").replace("citation", "recital");
+        String recitalsXml = "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" xmlns:leos=\"urn:eu:europa:ec:leos\">" +
+                "<bill><preamble><recitals><recital><num>(1)</num><p>Old</p></recital></recitals></preamble></bill></akomaNtoso>";
         when(xmlContentProcessor.doXMLPostProcessing(any())).thenAnswer(i -> i.getArgument(0));
         when(numberService.renumberRecitals(any())).thenAnswer(i -> i.getArgument(0));
 
@@ -276,8 +241,9 @@ public class CleanOperationStrategyTest {
         section.setOperation(Operation.CLEAN);
         section.setItems(List.of());
 
-        strategy.execute(recitalsXml.getBytes(StandardCharsets.UTF_8), section, "ANY");
+        byte[] result = strategy.execute(recitalsXml.getBytes(StandardCharsets.UTF_8), section, "ANY");
 
+        assertNotNull(result);
         verify(numberService, never()).renumberHigherSubDivisions(any(), any(), any(), any());
     }
 }

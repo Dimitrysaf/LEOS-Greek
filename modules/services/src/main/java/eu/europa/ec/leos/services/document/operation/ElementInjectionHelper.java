@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
@@ -50,6 +51,8 @@ public class ElementInjectionHelper {
         }
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
+        documentBuilderFactory.setValidating(false);
+        documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         documentBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         documentBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
@@ -89,6 +92,10 @@ public class ElementInjectionHelper {
                 Node importedNode = doc.importNode(fragment.getDocumentElement().getElementsByTagName(tagResolver.apply(item)).item(0), true);
                 containerNode.appendChild(importedNode);
             }
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException("Failed to insert into " + containerTag, e);
         }
