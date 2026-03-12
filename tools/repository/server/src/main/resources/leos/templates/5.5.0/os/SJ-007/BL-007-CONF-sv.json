@@ -1,0 +1,107 @@
+{
+  "guidance": [
+    {
+      "targets": [
+        {
+          "destinationPath": "//preamble/formula[1]/aknp",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_preamble__formula_1__p\" class=\"guidance-green-block\"><span id=\"_preamble__formula_1__p-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Citations\" target=\"_blank\">Citations</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//recitals/intro",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_recitalsIntro\" class=\"guidance-green-block\"><span id=\"_recitalsIntro-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/x/Yxt2F\" target=\"_blank\">Recitals</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//preamble/formula[2]/aknp",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_preamble__formula_2__p\" class=\"guidance-green-block\"><span id=\"_preamble__formula_2__p-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Enacting+terms\" target=\"_blank\">Enacting terms</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//recitals/recital[3]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-recital-3\" class=\"guidance-green-block\"><span id=\"clause-recital-3\">[That recital is optional in accordance with the guidance note on explanatory documents available at: https://myintracomm.ec.europa.eu/corp/sg/fr/droit_comm/infractions/Documents/guidance_explanatory_documents_en.pdf. Please note that a thorough justification must be reflected in the summary record of the committee meeting on whether or not the Commission considers such explanatory documents to be justified.]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "(//article)[2]/paragraph[1]/subparagraph[1]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-article-2\" class=\"guidance-green-block\"><span id=\"clause-article-2\">[...] - The time limit for transposition will be as short as possible and, generally, will not exceed two years</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//article[@refersto='~ART_DEF']/heading",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_art_definitions_heading\" class=\"guidance-green-block\"><span id=\"_art_2_definitions_heading-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Definitions\" target=\"_blank\">Definitions</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//conclusions[1]/aknp[1]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-clause-1\" class=\"guidance-green-block\"><span id=\"clause-1-guidance\">[Choose between the two options, depending on the person who signs.]</span></guidance>"
+    }
+  ],
+  "alternatives": [
+    {
+      "name": "listOption1",
+      "list": [
+        {
+          "index": "1",
+          "content": "<article xml:id=\"art2\" leos:editable=\"true\" leos:deletable=\"true\" leos:autonumbering=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\"><num xml:id=\"art2Num\" leos:editable=\"false\">Artikel 2</num><heading xml:id=\"art2Heading\">Artikelrubrik......</heading><paragraph xml:id=\"art1Para1\"><num xml:id=\"art1Para1Num\">1.</num><subparagraph xml:id=\"art1Para1Sub1\"><content xml:id=\"art1Para1Sub1Content\"><p xml:id=\"art1Para1Sub1ContentP\">Medlemsstaterna ska senast den [...] sätta i kraft de lagar och andra författningar som är nödvändiga för att följa detta direktiv. De ska till kommissionen genast överlämna texten till dessa bestämmelser.</p></content></subparagraph><subparagraph xml:id=\"art1Para1Sub2\"><content xml:id=\"art1Para1Sub2Content\"><p xml:id=\"art1Para1Sub2ContentP\">När en medlemsstat antar dessa bestämmelser ska de innehålla en hänvisning till detta direktiv eller åtföljas av en sådan hänvisning när de offentliggörs. Närmare föreskrifter om hur hänvisningen ska göras ska varje medlemsstat själv utfärda.</p></content></subparagraph></paragraph><paragraph xml:id=\"art2Para2\"><num xml:id=\"art2Para2Num\">2.</num><content xml:id=\"art1Para1Content\"><p xml:id=\"art1Para1ContentP\">Medlemsstaterna ska till kommissionen överlämna texten till de centrala bestämmelser i nationell lagstiftning som de antar inom det område som omfattas av detta direktiv.</p></content></paragraph></article>"
+        },
+        {
+          "index": "2",
+          "content": "<article xml:id=\"artN2\" leos:editable=\"true\" leos:deletable=\"true\" leos:autonumbering=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\"><num xml:id=\"art2Num\" leos:editable=\"false\">Artikel 2</num><heading xml:id=\"art2Heading\">Artikelrubrik......</heading><paragraph xml:id=\"art1Para1\"><num xml:id=\"art1Para1Num\">1.</num><subparagraph xml:id=\"art1Para1Sub1\"><content xml:id=\"art1Para1Sub1Content\"><p xml:id=\"art1Para1Sub1ContentP\">Medlemsstaterna ska senast den [...] anta och offentliggöra de lagar och andra författningar som är nödvändiga för att följa detta direktiv. De ska till kommissionen genast överlämna texten till dessa bestämmelser.</p></content></subparagraph><subparagraph xml:id=\"art1Para1Sub2\"><content xml:id=\"art1Para1Sub2Content\"><p xml:id=\"art1Para1Sub2ContentP\">De ska tillämpa dessa bestämmelser från och med den [...].</p></content></subparagraph><subparagraph xml:id=\"art1Para1Sub3\"><content xml:id=\"art1Para1Sub3Content\"><p xml:id=\"art1Para1Sub3ContentP\">När en medlemsstat antar dessa bestämmelser ska de innehålla en hänvisning till detta direktiv eller åtföljas av en sådan hänvisning när de offentliggörs. Närmare föreskrifter om hur hänvisningen ska göras ska varje medlemsstat själv utfärda.</p></content></subparagraph></paragraph><paragraph xml:id=\"art1Para2\"><num xml:id=\"art1Para1Num\">2.</num><content xml:id=\"art1Para2Content\"><p xml:id=\"art1Para2ContentP\">Medlemsstaterna ska till kommissionen överlämna texten till de centrala bestämmelser i nationell lagstiftning som de antar inom det område som omfattas av detta direktiv.</p></content></paragraph></article>"
+        }
+      ]
+    },
+    {
+      "name": "listOption2",
+      "list": [
+        {
+          "index": "1",
+          "title": "The President",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"1\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">På kommissionens vägnar</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">Ordförande</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "2",
+          "title": "On behalf of the President",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"2\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">På kommissionens vägnar</organization><role refersTo=\"~PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">För ordföranden</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        }
+      ]
+    }
+  ],
+  "structure": [
+    {
+      "mode": "main",
+      "name": "structure_08"
+    },
+    {
+      "mode": "translated",
+      "name": "structure_08_translated"
+    }
+  ]
+}
