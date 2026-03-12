@@ -1,35 +1,21 @@
 package eu.europa.ec.leos.services.document;
 
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.security.LeosPermission;
+import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.document.operation.OperationStrategy;
 import eu.europa.ec.leos.services.document.operation.OperationStrategyFactory;
-import eu.europa.ec.leos.services.dto.request.*;
+import eu.europa.ec.leos.services.dto.request.DocumentLinesRequest;
+import eu.europa.ec.leos.services.dto.request.SectionRequest;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import jakarta.inject.Provider;
 
-/**
- * Implementation of InjectElementService for processing element injection requests.
- * This service integrates with external applications (e.g., DG SANTE EMP2) to modify
- * EdiT document content by applying operations on specific sections.
- * 
- * The service:
- * 1. Retrieves the target document from the workspace
- * 2. Parses the XML content into a DOM structure
- * 3. Applies the requested operations using strategy pattern
- * 4. Persists the modified document back to the repository
- */
 @Service
 @Slf4j
 public class InjectElementServiceImpl implements InjectElementService {
@@ -37,66 +23,57 @@ public class InjectElementServiceImpl implements InjectElementService {
     private final WorkspaceService workspaceService;
     private final DocumentContentService documentContentService;
     private final OperationStrategyFactory strategyFactory;
+    private final Provider<StructureContext> structureContextProvider;
+    private final DocumentLanguageContext documentLanguageContext;
+    private final SecurityContext securityContext;
 
     @Autowired
-    public InjectElementServiceImpl(WorkspaceService workspaceService, 
-                                   DocumentContentService documentContentService,
-                                   OperationStrategyFactory strategyFactory) {
+    public InjectElementServiceImpl(WorkspaceService workspaceService,
+                                    DocumentContentService documentContentService,
+                                    OperationStrategyFactory strategyFactory,
+                                    Provider<StructureContext> structureContextProvider,
+                                    DocumentLanguageContext documentLanguageContext,
+                                    SecurityContext securityContext) {
         this.workspaceService = workspaceService;
         this.documentContentService = documentContentService;
         this.strategyFactory = strategyFactory;
+        this.structureContextProvider = structureContextProvider;
+        this.documentLanguageContext = documentLanguageContext;
+        this.securityContext = securityContext;
     }
 
-    /**
-     * Processes element injection requests for a document.
-     * 
-     * This method:
-     * 1. Retrieves the document by its reference ID
-     * 2. Parses the XML content into a DOM Document
-     * 3. Iterates through each section request and applies the corresponding operation strategy
-     * 4. Converts the modified DOM back to bytes
-     * 5. Updates the document in the repository
-     * 
-     * @param request the DocumentLinesRequest containing document ID and section operations
-     * @throws RuntimeException if document retrieval, parsing, or update fails
-     */
     @Override
     public void injectElements(DocumentLinesRequest request) {
+        if (request.getSections() == null || request.getSections().isEmpty()) {
+            throw new IllegalArgumentException("Request must contain at least one section");
+        }
         try {
             XmlDocument document = workspaceService.findDocumentByRef(request.getDocumentId(), XmlDocument.class);
+            if (!securityContext.hasPermission(document, LeosPermission.CAN_UPDATE)) {
+                throw new SecurityException("User does not have permission to modify document: " + request.getDocumentId());
+            }
             byte[] content = document.getContent().get().getSource().getBytes();
+            structureContextProvider.get().useDocumentTemplate(document.getMetadata().get().getDocTemplate());
+            documentLanguageContext.setDocumentLanguage(document.getMetadata().get().getLanguage());
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(new ByteArrayInputStream(content));
-
+            String docCollectionName = document.getMetadata().get().getDocumentCollectionName();
             for (SectionRequest section : request.getSections()) {
                 OperationStrategy strategy = strategyFactory.getStrategy(section.getOperation());
-                strategy.execute(doc, section);
+                content = strategy.execute(content, section, docCollectionName);
             }
 
-            content = documentToBytes(doc);
-            documentContentService.updateDocument(document, content, 
-                "Inject elements - " + request.getSections().get(0).getOperation());
+            String operations = request.getSections().stream()
+                    .map(s -> s.getOperation().toString())
+                    .distinct()
+                    .collect(java.util.stream.Collectors.joining(", "));
+            documentContentService.updateDocument(document, content, "Inject elements - " + operations);
+        } catch (IllegalArgumentException e) {
+            throw e;
+        } catch (SecurityException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Error injecting elements: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to inject elements", e);
+            throw new RuntimeException(e.getMessage(), e);
         }
-    }
-
-    /**
-     * Converts a DOM Document to a byte array.
-     * 
-     * @param doc the DOM Document to convert
-     * @return byte array representation of the XML document
-     * @throws Exception if transformation fails
-     */
-    private byte[] documentToBytes(Document doc) throws Exception {
-        TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        Transformer transformer = transformerFactory.newTransformer();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        transformer.transform(new DOMSource(doc), new StreamResult(outputStream));
-        return outputStream.toByteArray();
     }
 }
