@@ -585,6 +585,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
 
         CloneProposalMetadataVO cloneProposalMetadataVO = new CloneProposalMetadataVO();
         boolean isClonedProposal = false;
+        boolean isExternalClone = false;
         byte[] xmlContent = xmlDocument.getContent().get().getSource().getBytes();
         try {
             isClonedProposal = xmlContentProcessor.evalXPath(xmlContent, xPathCatalog.getXPathClonedProposal(), true);
@@ -596,7 +597,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
             String legFileName = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneOriginalMilestone(), true);
             String iscRef = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneIscRef(), true);
             String clonedFromObjectId = xmlContentProcessor.getElementValue(xmlContent, xPathCatalog.getXPathRefOriginForCloneObjectId(), true);
-            boolean isExternalClone = !Strings.CS.equals(cloneOriginRef, iscRef);
+            isExternalClone = !Strings.CS.equals(cloneOriginRef, iscRef);
 
             cloneProposalMetadataVO.setClonedFromRef(clonedFromRef);
             cloneProposalMetadataVO.setClonedFromObjectId(clonedFromObjectId);
@@ -613,10 +614,12 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 CPlegDocName = CPlegDoc.get(0).getName();
             }
             if (StringUtils.isNotEmpty((xmlDocument.getClonedFrom()))) {
+                isExternalClone = !Strings.CS.equals(cloneOriginRef, xmlDocument.getOriginRef());
                 cloneProposalMetadataVO.setClonedProposal(true);
                 cloneProposalMetadataVO.setClonedFromRef(xmlDocument.getClonedFrom());
                 cloneProposalMetadataVO.setLegFileName(CPlegDocName);
                 cloneProposalMetadataVO.setOriginRef(xmlDocument.getOriginRef());
+                cloneProposalMetadataVO.setExternalClone(isExternalClone);
             }
         }
         return cloneProposalMetadataVO;
