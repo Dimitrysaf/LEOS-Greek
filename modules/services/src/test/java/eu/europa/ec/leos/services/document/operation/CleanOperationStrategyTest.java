@@ -7,7 +7,11 @@ import eu.europa.ec.leos.services.dto.request.SectionRequest;
 import eu.europa.ec.leos.services.dto.request.SectionType;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XmlHelper;
+import eu.europa.ec.leos.vo.structure.TocItem;
+import jakarta.inject.Provider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,6 +31,9 @@ public class CleanOperationStrategyTest {
     @Mock private XmlContentProcessor xmlContentProcessor;
     @Mock private NumberService numberService;
     @Mock private SectionContentValidator sectionContentValidator;
+    @Mock private Provider<StructureContext> structureContextProvider;
+    @Mock private StructureContext structureContext;
+    @Mock private DocumentLanguageContext documentLanguageContext;
     @InjectMocks private CleanOperationStrategy strategy;
 
     private static final String CITATIONS_XML =
@@ -117,6 +124,10 @@ public class CleanOperationStrategyTest {
                 "</body></bill></akomaNtoso>";
         when(xmlContentProcessor.doXMLPostProcessing(any())).thenAnswer(i -> i.getArgument(0));
         when(numberService.renumberArticles(any(), eq(true))).thenAnswer(i -> i.getArgument(0));
+        when(structureContextProvider.get()).thenReturn(structureContext);
+        when(structureContext.getTocItems()).thenReturn(List.of());
+        when(documentLanguageContext.getDocumentLanguage()).thenReturn("EN");
+        when(numberService.renumberHigherSubDivisions(any(), any(), any(), any())).thenAnswer(i -> i.getArgument(0));
 
         List<LineItem> items = List.of(new LineItem());
         SectionRequest section = new SectionRequest();
@@ -128,6 +139,7 @@ public class CleanOperationStrategyTest {
 
         verify(injectionHelper).insertEnactingTerms(any(), eq(items));
         verify(numberService).renumberArticles(any(), eq(true));
+        verify(numberService, times(4)).renumberHigherSubDivisions(any(), eq("EN"), any(), any());
         verify(xmlContentProcessor).doXMLPostProcessing(any());
     }
 
@@ -179,6 +191,10 @@ public class CleanOperationStrategyTest {
                 "</body></bill></akomaNtoso>";
         when(xmlContentProcessor.doXMLPostProcessing(any())).thenAnswer(i -> i.getArgument(0));
         when(numberService.renumberArticles(any(), eq(true))).thenAnswer(i -> i.getArgument(0));
+        when(structureContextProvider.get()).thenReturn(structureContext);
+        when(structureContext.getTocItems()).thenReturn(List.of());
+        when(documentLanguageContext.getDocumentLanguage()).thenReturn("EN");
+        when(numberService.renumberHigherSubDivisions(any(), any(), any(), any())).thenAnswer(i -> i.getArgument(0));
 
         SectionRequest section = new SectionRequest();
         section.setSectionType(SectionType.ENACTING_TERMS);
@@ -222,5 +238,46 @@ public class CleanOperationStrategyTest {
 
         verify(numberService, never()).renumberRecitals(any());
         verify(numberService, never()).renumberArticles(any(), anyBoolean());
+    }
+
+    @Test
+    public void testEnactingTermsCallsRenumberHigherSubDivisionsForAllFourElements() throws Exception {
+        String bodyXml =
+                "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" xmlns:leos=\"urn:eu:europa:ec:leos\">" +
+                "<bill><body><clause><content><p>Clause.</p></content></clause></body></bill></akomaNtoso>";
+        when(xmlContentProcessor.doXMLPostProcessing(any())).thenAnswer(i -> i.getArgument(0));
+        when(numberService.renumberArticles(any(), eq(true))).thenAnswer(i -> i.getArgument(0));
+        when(structureContextProvider.get()).thenReturn(structureContext);
+        when(structureContext.getTocItems()).thenReturn(List.of());
+        when(documentLanguageContext.getDocumentLanguage()).thenReturn("EN");
+        when(numberService.renumberHigherSubDivisions(any(), any(), any(), any())).thenAnswer(i -> i.getArgument(0));
+
+        SectionRequest section = new SectionRequest();
+        section.setSectionType(SectionType.ENACTING_TERMS);
+        section.setOperation(Operation.CLEAN);
+        section.setItems(List.of());
+
+        strategy.execute(bodyXml.getBytes(StandardCharsets.UTF_8), section, "ANY");
+
+        verify(numberService).renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.PART),    any());
+        verify(numberService).renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.TITLE),   any());
+        verify(numberService).renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.CHAPTER), any());
+        verify(numberService).renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.SECTION), any());
+    }
+
+    @Test
+    public void testEnactingTermsDoesNotCallRenumberHigherSubDivisionsForRecitals() throws Exception {
+        String recitalsXml = CITATIONS_XML.replace("citations", "recitals").replace("citation", "recital");
+        when(xmlContentProcessor.doXMLPostProcessing(any())).thenAnswer(i -> i.getArgument(0));
+        when(numberService.renumberRecitals(any())).thenAnswer(i -> i.getArgument(0));
+
+        SectionRequest section = new SectionRequest();
+        section.setSectionType(SectionType.RECITALS);
+        section.setOperation(Operation.CLEAN);
+        section.setItems(List.of());
+
+        strategy.execute(recitalsXml.getBytes(StandardCharsets.UTF_8), section, "ANY");
+
+        verify(numberService, never()).renumberHigherSubDivisions(any(), any(), any(), any());
     }
 }

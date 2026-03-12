@@ -29,12 +29,13 @@ public class SectionContentValidator {
         SECTION_ROOTS.put(SectionType.CITATIONS,      EnumSet.of(AknType.CITATION));
         SECTION_ROOTS.put(SectionType.RECITALS,       EnumSet.of(AknType.RECITAL, AknType.RECITALS));
         SECTION_ROOTS.put(SectionType.ENACTING_TERMS, EnumSet.of(
-                AknType.TITLE, AknType.CHAPTER, AknType.SECTION,
+                AknType.PART, AknType.TITLE, AknType.CHAPTER, AknType.SECTION,
                 AknType.NUMBERED_ARTICLE, AknType.UNNUMBERED_ARTICLE));
 
         ALLOWED_CHILDREN.put(AknType.CITATION,           EnumSet.of(AknType.PARAGRAPH));
         ALLOWED_CHILDREN.put(AknType.RECITAL,            EnumSet.of(AknType.PARAGRAPH));
         ALLOWED_CHILDREN.put(AknType.RECITALS,         EnumSet.of(AknType.RECITAL));
+        ALLOWED_CHILDREN.put(AknType.PART,               EnumSet.of(AknType.TITLE, AknType.CHAPTER, AknType.SECTION, AknType.NUMBERED_ARTICLE, AknType.UNNUMBERED_ARTICLE));
         ALLOWED_CHILDREN.put(AknType.TITLE,              EnumSet.of(AknType.CHAPTER, AknType.SECTION, AknType.NUMBERED_ARTICLE, AknType.UNNUMBERED_ARTICLE));
         ALLOWED_CHILDREN.put(AknType.CHAPTER,            EnumSet.of(AknType.SECTION, AknType.NUMBERED_ARTICLE, AknType.UNNUMBERED_ARTICLE));
         ALLOWED_CHILDREN.put(AknType.SECTION,            EnumSet.of(AknType.NUMBERED_ARTICLE, AknType.UNNUMBERED_ARTICLE));
@@ -57,6 +58,17 @@ public class SectionContentValidator {
         Set<AknType> allowedRoots = SECTION_ROOTS.get(sectionType);
         if (allowedRoots == null) {
             throw new IllegalArgumentException("Unsupported section type: " + sectionType);
+        }
+        if (sectionType == SectionType.ENACTING_TERMS && items != null) {
+            boolean hasHigherDivisions = items.stream().anyMatch(i ->
+                    i.getType() == AknType.PART || i.getType() == AknType.TITLE ||
+                    i.getType() == AknType.CHAPTER || i.getType() == AknType.SECTION);
+            boolean hasRootArticles = items.stream().anyMatch(i ->
+                    i.getType() == AknType.NUMBERED_ARTICLE || i.getType() == AknType.UNNUMBERED_ARTICLE);
+            if (hasHigherDivisions && hasRootArticles) {
+                throw new IllegalArgumentException(
+                        "Articles cannot appear at the root of ENACTING_TERMS when higher division elements (PART, TITLE, CHAPTER, SECTION) are present");
+            }
         }
         if (sectionType == SectionType.RECITALS) {
             boolean hasGroups = items.stream().anyMatch(i -> i.getType() == AknType.RECITALS);

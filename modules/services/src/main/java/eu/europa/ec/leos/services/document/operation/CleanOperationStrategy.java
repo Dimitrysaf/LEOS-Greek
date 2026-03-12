@@ -5,7 +5,11 @@ import eu.europa.ec.leos.services.dto.request.SectionRequest;
 import eu.europa.ec.leos.services.dto.request.SectionType;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XmlHelper;
+import eu.europa.ec.leos.vo.structure.TocItem;
+import jakarta.inject.Provider;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,16 +36,22 @@ public class CleanOperationStrategy implements OperationStrategy {
     private final XmlContentProcessor xmlContentProcessor;
     private final NumberService numberService;
     private final SectionContentValidator sectionContentValidator;
+    private final Provider<StructureContext> structureContextProvider;
+    private final DocumentLanguageContext documentLanguageContext;
     private final DocumentBuilderFactory documentBuilderFactory;
     private final TransformerFactory transformerFactory;
 
     @Autowired
     public CleanOperationStrategy(ElementInjectionHelper injectionHelper, XmlContentProcessor xmlContentProcessor,
-                                  NumberService numberService, SectionContentValidator sectionContentValidator) throws Exception {
+                                  NumberService numberService, SectionContentValidator sectionContentValidator,
+                                  Provider<StructureContext> structureContextProvider,
+                                  DocumentLanguageContext documentLanguageContext) throws Exception {
         this.injectionHelper = injectionHelper;
         this.xmlContentProcessor = xmlContentProcessor;
         this.numberService = numberService;
         this.sectionContentValidator = sectionContentValidator;
+        this.structureContextProvider = structureContextProvider;
+        this.documentLanguageContext = documentLanguageContext;
         this.documentBuilderFactory = DocumentBuilderFactory.newInstance();
         this.documentBuilderFactory.setNamespaceAware(true);
         this.documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -122,6 +132,11 @@ public class CleanOperationStrategy implements OperationStrategy {
             result = numberService.renumberRecitals(result);
         } else if (sectionType == SectionType.ENACTING_TERMS) {
             result = numberService.renumberArticles(result, true);
+            List<TocItem> tocItems = structureContextProvider.get().getTocItems();
+            String language = documentLanguageContext.getDocumentLanguage();
+            for (String elementName : java.util.Arrays.asList(XmlHelper.PART, XmlHelper.TITLE, XmlHelper.CHAPTER, XmlHelper.SECTION)) {
+                result = numberService.renumberHigherSubDivisions(result, language, elementName, tocItems);
+            }
         }
         return xmlContentProcessor.doXMLPostProcessing(result);
     }

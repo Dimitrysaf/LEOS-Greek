@@ -4,6 +4,7 @@ public enum AknType {
     CITATION,
     RECITAL,
     RECITALS,
+    PART,
     TITLE,
     CHAPTER,
     SECTION,

@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.document.operation;
 
 import eu.europa.ec.leos.services.document.operation.builder.AknElementBuilder;
+import eu.europa.ec.leos.services.document.operation.builder.HigherDivisionBuilder;
 import eu.europa.ec.leos.services.dto.request.AknType;
 import eu.europa.ec.leos.services.dto.request.LineItem;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ public class ElementInjectionHelper {
     private static final java.util.Map<AknType, String> ENACTING_TERMS_TAGS;
     static {
         java.util.EnumMap<AknType, String> m = new java.util.EnumMap<>(AknType.class);
+        m.put(AknType.PART,             PART);
         m.put(AknType.TITLE,              TITLE);
         m.put(AknType.CHAPTER,            CHAPTER);
         m.put(AknType.SECTION,            SECTION);
@@ -40,9 +42,12 @@ public class ElementInjectionHelper {
     private final DocumentBuilderFactory documentBuilderFactory;
 
     @Autowired
-    public ElementInjectionHelper(List<AknElementBuilder> builderList) throws Exception {
+    public ElementInjectionHelper(List<AknElementBuilder> builderList, HigherDivisionBuilder higherDivisionBuilder) throws Exception {
         builders = new EnumMap<>(AknType.class);
         builderList.forEach(b -> builders.put(b.type(), b));
+        for (AknType type : new AknType[]{AknType.PART, AknType.TITLE, AknType.CHAPTER, AknType.SECTION}) {
+            builders.put(type, higherDivisionBuilder.forType(type));
+        }
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
         documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);

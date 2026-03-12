@@ -133,7 +133,7 @@ public class InjectElementServiceImplTest {
     public void testInjectElementsThrowsWhenSectionsEmpty() {
         DocumentLinesRequest request = new DocumentLinesRequest();
         request.setDocumentId("doc123");
-        request.setSections(Arrays.asList());
+        request.setSections(java.util.Collections.emptyList());
         assertThrows(IllegalArgumentException.class, () -> injectElementService.injectElements(request));
     }
 

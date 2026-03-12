@@ -19,7 +19,12 @@ import java.io.StringWriter;
 import java.util.List;
 
 import eu.europa.ec.leos.services.document.operation.builder.*;
+import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.vo.structure.TocItem;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
+import jakarta.inject.Provider;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class ElementInjectionHelperTest {
 
@@ -40,8 +45,26 @@ public class ElementInjectionHelperTest {
             "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" xmlns:leos=\"urn:eu:europa:ec:leos\">" +
             "<bill><body><clause><content><p>Binding clause.</p></content></clause></body></bill></akomaNtoso>";
 
+    private static TocItem tocItemWithTemplate(eu.europa.ec.leos.vo.structure.AknTag aknTag, String template) {
+        TocItem tocItem = mock(TocItem.class);
+        when(tocItem.getAknTag()).thenReturn(aknTag);
+        when(tocItem.getTemplate()).thenReturn(template);
+        return tocItem;
+    }
+
     @BeforeEach
     void setUp() throws Exception {
+        Provider<StructureContext> structureContextProvider = mock(Provider.class);
+        StructureContext structureContext = mock(StructureContext.class);
+        when(structureContextProvider.get()).thenReturn(structureContext);
+        List<TocItem> tocItems = List.of(
+                tocItemWithTemplate(eu.europa.ec.leos.vo.structure.AknTag.PART,    "<part leos:editable=\"true\"><num>${num}</num><heading>${heading}</heading></part>"),
+                tocItemWithTemplate(eu.europa.ec.leos.vo.structure.AknTag.TITLE,   "<title leos:editable=\"true\"><num>${num}</num><heading>${heading}</heading></title>"),
+                tocItemWithTemplate(eu.europa.ec.leos.vo.structure.AknTag.CHAPTER, "<chapter leos:editable=\"true\"><num>${num}</num><heading>${heading}</heading></chapter>"),
+                tocItemWithTemplate(eu.europa.ec.leos.vo.structure.AknTag.SECTION, "<section leos:editable=\"true\"><num>${num}</num><heading>${heading}</heading></section>")
+        );
+        when(structureContext.getTocItems()).thenReturn(tocItems);
+        HigherDivisionBuilder higherDivisionBuilder = new HigherDivisionBuilder(structureContextProvider);
         helper = new ElementInjectionHelper(List.of(
                 new CitationBuilder(),
                 new AuthorialNoteBuilder(),
@@ -54,7 +77,7 @@ public class ElementInjectionHelperTest {
                 new NumberedArticleBuilder(),
                 new NumberedParagraphBuilder(),
                 new UnnumberedParagraphBuilder()
-        ));
+        ), higherDivisionBuilder);
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -387,6 +410,205 @@ public class ElementInjectionHelperTest {
         assertTrue(xml.contains("&lt;tags&gt;"));
         assertTrue(xml.contains("&amp;"));
         assertFalse(xml.contains("<tags>"));
+    }
+
+    // --- Higher division tests ---
+
+    @Test
+    void testTitleWithHeadingAndArticle() throws Exception {
+        helper.insertEnactingTerms(bodyDoc, List.of(
+                title("Objectives and Scope",
+                        numberedArticle(articleHeading("Subject matter"), numberedParagraph("This Regulation establishes a framework.")))
+        ));
+
+        String xml = serialize(bodyDoc);
+        assertTrue(xml.contains("<title"), "title element must be present");
+        assertTrue(xml.contains("<heading>Objectives and Scope</heading>"));
+        assertTrue(xml.contains("<heading>Subject matter</heading>"));
+        assertTrue(xml.contains("<content><p>This Regulation establishes a framework.</p></content>"));
+        // article must be sibling of heading, not inside it
+        int headingClose = xml.indexOf("</heading>");
+        int articleOpen  = xml.indexOf("<article");
+        assertTrue(articleOpen > headingClose, "article must appear after </heading>");
+    }
+
+    @Test
+    void testChapterInsideTitleWithArticle() throws Exception {
+        helper.insertEnactingTerms(bodyDoc, List.of(
+                title("General Framework",
+                        chapter("General Provisions",
+                                numberedArticle(articleHeading("Definitions"), unnumberedParagraph("For the purposes of this Regulation:"))))
+        ));
+
+        String xml = serialize(bodyDoc);
+        assertTrue(xml.contains("<title"));
+        assertTrue(xml.contains("<chapter"));
+        assertTrue(xml.contains("<heading>General Framework</heading>"));
+        assertTrue(xml.contains("<heading>General Provisions</heading>"));
+        assertTrue(xml.contains("<heading>Definitions</heading>"));
+        assertTrue(xml.contains("<content><p>For the purposes of this Regulation:</p></content>"));
+    }
+
+    @Test
+    void testSectionInsideChapterInsideTitleInsidePart() throws Exception {
+        helper.insertEnactingTerms(bodyDoc, List.of(
+                part("General Framework",
+                        title("Objectives",
+                                chapter("Scope",
+                                        section("Subject Matter",
+                                                numberedArticle(articleHeading("Subject matter"), numberedParagraph("This Regulation applies."))))))
+        ));
+
+        String xml = serialize(bodyDoc);
+        assertTrue(xml.contains("<part"));
+        assertTrue(xml.contains("<title"));
+        assertTrue(xml.contains("<chapter"));
+        assertTrue(xml.contains("<section"));
+        assertTrue(xml.contains("<heading>General Framework</heading>"));
+        assertTrue(xml.contains("<heading>Objectives</heading>"));
+        assertTrue(xml.contains("<heading>Scope</heading>"));
+        assertTrue(xml.contains("<heading>Subject Matter</heading>"));
+        assertTrue(xml.contains("<heading>Subject matter</heading>"));
+        assertTrue(xml.contains("<content><p>This Regulation applies.</p></content>"));
+        // verify nesting order in xml
+        assertTrue(xml.indexOf("<part") < xml.indexOf("<title"));
+        assertTrue(xml.indexOf("<title") < xml.indexOf("<chapter"));
+        assertTrue(xml.indexOf("<chapter") < xml.indexOf("<section"));
+        assertTrue(xml.indexOf("<section") < xml.indexOf("<article"));
+    }
+
+    @Test
+    void testPartDirectlyContainingArticle() throws Exception {
+        helper.insertEnactingTerms(bodyDoc, List.of(
+                part("Final Provisions",
+                        numberedArticle(articleHeading("Entry into force"), unnumberedParagraph("This Regulation shall enter into force on the twentieth day.")))
+        ));
+
+        String xml = serialize(bodyDoc);
+        assertTrue(xml.contains("<part"));
+        assertTrue(xml.contains("<heading>Final Provisions</heading>"));
+        assertTrue(xml.contains("<heading>Entry into force</heading>"));
+        int headingClose = xml.lastIndexOf("</heading>", xml.indexOf("<article"));
+        int articleOpen  = xml.indexOf("<article");
+        assertTrue(articleOpen > headingClose, "article must appear after </heading> of part");
+    }
+
+    @Test
+    void testTitleSkippingChapterDirectlyToSection() throws Exception {
+        helper.insertEnactingTerms(bodyDoc, List.of(
+                title("Reporting Requirements",
+                        section("Annual Reports",
+                                numberedArticle(articleHeading("Scope of reporting"), numberedParagraph("Reporting entities shall submit annual reports."))))
+        ));
+
+        String xml = serialize(bodyDoc);
+        assertTrue(xml.contains("<title"));
+        assertFalse(xml.contains("<chapter"), "chapter must not be present when skipped");
+        assertTrue(xml.contains("<section"));
+        assertTrue(xml.contains("<heading>Reporting Requirements</heading>"));
+        assertTrue(xml.contains("<heading>Annual Reports</heading>"));
+    }
+
+    @Test
+    void testComplexScenarioAllHigherDivisions() throws Exception {
+        helper.insertEnactingTerms(bodyDoc, List.of(
+                part("General Framework",
+                        title("Objectives and Scope",
+                                chapter("General Provisions",
+                                        section("Subject Matter",
+                                                numberedArticle(articleHeading("Subject matter"),
+                                                        numberedParagraph("This Regulation establishes a framework."),
+                                                        numberedParagraph("It applies to all legal persons."))),
+                                        numberedArticle(articleHeading("Definitions"),
+                                                unnumberedParagraph("For the purposes of this Regulation:"),
+                                                numberedParagraph("'competent authority' means the national authority."))),
+                                chapter("Specific Provisions",
+                                        numberedArticle(articleHeading("Obligations"),
+                                                numberedParagraphWithNote(
+                                                        "Member States shall designate a competent authority by the date referred to in Article 10,",
+                                                        89, "1", "OJ L 123, 1.1.2024, p. 1.")))),
+                        title("Reporting Requirements",
+                                numberedArticle(articleHeading("Scope of reporting"),
+                                        numberedParagraph("Reporting entities shall submit annual reports.")))),
+                part("Final Provisions",
+                        section("Entry into Force",
+                                numberedArticle(articleHeading("Entry into force"),
+                                        unnumberedParagraph("This Regulation shall enter into force on the twentieth day.")))
+                )
+        ));
+
+        String xml = serialize(bodyDoc);
+
+        // structure present
+        assertTrue(xml.contains("<part"));
+        assertTrue(xml.contains("<title"));
+        assertTrue(xml.contains("<chapter"));
+        assertTrue(xml.contains("<section"));
+
+        // headings
+        assertTrue(xml.contains("<heading>General Framework</heading>"));
+        assertTrue(xml.contains("<heading>Objectives and Scope</heading>"));
+        assertTrue(xml.contains("<heading>General Provisions</heading>"));
+        assertTrue(xml.contains("<heading>Subject Matter</heading>"));
+        assertTrue(xml.contains("<heading>Reporting Requirements</heading>"));
+        assertTrue(xml.contains("<heading>Final Provisions</heading>"));
+        assertTrue(xml.contains("<heading>Entry into Force</heading>"));
+
+        // articles
+        assertEquals(5, bodyDoc.getElementsByTagName("article").getLength());
+
+        // footnote spliced correctly
+        assertTrue(xml.contains(
+                "Member States shall designate a competent authority by the date referred to in Article 10" +
+                "<authorialNote marker=\"1\" placement=\"bottom\"><p>OJ L 123, 1.1.2024, p. 1.</p></authorialNote>,"));
+
+        // clause preserved
+        assertTrue(xml.contains("<clause>"));
+
+        // nesting order
+        assertTrue(xml.indexOf("<part") < xml.indexOf("<title"));
+        assertTrue(xml.indexOf("<title") < xml.indexOf("<chapter"));
+        assertTrue(xml.indexOf("<chapter") < xml.indexOf("<section"));
+    }
+
+    @Test
+    void testHigherDivisionHeadingSpecialCharsEscaped() throws Exception {
+        helper.insertEnactingTerms(bodyDoc, List.of(
+                title("Scope & <Definitions>",
+                        numberedArticle(articleHeading("Article"), numberedParagraph("Text.")))
+        ));
+
+        String xml = serialize(bodyDoc);
+        assertTrue(xml.contains("Scope &amp; &lt;Definitions&gt;"));
+        assertFalse(xml.contains("<Definitions>"));
+    }
+
+    // --- Higher division helpers ---
+
+    private LineItem higherDivision(AknType type, String heading, LineItem... children) {
+        LineItem item = new LineItem();
+        item.setType(type);
+        item.setContent(heading);
+        item.setChildren(List.of(children));
+        return item;
+    }
+
+    private LineItem part(String heading, LineItem... children)    { return higherDivision(AknType.PART,    heading, children); }
+    private LineItem title(String heading, LineItem... children)   { return higherDivision(AknType.TITLE,   heading, children); }
+    private LineItem chapter(String heading, LineItem... children) { return higherDivision(AknType.CHAPTER, heading, children); }
+    private LineItem section(String heading, LineItem... children) { return higherDivision(AknType.SECTION, heading, children); }
+
+    private LineItem numberedParagraphWithNote(String content, int position, String refId, String noteContent) {
+        LineItem note = new LineItem();
+        note.setType(AknType.AUTHORIAL_NOTE);
+        note.setRefId(refId);
+        note.setPosition(position);
+        note.setContent(noteContent);
+        LineItem p = new LineItem();
+        p.setType(AknType.NUMBERED_PARAGRAPH);
+        p.setContent(content);
+        p.setChildren(List.of(note));
+        return p;
     }
 
     // --- Enacting terms helpers ---
