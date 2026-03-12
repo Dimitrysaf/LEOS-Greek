@@ -21,9 +21,13 @@ define(function leosProcessTranslationPluginModule(require) {
     var dialogDefinition = require("./leosProcessTranslationDialog");
     var pluginName = "leosProcessTranslation";
     var changeStateElements = {
-        updateTranslation : {
+        aknp : {
             elementName: 'p',
             selector: 'p[data-akn-name=aknp]:not([data-akn-update-translation=true]), p[data-akn-name=docPurpose]:not([data-akn-update-translation=true])'
+        },
+        heading : {
+            elementName: 'h2',
+            selector: 'h2[data-akn-name=aknHeading]:not([data-akn-update-translation=true])'
         },
     };
     var iconProcessTranslation = 'icons/leosprocesstranslation.png';

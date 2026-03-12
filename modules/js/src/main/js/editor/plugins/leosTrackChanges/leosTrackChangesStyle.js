@@ -351,7 +351,8 @@ define(function leosTrackChangesStyleModule(require) {
                                 styleRange.extractContents();
                             } else {
                                 // Move the contents of the range to the style element.
-                                styleRange.extractContents().appendTo(styleNode);
+                                var documentFragment = styleRange.extractContents();
+                                documentFragment.appendTo(styleNode);
 
                                 // Insert it into the range position (it is collapsed after
                                 // extractContents.

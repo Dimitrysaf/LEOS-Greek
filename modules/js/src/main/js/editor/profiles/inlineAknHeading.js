@@ -40,6 +40,7 @@ define(function aknHigherElementProfileModule(require) {
     plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
     plugins.push(require("plugins/leosOrientation/leosOrientationPlugin"));
+    plugins.push(require("plugins/leosProcessTranslation/leosProcessTranslationPlugin"));
 
     var pluginNames=[];
     var specificConfig={};
@@ -84,6 +85,7 @@ define(function aknHigherElementProfileModule(require) {
             {name: 'save', items: ['leosInlineSave', 'leosInlineSaveClose', 'leosInlineCancel']},
             {name: 'clipboard', items: ['Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo']},
             {name: 'insert', items: ['SpecialChar']},
+            {name: 'translate', items: [ 'ProcessTranslation' ]},
             {name: 'trackChanges', items: ['toggleDisplay', 'trackChangeActions']},
             {name: "colors", items: ["BGColor"]},
             { name: 'orientation', items: ['leosOrientation']}
