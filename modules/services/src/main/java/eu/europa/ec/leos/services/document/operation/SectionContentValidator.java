@@ -115,8 +115,9 @@ public class SectionContentValidator {
                         "Element type '" + item.getType() + "' cannot have children");
             }
             if (item.getType() == AknType.NUMBERED_ARTICLE || item.getType() == AknType.UNNUMBERED_ARTICLE) {
-                if (item.getChildren().get(0).getType() != AknType.ARTICLE_HEADING) {
-                    throw new IllegalArgumentException("Article must have ARTICLE_HEADING as first child");
+                boolean headingPresent = item.getChildren().stream().anyMatch(c -> c.getType() == AknType.ARTICLE_HEADING);
+                if (headingPresent && item.getChildren().get(0).getType() != AknType.ARTICLE_HEADING) {
+                    throw new IllegalArgumentException("ARTICLE_HEADING must be the first child of an article");
                 }
             }
             for (LineItem child : item.getChildren()) {
@@ -125,7 +126,7 @@ public class SectionContentValidator {
         } else if (item.getType() == AknType.RECITALS) {
             throw new IllegalArgumentException("RECITALS must have at least one RECITAL child");
         } else if (item.getType() == AknType.NUMBERED_ARTICLE || item.getType() == AknType.UNNUMBERED_ARTICLE) {
-            throw new IllegalArgumentException("Article must have at least one child");
+            throw new IllegalArgumentException("Article must have at least one paragraph child");
         }
     }
 }

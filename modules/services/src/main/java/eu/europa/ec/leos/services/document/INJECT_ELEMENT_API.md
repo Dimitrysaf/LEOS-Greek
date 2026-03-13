@@ -156,7 +156,7 @@ Called before DOM manipulation in `CleanOperationStrategy`.
 | TITLE | CHAPTER, SECTION, NUMBERED_ARTICLE, UNNUMBERED_ARTICLE |
 | CHAPTER | SECTION, NUMBERED_ARTICLE, UNNUMBERED_ARTICLE |
 | SECTION | NUMBERED_ARTICLE, UNNUMBERED_ARTICLE |
-| NUMBERED_ARTICLE / UNNUMBERED_ARTICLE | ARTICLE_HEADING, NUMBERED_PARAGRAPH, UNNUMBERED_PARAGRAPH |
+| NUMBERED_ARTICLE / UNNUMBERED_ARTICLE | ARTICLE_HEADING _(optional)_, NUMBERED_PARAGRAPH, UNNUMBERED_PARAGRAPH |
 | ARTICLE_HEADING | _(leaf)_ |
 
 ## Processing Pipeline (CLEAN)
@@ -175,6 +175,8 @@ Called before DOM manipulation in `CleanOperationStrategy`.
 - **Factory**: `OperationStrategyFactory`
 - **Validator**: `SectionContentValidator`
 - **Helper**: `ElementInjectionHelper`
+
+> **Article heading**: `ARTICLE_HEADING` is optional. If provided, it must be the first child. If omitted, no `<heading>` element is written to the XML. Articles must still have at least one paragraph child.
 
 ## Key Implementation Notes
 - `StructureContext` is request-scoped: call `useDocumentTemplate(docTemplate)` before `getTocItems()`
