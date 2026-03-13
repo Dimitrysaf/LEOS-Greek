@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?>
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+    <bill name="DIR_DEL">
+        <meta>
+            <identification source="~COM">
+                <FRBRWork>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:fileCUID value="yyyyyyy"/>
+                        <akn4eu:docCUID value="xxxxxx"/>
+                    </preservation>
+                    <FRBRcountry value="EU"/>
+                    <FRBRprescriptive value="true"/>
+                </FRBRWork>
+                <FRBRExpression>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <FRBRlanguage language="it"/>
+                </FRBRExpression>
+                <FRBRManifestation>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+					<preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                		<akn4eu:akn4euVersion value="4.2 AA"/>
+						<akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
+                	</preservation>
+                </FRBRManifestation>
+            </identification>
+            <references source="~COM">
+                <TLCLocation xml:id="BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
+                <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
+                <TLCRole xml:id="PRESID" href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
+                <TLCReference xml:id="DIR_DEL" href="http://publications.europa.eu/resource/authority/resource-type/DIR_DEL" name="docType" showAs="Delegated directive"/>
+                <TLCReference xml:id="legalBasis" href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis"/>
+                <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/ITA" name="language" showAs="it"/>
+                <TLCConcept xml:id="ART_DEF" href="http://publications.europa.eu/resource/authority/subdivision-content/ART_DEF" showAs="Article on definitions"/>
+            </references>
+            <proprietary source="~COM">
+                <leos:templateVersion>1.0.0</leos:templateVersion>
+                <leos:docVersion>0.1.0</leos:docVersion>
+                <leos:template>SJ-007</leos:template>
+                <leos:docTemplate>BL-007</leos:docTemplate>
+            </proprietary>
+        </meta>
+        <preface>
+            <container name="procedureIdentifier" class="template">
+                <p>
+                    <docketNumber class="template" />
+                </p>
+            </container>  
+            <longTitle>
+                <p>
+                    <docType refersTo="~DIR_DEL">DIRETTIVA DELEGATA (UE) .../... DELLA COMMISSIONE</docType>del <date date="2999-01-01">XXX</date> 
+                    <docPurpose>relativo a ...</docPurpose>
+                </p>
+            </longTitle>
+        </preface>
+        <preamble>
+            <formula name="actingEntity">
+                <p>LA COMMISSIONE EUROPEA,</p>
+            </formula>
+            <citations leos:editable="false">
+                <citation leos:editable="true">
+                    <p>visto il trattato sul funzionamento dell'Unione europea,</p>
+                </citation>
+                <citation leos:editable="true">
+                    <p>visto [...] <authorialNote marker="1" placement="bottom"><p>GU L [...] del [...], pag. [...].</p></authorialNote>, in particolare l'articolo [...],</p>
+                </citation>                
+            </citations>
+            <recitals leos:editable="false">
+                <intro><p>considerando quanto segue:</p></intro>
+                <recital leos:editable="true">
+                    <num>(1)</num>
+                    <p>Considerando...</p>
+                </recital>
+                <recital leos:editable="true">
+                    <num>(2)</num>
+                    <p>Considerando...</p>
+                </recital>
+                <recital leos:editable="true">
+                    <num>(3)</num>
+                    <p>Considerando...</p>
+                </recital>
+            </recitals>
+            <formula name="enactingFormula">
+                <p>HA ADOTTATO LA PRESENTE DIRETTIVA:</p>
+            </formula>
+        </preamble>
+        <body>
+            <article leos:editable="true" leos:deletable="true" leos:autonumbering="true">
+                <num leos:editable="false">Articolo 1</num>
+                <heading>Titolo dell'articolo...</heading>
+                <paragraph>
+                    <num>1.</num>
+                    <content>
+                        <p>Testo...</p>
+                    </content>
+                </paragraph>
+                <paragraph>
+                    <num>2.</num>
+                    <content>
+                        <p>Testo...</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article leos:editable="true" leos:deletable="true" leos:autonumbering="true" leos:alternative="true" leos:optionlist="listOption1" leos:selectedoption="1">
+                <num leos:editable="false">Articolo 2</num>
+                <heading>Titolo dell'articolo...</heading>
+                <paragraph>
+                    <num>1.</num>
+                    <subparagraph>
+                        <content>
+                            <p>Gli Stati membri mettono in vigore le disposizioni legislative, regolamentari e amministrative necessarie per conformarsi alla presente direttiva entro il [...]. Essi ne informano immediatamente la Commissione.</p>
+                        </content>
+                    </subparagraph>
+                    <subparagraph>
+                        <content>
+                            <p>Le disposizioni adottate dagli Stati membri contengono un riferimento alla presente direttiva o sono corredate di tale riferimento all'atto della pubblicazione ufficiale. Le modalità del riferimento sono stabilite dagli Stati membri.</p>
+                        </content>
+                    </subparagraph>
+                </paragraph>
+                <paragraph>
+                    <num>2.</num>
+                    <content>
+                        <p>Gli Stati membri comunicano alla Commissione il testo delle disposizioni fondamentali di diritto interno che adottano nel settore disciplinato dalla presente direttiva.</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article leos:editable="true" leos:deletable="true" leos:autonumbering="true">
+                <num leos:editable="false">Articolo 3</num>
+                <heading>Titolo dell'articolo...</heading>
+                <paragraph>
+                    <content>
+                        <p>La presente direttiva entra in vigore il [...] giorno successivo alla pubblicazione nella <i>Gazzetta ufficiale dell'Unione europea</i>.</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article leos:editable="true" leos:deletable="true" leos:autonumbering="true">
+                <num leos:editable="false">Articolo 4</num>
+                <heading>Titolo dell'articolo...</heading>
+                <paragraph>
+                    <content>
+                        <p>Gli Stati membri sono destinatari della presente direttiva.</p>
+                    </content>
+                </paragraph>
+            </article>
+        </body>
+        <conclusions>
+            <p>Fatto a <location refersTo="~BEL_BRU">Bruxelles</location>, il <date class="template" date="2999-01-01"/></p>
+            <block name="signatory" leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption2" leos:selectedoption="1">
+                <signature leos:optionlist="listOption2">
+                    <organization refersTo="~COM">Per la Commissione</organization>
+                    <role refersTo="~PRESID">La presidente</role>
+                    <person refersTo="">[...]</person>
+                </signature>
+            </block>
+        </conclusions>
+    </bill>
+</akomaNtoso>
