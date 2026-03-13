@@ -113,6 +113,7 @@ public class ImportServiceImpl implements ImportService {
 
             // Do pre-processing on the selected elements
             String updatedElement = xmlContentProcessor.doImportedElementPreProcessing(replaceNotAllowedElements(elementFragment), elementType);
+            updatedElement = new String(xmlContentProcessor.removeDuplicateIds(updatedElement.getBytes(StandardCharsets.UTF_8),true));
             if (HIGHER_ELEMENTS.contains(elementType.toLowerCase())) {
                 updatedElement = this.numberService.renumberImportedHigherSubDivision(updatedElement, language, elementType);
             } else if (elementType.equalsIgnoreCase(ARTICLE)) {

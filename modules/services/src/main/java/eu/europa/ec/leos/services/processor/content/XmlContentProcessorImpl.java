@@ -3201,6 +3201,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 addAttribute(node, XMLID, idAttrValue);
             }
             idsSet.add(idAttrValue);
+        } else {
+            removeAttribute(node, XMLID);
         }
 
         List<Node> children = getChildren(node);

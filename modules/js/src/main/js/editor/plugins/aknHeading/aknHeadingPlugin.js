@@ -114,6 +114,9 @@ define(function aknChapterPluginModule(require) {
             },{
                 akn : "class",
                 html : "data-akn-class"
+            }, {
+                akn: "leos:update-translation",
+                html: "data-akn-update-translation"
             } ],
             sub : {
                 akn : "text",

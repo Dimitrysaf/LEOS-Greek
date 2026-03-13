@@ -677,11 +677,15 @@ define(function leosTrackChangesModule(require) {
                         editor.getSelection().getRanges()[0].getPreviousEditableNode();
                 }
                 core.setToPosition(editor, selectedNode, position);
-            } while (selectedNode && (selectedNode.type === CKEDITOR.NODE_ELEMENT) && !selectedNode.hasClass("cke_widget_inline"));
+            } while (selectedNode && (selectedNode.type === CKEDITOR.NODE_ELEMENT) && !selectedNode.hasClass("cke_widget_inline")
+                && selectedNode.getName() !== 'img');
 
             if (!selectedNode) {
                 return false;
-            } else if (selectedNode.type === CKEDITOR.NODE_ELEMENT) {
+            } else if (selectedNode.type === CKEDITOR.NODE_ELEMENT && selectedNode.getName() === 'img') {
+                editor.getSelection().selectElement(selectedNode);
+                return true;
+            } else if (selectedNode.type === CKEDITOR.NODE_ELEMENT && selectedNode.getName() !== 'img') {
                 editor.getSelection().selectElement(selectedNode);
                 return false;
             } else {

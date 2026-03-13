@@ -85,7 +85,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
             Map<String, Object> documentFurtherContent = readFurtherDocumentContent(documentZipContent);
 
             String prefinalizedLegName = MetadataUtil.buildPrefinalizationLegName(request);
-            ApplyMetadataResponse response = processApplyMetadataRequest(request, documentXmlFiles);
+            ApplyMetadataResponse response = processApplyMetadataRequest(request, documentXmlFiles, prefinalizedLegName);
             return buildResponse(response, documentXmlFiles, documentFurtherContent, prefinalizedLegName);
         }
         catch(Exception ex){
@@ -177,11 +177,11 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         return furtherContent;
     }
 
-    private ApplyMetadataResponse processApplyMetadataRequest(ApplyMetadataRequest request, List<XmlFile> documentXmlFiles) {
+    private ApplyMetadataResponse processApplyMetadataRequest(ApplyMetadataRequest request, List<XmlFile> documentXmlFiles, String prefinalizedLegName) {
         List<ApplyMetadataResponse.TaskNode> taskResponses = new ArrayList<>();
         if (request.getTasks() != null) {
             for (ApplyMetadataRequest.TaskNode task : request.getTasks()) {
-                taskResponses.add(processApplyMetadataRequestTask(task, documentXmlFiles));
+                taskResponses.add(processApplyMetadataRequestTask(task, documentXmlFiles, prefinalizedLegName));
             }
         }
 
@@ -190,7 +190,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         return new ApplyMetadataResponse(request.getRequestId(), taskResponses, successResult);
     }
 
-    private ApplyMetadataResponse.TaskNode processApplyMetadataRequestTask(ApplyMetadataRequest.TaskNode task, List<XmlFile> documentXmlFiles) {
+    private ApplyMetadataResponse.TaskNode processApplyMetadataRequestTask(ApplyMetadataRequest.TaskNode task, List<XmlFile> documentXmlFiles, String prefinalizedLegName) {
         List<ApplyMetadataResponse.ActionNode> actionResponses = new ArrayList<>();
         for (ApplyMetadataRequest.ActionNode action : task.getActions()){
             actionResponses.add(processApplyMetadataRequestAction(action, documentXmlFiles));
@@ -202,7 +202,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
 
         final String statusCode = isContainsActionResponseWithErrors(actionResponses) ? "1" : "0";
         return new ApplyMetadataResponse.TaskNode(task.getTaskId(), statusCode, actionResponses,
-                getResponseConverter().applyMetadataRequestDocumentToResultDocument(task.getDocument()),
+                getResponseConverter().applyMetadataRequestDocumentToResultDocument(task.getDocument(), prefinalizedLegName),
                 getResponseConverter().getValidationSuccessResult("XMLValidationCheck"));
     }
 
