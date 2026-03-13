@@ -160,9 +160,17 @@ public class SectionContentValidatorTest {
     }
 
     @Test
-    void testArticleMissingHeadingThrows() {
+    void testArticleWithoutHeadingAllowed() {
         LineItem article = item(AknType.NUMBERED_ARTICLE);
         article.setChildren(List.of(item(AknType.NUMBERED_PARAGRAPH)));
+        assertDoesNotThrow(() ->
+                validator.validate(SectionType.ENACTING_TERMS, List.of(article), "ANY"));
+    }
+
+    @Test
+    void testArticleHeadingNotFirstChildThrows() {
+        LineItem article = item(AknType.NUMBERED_ARTICLE);
+        article.setChildren(List.of(item(AknType.NUMBERED_PARAGRAPH), item(AknType.ARTICLE_HEADING)));
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
                 validator.validate(SectionType.ENACTING_TERMS, List.of(article), "ANY"));
         assertTrue(ex.getMessage().contains("ARTICLE_HEADING"));
@@ -171,9 +179,8 @@ public class SectionContentValidatorTest {
     @Test
     void testValidEnactingTermsRootTypesAllowed() {
         for (AknType rootType : List.of(AknType.NUMBERED_ARTICLE, AknType.UNNUMBERED_ARTICLE)) {
-            LineItem heading = item(AknType.ARTICLE_HEADING);
             LineItem article = item(rootType);
-            article.setChildren(List.of(heading));
+            article.setChildren(List.of(item(AknType.ARTICLE_HEADING), item(AknType.NUMBERED_PARAGRAPH)));
             assertDoesNotThrow(() ->
                     validator.validate(SectionType.ENACTING_TERMS, List.of(article), "ANY"),
                     rootType + " should be a valid ENACTING_TERMS root");
