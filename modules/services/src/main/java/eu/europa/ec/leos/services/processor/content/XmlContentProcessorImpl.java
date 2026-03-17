@@ -3303,6 +3303,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
         alignMetaNode(sourceDoc, targetDoc);
         replaceUnchangedContentInSourceDocByTarget(targetDoc, sourceDoc, sourceBaseDoc);
+        alignInternalReferences(sourceDoc, targetDoc);
         alignAlternatives(targetXmlDoc, sourceDoc, sourceBaseDoc);
         alignAttachmentsIds(sourceDoc, targetDoc);
 
@@ -3440,6 +3441,20 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         for (int i = 0; i < sourceNodes.getLength(); i++) {
             Node sourceNode = sourceNodes.item(i);
             highlightNodeForTranslation(sourceNode);
+        }
+    }
+
+    private void alignInternalReferences(Document sourceDoc, Document targetDoc) {
+        String targetLanguage = getFirstElementByXPath(targetDoc, xPathCatalog.getXPathDocLanguage()).getNodeValue();
+        NodeList mrefList = XercesUtils.getElementsByName(sourceDoc, MREF);
+        for (int i = 0; i < mrefList.getLength(); i++) {
+            List<Node> refs = getChildren(mrefList.item(i), REF);
+            for (Node ref : refs) {
+                String href = getAttributeValue(ref, HREF);
+                if (href != null) {
+                    addAttribute(ref, HREF, href.replaceAll("(?<=-)[a-z]{2}(?=\\.xml)", targetLanguage));
+                }
+            }
         }
     }
 

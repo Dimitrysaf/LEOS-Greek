@@ -1,0 +1,100 @@
+/**
+ * Copyright 2024 European Union
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ *     https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and limitations under the Licence.
+ */
+
+#crossReferenceTextContainer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    font-family: serif;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 10px 0;
+}
+
+#crossReferenceTextError {
+    color: red;
+    font-weight: bold;
+    margin-top: 8px;
+    font-size: 12px;
+}
+
+#crossReferenceTextLegend {
+    margin-top: 8px;
+    font-size: 11px;
+    color: #666;
+}
+
+.crossref-legend-swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    vertical-align: middle;
+    margin-right: 3px;
+}
+
+.crossref-legend-swatch--ref {
+    background: #e6f3ff;
+    border: 1px solid #0066cc;
+}
+
+.crossref-legend-swatch--text {
+    background: transparent;
+    border: 1px dashed #ccc;
+}
+
+/* Common input styles */
+.crossref-input {
+    font-family: inherit;
+    font-size: inherit;
+    padding: 2px 1px;
+    margin: 2px;
+    min-width: 30px;
+    box-sizing: border-box;
+    outline: none;
+    cursor: text;
+    transition: box-shadow 0.15s, border-color 0.15s;
+}
+
+.crossref-input:hover {
+    box-shadow: 0 0 3px rgba(0, 102, 204, 0.3);
+}
+
+.crossref-input:focus {
+    box-shadow: 0 0 4px rgba(0, 102, 204, 0.5);
+    border-color: #0066cc;
+}
+
+/* Ref input */
+.crossref-input--ref {
+    background-color: #e6f3ff;
+    border: 1px solid #0066cc;
+    border-radius: 3px;
+}
+
+.crossref-input--ref.crossref-input--invalid {
+    background-color: #ffdddd;
+    border-color: #cc0000;
+}
+
+/* Text input */
+.crossref-input--text {
+    background-color: transparent;
+    border: 1px dashed #ccc;
+    border-radius: 2px;
+}
+
+.crossref-input--text:focus {
+    border-color: #0066cc;
+}
