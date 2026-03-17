@@ -34,4 +34,6 @@ public interface CollaboratorService {
     List<CollaboratorDTO> getCollaborators(Proposal proposal);
 
     void syncCollaborators(Proposal proposal);
+
+    boolean isRoleOwner(String roleName);
 }

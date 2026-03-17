@@ -105,14 +105,14 @@ public class CollaboratorServiceImpl implements CollaboratorService {
 
     @Override
     public void addCollaborator(Proposal proposal, String userId, String collaboratorId, String roleName, String connectedEntity,
-                                String proposalUrl,String systemClientId) {
+                                String proposalUrl, String systemClientId) {
         final User user = getUser(userId);
         final User collaborator = getUser(collaboratorId);
         final Role role = getRole(roleName);
         final String entity = getEntity(connectedEntity, collaborator);
         final String leosClientId = getLeosClientId(systemClientId);
 
-        if (isCollaboratorPresent(proposal, collaborator, leosClientId)) {
+        if (isCollaboratorPresent(proposal, collaborator)) {
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.present", collaborator.getLogin(), role.getName(), entity));
         }
 
@@ -126,7 +126,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
 
     @Override
     public void removeCollaborator(Proposal proposal, String userId, String roleName, String connectedEntity, String proposalUrl,
-                                     String systemClientId) {
+                                   String systemClientId) {
         LOG.trace("Removing collaborator...{}, with authority {}", userId, roleName);
         final User user = getUser(userId);
         final Role role = getRole(roleName);
@@ -200,7 +200,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         }
         User user = userService.getUser(userId);
         if (user == null) {
-            LOG.warn("User '{}' not found!", userId);
+            LOG.warn("User '{}' not found on user repository!", userId);
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.notFound", userId));
         }
         return user;
@@ -260,10 +260,23 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         return role;
     }
 
+    public boolean isRoleOwner(String roleName) {
+        try {
+            return this.getRole(roleName).getName().equalsIgnoreCase(ROLE_OWNER);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     private boolean isCollaboratorPresent(XmlDocument document, User user, String leosClientId) {
         return document.getCollaborators().stream()
                 .anyMatch(collaborator -> collaborator.getLogin().equals(user.getLogin())
                         && (CollaboratorUtils.matchLeosClientId(collaborator, leosClientId)));
+    }
+
+    private boolean isCollaboratorPresent(XmlDocument document, User user) {
+        return document.getCollaborators().stream()
+                .anyMatch(collaborator -> collaborator.getLogin().equals(user.getLogin()));
     }
 
     private boolean hasCollaboratorDifferentRole(XmlDocument document, User user, Role role) {
@@ -323,7 +336,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         List<Collaborator> collaborators = doc.getCollaborators();
 
         if (collaborators != null) {
-            collaborators.removeIf(c->CollaboratorUtils.matchUserAndEntityAndLeosClientId(c,user,selectedEntity,systemClientId));
+            collaborators.removeIf(c->CollaboratorUtils.matchUserAndEntityAndLeosClientId(c, user, selectedEntity, systemClientId));
             if (!isRemoveAction) {
                 //pick selectedEntity or first found entity if no selectedEntity defined
                 String newEntity = selectedEntity;
