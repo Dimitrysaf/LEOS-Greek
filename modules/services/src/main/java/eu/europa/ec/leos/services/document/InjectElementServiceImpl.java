@@ -1,79 +1,107 @@
 package eu.europa.ec.leos.services.document;
 
-import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.document.operation.OperationStrategy;
 import eu.europa.ec.leos.services.document.operation.OperationStrategyFactory;
 import eu.europa.ec.leos.services.dto.request.DocumentLinesRequest;
 import eu.europa.ec.leos.services.dto.request.SectionRequest;
-import eu.europa.ec.leos.services.store.WorkspaceService;
-import eu.europa.ec.leos.services.structure.StructureContext;
-import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.store.PackageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import jakarta.inject.Provider;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class InjectElementServiceImpl implements InjectElementService {
 
-    private final WorkspaceService workspaceService;
-    private final DocumentContentService documentContentService;
-    private final OperationStrategyFactory strategyFactory;
-    private final Provider<StructureContext> structureContextProvider;
-    private final DocumentLanguageContext documentLanguageContext;
+    private final PackageService packageService;
+    private final ProposalService proposalService;
+    private final BillService billService;
     private final SecurityContext securityContext;
+    private final OperationStrategyFactory strategyFactory;
+    private final DocumentContentService documentContentService;
+    private final DocumentContextInitializer documentContextInitializer;
 
     @Autowired
-    public InjectElementServiceImpl(WorkspaceService workspaceService,
-                                    DocumentContentService documentContentService,
+    public InjectElementServiceImpl(PackageService packageService,
+                                    ProposalService proposalService,
+                                    BillService billService,
+                                    SecurityContext securityContext,
                                     OperationStrategyFactory strategyFactory,
-                                    Provider<StructureContext> structureContextProvider,
-                                    DocumentLanguageContext documentLanguageContext,
-                                    SecurityContext securityContext) {
-        this.workspaceService = workspaceService;
-        this.documentContentService = documentContentService;
-        this.strategyFactory = strategyFactory;
-        this.structureContextProvider = structureContextProvider;
-        this.documentLanguageContext = documentLanguageContext;
+                                    DocumentContentService documentContentService,
+                                    DocumentContextInitializer documentContextInitializer) {
+        this.packageService = packageService;
+        this.proposalService = proposalService;
+        this.billService = billService;
         this.securityContext = securityContext;
+        this.strategyFactory = strategyFactory;
+        this.documentContentService = documentContentService;
+        this.documentContextInitializer = documentContextInitializer;
     }
 
     @Override
     public void injectElements(DocumentLinesRequest request) {
-        if (request.getSections() == null || request.getSections().isEmpty()) {
-            throw new IllegalArgumentException("Request must contain at least one section");
-        }
+        validateRequest(request);
         try {
-            XmlDocument document = workspaceService.findDocumentByRef(request.getDocumentId(), XmlDocument.class);
-            if (!securityContext.hasPermission(document, LeosPermission.CAN_UPDATE)) {
-                throw new SecurityException("User does not have permission to modify document: " + request.getDocumentId());
-            }
-            byte[] content = document.getContent().get().getSource().getBytes();
-            structureContextProvider.get().useDocumentTemplate(document.getMetadata().get().getDocTemplate());
-            documentLanguageContext.setDocumentLanguage(document.getMetadata().get().getLanguage());
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(request.getDocumentId(), Proposal.class);
+            Proposal proposal = resolveProposal(leosPackage);
+            Bill bill = resolveBill(leosPackage);
 
-            String docCollectionName = document.getMetadata().get().getDocumentCollectionName();
-            for (SectionRequest section : request.getSections()) {
-                OperationStrategy strategy = strategyFactory.getStrategy(section.getOperation());
-                content = strategy.execute(content, section, docCollectionName);
-            }
+            checkPermission(bill, request.getDocumentId());
+            documentContextInitializer.initializeFrom(bill);
 
-            String operations = request.getSections().stream()
-                    .map(s -> s.getOperation().toString())
-                    .distinct()
-                    .collect(java.util.stream.Collectors.joining(", "));
-            documentContentService.updateDocument(document, content, "Inject elements - " + operations);
-        } catch (IllegalArgumentException e) {
-            throw e;
-        } catch (SecurityException e) {
+            byte[] content = applyStrategies(bill, proposal, request);
+            documentContentService.updateDocument(bill, content, buildAuditMessage(request));
+        } catch (IllegalArgumentException | SecurityException e) {
             throw e;
         } catch (Exception e) {
             log.error("Error injecting elements: {}", e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
+            throw new InjectElementException(e.getMessage(), e);
         }
+    }
+
+    private void validateRequest(DocumentLinesRequest request) {
+        if (request.getSections() == null || request.getSections().isEmpty()) {
+            throw new IllegalArgumentException("Request must contain at least one section");
+        }
+    }
+
+    private Proposal resolveProposal(LeosPackage leosPackage) {
+        Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
+        return proposalService.populateProposalMetadataFromXml(proposal);
+    }
+
+    private Bill resolveBill(LeosPackage leosPackage) {
+        return billService.findBillByPackagePath(leosPackage.getPath());
+    }
+
+    private void checkPermission(Bill bill, String documentId) {
+        if (!securityContext.hasPermission(bill, LeosPermission.CAN_UPDATE)) {
+            throw new SecurityException("User does not have permission to modify document: " + documentId);
+        }
+    }
+
+    private byte[] applyStrategies(Bill bill, Proposal proposal, DocumentLinesRequest request) {
+        byte[] content = bill.getContent().get().getSource().getBytes();
+        String docCollectionName = proposal.getMetadata().get().getDocumentCollectionName();
+        for (SectionRequest section : request.getSections()) {
+            OperationStrategy strategy = strategyFactory.getStrategy(section.getOperation());
+            content = strategy.execute(content, section, docCollectionName);
+        }
+        return content;
+    }
+
+    private String buildAuditMessage(DocumentLinesRequest request) {
+        String operations = request.getSections().stream()
+                .map(s -> s.getOperation().toString())
+                .distinct()
+                .collect(Collectors.joining(", "));
+        return "Inject elements - " + operations;
     }
 }

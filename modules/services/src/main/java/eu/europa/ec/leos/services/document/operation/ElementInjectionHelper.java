@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
@@ -43,19 +42,15 @@ public class ElementInjectionHelper {
     private final DocumentBuilderFactory documentBuilderFactory;
 
     @Autowired
-    public ElementInjectionHelper(List<AknElementBuilder> builderList, HigherDivisionBuilder higherDivisionBuilder) throws Exception {
+    public ElementInjectionHelper(List<AknElementBuilder> builderList,
+                                   HigherDivisionBuilder higherDivisionBuilder,
+                                   DocumentBuilderFactory documentBuilderFactory) {
         builders = new EnumMap<>(AknType.class);
         builderList.forEach(b -> builders.put(b.type(), b));
         for (AknType type : new AknType[]{AknType.PART, AknType.TITLE, AknType.CHAPTER, AknType.SECTION}) {
             builders.put(type, higherDivisionBuilder.forType(type));
         }
-        documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        documentBuilderFactory.setNamespaceAware(true);
-        documentBuilderFactory.setValidating(false);
-        documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        documentBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-        documentBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        this.documentBuilderFactory = documentBuilderFactory;
     }
 
     public void insertCitations(Document doc, List<LineItem> items) {

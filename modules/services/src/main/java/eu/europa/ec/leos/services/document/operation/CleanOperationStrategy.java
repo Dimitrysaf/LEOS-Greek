@@ -16,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.TransformerFactory;
@@ -24,6 +23,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATIONS;
@@ -42,44 +43,33 @@ public class CleanOperationStrategy implements OperationStrategy {
     private final TransformerFactory transformerFactory;
 
     @Autowired
-    public CleanOperationStrategy(ElementInjectionHelper injectionHelper, XmlContentProcessor xmlContentProcessor,
-                                  NumberService numberService, SectionContentValidator sectionContentValidator,
+    public CleanOperationStrategy(ElementInjectionHelper injectionHelper,
+                                  XmlContentProcessor xmlContentProcessor,
+                                  NumberService numberService,
+                                  SectionContentValidator sectionContentValidator,
                                   Provider<StructureContext> structureContextProvider,
-                                  DocumentLanguageContext documentLanguageContext) throws Exception {
+                                  DocumentLanguageContext documentLanguageContext,
+                                  DocumentBuilderFactory documentBuilderFactory,
+                                  TransformerFactory transformerFactory) {
         this.injectionHelper = injectionHelper;
         this.xmlContentProcessor = xmlContentProcessor;
         this.numberService = numberService;
         this.sectionContentValidator = sectionContentValidator;
         this.structureContextProvider = structureContextProvider;
         this.documentLanguageContext = documentLanguageContext;
-        this.documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        this.documentBuilderFactory.setNamespaceAware(true);
-        this.documentBuilderFactory.setValidating(false);
-        this.documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        this.documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        this.documentBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-        this.documentBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        this.transformerFactory = TransformerFactory.newInstance();
-        this.transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        try { this.transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, ""); } catch (IllegalArgumentException ignored) {}
-        try { this.transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, ""); } catch (IllegalArgumentException ignored) {}
+        this.documentBuilderFactory = documentBuilderFactory;
+        this.transformerFactory = transformerFactory;
     }
 
     @Override
     public byte[] execute(byte[] content, SectionRequest section, String documentCollectionName) {
         try {
             sectionContentValidator.validate(section.getSectionType(), section.getItems(), documentCollectionName);
-            DocumentBuilder builder;
-            synchronized (documentBuilderFactory) {
-                builder = documentBuilderFactory.newDocumentBuilder();
-            }
-            Document doc = builder.parse(new ByteArrayInputStream(content));
-
-            String tagName = getSectionTagName(section.getSectionType());
-            Node sectionNode = doc.getElementsByTagName(tagName).item(0);
+            Document doc = parseXml(content);
+            Node sectionNode = findSection(doc, section.getSectionType());
 
             if (sectionNode == null) {
-                log.warn("Section {} not found in document", tagName);
+                log.warn("Section {} not found in document", getSectionTagName(section.getSectionType()));
                 return content;
             }
 
@@ -88,11 +78,22 @@ public class CleanOperationStrategy implements OperationStrategy {
             return postProcess(doc, section.getSectionType());
         } catch (IllegalArgumentException e) {
             throw e;
-        } catch (RuntimeException e) {
-            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    private Document parseXml(byte[] content) throws Exception {
+        DocumentBuilder builder;
+        // DocumentBuilder is not thread-safe; a new instance must be created per call
+        synchronized (documentBuilderFactory) {
+            builder = documentBuilderFactory.newDocumentBuilder();
+        }
+        return builder.parse(new ByteArrayInputStream(content));
+    }
+
+    private Node findSection(Document doc, SectionType sectionType) {
+        return doc.getElementsByTagName(getSectionTagName(sectionType)).item(0);
     }
 
     private void clearSection(Node sectionNode, SectionType sectionType) {
@@ -120,7 +121,7 @@ public class CleanOperationStrategy implements OperationStrategy {
     }
 
     private void injectItems(Document doc, SectionRequest section) {
-        List<LineItem> items = section.getItems() != null ? section.getItems() : java.util.Collections.emptyList();
+        List<LineItem> items = section.getItems() != null ? section.getItems() : Collections.emptyList();
         if (section.getSectionType() == SectionType.CITATIONS) {
             injectionHelper.insertCitations(doc, items);
         } else if (section.getSectionType() == SectionType.RECITALS) {
@@ -142,7 +143,7 @@ public class CleanOperationStrategy implements OperationStrategy {
             result = numberService.renumberArticles(result, true);
             List<TocItem> tocItems = structureContextProvider.get().getTocItems();
             String language = documentLanguageContext.getDocumentLanguage();
-            for (String elementName : java.util.Arrays.asList(XmlHelper.PART, XmlHelper.TITLE, XmlHelper.CHAPTER, XmlHelper.SECTION)) {
+            for (String elementName : Arrays.asList(XmlHelper.PART, XmlHelper.TITLE, XmlHelper.CHAPTER, XmlHelper.SECTION)) {
                 result = numberService.renumberHigherSubDivisions(result, language, elementName, tocItems);
             }
         }

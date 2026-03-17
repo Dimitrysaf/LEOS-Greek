@@ -21,7 +21,9 @@ public interface InjectElementService {
      * @param request the DocumentLinesRequest containing:
      *                - documentId: the reference ID of the target document
      *                - sections: list of section operations to perform (Citations, Recitals, Enacting Terms)
-     * @throws RuntimeException if the document is not found or processing fails
+     * @throws IllegalArgumentException if the request contains no sections
+     * @throws SecurityException if the current user lacks update permission on the document
+     * @throws InjectElementException if document resolution or content processing fails
      */
     void injectElements(DocumentLinesRequest request);
 }

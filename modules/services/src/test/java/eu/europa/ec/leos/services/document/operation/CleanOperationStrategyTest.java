@@ -12,9 +12,11 @@ import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import jakarta.inject.Provider;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.TransformerFactory;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -25,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CleanOperationStrategyTest {
+class CleanOperationStrategyTest {
 
     @Mock private ElementInjectionHelper injectionHelper;
     @Mock private XmlContentProcessor xmlContentProcessor;
@@ -34,7 +36,16 @@ public class CleanOperationStrategyTest {
     @Mock private Provider<StructureContext> structureContextProvider;
     @Mock private StructureContext structureContext;
     @Mock private DocumentLanguageContext documentLanguageContext;
-    @InjectMocks private CleanOperationStrategy strategy;
+    private CleanOperationStrategy strategy;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        XmlFactoryConfig config = new XmlFactoryConfig();
+        strategy = new CleanOperationStrategy(
+                injectionHelper, xmlContentProcessor, numberService, sectionContentValidator,
+                structureContextProvider, documentLanguageContext,
+                config.documentBuilderFactory(), config.transformerFactory());
+    }
 
     private static final String CITATIONS_XML =
             "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" xmlns:leos=\"urn:eu:europa:ec:leos\">" +

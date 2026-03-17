@@ -9,7 +9,6 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -66,6 +65,7 @@ public class ElementInjectionHelperTest {
         );
         when(structureContext.getTocItems()).thenReturn(tocItems);
         HigherDivisionBuilder higherDivisionBuilder = new HigherDivisionBuilder(structureContextProvider);
+        XmlFactoryConfig config = new XmlFactoryConfig();
         helper = new ElementInjectionHelper(List.of(
                 new CitationBuilder(),
                 new AuthorialNoteBuilder(),
@@ -78,15 +78,8 @@ public class ElementInjectionHelperTest {
                 new NumberedArticleBuilder(),
                 new NumberedParagraphBuilder(),
                 new UnnumberedParagraphBuilder()
-        ), higherDivisionBuilder);
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setValidating(false);
-        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        DocumentBuilder builder = factory.newDocumentBuilder();
+        ), higherDivisionBuilder, config.documentBuilderFactory());
+        DocumentBuilder builder = config.documentBuilderFactory().newDocumentBuilder();
         citationsDoc = builder.parse(new ByteArrayInputStream(CITATIONS_XML.getBytes(StandardCharsets.UTF_8)));
         recitalsDoc = builder.parse(new ByteArrayInputStream(RECITALS_XML.getBytes(StandardCharsets.UTF_8)));
         bodyDoc = builder.parse(new ByteArrayInputStream(BODY_XML.getBytes(StandardCharsets.UTF_8)));
