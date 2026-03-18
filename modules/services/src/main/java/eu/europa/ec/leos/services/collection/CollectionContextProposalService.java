@@ -125,7 +125,6 @@ public class CollectionContextProposalService extends CollectionContextService {
         String creationOptions = createJsonCreationOptions(templatePropertiesMap);
         metadata.setCreationOptions(creationOptions);
 
-        useProposalContentForLinguisticVersion(proposalTemplate);
         Proposal proposal = proposalService.createProposal(proposalTemplate.getId(), leosPackage.getPath(), metadata, this.proposalContent);
 
         Memorandum memorandum = cast(categoryTemplateMap.get(MEMORANDUM));
@@ -249,15 +248,6 @@ public class CollectionContextProposalService extends CollectionContextService {
             this.idsAndUrlsHolder.setFinancialStatementId(financialStatementRef);
         }
         return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
-    }
-
-    private void useProposalContentForLinguisticVersion(Proposal proposalTemplate) {
-        if (StringUtils.isNotEmpty(this.languageTemplateSuffix)) {
-            Content content = proposalTemplate.getContent().getOrNull();
-            if (content != null) {
-                useProposalContent(content.getSource().getBytes());
-            }
-        }
     }
 
     private boolean isToCreateDocument(String templateName, Map<String, String> templatePropertiesMap) {
