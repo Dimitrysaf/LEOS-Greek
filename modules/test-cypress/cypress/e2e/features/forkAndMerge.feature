@@ -446,7 +446,7 @@ Feature: fork and merge features
     When click close button of ck editor
     Then ck editor window is not displayed
 
-  @forkMerge @contributionPane @local
+  @forkMerge @contributionPane @local 
   Scenario: merge updated and moved elements from contribution
     Given navigate to leos application with "User1"
     Then user is on home page
@@ -592,6 +592,8 @@ Feature: fork and merge features
     Then user is on repository browser page
     When click on act 1
     Then user is on act viewer page
+    #sap total numner of annexes
+    Then  total number of annexes present in act viewer page is 2
     When click on milestones tab in act view page
     Then "Ready to merge" is showing under status column of row 2 of milestones table
     When click on three dots under actions column of row 2 of milestones table
@@ -602,12 +604,19 @@ Feature: fork and merge features
     When click on tab "Annex 2" showing in red color
     Then "Accept" button is enabled in milestone explorer window
     And  "Reject" button is enabled in milestone explorer window
+      When click on "Reject" button in milestone explorer window
+    Then successful message contains "Document was processed successfully"
+    Then "Reject" button is disabled in milestone explorer window
     When click on tab "Annex 2" showing in green color
     Then "Accept" button is enabled in milestone explorer window
     And  "Reject" button is enabled in milestone explorer window
+    When click on "Accept" button in milestone explorer window
+    Then successful message contains "Document was processed successfully"
+    And "Accept" button is disabled in milestone explorer window
     When click on close button in milestone explorer view
+    And click on drafts tab in act view page
     Then user is on act viewer page
-    When click on drafts tab in act view page
+    And total number of annexes present in act viewer page is 3
     When click on cover page link present in act viewer page
     Then user is on cover page
     When click on contributions pane accordion

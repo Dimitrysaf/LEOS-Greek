@@ -5,7 +5,9 @@ class milestoneExplorer {
         tabItemLabel: () => this.elements.tabList().find('.eui-tab-item__label'),
         tabItemDanger: () => this.elements.tabList().find('.eui-tab-item.eui-tab-item--danger'),
         tabItemSuccess: () => this.elements.tabList().find('.eui-tab-item.eui-tab-item--success'),
-        btnContainer: () => cy.get('span.eui-button__container')
+        btnContainer: () => cy.get('span.eui-button__container'),
+       ActionBtn:()=>cy.get('div.eui-dialog__body-content div button span'),
+        ContainerBtn :()=>cy.get('div.eui-dialog__body-content div button'),
     }
 
     getTabItemDanger(tabName){
@@ -27,5 +29,13 @@ class milestoneExplorer {
     getActionBtn(action) {
         return this.elements.btnContainer().contains(action).closest('button');
     }
+
+    clickOnActionBtn(action) {
+        this.elements.ActionBtn().contains(action).click();
+
+    }
+
+
+
 }
 export default new milestoneExplorer();

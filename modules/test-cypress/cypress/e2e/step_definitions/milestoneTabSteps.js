@@ -2,6 +2,7 @@ import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import milestoneTab from "../pages/milestoneTab";
 import dialogBoxPage from "../pages/euiDialogBoxPage";
 import headerPage from "../pages/headerPage";
+import milestoneExplorer from "../pages/milestoneExplorer";
 
 When(`click on add button in milestones tab`, () => {
     milestoneTab.clickAddBtn();
@@ -90,3 +91,4 @@ When(`click on row {int} from the user list`, (index) => {
 Then('content of milestone title textbox is {string}', function (content) {
     milestoneTab.elements.milestoneTitleTextBox().should('have.value', content);
 });
+
