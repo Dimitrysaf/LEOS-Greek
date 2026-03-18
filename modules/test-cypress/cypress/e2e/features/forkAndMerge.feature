@@ -446,7 +446,7 @@ Feature: fork and merge features
     When click close button of ck editor
     Then ck editor window is not displayed
 
-  @forkMerge @contributionPane @local 
+  @forkMerge @contributionPane @local
   Scenario: merge updated and moved elements from contribution
     Given navigate to leos application with "User1"
     Then user is on home page
