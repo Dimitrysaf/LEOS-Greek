@@ -50,6 +50,10 @@ public class XPathCatalog {
         return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:refOriginForClone/akn:objectId";
     }
 
+    public String getXPathDocumentRefFromProposal() {
+        return "//akn:akomaNtoso/akn:documentCollection/akn:collectionBody/akn:component/akn:documentRef[@href]";
+    }
+
     public String getXPathDocumentRefForExplanatory() {
         return "//akn:akomaNtoso/akn:documentCollection/akn:collectionBody/akn:component[@refersTo=\"#council_explanatory\" or @refersTo=\"#_council_explanatory\"]/akn:documentRef";
     }

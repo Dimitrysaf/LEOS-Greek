@@ -3303,6 +3303,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
         alignMetaNode(sourceDoc, targetDoc);
         replaceUnchangedContentInSourceDocByTarget(targetDoc, sourceDoc, sourceBaseDoc);
+        replaceDocumentRefsFromProposalInSourceByTarget(sourceDoc, targetDoc);
         alignInternalReferences(sourceDoc, targetDoc);
         alignAlternatives(targetXmlDoc, sourceDoc, sourceBaseDoc);
         alignAttachmentsIds(sourceDoc, targetDoc);
@@ -3441,6 +3442,16 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         for (int i = 0; i < sourceNodes.getLength(); i++) {
             Node sourceNode = sourceNodes.item(i);
             highlightNodeForTranslation(sourceNode);
+        }
+    }
+
+    private void replaceDocumentRefsFromProposalInSourceByTarget(Document sourceDoc, Document targetDoc) {
+        NodeList sourceDocumentRefNodes = getElementsByXPath(sourceDoc, xPathCatalog.getXPathDocumentRefFromProposal());
+        NodeList targetDocumentRefNodes = getElementsByXPath(targetDoc, xPathCatalog.getXPathDocumentRefFromProposal());
+        for (int i = 0; i < sourceDocumentRefNodes.getLength(); i++) {
+            Node sourceDocumentRefNode = sourceDocumentRefNodes.item(i);
+            Node targetDocumentRefNode = targetDocumentRefNodes.item(i);
+            importAndReplaceNodeInDocument(sourceDoc, sourceDocumentRefNode, targetDocumentRefNode);
         }
     }
 

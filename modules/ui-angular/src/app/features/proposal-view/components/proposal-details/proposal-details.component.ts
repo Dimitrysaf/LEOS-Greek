@@ -825,9 +825,8 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         this.enableSave = true;
-        this.growlService.growlError(this.translateService.instant(
-          'page.collection.default-error',
-        ),);
+        const errorMsg = err.error ?? this.translateService.instant('page.collection.default-error');
+        this.growlService.growlError(errorMsg);
       },
     });
 
