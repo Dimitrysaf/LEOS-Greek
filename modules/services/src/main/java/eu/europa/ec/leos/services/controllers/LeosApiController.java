@@ -290,7 +290,7 @@ public class LeosApiController implements LeosApi {
             return new ResponseEntity<>(legService.getLegDocumentDetailsByUserId(userId, proposalId, legFileStatus).toArray(), HttpStatus.OK);
         } catch (Exception ex) {
             LOG.error("Exception occurred in search " + ex.getMessage());
-            return new ResponseEntity<>("Error Occurred while getting the Leg Document for user " + userId, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Error occurred while getting the Leg Document for user " + userId, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -360,7 +360,7 @@ public class LeosApiController implements LeosApi {
                 leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
             }
             LOG.error("Exception occurred in downloading leg file " + ex.getMessage());
-            return new ResponseEntity<>("Error Occurred while sending the leg file  for Leg File Id " +
+            return new ResponseEntity<>("Error occurred while sending the leg file  for Leg File Id " +
                     legFileId, HttpStatus.NOT_FOUND);
         }
 
@@ -394,7 +394,7 @@ public class LeosApiController implements LeosApi {
                 leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
             }
             LOG.error("Exception occurred in downloading leg file " + ex.getMessage());
-            return new ResponseEntity<>("Error Occurred while sending the leg file  for Leg File Id " +
+            return new ResponseEntity<>("Error occurred while sending the leg file  for Leg File Id " +
                     legFileId, HttpStatus.NOT_FOUND);
         }
 
@@ -456,14 +456,14 @@ public class LeosApiController implements LeosApi {
             try {
                 content.setBytes(file.getBytes());
             } catch (IOException ioe) {
-                LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
+                LOG.error("Error occurred while reading the Leg file: " + ioe.getMessage(), ioe);
                 return new ResponseEntity<>("An error occurred during the reading of the Leg file.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
             DocumentVO propDocument = createCollectionService.getProposalDocumentFromLeg(content);
             createCollectionResult = createCollectionService.createCollectionFromLeg(content, propDocument, "EN", false);
             return new ResponseEntity<>(createCollectionResult, HttpStatus.OK);
         } catch (Exception ex) {
-            LOG.error("Error Occurred while creating collection from the Leg file: " + ex.getMessage(), ex);
+            LOG.error("Error occurred while creating collection from the Leg file: " + ex.getMessage(), ex);
             return new ResponseEntity<>("An error occurred during collection creation.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -485,14 +485,14 @@ public class LeosApiController implements LeosApi {
             try {
                 content.setBytes(legFile.getBytes());
             } catch (IOException ioe) {
-                LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
+                LOG.error("Error occurred while reading the Leg file: " + ioe.getMessage(), ioe);
                 return new ResponseEntity<>("An error occurred during the reading of the Leg file.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
             createCollectionResult = createCollectionService.cloneCollection(content, iscRef, targetUser, connectedEntity);
             return new ResponseEntity<>(createCollectionResult, HttpStatus.OK);
         } catch (Exception ex) {
-            LOG.error("Error Occurred while cloning proposal from the Leg file: " + ex.getMessage(), ex);
+            LOG.error("Error occurred while cloning proposal from the Leg file: " + ex.getMessage(), ex);
             return new ResponseEntity<>("An error occurred during proposal cloning.", HttpStatus.INTERNAL_SERVER_ERROR);
         } finally {
             userService.switchUserWithAuthorities(loggedInUser, loggedInUserAuthorities);
@@ -507,8 +507,8 @@ public class LeosApiController implements LeosApi {
             legFileId = encodeParam(legFileId);
             result = createCollectionService.updateOriginalProposalAfterRevisionDone(cloneProposalId, legFileId);
         } catch (Exception ex) {
-            LOG.error("Error Occurred while getting revision done status: " + ex.getMessage(), ex);
-            return new ResponseEntity<>("Error Occurred while getting revision done status", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error("Error occurred while getting revision done status: " + ex.getMessage(), ex);
+            return new ResponseEntity<>("Error occurred while getting revision done status", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(result.get(), HttpStatus.OK);
     }
@@ -554,7 +554,7 @@ public class LeosApiController implements LeosApi {
             return new ResponseEntity<>(proposal, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while downloading proposal - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occured while downloading proposal", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while downloading proposal", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -625,8 +625,8 @@ public class LeosApiController implements LeosApi {
             LOG.info("Annex document with ref {} is deleted by user {}", annexRef, securityContext.getUser().getLogin());
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            LOG.error("Error occured while deleting proposal annex - " + e.getMessage());
-            return new ResponseEntity<>("Error occured while deleting proposal annex", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error("Error occurred while deleting proposal annex - " + e.getMessage());
+            return new ResponseEntity<>("Error occurred while deleting proposal annex", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -640,8 +640,8 @@ public class LeosApiController implements LeosApi {
             apiService.updateAnnexOrder(proposalRef, annexRef, moveDirection, timesToMove);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            LOG.error("Error occured while updating annex order - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occured while updating annex order", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error("Error occurred while updating annex order - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while updating annex order", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -663,7 +663,7 @@ public class LeosApiController implements LeosApi {
         }
         coEditionVOS = coEditionInfoHandler.getCurrentEditInfo(proposalRef + "_ANNEXES_POS");
         if (!coEditionVOS.isEmpty()) {
-            LOG.error("Error occured while updating annex order - Other user's concurrency");
+            LOG.error("Error occurred while updating annex order - Other user's concurrency");
             return new ResponseEntity<>("Cannot update annexes' positions because of other user's concurrency", HttpStatus.TOO_MANY_REQUESTS);
         }
         try {
@@ -671,8 +671,8 @@ public class LeosApiController implements LeosApi {
             apiService.updateAnnexPosition(proposalRef, previousIndex, nextIndex);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
-            LOG.error("Error occured while updating annex order - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occured while updating annex order", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error("Error occurred while updating annex order - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while updating annex order", HttpStatus.INTERNAL_SERVER_ERROR);
         } finally {
             coEditionVOS = coEditionInfoHandler.getCurrentEditInfo(proposalRef + "_ANNEXES_POS");
             for (CoEditionVO coEditionVO1 : coEditionVOS) {
@@ -693,26 +693,25 @@ public class LeosApiController implements LeosApi {
             return new ResponseEntity<>(securityContext.getUser(), HttpStatus.OK);
         } catch (Exception e) {
             LOG.error(ERROR_WHILE_CREATING_NEW_BILL_ANNEX + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occured while getting current user", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting current user", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
     public ResponseEntity<Object> getDocument(String documentRef) {
-        XmlDocument document = null;
+        XmlDocument document;
         try {
             documentRef = encodeParam(documentRef);
             document = workspaceService.findDocumentByRef(documentRef, XmlDocument.class);
-            if (document != null) {
-                DocumentVO vo = new DocumentVO(document);
+            if ((document != null) && !document.getContent().isEmpty()) {
                 LOG.info("Document with doc ref {} is retrieved by the user {}: ", documentRef, securityContext.getUser().getLogin());
-                return new ResponseEntity<>(vo, HttpStatus.OK);
+                return new ResponseEntity<>(document.getContent().get().getSource().getBytes(), HttpStatus.OK);
             }
+            return new ResponseEntity<>("Document not found!!!", HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            LOG.error("Error occured while getting XML Document - " + e.getMessage());
+            LOG.error("Error occurred while getting XML Document - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while getting XML document", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return null;
     }
 
     @Override
