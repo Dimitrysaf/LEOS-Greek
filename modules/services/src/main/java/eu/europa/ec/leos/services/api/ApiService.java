@@ -57,7 +57,7 @@ public interface ApiService {
     CreateCollectionResult createProposal(String templateId, String templateName, String langCode, String docPurpose,
                                           boolean eeaRelevance, boolean customTemplateAct, String template) throws CreateCollectionException;
 
-    ExtPackageResult createExtProposal(String templateKey, String[] languageCodes, String docPurpose);
+    List<ExtPackageResult> createExtProposal(String templateKey, String[] languageCodes, String docPurpose);
 
     CreateCollectionResult uploadProposal(LeosFile legDocument) throws CreateCollectionException;
 

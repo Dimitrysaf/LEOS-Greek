@@ -97,11 +97,16 @@ public class WorkspaceApiController {
     @ResponseBody
     public ResponseEntity<Object> createExtPackage(@RequestParam("templateId") String templateId,
                                                    @RequestParam("langCodes") String[] langCodes,
-                                                   @RequestParam("docPurpose") String docPurpose) throws CreateCollectionException {
-        ExtPackageResult result = apiService.createExtProposal(templateId, langCodes, docPurpose);
-        LOG.info("Ext package created with proposal ref {} by user {}", result.getProposalId(), securityContext.getUser().getLogin());
-        HttpStatus status = HttpStatus.valueOf(result.getHttpStatus());
-        return new ResponseEntity<>(result, status);
+                                                   @RequestParam("docPurpose") String docPurpose) {
+        List<ExtPackageResult> results = apiService.createExtProposal(templateId, langCodes, docPurpose);
+        ExtPackageResult first = results.isEmpty() ? new ExtPackageResult("No result", 500) : results.get(0);
+        LOG.info("Ext package created with proposal ref {} by user {}", first.getProposalId(), securityContext.getUser().getLogin());
+        HttpStatus status = results.stream()
+                .filter(r -> r.getHttpStatus() != 200)
+                .findFirst()
+                .map(r -> HttpStatus.valueOf(r.getHttpStatus()))
+                .orElse(HttpStatus.OK);
+        return new ResponseEntity<>(results, status);
     }
 
     @RequestMapping(value = "/getTemplates", method = RequestMethod.GET)
@@ -139,9 +144,9 @@ public class WorkspaceApiController {
         }
     }
 
-    @RequestMapping(value = "/getTemplatesForEntity", method = RequestMethod.GET)
+    @RequestMapping(value = "/listTemplates", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<Object> getTemplatesForEntity() {
+    public ResponseEntity<Object> listTemplates() {
         List<List<CatalogItem>> combinedList;
         try {
             combinedList = apiService.getAllTemplatesForEntity();
