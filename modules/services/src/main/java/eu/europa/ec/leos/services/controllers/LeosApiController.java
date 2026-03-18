@@ -110,7 +110,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.isValidMimeTypeForLeg
 @RestController
 @RequestMapping
 @PerformanceLogger
-public class LeosApiController {
+public class LeosApiController implements LeosApi {
     private static final Logger LOG = LoggerFactory.getLogger(LeosApiController.class);
     private static final String ERROR_OCCURRED_WHILE_GETTING_DOCUMENT = "Error occurred while getting document ";
     private static final String FOR_USER = " for user ";
@@ -183,8 +183,7 @@ public class LeosApiController {
         this.notificationService = notificationService;
     }
 
-    @RequestMapping(value = "/token", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> getToken(HttpServletRequest request, HttpServletResponse response) {
         response.setHeader("Cache-Control", "no-store");
         response.setHeader("Pragma", "no-cache");
@@ -250,10 +249,9 @@ public class LeosApiController {
         return accessTokenExpirationInMinInt;
     }
 
-    @RequestMapping(value = "/secured/compare", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> compareContents(HttpServletRequest request, @RequestParam("mode") int mode,
-                                                  @RequestParam("firstContent") MultipartFile firstContent, @RequestParam("secondContent") MultipartFile secondContent) {
+    @Override
+    public ResponseEntity<Object> compareContents(HttpServletRequest request, int mode,
+                                                  MultipartFile firstContent, MultipartFile secondContent) {
         if ((mode != SINGLE_COLUMN_MODE) && (mode != TWO_COLUMN_MODE)) {
             return new ResponseEntity<>("Mode value has to be 1(single column mode) or 2(two column mode)", HttpStatus.BAD_REQUEST);
         }
@@ -284,11 +282,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/search/{userId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getProposalsForUser(@PathVariable("userId") String userId,
-                                                      @RequestParam(value = "proposalId", defaultValue = "") String proposalId,
-                                                      @RequestParam(value = "legFileStatus", defaultValue = "") String legFileStatus) {
+    @Override
+    public ResponseEntity<Object> getProposalsForUser(String userId, String proposalId, String legFileStatus) {
         try {
             userId = encodeParam(userId);
             proposalId = encodeParam(proposalId);
@@ -299,9 +294,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/search/{userId}/{documentRef}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getDocumentForUser(@PathVariable("userId") String userId, @PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> getDocumentForUser(String userId, String documentRef) {
         XmlDocument document = null;
         final String finalUserId = encodeParam(userId);
         documentRef = encodeParam(documentRef);
@@ -334,10 +328,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/searchlegfile/{legFileId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getLegFile(@PathVariable("legFileId") String legFileId,
-                                             @RequestParam(required = false, defaultValue = "false") Boolean isDownload) {
+    @Override
+    public ResponseEntity<Object> getLegFile(String legFileId, Boolean isDownload) {
         boolean isStatusUpdated = false;
         LeosLegStatus currentStatus = null;
         try {
@@ -374,10 +366,8 @@ public class LeosApiController {
 
     }
 
-    @RequestMapping(value = "/secured/searchlegfile/anystatus/{legFileId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getLegFileAnyStatus(@PathVariable("legFileId") String legFileId,
-                                                      @RequestParam(required = false, defaultValue = "false") Boolean isDownload) {
+    @Override
+    public ResponseEntity<Object> getLegFileAnyStatus(String legFileId, Boolean isDownload) {
         boolean isStatusUpdated = false;
         LeosLegStatus currentStatus = null;
         try {
@@ -410,9 +400,8 @@ public class LeosApiController {
 
     }
 
-    @RequestMapping(value = "/secured/renditionfromleg", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getPdfFromLegFile(@RequestParam("legFile") MultipartFile legFile, @RequestParam("type") String type) {
+    @Override
+    public ResponseEntity<Object> getPdfFromLegFile(MultipartFile legFile, String type) {
         try {
             final ExportOptions exportOptions = new ExportLW(type);
             exportOptions.setWithAnnotations(true);
@@ -436,9 +425,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/milestones/{proposalRef}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getLegFilesForProposal(@PathVariable("proposalRef") String proposalRef) {
+    @Override
+    public ResponseEntity<Object> getLegFilesForProposal(String proposalRef) {
         Proposal proposal = null;
         try {
             proposalRef = encodeParam(proposalRef);
@@ -457,9 +445,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/collectionfromleg", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> createCollectionFromLeg(@RequestParam("file") MultipartFile file) {
+    @Override
+    public ResponseEntity<Object> createCollectionFromLeg(MultipartFile file) {
         CreateCollectionResult createCollectionResult;
         try {
             validatePath(file.getOriginalFilename());
@@ -481,12 +468,9 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/cloneProposal", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> cloneProposalFromLeg(@RequestParam("file") MultipartFile legFile,
-                                                       @RequestParam("targetUser") String targetUser,
-                                                       @RequestParam("connectedEntity") String connectedEntity,
-                                                       @RequestParam("iscRef") String iscRef) {
+    @Override
+    public ResponseEntity<Object> cloneProposalFromLeg(MultipartFile legFile, String targetUser,
+                                                       String connectedEntity, String iscRef) {
         CreateCollectionResult createCollectionResult;
         User user = userService.getUser(targetUser);
         String loggedInUser = securityContext.getUser().getLogin();
@@ -515,10 +499,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/revisionDone", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> updateClonedProposalRevisionStatus(@RequestParam("cloneProposalId") String cloneProposalId,
-                                                                     @RequestParam("legFileId") String legFileId) {
+    @Override
+    public ResponseEntity<Object> updateClonedProposalRevisionStatus(String cloneProposalId, String legFileId) {
         Result<?> result;
         try {
             cloneProposalId = encodeParam(cloneProposalId);
@@ -531,9 +513,8 @@ public class LeosApiController {
         return new ResponseEntity<>(result.get(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/secured/export/{proposalRef}/{exportPackageId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getExportPackage(@PathVariable("proposalRef") String proposalRef, @PathVariable("exportPackageId") String exportPackageId) {
+    @Override
+    public ResponseEntity<Object> getExportPackage(String proposalRef, String exportPackageId) {
         ExportDocument exportDocument = null;
         try {
             exportPackageId = encodeParam(exportPackageId);
@@ -550,9 +531,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/proposals/{proposalRef}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getProposalDetails(@PathVariable String proposalRef) {
+    @Override
+    public ResponseEntity<Object> getProposalDetails(String proposalRef) {
         proposalRef = encodeParam(proposalRef);
         String userId = securityContext.getUser().getLogin();
         Optional<ProposalDetailsVO> requestedProposal = apiService.getProposalDetails(proposalRef, userId);
@@ -565,9 +545,8 @@ public class LeosApiController {
 
     }
 
-    @RequestMapping(value = "/secured/proposals/{proposalRef}/download", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> downloadProposal(@PathVariable("proposalRef") String proposalRef) {
+    @Override
+    public ResponseEntity<Object> downloadProposal(String proposalRef) {
         try {
             proposalRef = encodeParam(proposalRef);
             byte[] proposal = apiService.downloadProposal(proposalRef);
@@ -579,10 +558,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/proposals/{proposalRef}/createAnnex", method = RequestMethod.POST,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> createProposalAnnex(@PathVariable("proposalRef") String proposalRef) {
+    @Override
+    public ResponseEntity<Object> createProposalAnnex(String proposalRef) {
         try {
             proposalRef = encodeParam(proposalRef);
             this.apiService.createProposalAnnex(proposalRef);
@@ -593,11 +570,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/proposals/{proposalRef}/update-annex-title/{annexId}", method = RequestMethod.PUT,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> updateAnnexTitle(@PathVariable("proposalRef") String proposalRef, @PathVariable("annexId") String annexId,
-                                                   @RequestParam("title") String title) {
+    @Override
+    public ResponseEntity<Object> updateAnnexTitle(String proposalRef, String annexId, String title) {
         try {
             proposalRef = encodeParam(proposalRef);
             annexId = encodeParam(annexId);
@@ -610,13 +584,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/proposals/{proposalRef}/update-explanatory-title/{docId}",
-            method = RequestMethod.PUT,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> updateExplanatoryTitle(@PathVariable String proposalRef,
-                                                         @PathVariable String docId,
-                                                         @RequestParam String title) {
+    @Override
+    public ResponseEntity<Object> updateExplanatoryTitle(String proposalRef, String docId, String title) {
         try {
             proposalRef = encodeParam(proposalRef);
             docId = encodeParam(docId);
@@ -629,10 +598,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/proposals/{proposalRef}/milestones", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getProposalMilestones(@PathVariable("proposalRef") String proposalRef,
-                                                        @RequestParam(value="language", required = false) String language) {
+    @Override
+    public ResponseEntity<Object> getProposalMilestones(String proposalRef, String language) {
         try {
             proposalRef = encodeParam(proposalRef);
             if (language == null) {
@@ -649,10 +616,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/proposals/{proposalRef}/deleteAnnex/{annexRef}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> deleteAnnex(@PathVariable("proposalRef") String proposalRef,
-                                              @PathVariable("annexRef") String annexRef) {
+    @Override
+    public ResponseEntity<Object> deleteAnnex(String proposalRef, String annexRef) {
         try {
             proposalRef = encodeParam(proposalRef);
             annexRef = encodeParam(annexRef);
@@ -665,10 +630,9 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/updateAnnexOrder/{proposalRef}/annex/{annexRef}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> updateProposalAnnexOrder(@PathVariable("proposalRef") String proposalRef, @PathVariable("annexRef") String annexRef,
-                                                           @RequestParam String moveDirection, @RequestParam Integer timesToMove) {
+    @Override
+    public ResponseEntity<Object> updateProposalAnnexOrder(String proposalRef, String annexRef,
+                                                           String moveDirection, Integer timesToMove) {
         try {
             proposalRef = encodeParam(proposalRef);
             annexRef = encodeParam(annexRef);
@@ -681,11 +645,9 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/updateAnnexPosition/{proposalRef}/annex", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> updateProposalAnnexPosition(@PathVariable("proposalRef") String proposalRef,
-                                                              @RequestParam Integer previousIndex, @RequestParam Integer nextIndex,
-                                                              HttpServletRequest request) {
+    @Override
+    public ResponseEntity<Object> updateProposalAnnexPosition(String proposalRef, Integer previousIndex,
+                                                              Integer nextIndex, HttpServletRequest request) {
         proposalRef = encodeParam(proposalRef);
         String sessionId = request.getSession().getId();
         User user = securityContext.getUser();
@@ -719,15 +681,13 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/proposals/{proposalRef}/milestones", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> createMilestone(@PathVariable("proposalRef") String proposalRef, @RequestBody String milestoneComment) throws Exception {
+    @Override
+    public ResponseEntity<Object> createMilestone(String proposalRef, String milestoneComment) throws Exception {
         proposalRef = encodeParam(proposalRef);
         return new ResponseEntity<>(apiService.createMilestone(proposalRef, milestoneComment), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/secured/users/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> getCurrentUser() {
         try {
             return new ResponseEntity<>(securityContext.getUser(), HttpStatus.OK);
@@ -737,9 +697,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/document/{documentRef}", method = RequestMethod.GET, produces = MediaType.APPLICATION_XML_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getDocument(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> getDocument(String documentRef) {
         XmlDocument document = null;
         try {
             documentRef = encodeParam(documentRef);
@@ -756,8 +715,7 @@ public class LeosApiController {
         return null;
     }
 
-    @RequestMapping(value = "/secured/config", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> getConfig(HttpServletRequest request) {
         try {
             AppConfigResponse appConfigResponse = configService.getApplicationConfig(request.getHeader(AUTHORIZATION));
@@ -768,11 +726,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/list-milestones-view/{documentRef}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getListMilestoneDocumentViews(@PathVariable("documentRef") String documentRef,
-                                                                @RequestParam("legFileName") String legFileName,
-                                                                @RequestParam("legFileId") String legFileId) {
+    @Override
+    public ResponseEntity<Object> getListMilestoneDocumentViews(String documentRef, String legFileName, String legFileId) {
         try {
             documentRef = encodeParam(documentRef);
             legFileName = encodeParam(legFileName);
@@ -785,10 +740,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/list-milestones-view-version/{documentRef}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getListMilestoneDocumentViewsFromDoc(@PathVariable("documentRef") String documentRef,
-                                                                @RequestParam("versionedReference") String versionedReference) {
+    @Override
+    public ResponseEntity<Object> getListMilestoneDocumentViewsFromDoc(String documentRef, String versionedReference) {
         try {
             documentRef = encodeParam(documentRef);
             versionedReference = encodeParam(versionedReference);
@@ -800,11 +753,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/list-milestones-view/pdf-export/{documentRef}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getMilestoneExportPDF(@PathVariable("documentRef") String documentRef,
-                                                        @RequestParam("legFileName") String legFileName,
-                                                        @RequestParam("legFileId") String legFileId) {
+    @Override
+    public ResponseEntity<Object> getMilestoneExportPDF(String documentRef, String legFileName, String legFileId) {
         try {
             documentRef = encodeParam(documentRef);
             legFileName = encodeParam(legFileName);
@@ -821,11 +771,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/list-milestones-view-version/pdf-export/{documentRef}", method = RequestMethod.GET, produces =
-            MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getMilestoneExportPDFFromVersion(@PathVariable("documentRef") String documentRef,
-                                                                   @RequestParam("versionedReference") String versionedReference) {
+    @Override
+    public ResponseEntity<Object> getMilestoneExportPDFFromVersion(String documentRef, String versionedReference) {
         try {
             documentRef = encodeParam(documentRef);
             versionedReference = encodeParam(versionedReference);
@@ -841,10 +788,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/getHtmlRenditions", method = RequestMethod.POST, produces =
-            MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getHtmlRenditions(@RequestParam("document") MultipartFile document) {
+    @Override
+    public ResponseEntity<Object> getHtmlRenditions(MultipartFile document) {
         try {
             LeosRenditionOutputResponseList renditionOutputs = apiService.getHtmlRenditions(document.getBytes());
             return new ResponseEntity<>(renditionOutputs, HttpStatus.OK);
@@ -855,9 +800,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/conValidation", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> conValidation(@RequestParam("zipFile") MultipartFile zipFile, @RequestParam(name = "email", required = true) String email) {
+    @Override
+    public ResponseEntity<Object> conValidation(MultipartFile zipFile, String email) {
         try {
             validatePath(FilenameUtils.normalize(zipFile.getOriginalFilename()));
             if (!isValidFileNameForZipFile(zipFile.getOriginalFilename()) || !isValidSizeFileForBinaryFile(zipFile.getSize()) || !isValidMimeTypeForLegFile(zipFile.getBytes())) {
@@ -892,8 +836,7 @@ public class LeosApiController {
     }
 
 
-    @RequestMapping(value = "/secured/organizations", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> getOrganizations() {
         try {
             List<String> organizations = userService.getAllOrganizations();
@@ -904,9 +847,8 @@ public class LeosApiController {
         }
     }
 
-    @RequestMapping(value = "/secured/document-ref/{packageId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> findDocumentRefByPackageIdAndCategory(@PathVariable("packageId") String packageId) {
+    @Override
+    public ResponseEntity<Object> findDocumentRefByPackageIdAndCategory(String packageId) {
         try {
             String documentRef = apiService.findDocumentRefByPackageIdAndCategory(packageId,LeosCategory.PROPOSAL.name());
             return new ResponseEntity<>(documentRef, HttpStatus.OK);

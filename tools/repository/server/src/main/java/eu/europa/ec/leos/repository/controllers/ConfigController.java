@@ -26,17 +26,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ConfigController {
+public class ConfigController implements ConfigApi {
 
     @Autowired
     ConfigService configService;
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigController.class);
 
-    @PostMapping(path = "/config/notifications/upload",
-            consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> configNotificationsUpload(@RequestBody String json) {
+    @Override
+    public ResponseEntity<Object> configNotificationsUpload(String json) {
         try {
             configService.saveNotifications(json);
             return ResponseEntity.ok().build();
@@ -46,8 +44,7 @@ public class ConfigController {
         }
     }
 
-    @GetMapping(path = "/config/notifications/fetch",
-            produces = {MediaType.APPLICATION_JSON_VALUE})
+    @Override
     public ResponseEntity<Object> configNotificationsFetch() {
         try {
             String content = configService.fetchNotifications();

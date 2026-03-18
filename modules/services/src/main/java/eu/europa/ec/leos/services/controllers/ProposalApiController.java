@@ -56,7 +56,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 @RestController
 @RequestMapping(value = "/secured/proposal")
-public class ProposalApiController {
+public class ProposalApiController implements ProposalApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(ProposalApiController.class);
 
@@ -73,7 +73,7 @@ public class ProposalApiController {
         this.conValidatorService = Objects.requireNonNull(conValidatorService);
     }
 
-    @PostMapping(value = "/copyAct")
+    @Override
     public ResponseEntity<Object> copyAct(@RequestBody CreateProposalCopyRequest request) {
         CreateCollectionResult createCollectionResult;
         try {
@@ -85,7 +85,7 @@ public class ProposalApiController {
         }
     }
 
-    @PostMapping(value = "/{legFileId}/linguistic-versions")
+    @Override
     public ResponseEntity<Object> createLinguisticVersions(@PathVariable String legFileId, @RequestBody List<String> linguisticVersions) {
         try {
             List<String> notFoundLinguisticVersions = apiService.createLinguisticVersionsFromMilestone(legFileId, linguisticVersions);
@@ -97,8 +97,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}", method = RequestMethod.PUT)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> updateProposalMetadata(@PathVariable String proposalRef, @RequestBody UpdateProposalRequest request) {
         try {
             LOG.info("Updating proposal metadata for proposal ref {} and request {}", proposalRef, request);
@@ -110,8 +109,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping(value = "/updateDocPurpose/{proposalRef}", method = RequestMethod.PUT)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> updateProposalDocPurpose(@PathVariable String proposalRef, @RequestBody UpdateProposalRequest request) {
         try {
             LOG.info("Updating proposal doc purpose for proposal ref {} and request {}", proposalRef, request);
@@ -123,8 +121,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}", method = RequestMethod.DELETE)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> deleteProposal(@PathVariable("proposalRef") String proposalRef) {
         try {
             proposalRef = encodeParam(proposalRef);
@@ -137,8 +134,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping(value = "/searchUser", method = RequestMethod.GET)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> searchUser(@RequestParam("searchKey") String searchKey) {
         try {
             List<UserJSON> users = apiService.searchUser(searchKey);
@@ -150,8 +146,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping(value = "/searchUsersByJobTitle", method = RequestMethod.GET)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> searchUsersByJobTitle(@RequestParam("jobTitle") String jobTitle) {
         try {
             List<String> users = apiService.searchUserByJobTitle(jobTitle);
@@ -163,8 +158,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping(value = "/createExplanatory", method = RequestMethod.POST)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> createExplanatory(@RequestBody ExplanatoryRequest request) {
         try {
             apiService.createExplanatoryDocument(request.getProposalRef(), request.getTemplate());
@@ -176,8 +170,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping(value = "/createExplanatoryDocument", method = RequestMethod.POST)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> createExplanatoryDocument(@RequestBody CreateExplanatoryDocumentRequest request) {
         try {
             ProposalMetadata metadata = apiService.createExplanatoryDocument(request.getTemplateId(), request.getDocPurpose(), request.isEeaRelevance());
@@ -192,8 +185,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}/getExports", method = RequestMethod.GET)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> getExports(@PathVariable String proposalRef) {
         try {
             proposalRef = encodeParam(proposalRef);
@@ -206,8 +198,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}/updateExport/{exportId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> updateExport(@PathVariable String proposalRef, @PathVariable String exportId, @RequestBody List<String> comments) {
         try {
             proposalRef = encodeParam(proposalRef);
@@ -221,8 +212,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}/deleteExport/{exportId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> deleteExport(@PathVariable String proposalRef, @PathVariable String exportId) {
         try {
             proposalRef = encodeParam(proposalRef);
@@ -236,8 +226,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}/notifyExport/{exportId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> notifyExport(@PathVariable String proposalRef, @PathVariable String exportId) {
         try {
             proposalRef = encodeParam(proposalRef);
@@ -251,8 +240,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}/previewExport/{exportId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> previewExport(@PathVariable String proposalRef, @PathVariable String exportId) {
         try {
             proposalRef = encodeParam(proposalRef);
@@ -271,8 +259,7 @@ public class ProposalApiController {
     }
 
 
-    @RequestMapping(value = "/{proposalRef}/deleteExplanatory/{explanatoryRef}", method = RequestMethod.DELETE)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> deleteExplanatory(@PathVariable String proposalRef, @PathVariable String explanatoryRef) {
         try {
             proposalRef = encodeParam(proposalRef);
@@ -286,8 +273,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}/export", method = RequestMethod.GET)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> exportProposal(
             @PathVariable("proposalRef") String proposalRef,
             @RequestParam String exportOutput) {
@@ -303,8 +289,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}/export/download", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> exportProposalDownload(@PathVariable("proposalRef") String proposalRef, @RequestParam String exportOutput) {
         try {
             proposalRef = encodeParam(proposalRef);
@@ -318,8 +303,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> uploadProposal(@RequestParam("legFile") MultipartFile legFile) {
         CreateCollectionResult createCollectionResult;
         try {
@@ -339,8 +323,7 @@ public class ProposalApiController {
         }
     }
 
-    @RequestMapping(value = "/validateLegFile", method = RequestMethod.POST)
-    @ResponseBody
+    @Override
     public ResponseEntity<LegFileValidation> validateLegFile(@RequestParam("legFile") MultipartFile legFile) {
         String sanitizedFilename = sanitizeFilename(legFile.getName());
         LeosFile content = new LeosFile(sanitizedFilename);
@@ -354,7 +337,7 @@ public class ProposalApiController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/conValidateLegFile", method = RequestMethod.POST)
+    @Override
     public ResponseEntity<String> conValidateLegFile(@RequestParam("legFile") MultipartFile legFile) throws IOException {
         String sanitizedFilename = sanitizeFilename(legFile.getName());
         if (!isValidFileName(sanitizedFilename)) {
@@ -371,15 +354,13 @@ public class ProposalApiController {
         return new ResponseEntity<>(result.getResult(), HttpStatus.OK);
     }
 
-    @PostMapping(value = "{proposalRef}/create-financial-statement", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Override
     public void createFinancialStatement(@PathVariable("proposalRef") String proposalRef){
         proposalRef = encodeParam(proposalRef);
         this.financialStatementService.createFinancialStatementFromProposal(proposalRef);
     }
 
-    @DeleteMapping(value = "{proposalRef}/delete-financial-statement/{financialStatementRef}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Override
     public void deleteFinancialStatement(@PathVariable("proposalRef") String proposalRef,
                                          @PathVariable("financialStatementRef") String financialStatementRef){
         proposalRef = encodeParam(proposalRef);
@@ -387,8 +368,7 @@ public class ProposalApiController {
         this.financialStatementService.deleteFinancialStatement(proposalRef, financialStatementRef);
     }
 
-    @RequestMapping(value = "/{proposalRef}/validate", method = RequestMethod.GET)
-    @ResponseBody
+    @Override
     public ResponseEntity<String> validateProposal(@PathVariable("proposalRef") String proposalRef) {
         try {
             proposalRef = encodeParam(proposalRef);

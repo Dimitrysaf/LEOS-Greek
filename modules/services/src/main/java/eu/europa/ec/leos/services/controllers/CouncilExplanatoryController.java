@@ -66,7 +66,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 @RestController
 @RequestMapping("/secured/council_explanatory/")
 @Instance(InstanceType.COUNCIL)
-public class CouncilExplanatoryController {
+public class CouncilExplanatoryController implements CouncilExplanatoryApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(CouncilExplanatoryController.class);
     private static final String ERROR_OCCURED_WHILE_GETTING_ANEX_ELEMENT = "Error occured while getting anex element - {}";
@@ -81,14 +81,9 @@ public class CouncilExplanatoryController {
     @Autowired
     private CoEditionContext coEditionContext;
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/save-element", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> saveExplanatoryElement(@PathVariable("documentRef") String documentRef,
-                                                         @PathVariable("elementName") String elementName,
-                                                         @PathVariable("elementId") String elementId,
-                                                         @RequestParam(required = false) boolean isSplit,
-                                                         @RequestHeader("presenterId") String presenterId,
-                                                         @RequestBody String elementContent) {
+    @Override
+    public ResponseEntity<Object> saveExplanatoryElement(String documentRef, String elementName, String elementId,
+                                                         boolean isSplit, String presenterId, String elementContent) {
         try {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
@@ -106,11 +101,8 @@ public class CouncilExplanatoryController {
 
     }
 
-    @DeleteMapping(value = "/{documentRef}/element/{elementName}/{elementId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> deleteExplanatoryElement(@PathVariable("documentRef") String documentRef,
-                                                           @PathVariable("elementName") String elementName,
-                                                           @PathVariable("elementId") String elementId) {
+    @Override
+    public ResponseEntity<Object> deleteExplanatoryElement(String documentRef, String elementName, String elementId) {
         try {
             elementId = encodeParam(elementId);
             elementName = encodeParam(elementName);
@@ -126,12 +118,9 @@ public class CouncilExplanatoryController {
     }
 
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/insert-element", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> insertExplanatoryElement(@PathVariable("documentRef") String documentRef,
-                                                           @PathVariable("elementName") String elementName,
-                                                           @PathVariable("elementId") String elementId,
-                                                           @RequestBody InsertElementRequest request) {
+    @Override
+    public ResponseEntity<Object> insertExplanatoryElement(String documentRef, String elementName, String elementId,
+                                                           InsertElementRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
@@ -146,12 +135,9 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/merge-element", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> mergeExplanatoryElement(@PathVariable("documentRef") String documentRef,
-                                                          @PathVariable("elementName") String elementTag,
-                                                          @PathVariable("elementId") String elementId,
-                                                          @RequestBody String elementContent) {
+    @Override
+    public ResponseEntity<Object> mergeExplanatoryElement(String documentRef, String elementTag, String elementId,
+                                                          String elementContent) {
         try {
             documentRef = encodeParam(documentRef);
             elementTag = encodeParam(elementTag);
@@ -166,10 +152,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef,
-                                                   @RequestParam int pageIndex, @RequestParam int pageSize) {
+    @Override
+    public ResponseEntity<Object> getRecentChanges(String documentRef, int pageIndex, int pageSize) {
         try {
             documentRef = encodeParam(documentRef);
             List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef,
@@ -182,9 +166,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/count-recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> countRecentChanges(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> countRecentChanges(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             int count = this.genericDocumentApiService.countRecentMinorVersions(documentRef);
@@ -196,11 +179,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @PostMapping(value = "/{documentRef}/save-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> saveExplanatoryVersion(@PathVariable("documentRef") String documentRef,
-                                                         @RequestBody SaveIntermediateVersionRequest saveEvent
-    ) {
+    @Override
+    public ResponseEntity<Object> saveExplanatoryVersion(String documentRef, SaveIntermediateVersionRequest saveEvent) {
         try {
             documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.explanatoryApiService.saveDocument(documentRef,
@@ -213,12 +193,9 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @PostMapping(value = "/{documentRef}/save-toc", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> saveToc(@PathVariable("documentRef") String documentRef,
-                                          @RequestBody SaveTocRequestEvent saveTocRequestEvent,
-                                        HttpServletRequest request
-    ) {
+    @Override
+    public ResponseEntity<Object> saveToc(String documentRef, SaveTocRequestEvent saveTocRequestEvent,
+                                          HttpServletRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
@@ -232,11 +209,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getMajorVersionsData(@PathVariable("documentRef") String documentRef,
-                                                       @RequestParam int pageIndex,
-                                                       @RequestParam int pageSize) {
+    @Override
+    public ResponseEntity<Object> getMajorVersionsData(String documentRef, int pageIndex, int pageSize) {
         try {
             documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex,
@@ -250,11 +224,8 @@ public class CouncilExplanatoryController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/search-versions", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> searchVersionData(@PathVariable("documentRef") String documentRef,
-                                                    @RequestParam String authorKey,
-                                                    @RequestParam String type) {
+    @Override
+    public ResponseEntity<Object> searchVersionData(String documentRef, String authorKey, String type) {
         try {
             documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.genericDocumentApiService.searchVersions(documentRef, authorKey, type);
@@ -266,9 +237,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/count-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> countMajorVersionsData(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> countMajorVersionsData(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             int versions = this.genericDocumentApiService.countMajorVersionsData(documentRef);
@@ -280,11 +250,9 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef,
-                                                             @RequestParam String currIntVersion,
-                                                             @RequestParam int pageIndex, @RequestParam int pageSize) {
+    @Override
+    public ResponseEntity<Object> getIntermediateVersionData(String documentRef, String currIntVersion,
+                                                             int pageIndex, int pageSize) {
         try {
             documentRef = encodeParam(documentRef);
             currIntVersion = encodeParam(currIntVersion);
@@ -298,10 +266,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/count-intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> countIntermediateVersionData(@PathVariable("documentRef") String documentRef,
-                                                               @RequestParam String currIntVersion) {
+    @Override
+    public ResponseEntity<Object> countIntermediateVersionData(String documentRef, String currIntVersion) {
         try {
             documentRef = encodeParam(documentRef);
             currIntVersion = encodeParam(currIntVersion);
@@ -315,12 +281,8 @@ public class CouncilExplanatoryController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/getToc", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getToc(@PathVariable("documentRef") String documentRef,
-                                         @RequestParam("tocMode") TocMode tocMode,
-                                         HttpServletRequest request
-    ) {
+    @Override
+    public ResponseEntity<Object> getToc(String documentRef, TocMode tocMode, HttpServletRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
@@ -333,9 +295,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/getTocItems", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getTocItems(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> getTocItems(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             List<TocItem> tocItems = this.explanatoryApiService.getTocItems(documentRef);
@@ -348,9 +309,8 @@ public class CouncilExplanatoryController {
     }
 
 
-    @GetMapping(value = "/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getExplanatory(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> getExplanatory(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             DocumentViewResponse explanatory = this.explanatoryApiService.getDocument(documentRef);
@@ -363,13 +323,9 @@ public class CouncilExplanatoryController {
 
     }
 
-    @PostMapping(value = "/{documentRef}/search-text", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getSearchResults(@PathVariable("documentRef") String documentRef,
-                                                   @RequestParam String searchText,
-                                                   @RequestParam boolean matchCase,
-                                                   @RequestParam boolean completeWords,
-                                                   @RequestBody(required = false) String tempUpdatedContentXML) {
+    @Override
+    public ResponseEntity<Object> getSearchResults(String documentRef, String searchText, boolean matchCase,
+                                                   boolean completeWords, String tempUpdatedContentXML) {
         try {
             documentRef = encodeParam(documentRef);
             List<SearchMatchVO> explanatory = this.explanatoryApiService.searchTextInDocument(documentRef, searchText,
@@ -383,9 +339,8 @@ public class CouncilExplanatoryController {
 
     }
 
-    @GetMapping(value = "/{versionId}/show-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> showExplanatoryVersion(@PathVariable("versionId") String versionId) {
+    @Override
+    public ResponseEntity<Object> showExplanatoryVersion(String versionId) {
         try {
             versionId = encodeParam(versionId);
             DocumentViewResponse contentHtml = this.explanatoryApiService.showVersion(versionId);
@@ -397,10 +352,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{newVersionId}/compare/{oldVersionId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> compareExplanatoryVersions(@PathVariable("newVersionId") String newVersionId,
-                                                             @PathVariable("oldVersionId") String oldVersionId) {
+    @Override
+    public ResponseEntity<Object> compareExplanatoryVersions(String newVersionId, String oldVersionId) {
         try {
             newVersionId = encodeParam(newVersionId);
             oldVersionId = encodeParam(oldVersionId);
@@ -413,10 +366,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/restore/{targetVersion}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> restoreExplanatoryVersion(@PathVariable("documentRef") String documentRef,
-                                                            @PathVariable("targetVersion") String targetVersion) {
+    @Override
+    public ResponseEntity<Object> restoreExplanatoryVersion(String documentRef, String targetVersion) {
         try {
             documentRef = encodeParam(documentRef);
             targetVersion = encodeParam(targetVersion);
@@ -429,11 +380,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/element/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getExplanatoryElement(@PathVariable("documentRef") String documentRef,
-                                                        @PathVariable("elementId") String elementId,
-                                                        @PathVariable("elementTagName") String elementTagName) {
+    @Override
+    public ResponseEntity<Object> getExplanatoryElement(String documentRef, String elementId, String elementTagName) {
         try {
             documentRef = encodeParam(documentRef);
             elementId = encodeParam(elementId);
@@ -448,10 +396,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/download-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> downloadCurrentVersion(@PathVariable("documentRef") String documentRef,
-                                                         @RequestParam("isWithAnnotation") boolean isWithAnnotation) {
+    @Override
+    public ResponseEntity<Object> downloadCurrentVersion(String documentRef, boolean isWithAnnotation) {
         try {
             documentRef = encodeParam(documentRef);
             byte[] response = this.explanatoryApiService.downloadVersion(documentRef, isWithAnnotation);
@@ -463,10 +409,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/download-xml-version", produces = MediaType.APPLICATION_XML_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> downloadXmlVersion(@PathVariable("documentRef") String documentRef,
-                                                     @RequestParam("versionId") String versionId) {
+    @Override
+    public ResponseEntity<Object> downloadXmlVersion(String documentRef, String versionId) {
         try {
             documentRef = encodeParam(documentRef);
             versionId = encodeParam(versionId);
@@ -478,10 +422,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/replace-one", produces = MediaType.TEXT_XML_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> replaceOneText(@PathVariable("documentRef") String documentRef,
-                                                 @RequestBody ReplaceMatchRequest request) {
+    @Override
+    public ResponseEntity<Object> replaceOneText(String documentRef, ReplaceMatchRequest request) {
         try {
             byte[] response = this.explanatoryApiService.replaceOneTextInDocument(request);
             return ResponseEntity.ok().body(response);
@@ -491,10 +433,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/replace-all", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> replaceAllText(@PathVariable("documentRef") String documentRef,
-                                                 @RequestBody ReplaceAllMatchRequest request) {
+    @Override
+    public ResponseEntity<Object> replaceAllText(String documentRef, ReplaceAllMatchRequest request) {
         try {
             Pair<byte[], Integer> response = this.explanatoryApiService.replaceAllTextInDocument(request);
             SearchAndReplaceAllResponse searchAndReplaceAllResponse = new SearchAndReplaceAllResponse(new String(response.left(), StandardCharsets.UTF_8), response.right());
@@ -505,10 +445,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/save-after-replace", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> saveAllAfterReplace(@PathVariable("documentRef") String documentRef,
-                                                      @RequestBody SaveAfterReplaceRequest request) {
+    @Override
+    public ResponseEntity<Object> saveAllAfterReplace(String documentRef, SaveAfterReplaceRequest request) {
         try {
             DocumentViewResponse view = this.explanatoryApiService.saveAfterReplace(request);
             return ResponseEntity.ok().body(view);
@@ -519,10 +457,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/document-config", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getDocumentConfig(@PathVariable("documentRef") String documentRef,
-                                                    HttpServletRequest request) {
+    @Override
+    public ResponseEntity<Object> getDocumentConfig(String documentRef, HttpServletRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
@@ -535,9 +471,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/userGuidance", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getUserGuidance(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> getUserGuidance(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             String userGuidance = this.explanatoryApiService.fetchUserGuidance(documentRef);
@@ -549,9 +484,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/download-clean-version", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> downloadCleanVersion(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> downloadCleanVersion(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             byte[] cleanVersion = this.explanatoryApiService.downloadCleanVersion(documentRef);
@@ -568,9 +502,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/clean-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> showCleanVersion(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> showCleanVersion(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             DocumentViewResponse cleanVersion = this.explanatoryApiService.showCleanVersion(documentRef);
@@ -582,10 +515,8 @@ public class CouncilExplanatoryController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/fetch-toc-ancestors", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> fetchTocAndAncestors(@PathVariable("documentRef") String documentRef,
-                                                       @RequestParam(value = "elementIds", required = false) List<String> elementIds) {
+    @Override
+    public ResponseEntity<Object> fetchTocAndAncestors(String documentRef, List<String> elementIds) {
         try {
             documentRef = encodeParam(documentRef);
             TocAndAncestorsResponse tocAncestors = this.explanatoryApiService.fetchTocAncestor(documentRef, elementIds);

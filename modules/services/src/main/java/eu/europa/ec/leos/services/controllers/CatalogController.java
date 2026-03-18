@@ -32,16 +32,15 @@ import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
 @RestController
 @RequestMapping(path = "/secured/catalog")
-public class CatalogController {
+public class CatalogController implements CatalogApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(CatalogController.class);
 
     @Autowired
     private CustomTemplateService customTemplateService;
 
-    @RequestMapping(value = "/publish-template/{legFileId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> publishTemplateToCatalog(@PathVariable("legFileId") String legFileId, @RequestBody PublishTemplateRequest request)
+    @Override
+    public ResponseEntity<Object> publishTemplateToCatalog(String legFileId, PublishTemplateRequest request)
             throws PendingTranslationException {
         try {
             legFileId = encodeParam(legFileId);
@@ -65,9 +64,8 @@ public class CatalogController {
         }
     }
 
-    @RequestMapping(value = "/update-template/{packageId}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> updateTemplate(@PathVariable("packageId") String packageId, @RequestBody PublishTemplateRequest request) {
+    @Override
+    public ResponseEntity<Object> updateTemplate(String packageId, PublishTemplateRequest request) {
         try {
             packageId = encodeParam(packageId);
             customTemplateService.updateTemplate(
@@ -85,9 +83,8 @@ public class CatalogController {
         }
     }
 
-    @RequestMapping(value = "/un-publish-template/{catalogKey}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> unPublishTemplate(@PathVariable("catalogKey") String catalogKey) {
+    @Override
+    public ResponseEntity<Object> unPublishTemplate(String catalogKey) {
         try {
             catalogKey = encodeParam(catalogKey);
             Boolean isUpdated = customTemplateService.unPublishTemplate(catalogKey);
@@ -101,9 +98,8 @@ public class CatalogController {
         }
     }
 
-    @GetMapping(value = "/template/{proposalRef}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getTemplateInfo(@PathVariable("proposalRef") String proposalRef) {
+    @Override
+    public ResponseEntity<Object> getTemplateInfo(String proposalRef) {
         try {
             proposalRef = encodeParam(proposalRef);
             CustomTemplateInfoResponse response = customTemplateService.getTemplateInfo(proposalRef);

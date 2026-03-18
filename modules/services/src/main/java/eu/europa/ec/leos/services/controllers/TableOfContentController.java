@@ -33,15 +33,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/secured/toc/")
-public class TableOfContentController {
+public class TableOfContentController implements TableOfContentApi {
     private static final Logger LOG = LoggerFactory.getLogger(TableOfContentController.class);
 
     @Autowired
     TocApiService tableOfContentService;
 
-    @PostMapping(value = "/validate-node-drop", produces = MediaType.APPLICATION_JSON_VALUE )
-    @ResponseBody
-    public ResponseEntity<Object> validateNodeDrop(@RequestBody() NodeDropValidationRequest nodeValidationRequest) {
+    @Override
+    public ResponseEntity<Object> validateNodeDrop(NodeDropValidationRequest nodeValidationRequest) {
         try {
             NodeValidationResponse response = this.tableOfContentService.nodeValidationDrop(nodeValidationRequest);
             return ResponseEntity.ok().body(response);
@@ -51,9 +50,8 @@ public class TableOfContentController {
         }
     }
 
-    @PostMapping(value = "/validate-toc", produces = MediaType.APPLICATION_JSON_VALUE )
-    @ResponseBody
-    public ResponseEntity<Object> validateToc(@RequestBody() TocValidationRequest tocValidationRequest) {
+    @Override
+    public ResponseEntity<Object> validateToc(TocValidationRequest tocValidationRequest) {
         try {
             NodeValidationResponse response = this.tableOfContentService.validateToc(tocValidationRequest);
             return ResponseEntity.ok().body(response);

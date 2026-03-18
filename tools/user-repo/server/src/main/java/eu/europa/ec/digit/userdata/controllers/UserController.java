@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-public class UserController {
+public class UserController implements UserApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserController.class);
     private static final int MAX_RECORDS = 100;
@@ -44,8 +44,7 @@ public class UserController {
     private final SpecialEntityRepository specialEntityRepository;
     private final SpecialUserRepository specialUserRepository;
 
-    @GetMapping(path = "/users")
-    @Transactional(readOnly = true)
+    @Override
     public Collection<User> searchUsers(
             @RequestParam(value = "searchKey") String searchKey,
             @RequestParam(value = "searchContext", required = false) String searchContext,
@@ -55,28 +54,22 @@ public class UserController {
                 .limit(MAX_RECORDS).toList();
     }
 
-    @GetMapping(path = "/users/{userId}")
-    @Transactional(readOnly = true)
+    @Override
     public User getUser(@PathVariable(value = "userId") String userId) {
         return userRepository.findByLogin(userId);
     }
 
-    @GetMapping(path = "/entities")
-    @Transactional(readOnly = true)
+    @Override
     public Collection<String> getAllOrganizations() {
         return entityRepository.findAllOrganizations().toList();
     }
 
-    @GetMapping(path = "/entities/{org}/users")
-
-    @RequestMapping(method = RequestMethod.GET, path = "/users/jobTitle/{jobTitle}")
-    @Transactional(readOnly = true)
+    @Override
     public Collection<User> getUsersForJobTitle(@PathVariable(value = "jobTitle") String jobTitle) {
         return userRepository.findByJobTitle(jobTitle).collect(Collectors.toList());
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = "/entities/{org}/users")
-    @Transactional(readOnly = true)
+    @Override
     public Collection<User> searchUsersByOrganizationAndKey(
             @PathVariable(value = "org", required = false) String organization,
             @RequestParam(value = "searchKey", required = true) String searchKey) {
@@ -87,8 +80,7 @@ public class UserController {
                 .limit(MAX_RECORDS).toList();
     }
 
-    @PostMapping(path = "/users/connectedEntity")
-    @Transactional
+    @Override
     public Boolean addSpecialEntityForUser(@RequestBody SpecialEntityRequest request) {
         LOG.debug("Adding special entity to LEOS_SPECIAL_ENTITY table in ud-repo ---Started");
         SpecialUser specialUser = specialUserRepository.findByLogin(request.getUserId());
@@ -120,8 +112,7 @@ public class UserController {
         return false;
     }
 
-    @GetMapping(path = "/entities/{userId}")
-    @Transactional(readOnly = true)
+    @Override
     public Collection<Entity> getAllFullPathEntitiesForUser(@PathVariable(value = "userId") String userId) {
         User user = userRepository.findByLogin(userId);
         return entityRepository

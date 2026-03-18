@@ -63,7 +63,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
 @RestController
 @RequestMapping("/secured/coverPage/")
-public class CoverPageController {
+public class CoverPageController implements CoverPageApi {
     private static final Logger LOG = LoggerFactory.getLogger(CoverPageController.class);
     private static final String ERROR_OCCURED_WHILE_GETTING_ANEX_ELEMENT = "Error occured while getting anex element - ";
     private static final String ERROR_OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION = "Error occurred  while getting downloading xml version - ";
@@ -77,9 +77,8 @@ public class CoverPageController {
     @Autowired
     private CoEditionContext coEditionContext;
 
-    @GetMapping(value = "/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getCoverPage(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> getCoverPage(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             DocumentViewResponse coverPageDocument = this.coverPageApiService.getDocument(documentRef);
@@ -92,12 +91,8 @@ public class CoverPageController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/getToc", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getToc(@PathVariable("documentRef") String documentRef,
-                                         @RequestParam("tocMode") TocMode tocMode,
-                                         HttpServletRequest request
-    ) {
+    @Override
+    public ResponseEntity<Object> getToc(String documentRef, TocMode tocMode, HttpServletRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
@@ -111,9 +106,8 @@ public class CoverPageController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/getTocItems", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getTocItems(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> getTocItems(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             List<TocItem> tocItems = this.coverPageApiService.getTocItems(documentRef);
@@ -126,14 +120,9 @@ public class CoverPageController {
 
     }
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/save-element", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> saveCoverPageElement(@PathVariable("documentRef") String documentRef,
-                                                       @PathVariable("elementName") String elementName,
-                                                       @PathVariable("elementId") String elementId,
-                                                       @RequestParam(required = false) boolean isSplit,
-                                                       @RequestHeader("presenterId") String presenterId,
-                                                       @RequestBody String elementContent) {
+    @Override
+    public ResponseEntity<Object> saveCoverPageElement(String documentRef, String elementName, String elementId,
+                                                       boolean isSplit, String presenterId, String elementContent) {
         try {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
@@ -152,11 +141,8 @@ public class CoverPageController {
 
     }
 
-    @DeleteMapping(value = "/{documentRef}/element/{elementName}/{elementId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> deleteCoverPageElement(@PathVariable("documentRef") String documentRef,
-                                                         @PathVariable("elementName") String elementName,
-                                                         @PathVariable("elementId") String elementId) {
+    @Override
+    public ResponseEntity<Object> deleteCoverPageElement(String documentRef, String elementName, String elementId) {
         try {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
@@ -173,12 +159,9 @@ public class CoverPageController {
     }
 
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/insert-element", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> insertCoverPageElement(@PathVariable("documentRef") String documentRef,
-                                                         @PathVariable("elementName") String elementName,
-                                                         @PathVariable("elementId") String elementId,
-                                                         @RequestBody InsertElementRequest request) {
+    @Override
+    public ResponseEntity<Object> insertCoverPageElement(String documentRef, String elementName, String elementId,
+                                                         InsertElementRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
@@ -194,12 +177,9 @@ public class CoverPageController {
 
     }
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/merge-element", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> mergeCoverPageElement(@PathVariable("documentRef") String documentRef,
-                                                        @PathVariable("elementName") String elementTag,
-                                                        @PathVariable("elementId") String elementId,
-                                                        @RequestBody String elementContent) {
+    @Override
+    public ResponseEntity<Object> mergeCoverPageElement(String documentRef, String elementTag, String elementId,
+                                                        String elementContent) {
         try {
             documentRef = encodeParam(documentRef);
             elementTag = encodeParam(elementTag);
@@ -215,10 +195,8 @@ public class CoverPageController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef,
-                                                   @RequestParam int pageIndex, @RequestParam int pageSize) {
+    @Override
+    public ResponseEntity<Object> getRecentChanges(String documentRef, int pageIndex, int pageSize) {
         try {
             documentRef = encodeParam(documentRef);
             List<VersionVO> coverPagees = this.genericDocumentApiService.getRecentMinorVersions(documentRef, pageIndex,
@@ -232,9 +210,8 @@ public class CoverPageController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/count-recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> countRecentChanges(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> countRecentChanges(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             int count = this.genericDocumentApiService.countRecentMinorVersions(documentRef);
@@ -247,11 +224,8 @@ public class CoverPageController {
 
     }
 
-    @PostMapping(value = "/{documentRef}/save-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> saveCoverPageVersion(@PathVariable("documentRef") String documentRef,
-                                                       @RequestBody SaveIntermediateVersionRequest saveEvent
-    ) {
+    @Override
+    public ResponseEntity<Object> saveCoverPageVersion(String documentRef, SaveIntermediateVersionRequest saveEvent) {
         try {
             documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.coverPageApiService.saveDocument(documentRef, saveEvent.getCheckinComment(),
@@ -265,12 +239,9 @@ public class CoverPageController {
 
     }
 
-    @PostMapping(value = "/{documentRef}/save-toc", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> saveCoverPageVersion(@PathVariable("documentRef") String documentRef,
-                                                       @RequestBody SaveTocRequestEvent saveTocRequestEvent,
-                                        HttpServletRequest request
-    ) {
+    @Override
+    public ResponseEntity<Object> saveToc(String documentRef, SaveTocRequestEvent saveTocRequestEvent,
+                                          HttpServletRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
@@ -285,11 +256,8 @@ public class CoverPageController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/search-versions", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> searchVersionData(@PathVariable("documentRef") String documentRef,
-                                                    @RequestParam String authorKey,
-                                                    @RequestParam String type) {
+    @Override
+    public ResponseEntity<Object> searchVersionData(String documentRef, String authorKey, String type) {
         try {
             documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.genericDocumentApiService.searchVersions(documentRef, authorKey, type);
@@ -302,11 +270,8 @@ public class CoverPageController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getMajorVersionsData(@PathVariable("documentRef") String documentRef,
-                                                       @RequestParam int pageIndex,
-                                                       @RequestParam int pageSize) {
+    @Override
+    public ResponseEntity<Object> getMajorVersionsData(String documentRef, int pageIndex, int pageSize) {
         try {
             documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex,
@@ -320,9 +285,8 @@ public class CoverPageController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/count-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> countMajorVersionsData(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> countMajorVersionsData(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             int versions = this.genericDocumentApiService.countMajorVersionsData(documentRef);
@@ -335,11 +299,9 @@ public class CoverPageController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef,
-                                                             @RequestParam String currIntVersion,
-                                                             @RequestParam int pageIndex, @RequestParam int pageSize) {
+    @Override
+    public ResponseEntity<Object> getIntermediateVersionData(String documentRef, String currIntVersion,
+                                                             int pageIndex, int pageSize) {
         try {
             documentRef = encodeParam(documentRef);
             currIntVersion = encodeParam(currIntVersion);
@@ -354,10 +316,8 @@ public class CoverPageController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/count-intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> countIntermediateVersionData(@PathVariable("documentRef") String documentRef,
-                                                               @RequestParam String currIntVersion) {
+    @Override
+    public ResponseEntity<Object> countIntermediateVersionData(String documentRef, String currIntVersion) {
         try {
             documentRef = encodeParam(documentRef);
             int count = this.genericDocumentApiService.countIntermediateVersionsData(documentRef, currIntVersion);
@@ -370,13 +330,9 @@ public class CoverPageController {
 
     }
 
-    @PostMapping(value = "/{documentRef}/search-text", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getSearchResults(@PathVariable("documentRef") String documentRef,
-                                                   @RequestParam String searchText,
-                                                   @RequestParam boolean matchCase,
-                                                   @RequestParam boolean completeWords,
-                                                   @RequestBody(required = false) String tempUpdatedContentXML) {
+    @Override
+    public ResponseEntity<Object> getSearchResults(String documentRef, String searchText, boolean matchCase,
+                                                   boolean completeWords, String tempUpdatedContentXML) {
         try {
             documentRef = encodeParam(documentRef);
             List<SearchMatchVO> coverPage = this.coverPageApiService.searchTextInDocument(documentRef, searchText,
@@ -390,9 +346,8 @@ public class CoverPageController {
 
     }
 
-    @GetMapping(value = "/{versionId}/show-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> showCoverPageVersion(@PathVariable("versionId") String versionId) {
+    @Override
+    public ResponseEntity<Object> showCoverPageVersion(String versionId) {
         try {
             versionId = encodeParam(versionId);
             DocumentViewResponse contentHtml = this.coverPageApiService.showVersion(versionId);
@@ -405,10 +360,8 @@ public class CoverPageController {
 
     }
 
-    @GetMapping(value = "/{newVersionId}/compare/{oldVersionId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> compareCoverPageVersions(@PathVariable("newVersionId") String newVersionId,
-                                                           @PathVariable("oldVersionId") String oldVersionId) {
+    @Override
+    public ResponseEntity<Object> compareCoverPageVersions(String newVersionId, String oldVersionId) {
         try {
             newVersionId = encodeParam(newVersionId);
             oldVersionId = encodeParam(oldVersionId);
@@ -422,10 +375,8 @@ public class CoverPageController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/restore/{targetVersion}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> restoreCoverPageVersion(@PathVariable("documentRef") String documentRef,
-                                                          @PathVariable("targetVersion") String targetVersion) {
+    @Override
+    public ResponseEntity<Object> restoreCoverPageVersion(String documentRef, String targetVersion) {
         try {
             documentRef = encodeParam(documentRef);
             targetVersion = encodeParam(targetVersion);
@@ -439,11 +390,8 @@ public class CoverPageController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/element/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getCoverPageElement(@PathVariable("documentRef") String documentRef,
-                                                      @PathVariable("elementId") String elementId,
-                                                      @PathVariable("elementTagName") String elementTagName) {
+    @Override
+    public ResponseEntity<Object> getCoverPageElement(String documentRef, String elementId, String elementTagName) {
         try {
             documentRef = encodeParam(documentRef);
             elementId = encodeParam(elementId);
@@ -457,10 +405,8 @@ public class CoverPageController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/download-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> downloadCurrentVersion(@PathVariable("documentRef") String documentRef,
-                                                         @RequestParam("isWithAnnotation") boolean isWithAnnotation) {
+    @Override
+    public ResponseEntity<Object> downloadCurrentVersion(String documentRef, boolean isWithAnnotation) {
         try {
             documentRef = encodeParam(documentRef);
             byte[] response = this.coverPageApiService.downloadVersion(documentRef, isWithAnnotation);
@@ -472,10 +418,8 @@ public class CoverPageController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/download-xml-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> downloadXmlVersion(@PathVariable("documentRef") String documentRef,
-                                                     @RequestParam("versionId") String versionId) {
+    @Override
+    public ResponseEntity<Object> downloadXmlVersion(String documentRef, String versionId) {
         try {
             documentRef = encodeParam(documentRef);
             versionId = encodeParam(versionId);
@@ -487,10 +431,8 @@ public class CoverPageController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/replace-one", produces = MediaType.TEXT_XML_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> replaceOneText(@PathVariable("documentRef") String documentRef,
-                                                 @RequestBody ReplaceMatchRequest request) {
+    @Override
+    public ResponseEntity<Object> replaceOneText(String documentRef, ReplaceMatchRequest request) {
         try {
             byte[] response = this.coverPageApiService.replaceOneTextInDocument(request);
             return ResponseEntity.ok().body(response);
@@ -500,10 +442,8 @@ public class CoverPageController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/replace-all", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> replaceAllText(@PathVariable("documentRef") String documentRef,
-                                                 @RequestBody ReplaceAllMatchRequest request) {
+    @Override
+    public ResponseEntity<Object> replaceAllText(String documentRef, ReplaceAllMatchRequest request) {
         try {
             Pair<byte[], Integer> response = this.coverPageApiService.replaceAllTextInDocument(request);
             SearchAndReplaceAllResponse searchAndReplaceAllResponse = new SearchAndReplaceAllResponse(new String(response.left(), StandardCharsets.UTF_8), response.right());
@@ -514,10 +454,8 @@ public class CoverPageController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/save-after-replace", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> saveAllAfterReplace(@PathVariable("documentRef") String documentRef,
-                                                      @RequestBody SaveAfterReplaceRequest request) {
+    @Override
+    public ResponseEntity<Object> saveAllAfterReplace(String documentRef, SaveAfterReplaceRequest request) {
         try {
             DocumentViewResponse view = this.coverPageApiService.saveAfterReplace(request);
             return ResponseEntity.ok().body(view);
@@ -528,10 +466,8 @@ public class CoverPageController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/document-config", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getDocumentConfig(@PathVariable("documentRef") String documentRef,
-                                                    HttpServletRequest request) {
+    @Override
+    public ResponseEntity<Object> getDocumentConfig(String documentRef, HttpServletRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
@@ -544,9 +480,8 @@ public class CoverPageController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/userGuidance", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getUserGuidance(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> getUserGuidance(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             String userGuidance = this.coverPageApiService.fetchUserGuidance(documentRef);
@@ -558,9 +493,8 @@ public class CoverPageController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/download-clean-version", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> downloadCleanVersion(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> downloadCleanVersion(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             byte[] cleanVersion = this.coverPageApiService.downloadCleanVersion(documentRef);
@@ -576,9 +510,8 @@ public class CoverPageController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/clean-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> showCleanVersion(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> showCleanVersion(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             DocumentViewResponse cleanVersion = this.coverPageApiService.showCleanVersion(documentRef);
@@ -590,11 +523,9 @@ public class CoverPageController {
         }
     }
 
-    @PostMapping(value = "/{documentRef}/toggle-trackchange-enabled", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> toggleTrackChangeEnabled(@PathVariable("documentRef") String documentRef,
-                                                           @RequestBody() ToggleTrackChangeEnabledRequest toggleTrackChangeEnabledRequest
-    ) {
+    @Override
+    public ResponseEntity<Object> toggleTrackChangeEnabled(String documentRef,
+                                                           ToggleTrackChangeEnabledRequest toggleTrackChangeEnabledRequest) {
         try {
             documentRef = encodeParam(documentRef);
             boolean isTrackChangesEnabled = toggleTrackChangeEnabledRequest.isTrackChangedEnabled();

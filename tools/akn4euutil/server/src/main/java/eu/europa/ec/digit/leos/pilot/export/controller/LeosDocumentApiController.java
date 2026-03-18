@@ -37,7 +37,7 @@ import static org.springframework.http.HttpStatus.ACCEPTED;
 
 @RestController
 @CrossOrigin(origins = "*")
-public class LeosDocumentApiController {
+public class LeosDocumentApiController implements LeosDocumentApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(LeosDocumentApiController.class);
     private final LeosDocumentService leosDocumentService;
@@ -46,8 +46,7 @@ public class LeosDocumentApiController {
         this.leosDocumentService = leosDocumentService;
     }
 
-    @RequestMapping(value = "/getRenditions", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> getRenditions(@RequestParam MultipartFile inputFile, @RequestParam(required = false) MultipartFile main,
                                                 @RequestParam(required = false, defaultValue = "false") boolean isWithAnnotations) {
         try {
@@ -65,8 +64,7 @@ public class LeosDocumentApiController {
         }
     }
 
-    @RequestMapping(value = "/updateWithTranslations", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> updateWithTranslations(@RequestParam MultipartFile inputFile,
                                                          @RequestParam MultipartFile translationsFile) {
 
@@ -87,8 +85,7 @@ public class LeosDocumentApiController {
         }
     }
 
-    @RequestMapping(value = "/applyMetadata", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> applyMetadata(@RequestParam MultipartFile inputFile,
                                                 @RequestParam(name = "email", required = false) String email) {
         try {
@@ -103,9 +100,8 @@ public class LeosDocumentApiController {
         }
     }
 
-    @RequestMapping(value = "/applyMetadataAsync", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<Object> applyMetadata(@RequestParam("inputFile") MultipartFile inputFile,
+    @Override
+    public ResponseEntity<Object> applyMetadataAsync(@RequestParam("inputFile") MultipartFile inputFile,
                                                 @RequestParam("callbackUrl") String callbackUrl,
                                                 @RequestParam(name = "email", required = false) String email) {
         try {
@@ -116,15 +112,15 @@ public class LeosDocumentApiController {
         }
     }
 
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    @Override
     public String test() { return "Test RESTful service"; }
 
-    @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)
+    @Override
     public ResponseEntity<?> handleOptionsRequest() {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(value = "/prefinalization-callback", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Override
     @ResponseStatus(ACCEPTED)
     public void processPrefinalization(final @RequestParam(name = "token") String token, @RequestParam MultipartFile inputFile) throws IOException {
         // This is just for callback testing purposes

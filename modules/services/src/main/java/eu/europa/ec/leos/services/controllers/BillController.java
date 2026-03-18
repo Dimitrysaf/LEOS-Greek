@@ -68,7 +68,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
 @RestController
 @RequestMapping("/secured/bill/")
-public class BillController {
+public class BillController implements BillApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(BillController.class);
     private static final String ERROR_OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION = "Error occurred  while getting downloading xml version - {}";
@@ -84,16 +84,10 @@ public class BillController {
     @Autowired
     ProfileContext profileContext;
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/save-element", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> saveBillElement(@PathVariable("documentRef") String documentRef,
-                                                  @PathVariable("elementName") String elementName,
-                                                  @PathVariable("elementId") String elementId,
-                                                  @RequestHeader("presenterId") String presenterId,
-                                                  @RequestParam(required = false) boolean isSplit,
-                                                  @RequestParam(required = false, defaultValue = "") String alternateElementId,
-                                                  @RequestBody String elementContent,
-                                                  HttpServletRequest request) {
+    @Override
+    public ResponseEntity<Object> saveBillElement(String documentRef, String elementName, String elementId,
+                                                  String presenterId, boolean isSplit, String alternateElementId,
+                                                  String elementContent, HttpServletRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
@@ -113,11 +107,8 @@ public class BillController {
         }
     }
 
-    @DeleteMapping(value = "/{documentRef}/element/{elementName}/{elementId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> deleteBillElement(@PathVariable("documentRef") String documentRef,
-                                                    @PathVariable("elementName") String elementName,
-                                                    @PathVariable("elementId") String elementId) {
+    @Override
+    public ResponseEntity<Object> deleteBillElement(String documentRef, String elementName, String elementId) {
         try {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
@@ -130,12 +121,9 @@ public class BillController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/insert-element", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> insertBillElement(@PathVariable("documentRef") String documentRef,
-                                                    @PathVariable("elementName") String elementName,
-                                                    @PathVariable("elementId") String elementId,
-                                                    @RequestBody InsertElementRequest request) {
+    @Override
+    public ResponseEntity<Object> insertBillElement(String documentRef, String elementName, String elementId,
+                                                    InsertElementRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
@@ -148,12 +136,9 @@ public class BillController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/merge-element", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> mergeBillElement(@PathVariable("documentRef") String documentRef,
-                                                   @PathVariable("elementName") String elementTag,
-                                                   @PathVariable("elementId") String elementId,
-                                                   @RequestBody String elementContent) {
+    @Override
+    public ResponseEntity<Object> mergeBillElement(String documentRef, String elementTag, String elementId,
+                                                   String elementContent) {
         try {
             documentRef = encodeParam(documentRef);
             elementTag = encodeParam(elementTag);
@@ -167,10 +152,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef,
-                                                   @RequestParam int pageIndex, @RequestParam int pageSize) {
+    @Override
+    public ResponseEntity<Object> getRecentChanges(String documentRef, int pageIndex, int pageSize) {
         try {
             documentRef = encodeParam(documentRef);
             List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef, pageIndex, pageSize);
@@ -181,9 +164,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/count-recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> countRecentChanges(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> countRecentChanges(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             int count = this.genericDocumentApiService.countRecentMinorVersions(documentRef);
@@ -194,11 +176,8 @@ public class BillController {
         }
     }
 
-    @PostMapping(value = "/{documentRef}/save-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> saveBillVersion(@PathVariable("documentRef") String documentRef,
-                                                  @RequestBody SaveIntermediateVersionRequest saveEvent
-    ) {
+    @Override
+    public ResponseEntity<Object> saveBillVersion(String documentRef, SaveIntermediateVersionRequest saveEvent) {
         try {
             documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.billApiService.saveDocument(documentRef, saveEvent.getCheckinComment(), saveEvent.getVersionType());
@@ -209,12 +188,9 @@ public class BillController {
         }
     }
 
-    @PostMapping(value = "/{documentRef}/save-toc", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> saveToc(@PathVariable("documentRef") String documentRef,
-                                          @RequestBody SaveTocRequestEvent saveTocRequestEvent,
-                                          @RequestHeader(value = CLIENT_CONTEXT_PARAMETER, required = false) String clientContextToken
-    ) {
+    @Override
+    public ResponseEntity<Object> saveToc(String documentRef, SaveTocRequestEvent saveTocRequestEvent,
+                                          String clientContextToken) {
         try {
             documentRef = encodeParam(documentRef);
             List<TableOfContentItemVO> toc = this.billApiService.saveToC(documentRef, saveTocRequestEvent.getTableOfContentItemVOs(), TocMode.NOT_SIMPLIFIED, clientContextToken);
@@ -225,11 +201,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getMajorVersionsData(@PathVariable("documentRef") String documentRef,
-                                                       @RequestParam int pageIndex,
-                                                       @RequestParam int pageSize) {
+    @Override
+    public ResponseEntity<Object> getMajorVersionsData(String documentRef, int pageIndex, int pageSize) {
         try {
             documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex, pageSize);
@@ -240,9 +213,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/count-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> countMajorVersionsData(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> countMajorVersionsData(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             int versions = this.genericDocumentApiService.countMajorVersionsData(documentRef);
@@ -253,11 +225,9 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef,
-                                                             @RequestParam String currIntVersion,
-                                                             @RequestParam int pageIndex, @RequestParam int pageSize) {
+    @Override
+    public ResponseEntity<Object> getIntermediateVersionData(String documentRef, String currIntVersion,
+                                                             int pageIndex, int pageSize) {
         try {
             documentRef = encodeParam(documentRef);
             currIntVersion = encodeParam(currIntVersion);
@@ -269,10 +239,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/count-intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef,
-                                                             @RequestParam String currIntVersion) {
+    @Override
+    public ResponseEntity<Object> countIntermediateVersionData(String documentRef, String currIntVersion) {
         try {
             documentRef = encodeParam(documentRef);
             currIntVersion = encodeParam(currIntVersion);
@@ -284,11 +252,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/search-versions", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> searchVersionData(@PathVariable("documentRef") String documentRef,
-                                                    @RequestParam(required = false, defaultValue = "") String authorKey,
-                                                    @RequestParam(required = false, defaultValue = "") String type) {
+    @Override
+    public ResponseEntity<Object> searchVersionData(String documentRef, String authorKey, String type) {
         try {
             documentRef = encodeParam(documentRef);
             authorKey = encodeParam(authorKey);
@@ -301,12 +266,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/getToc", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getToc(@PathVariable("documentRef") String documentRef,
-                                         @RequestParam("tocMode") TocMode tocMode,
-                                         @RequestHeader(value = CLIENT_CONTEXT_PARAMETER, required = false) String clientContextToken
-    ) {
+    @Override
+    public ResponseEntity<Object> getToc(String documentRef, TocMode tocMode, String clientContextToken) {
         try {
             documentRef = encodeParam(documentRef);
             List<TableOfContentItemVO> toc = this.billApiService.getToc(documentRef, tocMode, clientContextToken);
@@ -317,9 +278,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/getTocItems", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getTocItems(@PathVariable("documentRef") String documentRef, @RequestHeader(value = CLIENT_CONTEXT_PARAMETER, required = false) String clientContextToken) {
+    @Override
+    public ResponseEntity<Object> getTocItems(String documentRef, String clientContextToken) {
         try {
             documentRef = encodeParam(documentRef);
             List<TocItem> tocItems = this.billApiService.getTocItems(documentRef, clientContextToken);
@@ -330,9 +290,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getBill(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> getBill(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             DocumentViewResponse bill = this.billApiService.getDocument(documentRef);
@@ -343,13 +302,9 @@ public class BillController {
         }
     }
 
-    @PostMapping(value = "/{documentRef}/search-text", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getSearchResults(@PathVariable("documentRef") String documentRef,
-                                                   @RequestParam String searchText,
-                                                   @RequestParam boolean matchCase,
-                                                   @RequestParam boolean completeWords,
-                                                   @RequestBody(required = false) String tempUpdatedContentXML) {
+    @Override
+    public ResponseEntity<Object> getSearchResults(String documentRef, String searchText, boolean matchCase,
+                                                   boolean completeWords, String tempUpdatedContentXML) {
         try {
             documentRef = encodeParam(documentRef);
 //            searchText = encodeParam(searchText);
@@ -362,9 +317,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{versionId}/show-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> showBillVersion(@PathVariable("versionId") String versionId) {
+    @Override
+    public ResponseEntity<Object> showBillVersion(String versionId) {
         try {
             versionId = encodeParam(versionId);
             DocumentViewResponse contentHtml = this.billApiService.showVersion(versionId);
@@ -375,10 +329,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{newVersionId}/compare/{oldVersionId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> compareBillVersions(@PathVariable("newVersionId") String newVersionId,
-                                                      @PathVariable("oldVersionId") String oldVersionId) {
+    @Override
+    public ResponseEntity<Object> compareBillVersions(String newVersionId, String oldVersionId) {
         try {
             newVersionId = encodeParam(newVersionId);
             oldVersionId = encodeParam(oldVersionId);
@@ -390,10 +342,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/restore/{targetVersion}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> restoreBillVersion(@PathVariable("documentRef") String documentRef,
-                                                     @PathVariable("targetVersion") String targetVersion) {
+    @Override
+    public ResponseEntity<Object> restoreBillVersion(String documentRef, String targetVersion) {
         try {
             documentRef = encodeParam(documentRef);
             targetVersion = encodeParam(targetVersion);
@@ -406,11 +356,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/element/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getBillElement(@PathVariable("documentRef") String documentRef,
-                                                 @PathVariable("elementId") String elementId,
-                                                 @PathVariable("elementTagName") String elementTagName) {
+    @Override
+    public ResponseEntity<Object> getBillElement(String documentRef, String elementId, String elementTagName) {
         try {
             documentRef = encodeParam(documentRef);
             elementId = encodeParam(elementId);
@@ -423,13 +370,9 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/accept-change/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> acceptChange(@PathVariable("documentRef") String documentRef,
-                                               @PathVariable("elementId") String elementId,
-                                               @PathVariable("elementTagName") String elementTagName,
-                                               @RequestParam("trackChangeAction") String trackChangeAction,
-                                               @RequestHeader("presenterId") String presenterId) {
+    @Override
+    public ResponseEntity<Object> acceptChange(String documentRef, String elementId, String elementTagName,
+                                               String trackChangeAction, String presenterId) {
         try {
             documentRef = encodeParam(documentRef);
             elementId = encodeParam(elementId);
@@ -445,13 +388,9 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/reject-change/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> rejectChange(@PathVariable("documentRef") String documentRef,
-                                               @PathVariable("elementId") String elementId,
-                                               @PathVariable("elementTagName") String elementTagName,
-                                               @RequestParam("trackChangeAction") String trackChangeAction,
-                                                @RequestHeader("presenterId") String presenterId) {
+    @Override
+    public ResponseEntity<Object> rejectChange(String documentRef, String elementId, String elementTagName,
+                                               String trackChangeAction, String presenterId) {
         try {
             documentRef = encodeParam(documentRef);
             elementId = encodeParam(elementId);
@@ -467,10 +406,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/download-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> downloadCurrentVersion(@PathVariable("documentRef") String documentRef,
-                                                         @RequestParam("isWithAnnotation") boolean isWithAnnotation) {
+    @Override
+    public ResponseEntity<Object> downloadCurrentVersion(String documentRef, boolean isWithAnnotation) {
         try {
             documentRef = encodeParam(documentRef);
             byte[] response = this.billApiService.downloadVersion(documentRef, isWithAnnotation);
@@ -481,10 +418,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/download-xml-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> downloadXmlVersion(@PathVariable("documentRef") String documentRef,
-                                                     @RequestParam("versionId") String versionId) {
+    @Override
+    public ResponseEntity<Object> downloadXmlVersion(String documentRef, String versionId) {
         try {
             documentRef = encodeParam(documentRef);
             versionId = encodeParam(versionId);
@@ -496,10 +431,8 @@ public class BillController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/replace-one", produces = MediaType.TEXT_XML_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> replaceOneText(@PathVariable("documentRef") String documentRef,
-                                                 @RequestBody ReplaceMatchRequest request) {
+    @Override
+    public ResponseEntity<Object> replaceOneText(String documentRef, ReplaceMatchRequest request) {
         try {
 //            request.setReplaceText(encodeParam(request.getReplaceText()));
 //            request.setSearchText(encodeParam(request.getSearchText()));
@@ -513,10 +446,8 @@ public class BillController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/replace-all", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> replaceAllText(@PathVariable("documentRef") String documentRef,
-                                                 @RequestBody ReplaceAllMatchRequest request) {
+    @Override
+    public ResponseEntity<Object> replaceAllText(String documentRef, ReplaceAllMatchRequest request) {
         try {
             request.setDocumentRef(encodeParam(request.getDocumentRef()));
             Pair<byte[], Integer> response = this.billApiService.replaceAllTextInDocument(request);
@@ -528,10 +459,8 @@ public class BillController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/save-after-replace", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> saveAllAfterReplace(@PathVariable("documentRef") String documentRef,
-                                                      @RequestBody SaveAfterReplaceRequest request) {
+    @Override
+    public ResponseEntity<Object> saveAllAfterReplace(String documentRef, SaveAfterReplaceRequest request) {
         try {
             DocumentViewResponse view = this.billApiService.saveAfterReplace(request);
             return ResponseEntity.ok().body(view);
@@ -542,10 +471,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/document-config", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getDocumentConfig(@PathVariable("documentRef") String documentRef,
-                                                    HttpServletRequest request) {
+    @Override
+    public ResponseEntity<Object> getDocumentConfig(String documentRef, HttpServletRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
@@ -557,10 +484,9 @@ public class BillController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/search-for-import", produces = MediaType.TEXT_HTML_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> searchForImportFromJournal(@PathVariable("documentRef") String documentRef,
-                                                             @RequestBody SearchForImportCriteriaRequest searchForImportCriteriaRequest) {
+    @Override
+    public ResponseEntity<Object> searchForImportFromJournal(String documentRef,
+                                                             SearchForImportCriteriaRequest searchForImportCriteriaRequest) {
         try {
             String view = this.billApiService.searchForImport(searchForImportCriteriaRequest.getNumber(),
                     searchForImportCriteriaRequest.getYear(), searchForImportCriteriaRequest.getType());
@@ -572,9 +498,8 @@ public class BillController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/renumber-document", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> renumberBill(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> renumberBill(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             DocumentViewResponse view = this.billApiService.renumberBill(documentRef);
@@ -585,9 +510,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/userGuidance", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getUserGuidance(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> getUserGuidance(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             String userGuidance = this.billApiService.fetchUserGuidance(documentRef);
@@ -598,9 +522,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/download-clean-version", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> downloadCleanVersion(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> downloadCleanVersion(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             byte[] cleanVersion = this.billApiService.downloadCleanVersion(documentRef);
@@ -615,9 +538,8 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/clean-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> showCleanVersion(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> showCleanVersion(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             DocumentViewResponse cleanVersion = this.billApiService.showCleanVersion(documentRef);
@@ -628,11 +550,9 @@ public class BillController {
         }
     }
 
-    @PostMapping(value = "/{documentRef}/toggle-trackchange-enabled", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> toggleTrackChangeEnabled(@PathVariable("documentRef") String documentRef,
-                                                           @RequestBody ToggleTrackChangeEnabledRequest toggleTrackChangeEnabledRequest
-    ) {
+    @Override
+    public ResponseEntity<Object> toggleTrackChangeEnabled(String documentRef,
+                                                           ToggleTrackChangeEnabledRequest toggleTrackChangeEnabledRequest) {
         try {
             documentRef = encodeParam(documentRef);
             boolean isTrackChangesEnabled = toggleTrackChangeEnabledRequest.isTrackChangedEnabled();
@@ -644,10 +564,8 @@ public class BillController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/import-elements", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> importElements(@PathVariable("documentRef") String documentRef,
-                                                 @RequestBody ImportElementRequest request) {
+    @Override
+    public ResponseEntity<Object> importElements(String documentRef, ImportElementRequest request) {
         documentRef = encodeParam(documentRef);
         DocumentViewResponse view = this.billApiService.importElements(documentRef, request);
         return ResponseEntity.ok().body(view);
