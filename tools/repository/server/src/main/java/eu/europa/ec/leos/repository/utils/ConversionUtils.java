@@ -166,7 +166,9 @@ public class ConversionUtils {
             if (fetchContent) {
                 content = documentContentRepository.findDocumentContentByVersionId(doc.getVersionId());
             }
-            convertedDocs.add(content.isPresent() ? new LeosDocument(doc, content.get(), collaborators, docProps) : new LeosDocument(doc, collaborators, docProps));
+            convertedDocs.add(content.isPresent()
+                    ? new LeosDocument(doc, content.map(AknSanitizer::sanitize).get(), collaborators, docProps)
+                    : new LeosDocument(doc, collaborators, docProps));
         }
 
         return convertedDocs;
@@ -183,8 +185,9 @@ public class ConversionUtils {
             if (fetchContent) {
                 content = documentContentRepository.findDocumentContentByVersionId(doc.getVersionId());
             }
-            LeosDocument leosDoc = content.isPresent() ? new LeosDocument(doc, content.get(), fetchCollaborators(collaboratorsService, doc.getPackageId()), docProps) :
-                    new LeosDocument(doc, fetchCollaborators(collaboratorsService, doc.getPackageId()), docProps);
+            LeosDocument leosDoc = content.isPresent()
+                    ? new LeosDocument(doc, content.map(AknSanitizer::sanitize).get(), fetchCollaborators(collaboratorsService, doc.getPackageId()), docProps)
+                    : new LeosDocument(doc, fetchCollaborators(collaboratorsService, doc.getPackageId()), docProps);
             
             // Set package info if available
             PackageInfo packageInfo = packageInfoMap.get(doc.getPackageId());
@@ -208,7 +211,9 @@ public class ConversionUtils {
             if (fetchContent) {
                 content = documentContentRepository.findDocumentContentByVersionId(doc.getVersionId());
             }
-            return content.isPresent() ? new LeosDocument(doc, content.get(), collaborators, docProps) : new LeosDocument(doc, collaborators, docProps);
+            return content.isPresent()
+                    ? new LeosDocument(doc, content.map(AknSanitizer::sanitize).get(), collaborators, docProps)
+                    : new LeosDocument(doc, collaborators, docProps);
         } else {
             return null;
         }
