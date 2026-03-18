@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "/api/app-info", produces = "application/json;charset=utf-8")
 @CrossOrigin(origins = "*")
-public class UserRepoAppInfoController {
+public class UserRepoAppInfoController implements UserRepoAppInfoApi {
 
     private static final Logger log = LoggerFactory.getLogger(UserRepoAppInfoController.class);
 
-    @GetMapping
+    @Override
     public Map<String, String> getAppInfo() {
         Properties properties = new Properties();
         try {

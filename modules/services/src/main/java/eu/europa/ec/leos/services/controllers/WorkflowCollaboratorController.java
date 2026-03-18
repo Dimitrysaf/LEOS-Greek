@@ -40,7 +40,7 @@ import static eu.europa.ec.leos.services.utils.LogUtils.logInfo;
 @RequestMapping("/secured/proposal")
 @Slf4j
 @RequiredArgsConstructor
-public class WorkflowCollaboratorController {
+public class WorkflowCollaboratorController implements WorkflowCollaboratorApi {
 
     public static final String SYSTEM_CLIENT_ID_NOT_FOUND_ON_JWT_TOKEN = "systemClientId not found on jwt token";
 
@@ -54,11 +54,10 @@ public class WorkflowCollaboratorController {
     private final UserService userService;
     private final SecurityContext securityContext;
 
-    @PostMapping(value = "/{proposalRef}/workflow-collaborators")
-    public ResponseEntity<Object> addWorkflowCollaboratorAcl(
-            @PathVariable("proposalRef") String proposalRef,
-            @RequestBody WorkflowCollaboratorAclRequest workflowCollaboratorAclRequest,
-            @RequestHeader("Authorization") String authorizationHeader) {
+    @Override
+    public ResponseEntity<Object> addWorkflowCollaboratorAcl(String proposalRef,
+                                                             WorkflowCollaboratorAclRequest workflowCollaboratorAclRequest,
+                                                             String authorizationHeader) {
         Optional<LeosClientResponse> leosClientResponse = getLeosClientResponse(authorizationHeader, securityContext);
         LeosClientResponse leosClient = leosClientResponse.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, SYSTEM_CLIENT_ID_NOT_FOUND_ON_JWT_TOKEN));
         final String clientSystemId = leosClient.getName();
@@ -129,10 +128,9 @@ public class WorkflowCollaboratorController {
     /**
      * returns the WorkflowCollaboratorAcl of the connected client
      */
-    @GetMapping(value = "/{proposalRef}/workflow-collaborators")
-    public ResponseEntity<WorkflowCollaboratorDTO> getWorkflowCollaboratorAcl(
-            @PathVariable("proposalRef") String proposalRef,
-            @RequestHeader("Authorization") String authorizationHeader) {
+    @Override
+    public ResponseEntity<WorkflowCollaboratorDTO> getWorkflowCollaboratorAcl(String proposalRef,
+                                                                               String authorizationHeader) {
         proposalRef = encodeParam(proposalRef);
         logDebug(log, "get workflow collaborator for %s ",proposalRef);
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
@@ -147,8 +145,8 @@ public class WorkflowCollaboratorController {
     /**
      * returns all WorkflowCollaboratorAcl (of all the clients)
      */
-    @GetMapping(value = "/{proposalRef}/workflow-collaborators/all")
-    public ResponseEntity<List<WorkflowCollaboratorDTO>> getWorkflowCollaboratorAcls(@PathVariable("proposalRef") String proposalRef) {
+    @Override
+    public ResponseEntity<List<WorkflowCollaboratorDTO>> getWorkflowCollaboratorAcls(String proposalRef) {
         proposalRef = encodeParam(proposalRef);
         logDebug(log,"get all workflow collaborators for %s ",proposalRef);
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
@@ -156,10 +154,8 @@ public class WorkflowCollaboratorController {
         return new ResponseEntity<>(collaborators, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/{proposalRef}/workflow-collaborators")
-    public ResponseEntity<Object> deleteWorkflowCollaboratorAcl(
-            @PathVariable("proposalRef") String proposalRef,
-            @RequestHeader("Authorization") String authorizationHeader) {
+    @Override
+    public ResponseEntity<Object> deleteWorkflowCollaboratorAcl(String proposalRef, String authorizationHeader) {
         proposalRef = encodeParam(proposalRef);
         logDebug(log, "Delete workflow collaborator %s", proposalRef);
         Optional<String> systemClientId = HttpUtils.extractSystemClientIdFromAuthorizationHeader(authorizationHeader);

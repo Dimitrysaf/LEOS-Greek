@@ -54,7 +54,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
 @RestController
 @RequestMapping("/secured/document")
-public class DocumentController {
+public class DocumentController implements DocumentApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(DocumentController.class);
     private static final String CONTENT_DISPOSITION = "Content-Disposition";
@@ -72,13 +72,9 @@ public class DocumentController {
         this.genericDocumentApiService = genericDocumentApiService;
     }
 
-    @PostMapping(value = "/upload-document", consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Object> uploadDocument( @RequestParam("uploadedFile") MultipartFile uploadedFile,
-            @RequestParam("checkinComment") String checkinComment, @RequestParam("versionType") VersionType versionType,
-            @RequestParam("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> uploadDocument(MultipartFile uploadedFile, String checkinComment,
+                                                 VersionType versionType, String documentRef) {
         try {
             byte[] fileBytes = uploadedFile.getBytes();
             this.genericDocumentApiService.uploadDocument(documentRef, versionType, checkinComment, fileBytes);
@@ -89,10 +85,9 @@ public class DocumentController {
         }
     }
 
-    @RequestMapping(value = "/downloadVersion/{documentType}/{documentRef}", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<Object> downloadVersion(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
-                                                  @RequestBody DownloadVersionRequest downloadVersionRequest) {
+    @Override
+    public ResponseEntity<Object> downloadVersion(String documentType, String documentRef,
+                                                  DownloadVersionRequest downloadVersionRequest) {
         try {
             documentType = encodeParam(documentType);
             documentRef = encodeParam(documentRef);
@@ -113,10 +108,9 @@ public class DocumentController {
         }
     }
 
-    @RequestMapping(value = "/export-to-econsilium/{documentType}/{documentRef}", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<Object> exportToEconsilium(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
-                                                     @RequestBody ExportToConsiliumRequest exportToConsiliumRequest) {
+    @Override
+    public ResponseEntity<Object> exportToEconsilium(String documentType, String documentRef,
+                                                     ExportToConsiliumRequest exportToConsiliumRequest) {
         try {
             documentType = encodeParam(documentType);
             documentRef = encodeParam(documentRef);
@@ -129,10 +123,9 @@ public class DocumentController {
         }
     }
 
-    @RequestMapping(value = "/download-compared-version-XML/{documentType}/{documentRef}", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<Object> downloadComparedVersionXMLFile(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
-                                                                 @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
+    @Override
+    public ResponseEntity<Object> downloadComparedVersionXMLFile(String documentType, String documentRef,
+                                                                 DownloadComparedVersionRequest downloadComparedVersionRequest) {
         try {
             documentType = encodeParam(documentType);
             documentRef = encodeParam(documentRef);
@@ -150,10 +143,9 @@ public class DocumentController {
         }
     }
 
-    @RequestMapping(value = "/export-compared-version-as-PDF/{documentType}/{documentRef}", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<Object> exportComparedVersionAsPDF(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
-                                                             @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
+    @Override
+    public ResponseEntity<Object> exportComparedVersionAsPDF(String documentType, String documentRef,
+                                                             DownloadComparedVersionRequest downloadComparedVersionRequest) {
         try {
             documentType = encodeParam(documentType);
             documentRef = encodeParam(documentRef);
@@ -166,11 +158,9 @@ public class DocumentController {
         }
     }
 
-    @RequestMapping(value = "/download-compared-version-as-docuwrite/{documentType}/{documentRef}", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<Object> downloadComparedVersionAsDocuwrite(@PathVariable("documentType") String documentType,
-                                                                     @PathVariable("documentRef") String documentRef,
-                                                                     @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
+    @Override
+    public ResponseEntity<Object> downloadComparedVersionAsDocuwrite(String documentType, String documentRef,
+                                                                     DownloadComparedVersionRequest downloadComparedVersionRequest) {
         try {
             documentType = encodeParam(documentType);
             documentRef = encodeParam(documentRef);
@@ -190,11 +180,9 @@ public class DocumentController {
         }
     }
 
-    @PostMapping(value = "/double-compare/{documentType}/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> doubleCompare(@PathVariable("documentType") String documentType,
-                                                @PathVariable("documentRef") String documentRef,
-                                                @RequestBody DoubleCompareRequest doubleCompareRequest) {
+    @Override
+    public ResponseEntity<Object> doubleCompare(String documentType, String documentRef,
+                                                DoubleCompareRequest doubleCompareRequest) {
         try {
             documentType = encodeParam(documentType);
             documentRef = encodeParam(documentRef);
@@ -209,11 +197,9 @@ public class DocumentController {
         }
     }
 
-    @GetMapping(value = "/fetch-reference-label/{documentRef}", produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> fetchReferenceLabel(@PathVariable("documentRef") String documentRef,
-                                                      @RequestParam List<String> references,
-                                                      @RequestParam String currentElementId, @RequestParam boolean capital) {
+    @Override
+    public ResponseEntity<Object> fetchReferenceLabel(String documentRef, List<String> references,
+                                                      String currentElementId, boolean capital) {
         try {
             documentRef = encodeParam(documentRef);
             currentElementId = encodeParam(currentElementId);
@@ -225,10 +211,8 @@ public class DocumentController {
         }
     }
 
-    @GetMapping(value = "/request-element/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> requestElement(@PathVariable("documentRef") String documentRef,
-                                                 @RequestParam String elementId, @RequestParam String elementTagName) {
+    @Override
+    public ResponseEntity<Object> requestElement(String documentRef, String elementId, String elementTagName) {
         try {
             documentRef = encodeParam(documentRef);
             elementId = encodeParam(elementId);
@@ -241,12 +225,9 @@ public class DocumentController {
         }
     }
 
-    @GetMapping(value = "/{documentType}/{documentRef}/baseVersion/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> changeBaseVersion(@PathVariable("documentType") String documentType,
-            @PathVariable("documentRef") String documentRef,
-            @PathVariable("documentId") String documentId,
-            @RequestParam String versionLabel, @RequestParam String versionComment) {
+    @Override
+    public ResponseEntity<Object> changeBaseVersion(String documentType, String documentRef, String documentId,
+                                                    String versionLabel, String versionComment) {
         try {
             documentRef = encodeParam(documentRef);
             documentId = encodeParam(documentId);
@@ -261,12 +242,9 @@ public class DocumentController {
         }
     }
 
-    @GetMapping(value = "/{proposalRef}/stored-annotations/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getStoredAnnotationsFromId(@PathVariable("documentRef") String documentRef,
-                                                             @PathVariable("proposalRef") String proposalRef,
-                                                             @RequestParam("legFileId") String legFileId,
-                                                             @RequestParam("removeRevisionPrefix") Boolean removeRevisionPrefix) {
+    @Override
+    public ResponseEntity<Object> getStoredAnnotationsFromId(String documentRef, String proposalRef,
+                                                             String legFileId, Boolean removeRevisionPrefix) {
         try {
             documentRef = encodeParam(documentRef);
             proposalRef = encodeParam(proposalRef);
@@ -278,12 +256,9 @@ public class DocumentController {
         }
     }
 
-    @GetMapping(value = "/{legFileName}/{proposalRef}/stored-annotations/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getStoredAnnotations(@PathVariable("legFileName") String legFileName,
-                                                       @PathVariable("documentRef") String documentRef,
-                                                       @PathVariable("proposalRef") String proposalRef,
-                                                       @RequestParam("removeRevisionPrefix") Boolean removeRevisionPrefix) {
+    @Override
+    public ResponseEntity<Object> getStoredAnnotations(String legFileName, String documentRef, String proposalRef,
+                                                       Boolean removeRevisionPrefix) {
         try {
             documentRef = encodeParam(documentRef);
             proposalRef = encodeParam(proposalRef);
@@ -296,12 +271,9 @@ public class DocumentController {
         }
     }
 
-    @GetMapping(value = "/{proposalRef}/stored-annotations", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getStoredAnnotationsFromVersionedRef(@PathVariable("proposalRef") String proposalRef,
-                                                                       @RequestParam(required=false, value="legFileName") String legFileName,
-                                                                       @RequestParam("versionedReference") String versionedReference,
-                                                                       @RequestParam("removeRevisionPrefix") Boolean removeRevisionPrefix) {
+    @Override
+    public ResponseEntity<Object> getStoredAnnotationsFromVersionedRef(String proposalRef, String legFileName,
+                                                                       String versionedReference, Boolean removeRevisionPrefix) {
         try {
             proposalRef = encodeParam(proposalRef);
             String annots;
@@ -318,10 +290,8 @@ public class DocumentController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/fetch-toc-ancestors", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> fetchTocAndAncestors(@PathVariable("documentRef") String documentRef,
-                                                       @RequestParam(value = "elementIds", required = false) List<String> elementIds) {
+    @Override
+    public ResponseEntity<Object> fetchTocAndAncestors(String documentRef, List<String> elementIds) {
         try {
             documentRef = encodeParam(documentRef);
             TocAndAncestorsResponse tocAncestors = this.genericDocumentApiService.fetchTocAncestor(documentRef, elementIds);
@@ -332,10 +302,8 @@ public class DocumentController {
         }
     }
 
-    @PostMapping(value = "/archive-version/{documentRef}/{version}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> archiveVersion(@PathVariable("documentRef") String documentRef,
-                                                 @PathVariable("version") String version) {
+    @Override
+    public ResponseEntity<Object> archiveVersion(String documentRef, String version) {
         try {
             documentRef = encodeParam(documentRef);
             version = encodeParam(version);
@@ -347,10 +315,8 @@ public class DocumentController {
         }
     }
 
-    @GetMapping(value = "/document-version/{documentType}/{documentRef}/{version}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getDocumentVersion(@PathVariable("documentType") String documentType,
-                                                     @PathVariable("documentRef") String documentRef, @PathVariable("version") String version) {
+    @Override
+    public ResponseEntity<Object> getDocumentVersion(String documentType, String documentRef, String version) {
         try {
             documentType = encodeParam(documentType);
             documentRef = encodeParam(documentRef);

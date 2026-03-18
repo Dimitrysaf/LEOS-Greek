@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/app-info", produces = "application/json;charset=utf-8")
 @CrossOrigin(origins = "*")
 @Slf4j
-public class LeosAppInfoController {
+public class LeosAppInfoController implements LeosAppInfoApi {
 
-    @GetMapping
+    @Override
     public Map<String, String> getAppInfo() {
         Properties properties = new Properties();
         try {

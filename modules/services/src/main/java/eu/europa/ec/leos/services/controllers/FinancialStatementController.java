@@ -52,7 +52,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
 @RestController
 @RequestMapping(value = "/secured/stat_digit_financ_legis")
-public class FinancialStatementController {
+public class FinancialStatementController implements FinancialStatementApi {
     private static final Logger LOG = LoggerFactory.getLogger(FinancialStatementController.class);
     private static  final String CLIENT_CONTEXT_PARAMETER = "Client-Context";
 
@@ -71,40 +71,31 @@ public class FinancialStatementController {
         this.financialStatementApiService = Objects.requireNonNull(financialStatementApiService);
     }
 
-    @GetMapping(value = "/{reference}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    public DocumentViewResponse getDocumentByRef(@PathVariable("reference") String reference) {
+    @Override
+    public DocumentViewResponse getDocumentByRef(String reference) {
         // When the controller will be used as generic document controller the category will be part of the path.
         reference = encodeParam(reference);
         DocumentViewResponse response = this.genericDocumentApiService.getDocumentByRef(reference);
         return response;
     }
 
-    @GetMapping(value = "/{documentRef}/getToc", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public List<TableOfContentItemVO> getToc(@PathVariable("documentRef") String docRef,
-                                             @RequestParam("tocMode") TocMode tocMode) {
+    @Override
+    public List<TableOfContentItemVO> getToc(String docRef, TocMode tocMode) {
         // When the controller will be used as generic document controller the category will be part of the path.
         docRef = encodeParam(docRef);
         List<TableOfContentItemVO> tableOfContent = this.genericDocumentTocApiService.getTableOfContent(docRef, tocMode);
         return tableOfContent;
     }
 
-    @GetMapping(value = "/{documentRef}/getTocItems", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public List<TocItem> getTocItems(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public List<TocItem> getTocItems(String documentRef) {
         documentRef = encodeParam(documentRef);
         List<TocItem> tocItems = this.genericDocumentApiService.getTocItems(documentRef);
         return tocItems;
     }
 
-    @GetMapping(value = "/{documentRef}/search-versions", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> searchVersionData(@PathVariable("documentRef") String documentRef,
-                                                    @RequestParam String authorKey,
-                                                    @RequestParam String type) {
+    @Override
+    public ResponseEntity<Object> searchVersionData(String documentRef, String authorKey, String type) {
         try {
             documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.genericDocumentApiService.searchVersions(documentRef, authorKey, type);
@@ -117,18 +108,14 @@ public class FinancialStatementController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public List<VersionVO> getMajorVersionsData(@PathVariable("documentRef") String documentRef,
-                                                @RequestParam int pageIndex, @RequestParam int pageSize) {
+    @Override
+    public List<VersionVO> getMajorVersionsData(String documentRef, int pageIndex, int pageSize) {
         documentRef = encodeParam(documentRef);
         return this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex, pageSize);
     }
 
-    @GetMapping(value = "/{documentRef}/count-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> countMajorVersionsData(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> countMajorVersionsData(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             int versions = this.genericDocumentApiService.countMajorVersionsData(documentRef);
@@ -141,40 +128,31 @@ public class FinancialStatementController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/document-config", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public DocumentConfigResponse getDocumentConfig(@PathVariable("documentRef") String documentRef, HttpServletRequest request) {
+    @Override
+    public DocumentConfigResponse getDocumentConfig(String documentRef, HttpServletRequest request) {
         documentRef = encodeParam(documentRef);
         String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
         DocumentConfigResponse config = this.financialStatementApiService.getDocumentConfig(documentRef, clientContextToken);
         return config;
     }
 
-    @GetMapping(value = "/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public List<VersionVO> getRecentChanges(@PathVariable("documentRef") String documentRef,
-                                            @RequestParam int pageIndex, @RequestParam int pageSize) {
+    @Override
+    public List<VersionVO> getRecentChanges(String documentRef, int pageIndex, int pageSize) {
         documentRef = encodeParam(documentRef);
         List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef,
                 pageIndex, pageSize);
         return recentMinorVersions;
     }
 
-    @GetMapping(value = "/{documentRef}/count-recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public int countRecentChanges(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public int countRecentChanges(String documentRef) {
         documentRef = encodeParam(documentRef);
         return this.genericDocumentApiService.countRecentMinorVersions(documentRef);
     }
 
-    @GetMapping(value = "/{documentRef}/intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef,
-                                                             @RequestParam String currIntVersion,
-                                                             @RequestParam int pageIndex, @RequestParam int pageSize) {
+    @Override
+    public ResponseEntity<Object> getIntermediateVersionData(String documentRef, String currIntVersion,
+                                                             int pageIndex, int pageSize) {
         try {
             documentRef = encodeParam(documentRef);
             currIntVersion = encodeParam(currIntVersion);
@@ -189,10 +167,8 @@ public class FinancialStatementController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/count-intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef,
-                                                             @RequestParam String currIntVersion) {
+    @Override
+    public ResponseEntity<Object> countIntermediateVersionData(String documentRef, String currIntVersion) {
         try {
             documentRef = encodeParam(documentRef);
             currIntVersion = encodeParam(currIntVersion);
@@ -207,20 +183,15 @@ public class FinancialStatementController {
     }
 
     // TODO when refactor: the endpoint path should be /version/{id} in order to follow the REST APIs resources naming.
-    @GetMapping(value = "/{versionId}/show-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public DocumentViewResponse getVersion(@PathVariable("versionId") String versionId) {
+    @Override
+    public DocumentViewResponse getVersion(String versionId) {
         versionId = encodeParam(versionId);
         DocumentViewResponse version = this.genericDocumentApiService.getVersion(versionId);
         return version;
     }
 
-    @PostMapping(value = "/{documentRef}/save-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public List<VersionVO> saveVersion(@PathVariable("documentRef") String documentRef,
-                                       @RequestBody SaveIntermediateVersionRequest request) {
+    @Override
+    public List<VersionVO> saveVersion(String documentRef, SaveIntermediateVersionRequest request) {
         documentRef = encodeParam(documentRef);
         List<VersionVO> versions = this.genericDocumentApiService.saveDocument(documentRef, request.getVersionType(),
                 request.getCheckinComment());
@@ -228,18 +199,13 @@ public class FinancialStatementController {
     }
 
     // TODO when refactor: This API call is redundant. Its the same as getVersion. Then the FE should only parse the XML.
-    @GetMapping(value = "/{documentRef}/download-xml-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public byte[] downloadVersion(@RequestParam("versionId") String versionId) {
+    @Override
+    public byte[] downloadVersion(String versionId) {
         return this.genericDocumentApiService.getXmlContent(versionId);
     }
 
-    @GetMapping(value = "/{documentRef}/restore/{targetVersion}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public DocumentViewResponse restoreVersion(@PathVariable("documentRef") String documentRef,
-                                               @PathVariable("targetVersion") String targetVersion) {
+    @Override
+    public DocumentViewResponse restoreVersion(String documentRef, String targetVersion) {
         documentRef = encodeParam(documentRef);
         targetVersion = encodeParam(targetVersion);
         DocumentViewResponse response = this.genericDocumentApiService.restoreToVersion(documentRef, targetVersion);
@@ -247,14 +213,9 @@ public class FinancialStatementController {
     }
 
     // TODO on Refactor set the path to /{documentRef/element/{elementId}/{elementName. The "/save-element" is not needed.
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/save-element", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Object> saveElement(@PathVariable("documentRef") String documentRef,
-                                              @PathVariable("elementName") String elementName,
-                                              @PathVariable("elementId") String elementId,
-                                              @RequestHeader("presenterId") String presenterId,
-                                              @RequestBody String elementContent) throws Exception {
+    @Override
+    public ResponseEntity<Object> saveElement(String documentRef, String elementName, String elementId,
+                                              String presenterId, String elementContent) throws Exception {
         try {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
@@ -272,12 +233,8 @@ public class FinancialStatementController {
     }
 
 
-    @GetMapping(value = "/{documentRef}/element/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public EditElementResponse getElement(@PathVariable("documentRef") String documentRef,
-                                          @PathVariable("elementId") String elementId,
-                                          @PathVariable("elementTagName") String elementTagName) {
+    @Override
+    public EditElementResponse getElement(String documentRef, String elementId, String elementTagName) {
         documentRef = encodeParam(documentRef);
         elementId = encodeParam(elementId);
         elementTagName = encodeParam(elementTagName);
@@ -286,10 +243,8 @@ public class FinancialStatementController {
         return response;
     }
 
-    @GetMapping(value = "/{documentRef}/userGuidance", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<Object> getUserGuidance(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> getUserGuidance(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             String userGuidance = this.financialStatementApiService.fetchUserGuidance(documentRef);
@@ -300,24 +255,16 @@ public class FinancialStatementController {
         }
     }
 
-    @PostMapping(value = "/{documentRef}/search-text", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    @ResponseStatus(HttpStatus.OK)
-    public List<SearchMatchVO> getSearchResults(@PathVariable("documentRef") String documentRef,
-                                                @RequestParam String searchText,
-                                                @RequestParam boolean matchCase,
-                                                @RequestParam boolean completeWords,
-                                                @RequestBody(required = false) String tempUpdatedContentXML)
-            throws Exception {
+    @Override
+    public List<SearchMatchVO> getSearchResults(String documentRef, String searchText, boolean matchCase,
+                                   boolean completeWords, String tempUpdatedContentXML) throws Exception {
         documentRef = encodeParam(documentRef);
         return this.genericDocumentApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords,
                 tempUpdatedContentXML);
     }
 
-    @GetMapping(value = "/{newVersionId}/compare/{oldVersionId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> compareDocumentVersions(@PathVariable("newVersionId") String newVersionId,
-                                                          @PathVariable("oldVersionId") String oldVersionId) {
+    @Override
+    public ResponseEntity<Object> compareDocumentVersions(String newVersionId, String oldVersionId) {
         try {
             newVersionId = encodeParam(newVersionId);
             oldVersionId = encodeParam(oldVersionId);
@@ -330,11 +277,8 @@ public class FinancialStatementController {
 
     }
 
-    @DeleteMapping(value = "/{documentRef}/element/{elementName}/{elementId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> deleteDocumentElement(@PathVariable("documentRef") String documentRef,
-            @PathVariable("elementName") String elementName,
-            @PathVariable("elementId") String elementId) {
+    @Override
+    public ResponseEntity<Object> deleteDocumentElement(String documentRef, String elementName, String elementId) {
         try {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
@@ -347,12 +291,9 @@ public class FinancialStatementController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/insert-group", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> insertGroup(@PathVariable("documentRef") String documentRef,
-                                                @PathVariable("elementName") String elementName,
-                                                @PathVariable("elementId") String elementId,
-                                                @RequestBody InsertElementRequest request) {
+    @Override
+    public ResponseEntity<Object> insertGroup(String documentRef, String elementName, String elementId,
+                                              InsertElementRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
@@ -365,12 +306,9 @@ public class FinancialStatementController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/insert-element", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> insertElement(@PathVariable("documentRef") String documentRef,
-                                                @PathVariable("elementName") String elementName,
-                                                @PathVariable("elementId") String elementId,
-                                                @RequestBody InsertElementRequest request) {
+    @Override
+    public ResponseEntity<Object> insertElement(String documentRef, String elementName, String elementId,
+                                                InsertElementRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
@@ -383,10 +321,8 @@ public class FinancialStatementController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/replace-one", produces = MediaType.TEXT_XML_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> replaceOneText(@PathVariable("documentRef") String documentRef,
-                                                 @RequestBody ReplaceMatchRequest request) {
+    @Override
+    public ResponseEntity<Object> replaceOneText(String documentRef, ReplaceMatchRequest request) {
         try {
             byte[] response = this.genericDocumentApiService.replaceOneTextInDocument(request);
             return ResponseEntity.ok().body(response);
@@ -397,10 +333,8 @@ public class FinancialStatementController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/replace-all", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> replaceAllText(@PathVariable("documentRef") String documentRef,
-                                                 @RequestBody ReplaceAllMatchRequest request) {
+    @Override
+    public ResponseEntity<Object> replaceAllText(String documentRef, ReplaceAllMatchRequest request) {
         try {
             Pair<byte[], Integer> response = this.genericDocumentApiService.replaceAllTextInDocument(request);
             SearchAndReplaceAllResponse searchAndReplaceAllResponse = new SearchAndReplaceAllResponse(new String(response.left(), StandardCharsets.UTF_8), response.right());
@@ -412,10 +346,8 @@ public class FinancialStatementController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/save-after-replace", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> saveAllAfterReplace(@PathVariable("documentRef") String documentRef,
-                                                      @RequestBody SaveAfterReplaceRequest request) {
+    @Override
+    public ResponseEntity<Object> saveAllAfterReplace(String documentRef, SaveAfterReplaceRequest request) {
         try {
             DocumentViewResponse view = this.genericDocumentApiService.saveAfterReplace(request);
             return ResponseEntity.ok().body(view);
@@ -427,9 +359,8 @@ public class FinancialStatementController {
     }
 
 
-    @GetMapping(value = "/{documentRef}/download-clean-version", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> downloadCleanVersion(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> downloadCleanVersion(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             byte[] cleanVersion = this.genericDocumentApiService.downloadCleanVersion(documentRef);
@@ -447,9 +378,8 @@ public class FinancialStatementController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/clean-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> showCleanVersion(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> showCleanVersion(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             DocumentViewResponse cleanVersion = this.genericDocumentApiService.showCleanVersion(documentRef);
@@ -461,11 +391,9 @@ public class FinancialStatementController {
         }
     }
 
-    @PostMapping(value = "/{documentRef}/toggle-trackchange-enabled", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> toggleTrackChangeEnabled(@PathVariable("documentRef") String documentRef,
-                                                           @RequestBody ToggleTrackChangeEnabledRequest toggleTrackChangeEnabledRequest
-    ) {
+    @Override
+    public ResponseEntity<Object> toggleTrackChangeEnabled(String documentRef,
+                                                           ToggleTrackChangeEnabledRequest toggleTrackChangeEnabledRequest) {
         try {
             documentRef = encodeParam(documentRef);
             boolean isTrackChangesEnabled = toggleTrackChangeEnabledRequest.isTrackChangedEnabled();
@@ -479,13 +407,9 @@ public class FinancialStatementController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/reject-change/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> rejectChange(@PathVariable("documentRef") String documentRef,
-            @PathVariable("elementId") String elementId,
-            @PathVariable("elementTagName") String elementTagName,
-            @RequestParam("trackChangeAction") String trackChangeAction,
-            @RequestHeader("presenterId") String presenterId) {
+    @Override
+    public ResponseEntity<Object> rejectChange(String documentRef, String elementId, String elementTagName,
+                                               String trackChangeAction, String presenterId) {
         try {
             documentRef = encodeParam(documentRef);
             elementId = encodeParam(elementId);
@@ -501,9 +425,8 @@ public class FinancialStatementController {
         }
     }
 
-    @PostMapping(value = "/{documentRef}/finalise-document", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> finaliseDocument(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> finaliseDocument(String documentRef) {
         documentRef = encodeParam(documentRef);
         try {
             this.genericDocumentApiService.finaliseDocument(documentRef);

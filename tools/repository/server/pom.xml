@@ -105,8 +105,8 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
         </dependency>
     </dependencies>
     <build>
@@ -179,19 +179,17 @@
                     </configuration>
                 </execution>
                 <execution>
-                    <id>generate-api-docs</id>
+                    <id>generate-api-pdf</id>
                     <phase>package</phase>
                     <goals>
                         <goal>java</goal>
                     </goals>
                     <configuration>
-                        <mainClass>eu.europa.ec.leos.repository.openapi.OpenApiToDocxConverter</mainClass>
+                        <mainClass>eu.europa.ec.leos.repository.openapi.OpenApiToPdfConverter</mainClass>
                         <arguments>
                             <argument>${project.build.directory}\openapi\openapi.json</argument>
-                           <!-- <argument>server/src/main/resources/openapi/openapi.json</argument>
-                            <argument>../../docs/REST/API/leos_repository_api-documentation.docx</argument>
-                            --><argument>${project.basedir}\src\main\resources\openapi/openapi.json</argument>
-                            <argument>${project.basedir}\..\..\..\docs\REST\API\leos_repository_api-documentation.docx</argument>
+                            <argument>${project.basedir}\src\main\resources\openapi\openapi.json</argument>
+                            <argument>${project.basedir}\..\..\..\docs\REST\API\leos_repository_api-documentation.pdf</argument>
                         </arguments>
                     </configuration>
                 </execution>

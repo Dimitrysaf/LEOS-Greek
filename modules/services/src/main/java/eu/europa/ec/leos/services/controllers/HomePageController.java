@@ -32,33 +32,29 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/secured/home/")
-public class HomePageController {
+public class HomePageController implements HomePageApi {
     private static final Logger LOG = LoggerFactory.getLogger(HomePageController.class);
 
     @Autowired
     private GenericDocumentApiService genericDocumentApiService;
 
-    @GetMapping(path = "/my-recent-packages", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> findMyRecentPackages() {
         return ResponseEntity.ok().body(genericDocumentApiService.findRecentPackagesForUser());
     }
 
-    @GetMapping(path = "/my-favourite-packages", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> findMyFavouritePackages() {
         return ResponseEntity.ok().body(genericDocumentApiService.findFavouritePackagesForUser());
     }
 
-    @PutMapping(path = "/{documentRef}/toggle-favourite-package", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> toggleFavouritePackage(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> toggleFavouritePackage(String documentRef) {
         return ResponseEntity.ok().body(genericDocumentApiService.toggleFavouritePackage(documentRef));
     }
 
-    @PostMapping(path = "/uploadNotifications",consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> configNotificationsUpload(@RequestBody String content) {
+    @Override
+    public ResponseEntity<Object> configNotificationsUpload(String content) {
         try {
             return ResponseEntity.ok().body(genericDocumentApiService.configNotificationsUpload(content));
         } catch (Exception e) {
@@ -67,8 +63,7 @@ public class HomePageController {
         }
     }
 
-    @GetMapping(path = "/fetchNotifications",produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> configNotificationsFetch() {
         return ResponseEntity.ok().body(genericDocumentApiService.configNotificationsFetch());
     }

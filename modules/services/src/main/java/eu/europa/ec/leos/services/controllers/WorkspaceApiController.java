@@ -41,7 +41,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/secured")
-public class WorkspaceApiController {
+public class WorkspaceApiController implements WorkspaceApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceApiController.class);
 
@@ -54,9 +54,8 @@ public class WorkspaceApiController {
         this.securityContext = securityContext;
     }
 
-    @RequestMapping(value = "/filterProposals", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<Object> filterProposals(@RequestBody FilterProposalsRequest request) {
+    @Override
+    public ResponseEntity<Object> filterProposals(FilterProposalsRequest request) {
         try {
             WorkspaceProposalResponse workspaceProposalResponse = apiService.listDocumentsWithFilter(request);
             if(workspaceProposalResponse != null) {
@@ -71,9 +70,8 @@ public class WorkspaceApiController {
         }
     }
 
-    @RequestMapping(value = "/createPackage", method = RequestMethod.POST)
-    @ResponseBody
-    public ResponseEntity<Object> createPackage(@RequestBody CreateProposalRequest request) {
+    @Override
+    public ResponseEntity<Object> createPackage(CreateProposalRequest request) {
         CreateCollectionResult createCollectionResult;
         try {
             createCollectionResult = apiService.createProposal(request.getTemplateId(), request.getTemplateName(), request.getLangCode(),
@@ -87,8 +85,7 @@ public class WorkspaceApiController {
         }
     }
 
-    @RequestMapping(value = "/getTemplates", method = RequestMethod.GET)
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> getTemplates() {
         try {
             List<CatalogItem> catalogItems = apiService.getTemplates();
@@ -104,9 +101,8 @@ public class WorkspaceApiController {
         }
     }
 
-    @RequestMapping(value = "/getCustomTemplates/{entityName}", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<Object> getCustomTemplates(@PathVariable String entityName) {
+    @Override
+    public ResponseEntity<Object> getCustomTemplates(String entityName) {
         try {
             List<CatalogItem> catalogItems = apiService.getCustomTemplates(entityName);
             return new ResponseEntity<>(catalogItems, HttpStatus.OK);

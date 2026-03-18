@@ -41,17 +41,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
-public class DocumentController {
+public class DocumentController implements DocumentApi {
 
     @Autowired
     DocumentService documentService;
 
-    @PutMapping(path = "/document/create-with-content",
-            consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> createDocumentFromContent(@Validated(OnCreateFromContent.class)
-                                                            @Valid @RequestBody CreateDocumentRequest createDocumentRequest)
-            throws RepositoryException {
+    @Override
+    public ResponseEntity<Object> createDocumentFromContent(CreateDocumentRequest createDocumentRequest) throws RepositoryException {
         LeosDocument xmlDoc = documentService.createDocumentFromContent(createDocumentRequest.getPackageName(),
                 createDocumentRequest.getName(),
                 createDocumentRequest.getMetadata(), createDocumentRequest.getLabelVersion(), createDocumentRequest.getVersionType().value(),
@@ -60,11 +56,8 @@ public class DocumentController {
         return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.INTERNAL_SERVER_ERROR, "Error while creating document"));
     }
 
-    @PutMapping(path = "/document/create-with-source",
-            consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> createDocumentFromSource(@Validated(OnCreateFromSource.class) @Valid @RequestBody CreateDocumentRequest createDocumentRequest)
-            throws RepositoryException {
+    @Override
+    public ResponseEntity<Object> createDocumentFromSource(CreateDocumentRequest createDocumentRequest) throws RepositoryException {
         LeosDocument xmlDoc = documentService.createDocumentFromSource(createDocumentRequest.getSourceDocumentId(),
                 createDocumentRequest.getPackageName(),
                 createDocumentRequest.getName(),
@@ -74,266 +67,193 @@ public class DocumentController {
         return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.INTERNAL_SERVER_ERROR, "Error while creating document"));
     }
 
-    @DeleteMapping(path = "/document/delete-by-id/{versionId}")
-    public ResponseEntity deleteDocumentById(@PathVariable("versionId") BigDecimal versionId) throws RepositoryException {
+    @Override
+    public ResponseEntity deleteDocumentById(BigDecimal versionId) throws RepositoryException {
         documentService.deleteDocumentByVersionId(versionId);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping(path = "/document/delete-by-ref/{docRef}")
-    public ResponseEntity deleteDocumentByRef(@PathVariable("docRef") String docRef) throws RepositoryException {
+    @Override
+    public ResponseEntity deleteDocumentByRef(String docRef) throws RepositoryException {
         documentService.deleteDocumentByRef(docRef);
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping(path = "/document/update-content/{versionId}",
-            consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> updateDocument(@PathVariable("versionId") BigDecimal versionId,
-                                                 @Validated(OnUpdateWithContent.class) @Valid @RequestBody UpdateDocumentRequest updateDocumentRequest)
-            throws Exception {
+    @Override
+    public ResponseEntity<Object> updateDocument(BigDecimal versionId, UpdateDocumentRequest updateDocumentRequest) throws Exception {
         LeosDocument xmlDoc = documentService.updateDocument(versionId, updateDocumentRequest.getMetadata(), updateDocumentRequest.getVersionType(),
                 updateDocumentRequest.getCategory(), updateDocumentRequest.getContent(), updateDocumentRequest.getComments(), updateDocumentRequest.getUserId());
         return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.NOT_FOUND, "No documents found"));
     }
 
-    @PutMapping(path = "/document/update-metadata/{docRef}/{versionId}",
-            consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> updateDocumentMetadata(@PathVariable("versionId") BigDecimal versionId, @PathVariable("docRef") String docRef,
-                                                         @Validated(OnUpdateWithoutContent.class) @Valid @RequestBody UpdateDocumentRequest updateDocumentRequest,
-                                                            @RequestParam("latest") Boolean latest)
-            throws Exception {
+    @Override
+    public ResponseEntity<Object> updateDocumentMetadata(BigDecimal versionId, String docRef, UpdateDocumentRequest updateDocumentRequest, Boolean latest) throws Exception {
         LeosDocument xmlDoc = documentService.updateDocument(docRef, versionId, updateDocumentRequest.getMetadata(), updateDocumentRequest.getUserId(), latest);
         return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.NOT_FOUND, "No documents found"));
     }
 
-    @GetMapping(path = "/document/archive/{docRef}",
-            consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE} )
-    public ResponseEntity<Object> archiveDocument(@PathVariable("docRef") String docRef,
-                                               @RequestParam("userId") String userName) throws Exception {
+    @Override
+    public ResponseEntity<Object> archiveDocument(String docRef, String userName) throws Exception {
         LeosDocument xmlDoc = documentService.archiveDocument(docRef, userName);
         return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.NOT_FOUND, "No documents found"));
     }
 
-    @PutMapping(path = "/document/archive-version/{docRef}/{version}",
-            consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE} )
-    public ResponseEntity<Object> archiveDocumentVersion(@PathVariable("docRef") String docRef,
-                                                         @PathVariable("version") String version) throws Exception {
+    @Override
+    public ResponseEntity<Object> archiveDocumentVersion(String docRef, String version) throws Exception {
         LeosDocument leosDocument = documentService.archiveDocumentVersion(docRef, version);
         return ResponseEntity.ok(RestPreconditions.checkFound(leosDocument, HttpStatus.NOT_FOUND, "No version found"));
     }
 
-    @GetMapping(path = "/documents/find-by-collaborator/{userName}",
-            consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity findDocumentsByUserName(@RequestParam("role") String role, @RequestParam(value = "category", defaultValue = "") String category,
-                                                  @PathVariable("userName") String userName) {
+    @Override
+    public ResponseEntity findDocumentsByUserName(String role, String category, String userName) {
         List<LeosDocument> xmlDocs = documentService.findDocumentsByUserId(userName, role, category);
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
-    @GetMapping(path = "/documents/find-by-collaborator/{userName}/{entities}",
-            consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity findDocumentsByUserNameOrEntityName(@RequestParam("role") String role, @RequestParam(value = "category", defaultValue = "") String category,
-                                                              @PathVariable("userName") String userName, @PathVariable("entities") String entities) {
+    @Override
+    public ResponseEntity findDocumentsByUserNameOrEntityName(String role, String category, String userName, String entities) {
         List<LeosDocument> xmlDocs = documentService.findDocumentsByUserIdOrEntity(userName, entities, role, category);
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
-    @GetMapping(path = "/document/find-version/{versionId}",
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> findDocumentById(@PathVariable("versionId") BigDecimal versionId,
-                                                    @RequestParam("category") String category,
-                                                   @RequestParam("latest") Boolean latest)
-            throws RepositoryException {
+    @Override
+    public ResponseEntity<Object> findDocumentById(BigDecimal versionId, String category, Boolean latest) throws RepositoryException {
         LeosDocument xmlDoc = RestPreconditions.checkFound(documentService.findDocumentById(versionId, category, latest),
                 HttpStatus.NOT_FOUND, "No documents found");
         return ResponseEntity.ok(xmlDoc);
     }
 
-    @PostMapping(path = "/document/search-versions/{ref}",
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> searchVersions(@PathVariable("ref") String docRef,
-                                                   @RequestParam("versionType") String versionType,
-                                                   @RequestBody List<String> logins) {
+    @Override
+    public ResponseEntity<Object> searchVersions(String docRef, String versionType, List<String> logins) {
         List<LeosDocument> xmlDocs = documentService.searchVersionsByRef(docRef, logins, versionType);
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
-    @GetMapping(path = "/document/all-versions/{docRef}")
-    public ResponseEntity<Object> findAllVersionsByDocumentRef(@PathVariable("docRef") String docRef) {
+    @Override
+    public ResponseEntity<Object> findAllVersionsByDocumentRef(String docRef) {
         List<LeosDocument> xmlDocs = documentService.findAllVersionsByRef(docRef);
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
-    @GetMapping(path = "/documents/last-version/{docRef}",
-            consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<LeosDocument> findDocumentsByRef(@PathVariable("docRef") String ref,
-                                                            @RequestParam("category") String category,
-                                                            @RequestParam(value = "withContent", defaultValue = "true") boolean withContent) {
+    @Override
+    public ResponseEntity<LeosDocument> findDocumentsByRef(String ref, String category, boolean withContent) {
         LeosDocument xmlDoc = documentService.findDocumentByRef(ref, category, withContent).orElse(null);
         return ResponseEntity.ok(xmlDoc);
     }
 
-    @GetMapping(path = "/document/next-version-label", produces =  MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> getNextVersionLabel(@RequestParam("versionType") String versionType, @RequestParam(name = "oldVersion", defaultValue = "") String oldVersion) {
+    @Override
+    public ResponseEntity<String> getNextVersionLabel(String versionType, String oldVersion) {
         String nextVersion = RestPreconditions.checkFound(documentService.getNextVersionLabel(VersionType.valueOf(versionType), oldVersion),
                 HttpStatus.UNPROCESSABLE_ENTITY, "Error while counting");
         return ResponseEntity.ok(nextVersion);
     }
 
-    @GetMapping(path = "/documents/all-minors-for-intermediate/{docRef}",
-            consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> findAllMinorsForIntermediate(@PathVariable("docRef") String docRef, @RequestParam("currIntVersion") String currIntVersion,
-                                                               @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResults) {
+    @Override
+    public ResponseEntity<Object> findAllMinorsForIntermediate(String docRef, String currIntVersion, Integer startIndex, Integer maxResults) {
         List<LeosDocument> xmlDocs = documentService.findAllMinorsForIntermediate(docRef, currIntVersion, startIndex, maxResults);
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
-    @GetMapping(path = "/documents/all-majors/{docRef}",
-            consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> findAllMajors(@PathVariable("docRef") String docRef,
-                                                @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResult) {
+    @Override
+    public ResponseEntity<Object> findAllMajors(String docRef, Integer startIndex, Integer maxResult) {
         List<LeosDocument> xmlDocs = documentService.findAllMajors(docRef, startIndex, maxResult);
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
-    @GetMapping(path = "/documents/count-all-minors-for-intermediate/{docRef}",
-            consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Long> getAllMinorsCountForIntermediate(@PathVariable("docRef") String docRef,
-                                                                 @RequestParam("currIntVersion") String currIntVersion) {
+    @Override
+    public ResponseEntity<Long> getAllMinorsCountForIntermediate(String docRef, String currIntVersion) {
         long result = documentService.getAllMinorsCountForIntermediate(docRef, currIntVersion);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(path = "/documents/count-all-majors/{docRef}",
-            consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Integer> getAllMajorsCount(@PathVariable("docRef") String docRef) {
+    @Override
+    public ResponseEntity<Integer> getAllMajorsCount(String docRef) {
         long result = documentService.getAllMajorsCount(docRef);
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
-    @GetMapping(path = "/documents/recent-minor-versions/{docRef}",
-            consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> findRecentMinorVersions(@PathVariable("docRef") String docRef, @RequestParam("lastMajorVersion") String lastMajorVersion,
-                                                          @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResults) {
+    @Override
+    public ResponseEntity<Object> findRecentMinorVersions(String docRef, String lastMajorVersion, Integer startIndex, Integer maxResults) {
         List<LeosDocument> xmlDocs = documentService.findRecentMinorVersions(docRef, lastMajorVersion, startIndex, maxResults);
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
-    @GetMapping(path = "/documents/count-recent-minor-versions/{docRef}",
-            consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Long> getRecentMinorVersionsCount(@PathVariable("docRef") String docRef, @RequestParam("versionLabel") String versionLabel) {
+    @Override
+    public ResponseEntity<Long> getRecentMinorVersionsCount(String docRef, String versionLabel) {
         long result = documentService.getRecentMinorVersionsCount(docRef, versionLabel);
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping(path = "/documents/latest-major-version/{docRef}",
-            consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<LeosDocument> findLatestMajorVersionByRef(@PathVariable("docRef") String docRef) {
+    @Override
+    public ResponseEntity<LeosDocument> findLatestMajorVersionByRef(String docRef) {
         LeosDocument xmlDoc = RestPreconditions.checkFound(documentService.findLatestMajorVersionByRef(docRef),
                 HttpStatus.NOT_FOUND, "No documents found");
         return ResponseEntity.ok(xmlDoc);
 
     }
 
-    @GetMapping(path = "/documents/first-version/{docRef}",
-            consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> findFirstVersion(@PathVariable("docRef") String docRef) {
+    @Override
+    public ResponseEntity<Object> findFirstVersion(String docRef) {
         LeosDocument xmlDoc = RestPreconditions.checkFound(documentService.findFirstVersion(docRef),
                 HttpStatus.NOT_FOUND, "No documents found");
         return ResponseEntity.ok(xmlDoc);
     }
 
-    @GetMapping(path = "/document/{docRef}/find-by-version/{versionLabel}",
-            consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> findDocumentByVersion(@PathVariable("docRef") String docRef,
-                                                        @PathVariable("versionLabel") String versionLabel) {
+    @Override
+    public ResponseEntity<Object> findDocumentByVersion(String docRef, String versionLabel) {
         LeosDocument xmlDoc = RestPreconditions.checkFound(documentService.findDocumentByVersion(docRef, versionLabel),
                 HttpStatus.NOT_FOUND, "No documents found");
         return ResponseEntity.ok(xmlDoc);
     }
 
-    @GetMapping(path = "/documents/find-by-name/{name}",
-            consumes = {},
-            produces = {"application/json;charset=UTF-8"})
-    public ResponseEntity<LeosDocument> findDocumentByName(@PathVariable("name") String name) throws RepositoryException {
+    @Override
+    public ResponseEntity<LeosDocument> findDocumentByName(String name) throws RepositoryException {
         LeosDocument xmlDoc = RestPreconditions.checkFound(documentService.findDocumentByName(name).orElse(null),
                 HttpStatus.NOT_FOUND, "No documents found");
         return ResponseEntity.ok(xmlDoc);
     }
 
-    @GetMapping(path = "/documents/find-by-status/{status}",
-            consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> findDocumentByStatus(@PathVariable("status") String status) {
+    @Override
+    public ResponseEntity<Object> findDocumentByStatus(String status) {
         List<LeosDocument> xmlDocs = documentService.findDocumentsByStatus(status);
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
-    @PostMapping(path = "/documents/find-by-filter",
-            consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> findDocumentsUsingFilter(@RequestParam(value="packageName", required=false, defaultValue="%25") String packageName,
-                                                                     @RequestBody FindDocumentsRequest findDocumentsRequest,
-                                                                     @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResults,
-                                                                     @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent)
-            throws MalformedURLException {
+    @Override
+    public ResponseEntity<Object> findDocumentsUsingFilter(String packageName, FindDocumentsRequest findDocumentsRequest, Integer startIndex, Integer maxResults, Boolean fetchContent) throws MalformedURLException {
         packageName = URLDecoder.decode(packageName, StandardCharsets.UTF_8);
         List<LeosDocument> xmlDocs = documentService.findDocumentsUsingFilter(packageName, findDocumentsRequest.getCategories(),
                 findDocumentsRequest.getQueryFilter(), startIndex, maxResults, fetchContent);
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
-    @PostMapping(path = "/documents/count-by-filter",
-            consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> countDocumentsUsingFilter(@RequestParam(value="packageName", required=false, defaultValue="%25") String packageName,
-                                                            @RequestBody FindDocumentsRequest findDocumentsRequest) throws MalformedURLException {
+    @Override
+    public ResponseEntity<Object> countDocumentsUsingFilter(String packageName, FindDocumentsRequest findDocumentsRequest) throws MalformedURLException {
         packageName = URLDecoder.decode(packageName, StandardCharsets.UTF_8);
         Long count = documentService.countDocumentsUsingFilter(packageName, findDocumentsRequest.getCategories(), findDocumentsRequest.getQueryFilter());
         return ResponseEntity.ok(RestPreconditions.checkFound(count, HttpStatus.UNPROCESSABLE_ENTITY, "Error while counting"));
     }
 
-    @GetMapping(path = "/documents/find-by-packageId/{packageId}",
-            consumes = {},
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> findDocumentRefByPackageIdAndCategory(@PathVariable("packageId") String packageId,
-                                                       @RequestParam(value="category", required=false, defaultValue="%25") String categoryCode) {
+    @Override
+    public ResponseEntity<Object> findDocumentRefByPackageIdAndCategory(String packageId, String categoryCode) {
         String documentRef = documentService.findDocumentRefByPackageIdAndCategory(packageId, categoryCode);
         return ResponseEntity.ok(documentRef);
     }
 
-    @GetMapping(path = "/documents/find-for-validation",
-            produces = {MediaType.APPLICATION_JSON_VALUE})
+    @Override
     public ResponseEntity<Object> findDocumentsPackagesForValidation() {
         List<String> packageNames = documentService.findPackagesForValidation();
         return ResponseEntity.ok(packageNames);
     }
 
-    @PutMapping(path = "/documents/set-docs-validation-status")
-    public ResponseEntity<Object> setDocumentsValidationStatus(@RequestBody List<String> versionIDs) throws RepositoryException {
+    @Override
+    public ResponseEntity<Object> setDocumentsValidationStatus(List<String> versionIDs) throws RepositoryException {
         return ResponseEntity.ok(documentService.setDocumentValidationStatus(versionIDs));
     }
 
 
-    @GetMapping(path = "/documents/clones/find-by-original-ref/{proposalRef}",
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> searchClonesOfOriginalDocument(@PathVariable("proposalRef") String proposalRef) throws RepositoryException {
+    @Override
+    public ResponseEntity<Object> searchClonesOfOriginalDocument(String proposalRef) throws RepositoryException {
         List<LeosDocument> clonedProposals =  documentService.searchClonesOfOriginalDocument(proposalRef);
         return ResponseEntity.ok(new LeosDocumentList(clonedProposals));
     }

@@ -42,19 +42,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
@@ -64,7 +54,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
 @RestController
 @RequestMapping("/secured/annex/")
-public class AnnexController {
+public class AnnexController implements AnnexApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(AnnexController.class);
     private static final String ERROR_OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION = "Error occurred  while getting downloading xml version - ";
@@ -79,15 +69,10 @@ public class AnnexController {
     @Autowired
     private CoEditionContext coEditionContext;
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/save-element", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> saveAnnexElement(@PathVariable("documentRef") String documentRef,
-                                                   @PathVariable("elementName") String elementName,
-                                                   @PathVariable("elementId") String elementId,
-                                                   @RequestParam(required = false) boolean isSplit,
-                                                   @RequestHeader("presenterId") String presenterId,
-                                                   @RequestParam(required = false, defaultValue = "") String alternateElementId,
-                                                   @RequestBody String elementContent) {
+    @Override
+    public ResponseEntity<Object> saveAnnexElement(String documentRef, String elementName, String elementId,
+                                                   boolean isSplit, String presenterId, String alternateElementId,
+                                                   String elementContent) {
         try {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
@@ -105,11 +90,8 @@ public class AnnexController {
 
     }
 
-    @DeleteMapping(value = "/{documentRef}/element/{elementName}/{elementId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> deleteAnnexElement(@PathVariable("documentRef") String documentRef,
-                                                     @PathVariable("elementName") String elementName,
-                                                     @PathVariable("elementId") String elementId) {
+    @Override
+    public ResponseEntity<Object> deleteAnnexElement(String documentRef, String elementName, String elementId) {
         try {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
@@ -126,12 +108,9 @@ public class AnnexController {
     }
 
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/insert-element", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> insertAnnexElement(@PathVariable("documentRef") String documentRef,
-                                                     @PathVariable("elementName") String elementName,
-                                                     @PathVariable("elementId") String elementId,
-                                                     @RequestBody InsertElementRequest request) {
+    @Override
+    public ResponseEntity<Object> insertAnnexElement(String documentRef, String elementName, String elementId,
+                                                     InsertElementRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
@@ -147,12 +126,9 @@ public class AnnexController {
 
     }
 
-    @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/merge-element", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> mergeAnnexElement(@PathVariable("documentRef") String documentRef,
-                                                    @PathVariable("elementName") String elementTag,
-                                                    @PathVariable("elementId") String elementId,
-                                                    @RequestBody String elementContent) {
+    @Override
+    public ResponseEntity<Object> mergeAnnexElement(String documentRef, String elementTag, String elementId,
+                                                    String elementContent) {
         try {
             documentRef = encodeParam(documentRef);
             elementTag = encodeParam(elementTag);
@@ -168,10 +144,8 @@ public class AnnexController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef,
-                                                   @RequestParam int pageIndex, @RequestParam int pageSize) {
+    @Override
+    public ResponseEntity<Object> getRecentChanges(String documentRef, int pageIndex, int pageSize) {
         try {
             documentRef = encodeParam(documentRef);
             List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef,
@@ -185,9 +159,8 @@ public class AnnexController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/count-recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> countRecentChanges(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> countRecentChanges(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             int count = this.genericDocumentApiService.countRecentMinorVersions(documentRef);
@@ -200,11 +173,8 @@ public class AnnexController {
 
     }
 
-    @PostMapping(value = "/{documentRef}/save-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> saveAnnexVersion(@PathVariable("documentRef") String documentRef,
-                                                   @RequestBody SaveIntermediateVersionRequest saveEvent
-    ) {
+    @Override
+    public ResponseEntity<Object> saveAnnexVersion(String documentRef, SaveIntermediateVersionRequest saveEvent) {
         try {
             documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.annexApiService.saveDocument(documentRef, saveEvent.getCheckinComment(),
@@ -218,12 +188,9 @@ public class AnnexController {
 
     }
 
-    @PostMapping(value = "/{documentRef}/save-toc", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> saveToc(@PathVariable("documentRef") String documentRef,
-                                          @RequestBody SaveTocRequestEvent saveTocRequestEvent,
-                                        HttpServletRequest request
-    ) {
+    @Override
+    public ResponseEntity<Object> saveToc(String documentRef, SaveTocRequestEvent saveTocRequestEvent,
+                                          HttpServletRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
@@ -238,10 +205,8 @@ public class AnnexController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getMajorVersionsData(@PathVariable("documentRef") String documentRef,
-                                                       @RequestParam int pageIndex, @RequestParam int pageSize) {
+    @Override
+    public ResponseEntity<Object> getMajorVersionsData(String documentRef, int pageIndex, int pageSize) {
         try {
             documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex,
@@ -255,11 +220,8 @@ public class AnnexController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/search-versions", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> searchVersionData(@PathVariable("documentRef") String documentRef,
-                                                    @RequestParam String authorKey,
-                                                    @RequestParam String type) {
+    @Override
+    public ResponseEntity<Object> searchVersionData(String documentRef, String authorKey, String type) {
         try {
             documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.genericDocumentApiService.searchVersions(documentRef, authorKey, type);
@@ -272,9 +234,8 @@ public class AnnexController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/count-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> countMajorVersionsData(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> countMajorVersionsData(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             int versions = this.genericDocumentApiService.countMajorVersionsData(documentRef);
@@ -287,11 +248,9 @@ public class AnnexController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef,
-                                                             @RequestParam String currIntVersion,
-                                                             @RequestParam int pageIndex, @RequestParam int pageSize) {
+    @Override
+    public ResponseEntity<Object> getIntermediateVersionData(String documentRef, String currIntVersion,
+                                                             int pageIndex, int pageSize) {
         try {
             documentRef = encodeParam(documentRef);
             currIntVersion = encodeParam(currIntVersion);
@@ -306,10 +265,8 @@ public class AnnexController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/count-intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> countIntermediateVersionData(@PathVariable("documentRef") String documentRef,
-                                                               @RequestParam String currIntVersion) {
+    @Override
+    public ResponseEntity<Object> countIntermediateVersionData(String documentRef, String currIntVersion) {
         try {
             documentRef = encodeParam(documentRef);
             currIntVersion = encodeParam(currIntVersion);
@@ -323,12 +280,8 @@ public class AnnexController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/getToc", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getToc(@PathVariable("documentRef") String documentRef,
-                                         @RequestParam("tocMode") TocMode tocMode,
-                                         HttpServletRequest request
-    ) {
+    @Override
+    public ResponseEntity<Object> getToc(String documentRef, TocMode tocMode, HttpServletRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
@@ -342,9 +295,8 @@ public class AnnexController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/getTocItems", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getTocItems(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> getTocItems(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             List<TocItem> tocItems = this.annexApiService.getTocItems(documentRef);
@@ -358,9 +310,8 @@ public class AnnexController {
     }
 
 
-    @GetMapping(value = "/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getAnnex(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> getAnnex(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             DocumentViewResponse annex = this.annexApiService.getDocument(documentRef);
@@ -373,13 +324,9 @@ public class AnnexController {
 
     }
 
-    @PostMapping(value = "/{documentRef}/search-text", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getSearchResults(@PathVariable("documentRef") String documentRef,
-                                                   @RequestParam String searchText,
-                                                   @RequestParam boolean matchCase,
-                                                   @RequestParam boolean completeWords,
-                                                   @RequestBody(required = false) String tempUpdatedContentXML) {
+    @Override
+    public ResponseEntity<Object> getSearchResults(String documentRef, String searchText, boolean matchCase,
+                                                   boolean completeWords, String tempUpdatedContentXML) {
         try {
             documentRef = encodeParam(documentRef);
             List<SearchMatchVO> annex = this.annexApiService.searchTextInDocument(documentRef, searchText, matchCase,
@@ -393,9 +340,8 @@ public class AnnexController {
 
     }
 
-    @GetMapping(value = "/{versionId}/show-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> showAnnexVersion(@PathVariable("versionId") String versionId) {
+    @Override
+    public ResponseEntity<Object> showAnnexVersion(String versionId) {
         try {
             versionId = encodeParam(versionId);
             DocumentViewResponse contentHtml = this.annexApiService.showVersion(versionId);
@@ -408,10 +354,8 @@ public class AnnexController {
 
     }
 
-    @GetMapping(value = "/{newVersionId}/compare/{oldVersionId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> compareAnnexVersions(@PathVariable("newVersionId") String newVersionId,
-                                                       @PathVariable("oldVersionId") String oldVersionId) {
+    @Override
+    public ResponseEntity<Object> compareAnnexVersions(String newVersionId, String oldVersionId) {
         try {
             newVersionId = encodeParam(newVersionId);
             oldVersionId = encodeParam(oldVersionId);
@@ -425,10 +369,8 @@ public class AnnexController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/restore/{targetVersion}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> restoreAnnexVersion(@PathVariable("documentRef") String documentRef,
-                                                      @PathVariable("targetVersion") String targetVersion) {
+    @Override
+    public ResponseEntity<Object> restoreAnnexVersion(String documentRef, String targetVersion) {
         try {
             documentRef = encodeParam(documentRef);
             targetVersion = encodeParam(targetVersion);
@@ -442,11 +384,8 @@ public class AnnexController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/element/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getAnnexElement(@PathVariable("documentRef") String documentRef,
-                                                  @PathVariable("elementId") String elementId,
-                                                  @PathVariable("elementTagName") String elementTagName) {
+    @Override
+    public ResponseEntity<Object> getAnnexElement(String documentRef, String elementId, String elementTagName) {
         try {
             documentRef = encodeParam(documentRef);
             elementId = encodeParam(elementId);
@@ -460,10 +399,8 @@ public class AnnexController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/download-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> downloadCurrentVersion(@PathVariable("documentRef") String documentRef,
-                                                         @RequestParam("isWithAnnotation") boolean isWithAnnotation) {
+    @Override
+    public ResponseEntity<Object> downloadCurrentVersion(String documentRef, boolean isWithAnnotation) {
         try {
             documentRef = encodeParam(documentRef);
             byte[] response = this.annexApiService.downloadVersion(documentRef, isWithAnnotation);
@@ -475,10 +412,8 @@ public class AnnexController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/download-xml-version", produces = MediaType.APPLICATION_XML_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> downloadXmlVersion(@PathVariable("documentRef") String documentRef,
-                                                     @RequestParam("versionId") String versionId) {
+    @Override
+    public ResponseEntity<Object> downloadXmlVersion(String documentRef, String versionId) {
         try {
             documentRef = encodeParam(documentRef);
             versionId = encodeParam(versionId);
@@ -490,10 +425,8 @@ public class AnnexController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/replace-one", produces = MediaType.TEXT_XML_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> replaceOneText(@PathVariable("documentRef") String documentRef,
-                                                 @RequestBody ReplaceMatchRequest request) {
+    @Override
+    public ResponseEntity<Object> replaceOneText(String documentRef, ReplaceMatchRequest request) {
         try {
             byte[] response = this.annexApiService.replaceOneTextInDocument(request);
             return ResponseEntity.ok().body(response);
@@ -503,10 +436,8 @@ public class AnnexController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/replace-all", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> replaceAllText(@PathVariable("documentRef") String documentRef,
-                                                 @RequestBody ReplaceAllMatchRequest request) {
+    @Override
+    public ResponseEntity<Object> replaceAllText(String documentRef, ReplaceAllMatchRequest request) {
         try {
             Pair<byte[], Integer> response = this.annexApiService.replaceAllTextInDocument(request);
             SearchAndReplaceAllResponse searchAndReplaceAllResponse = new SearchAndReplaceAllResponse(new String(response.left(), StandardCharsets.UTF_8), response.right());
@@ -517,10 +448,8 @@ public class AnnexController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/save-after-replace", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> saveAllAfterReplace(@PathVariable("documentRef") String documentRef,
-                                                      @RequestBody SaveAfterReplaceRequest request) {
+    @Override
+    public ResponseEntity<Object> saveAllAfterReplace(String documentRef, SaveAfterReplaceRequest request) {
         try {
             DocumentViewResponse view = this.annexApiService.saveAfterReplace(request);
             return ResponseEntity.ok().body(view);
@@ -531,10 +460,8 @@ public class AnnexController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/document-config", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getDocumentConfig(@PathVariable("documentRef") String documentRef,
-                                                    HttpServletRequest request) {
+    @Override
+    public ResponseEntity<Object> getDocumentConfig(String documentRef, HttpServletRequest request) {
         try {
             documentRef = encodeParam(documentRef);
             String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
@@ -547,9 +474,8 @@ public class AnnexController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/switch-annex-structure", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> switchAnnexStructure(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> switchAnnexStructure(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             DocumentViewResponse view = this.annexApiService.changeAnnexStructureType(documentRef);
@@ -561,9 +487,8 @@ public class AnnexController {
         }
     }
 
-    @PutMapping(value = "/{documentRef}/renumber-document", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> renumberAnnex(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> renumberAnnex(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             DocumentViewResponse view = this.annexApiService.renumberAnnex(documentRef);
@@ -575,9 +500,8 @@ public class AnnexController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/userGuidance", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getUserGuidance(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> getUserGuidance(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             String userGuidance = this.annexApiService.fetchUserGuidance(documentRef);
@@ -589,9 +513,8 @@ public class AnnexController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/download-clean-version", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> downloadCleanVersion(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> downloadCleanVersion(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             byte[] cleanVersion = this.annexApiService.downloadCleanVersion(documentRef);
@@ -607,9 +530,8 @@ public class AnnexController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/clean-version", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> showCleanVersion(@PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> showCleanVersion(String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
             DocumentViewResponse cleanVersion = this.annexApiService.showCleanVersion(documentRef);
@@ -621,13 +543,9 @@ public class AnnexController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/accept-change/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> acceptChange(@PathVariable("documentRef") String documentRef,
-                                               @PathVariable("elementId") String elementId,
-                                               @PathVariable("elementTagName") String elementTagName,
-                                               @RequestParam("trackChangeAction") String trackChangeAction,
-                                               @RequestHeader("presenterId") String presenterId) {
+    @Override
+    public ResponseEntity<Object> acceptChange(String documentRef, String elementId, String elementTagName,
+                                               String trackChangeAction, String presenterId) {
         try {
             documentRef = encodeParam(documentRef);
             elementId = encodeParam(elementId);
@@ -643,13 +561,9 @@ public class AnnexController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/reject-change/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> rejectChange(@PathVariable("documentRef") String documentRef,
-                                               @PathVariable("elementId") String elementId,
-                                               @PathVariable("elementTagName") String elementTagName,
-                                               @RequestParam("trackChangeAction") String trackChangeAction,
-                                               @RequestHeader("presenterId") String presenterId) {
+    @Override
+    public ResponseEntity<Object> rejectChange(String documentRef, String elementId, String elementTagName,
+                                               String trackChangeAction, String presenterId) {
         try {
             documentRef = encodeParam(documentRef);
             elementId = encodeParam(elementId);
@@ -665,11 +579,9 @@ public class AnnexController {
         }
     }
 
-    @PostMapping(value = "/{documentRef}/toggle-trackchange-enabled", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> toggleTrackChangeEnabled(@PathVariable("documentRef") String documentRef,
-                                                           @RequestBody ToggleTrackChangeEnabledRequest toggleTrackChangeEnabledRequest
-    ) {
+    @Override
+    public ResponseEntity<Object> toggleTrackChangeEnabled(String documentRef,
+                                                           ToggleTrackChangeEnabledRequest toggleTrackChangeEnabledRequest) {
         try {
             documentRef = encodeParam(documentRef);
             boolean isTrackChangesEnabled = toggleTrackChangeEnabledRequest.isTrackChangedEnabled();
