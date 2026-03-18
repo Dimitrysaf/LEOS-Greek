@@ -85,13 +85,6 @@ public class ElementInjectionHelperTest {
         bodyDoc = builder.parse(new ByteArrayInputStream(BODY_XML.getBytes(StandardCharsets.UTF_8)));
     }
 
-    private LineItem paragraph(String content) {
-        LineItem p = new LineItem();
-        p.setType(AknType.PARAGRAPH);
-        p.setContent(content);
-        return p;
-    }
-
     private LineItem note(String refId, int position, String content) {
         LineItem note = new LineItem();
         note.setType(AknType.AUTHORIAL_NOTE);
@@ -101,22 +94,11 @@ public class ElementInjectionHelperTest {
         return note;
     }
 
-    private LineItem paragraphWithNotes(String content, LineItem... notes) {
-        LineItem p = new LineItem();
-        p.setType(AknType.PARAGRAPH);
-        p.setContent(content);
-        p.setChildren(List.of(notes));
-        return p;
-    }
-
-    private LineItem paragraphWithNote(String content, int position, String noteRefId, String noteContent) {
-        return paragraphWithNotes(content, note(noteRefId, position, noteContent));
-    }
-
-    private LineItem citation(LineItem... children) {
+    private LineItem citation(String content, LineItem... notes) {
         LineItem c = new LineItem();
         c.setType(AknType.CITATION);
-        c.setChildren(List.of(children));
+        c.setContent(content);
+        if (notes.length > 0) c.setChildren(List.of(notes));
         return c;
     }
 
@@ -134,7 +116,7 @@ public class ElementInjectionHelperTest {
     @Test
     void testSimpleCitationWithoutAuthorialNote() throws Exception {
         helper.insertCitations(citationsDoc, List.of(
-                citation(paragraph("Lorem ipsum dolor sit amet,"))
+                citation("Lorem ipsum dolor sit amet,")
         ));
 
         NodeList citations = citationsDoc.getElementsByTagName("citation");
@@ -151,7 +133,7 @@ public class ElementInjectionHelperTest {
         int pos = 62;
 
         helper.insertCitations(citationsDoc, List.of(
-                citation(paragraphWithNote(text, pos, "1", "Footnote text here."))
+                citation(text, note("1", pos, "Footnote text here."))
         ));
 
         String xml = serialize(citationsDoc);
@@ -166,7 +148,7 @@ public class ElementInjectionHelperTest {
         String text = "At vero eos et accusamus et iusto odio dignissimos ducimus,";
         // pos 47 = after "dignissimos", pos 57 = after "ducimus"
         helper.insertCitations(citationsDoc, List.of(
-                citation(paragraphWithNotes(text, note("2", 47, "First footnote."), note("3", 57, "Second footnote.")))
+                citation(text, note("2", 47, "First footnote."), note("3", 57, "Second footnote."))
         ));
 
         String xml = serialize(citationsDoc);
@@ -179,8 +161,8 @@ public class ElementInjectionHelperTest {
     @Test
     void testMultipleCitationsMixedContent() throws Exception {
         helper.insertCitations(citationsDoc, List.of(
-                citation(paragraph("Simple citation text,")),
-                citation(paragraphWithNote("Citation with a note at end,", 27, "1", "Footnote."))
+                citation("Simple citation text,"),
+                citation("Citation with a note at end,", note("1", 27, "Footnote."))
         ));
 
         NodeList citations = citationsDoc.getElementsByTagName("citation");
@@ -197,7 +179,7 @@ public class ElementInjectionHelperTest {
 
     @Test
     void testSimpleRecital() throws Exception {
-        helper.insertRecitals(recitalsDoc, List.of(recital(paragraph("Whereas this is a simple recital."))));
+        helper.insertRecitals(recitalsDoc, List.of(recital("Whereas this is a simple recital.")));
 
         NodeList recitals = recitalsDoc.getElementsByTagName("recital");
         assertEquals(1, recitals.getLength());
@@ -211,7 +193,7 @@ public class ElementInjectionHelperTest {
     @Test
     void testRecitalWithAuthorialNote() throws Exception {
         String text = "Whereas the Committee has issued an opinion,";
-        helper.insertRecitals(recitalsDoc, List.of(recital(paragraphWithNote(text, 38, "1", "OJ C 123, p. 1."))));
+        helper.insertRecitals(recitalsDoc, List.of(recital(text, note("1", 38, "OJ C 123, p. 1."))));
 
         String xml = serialize(recitalsDoc);
         assertTrue(xml.contains("Whereas the Committee has issued an op" +
@@ -221,7 +203,7 @@ public class ElementInjectionHelperTest {
 
     @Test
     void testRecitalsGroupWithHeading() throws Exception {
-        helper.insertRecitals(recitalsDoc, List.of(recitalsGroup("Group Heading", recital(paragraph("Grouped recital text.")))));
+        helper.insertRecitals(recitalsDoc, List.of(recitalsGroup("Group Heading", recital("Grouped recital text."))));
 
         String xml = serialize(recitalsDoc);
         assertTrue(xml.contains("<heading>Group Heading</heading>"));
@@ -231,7 +213,7 @@ public class ElementInjectionHelperTest {
     @Test
     void testRecitalsGroupWithRecitalContainingFootnote() throws Exception {
         String text = "Grouped recital with footnote,";
-        helper.insertRecitals(recitalsDoc, List.of(recitalsGroup("My Group", recital(paragraphWithNote(text, 29, "1", "Footnote text.")))));
+        helper.insertRecitals(recitalsDoc, List.of(recitalsGroup("My Group", recital(text, note("1", 29, "Footnote text.")))));
 
         String xml = serialize(recitalsDoc);
         assertTrue(xml.contains("<heading>My Group</heading>"));
@@ -242,10 +224,10 @@ public class ElementInjectionHelperTest {
     @Test
     void testMixedStandaloneRecitalAndGroup() throws Exception {
         helper.insertRecitals(recitalsDoc, List.of(
-                recital(paragraph("Standalone recital.")),
+                recital("Standalone recital."),
                 recitalsGroup("Section A",
-                        recital(paragraph("First grouped recital.")),
-                        recital(paragraph("Second grouped recital.")))));
+                        recital("First grouped recital."),
+                        recital("Second grouped recital."))));
 
         String xml = serialize(recitalsDoc);
         NodeList recitalNodes = recitalsDoc.getElementsByTagName("recital");
@@ -259,10 +241,11 @@ public class ElementInjectionHelperTest {
 
     // --- Helpers ---
 
-    private LineItem recital(LineItem... children) {
+    private LineItem recital(String content, LineItem... notes) {
         LineItem r = new LineItem();
         r.setType(AknType.RECITAL);
-        r.setChildren(List.of(children));
+        r.setContent(content);
+        if (notes.length > 0) r.setChildren(List.of(notes));
         return r;
     }
 
@@ -384,7 +367,7 @@ public class ElementInjectionHelperTest {
     @Test
     void testXmlSpecialCharactersInContentAreEscaped() throws Exception {
         helper.insertCitations(citationsDoc, List.of(
-                citation(paragraph("Text with <tags> & \"quotes\""))
+                citation("Text with <tags> & \"quotes\"")
         ));
         String xml = serialize(citationsDoc);
         assertTrue(xml.contains("&lt;tags&gt;"));

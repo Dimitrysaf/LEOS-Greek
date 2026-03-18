@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.services.document;
 
-import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import jakarta.inject.Provider;
@@ -18,8 +18,8 @@ public class DocumentContextInitializer {
         this.documentLanguageContext = documentLanguageContext;
     }
 
-    public void initializeFrom(Bill bill) {
-        structureContextProvider.get().useDocumentTemplate(bill.getMetadata().get().getDocTemplate());
-        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
+    public void initializeFrom(XmlDocument document) {
+        structureContextProvider.get().useDocumentTemplate(document.getMetadata().get().getDocTemplate());
+        documentLanguageContext.setDocumentLanguage(document.getMetadata().get().getLanguage());
     }
 }

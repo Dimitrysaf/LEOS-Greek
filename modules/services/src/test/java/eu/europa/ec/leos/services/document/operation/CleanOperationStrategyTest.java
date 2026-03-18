@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.document.operation;
 
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.services.dto.request.AknType;
 import eu.europa.ec.leos.services.dto.request.LineItem;
 import eu.europa.ec.leos.services.dto.request.Operation;
@@ -10,7 +11,6 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XmlHelper;
-import eu.europa.ec.leos.vo.structure.TocItem;
 import jakarta.inject.Provider;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.TransformerFactory;
@@ -56,18 +56,18 @@ class CleanOperationStrategyTest {
     @Test
     public void testValidationFailurePropagatesAsIllegalArgumentException() {
         doThrow(new IllegalArgumentException("Invalid element type"))
-                .when(sectionContentValidator).validate(any(), any(), any());
+                .when(sectionContentValidator).validate(any(), any(), any(), any());
 
         SectionRequest section = new SectionRequest();
         section.setSectionType(SectionType.CITATIONS);
         section.setOperation(Operation.CLEAN);
         section.setItems(List.of());
 
-        assertThrows(IllegalArgumentException.class, () -> strategy.execute(xmlBytes(), section, "ANY"));
+        assertThrows(IllegalArgumentException.class, () -> strategy.execute(xmlBytes(), section, "ANY", LeosCategory.BILL));
     }
 
     @Test
-    public void testValidateCalledWithDocumentCollectionName() throws Exception {
+    public void testValidateCalledWithDocumentCollectionNameAndCategory() throws Exception {
         when(xmlContentProcessor.doXMLPostProcessing(any())).thenAnswer(i -> i.getArgument(0));
 
         SectionRequest section = new SectionRequest();
@@ -75,9 +75,9 @@ class CleanOperationStrategyTest {
         section.setOperation(Operation.CLEAN);
         section.setItems(List.of());
 
-        strategy.execute(xmlBytes(), section, XmlHelper.ACT_AUTO_COM);
+        strategy.execute(xmlBytes(), section, XmlHelper.ACT_AUTO_COM, LeosCategory.BILL);
 
-        verify(sectionContentValidator).validate(SectionType.CITATIONS, List.of(), XmlHelper.ACT_AUTO_COM);
+        verify(sectionContentValidator).validate(SectionType.CITATIONS, List.of(), XmlHelper.ACT_AUTO_COM, LeosCategory.BILL);
     }
 
     @Test
@@ -90,7 +90,7 @@ class CleanOperationStrategyTest {
         section.setOperation(Operation.CLEAN);
         section.setItems(items);
 
-        byte[] result = strategy.execute(xmlBytes(), section, "ANY");
+        byte[] result = strategy.execute(xmlBytes(), section, "ANY", LeosCategory.BILL);
 
         String xml = new String(result, StandardCharsets.UTF_8);
         assertFalse(xml.contains("<p>Old</p>"), "Existing citation content must be removed from output");
@@ -115,7 +115,7 @@ class CleanOperationStrategyTest {
         section.setOperation(Operation.CLEAN);
         section.setItems(List.of());
 
-        byte[] result = strategy.execute(recitalsXml.getBytes(StandardCharsets.UTF_8), section, "ANY");
+        byte[] result = strategy.execute(recitalsXml.getBytes(StandardCharsets.UTF_8), section, "ANY", LeosCategory.BILL);
 
         String xml = new String(result, StandardCharsets.UTF_8);
         assertTrue(xml.contains("<intro>"), "intro element must be preserved in output");
@@ -130,7 +130,7 @@ class CleanOperationStrategyTest {
         section.setOperation(Operation.CLEAN);
 
         byte[] input = xmlBytes();
-        byte[] result = strategy.execute(input, section, "ANY");
+        byte[] result = strategy.execute(input, section, "ANY", LeosCategory.BILL);
 
         assertSame(input, result);
         verifyNoInteractions(injectionHelper);
@@ -158,7 +158,7 @@ class CleanOperationStrategyTest {
         section.setOperation(Operation.CLEAN);
         section.setItems(items);
 
-        byte[] result = strategy.execute(bodyXml.getBytes(StandardCharsets.UTF_8), section, "ANY");
+        byte[] result = strategy.execute(bodyXml.getBytes(StandardCharsets.UTF_8), section, "ANY", LeosCategory.BILL);
 
         String xml = new String(result, StandardCharsets.UTF_8);
         assertFalse(xml.contains("Old text."), "article content must be removed from output");
@@ -172,7 +172,7 @@ class CleanOperationStrategyTest {
     public void testRecitalsOutputContainsRenumberedContentAndNoOldRecitals() throws Exception {
         String recitalsXml = "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" xmlns:leos=\"urn:eu:europa:ec:leos\">" +
                 "<bill><preamble><recitals><recital><num>(1)</num><p>Old</p></recital></recitals></preamble></bill></akomaNtoso>";
-        byte[] renumbered = "<renumbered/>" .getBytes(StandardCharsets.UTF_8);
+        byte[] renumbered = "<renumbered/>".getBytes(StandardCharsets.UTF_8);
         when(xmlContentProcessor.doXMLPostProcessing(any())).thenAnswer(i -> i.getArgument(0));
         when(numberService.renumberRecitals(any())).thenReturn(renumbered);
 
@@ -181,7 +181,7 @@ class CleanOperationStrategyTest {
         section.setOperation(Operation.CLEAN);
         section.setItems(List.of());
 
-        byte[] result = strategy.execute(recitalsXml.getBytes(StandardCharsets.UTF_8), section, "ANY");
+        byte[] result = strategy.execute(recitalsXml.getBytes(StandardCharsets.UTF_8), section, "ANY", LeosCategory.BILL);
 
         assertArrayEquals(renumbered, result, "output must be the result of renumberRecitals");
         verify(numberService).renumberRecitals(any());
@@ -198,7 +198,7 @@ class CleanOperationStrategyTest {
         section.setOperation(Operation.CLEAN);
         section.setItems(List.of());
 
-        byte[] result = strategy.execute(xmlBytes(), section, "ANY");
+        byte[] result = strategy.execute(xmlBytes(), section, "ANY", LeosCategory.BILL);
 
         assertArrayEquals(postProcessed, result, "output must be the result of doXMLPostProcessing");
         verify(numberService, never()).renumberRecitals(any());
@@ -210,30 +210,28 @@ class CleanOperationStrategyTest {
         String bodyXml =
                 "<akomaNtoso xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\" xmlns:leos=\"urn:eu:europa:ec:leos\">" +
                 "<bill><body><clause><content><p>Clause.</p></content></clause></body></bill></akomaNtoso>";
-        // each renumber call appends a marker so we can verify order and chaining
         when(xmlContentProcessor.doXMLPostProcessing(any())).thenAnswer(i -> i.getArgument(0));
         when(numberService.renumberArticles(any(), eq(true))).thenAnswer(i -> i.getArgument(0));
         when(structureContextProvider.get()).thenReturn(structureContext);
         when(structureContext.getTocItems()).thenReturn(List.of());
         when(documentLanguageContext.getDocumentLanguage()).thenReturn("EN");
-        when(numberService.renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.PART),    any())).thenAnswer(i -> ("part-done:"+new String((byte[])i.getArgument(0), StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8));
-        when(numberService.renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.TITLE),   any())).thenAnswer(i -> ("title-done:"+new String((byte[])i.getArgument(0), StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8));
-        when(numberService.renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.CHAPTER), any())).thenAnswer(i -> ("chapter-done:"+new String((byte[])i.getArgument(0), StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8));
-        when(numberService.renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.SECTION), any())).thenAnswer(i -> ("section-done:"+new String((byte[])i.getArgument(0), StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8));
+        when(numberService.renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.PART),    any())).thenAnswer(i -> ("part-done:"   + new String((byte[]) i.getArgument(0), StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8));
+        when(numberService.renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.TITLE),   any())).thenAnswer(i -> ("title-done:"  + new String((byte[]) i.getArgument(0), StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8));
+        when(numberService.renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.CHAPTER), any())).thenAnswer(i -> ("chapter-done:"+ new String((byte[]) i.getArgument(0), StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8));
+        when(numberService.renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.SECTION), any())).thenAnswer(i -> ("section-done:"+ new String((byte[]) i.getArgument(0), StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8));
 
         SectionRequest section = new SectionRequest();
         section.setSectionType(SectionType.ENACTING_TERMS);
         section.setOperation(Operation.CLEAN);
         section.setItems(List.of());
 
-        byte[] result = strategy.execute(bodyXml.getBytes(StandardCharsets.UTF_8), section, "ANY");
+        byte[] result = strategy.execute(bodyXml.getBytes(StandardCharsets.UTF_8), section, "ANY", LeosCategory.BILL);
         String xml = new String(result, StandardCharsets.UTF_8);
 
-        // verify all four were called and output was chained through each in order
         assertTrue(xml.contains("section-done:"), "output must pass through renumberHigherSubDivisions for SECTION last");
         assertTrue(xml.contains("chapter-done:"), "output must pass through renumberHigherSubDivisions for CHAPTER");
         assertTrue(xml.contains("title-done:"),   "output must pass through renumberHigherSubDivisions for TITLE");
-        assertTrue(xml.contains("part-done:"),     "output must pass through renumberHigherSubDivisions for PART");
+        assertTrue(xml.contains("part-done:"),    "output must pass through renumberHigherSubDivisions for PART");
         verify(numberService).renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.PART),    any());
         verify(numberService).renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.TITLE),   any());
         verify(numberService).renumberHigherSubDivisions(any(), eq("EN"), eq(XmlHelper.CHAPTER), any());
@@ -252,7 +250,7 @@ class CleanOperationStrategyTest {
         section.setOperation(Operation.CLEAN);
         section.setItems(List.of());
 
-        byte[] result = strategy.execute(recitalsXml.getBytes(StandardCharsets.UTF_8), section, "ANY");
+        byte[] result = strategy.execute(recitalsXml.getBytes(StandardCharsets.UTF_8), section, "ANY", LeosCategory.BILL);
 
         assertNotNull(result);
         verify(numberService, never()).renumberHigherSubDivisions(any(), any(), any(), any());
