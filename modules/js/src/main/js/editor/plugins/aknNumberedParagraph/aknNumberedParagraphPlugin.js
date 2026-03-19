@@ -426,7 +426,7 @@ define(function aknNumberedParagraphPluginModule(require) {
                 var listItems = ols[i].children;
                 for (var jj = 0; jj < listItems.length; jj++) {
                     idAttrValue = listItems[jj].getAttribute("id");
-                    if (idAttrValue && $('[id="' + idAttrValue + '"]').length > 1) {
+                    if (idAttrValue && $('[id="' + idAttrValue + '"]').not('div[role="tabpanel"] [id="' + idAttrValue + '"]').length > 1) {
                         idAttrValue = identityHandler.generateId();
                         listItems[jj].setAttribute("id", idAttrValue);
                     }
