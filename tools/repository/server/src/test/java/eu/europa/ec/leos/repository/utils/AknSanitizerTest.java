@@ -31,11 +31,7 @@ public class AknSanitizerTest {
 
                 AknSanitizer.sanitize(content);
 
-                Document doc = XercesUtils.createXercesDocument(xmlString.getBytes(), true);
-                StringWriter writer = new StringWriter();
-                transformer.transform(new DOMSource(doc), new StreamResult(writer));
-
-                Assertions.assertEquals(writer.toString(), content.getContent());
+                Assertions.assertEquals(xmlString, content.getContent());
             }
         }
     }
@@ -43,7 +39,7 @@ public class AknSanitizerTest {
     @Test
     void testTemplateWithScriptTag() throws Exception {
         Transformer transformer = XercesUtils.createSecureTransformer();
-        transformer.setOutputProperty(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
+//        transformer.setOutputProperty(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
 
         String xmlStringWithScript = FileUtils.readFileToString(new File("src/test/resources/xml/BL-023-with-script.xml"));
         DocumentContent content = new DocumentContent();

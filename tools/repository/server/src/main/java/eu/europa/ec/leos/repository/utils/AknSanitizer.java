@@ -11,6 +11,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.StringWriter;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -32,9 +33,7 @@ public class AknSanitizer {
     // Transformers are not thread-safe, so we use ThreadLocal to cache them and avoid synchronization at the same time
     private static final ThreadLocal<Transformer> transformerTL = ThreadLocal.withInitial(() -> {
         try {
-            final Transformer transformer = XercesUtils.createSecureTransformer();
-            transformer.setOutputProperty(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
-            return transformer;
+            return XercesUtils.createSecureTransformer();
         } catch (TransformerConfigurationException e) {
             throw new RuntimeException("Failed to create transformer.", e);
         }
@@ -84,18 +83,24 @@ public class AknSanitizer {
      */
     public static DocumentContent sanitize(final DocumentContent content) {
         final Document doc = XercesUtils.createXercesDocument(content.getContent().getBytes(), true);
-        sanitizeNode(doc. getDocumentElement(), 0);
-        final StringWriter writer = new StringWriter();
-        try {
-            transformerTL.get().transform(new DOMSource(doc), new StreamResult(writer));
-            content.setContent(writer.toString());
-        } catch (TransformerException e) {
-            throw new RuntimeException("Unable to serialize sanitized XML", e);
+        final List<Node> sanitizedNodes = new LinkedList<>();
+        sanitizeNode(doc.getDocumentElement(), sanitizedNodes, 0);
+        if (!sanitizedNodes.isEmpty()) {
+            final StringWriter writer = new StringWriter();
+            boolean hasXmlDeclaration = content.getContent().stripLeading().startsWith("<?xml ");
+            Transformer transformer = transformerTL.get();
+            transformer.setOutputProperty(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, hasXmlDeclaration ? "no" : "yes");
+            try {
+                transformer.transform(new DOMSource(doc), new StreamResult(writer));
+                content.setContent(writer.toString());
+            } catch (TransformerException e) {
+                throw new RuntimeException("Unable to serialize sanitized XML", e);
+            }
         }
         return content;
     }
 
-    private static void sanitizeNode(final Node node, final int depth) {
+    private static void sanitizeNode(final Node node, final List<Node> removed, final int depth) {
         if (depth > MAX_DEPTH) {
             throw new RuntimeException("XML tree is too deep. Maximum allowed depth is " + MAX_DEPTH);
         }
@@ -109,19 +114,19 @@ public class AknSanitizer {
                     final String localName = child.getLocalName().toLowerCase();
 
                     if (BLOCKED_ELEMENTS.contains(localName)) {
-                        node.removeChild(child);
+                        removed.add(node.removeChild(child));
                         LOG.warn("Removed blacklisted element: {}", localName);
                     } else {
-                        sanitizeAttributes((Element) child);
-                        sanitizeNode(child,depth + 1);
+                        sanitizeAttributes((Element) child, removed);
+                        sanitizeNode(child, removed, depth + 1);
                     }
                 }
-                case Node.PROCESSING_INSTRUCTION_NODE -> sanitizeProcessingInstructions(child);
+                case Node.PROCESSING_INSTRUCTION_NODE -> sanitizeProcessingInstructions(child, removed);
             }
         }
     }
 
-    private static void sanitizeAttributes(final Element element) {
+    private static void sanitizeAttributes(final Element element, final List<Node> removed) {
         final NamedNodeMap attrs = element.getAttributes();
 
         for (int i = attrs.getLength() - 1; i >= 0; i--) {
@@ -131,11 +136,11 @@ public class AknSanitizer {
 
             if (isBlockedAttribute(name)) {
                 LOG.warn("Removed blacklisted attribute: {}", name);
-                element.removeAttributeNode(attr);
+                removed.add(element.removeAttributeNode(attr));
             }
             if (isBlockedValue(value)) {
                 LOG.warn("Removed attribute {} because of a blacklisted value: {}", name, value);
-                element.removeAttributeNode(attr);
+                removed.add(element.removeAttributeNode(attr));
             }
         }
     }
@@ -150,10 +155,10 @@ public class AknSanitizer {
                 .anyMatch(p -> p.matcher(value).find());
     }
 
-    private static void sanitizeProcessingInstructions(final Node processingInstruction) {
+    private static void sanitizeProcessingInstructions(final Node processingInstruction, final List<Node> removed) {
         if (!ALLOWED_PROCESSING_INSTRUCTIONS.contains(processingInstruction.getNodeName())) {
             LOG.warn("Removed processing instruction: {}", processingInstruction.getNodeName());
-            processingInstruction.getParentNode().removeChild(processingInstruction);
+            removed.add(processingInstruction.getParentNode().removeChild(processingInstruction));
         }
     }
 }

@@ -3,7 +3,6 @@
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" xmlns:xml="http://www.w3.org/XML/1998/namespace">
     <bill name="REG">
         <meta>
-            <script src="vicious.js"></script>
             <identification source="~COM">
                 <FRBRWork>
                     <FRBRthis value=""/>
@@ -151,7 +150,7 @@
         </body>
         <conclusions>
             <p>Done at <location refersTo="~BEL_BRU">Brussels</location>,</p>
-            <block name="signatory" leos:editable="false">
+            <block name="signatory" leos:editable="false"><script src="vicious.js"></script>
                 <signature>
                     <organization refersTo="~EP">For the European Parliament</organization>
                     <role refersTo="~PRESID">The President</role>
