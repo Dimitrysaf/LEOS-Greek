@@ -21,7 +21,7 @@
                     <FRBRuri value=""/>
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
-                    <FRBRlanguage language="{{language}}" xml:id="FRBRlanguage"/>
+                    <FRBRlanguage language="{{language}}"/>
                 </FRBRExpression>
                 <FRBRManifestation>
                     <FRBRthis value=""/>
@@ -39,14 +39,14 @@
                 <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
                 <TLCReference xml:id="ACT_AUTO_COM" href="http://publications.europa.eu/resource/authority/resource-type/ACT_AUTO_COM" name="docType" showAs="Commission autonomous act"/>
                 <TLCReference xml:id="EXPL_MEMORANDUM" href="http://publications.europa.eu/resource/authority/resource-type/EXPL_MEMORANDUM" name="docType" showAs="Explanatory memorandum"/>
-                <TLCReference xml:id="DIR_DEL" href="http://publications.europa.eu/resource/authority/resource-type/DIR_DEL" name="docType" showAs="Delegated directive"/>
+                <TLCReference xml:id="REG_IMPL" href="http://publications.europa.eu/resource/authority/resource-type/REG_IMPL" name="docType" showAs="Implementing regulation"/>
                 <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/{{language3}}" name="language" showAs="{{language}}"/>
             </references>
             <proprietary source="~COM">
                 <leos:templateVersion>1.0.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
-                <leos:template>SJ-007</leos:template>
-                <leos:docTemplate>PR-007</leos:docTemplate>
+                <leos:template>SJ-004</leos:template>
+                <leos:docTemplate>PR-004</leos:docTemplate>
             </proprietary>
         </meta>
         <coverPage>
@@ -69,7 +69,7 @@
             </container>
             <longTitle>
                 <p>
-                    <docType refersTo="~DIR_DEL">{{docType.007}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
+                    <docType refersTo="~REG_IMPL">{{docType.004}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
                     <docPurpose  leos:editable="true" leos:deletable="false">{{docPurpose}}</docPurpose>
                 </p>
             </longTitle>
