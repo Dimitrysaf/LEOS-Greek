@@ -1971,3 +1971,28 @@ Feature: Track Changes Feature
       | Sole Article - Article heading... 1.Text... |
     When click on cancel button in cke dialog window
     And  click close button of ck editor
+
+  @3045 @local
+  Scenario: 3045 Scenario @focus
+    Given navigate to leos application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "3045 " in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    When mouseover and click on article 1
+    Then ck editor window is displayed
+    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+    And  click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on increase indent icon present in ck editor panel
+    And  add "point a" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And add "point b" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And add "point c" at current cursor position in edition mode
