@@ -511,7 +511,7 @@ public class MetadataServiceImpl implements MetadataService {
         if (!StringUtil.isEmpty(xmlNodeDocNumber.getTextContent())) {
             XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
             XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_NAME, MetadataUtil.VALUE_VERSION);
-            inline.setTextContent(" " + versionNumber);
+            inline.setTextContent(versionNumber);
             xmlNodeDocNumber.appendChild(inline);
         }
     }
@@ -662,7 +662,7 @@ public class MetadataServiceImpl implements MetadataService {
         MetadataUtil.removeClassAttribute(xmlNodeBlock);
         MetadataUtil.removeClassAttribute(xmlNodeDocNumber);
         MetadataUtil.addRefersToAttribute(xmlNodeDocNumber, fieldInfo.getId());
-        xmlNodeDocNumber.setTextContent(fieldInfo.getDisplayValue());
+        xmlNodeDocNumber.setTextContent(fieldInfo.getDisplayValue() + " ");
     }
 
     public void removeCoteToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
