@@ -454,7 +454,7 @@ public class MetadataServiceImpl implements MetadataService {
     private void addCote(ReferenceFieldInfo fieldInfo, String diffusionVersion, boolean isFinal, XmlUtil.XmlFile xmlFile) {
         addCoteToMetaIdentification(fieldInfo, xmlFile);
         addCoteToMetaReference(fieldInfo, xmlFile);
-        addCoteToCoverPage(fieldInfo, xmlFile);
+        addCoteToCoverPage(fieldInfo, xmlFile, isFinal);
         addCoteToDocumentFilename(fieldInfo, xmlFile);
 
         if (!StringUtil.isEmpty(diffusionVersion)) {
@@ -639,7 +639,7 @@ public class MetadataServiceImpl implements MetadataService {
         preservationNode.removeChild(docCuidNode);
     }
 
-    public void addCoteToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
+    public void addCoteToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile, boolean isFinal) {
         Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
         if (xmlNodeCoverpage == null) {
             return;
@@ -662,7 +662,13 @@ public class MetadataServiceImpl implements MetadataService {
         MetadataUtil.removeClassAttribute(xmlNodeBlock);
         MetadataUtil.removeClassAttribute(xmlNodeDocNumber);
         MetadataUtil.addRefersToAttribute(xmlNodeDocNumber, fieldInfo.getId());
-        xmlNodeDocNumber.setTextContent(fieldInfo.getDisplayValue() + " ");
+
+        if (isFinal) {
+            xmlNodeDocNumber.setTextContent(fieldInfo.getDisplayValue() + " ");
+        }
+        else{
+            xmlNodeDocNumber.setTextContent(fieldInfo.getDisplayValue());
+        }
     }
 
     public void removeCoteToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
