@@ -1,0 +1,128 @@
+{
+  "guidance": [
+    {
+      "targets": [
+        {
+          "destinationPath": "//preamble/formula[1]/aknp",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_preamble__formula_1__p\" class=\"guidance-green-block\"><span id=\"_preamble__formula_1__p-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Citations\" target=\"_blank\">Citations</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//recitals/intro",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_recitalsIntro\" class=\"guidance-green-block\"><span id=\"_recitalsIntro-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/x/Yxt2F\" target=\"_blank\">Recitals</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//preamble/formula[2]/aknp",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_preamble__formula_2__p\" class=\"guidance-green-block\"><span id=\"_preamble__formula_2__p-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Enacting+terms\" target=\"_blank\">Enacting terms</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "(//article)[2]",
+          "position": "BEFORE-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-clause-1\" class=\"guidance-green-block\"><span id=\"clause-1-guidance\">[Choose between the two options, depending on the addressees of the act.]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//article[@refersto='~ART_DEF']/heading",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_art_definitions_heading\" class=\"guidance-green-block\"><span id=\"_art_2_definitions_heading-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Definitions\" target=\"_blank\">Definitions</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//conclusions[1]/aknp[1]",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-clause-1\" class=\"guidance-green-block\"><span id=\"clause-1-guidance\">[Choose the right option, depending on Procedure and the person who signs]</span></guidance>"
+    }
+  ],
+  "alternatives": [
+    {
+      "name": "listOption1",
+      "list": [
+        {
+          "index": "1",
+          "content": "<article xml:id=\"art2\" leos:editable=\"true\" leos:deletable=\"true\" leos:autonumbering=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\"><num leos:editable=\"false\">{{$bl.num2}}</num><heading xml:id=\"art2Heading\">{{$bl.heading}}</heading><paragraph><content><p>{{bl.firstParagraphOfArticle2.010}}</p></content></paragraph></article>"
+        },
+        {
+          "index": "2",
+          "content": "<article xml:id=\"art2\" leos:editable=\"true\" leos:deletable=\"true\" leos:autonumbering=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\"><num leos:editable=\"false\">{{$bl.num2}}</num><heading xml:id=\"art2Heading\">{{$bl.heading}}</heading><paragraph><content><p>{{bl.firstParagraphOfArticle2Alternative.010}}</p></content></paragraph></article>"
+        }
+      ]
+    },
+    {
+      "name": "listOption2",
+      "list": [
+        {
+          "index": "1",
+          "title": "{{bl.role.president}}",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"1\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">{{bl.forCommission}}</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">{{bl.role.president}}</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "2",
+          "title": "{{bl.role.executiveVicePresident}}",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"2\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">{{bl.forCommission}}</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">{{bl.role.executiveVicePresident}}</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "3",
+          "title": "{{bl.role.vicePresident}}",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"3\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">{{bl.forCommission}}</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">{{bl.role.vicePresident}}</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "4",
+          "title": "{{bl.role.memberOfTheCommission}}",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"4\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">{{bl.forCommission}}</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">{{bl.role.memberOfTheCommission}}</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "5",
+          "title": "{{bl.role.directorGeneral}}",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"5\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">{{bl.forCommission}}</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">{{bl.role.directorGeneral}}</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "6",
+          "title": "{{bl.role.director}}",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"6\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">{{bl.forCommission}}</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">{{bl.role.director}}</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "7",
+          "title": "{{bl.role.headOfUnit}}",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"7\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">{{bl.forCommission}}</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">{{bl.role.headOfUnit}}</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        },
+        {
+          "index": "8",
+          "title": "{{bl.role.headOfService}}",
+          "content": "<block xml:id=\"block1\" leos:alternative=\"true\" leos:deletable=\"true\" leos:editable=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"8\" name=\"signatory\"><signature xml:id=\"signature1\"><organization refersTo=\"~COM\" xml:id=\"conclusionsBlock1Signature1Organization\">{{bl.forCommission}}</organization><role refersTo=\"_PRESID\" xml:id=\"conclusionsBlock1Signature1Role\">{{bl.role.headOfService}}</role><person refersTo=\"\" xml:id=\"conclusionsBlock1Signature1Person\">[...]</person></signature></block>"
+        }
+      ]
+    }
+  ],
+  "structure": [
+    {
+      "mode": "main",
+      "name": "structure_08"
+    },
+    {
+      "mode": "translated",
+      "name": "structure_08_translated"
+    }
+  ]
+}
