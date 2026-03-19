@@ -48,6 +48,7 @@ class ckEditorWindow {
         tcActionIcon: () => cy.get('.cke_combo__trackchangeactions'),
         tcActionDropdown: () => cy.get('ul.cke_panel_list > li.cke_panel_listItem > a'),
         insertListIcon: () => cy.get('.cke_button__leosindentlist'),
+        cutIcon: () => cy.get('.cke_button__cut'),
     }
 
     uploadImageFile(location, iframeClass) {

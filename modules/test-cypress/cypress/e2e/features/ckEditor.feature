@@ -1201,6 +1201,15 @@ Feature: CK Editor Regression Features
     Then level does not contain span tag with attribute name "data-akn-name" with value "aknAuthorialNote" in edition mode
     When click save and close button of ck editor
     Then ck editor window is not displayed
+    When user scroll subparagraph 3 of landscape level 2 in financial statement page
+    Then table 1 of content 1 of subparagraph 3 of landscape level 2 contains an attribute "leos:predefinedtable" with value "true"
+    When click on edit icon of subparagraph 3 of landscape level 2 in financial statement page
+    Then ck editor window is displayed
+    And landscape level 2 contains an attribute "leos:deletable" with value "false"
+    And cut icon is disabled in ck editor panel
+    When click close button of ck editor
+    Then ck editor window is not displayed
+
 
   @acceptAllRejectAllPluginInLFDS @local
   Scenario: Accept all and reject all functionality in Legislative Financial and Digital Statement
