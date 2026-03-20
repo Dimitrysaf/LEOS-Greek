@@ -2,6 +2,7 @@ import {When, Then} from "@badeball/cypress-cucumber-preprocessor";
 import legalActPage from "../pages/legalActPage";
 import headerPage from "../pages/headerPage";
 import {checkContentResult} from "../util/expectDataTable";
+import ckEditorWindow from "../pages/ckEditorWindow";
 
 
 Then('user is on legal act page', () => {
@@ -787,3 +788,14 @@ legalActPage.getSubparagraphOfParagraphFromArticle(subparagraphNumber,paragraphN
 Then('subparagraph {int} of paragraph {int} of article {int} does not exist', function (subparagraphNumber, paragraphNumber, articleNumber) {
 legalActPage.getSubparagraphOfParagraphFromArticle(subparagraphNumber,paragraphNumber,articleNumber).should('not.exist');
 });
+
+Then('l1 {int} with data-akn-element {string} of article contains {string} in edition mode', function (l1Number, dataAknElement, expectedText) {
+ckEditorWindow.getParagraphElementOfArticle(l1Number, dataAknElement).should('have.text', expectedText);
+});
+
+
+Then ('li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains {string} in edition mode', function (liNumber, dataAknElement, parentLiNumber, parentDataAknElement, expectedText) {
+ckEditorWindow. getPointOfParagraphOfArticle(liNumber, dataAknElement, parentLiNumber, parentDataAknElement).should('have.text', expectedText);
+
+});
+
