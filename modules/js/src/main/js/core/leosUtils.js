@@ -143,6 +143,11 @@ define(function leosUtilsModule(require) {
         }
         if (elementsToBeChecked.includes(el.tagName)) {
             var trimmedInnerText = $.trim(el.innerText);
+            //element contains image NOT empty
+            if (el.querySelector && el.querySelector('img')) {
+                return false;
+            }
+
             if (!trimmedInnerText || trimmedInnerText.match(ZERO_WIDTH_SPACE)) {
                 if ((el.tagName === PARAGRAPH_POINT_TAG || el.tagName === SUBPARAGRAPH_SUBPOINT_TAG)
                     && el.parentElement 
