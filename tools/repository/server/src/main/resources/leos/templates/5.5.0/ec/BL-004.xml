@@ -91,7 +91,7 @@
                 </recital>
             </recitals>
             <formula name="enactingFormula">
-                <p>{{bl.enactingFormula.004}}</p>
+                <p>{{bl.enactingFormula.regulation}}</p>
             </formula>
         </preamble>
         <body>

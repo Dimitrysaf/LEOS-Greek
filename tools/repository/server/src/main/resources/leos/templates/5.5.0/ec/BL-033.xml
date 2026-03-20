@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?>
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" xmlns:xml="http://www.w3.org/XML/1998/namespace">
-    <bill name="DIR_DEL">
+    <bill name="DEC_DEL">
         <meta>
             <identification source="~COM">
                 <FRBRWork>
@@ -38,7 +38,7 @@
                 <TLCLocation xml:id="BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
                 <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
                 <TLCRole xml:id="PRESID" href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
-                <TLCReference xml:id="DIR_DEL" href="http://publications.europa.eu/resource/authority/resource-type/DIR_DEL" name="docType" showAs="Delegated directive"/>
+                <TLCReference xml:id="DEC_DEL" href="http://publications.europa.eu/resource/authority/resource-type/DEC_DEL" name="docType" showAs="Delegated decision"/>
                 <TLCReference xml:id="legalBasis" href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis"/>
                 <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/{{language3}}" name="language" showAs="{{language}}"/>
                 <TLCConcept xml:id="ART_DEF" href="http://publications.europa.eu/resource/authority/subdivision-content/ART_DEF" showAs="Article on definitions"/>
@@ -46,8 +46,8 @@
             <proprietary source="~COM">
                 <leos:templateVersion>1.0.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
-                <leos:template>SJ-007</leos:template>
-                <leos:docTemplate>BL-007</leos:docTemplate>
+                <leos:template>SJ-033</leos:template>
+                <leos:docTemplate>BL-033</leos:docTemplate>
             </proprietary>
         </meta>
         <preface>
@@ -58,7 +58,7 @@
             </container>  
             <longTitle>
                 <p>
-                    <docType refersTo="~DIR_DEL">{{docType.007}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
+                    <docType refersTo="~DEC_DEL">{{docType.033}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
                     <docPurpose>{{docPurpose}}</docPurpose>
                 </p>
             </longTitle>
@@ -73,7 +73,7 @@
                 </citation>
                 <citation leos:editable="true">
                     <p>{{bl.citation2Before}}<authorialNote marker="1" placement="bottom"><p>{{bl.citation2inside}}</p></authorialNote>{{bl.citation2after}}</p>
-                </citation>                
+                </citation>
             </citations>
             <recitals leos:editable="false">
                 <intro><p>{{bl.intro}}</p></intro>
@@ -85,13 +85,9 @@
                     <num>(2)</num>
                     <p>{{bl.recital}}</p>
                 </recital>
-                <recital leos:editable="true">
-                    <num>(3)</num>
-                    <p>{{bl.recital}}</p>
-                </recital>
             </recitals>
             <formula name="enactingFormula">
-                <p>{{bl.enactingFormula.directive}}</p>
+                <p>{{bl.enactingFormula.decision}}</p>
             </formula>
         </preamble>
         <body>
@@ -111,44 +107,12 @@
                     </content>
                 </paragraph>
             </article>
-            <article leos:editable="true" leos:deletable="true" leos:autonumbering="true" leos:alternative="true" leos:optionlist="listOption1" leos:selectedoption="1">
+            <article leos:editable="true" leos:deletable="true" leos:autonumbering="true">
                 <num leos:editable="false">{{bl.num2}}</num>
                 <heading>{{bl.heading}}</heading>
                 <paragraph>
-                    <num>1.</num>
-                    <subparagraph>
-                        <content>
-                            <p>{{bl.firstParagraphOfArticle2.007}}</p>
-                        </content>
-                    </subparagraph>
-                    <subparagraph>
-                        <content>
-                            <p>{{bl.secondParagraphOfArticle2.007}}</p>
-                        </content>
-                    </subparagraph>
-                </paragraph>
-                <paragraph>
-                    <num>2.</num>
                     <content>
-                        <p>{{bl.thirdParagraphOfArticle2.007}}</p>
-                    </content>
-                </paragraph>
-            </article>
-            <article leos:editable="true" leos:deletable="true" leos:autonumbering="true">
-                <num leos:editable="false">{{bl.num3}}</num>
-                <heading>{{bl.heading}}</heading>
-                <paragraph>
-                    <content>
-                        <p>{{bl.article3.007}}</p>
-                    </content>
-                </paragraph>
-            </article>
-            <article leos:editable="true" leos:deletable="true" leos:autonumbering="true">
-                <num leos:editable="false">{{bl.num4}}</num>
-                <heading>{{bl.heading}}</heading>
-                <paragraph>
-                    <content>
-                        <p>{{bl.article4.007}}</p>
+                        <p>{{bl.article2.033}}</p>
                     </content>
                 </paragraph>
             </article>
