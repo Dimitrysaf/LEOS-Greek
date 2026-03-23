@@ -14,12 +14,6 @@ public class CitationBuilder implements AknElementBuilder {
 
     @Override
     public String build(LineItem item, Function<LineItem, String> buildChild) {
-        StringBuilder inner = new StringBuilder();
-        if (item.getChildren() == null || item.getChildren().isEmpty()) {
-            inner.append("<p>").append(escape(item.getContent())).append("</p>");
-        } else {
-            item.getChildren().forEach(child -> inner.append(buildChild.apply(child)));
-        }
-        return "<citation leos:editable=\"true\">" + inner + "</citation>";
+        return "<citation leos:editable=\"true\">" + buildParagraph(item, buildChild) + "</citation>";
     }
 }

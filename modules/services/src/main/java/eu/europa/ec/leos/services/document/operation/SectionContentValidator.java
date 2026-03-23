@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.document.operation;
 
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.services.dto.request.AknType;
 import eu.europa.ec.leos.services.dto.request.LineItem;
 import eu.europa.ec.leos.services.dto.request.SectionType;
@@ -19,6 +20,13 @@ public class SectionContentValidator {
     static final int MAX_DEPTH = 50;
     static final int MAX_CONTENT_LENGTH = 50_000;
 
+    // Allowed section types per document category — extend here to support new combinations
+    private static final Map<LeosCategory, Set<SectionType>> ALLOWED_SECTIONS_BY_CATEGORY = new EnumMap<>(LeosCategory.class);
+
+    static {
+        ALLOWED_SECTIONS_BY_CATEGORY.put(LeosCategory.BILL, EnumSet.allOf(SectionType.class));
+    }
+
     // Allowed root types per section
     private static final Map<SectionType, Set<AknType>> SECTION_ROOTS = new EnumMap<>(SectionType.class);
 
@@ -32,8 +40,8 @@ public class SectionContentValidator {
                 AknType.PART, AknType.TITLE, AknType.CHAPTER, AknType.SECTION,
                 AknType.NUMBERED_ARTICLE, AknType.UNNUMBERED_ARTICLE));
 
-        ALLOWED_CHILDREN.put(AknType.CITATION,           EnumSet.of(AknType.PARAGRAPH));
-        ALLOWED_CHILDREN.put(AknType.RECITAL,            EnumSet.of(AknType.PARAGRAPH));
+        ALLOWED_CHILDREN.put(AknType.CITATION,           EnumSet.of(AknType.AUTHORIAL_NOTE));
+        ALLOWED_CHILDREN.put(AknType.RECITAL,            EnumSet.of(AknType.AUTHORIAL_NOTE));
         ALLOWED_CHILDREN.put(AknType.RECITALS,         EnumSet.of(AknType.RECITAL));
         ALLOWED_CHILDREN.put(AknType.PART,               EnumSet.of(AknType.TITLE, AknType.CHAPTER, AknType.SECTION, AknType.NUMBERED_ARTICLE, AknType.UNNUMBERED_ARTICLE));
         ALLOWED_CHILDREN.put(AknType.TITLE,              EnumSet.of(AknType.CHAPTER, AknType.SECTION, AknType.NUMBERED_ARTICLE, AknType.UNNUMBERED_ARTICLE));
@@ -50,7 +58,12 @@ public class SectionContentValidator {
         ALLOWED_CHILDREN.put(AknType.AUTHORIAL_NOTE,     EnumSet.noneOf(AknType.class));
     }
 
-    public void validate(SectionType sectionType, List<LineItem> items, String documentCollectionName) {
+    public void validate(SectionType sectionType, List<LineItem> items, String documentCollectionName, LeosCategory category) {
+        Set<SectionType> allowedSections = ALLOWED_SECTIONS_BY_CATEGORY.getOrDefault(category, EnumSet.noneOf(SectionType.class));
+        if (!allowedSections.contains(sectionType)) {
+            throw new IllegalArgumentException(
+                    "Section type " + sectionType + " is not allowed for document category " + category);
+        }
         if (items == null) return;
         if (items.size() > MAX_ITEMS) {
             throw new IllegalArgumentException("Too many items: max " + MAX_ITEMS + " allowed");

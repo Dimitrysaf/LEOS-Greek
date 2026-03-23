@@ -1,9 +1,12 @@
 package eu.europa.ec.leos.services.document;
 
 import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -22,6 +25,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -32,13 +36,13 @@ import static org.mockito.Mockito.*;
 class InjectElementServiceImplTest {
 
     private static final String DOCUMENT_ID = "doc123";
+    private static final String PACKAGE_ID = "pkg456";
     private static final String PACKAGE_PATH = "/path/to/package";
     private static final String COLLECTION_NAME = "ANY_COLLECTION";
     private static final byte[] BILL_CONTENT = "<akomaNtoso/>".getBytes(StandardCharsets.UTF_8);
 
     @Mock private PackageService packageService;
     @Mock private ProposalService proposalService;
-    @Mock private BillService billService;
     @Mock private SecurityContext securityContext;
     @Mock private OperationStrategyFactory strategyFactory;
     @Mock private OperationStrategy operationStrategy;
@@ -69,9 +73,8 @@ class InjectElementServiceImplTest {
     @Test
     void injectElements_whenUserLacksUpdatePermission_throwsSecurityException() {
         Bill bill = mockBill();
-        givenPackageFound(DOCUMENT_ID, PACKAGE_PATH);
-        givenProposalFound(PACKAGE_PATH, mockProposal());
-        givenBillFound(PACKAGE_PATH, bill);
+        givenPackageFound(DOCUMENT_ID, PACKAGE_ID, PACKAGE_PATH, bill);
+        givenProposalFound(PACKAGE_PATH, mock(Proposal.class));
         when(securityContext.hasPermission(bill, LeosPermission.CAN_UPDATE)).thenReturn(false);
 
         assertThrows(SecurityException.class,
@@ -82,56 +85,67 @@ class InjectElementServiceImplTest {
 
     @Test
     void injectElements_whenPackageNotFound_throwsIllegalArgument() {
-        when(packageService.findPackageByDocumentRef(eq("unknown"), eq(Proposal.class)))
+        when(packageService.findPackageByDocumentRef(eq("unknown"), eq(XmlDocument.class)))
                 .thenThrow(new IllegalArgumentException("Package not found"));
 
         assertThrows(IllegalArgumentException.class,
                 () -> injectElementService.injectElements(requestFor("unknown", SectionType.CITATIONS)));
     }
 
+    @Test
+    void injectElements_whenDocumentNotFoundInPackage_throwsIllegalArgument() {
+        LeosPackage leosPackage = mock(LeosPackage.class);
+        when(leosPackage.getId()).thenReturn(PACKAGE_ID);
+        when(packageService.findPackageByDocumentRef(eq(DOCUMENT_ID), eq(XmlDocument.class))).thenReturn(leosPackage);
+        when(packageService.findDocumentsByPackageId(eq(PACKAGE_ID), eq(XmlDocument.class), eq(false), eq(true)))
+                .thenReturn(List.of());
+
+        assertThrows(IllegalArgumentException.class,
+                () -> injectElementService.injectElements(requestFor(DOCUMENT_ID, SectionType.CITATIONS)));
+    }
+
     // --- Strategy execution ---
 
     @Test
-    void injectElements_passesCurrentBillContentToStrategy() {
+    void injectElements_passesCurrentDocumentContentToStrategy() {
         byte[] expectedContent = "<bill/>".getBytes(StandardCharsets.UTF_8);
-        Bill bill = billWithContent(expectedContent);
-        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_PATH, bill, COLLECTION_NAME);
+        Bill bill = mockBillWithContent(expectedContent);
+        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_ID, PACKAGE_PATH, bill, COLLECTION_NAME);
         givenStrategyReturnsContentUnchanged();
 
         injectElementService.injectElements(requestFor(DOCUMENT_ID, SectionType.CITATIONS));
 
-        verify(operationStrategy).execute(eq(expectedContent), any(SectionRequest.class), anyString());
+        verify(operationStrategy).execute(eq(expectedContent), any(SectionRequest.class), anyString(), eq(LeosCategory.BILL));
     }
 
     @Test
     void injectElements_passesDocumentCollectionNameToStrategy() {
-        Bill bill = billWithContent(BILL_CONTENT);
-        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_PATH, bill, "SPECIFIC_COLLECTION");
+        Bill bill = mockBillWithContent(BILL_CONTENT);
+        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_ID, PACKAGE_PATH, bill, "SPECIFIC_COLLECTION");
         givenStrategyReturnsContentUnchanged();
 
         injectElementService.injectElements(requestFor(DOCUMENT_ID, SectionType.CITATIONS));
 
-        verify(operationStrategy).execute(any(byte[].class), any(SectionRequest.class), eq("SPECIFIC_COLLECTION"));
+        verify(operationStrategy).execute(any(byte[].class), any(SectionRequest.class), eq("SPECIFIC_COLLECTION"), any());
     }
 
     @Test
     void injectElements_withMultipleSections_executesStrategyForEachSection() {
-        Bill bill = billWithContent(BILL_CONTENT);
-        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_PATH, bill, COLLECTION_NAME);
+        Bill bill = mockBillWithContent(BILL_CONTENT);
+        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_ID, PACKAGE_PATH, bill, COLLECTION_NAME);
         givenStrategyReturnsContentUnchanged();
 
         injectElementService.injectElements(requestFor(DOCUMENT_ID, SectionType.CITATIONS, SectionType.RECITALS));
 
-        verify(operationStrategy, times(2)).execute(any(byte[].class), any(SectionRequest.class), anyString());
+        verify(operationStrategy, times(2)).execute(any(byte[].class), any(SectionRequest.class), anyString(), any());
     }
 
     @Test
     void injectElements_whenStrategyThrowsUnsupportedOperation_wrapsInInjectElementException() {
-        Bill bill = billWithContent(BILL_CONTENT);
-        Proposal proposal = proposalWithCollection(COLLECTION_NAME);
-        givenPackageFound(DOCUMENT_ID, PACKAGE_PATH);
-        givenProposalFound(PACKAGE_PATH, proposal);
-        givenBillFound(PACKAGE_PATH, bill);
+        Bill bill = mockBillWithContent(BILL_CONTENT);
+        givenPackageFound(DOCUMENT_ID, PACKAGE_ID, PACKAGE_PATH, bill);
+        givenProposalFound(PACKAGE_PATH, proposalWithCollection(COLLECTION_NAME));
+        when(securityContext.hasPermission(bill, LeosPermission.CAN_UPDATE)).thenReturn(true);
         when(strategyFactory.getStrategy(Operation.CLEAN))
                 .thenThrow(new UnsupportedOperationException("Operation not supported: CLEAN"));
 
@@ -141,9 +155,9 @@ class InjectElementServiceImplTest {
 
     @Test
     void injectElements_whenStrategyThrowsIllegalArgument_propagatesAsIs() {
-        Bill bill = billWithContent(BILL_CONTENT);
-        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_PATH, bill, COLLECTION_NAME);
-        when(operationStrategy.execute(any(), any(), any()))
+        Bill bill = mockBillWithContent(BILL_CONTENT);
+        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_ID, PACKAGE_PATH, bill, COLLECTION_NAME);
+        when(operationStrategy.execute(any(), any(), any(), any()))
                 .thenThrow(new IllegalArgumentException("Invalid section content"));
 
         assertThrows(IllegalArgumentException.class,
@@ -153,9 +167,9 @@ class InjectElementServiceImplTest {
     // --- Document context ---
 
     @Test
-    void injectElements_initialisesDocumentContextFromBill() {
-        Bill bill = billWithContent(BILL_CONTENT);
-        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_PATH, bill, COLLECTION_NAME);
+    void injectElements_initialisesDocumentContextFromDocument() {
+        Bill bill = mockBillWithContent(BILL_CONTENT);
+        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_ID, PACKAGE_PATH, bill, COLLECTION_NAME);
         givenStrategyReturnsContentUnchanged();
 
         injectElementService.injectElements(requestFor(DOCUMENT_ID, SectionType.CITATIONS));
@@ -166,9 +180,9 @@ class InjectElementServiceImplTest {
     // --- Document persistence ---
 
     @Test
-    void injectElements_savesUpdatedContentToCorrectBill() {
-        Bill bill = billWithContent(BILL_CONTENT);
-        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_PATH, bill, COLLECTION_NAME);
+    void injectElements_savesUpdatedContentToCorrectDocument() {
+        Bill bill = mockBillWithContent(BILL_CONTENT);
+        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_ID, PACKAGE_PATH, bill, COLLECTION_NAME);
         givenStrategyReturnsContentUnchanged();
 
         injectElementService.injectElements(requestFor(DOCUMENT_ID, SectionType.CITATIONS));
@@ -178,8 +192,8 @@ class InjectElementServiceImplTest {
 
     @Test
     void injectElements_auditMessageContainsSingleOperationName() {
-        Bill bill = billWithContent(BILL_CONTENT);
-        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_PATH, bill, COLLECTION_NAME);
+        Bill bill = mockBillWithContent(BILL_CONTENT);
+        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_ID, PACKAGE_PATH, bill, COLLECTION_NAME);
         givenStrategyReturnsContentUnchanged();
 
         injectElementService.injectElements(requestFor(DOCUMENT_ID, SectionType.CITATIONS));
@@ -189,8 +203,8 @@ class InjectElementServiceImplTest {
 
     @Test
     void injectElements_auditMessageDeduplicatesRepeatedOperationNames() {
-        Bill bill = billWithContent(BILL_CONTENT);
-        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_PATH, bill, COLLECTION_NAME);
+        Bill bill = mockBillWithContent(BILL_CONTENT);
+        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_ID, PACKAGE_PATH, bill, COLLECTION_NAME);
         givenStrategyReturnsContentUnchanged();
 
         injectElementService.injectElements(requestFor(DOCUMENT_ID, SectionType.CITATIONS, SectionType.RECITALS));
@@ -201,8 +215,8 @@ class InjectElementServiceImplTest {
 
     @Test
     void injectElements_whenUpdateDocumentThrows_wrapsInInjectElementException() {
-        Bill bill = billWithContent(BILL_CONTENT);
-        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_PATH, bill, COLLECTION_NAME);
+        Bill bill = mockBillWithContent(BILL_CONTENT);
+        givenFullyAuthorised(DOCUMENT_ID, PACKAGE_ID, PACKAGE_PATH, bill, COLLECTION_NAME);
         givenStrategyReturnsContentUnchanged();
         when(documentContentService.updateDocument(any(), any(), any()))
                 .thenThrow(new RuntimeException("Storage failure"));
@@ -213,10 +227,16 @@ class InjectElementServiceImplTest {
 
     // --- Helpers ---
 
-    private void givenPackageFound(String documentId, String packagePath) {
+    private void givenPackageFound(String documentRef, String packageId, String packagePath, Bill bill) {
         LeosPackage leosPackage = mock(LeosPackage.class);
+        when(leosPackage.getId()).thenReturn(packageId);
         when(leosPackage.getPath()).thenReturn(packagePath);
-        when(packageService.findPackageByDocumentRef(eq(documentId), eq(Proposal.class))).thenReturn(leosPackage);
+        when(packageService.findPackageByDocumentRef(eq(documentRef), eq(XmlDocument.class))).thenReturn(leosPackage);
+        when(packageService.findDocumentsByPackageId(eq(packageId), eq(XmlDocument.class), eq(false), eq(true)))
+                .thenReturn(List.of(bill));
+        BillMetadata metadata = mock(BillMetadata.class);
+        when(metadata.getRef()).thenReturn(documentRef);
+        doReturn(Option.some(metadata)).when(bill).getMetadata();
     }
 
     private void givenProposalFound(String packagePath, Proposal proposal) {
@@ -224,25 +244,17 @@ class InjectElementServiceImplTest {
         when(proposalService.populateProposalMetadataFromXml(proposal)).thenReturn(proposal);
     }
 
-    private void givenBillFound(String packagePath, Bill bill) {
-        when(billService.findBillByPackagePath(packagePath)).thenReturn(bill);
-        when(securityContext.hasPermission(bill, LeosPermission.CAN_UPDATE)).thenReturn(true);
-    }
-
-    private void givenFullyAuthorised(String documentId, String packagePath, Bill bill, String collectionName) {
-        givenPackageFound(documentId, packagePath);
+    private void givenFullyAuthorised(String documentId, String packageId, String packagePath, Bill bill, String collectionName) {
+        givenPackageFound(documentId, packageId, packagePath, bill);
         givenProposalFound(packagePath, proposalWithCollection(collectionName));
-        givenBillFound(packagePath, bill);
+        when(securityContext.hasPermission(bill, LeosPermission.CAN_UPDATE)).thenReturn(true);
         when(strategyFactory.getStrategy(Operation.CLEAN)).thenReturn(operationStrategy);
+        when(bill.getCategory()).thenReturn(LeosCategory.BILL);
     }
 
     private void givenStrategyReturnsContentUnchanged() {
-        when(operationStrategy.execute(any(byte[].class), any(SectionRequest.class), anyString()))
+        when(operationStrategy.execute(any(byte[].class), any(SectionRequest.class), anyString(), any()))
                 .thenAnswer(i -> i.getArgument(0));
-    }
-
-    private Proposal mockProposal() {
-        return mock(Proposal.class);
     }
 
     private Proposal proposalWithCollection(String collectionName) {
@@ -257,7 +269,7 @@ class InjectElementServiceImplTest {
         return mock(Bill.class);
     }
 
-    private Bill billWithContent(byte[] contentBytes) {
+    private Bill mockBillWithContent(byte[] contentBytes) {
         Content.Source source = mock(Content.Source.class);
         when(source.getBytes()).thenReturn(contentBytes);
         Content content = mock(Content.class);
@@ -270,15 +282,14 @@ class InjectElementServiceImplTest {
     private DocumentLinesRequest requestFor(String documentId, SectionType... types) {
         DocumentLinesRequest request = new DocumentLinesRequest();
         request.setDocumentId(documentId);
-        request.setSections(List.of(
-                java.util.Arrays.stream(types)
-                        .map(type -> {
-                            SectionRequest section = new SectionRequest();
-                            section.setSectionType(type);
-                            section.setOperation(Operation.CLEAN);
-                            return section;
-                        })
-                        .toArray(SectionRequest[]::new)));
+        request.setSections(Arrays.stream(types)
+                .map(type -> {
+                    SectionRequest section = new SectionRequest();
+                    section.setSectionType(type);
+                    section.setOperation(Operation.CLEAN);
+                    return section;
+                })
+                .toList());
         return request;
     }
 

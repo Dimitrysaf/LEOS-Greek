@@ -375,7 +375,7 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public ExtPackageResult createExtProposal(String templateKey, String[] languageCodes, String docPurpose) {
+    public List<ExtPackageResult> createExtProposal(String templateKey, String[] languageCodes, String docPurpose) {
         try {
             List<String> languages = (languageCodes == null || languageCodes.length == 0)
                     ? new ArrayList<>(Collections.singletonList("EN"))
@@ -384,7 +384,7 @@ public abstract class ApiServiceImpl implements ApiService {
             if (languages.size() == 1 && "ALL".equals(languages.getFirst())) {
                 languages = languageGroupService.getLanguageList().stream().map(StringUtils::upperCase).collect(Collectors.toList());
             } else if (!languages.contains("EN")) {
-                return new ExtPackageResult("Language list must include EN", 400);
+                return Collections.singletonList(new ExtPackageResult("Language list must include EN", 400));
             }
 
 
@@ -398,23 +398,27 @@ public abstract class ApiServiceImpl implements ApiService {
             CreateCollectionResult enResult = createCollectionService.createCollection(documentVO, false);
             languages.remove("EN");
 
+            List<ExtPackageResult> results = new ArrayList<>();
+            results.add(new ExtPackageResult(enResult, "EN"));
+
             documentVO.setRef(enResult.getProposalId());
             try {
                 for (String langCode : languages) {
                     documentVO.setLanguage(langCode);
-                    createCollectionService.createCollection(documentVO, true);
+                    CreateCollectionResult langResult = createCollectionService.createCollection(documentVO, true);
+                    results.add(new ExtPackageResult(langResult, langCode));
                 }
             } catch (Exception ex) {
                 LeosPackage mainPackage = packageService.findPackageByDocumentRef(enResult.getProposalId(), Proposal.class);
                 packageService.deletePackage(mainPackage);
 
                 LOG.error("Error occurred while creating linguistic versions: {}", ex.getMessage());
-                return new ExtPackageResult(ex.getMessage());
+                return Collections.singletonList(new ExtPackageResult(ex.getMessage()));
             }
-            return new ExtPackageResult(enResult);
+            return results;
         } catch (Exception e) {
             LOG.error("Error occurred while creating ext proposal: {}", e.getMessage());
-            return new ExtPackageResult(e.getMessage());
+            return Collections.singletonList(new ExtPackageResult(e.getMessage()));
         }
     }
 

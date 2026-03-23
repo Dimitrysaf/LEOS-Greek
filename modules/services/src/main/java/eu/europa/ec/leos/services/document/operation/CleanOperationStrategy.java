@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.document.operation;
 
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.services.dto.request.LineItem;
 import eu.europa.ec.leos.services.dto.request.SectionRequest;
 import eu.europa.ec.leos.services.dto.request.SectionType;
@@ -62,9 +63,9 @@ public class CleanOperationStrategy implements OperationStrategy {
     }
 
     @Override
-    public byte[] execute(byte[] content, SectionRequest section, String documentCollectionName) {
+    public byte[] execute(byte[] content, SectionRequest section, String documentCollectionName, LeosCategory category) {
         try {
-            sectionContentValidator.validate(section.getSectionType(), section.getItems(), documentCollectionName);
+            sectionContentValidator.validate(section.getSectionType(), section.getItems(), documentCollectionName, category);
             Document doc = parseXml(content);
             Node sectionNode = findSection(doc, section.getSectionType());
 
