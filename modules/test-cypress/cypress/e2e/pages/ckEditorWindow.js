@@ -712,10 +712,19 @@ class ckEditorWindow {
                 let editor = w.CKEDITOR.instances[Object.keys(w.CKEDITOR.instances)[0]];
                 let elementToPutCursorParent = editor.element.findOne(element);
                 let elementToPutCursor = elementToPutCursorParent.getChild(child);
+                let textNode;
+
+                if (elementToPutCursor.type === w.CKEDITOR.NODE_TEXT) {
+                    textNode = elementToPutCursor;
+                } else {
+                    textNode = elementToPutCursor.getFirst(e => e.type === w.CKEDITOR.NODE_TEXT);
+                }
+                let textLength = textNode.getText().length;
+                let safeOffset = Math.min(offset, textLength);
                 let range = editor.createRange();
                 range.moveToPosition(elementToPutCursor, w.CKEDITOR.POSITION_AFTER_START);
-                range.setStart(elementToPutCursor, offset);
-                range.setEnd(elementToPutCursor, offset);
+                range.setStart(textNode, safeOffset);
+                range.setEnd(textNode, safeOffset);
                 range.collapse(true);
                 // range.select();
                 // Force selection to this range

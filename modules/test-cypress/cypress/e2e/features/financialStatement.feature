@@ -8,7 +8,7 @@ Feature: financial statement page regression features
     Given navigate to leos application with "User1"
     Then user is on home page
 
-  @operationInFinancialStatement @local
+  @operationInFinancialStatement @local @focus
   Scenario: add section for financial statement document on Proposal Screen
     When click on Create act button
     Then user is on create new legislative document window

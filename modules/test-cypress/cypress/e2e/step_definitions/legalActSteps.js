@@ -799,3 +799,7 @@ ckEditorWindow. getPointOfParagraphOfArticle(liNumber, dataAknElement, parentLiN
 
 });
 
+Then('{string} tag {int} of organization tag {int} of signature of block {int} contains text {string}', (delIndex, orgIndex, BlockNumber, expectedText) => {
+    legalActPage.getOrganizationFromBlock(blockNumber).find('del').eq(delIndex-1).find('organization').eq(orgIndex-1).should('have.text', expectedText);
+
+});

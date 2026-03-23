@@ -21,7 +21,7 @@ class legalActPage {
         leosSoftMoveLabel: () => this.elements.aknBody().find('span.leos-soft-move-label'),
         recitals: () => cy.xpath('//recitals'),
         recitalSection: () => this.elements.recitals().children('recitals'),
-        SignatureBlock: () => cy.get('conclusions block')
+        SignatureBlock: () => cy.get('conclusions>block')
     }
 
     clickCloseBtn() {
@@ -408,6 +408,13 @@ class legalActPage {
 
     getAknpTagOfCitation(citationNumber) {
         return this.getCitation(citationNumber).find('aknp');
+    }
+
+    getOrganizationTagOfSignatureOfBlock(editTag, tagName, tagNumber, signatureNumber, blockNumber) {
+        return this.getBlock(blockNumber)
+            .find('signature').eq(signatureNumber - 1)
+            .find(tagName).eq(tagNumber - 1)
+            .find(editTag);
     }
 }
 export default new legalActPage();
