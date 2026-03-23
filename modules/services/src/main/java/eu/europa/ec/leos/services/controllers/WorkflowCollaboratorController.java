@@ -63,6 +63,7 @@ public class WorkflowCollaboratorController implements WorkflowCollaboratorApi {
         final String clientSystemId = leosClient.getName();
         final String proposalReference = encodeParam(proposalRef);
         Proposal proposal = proposalService.getProposalByRef(proposalReference);
+        final String proposalUrl = urlBuilder.buildProposalViewUrl(proposal.getDocumentRef());
         logInfo(log, "workflow-collaborators: proposalRef:%s, payload:%s, securityContext.user:%s",
                 proposalReference,
                 workflowCollaboratorAclRequest.toString(),
@@ -72,13 +73,13 @@ public class WorkflowCollaboratorController implements WorkflowCollaboratorApi {
         final List<AccessDTO> accessControlList = externalSystemACLService.getAccessControlList(workflowCollaboratorAclRequest.getAclCallbackUrl());
         accessControlList.stream()
                 .sorted(Comparator.comparing(c -> !collaboratorService.isRoleOwner(c.getRole())))
-                .forEach(c -> addWorkflowCollaborator(proposal, c, clientSystemId));
+                .forEach(c -> addWorkflowCollaborator(proposal, proposalUrl, c, clientSystemId));
 
         proposal.getCollaborators().stream()
                 .filter(c -> CollaboratorUtils.matchLeosClientId(c, clientSystemId))
                 .filter(c -> accessControlList.stream()
                         .noneMatch(acl -> c.getLogin().equalsIgnoreCase(StringUtils.defaultIfEmpty(acl.getUserId(), acl.getEntity()))))
-                .forEach(c -> deleteWorkflowCollaborator(proposal, c));
+                .forEach(c -> deleteWorkflowCollaborator(proposal, proposalUrl, c));
 
         return new ResponseEntity<>(workflowConfigId, HttpStatus.OK);
     }
@@ -91,38 +92,38 @@ public class WorkflowCollaboratorController implements WorkflowCollaboratorApi {
         return Optional.empty();
     }
 
-    private void addWorkflowCollaborator(Proposal proposal, AccessDTO accessDTO, String clientSystemId) {
+    private void addWorkflowCollaborator(Proposal proposal, String proposalUrl, AccessDTO accessDTO, String clientSystemId) {
         final String userId = StringUtils.defaultIfEmpty(accessDTO.getUserId(), accessDTO.getEntity());
         final String roleName = accessDTO.getRole();
         final String connectedDG = !accessDTO.getAclType().equals(AccessDTO.AclType.ENTITY) ? accessDTO.getEntity() : null;
-        String proposalUrl = urlBuilder.buildProposalViewUrl(proposal.getDocumentRef());
         try {
-            if (isCollaboratorPresent(proposal, userId, clientSystemId)) {
-                collaboratorService.removeCollaborator(proposal, userId, roleName, connectedDG, proposalUrl, clientSystemId);
-            }
+            getCollaborator(proposal, userId, clientSystemId).ifPresent(c -> {
+                collaboratorService.removeCollaborator(proposal, userId, c.getRole(), connectedDG, proposalUrl, clientSystemId);
+                proposal.getCollaborators().remove(c);
+            });
             collaboratorService.addCollaborator(proposal, userId, userId, roleName, connectedDG, proposalUrl, clientSystemId);
         } catch (CollaboratorException e) {
-            log.warn("Error adding workflow collaborator with userId '{}', skip addition!!!. Error: {}", userId, e.getMessage());
+            log.warn("Error adding workflow collaborator with userId '{}' and role '{}', skip addition!!!. Error: {}", userId, roleName, e.getMessage());
         }
     }
 
-    private void deleteWorkflowCollaborator(Proposal proposal, Collaborator collaborator) {
+    private void deleteWorkflowCollaborator(Proposal proposal, String proposalUrl, Collaborator collaborator) {
         final String userId = collaborator.getLogin();
         final String roleName = collaborator.getRole();
         final String connectedDG = collaborator.getEntity();
         final String clientSystemId = collaborator.getLeosClientId();
-        String proposalUrl = urlBuilder.buildProposalViewUrl(proposal.getDocumentRef());
         try {
             collaboratorService.removeCollaborator(proposal, userId, roleName, connectedDG, proposalUrl, clientSystemId);
         } catch (CollaboratorException e) {
-            log.warn("Error removing workflow collaborator with userId '{}', skip removing!!!. Error: {}", userId, e.getMessage());
+            log.warn("Error removing workflow collaborator with userId '{}' and role '{}', skip removing!!!. Error: {}", userId, roleName, e.getMessage());
         }
     }
 
-    private boolean isCollaboratorPresent(Proposal proposal, String userId, String leosClientId) {
+    private Optional<Collaborator> getCollaborator(Proposal proposal, String userId, String leosClientId) {
         return proposal.getCollaborators().stream()
-                .anyMatch(collaborator -> collaborator.getLogin().equals(userId)
-                        && (CollaboratorUtils.matchLeosClientId(collaborator, leosClientId)));
+                .filter(collaborator -> collaborator.getLogin().equals(userId)
+                        && CollaboratorUtils.matchLeosClientId(collaborator, leosClientId))
+                .findFirst();
     }
 
     /**
