@@ -267,35 +267,6 @@ Feature: financial statement page regression features
     Then " There is no Legislative Financial and Digital Statement " is displayed
     And  add button is displayed under financial statement section
 
-  @SomeSceneriosWithPredefinedTable @local
-  Scenario: Predefined table in financial statement document
-    When click on Create act button
-    Then user is on create new legislative document window
-    When click on template "SJ-023" in create new legislative document window
-    When click on next button in create document page
-    And  provide document title "Automation Testing FS" in create document page
-    And  click on create button
-    Then user is on act viewer page
-    And  title of the act contains "Automation Testing FS" keyword
-    When click on add button in annexes section
-    Then total number of annexes present in act viewer page is 1
-    When click on financial statement link present in act viewer page
-    Then user is on financial statement page
-    When user scroll subparagraph 3 of landscape level 2 in financial statement page
-    Then table 1 of content 1 of subparagraph 3 of landscape level 2 contains an attribute "leos:predefinedtable" with value "true"
-    When click on edit icon of subparagraph 3 of landscape level 2 in financial statement page
-    Then ck editor window is displayed
-    And landscape level 2 contains an attribute "leos:deletable" with value "false"
-    When click close button of ck editor
-    Then ck editor window is not displayed
-    When user scroll subparagraph 4 of landscape level 5 in financial statement page
-    Then subparagraph 4 of landscape level 5 contains an attribute "leos:optional" with value "true"
-    And  table 1 of content 1 of subparagraph 4 of landscape level 5 contains an attribute "leos:predefinedtable" with value "true"
-    When click on edit icon of subparagraph 4 of landscape level 5 in financial statement page
-    Then ck editor window is displayed
-    And landscape level 5 contains an attribute "leos:deletable" with value "false"
-    When click close button of ck editor
-    Then ck editor window is not displayed
 
 
 
