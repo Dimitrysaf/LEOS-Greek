@@ -721,17 +721,17 @@ Then('recital {int} doest not contain subflow', function (recitalNumber) {
 Then('recital section count is {int}', (recitalSectionCount) => {
     legalActPage.elements.recitalSection().should('have.length', recitalSectionCount);
 });
-Then('block {int} contains the signature organisation text {string}', function (blockNumber, text) {
-    legalActPage.getOrganizationFromBlock(blockNumber).should("have.text", text);
 
+Then('block {int} contains the signature organisation {int} contains text {string}', function (blockNumber,organizationIndex, text) {
+    legalActPage.getOrganizationFromBlock(blockNumber,organizationIndex).should("have.text", text);
 })
 
-Then ('block {int} contains the  role text {string}', function (blockNumber, text) {
-    legalActPage.getRoleFromBlock(blockNumber).should("have.text", text);
+Then ('block {int} contains the  role {int} contains text {string}', function (blockNumber,roleIndex, text) {
+    legalActPage.getRoleFromBlock(blockNumber,roleIndex).should("have.text", text);
 });
 
-Then ('block {int} contains the signature of the person {string}', function (blockNumber, text) {
-    legalActPage.getSignatureOfThePerson(blockNumber).should("have.text", text);
+Then ('block {int} contains the signature of the person {int} contains {string}', function (blockNumber,signatureOfThePersonIndex,text) {
+    legalActPage.getSignatureOfThePerson(blockNumber,signatureOfThePersonIndex).should("have.text", text);
 });
 
 When('mouseover and click on block {int}',(blockNumber) => {
@@ -799,7 +799,24 @@ ckEditorWindow. getPointOfParagraphOfArticle(liNumber, dataAknElement, parentLiN
 
 });
 
-Then('{string} tag {int} of organization tag {int} of signature of block {int} contains text {string}', (delIndex, orgIndex, BlockNumber, expectedText) => {
-    legalActPage.getOrganizationFromBlock(blockNumber).find('del').eq(delIndex-1).find('organization').eq(orgIndex-1).should('have.text', expectedText);
+Then('{string} tag {int} of organization {int} of signature of block {int} contains text {string}', (tagName, tagIndex, organizationIndex, blockNumber, expectedText) => {
+        legalActPage
+            .getOrganizationFromBlock(blockNumber, organizationIndex)
+            .find(tagName)
+            .eq(tagIndex - 1)
+            .should('have.text', expectedText);
+    });
 
+Then('{string} tag {int} of role {int} of signature of block {int} contains text {string}', (tagName, tagIndex, roleIndex, blockNumber, expectedText) => {
+    legalActPage.getRoleFromBlock(blockNumber, roleIndex)
+        .find(tagName)
+        .eq(tagIndex - 1)
+        .should('contain.text', expectedText);
+});
+
+Then('{string} tag {int} of person {int} of signature of block {int} contains text {string}', (tagName, tagIndex, signatureOfThePersonIndex, blockNumber, expectedText) => {
+    legalActPage.getSignatureOfThePerson(blockNumber, signatureOfThePersonIndex)
+        .find(tagName)
+        .eq(tagIndex - 1)
+        .should('contain.text', expectedText);
 });

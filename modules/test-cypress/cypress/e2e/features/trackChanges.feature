@@ -2009,8 +2009,8 @@ Feature: Track Changes Feature
     When click on cancel button in cke dialog window
     And  click close button of ck editor
 
-  # Ticket : #3416Autonomus acts templates: Not possible to navigate to Act view page once signature is changed to alternate one.
-  @switchingAlternativeSignatureWithTC @local @focus
+  # Ticket : #3416 Autonomous acts templates: Not possible to navigate to Act view page once signature is changed to alternate one.
+  @switchingAlternativeSignatureWithTC @local
   Scenario: user is able to switch alternative article
     Given navigate to leos application with "User1"
     Then user is on home page
@@ -2020,7 +2020,7 @@ Feature: Track Changes Feature
     When click on next button in create document page
     When tick guidance approval checkbox in create document page
     When click on next button in create document page
-    And  provide document title "Automation Testing Alternative clause" in create document page
+    And  provide document title "Automation Testing Alternative Signature " in create document page
     And  click on create button
     Then user is on act viewer page
     When click on legal act link present in act viewer page
@@ -2029,9 +2029,9 @@ Feature: Track Changes Feature
     And  ribbon toolbar is maximized
     When enable track changes
     Then enable track changes toggle bar is on in ribbon toolbar
-    And  block 1 contains the signature organisation text "For the Commission"
-    And block 1 contains the  role text "The President"
-    And block 1 contains the signature of the person "[...]"
+    And  block 1 contains the signature organisation 1 contains text "For the Commission"
+    And block 1 contains the  role 1 contains text "The President"
+    And block 1 contains the signature of the person 1 contains "[...]"
     When mouseover and click on block 1
     Then ck editor window is displayed
     And the block inside ck editor is not editable and contains attribute "contenteditable" with value "false"
@@ -2045,9 +2045,11 @@ Feature: Track Changes Feature
     When click on ok button in cke dialog window
     And click save and close button of ck editor
     Then ck editor window is not displayed
-   Then 'del' tag 1 of organization tag 1 of signature of block 1 contains text "For the Commission"
-   # And  'del' tag 1 of role tag of signature 1 of block 1 contains text "The President"
-    #And  'del' tag 1 of person tag of signature 1 of block 1 contains text "[...]"
-   #And  ins tag of organization tag of signature 1 of block 1 contains text "For the Commission"
-   # And  ins tag of role tag of signature 1 of block 1 contains text "On behalf of the President"
-    #And  ins tag of person tag of signature 1 of block 1 contains text "[...]"
+    Then "del" tag 1 of organization 1 of signature of block 1 contains text "For the Commission"
+    And  'del' tag 1 of role 1 of signature of block 1 contains text "The President"
+    And  'del' tag 1 of person 2 of signature of block 1 contains text "[...]"
+    And  'ins' tag 1 of organization 2 of signature of block 1 contains text "For the Commission"
+    And 'ins' tag 1 of role 2 of signature of block 1 contains text "On behalf of the President"
+    And 'ins' tag 1 of person 2 of signature of block 1 contains text "[...]"
+    When click on close button present in legal act page
+    Then user is on act viewer page
