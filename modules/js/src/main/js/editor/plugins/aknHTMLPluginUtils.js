@@ -41,7 +41,7 @@ define(function aknHTMLPluginUtilsModule(require) {
         const startContainer = result.startContainer;
         const endContainer = result.endContainer;
         if (startContainer === endContainer) {
-            element.removeAttribute(attribute);
+            startContainer.removeAttribute(attribute);
         }
     }
 
