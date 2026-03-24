@@ -248,8 +248,8 @@ define(function leosBase64ImageDialog(require) {
                     if (typeof(selectedImg.getAttribute("width")) == "string") orgWidth = selectedImg.getAttribute("width");
                     if (typeof(selectedImg.getAttribute("height")) == "string") orgHeight = selectedImg.getAttribute("height");
                     if ((orgWidth == null || orgHeight == null) && selectedImg.$) {
-                        orgWidth = selectedImg.$.width;
-                        orgHeight = selectedImg.$.height;
+                        orgWidth = Math.round(selectedImg.$.width);
+                        orgHeight = Math.round(selectedImg.$.height);
                     }
                     if (orgWidth != null && orgHeight != null) {
                         t.setValueOf("tab-source", "width", orgWidth);
