@@ -438,7 +438,7 @@ Feature: Legal Act Page Regression Features
     And content of point 2 of list 1 of paragraph 1 of article 5 contains "point b"
     And content of point 3 of list 1 of paragraph 1 of article 5 contains "point c"
     And content of point 4 of list 1 of paragraph 1 of article 5 contains "point d"
-
+#3039
     When mouseover and click on article 5
     Then ck editor window is displayed
     And  click at offset 7 in li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
@@ -1471,138 +1471,6 @@ Feature: Legal Act Page Regression Features
     Then total recital count is 1
     And recital section count is 0
 
-
-  @OutdentScenerio @local
-  Scenario: Outdent Scenerio for article #2982
-    Given navigate to leos application with "User1"
-    Then user is on home page
-    When click on Create act button
-    Then user is on create new legislative document window
-    When click on template "SJ-023" in create new legislative document window
-    When click on next button in create document page
-    And  provide document title "Automation Testing for Outdent Scenerio" in create document page
-    And  click on create button
-    Then user is on act viewer page
-    When click on legal act link present in act viewer page
-    Then user is on legal act page
-    When mouseover and click on article 1
-    Then ck editor window is displayed
-    Then  li 1 with data-akn-element "paragraph" of article contains "Text..." in edition mode
-    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-    And click enter from keyboard in edition mode
-    And click on increase indent icon present in ck editor panel
-    And click on increase indent icon present in ck editor panel
-    And  add "point a" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And  add "sub point a" at current cursor position in edition mode
-    And click on decrease indent icon present in ck editor panel
-    When click save and close button of ck editor
-    Then ck editor window is not displayed
-    And content of subparagraph 1 of list 1 of paragraph 1 of article 1 contains "Text..."
-    And content of point 1 of list 1 of paragraph 1 of article 1 contains "point a"
-    And content of subparagraph 2 of list 1 of paragraph 1 of article 1 contains "sub point a"
-
-
-  @OutdentScenerio2 @local @focus
-  Scenario: Outdent Scenerio for article #2990
-    Given navigate to leos application with "User1"
-    Then user is on home page
-    When click on Create act button
-    Then user is on create new legislative document window
-    When click on template "SJ-023" in create new legislative document window
-    When click on next button in create document page
-    And  provide document title "Automation Testing for Outdent Scenerio2" in create document page
-    And  click on create button
-    Then user is on act viewer page
-    When click on legal act link present in act viewer page
-    Then user is on legal act page
-    When mouseover and click on article 1
-    Then ck editor window is displayed
-    Then  li 1 with data-akn-element "paragraph" of article contains "Text..." in edition mode
-    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-    And click enter from keyboard in edition mode
-    And click on increase indent icon present in ck editor panel
-    And click on increase indent icon present in ck editor panel
-    And  add "point a" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And  add "point b" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And  add "point c" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And  add "point d" at current cursor position in edition mode
-    When click save and close button of ck editor
-    Then ck editor window is not displayed
-    And content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 1 contains "Text..."
-    And content of point 1 of list 1 of paragraph 1 of article 1 contains "point a"
-    And content of point 2 of list 1 of paragraph 1 of article 1 contains "point b"
-    And content of point 3 of list 1 of paragraph 1 of article 1 contains "point c"
-    And content of point 4 of list 1 of paragraph 1 of article 1 contains "point d"
-    When mouseover and click on article 1
-    Then ck editor window is displayed
-    And  click at offset 7 in li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-    And click on decrease indent icon present in ck editor panel
-    And click on decrease indent icon present in ck editor panel
-    And click save and close button of ck editor
-    Then ck editor window is not displayed
-    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 1 contains "Text..."
-    And content of point 1 of list 1 of paragraph 1 of article 1 contains "point a"
-    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 2 of article 1 contains "point b"
-    And content of point 1 of list 1 of paragraph 2 of article 1 contains "point c"
-    And content of point 2 of list 1 of paragraph 2 of article 1 contains "point d"
-    When click on insert after icon of article 1
-    And mouseover and click on article 2
-    When mouseover and click on article 1
-    Then ck editor window is displayed
-    Then  li 1 with data-akn-element "paragraph" of article contains "Text..." in edition mode
-    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-    And click enter from keyboard in edition mode
-    And click on increase indent icon present in ck editor panel
-    And click on increase indent icon present in ck editor panel
-    And  add "point a" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And  add "point b" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And  add "point c" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And  add "point d" at current cursor position in edition mode
-    When click save and close button of ck editor
-    Then ck editor window is not displayed
-    And content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 1 contains "Text..."
-    And content of point 1 of list 1 of paragraph 1 of article 1 contains "point a"
-    And content of point 2 of list 1 of paragraph 1 of article 1 contains "point b"
-    And content of point 3 of list 1 of paragraph 1 of article 1 contains "point c"
-    And content of point 4 of list 1 of paragraph 1 of article 1 contains "point d"
-    When mouseover and click on article 1
-    Then ck editor window is displayed
-    And  click at offset 7 in li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-    And click on decrease indent icon present in ck editor panel
-    And click on decrease indent icon present in ck editor panel
-    And click save and close button of ck editor
-    Then ck editor window is not displayed
-    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 1 contains "Text..."
-    And content of point 1 of list 1 of paragraph 1 of article 1 contains "point a"
-    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 2 of article 1 contains "point b"
-    And content of point 1 of list 1 of paragraph 2 of article 1 contains "point c"
-    And content of point 2 of list 1 of paragraph 2 of article 1 contains "point d"
-    And mouseover and click on article 3
-    Then ck editor window is displayed
-    Then  li 1 with data-akn-element "paragraph" of article contains "This Regulation shall enter into force on the [...] day following that of its publication in the Official Journal of the European Union" in edition mode
-    When click at offset 105 of paragraph in edition mode
-   # And click enter from keyboard in edition mode
-   # And click on increase indent icon present in ck editor panel
-   # And click on increase indent icon present in ck editor panel
-   # And  add "point a" at current cursor position in edition mode
-   # And click enter from keyboard in edition mode
-   # And  add "point b" at current cursor position in edition mode
-#    When click save and close button of ck editor
-#    Then ck editor window is not displayed
-#    And content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 1 contains "This Regulation shall enter into force on the [...] day following that of its publication in the"
-#    And content of point 1 of list 1 of paragraph 1 of article 1 contains "point a"
-#    And content of point 2 of list 1 of paragraph 1 of article 1 contains "point b"
-#    When  mouseover and click on article 3
-#    Then ck editor window is displayed
-#    And  click at offset 7 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-#
 
 
 
