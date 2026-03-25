@@ -31,7 +31,9 @@ define(function leosTablePluginModule(require) {
     var DELETE_KEY = 46;
     var BACKSPACE_KEY = 8;
     var ENTER_KEY = 13;
+    var TAB_KEY = 9;
     var SHIFT_ENTER = CKEDITOR.SHIFT + ENTER_KEY;
+    var SHIFT_TAB = CKEDITOR.SHIFT + TAB_KEY;
     var HTML_CAPTION = "caption";
     var HTML_TABLE = "table";
     var changeStateElements = {
@@ -124,6 +126,20 @@ define(function leosTablePluginModule(require) {
                 eventType : 'key',
                 key : DELETE_KEY,
                 action : _handleTableRemoval
+            });
+
+            leosKeyHandler.on({
+                editor : editor,
+                eventType : 'key',
+                key : TAB_KEY,
+                action : _onTabKey
+            });
+
+            leosKeyHandler.on({
+                editor : editor,
+                eventType : 'key',
+                key : SHIFT_TAB,
+                action : _onShiftTabKey
             });
 
             // Prevent typing outside table (only in table-only mode)
@@ -433,6 +449,52 @@ define(function leosTablePluginModule(require) {
             var currentElement = startElement.$;
             if ($(currentElement).parents(HTML_TABLE).length) {
                 context.event.cancel();
+            }
+        }
+    }
+
+    /**
+     * Handle Tab key inside a table cell: navigate to the next cell
+     */
+    function _onTabKey(context) {
+        let target = context.selection.getStartElement()
+            .getAscendant((e) => e.is?.('td') || e.is?.('th'), true);
+        if (target) { // Tab was pressed inside a table cell
+            context.event.cancel();
+            let nextCell
+                =  target.getNext((e) => e.is?.('td') || e.is?.('th'))  // Select the next cell
+                ?? target.getParent(e => e.is?.('tr'))          // Or the first cell from the next row
+                    ?.getNext(e => e.is?.('tr'))
+                    ?.getChildren((e) => e.is?.('td') || e.is?.('th'))
+                    ?.getItem(0)
+            if (nextCell) {
+                const range = context.event.editor.createRange();
+                range.moveToPosition(nextCell, CKEDITOR.POSITION_AFTER_START);
+                range.select();
+            }
+        }
+
+    }
+
+    /**
+     * Handle Shift+Tab key inside a table cell: navigate to the previous cell
+     */
+    function _onShiftTabKey(context) {
+        let target = context.selection.getStartElement()
+            .getAscendant((e) => e.is?.('td') || e.is?.('th'), true);
+        if (target) { // Shift+Tab was pressed inside a table cell
+            context.event.cancel();
+            let childrenCells;
+            let previousCell
+                =  target.getPrevious((e) => e.is?.('td') || e.is?.('th'))      // Select the previous cell
+                ?? (childrenCells = target.getParent(e => e.is?.('tr')) // Or the last cell from the previous row
+                    ?.getPrevious(e => e.is?.('tr'))
+                    ?.getChildren((e) => e.is?.('td') || e.is?.('th')))
+                    ?.getItem(childrenCells.count() - 1)
+            if (previousCell) {
+                const range = context.event.editor.createRange();
+                range.moveToPosition(previousCell, CKEDITOR.POSITION_AFTER_START);
+                range.select();
             }
         }
     }
