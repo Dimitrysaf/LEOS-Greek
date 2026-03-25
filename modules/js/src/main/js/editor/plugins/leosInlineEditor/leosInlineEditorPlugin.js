@@ -47,7 +47,7 @@ define(function leosInlineEditorPluginModule(require) {
 			editor.on('contentDom', function(event) {
                 var editor = event.editor,
                     editable = editor.editable();
-               editable.attachListener(editable, 'keydown', function(event) {
+                editable.attachListener(editable, 'keydown', function(event) {
                     if (event.data.getKeystroke() == CKEDITOR.CTRL + 36) {
                         event.data.preventDefault();
                         
