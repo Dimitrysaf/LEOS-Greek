@@ -376,6 +376,8 @@ Feature: Legal Act Page Regression Features
     And  content of subparagraph 1 of list 1 of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 3 contains "point a"
     And  content of subparagraph 1 of point 1 of list 1 of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 3 contains "point i"
     And  content of subparagraph 2 of point 1 of list 1 of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 3 contains "point i subparagraph"
+
+    # Ticket 2982: Issue while outdenting a point in article
     When click on insert after icon of article 3
     Then article 4 is displayed
     When mouseover and click on article 4
@@ -395,26 +397,7 @@ Feature: Legal Act Page Regression Features
     And content of point 1 of list 1 of paragraph 1 of article 4 contains "point a"
     And content of subparagraph 2 of list 1 of paragraph 1 of article 4 contains "sub point a"
 
-    # Ticket 2982
-    When click on insert after icon of article 3
-    Then article 4 is displayed
-    When mouseover and click on article 4
-    Then ck editor window is displayed
-    Then  li 1 with data-akn-element "paragraph" of article contains "Text..." in edition mode
-    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-    And click enter from keyboard in edition mode
-    And click on increase indent icon present in ck editor panel
-    And click on increase indent icon present in ck editor panel
-    And  add "point a" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And  add "sub point a" at current cursor position in edition mode
-    And click on decrease indent icon present in ck editor panel
-    When click save and close button of ck editor
-    Then ck editor window is not displayed
-    And content of subparagraph 1 of list 1 of paragraph 1 of article 4 contains "Text..."
-    And content of point 1 of list 1 of paragraph 1 of article 4 contains "point a"
-    And content of subparagraph 2 of list 1 of paragraph 1 of article 4 contains "sub point a"
-    #Ticket 2990
+    #Ticket 2990 :MERGE: Outdent is breaking the structure
     When click on insert after icon of article 4
     Then article 5 is displayed
     When mouseover and click on article 5
@@ -438,7 +421,6 @@ Feature: Legal Act Page Regression Features
     And content of point 2 of list 1 of paragraph 1 of article 5 contains "point b"
     And content of point 3 of list 1 of paragraph 1 of article 5 contains "point c"
     And content of point 4 of list 1 of paragraph 1 of article 5 contains "point d"
-#3039
     When mouseover and click on article 5
     Then ck editor window is displayed
     And  click at offset 7 in li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
@@ -451,7 +433,9 @@ Feature: Legal Act Page Regression Features
     And  content of subparagraph refersTo "~INP" of list 1 of paragraph 2 of article 5 contains "point b"
     And content of point 1 of list 1 of paragraph 2 of article 5 contains "point c"
     And content of point 2 of list 1 of paragraph 2 of article 5 contains "point d"
-    And mouseover and click on article 6
+
+    #Ticket #3039 :wrong structure created when we outdent a point inside unnumbered paragraph
+    When mouseover and click on article 6
     Then ck editor window is displayed
     Then  li 1 with data-akn-element "paragraph" of article contains "This Regulation shall enter into force on the [...] day following that of its publication in the Official Journal of the European Union" in edition mode
     When click at offset 39 of child 1 of li 1 with data-akn-element "paragraph" of article in edition mode
@@ -466,7 +450,6 @@ Feature: Legal Act Page Regression Features
     And content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 6 contains "This Regulation shall enter into force on the [...] day following that of its publication in the Official Journal of the European Union"
     And content of point 1 of list 1 of paragraph 1 of article 6 contains "point a"
     And content of point 2 of list 1 of paragraph 1 of article 6 contains "point b"
-
     When  mouseover and click on article 6
     Then ck editor window is displayed
     And  click at offset 7 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
