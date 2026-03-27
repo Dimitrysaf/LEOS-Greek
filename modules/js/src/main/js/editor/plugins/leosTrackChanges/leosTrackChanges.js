@@ -418,6 +418,21 @@ define(function leosTrackChangesModule(require) {
             return ((element != null) && !CKEDITOR.tools.trim(element.getText()));
         },
 
+        isEmptyElementOrOnlyImage: function(element) {
+
+            // Check if element has text content
+            if (CKEDITOR.tools.trim(element.getText())) {
+                return false;
+            }
+
+            // Check if element contains an image (only if element has find method)
+            if (element.find && element.find('img').count() > 0) {
+                return false;
+            }
+
+            return true;
+        },
+
         isTrackChangeElement: function(element, action) {
             var actions = action ? [action] : [this.INSERT_ACTION, this.DELETE_ACTION];
             for (var action of actions) {
@@ -478,11 +493,13 @@ define(function leosTrackChangesModule(require) {
 
         breakParentAndMoveTo: function(editor, element, parent, moveTo) {
             element.breakParent(parent);
-            if (this.isEmpty(element.getPrevious()) && (this.isTrackChangeElement(element.getPrevious(), this.INSERT_ACTION) || this.isTrackChangeElement(element.getPrevious(), this.DELETE_ACTION))) {
-                element.getPrevious().remove();
+            var previousElement = element.getPrevious();
+            if (previousElement && this.isEmptyElementOrOnlyImage(previousElement) && (this.isTrackChangeElement(previousElement, this.INSERT_ACTION) || this.isTrackChangeElement(previousElement, this.DELETE_ACTION))) {
+                previousElement.remove();
             }
-            if (this.isEmpty(element.getNext()) && (this.isTrackChangeElement(element.getNext(), this.INSERT_ACTION) || this.isTrackChangeElement(element.getNext(), this.DELETE_ACTION))) {
-                element.getNext().remove();
+            var nextElement = element.getNext();
+            if (nextElement && this.isEmptyElementOrOnlyImage(nextElement) && (this.isTrackChangeElement(nextElement, this.INSERT_ACTION) || this.isTrackChangeElement(nextElement, this.DELETE_ACTION))) {
+                nextElement.remove();
             }
             this.setToEditablePosition(editor, element, moveTo);
         },
