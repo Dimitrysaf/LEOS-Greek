@@ -36,6 +36,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -1913,4 +1914,103 @@ public class XercesUtils {
         }
     }
 
+    public static String getXPath(Node node) {
+        if (node == null) return "";
+        if (node.getNodeType() == Node.DOCUMENT_NODE) return "/";
+
+        StringBuilder xpath = new StringBuilder();
+        while (node != null && node.getNodeType() != Node.DOCUMENT_NODE) {
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                String id = XercesUtils.getAttributeValue(node, XMLID);
+                if (id != null) {
+                    xpath.insert(0, "//" + node.getNodeName() + "[@xml:id='" + id + "']");
+                    break; // id is unique, no need to go further up
+                }
+                int index = 1;
+                Node sibling = node.getPreviousSibling();
+                while (sibling != null) {
+                    if (sibling.getNodeType() == Node.ELEMENT_NODE && sibling.getNodeName().equals(node.getNodeName()))
+                        index++;
+                    sibling = sibling.getPreviousSibling();
+                }
+                xpath.insert(0, "/" + node.getNodeName() + "[" + index + "]");
+            }
+            node = node.getParentNode();
+        }
+        return xpath.toString();
+    }
+
+    public static String getXPathWithPrefix(Node node) {
+        if (node == null) return "";
+        if (node.getNodeType() == Node.DOCUMENT_NODE) return "/";
+
+        StringBuilder xpath = new StringBuilder();
+
+        while (node != null && node.getNodeType() != Node.DOCUMENT_NODE) {
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                String prefix = resolvePrefix(node);
+                String localName = node.getLocalName();
+
+                if (localName == null) {
+                    localName = node.getNodeName();
+                }
+
+                String name = (prefix != null && !prefix.isEmpty())
+                        ? prefix + ":" + localName
+                        : localName;
+
+                int index = getElementIndex(node);
+
+                xpath.insert(0, "/" + name + "[" + index + "]");
+            }
+            node = node.getParentNode();
+        }
+
+        return xpath.toString();
+    }
+
+    private static int getElementIndex(Node node) {
+        int index = 1;
+        Node sibling = node.getPreviousSibling();
+
+        while (sibling != null) {
+            if (sibling.getNodeType() == Node.ELEMENT_NODE &&
+                    equalsQName(sibling, node)) {
+                index++;
+            }
+            sibling = sibling.getPreviousSibling();
+        }
+
+        return index;
+    }
+
+    private static boolean equalsQName(Node a, Node b) {
+        String aLocal = a.getLocalName();
+        String bLocal = b.getLocalName();
+
+        if (aLocal == null || bLocal == null) {
+            return a.getNodeName().equals(b.getNodeName());
+        }
+
+        return aLocal.equals(bLocal) &&
+                Objects.equals(a.getNamespaceURI(), b.getNamespaceURI());
+    }
+
+    private static String resolvePrefix(Node node) {
+        if (node == null) return "";
+        String ns = node.getNamespaceURI();
+        if (ns == null) return "";
+        switch (ns) {
+            case NAMESPACE_AKN_URI:
+                return NAMESPACE_AKN_NAME;
+            case "http://www.w3.org/XML/1998/namespace":
+                return "xml";
+            case "urn:eu:europa:ec:leos":
+                return "leos";
+            case NAMESPACE_AKN4EU_URI:
+                return NAMESPACE_AKN4EU_NAME;
+            default:
+                return ""; // fallback (or generate dynamic prefix)
+        }
+    }
 }

@@ -1453,9 +1453,18 @@ export class DocumentService {
     const rangeArray = [];
     const wrapperIdArray = [];
     for (const [index, res] of resultArray.entries()) {
-      const element = document.getElementById(
+      let element = document.getElementById(
         `${res.matchedElements[0].elementId}`,
       );
+      let elementSelectedByCss = null;
+      if (res.matchedElements[0].xpath) {
+        const cssFromXpath = this.xpathToCss(res.matchedElements[0].xpath);
+        elementSelectedByCss = document.querySelector(cssFromXpath);
+        if(elementSelectedByCss){
+          element = elementSelectedByCss;
+        }
+      }
+
       if (element) {
         let elementTextLength = 0;
         let previousElementTextLength = 0;
@@ -1717,6 +1726,28 @@ export class DocumentService {
   private formatVersionNumber(version: Version): string {
     const { major, intermediate, minor } = version.versionNumber;
     return `${major}.${intermediate}.${minor}`;
+  }
+
+  private xpathToCss(xpath: string): string {
+    if (!xpath) return "";
+
+    return xpath
+      .trim()
+      .replace(/^\/\//, "")
+      .replace(/\/\//g, " ")
+      .replace(/\//g, " > ")
+      .replace(/\b[\w-]+:/g, "")
+      .replace(/\[@id=['"]([^'"]+)['"]\]/g, "#$1")
+      .replace(/\[@class=['"]([^'"]+)['"]\]/g, (_, cls) => "." + cls.trim().replace(/\s+/g, "."))
+      .replace(/\[@([\w-]+)=['"]([^'"]+)['"]\]/g, '[$1="$2"]')
+      .replace(/\[@([\w-]+)\]/g, "[$1]")
+      .replace(/\[(\d+)\]/g, ":nth-of-type($1)")
+      .replace(/\btext\(\)/g, "")
+      .replace(/\bp\b/g, "aknP") // p->aknp
+      .replace(/\bbody\b/g, "aknBody") // p->aknp
+      .replace(/\btitle\b/g, "aknTitle") // p->aknp
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   isTrackChangesEnabled(){
