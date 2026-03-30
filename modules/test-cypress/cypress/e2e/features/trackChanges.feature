@@ -2011,12 +2011,12 @@ Feature: Track Changes Feature
 
   # Ticket : #3416 Autonomous acts templates: Not possible to navigate to Act view page once signature is changed to alternate one.
   @switchingAlternativeSignatureWithTC @local
-  Scenario: user is able to switch alternative article
+  Scenario: user is able to switch alternative signature
     Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
-    When click on template "SJ-023" in create new legislative document window
+    When click on template "SJ-003" in create new legislative document window
     When click on next button in create document page
     When tick guidance approval checkbox in create document page
     When click on next button in create document page
@@ -2047,7 +2047,7 @@ Feature: Track Changes Feature
     Then ck editor window is not displayed
     Then "del" tag 1 of organization 1 of signature of block 1 contains text "For the Commission"
     And  'del' tag 1 of role 1 of signature of block 1 contains text "The President"
-    And  'del' tag 1 of person 2 of signature of block 1 contains text "[...]"
+    And  'del' tag 1 of person 1 of signature of block 1 contains text "[...]"
     And  'ins' tag 1 of organization 2 of signature of block 1 contains text "For the Commission"
     And 'ins' tag 1 of role 2 of signature of block 1 contains text "On behalf of the President"
     And 'ins' tag 1 of person 2 of signature of block 1 contains text "[...]"
