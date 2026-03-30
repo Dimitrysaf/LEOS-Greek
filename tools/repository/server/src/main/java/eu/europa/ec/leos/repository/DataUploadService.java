@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.repository;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -142,6 +143,23 @@ abstract class DataUploadService {
                 }
             }
         }
+    }
+
+    public void setIsLastVersionAccordingToVersion(String version) {
+
+        String updateAllIsLastVersionTo0 = "update config_version set is_latest_version = 0";
+        jdbcTemplate.update(updateAllIsLastVersionTo0);
+
+        if (StringUtils.isNotEmpty(version)) {
+            String updateAllIsLastVersionAccordingToVersion = "update config_version v set is_latest_version = 1 \n" +
+                    "where version_label = (select max(version_label) from config, config_version where config.id = config_version.config_id and config.id=v.config_id group by config.id, name)";
+            jdbcTemplate.update(updateAllIsLastVersionAccordingToVersion);
+        } else {
+            String updateAllIsLastVersionAccordingToVersion = "update config_version v set is_latest_version = 1 \n" +
+                    "where version_label = (select max(version_label) from config, config_version where config.id = config_version.config_id and config.id=v.config_id and version_label <= ? group by config.id, name)";
+            jdbcTemplate.update(updateAllIsLastVersionAccordingToVersion, version, version);
+        }
+
     }
 
     public String getFileContent(Resource resource) {

@@ -18,7 +18,11 @@ public class LoadTemplatesCommandLineRunner implements CommandLineRunner {
     public void run(String... args) {
         if (args.length > 0) {
             String subdirectory = args[0];
-            templatesUploadService.loadConfigDataFromFilesInFolder(subdirectory);
+            String version = "";
+            if (args.length >= 2) {
+                version = args[1];
+            }
+            templatesUploadService.loadConfigDataFromFilesInFolder(subdirectory, version);
         } else {
             System.out.println("No subdirectory specified, skipping data initialization.");
         }

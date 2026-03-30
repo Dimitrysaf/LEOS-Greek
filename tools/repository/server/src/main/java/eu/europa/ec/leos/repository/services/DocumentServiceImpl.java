@@ -200,7 +200,11 @@ public class DocumentServiceImpl implements DocumentService {
     @Transactional(rollbackFor = Exception.class)
     public LeosDocument createDocumentFromSource(final String sourceDocumentId, final String packageName, final String name, Map<String, ?> metadata,
             final String labelVersion, int versionType, String comments, String userId) throws RepositoryException {
-        LeosDocument template = findTemplateByName((String) metadata.get("docTemplate"));
+        String templateName = (String) metadata.get("docTemplate");
+        if (metadata.get("language") != null) {
+            templateName = templateName + "-" + metadata.get("language");
+        }
+        LeosDocument template = findTemplateByName(templateName);
         metadata = mergeDocMetadataWithTemplateMetadata(metadata, template);
         return createDocumentFromContent(packageName, name, metadata, labelVersion, versionType, template.getSource(), comments, userId);
     }

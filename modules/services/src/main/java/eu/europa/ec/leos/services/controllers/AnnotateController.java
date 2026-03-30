@@ -41,7 +41,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
 @RestController
 @RequestMapping("/secured/annotation")
-public class AnnotateController {
+public class AnnotateController implements AnnotateApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(AnnotateController.class);
 
@@ -62,9 +62,8 @@ public class AnnotateController {
         this.xmlContentProcessor = xmlContentProcessor;
     }
 
-    @GetMapping(value = "/requestUserPermissions/{documentType}/{documentRef}")
-    @ResponseBody
-    public ResponseEntity<Object> requestUserPermissions(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> requestUserPermissions(String documentType, String documentRef) {
         try {
             documentType = encodeParam(documentType);
             documentRef = encodeParam(documentRef);
@@ -79,8 +78,7 @@ public class AnnotateController {
         }
     }
 
-    @GetMapping(value = "/requestSecurityToken")
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> requestSecurityToken() {
         try {
             String annotationToken = annotateApiService.getAnnotationToken();
@@ -92,9 +90,8 @@ public class AnnotateController {
         }
     }
 
-    @GetMapping(value = "/requestDocumentMetadata/{documentType}/{documentRef}")
-    @ResponseBody
-    public ResponseEntity<Object> requestDocumentMetadata(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef) {
+    @Override
+    public ResponseEntity<Object> requestDocumentMetadata(String documentType, String documentRef) {
         try {
             documentType = encodeParam(documentType);
             documentRef = encodeParam(documentRef);
@@ -109,8 +106,7 @@ public class AnnotateController {
         }
     }
 
-    @GetMapping(value = "/requestSearchMetadata")
-    @ResponseBody
+    @Override
     public ResponseEntity<Object> requestSearchMetadata() {
         try {
             List<AnnotateMetadata> searchMetadata = annotateApiService.requestSearchMetadata();
@@ -122,10 +118,9 @@ public class AnnotateController {
         }
     }
 
-    @PostMapping(value = "/requestMergeSuggestion/{documentType}/{documentRef}")
-    @ResponseBody
-    public ResponseEntity<Object> requestMergeSuggestion(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
-                                                         @RequestBody AnnotateMergeSuggestionRequest mergeSuggestionRequest) {
+    @Override
+    public ResponseEntity<Object> requestMergeSuggestion(String documentType, String documentRef,
+                                                         AnnotateMergeSuggestionRequest mergeSuggestionRequest) {
         try {
             documentType = encodeParam(documentType);
             documentRef = encodeParam(documentRef);
@@ -140,10 +135,9 @@ public class AnnotateController {
         }
     }
 
-    @PostMapping(value = "/requestMergeSuggestions/{documentType}/{documentRef}")
-    @ResponseBody
-    public ResponseEntity<Object> requestMergeSuggestions(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
-                                                          @RequestBody AnnotateMergeSuggestionRequests mergeSuggestionRequests) {
+    @Override
+    public ResponseEntity<Object> requestMergeSuggestions(String documentType, String documentRef,
+                                                          AnnotateMergeSuggestionRequests mergeSuggestionRequests) {
         try {
             documentType = encodeParam(documentType);
             documentRef = encodeParam(documentRef);

@@ -289,28 +289,19 @@ public class JwtTokenService implements TokenService {
     @Override
     public String extractUserRoleFromToken(String token) {
         Claim claim = JWT.decode(token).getClaim("role");
-        if(claim.isNull()){
-            return "";
-        }
-        return claim.asString();
+        return (claim.isMissing() || claim.isNull()) ? StringUtils.EMPTY : claim.asString();
     }
 
     @Override
     public String extractUserSystemNameFromToken(String token) {
         Claim claim = JWT.decode(token).getClaim("systemName");
-        if(claim.isNull()){
-            return "";
-        }
-        return claim.asString();
+        return (claim.isMissing() || claim.isNull()) ? StringUtils.EMPTY : claim.asString();
     }
 
     @Override
     public String extractUserFromToken(String token) {
         Claim claim = JWT.decode(token).getClaim("user");
-        if(claim.isNull()){
-            return "";
-        }
-        return claim.asString();
+        return (claim.isMissing() || claim.isNull()) ? StringUtils.EMPTY : claim.asString();
     }
     
     private boolean isTokenValid(String clientId, String secret, String token) {

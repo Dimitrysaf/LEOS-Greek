@@ -77,7 +77,7 @@ define(function aknCitationProfileModule(require) {
         customConfig: "",
         // comma-separated list of plugins to be loaded
         plugins: "toolbar,wysiwygarea,elementspath," +
-        "clipboard,undo,pastefromword,basicstyles,specialchar,enterkey," +
+        "clipboard,undo,basicstyles,specialchar,enterkey," +
         "button,dialog,dialogui,contextmenu,menubutton,widget,colorbutton",
         // comma-separated list of toolbar button names that must not be rendered
         removeButtons: "Bold,Italic,Underline,Strike,TextColor,PasteFromWord",

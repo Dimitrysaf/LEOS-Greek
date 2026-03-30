@@ -49,6 +49,59 @@ define(function leosInlineEditorPluginModule(require) {
                     editable = editor.editable();
                 editable.attachListener(editable, 'keydown', function(event) {
                     if (event.data.getKeystroke() == CKEDITOR.CTRL + 36) {
+                        event.data.preventDefault();
+                        
+                        // Find first editable element recursively
+                        var findFirstEditableNode = function(element) {
+                            if (!element) return null;
+                            
+                            // Skip non-editable elements (widgets)
+                            if (element.type === CKEDITOR.NODE_ELEMENT) {
+                                var contentEditable = element.getAttribute('contenteditable');
+                                if (contentEditable === 'false') {
+                                    return null; // Skip this branch entirely
+                                }
+                                
+                                // Found an editable widget - search within it
+                                if (contentEditable === 'true' && element.hasAttribute('data-cke-widget-editable')) {
+                                    var firstText = element.findOne(function(node) {
+                                        return node.type === CKEDITOR.NODE_TEXT && node.getText().trim();
+                                    });
+                                    if (firstText) return firstText;
+                                }
+                            }
+                            
+                            // Check if current element is editable text node
+                            if (element.type === CKEDITOR.NODE_TEXT && element.getText().trim()) {
+                                return element;
+                            }
+                            
+                            // Recursively check children
+                            var children = element.getChildren();
+                            if (children) {
+                                for (var i = 0; i < children.count(); i++) {
+                                    var child = children.getItem(i);
+                                    var result = findFirstEditableNode(child);
+                                    if (result) return result;
+                                }
+                            }
+                            return null;
+                        };
+                        
+                        var firstNode = findFirstEditableNode(editor.editable());
+                        var range = editor.createRange();
+                        
+                        if (firstNode) {
+                            range.setStart(firstNode, 0);
+                            range.collapse(true);
+                        } else {
+                            range.setStart(editor.editable(), 0);
+                            range.collapse(true);
+                        }
+                        
+                        editor.getSelection().selectRanges([range]);
+                        
+                        // Scroll container to top
                         var element = editor.element.$;
 						contentScroller.scrollTo(element, null, null, false);
 						editor.focus();

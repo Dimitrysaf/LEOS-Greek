@@ -13,8 +13,11 @@
  */
 package eu.europa.ec.leos.repository.config;
 
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +34,17 @@ public class OpenApiConfig {
                 .info(new Info()
                         .title("LEOS Repository API")
                         .version(projectVersion)
-                        .description("API documentation for LEOS Repository"));
+                        .description("API documentation for LEOS Repository"))
+                .components(new Components()
+                        .addSecuritySchemes("bearerAuth", new SecurityScheme()
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")
+                                .description("JWT Bearer token authentication"))
+                        .addSecuritySchemes("basicAuth", new SecurityScheme()
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("basic")
+                                .description("Basic HTTP authentication")))
+                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"));
     }
 }

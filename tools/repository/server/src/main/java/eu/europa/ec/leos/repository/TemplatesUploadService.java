@@ -14,8 +14,9 @@ public class TemplatesUploadService extends DataUploadService {
         this.resourcePatternResolver = new PathMatchingResourcePatternResolver();
     }
 
-    public void loadConfigDataFromFilesInFolder(String subdirectory) {
+    public void loadConfigDataFromFilesInFolder(String subdirectory, String version) {
         super.loadConfigDataFromFilesInFolder(subdirectory);
         loadConfigDataFromFilesInCustomFolder();
+        setIsLastVersionAccordingToVersion(version);
     }
 }

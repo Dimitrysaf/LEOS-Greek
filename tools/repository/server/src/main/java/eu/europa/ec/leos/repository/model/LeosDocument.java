@@ -27,10 +27,12 @@ import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
 import eu.europa.ec.leos.repository.entities.DocumentV;
 import eu.europa.ec.leos.repository.entities.MilestoneV;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
+import eu.europa.ec.leos.repository.services.TemplateService;
 import eu.europa.ec.leos.repository.utils.DateDesSerializer;
 import eu.europa.ec.leos.repository.utils.DateSerializer;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class LeosDocument {
@@ -266,6 +269,30 @@ public class LeosDocument {
             this.category = doc.getConfigCategory().getCategoryCode();
 
             this.metadata.put("language", doc.getLanguage());
+
+            this.setVersionLabel(configContent.getVersionId().getVersionLabel());
+        }
+    }
+
+    public LeosDocument(Config doc, ConfigContent configContent, TemplateService templateService, String language) {
+        if (doc != null) {
+            this.setVersionId(configContent.getVersionId().getId());
+            this.setCreatedBy(doc.getAuditCBy());
+            this.setCreatedOn(Date.from(doc.getAuditCDate().atZone(ZoneId.systemDefault()).toInstant()));
+            this.setUpdatedBy(configContent.getVersionId().getAuditLastMBy());
+            this.setUpdatedOn(configContent.getVersionId().getAuditLastMDate() != null ? Date.from(configContent.getVersionId().getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
+            if (StringUtils.isEmpty(language)) {
+                this.metadata.put("language", Locale.ENGLISH.getLanguage().toUpperCase());
+                this.setSource(templateService.resolve(new String(configContent.getContent()), Locale.ENGLISH).getBytes());
+            } else {
+                this.metadata.put("language", language.toUpperCase());
+                this.setSource(templateService.resolve(new String(configContent.getContent()), Locale.of(language)).getBytes());
+            }
+            this.isLatestVersion = configContent.getVersionId().getIsLatestVersion();
+            this.versionType = configContent.getVersionId().getVersionType() != null ? VersionType.fromValue(Integer.parseInt(configContent.getVersionId().getVersionType())) : null;
+            this.name = doc.getName();
+            this.ref = doc.getName();
+            this.category = doc.getConfigCategory().getCategoryCode();
 
             this.setVersionLabel(configContent.getVersionId().getVersionLabel());
         }

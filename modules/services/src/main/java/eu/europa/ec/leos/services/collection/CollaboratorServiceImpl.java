@@ -105,14 +105,21 @@ public class CollaboratorServiceImpl implements CollaboratorService {
 
     @Override
     public void addCollaborator(Proposal proposal, String userId, String collaboratorId, String roleName, String connectedEntity,
-                                String proposalUrl,String systemClientId) {
+                                String proposalUrl, String clientSystemId) {
+        final ClientSystem leosClient = this.getLeosClientSystem(clientSystemId);
+        this.addCollaborator(proposal, userId, collaboratorId, roleName, connectedEntity, proposalUrl, leosClient);
+    }
+
+    @Override
+    public void addCollaborator(Proposal proposal, String userId, String collaboratorId, String roleName, String connectedEntity,
+                                String proposalUrl, ClientSystem clientSystem) {
         final User user = getUser(userId);
         final User collaborator = getUser(collaboratorId);
         final Role role = getRole(roleName);
         final String entity = getEntity(connectedEntity, collaborator);
-        final String leosClientId = getLeosClientId(systemClientId);
+        final String leosClientId = (clientSystem != null) ? clientSystem.getClientId() : null;
 
-        if (isCollaboratorPresent(proposal, collaborator, leosClientId)) {
+        if (isCollaboratorPresent(proposal, collaborator)) {
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.present", collaborator.getLogin(), role.getName(), entity));
         }
 
@@ -120,18 +127,25 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         packages.forEach(p -> addCollaborator(user, collaboratorId, role, entity, leosClientId, p));
 
         proposal.getCollaborators().add(new Collaborator(collaboratorId, role.getName(), entity, leosClientId));
-        sendNotification(new AddCollaborator(collaborator, entity, role.getName(), proposal.getId(), proposalUrl));
+        if (StringUtils.isEmpty(leosClientId)) {
+            sendNotification(new AddCollaborator(collaborator, entity, role.getName(), proposal.getId(), proposalUrl));
+        }
         LOG.info("Collaborator '{}', role '{}', entity '{}' added to proposal {}", collaboratorId, role.getName(), entity, proposal.getOriginRef());
     }
 
     @Override
-    public void removeCollaborator(Proposal proposal, String userId, String roleName, String connectedEntity, String proposalUrl,
-                                     String systemClientId) {
+    public void removeCollaborator(Proposal proposal, String userId, String roleName, String connectedEntity, String proposalUrl, String clientSystemId) {
+        final ClientSystem leosClient = this.getLeosClientSystem(clientSystemId);
+        this.removeCollaborator(proposal, userId, roleName, connectedEntity, proposalUrl, leosClient);
+    }
+
+    @Override
+    public void removeCollaborator(Proposal proposal, String userId, String roleName, String connectedEntity, String proposalUrl, ClientSystem clientSystem) {
         LOG.trace("Removing collaborator...{}, with authority {}", userId, roleName);
         final User user = getUser(userId);
         final Role role = getRole(roleName);
         final String entity = getEntity(connectedEntity, user);
-        final String leosClientId = getLeosClientId(systemClientId);
+        final String leosClientId = (clientSystem != null) ? clientSystem.getClientId() : null;
 
         if (!isCollaboratorPresent(proposal, user, leosClientId)) {
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.notPresent", user.getLogin(), messageHelper.getMessage(role.getMessageKey()), entity));
@@ -147,7 +161,9 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         packages.forEach(p -> deleteCollaborator(user, role, entity, leosClientId, p));
 
         proposal.getCollaborators().remove(new Collaborator(user.getLogin(), role.getName(), entity, leosClientId));
-        sendNotification(new RemoveCollaborator(user, entity, role.getName(), proposal.getId(), proposalUrl));
+        if (StringUtils.isEmpty(leosClientId)) {
+            sendNotification(new RemoveCollaborator(user, entity, role.getName(), proposal.getId(), proposalUrl));
+        }
         LOG.info("Collaborator '{}', role '{}', entity '{}' removed from proposal {}", user.getLogin(), role.getName(), entity, proposal.getOriginRef());
     }
 
@@ -200,7 +216,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         }
         User user = userService.getUser(userId);
         if (user == null) {
-            LOG.warn("User '{}' not found!", userId);
+            LOG.warn("User '{}' not found on user repository!", userId);
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.notFound", userId));
         }
         return user;
@@ -216,11 +232,6 @@ public class CollaboratorServiceImpl implements CollaboratorService {
             }
         }
         return clientSystem;
-    }
-
-    private String getLeosClientId(String clientSystemId) {
-        ClientSystem leosClientSystem = this.getLeosClientSystem(clientSystemId);
-        return leosClientSystem != null ? leosClientSystem.getClientId() : null;
     }
 
     private String getEntity(String connectedDG, User user) {
@@ -260,10 +271,23 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         return role;
     }
 
+    public boolean isRoleOwner(String roleName) {
+        try {
+            return this.getRole(roleName).getName().equalsIgnoreCase(ROLE_OWNER);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     private boolean isCollaboratorPresent(XmlDocument document, User user, String leosClientId) {
         return document.getCollaborators().stream()
                 .anyMatch(collaborator -> collaborator.getLogin().equals(user.getLogin())
                         && (CollaboratorUtils.matchLeosClientId(collaborator, leosClientId)));
+    }
+
+    private boolean isCollaboratorPresent(XmlDocument document, User user) {
+        return document.getCollaborators().stream()
+                .anyMatch(collaborator -> collaborator.getLogin().equals(user.getLogin()));
     }
 
     private boolean hasCollaboratorDifferentRole(XmlDocument document, User user, Role role) {
@@ -323,7 +347,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         List<Collaborator> collaborators = doc.getCollaborators();
 
         if (collaborators != null) {
-            collaborators.removeIf(c->CollaboratorUtils.matchUserAndEntityAndLeosClientId(c,user,selectedEntity,systemClientId));
+            collaborators.removeIf(c->CollaboratorUtils.matchUserAndEntityAndLeosClientId(c, user, selectedEntity, systemClientId));
             if (!isRemoveAction) {
                 //pick selectedEntity or first found entity if no selectedEntity defined
                 String newEntity = selectedEntity;

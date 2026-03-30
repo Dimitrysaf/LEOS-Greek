@@ -1110,7 +1110,11 @@ __xml-resolver:xml-resolver 1.2__
  * Copyright:
    * Copyright © 2001-2009 The Apache Software Foundation.
 
-
+__org.apache.pdfbox:pdfbox 3.0.3__
+* https://github.com/apache/pdfbox
+* License: The Apache Software License, Version 2.0
+* Copyright:
+   * Copyright 2015 The Apache Software Foundation.
 ______
 
 __EPL-1.0__

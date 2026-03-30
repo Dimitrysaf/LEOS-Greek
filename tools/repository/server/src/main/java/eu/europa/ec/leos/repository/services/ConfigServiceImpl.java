@@ -14,6 +14,7 @@ import eu.europa.ec.leos.repository.repositories.ConfigRepository;
 import eu.europa.ec.leos.repository.repositories.ConfigVersionRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import eu.europa.ec.leos.repository.utils.DateUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,14 +43,21 @@ public class ConfigServiceImpl implements ConfigService {
     private Notification notification;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private TemplateService templateService;
 
-    public List<LeosDocument> findConfigByName(final String name, final boolean withContent) throws RepositoryException {
+    public List<LeosDocument> findConfigByName(String name, final boolean withContent) throws RepositoryException {
+        String language = "";
+        if (name.lastIndexOf("-") == name.length()-3) {
+            language = name.substring(name.lastIndexOf("-")+1);
+            name = name.substring(0, name.lastIndexOf("-"));
+        }
         Optional<Config> hasDoc = configRepository.findConfigByName(name);
         if (hasDoc.isPresent() && !withContent) {
             return Arrays.asList(ConversionUtils.buildConfigDocument(hasDoc.get()));
         } else if (hasDoc.isPresent()) {
             ConfigContent content = getConfigContent(hasDoc.get());
-            return Arrays.asList(ConversionUtils.buildConfigDocument(hasDoc.get(), content));
+            return Arrays.asList(ConversionUtils.buildConfigDocument(hasDoc.get(), content, templateService, language));
         } else {
             return Arrays.asList();
         }

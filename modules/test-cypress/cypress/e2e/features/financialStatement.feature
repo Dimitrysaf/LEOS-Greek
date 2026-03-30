@@ -50,7 +50,6 @@ Feature: financial statement page regression features
     Then ck editor window is not displayed
     And  content of subparagraph 1 of level 2 contains "text" in financial statement page
     And  content of subparagraph 2 of level 2 contains "Text..." in financial statement page
-#    When scroll the view into level "1.4."
     When user selects checkbox 1 of level "1.4."
     Then checkbox 1 of level "1.4." is selected
     When user selects checkbox 2 of level "1.4."
@@ -267,6 +266,9 @@ Feature: financial statement page regression features
     When click on delete button in dialog box window
     Then " There is no Legislative Financial and Digital Statement " is displayed
     And  add button is displayed under financial statement section
+
+
+
 
 
 

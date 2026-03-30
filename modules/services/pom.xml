@@ -76,11 +76,11 @@
                             <goal>java</goal>
                         </goals>
                         <configuration>
-                            <mainClass>eu.europa.ec.leos.services.api.openapi.OpenApiToDocxConverter</mainClass>
+                            <mainClass>eu.europa.ec.leos.services.api.openapi.OpenApiToPdfConverter</mainClass>
                             <arguments>
                                 <argument>${project.build.directory}\openapi\openapi.json</argument>
                                 <argument>${project.basedir}\src\main\resources\openapi\openapi.json</argument>
-                                <argument>${project.basedir}\..\..\docs\REST\API\leos_service_api-documentation.docx</argument>
+                                <argument>${project.basedir}\..\..\docs\REST\API\leos_service_api-documentation.pdf</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -332,8 +332,14 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>

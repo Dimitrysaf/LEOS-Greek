@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/actuator")
-public class ActuatorController {
+public class ActuatorController implements ActuatorApi {
 
     private final HealthContributorRegistry healthRegistry;
     private final StatusAggregator statusAggregator;
@@ -34,7 +34,7 @@ public class ActuatorController {
         healthRegistry.registerContributor("readinessState", (HealthIndicator) () -> Health.up().build());
     }
 
-    @GetMapping("/health")
+    @Override
     public ResponseEntity<Map<String, Object>> health() {
         Map<String, Health> healths = new LinkedHashMap<>();
         

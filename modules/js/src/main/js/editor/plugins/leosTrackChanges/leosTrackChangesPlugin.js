@@ -1001,7 +1001,6 @@ define(function leosTrackChangesPluginModule(require) {
                                                 //Images inside the <ins> tag are ignored by CKEditor and disappear if the tag has no text.
                                                 // The <ins> tag is still required to wrap track changes and handle merge contributions.
                                                 const parent = new CKEDITOR.dom.element(node).getParent();
-                                                parent.appendText('\u200B'); // zero-width space
                                             }
                                             node.remove();
                                         }

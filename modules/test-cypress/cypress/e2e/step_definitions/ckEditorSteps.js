@@ -912,3 +912,6 @@ When('click at offset {int} in li {int} with data-akn-element {string} of li {in
     ckEditorWindow.moveCursorToSpecificOffsetInSecondLayerPointOfParagraphOfArticle(offset, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3);
 });
 
+Then(`cut icon is disabled in ck editor panel`, () => {
+    ckEditorWindow.elements.cutIcon().invoke('attr', 'class').should('contain', 'disabled');
+});

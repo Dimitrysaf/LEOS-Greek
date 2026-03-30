@@ -1972,42 +1972,27 @@ Feature: Track Changes Feature
     When click on cancel button in cke dialog window
     And  click close button of ck editor
 
-  @validationOfRecitalSectionWithTrackChangesInAutonomousAct @local
-  Scenario: Recital section in autonomous act
+  @3045 @local
+  Scenario: 3045 Scenario @focus
     Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
-    When click on template "SJ-003" in create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
-    And  provide document title "Automation Testing for recital Section in Autonomous act" in create document page
+    And  provide document title "3045 " in create document page
     And  click on create button
     Then user is on act viewer page
     When click on legal act link present in act viewer page
     Then user is on legal act page
-    When enable track changes
-    Then enable track changes toggle bar is on in ribbon toolbar
-    When click on toc edit button
-    Then cancel button is displayed and enabled in navigation pane
-    Then below element lists are displayed in Elements menu
-      | ElementList     |
-      | Citation        |
-      | Recital section |
-      | Recital         |
-      | Part            |
-      | Title           |
-      | Chapter         |
-      | Section         |
-      | Article         |
-    When click on right angle icon of preamble link
-    And drag element "Recital section" from element tree list and drop before node label "(1) Recital..." in navigation pane
-   # And drag element "Recital section" from element tree list and drop after node label "(1) Recital..." in navigation pane
-    Then preamble contains node label "Recitals # RECITAL SECTION HEADING" and showing as bold
-    And drag element "Recital section" from element tree list and drop before node label "(1) Recital..." in navigation pane
-    And preamble contains node label "Recitals # RECITAL SECTION HEADING" and showing as bold
-    And  click on save button in navigation pane
-   # Then ngContent "Recitals 1. RECITAL SECTION HEADING" is showing as bold in toc
-   # And drag element "Recital section" from element tree list and drop before node label "(1) Recital..." in navigation pane
-   # And  below warning message is displayed in navigation pane
-    #  | warning                                                                                                |
-     # | A recital section must contain at least one recital element |
+    When mouseover and click on article 1
+    Then ck editor window is displayed
+    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+    And  click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on increase indent icon present in ck editor panel
+    And  add "point a" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And add "point b" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And add "point c" at current cursor position in edition mode

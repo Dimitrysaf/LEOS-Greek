@@ -3,7 +3,6 @@ package eu.europa.ec.digit.leos.pilot.export.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,11 +13,11 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(path = "/api/app-info", produces = "application/json;charset=utf-8")
 @CrossOrigin(origins = "*")
-public class Akn4euutilsAppInfoController {
+public class Akn4euutilsAppInfoController implements Akn4euutilsAppInfoApi {
 
     private static final Logger log = LoggerFactory.getLogger(Akn4euutilsAppInfoController.class);
 
-    @GetMapping
+    @Override
     public Map<String, String> getAppInfo() {
         Properties properties = new Properties();
         try {

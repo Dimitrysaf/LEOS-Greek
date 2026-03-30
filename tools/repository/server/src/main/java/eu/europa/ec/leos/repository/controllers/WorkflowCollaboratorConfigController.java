@@ -51,14 +51,13 @@ import static org.springframework.web.util.UriUtils.decode;
 @RestController
 @Slf4j
 @AllArgsConstructor
-public class WorkflowCollaboratorConfigController {
+public class WorkflowCollaboratorConfigController implements WorkflowCollaboratorConfigApi {
 
     WorkflowCollaboratorConfigService workflowCollaboratorConfigService;
     PackageService packageService;
 
-    @PostMapping(path = "/workflow-collaborator-config",
-            consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Object> setWorkflowConfiguration(@Valid @RequestBody WorkflowCollaboratorConfigRequest workflowCollaboratorConfigRequest) {
+    @Override
+    public ResponseEntity<Object> setWorkflowConfiguration(WorkflowCollaboratorConfigRequest workflowCollaboratorConfigRequest) {
         try {
             log.info("POST workflowCollaboratorConfigRequest "+workflowCollaboratorConfigRequest);
             final BigDecimal id = workflowCollaboratorConfigService.save(workflowCollaboratorConfigRequest);
@@ -69,10 +68,8 @@ public class WorkflowCollaboratorConfigController {
         }
     }
 
-    @GetMapping(path = "/workflow-collaborator-config")
-    public ResponseEntity<Object> getWorkflowCollaboratorConfig
-            (@RequestParam("packageName") String packageName,
-             @RequestParam("clientName") String clientName) {
+    @Override
+    public ResponseEntity<Object> getWorkflowCollaboratorConfig(String packageName, String clientName) {
         final Optional<WorkflowCollaboratorConfig> workflowCollaboratorConfig = getWorkflowCollaboratorConfiguration(packageName, clientName);
         if (workflowCollaboratorConfig.isPresent()) {
             return ResponseEntity.ok(convert(workflowCollaboratorConfig.get()));
@@ -88,10 +85,8 @@ public class WorkflowCollaboratorConfigController {
         return workflowCollaboratorConfigService.getWorkflowCollaboratorConfig(packageName, clientName);
     }
 
-    @GetMapping(path = "/workflow-collaborator-config/all")
-    public ResponseEntity<Object> getWorkflowCollaboratorConfigs
-            (@RequestParam("packageName") String packageName)
-            throws  RepositoryException {
+    @Override
+    public ResponseEntity<Object> getWorkflowCollaboratorConfigs(String packageName) throws RepositoryException {
         packageName = decode(packageName, StandardCharsets.UTF_8.name());
         log.info(String.format("searching for a package %s.",packageName));
         Package pkg = packageService.getPackageByName(packageName);
@@ -101,9 +96,8 @@ public class WorkflowCollaboratorConfigController {
         return ResponseEntity.ok(convert(workflowCollaboratorConfigs));
     }
 
-    @DeleteMapping(path = "/workflow-collaborator-config/{id}")
-    public ResponseEntity<Object> deleteWorkflowCollaboratorConfig
-            (@PathVariable("id") int id) {
+    @Override
+    public ResponseEntity<Object> deleteWorkflowCollaboratorConfig(int id) {
         final Optional<WorkflowCollaboratorConfig> workflowCollaboratorConfiguration = getWorkflowCollaboratorConfiguration(id);
         if (workflowCollaboratorConfiguration.isPresent()) {
             workflowCollaboratorConfigService.delete(workflowCollaboratorConfiguration.get());
@@ -134,9 +128,8 @@ public class WorkflowCollaboratorConfigController {
                 .build();
     }
 
-    @DeleteMapping(path = "/workflow-collaborator-config")
-    public ResponseEntity<Object> deleteWorkflowCollaboratorConfig
-            (@RequestParam("packageName") String packageName, @RequestParam("clientName") String clientName) {
+    @Override
+    public ResponseEntity<Object> deleteWorkflowCollaboratorConfig(String packageName, String clientName) {
         final Optional<WorkflowCollaboratorConfig> workflowCollaboratorConfiguration = getWorkflowCollaboratorConfiguration(packageName, clientName);
         if (workflowCollaboratorConfiguration.isPresent()) {
             workflowCollaboratorConfigService.delete(workflowCollaboratorConfiguration.get());

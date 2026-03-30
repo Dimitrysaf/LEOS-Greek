@@ -256,50 +256,50 @@ public abstract class BillApiServiceImpl implements BillApiService {
     public DocumentViewResponse restoreToVersion(String documentRef, String versionId) {
         Bill targetVersion = billService.findBillVersion(versionId);
         Bill sourceVersion = billService.findBillByRef(documentRef);
-        byte[] resultXmlContent = getContent(targetVersion);
+        byte[] resultXmlContent = this.keepCoverPageTitle(targetVersion, sourceVersion);
         Bill updatedBill = billService.updateBill(sourceVersion, resultXmlContent,
                 messageHelper.getMessage("operation.restore.version", targetVersion.getVersionLabel()), true);
-
-
-        this.saveCoverPageTitle(updatedBill);
         return this.documentViewService.updateDocumentView(updatedBill);
     }
 
-
-    private void saveCoverPageTitle(Bill updatedBill) {
-        //get the new docPurpose content from the bill
-        byte[] billContent = updatedBill.getContent().get().getSource().getBytes();
-        List<Element> docPurposeElementsFromBill = xmlContentProcessor.getElementsByTagName(billContent,
-                Arrays.asList("docPurpose"), true);
-        String elementFragment = docPurposeElementsFromBill.get(0).getElementFragment();
-        String newDocPurpose = this.proposalService.getPurposeFromXml(elementFragment.getBytes());
-
+    /**
+     * Algorithm:
+     * 1. get purpose from the current version of the proposal
+     * 2. replace purpose in the target bill with the purpose from proposal
+     *
+     * @param targetVersion
+     * @param sourceVersion
+     * @return
+     */
+    private byte[] keepCoverPageTitle(Bill targetVersion, Bill sourceVersion){
         // get the current docPurpose xml element from proposal so that it can be updated
-        Proposal proposal = this.documentViewService.getProposalFromPackage(updatedBill);
+        Proposal proposal = this.documentViewService.getProposalFromPackage(sourceVersion);
         proposal = proposalService.populateProposalMetadataFromXml(proposal);
 
-        byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
+        byte[] proposalContent = getContent(proposal);
         List<Element> docPurposeElements = xmlContentProcessor.getElementsByTagName(proposalContent,
                 Arrays.asList("docPurpose"), true);
+
+        byte[] targetBillContent = getContent(targetVersion);
+        List<Element> docPurposeElementsFromBill = xmlContentProcessor.getElementsByTagName(targetBillContent,
+                Arrays.asList("docPurpose"), true);
+        String newDocPurpose = this.proposalService.getPurposeFromXml(docPurposeElements.get(0).getElementFragment().getBytes());
 
         // Check if new doc purpose is not empty
         if (newDocPurpose != null && newDocPurpose.trim().replaceAll("(^\\h*)|(\\h*$)", "").length() > 0) {
             //replace the content of proposal's docPurpose tag
-            String newElementFragment = docPurposeElements.get(0).getElementFragment();
+            String newElementFragment = docPurposeElementsFromBill.get(0).getElementFragment();
             Node proposalDocPurposeNode = XercesUtils.createNodeFromXmlFragment(newElementFragment.getBytes(StandardCharsets.UTF_8));
             newElementFragment = XercesUtils.nodeToString(XercesUtils.addContentToNode(proposalDocPurposeNode, newDocPurpose));
 
             // save the new docPurpose tag inside the proposal content
             byte[] newXmlContent =
-                    !docPurposeElements.isEmpty() ? xmlContentProcessor.replaceElementById(proposalContent,
+                    !docPurposeElementsFromBill.isEmpty() ? xmlContentProcessor.replaceElementById(targetBillContent,
                             newElementFragment,
-                            docPurposeElements.get(0).getElementId(), true) : null;
-
-            if (newXmlContent == null) {
-                return ;
-            }
-            proposalService.updateProposal(proposal, newXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.docpurpose.updated"));
+                            docPurposeElementsFromBill.get(0).getElementId(), true) : null;
+            return newXmlContent;
         }
+        return targetBillContent;
     }
 
     @Override
