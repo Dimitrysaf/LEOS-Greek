@@ -34,7 +34,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
 @RestController
 @RequestMapping(path = "/secured/contribution")
-public class ContributionController {
+public class ContributionController implements ContributionApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContributionController.class);
 
@@ -45,9 +45,8 @@ public class ContributionController {
     @Autowired
     ApiService apiService;
 
-    @PostMapping(value = "/create-clone-proposal/{legFileId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> createCloneProposal(@PathVariable("legFileId") String legFileId, @RequestBody CloneProposalRequest cloneRequest) {
+    @Override
+    public ResponseEntity<Object> createCloneProposal(String legFileId, CloneProposalRequest cloneRequest) {
         legFileId = encodeParam(legFileId);
         try {
             CreateCollectionResult response = contributionApiService.createCloneProposal(cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName(), legFileId);
@@ -58,9 +57,8 @@ public class ContributionController {
         }
     }
 
-    @PostMapping(value = "/revision-done/{proposalRef}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> updateClonedProposalRevisionStatus(@PathVariable("proposalRef") String proposalRef, @RequestBody String legFileId) {
+    @Override
+    public ResponseEntity<Object> updateClonedProposalRevisionStatus(String proposalRef, String legFileId) {
         proposalRef = encodeParam(proposalRef);
         Result result = contributionApiService.updateClonedProposalRevisionStatus(proposalRef, legFileId);
         if (result.isOk()) {
@@ -70,22 +68,17 @@ public class ContributionController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping(value = "/list-contributions/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> listContributionsForDocument(@PathVariable("documentRef") String documentRef,
-                                                               @PathVariable("documentType") String documentType) {
+    @Override
+    public ResponseEntity<Object> listContributionsForDocument(String documentRef, String documentType) {
         documentRef = encodeParam(documentRef);
         List<ContributionVO> contributions = this.contributionApiService.listContributionsForDocument(documentRef);
         return new ResponseEntity<>(contributions, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/view-merge-pane/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<DocumentViewResponse> viewMergePane(HttpServletRequest request,
-                                                              @PathVariable("documentRef") String documentRef,
-                                                              @PathVariable("documentType") String documentType,
-                                                              @RequestParam String contributionVersionRef,
-                                                              @RequestParam String legFileName) throws Exception {
+    @Override
+    public ResponseEntity<DocumentViewResponse> viewMergePane(HttpServletRequest request, String documentRef,
+                                                              String documentType, String contributionVersionRef,
+                                                              String legFileName) throws Exception {
         documentRef = encodeParam(documentRef);
         contributionVersionRef = encodeParam(contributionVersionRef);
         legFileName = encodeParam(legFileName);
@@ -96,20 +89,17 @@ public class ContributionController {
         return ResponseEntity.ok(mergedContent);
     }
 
-    @PostMapping(value = "/decline-contributions/{documentVersionedRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<DeclineContributionResponse> declineContribution(@PathVariable("documentVersionedRef") String documentVersionedRef,
-                                                                           @PathVariable("documentType") String documentType) {
+    @Override
+    public ResponseEntity<DeclineContributionResponse> declineContribution(String documentVersionedRef,
+                                                                           String documentType) {
         documentVersionedRef = encodeParam(documentVersionedRef);
         this.contributionApiService.declineContribution(documentVersionedRef);
         return ResponseEntity.ok(new DeclineContributionResponse(ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue()));
     }
 
-    @PostMapping(value = "/merge-contributions/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<MergeContributionResponse> mergeContribution(@PathVariable("documentRef") String documentRef,
-                                                                       @RequestHeader("presenterId") String presenterId,
-                                                                       @RequestBody ApplyContributionsRequest applyContributionsRequest) throws Exception {
+    @Override
+    public ResponseEntity<MergeContributionResponse> mergeContribution(String documentRef, String presenterId,
+                                                                       ApplyContributionsRequest applyContributionsRequest) throws Exception {
         documentRef = encodeParam(documentRef);
         MergeContributionResponse mergeResult = this.contributionApiService.mergeContribution(documentRef, applyContributionsRequest);
 
@@ -118,19 +108,16 @@ public class ContributionController {
         return ResponseEntity.ok(mergeResult);
     }
 
-    @PostMapping(value = "/mark-as-processed/{contributionVersionRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> markAsProcessed(@PathVariable("contributionVersionRef") String contributionVersionRef,
-                                                  @PathVariable("documentType") String documentType) {
+    @Override
+    public ResponseEntity<Object> markAsProcessed(String contributionVersionRef, String documentType) {
         contributionVersionRef = encodeParam(contributionVersionRef);
         this.contributionApiService.markContributionAsProcessed(contributionVersionRef);
         return ResponseEntity.ok().build();
     }
 
-    @RequestMapping(value = "/milestones/{proposalRef}/viewContribution/{legFileName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getClonedMilestoneContribution(@PathVariable("proposalRef") String proposalRef,
-                                                                 @PathVariable("legFileName") String clonedLegFileName,
-                                                                 @RequestParam("legFileId") String originalLegFileId) {
+    @Override
+    public ResponseEntity<Object> getClonedMilestoneContribution(String proposalRef, String clonedLegFileName,
+                                                                 String originalLegFileId) {
         try {
             proposalRef = encodeParam(proposalRef);
             clonedLegFileName = encodeParam(clonedLegFileName);
@@ -143,9 +130,8 @@ public class ContributionController {
         }
     }
 
-    @PostMapping(value = "/milestones/sendFeedback", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> sendFeedback(@RequestBody SendFeedbackRequest sendFeedbackRequest) {
+    @Override
+    public ResponseEntity<Object> sendFeedback(SendFeedbackRequest sendFeedbackRequest) {
         try {
             contributionApiService.updateFeedbackAnnotations(sendFeedbackRequest.getProposalRef(), sendFeedbackRequest.getLegFileName(), sendFeedbackRequest.getContributionsVersionRef());
         } catch (Exception e) {
@@ -161,11 +147,8 @@ public class ContributionController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "/{legFileName}/{proposalRef}/count-feedbacks/{versionedReference}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> countFeedbacks(@PathVariable("legFileName") String legFileName,
-                                                  @PathVariable("versionedReference") String versionedReference,
-                                                  @PathVariable("proposalRef") String proposalRef) {
+    @Override
+    public ResponseEntity<Object> countFeedbacks(String legFileName, String versionedReference, String proposalRef) {
         try {
             versionedReference = encodeParam(versionedReference);
             proposalRef = encodeParam(proposalRef);
@@ -178,16 +161,9 @@ public class ContributionController {
         }
     }
 
-    @LeosErrorMessage("Unexpected error occurred while handling accept annex on milestone")
-    @GetMapping(value = "/milestones/accept-doc/{proposalRef}/{annexRef}/{legFileName}", produces =
-            MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> milestoneAcceptAnnex(@PathVariable("proposalRef") String proposalRef,
-                                                       @PathVariable("annexRef") String annexRef,
-                                                       @PathVariable("legFileName") String legFileName,
-                                                       @RequestParam(value="originalLegFileId") String originalLegFileId,
-                                                       @RequestParam("isAdded") boolean isAdded,
-                                                       @RequestParam(value = "docCategory", required = false) String docCategory) throws IOException {
+    @Override
+    public ResponseEntity<Object> milestoneAcceptAnnex(String proposalRef, String annexRef, String legFileName,
+                                                       String originalLegFileId, boolean isAdded, String docCategory) throws IOException {
         LeosCategory category = docCategory != null ? LeosCategory.valueOf(docCategory) : LeosCategory.ANNEX;
         originalLegFileId = encodeParam(originalLegFileId);
         annexRef = encodeParam(annexRef);
@@ -202,15 +178,9 @@ public class ContributionController {
         return ResponseEntity.ok().body(apiService.listContributionsView(proposalRef, legFileName, originalLegFileId));
     }
 
-    @LeosErrorMessage("Unexpected error occurred while handling reject annex on milestone")
-    @GetMapping(value = "/milestones/reject-doc/{proposalRef}/{docRef}/{milestoneLegFileName}", produces =
-            MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> milestoneRejectAnnex(@PathVariable("proposalRef") String proposalRef,
-                                                       @PathVariable("docRef") String docRef,
-                                                       @PathVariable("milestoneLegFileName") String milestoneLegFileName,
-                                                       @RequestParam("isAdded") boolean isAdded,
-                                                       @RequestParam(value="originalLegFileId") String originalLegFileId) throws IOException {
+    @Override
+    public ResponseEntity<Object> milestoneRejectAnnex(String proposalRef, String docRef, String milestoneLegFileName,
+                                                       boolean isAdded, String originalLegFileId) throws IOException {
         originalLegFileId = encodeParam(originalLegFileId);
         docRef = encodeParam(docRef);
         proposalRef = encodeParam(proposalRef);

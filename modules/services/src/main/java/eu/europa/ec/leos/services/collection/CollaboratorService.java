@@ -15,6 +15,7 @@
 package eu.europa.ec.leos.services.collection;
 
 import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.model.user.ClientSystem;
 import eu.europa.ec.leos.services.dto.collaborator.CollaboratorDTO;
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -23,10 +24,16 @@ import java.util.List;
 public interface CollaboratorService {
 
     @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
-    void addCollaborator(Proposal proposal, String userId, String collaboratorId, String roleName, String connectedEntity, String proposalUrl, String systemClientId);
+    void addCollaborator(Proposal proposal, String userId, String collaboratorId, String roleName, String connectedEntity, String proposalUrl, String clientSystemId);
 
     @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
-    void removeCollaborator(Proposal proposal, String userId, String roleName, String connectedEntity, String proposalUrl, String systemClientId);
+    void addCollaborator(Proposal proposal, String userId, String collaboratorId, String roleName, String connectedEntity, String proposalUrl, ClientSystem clientSystem);
+
+    @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
+    void removeCollaborator(Proposal proposal, String userId, String roleName, String connectedEntity, String proposalUrl, String clientSystemId);
+
+    @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
+    void removeCollaborator(Proposal proposal, String userId, String roleName, String connectedEntity, String proposalUrl, ClientSystem clientSystem);
 
     @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
     void editCollaborator(Proposal proposal, String userId, String roleName, String connectedEntity, String proposalUrl);
@@ -34,4 +41,6 @@ public interface CollaboratorService {
     List<CollaboratorDTO> getCollaborators(Proposal proposal);
 
     void syncCollaborators(Proposal proposal);
+
+    boolean isRoleOwner(String roleName);
 }

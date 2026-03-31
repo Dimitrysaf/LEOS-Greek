@@ -72,9 +72,11 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
     private ckEditorService?: CKEditorService,
   ) {
     super({ ...leosJavaScriptExtensionState, ...state }, null);
-    this.documentService.isEditorOpen$.subscribe((isOpen) => {
-      this.isEditorOpen = isOpen;
-    });
+    if (this.documentService.isEditorOpen$) {
+      this.documentService.isEditorOpen$.subscribe((isOpen) => {
+        this.isEditorOpen = isOpen;
+      });
+    }
   }
 
   requestStoredDocumentAnnotations(uri: string) {

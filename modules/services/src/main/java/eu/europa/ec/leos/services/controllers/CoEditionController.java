@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
 @Controller
-public class CoEditionController {
+public class CoEditionController implements CoEditionApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(CoEditionController.class);
     private static final String TOPIC_DOCUMENT = "/topic/document";
@@ -104,7 +104,7 @@ public class CoEditionController {
         }
     }
 
-    @MessageMapping("/refresh/document")
+    @Override
     public void refreshDocumentRoom(Message<CoEditionRequest> message) {
         CoEditionRequest event = message.getPayload();
         LOG.info("Received refresh message from user {} on documentId {}", event.getUserId(), event.getDocumentId());
@@ -115,7 +115,7 @@ public class CoEditionController {
         }
     }
 
-    @MessageMapping("/join/document")
+    @Override
     public void joinDocumentRoom(Message<CoEditionRequest> message) {
         CoEditionRequest event = message.getPayload();
         LOG.info("Received message from user {} on documentId {} with type {}", event.getUserId(), event.getDocumentId(), event.getInfoType());
@@ -129,7 +129,7 @@ public class CoEditionController {
         }
     }
 
-    @MessageMapping("/remove/document")
+    @Override
     public void removeFromDocumentRoom(Message<CoEditionRequest> message) {
         CoEditionRequest event = message.getPayload();
         LOG.info("Received message from user {} on documentId {} with type {} for remove", event.getUserId(), event.getDocumentId(), event.getInfoType());
@@ -141,7 +141,7 @@ public class CoEditionController {
         }
     }
 
-    @MessageMapping("/update/document")
+    @Override
     public void updateDocumentAndSendUpdateToRoom(Message<UpdateCoEditionRequest> message) {
         UpdateCoEditionRequest event = message.getPayload();
         LOG.info("Received message from user {} on documentId {} for update ", event.getUserId(), event.getDocumentId());
@@ -164,7 +164,7 @@ public class CoEditionController {
     }
 
 
-    @MessageMapping("/removeSession")
+    @Override
     public void removeSession(Message<CoEditionRequest> message) {
         CoEditionRequest event = message.getPayload();
         LOG.info("Received message to remove session {} ", event.getSessionId());

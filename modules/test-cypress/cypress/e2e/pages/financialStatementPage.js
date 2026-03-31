@@ -23,11 +23,11 @@ class financialStatementPage {
     }
 
     getLevelByNum(levelName) {
-        return cy.xpath("//mainbody//level/num[text()='" + levelName + "']").parent();
+        return cy.xpath("//mainbody//level/num[text()='" + levelName + "']").parent()
     }
 
     getLandscapeLevel(levelNumber) {
-        return cy.get('mainbody div.landscape level').eq(levelNumber - 1);
+        return cy.get('mainbody >div.landscape > level').eq(levelNumber - 1);
     }
 
     getContentOfLevel(levelNumber) {
@@ -43,7 +43,7 @@ class financialStatementPage {
     }
 
     getSubparagraphOfLandscapeLevel(subparagraphNumber, levelNumber) {
-        return this.getLandscapeLevel(levelNumber).find('subparagraph').eq(subparagraphNumber - 1);
+        return this.getLandscapeLevel(levelNumber).children('subparagraph').eq(subparagraphNumber - 1);
     }
 
     getContentOfSubparagraphOfLevel(subparagraphNumber, levelNumber) {
@@ -147,10 +147,26 @@ class financialStatementPage {
         return this.getLevelByNum(levelNumber).find('input[class="hasDatepicker"]').eq(index-1);
     }
 
-
-
-    mouseHoverOnLevel(levelNumber) {
-        cy.xpath("//mainbody//level[" + levelNumber + "]").invoke('attr', 'id').then(id => cy.get("#" + id).realHover());
+    scrollSubparagraphOfLandscapeLevel(subparagraphNumber, levelNumber){
+        this.getSubparagraphOfLandscapeLevel(subparagraphNumber, levelNumber).scrollIntoView();
     }
+
+    getContentOfSubparagraphOfLandscapeLeve(subparagraphNumber, levelNumber){
+        return this.getSubparagraphOfLandscapeLevel(subparagraphNumber,levelNumber).children('content');
+    }
+
+    getTableOfContentOfSubparagraphOfLandscapeLevel(tableNumber, contentNumber, subparagraphNumber, levelNumber){
+        return this.getContentOfSubparagraphOfLandscapeLeve(subparagraphNumber,levelNumber).children('table')
+    }
+
+    scrollNumOfLandscapeLevel(subparagraphNumber, levelNumber){
+        this.getNumOfLandscapeLevel(subparagraphNumber, levelNumber).scrollIntoView();
+    }
+
+    getNumOfLandscapeLevel(subparagraphNumber, levelNumber) {
+        return this.getLandscapeLevel(levelNumber).children('num').eq(subparagraphNumber - 1);
+    }
+
+
 }
 export default new financialStatementPage();

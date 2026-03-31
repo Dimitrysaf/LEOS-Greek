@@ -655,7 +655,6 @@ export class ProposalDetailsService implements OnDestroy {
 
     return this.http
       .post(url, linguisticVersions)
-      .pipe(finalize(() => this.loadingService.setLoading(false)))
       .subscribe({
         next: (notFoundLanguages: string[]) => {
           if (notFoundLanguages.length > 0) {

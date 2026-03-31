@@ -48,3 +48,11 @@ When(/^click on tab "([^"]*)" showing in green color$/, function (tabName) {
 Then(/^"([^"]*)" button is enabled in milestone explorer window$/, function (action) {
     milestoneExplorer.getActionBtn(action).should('not.have.attr', 'disabled');
 });
+
+Then(/^"([^"]*)" button is disabled in milestone explorer window$/, function (action) {
+    milestoneExplorer.elements.ContainerBtn(action).should('have.attr', 'disabled');
+});
+
+When('click on {string} button in milestone explorer window', (action) => {
+    milestoneExplorer.clickOnActionBtn(action);
+});

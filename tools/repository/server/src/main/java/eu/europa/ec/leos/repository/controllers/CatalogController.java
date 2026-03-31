@@ -17,59 +17,50 @@ import eu.europa.ec.leos.repository.model.CustomTemplateInfo;
 import eu.europa.ec.leos.repository.exceptions.CatalogException;
 import eu.europa.ec.leos.repository.services.CatalogService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
-public class CatalogController {
+public class CatalogController implements CatalogApi {
 
     @Autowired
     CatalogService catalogService;
 
-    @PostMapping(path = "/catalog/publish-template",
-            produces = {MediaType.APPLICATION_JSON_VALUE})
+    @Override
     public ResponseEntity<Object> publishCustomTemplate(
-            @RequestParam String legFileId,
-            @RequestParam String templateName,
-            @RequestParam List<String> dgs,
-            @RequestParam String userId,
-            @RequestParam String originalDg) throws CatalogException {
+            String legFileId,
+            String templateName,
+            List<String> dgs,
+            String userId,
+            String originalDg) throws CatalogException {
         catalogService.publishCustomTemplate(legFileId, templateName, dgs, userId, originalDg);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(path = "/catalog/update-template",
-            produces = {MediaType.APPLICATION_JSON_VALUE})
+    @Override
     public ResponseEntity<Object> updateCustomTemplate(
-            @RequestParam String packageId,
-            @RequestParam String templateName,
-            @RequestParam List<String> dgs,
-            @RequestParam String userId,
-            @RequestParam String originalDg) throws CatalogException {
+            String packageId,
+            String templateName,
+            List<String> dgs,
+            String userId,
+            String originalDg) throws CatalogException {
         catalogService.updateCustomTemplate(packageId, templateName, dgs, userId, originalDg);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping(path = "/catalog/un-publish-template",
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<Boolean> updateCustomTemplate(
-            @RequestParam String packageId,
-            @RequestParam String userId) throws CatalogException {
+    @Override
+    public ResponseEntity<Boolean> unpublishCustomTemplate(
+            String packageId,
+            String userId) throws CatalogException {
         Boolean isUpdated = catalogService.unpublishCustomTemplate(packageId, userId);
         return ResponseEntity.ok(isUpdated);
     }
 
-    @GetMapping(path = "/catalog/template/{packageId}",
-            produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<CustomTemplateInfo> getTemplateInfo(@PathVariable BigDecimal packageId) throws CatalogException {
+    @Override
+    public ResponseEntity<CustomTemplateInfo> getTemplateInfo(BigDecimal packageId) throws CatalogException {
         CustomTemplateInfo templateInfo = catalogService.getTemplateInfo(packageId);
         return ResponseEntity.ok(templateInfo);
     }

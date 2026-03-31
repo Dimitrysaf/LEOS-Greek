@@ -36,6 +36,7 @@ import eu.europa.ec.leos.repository.repositories.DocumentMilestoneRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentPropertyValuesRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
 import eu.europa.ec.leos.repository.services.CollaboratorsService;
+import eu.europa.ec.leos.repository.services.TemplateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -260,6 +261,11 @@ public class ConversionUtils {
     public static LeosDocument buildConfigDocument(Config config,
                                                    ConfigContent configContent) {
         return new LeosDocument(config, configContent);
+    }
+
+    public static LeosDocument buildConfigDocument(Config config,
+            ConfigContent configContent, TemplateService templateService, String language) {
+        return new LeosDocument(config, configContent, templateService, language);
     }
 
     public static LeosDocument buildConfigDocument(Config config) {

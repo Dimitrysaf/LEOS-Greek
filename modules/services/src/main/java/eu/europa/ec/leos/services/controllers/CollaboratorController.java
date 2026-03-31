@@ -43,7 +43,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
 @RestController
 @RequestMapping(path = "/secured/proposal")
-public class CollaboratorController {
+public class CollaboratorController implements CollaboratorApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(CollaboratorController.class);
     private static final String TO_PROPOSAL = "' to proposal '";
@@ -63,8 +63,8 @@ public class CollaboratorController {
         this.securityContext = securityContext;
     }
 
-    @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getAllCollaboratorFromProposal(@PathVariable("proposalRef") String proposalRef) {
+    @Override
+    public ResponseEntity<Object> getAllCollaboratorFromProposal(String proposalRef) {
         try {
             proposalRef = encodeParam(proposalRef);
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
@@ -79,8 +79,8 @@ public class CollaboratorController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.POST)
-    public ResponseEntity<Object> addCollaboratorToProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorRequest collaboratorRequest) {
+    @Override
+    public ResponseEntity<Object> addCollaboratorToProposal(String proposalRef, CollaboratorRequest collaboratorRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
@@ -98,8 +98,8 @@ public class CollaboratorController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}/bulkCollaborators", method = RequestMethod.POST)
-    public ResponseEntity<Object> addBulkCollaboratorsToProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorsRequest collaboratorsRequest) {
+    @Override
+    public ResponseEntity<Object> addBulkCollaboratorsToProposal(String proposalRef, CollaboratorsRequest collaboratorsRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
@@ -119,8 +119,8 @@ public class CollaboratorController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> editCollaboratorFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorRequest collaboratorRequest) {
+    @Override
+    public ResponseEntity<Object> editCollaboratorFromProposal(String proposalRef, CollaboratorRequest collaboratorRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
@@ -137,8 +137,8 @@ public class CollaboratorController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}/bulkCollaborators", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> editBulkCollaboratorsFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorsRequest collaboratorsRequest) {
+    @Override
+    public ResponseEntity<Object> editBulkCollaboratorsFromProposal(String proposalRef, CollaboratorsRequest collaboratorsRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
@@ -156,9 +156,8 @@ public class CollaboratorController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}/collaborators", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> removeCollaboratorFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorRequest collaboratorRequest) {
+    @Override
+    public ResponseEntity<Object> removeCollaboratorFromProposal(String proposalRef, CollaboratorRequest collaboratorRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
@@ -175,9 +174,8 @@ public class CollaboratorController {
         }
     }
 
-    @RequestMapping(value = "/{proposalRef}/bulkCollaborators", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> removeBulkCollaboratorsFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorsRequest collaboratorsRequest) {
+    @Override
+    public ResponseEntity<Object> removeBulkCollaboratorsFromProposal(String proposalRef, CollaboratorsRequest collaboratorsRequest) {
         try {
             proposalRef = encodeParam(proposalRef);
             Proposal proposal = proposalService.findProposalByRef(proposalRef);

@@ -16,14 +16,11 @@ import java.util.Optional;
 @RestController
 @Slf4j
 @AllArgsConstructor
-public class LeosClientController {
+public class LeosClientController implements LeosClientApi {
     private final LeosClientsRepository leosClientsRepository;
 
-    @GetMapping(path = "/leos-client")
-    public ResponseEntity<Object> getLeosClient(
-            @RequestParam(value = "clientName", required = true) String clientName,
-            @RequestParam(value = "technicalUser", required = false) String technicalUser
-            ) {
+    @Override
+    public ResponseEntity<Object> getLeosClient(String clientName, String technicalUser) {
         final Optional<LeosClients> leosClient = Objects.isNull(technicalUser)?
                 leosClientsRepository.findByName(clientName) :
                 leosClientsRepository.findByNameAndTechnicalUser(clientName, technicalUser);

@@ -139,9 +139,26 @@ Then('calendar field {int} of level {string} has value {string}',function(index,
     financialStatementPage.getAllDatePicker(index, levelNumber).should('have.value', expectedDate);
 });
 
-
-
-When ('mouseover on level {int} in financial statement page',(levelNumber) => {
-    financialStatementPage.mouseHoverOnLevel(levelNumber);
+Then('landscape level {int} contains an attribute {string} with value {string}', function( levelNumber, attributeName, attributeValue) {
+    financialStatementPage.getLandscapeLevel(levelNumber).should('have.attr', attributeName, attributeValue);
 });
 
+When ('user scroll subparagraph {int} of landscape level {int} in financial statement page', function(subparagraphNumber, levelNumber){
+    financialStatementPage.scrollSubparagraphOfLandscapeLevel(subparagraphNumber, levelNumber);
+});
+
+Then ('table {int} of content {int} of subparagraph {int} of landscape level {int} contains an attribute {string} with value {string}', function(tableNumber, contentNumber, subparagraphNumber, levelNumber, attributeName, attributeValue){
+    financialStatementPage.getTableOfContentOfSubparagraphOfLandscapeLevel(tableNumber, contentNumber, subparagraphNumber, levelNumber).should('have.attr', attributeName, attributeValue);
+});
+
+When('right click on subparagraph {int} of landscape level {int} in financial statement page', function(subparagraphNumber, levelNumber){
+    financialStatementPage.getSubparagraphOfLandscapeLevel(subparagraphNumber,levelNumber).rightclick();
+});
+
+Then('subparagraph {int} of landscape level {int} contains an attribute {string} with value {string}', function(subparagraphNumber, levelNumber, attributeName, attributeValue){
+    financialStatementPage.getSubparagraphOfLandscapeLevel(subparagraphNumber,levelNumber).should('have.attr', attributeName, attributeValue);
+});
+
+When ('user scroll num 1 of landscape level 4 in financial statement page', function(){
+    financialStatementPage.scrollNumOfLandscapeLevel(1,4);
+});

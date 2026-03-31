@@ -38,7 +38,7 @@ define(function aknInlineContentModule(require) {
     plugins.push(require("plugins/aknHtmlSubScript/aknHtmlSubScriptPlugin"));
     plugins.push(require("plugins/leosWidget/leosWidgetPlugin"));
     plugins.push(require("plugins/leosPaste/leosPastePlugin"));
-    plugins.push(require("plugins/leosCrossReference/leosCrossReferencePlugin"));
+    plugins.push(require("plugins/leosCrossReferenceText/leosCrossReferenceTextPlugin"));
     plugins.push(require("plugins/leosFloatingSpace/leosFloatingSpacePlugin"));
     plugins.push(require("plugins/leosXmlEntities/leosXmlEntitiesPlugin"));
     plugins.push(require("plugins/leosTextCaseChanger/leosTextCaseChangerPlugin"));

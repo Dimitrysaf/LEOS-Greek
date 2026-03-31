@@ -12,11 +12,10 @@ public class HttpUtils {
     public static final String CLAIM_REMOTE_CLIENT_ID = "remoteClientId";
 
     public static Optional<String> extractSystemClientIdFromAuthorizationHeader(String authorizationHeader) {
-        if (authorizationHeader==null && authorizationHeader.length()<BEARER_LENGTH) {
+        if ((authorizationHeader == null) || (authorizationHeader.length() < BEARER_LENGTH)) {
             return Optional.empty();
         }
         String token = extractToken(authorizationHeader);
-
         return extractStringClaimFromToken(token, CLAIM_REMOTE_CLIENT_ID);
     }
 
@@ -26,7 +25,7 @@ public class HttpUtils {
 
     public Optional<String> extractStringClaimFromToken(String token, String claimString) {
         Claim claim = JWT.decode(token).getClaim(claimString);
-        if(claim.isNull()){
+        if (claim.isMissing() || claim.isNull()) {
             return Optional.empty();
         }
         return Optional.of(claim.asString());

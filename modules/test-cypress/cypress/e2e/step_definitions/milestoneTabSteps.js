@@ -2,6 +2,7 @@ import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
 import milestoneTab from "../pages/milestoneTab";
 import dialogBoxPage from "../pages/euiDialogBoxPage";
 import headerPage from "../pages/headerPage";
+import milestoneExplorer from "../pages/milestoneExplorer";
 
 When(`click on add button in milestones tab`, () => {
     milestoneTab.clickAddBtn();
@@ -91,8 +92,3 @@ Then('content of milestone title textbox is {string}', function (content) {
     milestoneTab.elements.milestoneTitleTextBox().should('have.value', content);
 });
 
-
-Then('user is on milestone page', () => {
-    headerPage.getCurrentPageName().should("have.text", "Milestones");
-    cy.wait(7000);
-})

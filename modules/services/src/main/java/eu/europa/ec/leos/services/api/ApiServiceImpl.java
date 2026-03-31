@@ -517,6 +517,7 @@ public abstract class ApiServiceImpl implements ApiService {
             CollectionContextService context = collectionContextProvider.get();
             LeosPackage leosPackage = getLeosPackage(proposalRef);
             Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
+            Validate.isTrue(!proposal.getMetadata().get().isCustomTemplateAct(), "This is a custom template. Proposal metadata cannot be updated");
             proposal = proposalService.populateProposalMetadataFromXml(proposal);
             String proposalComment = generateProposalComment(request);
             if (request.getCrossReferences() == null) {

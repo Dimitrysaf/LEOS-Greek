@@ -62,7 +62,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
 
 @RestController
-public class LeosLightApiController {
+public class LeosLightApiController implements LeosLightApi {
 
     private static final Logger LOG = LoggerFactory.getLogger(LeosLightApiController.class);
 
@@ -103,11 +103,8 @@ public class LeosLightApiController {
         this.applicationProperties = applicationProperties;
     }
 
-    @RequestMapping(value = "/secured/leos-light/import-document", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> importDocument(@RequestParam MultipartFile inputFile,
-                                                 @RequestParam String language,
-                                                 @RequestParam(required = false) String callbackAddress) {
+    @Override
+    public ResponseEntity<Object> importDocument(MultipartFile inputFile, String language, String callbackAddress) {
         if(inputFile.isEmpty()) {
             throw new InvalidInputException("leoslight.service.import.file.empty");
         }
@@ -128,9 +125,8 @@ public class LeosLightApiController {
         }
     }
 
-    @PostMapping(value = "/secured/leos-light/export-document", produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    @ResponseBody
-    public ResponseEntity<Object> exportDocument(@RequestBody ExportDocumentRequest request, HttpServletRequest httpRequest) throws IOException {
+    @Override
+    public ResponseEntity<Object> exportDocument(ExportDocumentRequest request, HttpServletRequest httpRequest) throws IOException {
         String clientContextToken = httpRequest.getHeader(CLIENT_CONTEXT_PARAMETER);
 
         Pair<Boolean, LeosFile> result = leosLightApiService.exportDocument(request, clientContextToken);
@@ -150,8 +146,8 @@ public class LeosLightApiController {
         }
     }
 
-    @RequestMapping(value = "/leos-light/context-token", method = RequestMethod.GET)
-    public String getContextToken(@RequestParam String clientId, @RequestParam String user, @RequestParam String role, @RequestParam String systemName) {
+    @Override
+    public String getContextToken(String clientId, String user, String role, String systemName) {
         AuthClient authClient = tokenService.getAuthClient(clientId);
         if(authClient == null) {
             throw new NotFoundException(messageHelper.getMessage("leoslight.auth.client.not.found"));
@@ -159,9 +155,8 @@ public class LeosLightApiController {
         return tokenService.getClientContextToken(clientId, user, role, systemName);
     }
 
-    @RequestMapping(value = "/secured/editlight/importProposal", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> importProposal(@RequestParam("legFile") MultipartFile file) {
+    @Override
+    public ResponseEntity<Object> importProposal(MultipartFile file) {
         try {
             validatePath(file.getOriginalFilename());
             Pair<Object, HttpStatus> result = leosLightApiService.importProposal(file);
@@ -172,14 +167,13 @@ public class LeosLightApiController {
         }
     }
 
-    @RequestMapping(value = "/editlight/test", method = RequestMethod.GET)
+    @Override
     public String test() {
         return "Test RESTful service. " + System.currentTimeMillis();
     }
 
-    @RequestMapping(value = "/leos-light/test-callback", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> testCallbackAddress(@RequestParam MultipartFile file) {
+    @Override
+    public ResponseEntity<Object> testCallbackAddress(MultipartFile file) {
         return ResponseEntity.ok().body(ImmutableMap.of("result", "Successfully tested callback address!"));
     }
 

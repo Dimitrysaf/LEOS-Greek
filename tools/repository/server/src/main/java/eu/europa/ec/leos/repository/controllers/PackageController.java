@@ -44,7 +44,7 @@ import java.util.List;
 
 @RestController
 @Validated
-public class PackageController {
+public class PackageController implements PackageApi {
     private static final Logger LOG = LoggerFactory.getLogger(PackageController.class);
 
     @Autowired
@@ -53,12 +53,8 @@ public class PackageController {
     @Autowired
     CollaboratorsService collaboratorsService;
 
-    @PostMapping(path = "/package/create/{name}",
-    consumes = {MediaType.APPLICATION_JSON_VALUE},
-    produces = {MediaType.APPLICATION_JSON_VALUE} )
-    public ResponseEntity<Package> createPackage(@PathVariable("name") String name,
-                                                 @Valid @RequestBody CreatePackageRequest createPackageRequest) throws Exception
-    {
+    @Override
+    public ResponseEntity<Package> createPackage(String name, CreatePackageRequest createPackageRequest) throws Exception {
         name = URLDecoder.decode(name, StandardCharsets.UTF_8);
         String originRef = createPackageRequest.getOriginRef();
         Package originPkg;
@@ -77,57 +73,52 @@ public class PackageController {
         return ResponseEntity.ok(p);
     }
 
-    @DeleteMapping(path = "/package/delete/{name}")
-    public ResponseEntity deletePackage(@PathVariable("name") String packageName) throws Exception {
+    @Override
+    public ResponseEntity deletePackage(String packageName) throws Exception {
         packageName = URLDecoder.decode(packageName, StandardCharsets.UTF_8);
         packageService.deletePackage(packageName);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(path = "/package/find-by-name/{name}")
-    public ResponseEntity<Object> getPackageByName(@PathVariable("name") String name) throws MalformedURLException, RepositoryException{
+    @Override
+    public ResponseEntity<Object> getPackageByName(String name) throws MalformedURLException, RepositoryException {
         name = URLDecoder.decode(name, StandardCharsets.UTF_8);
         Package pkg = packageService.getPackageByName(name);
         pkg =  RestPreconditions.checkFound(pkg, HttpStatus.NOT_FOUND ,"Error while searching for a package");
         return ResponseEntity.ok(pkg);
     }
 
-    @GetMapping(path = "/package/find-by-pkg-id/{pkgId}")
-    public ResponseEntity<Object> getLinkedPackagesByPkgId(@PathVariable("pkgId") String pkgId) throws MalformedURLException, RepositoryException{
+    @Override
+    public ResponseEntity<Object> getLinkedPackagesByPkgId(String pkgId) throws MalformedURLException, RepositoryException {
         pkgId = URLDecoder.decode(pkgId, StandardCharsets.UTF_8);
         List<LinkedPackage> linkedPackages = packageService.getLinkedPackagesByPkgId(pkgId);
         return ResponseEntity.ok(new LinkedPackageList(linkedPackages));
     }
 
-    @GetMapping(path = "/package/find-by-linked-pkg-id/{linkedPkgId}")
-    public ResponseEntity<Object> getLinkedPackagesByLinkedPkgId(@PathVariable("linkedPkgId") String linkedPkgId) throws MalformedURLException, RepositoryException{
+    @Override
+    public ResponseEntity<Object> getLinkedPackagesByLinkedPkgId(String linkedPkgId) throws MalformedURLException, RepositoryException {
         linkedPkgId = URLDecoder.decode(linkedPkgId, StandardCharsets.UTF_8);
         List<LinkedPackage> linkedPackages = packageService.getLinkedPackagesByLinkedPkgId(linkedPkgId);
         return ResponseEntity.ok(new LinkedPackageList(linkedPackages));
     }
 
-    @GetMapping(path = "/package/find-by-document-id/{id}")
-    public ResponseEntity<Object> getPackageByDocumentId(@PathVariable("id") String id) throws RepositoryException{
+    @Override
+    public ResponseEntity<Object> getPackageByDocumentId(String id) throws RepositoryException {
         Package pkg = packageService.findPackageByDocumentVersionId(id);
         pkg =  RestPreconditions.checkFound(pkg, HttpStatus.NOT_FOUND ,"Error while searching for a package");
         return ResponseEntity.ok(pkg);
     }
 
 
-    @GetMapping(path = "/package/find-by-id/{id}")
-    public ResponseEntity<Object> getPackageById(@PathVariable("id") String id) throws RepositoryException{
+    @Override
+    public ResponseEntity<Object> getPackageById(String id) throws RepositoryException {
         Package pkg = packageService.getPackageById(id);
         pkg =  RestPreconditions.checkFound(pkg, HttpStatus.NOT_FOUND ,"Error while searching for a package");
         return ResponseEntity.ok(pkg);
     }
 
-    @PostMapping(path = "/package/find-by-name/documents",
-            consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE} )
-    public ResponseEntity<LeosDocumentList> findDocumentsByPackageName(@RequestParam(value="name", required=false, defaultValue="%25") String name,
-                                                                   @RequestParam(value = "descendants", required = false, defaultValue = "false") Boolean descendants,
-                                                                       @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent,
-                                                                  @Valid @RequestBody FindDocumentsRequest findDocumentsRequest) throws Exception {
+    @Override
+    public ResponseEntity<LeosDocumentList> findDocumentsByPackageName(String name, Boolean descendants, Boolean fetchContent, FindDocumentsRequest findDocumentsRequest) throws Exception {
         name = URLDecoder.decode(name, StandardCharsets.UTF_8);
         LeosDocumentList xmlDocs = new LeosDocumentList(packageService.findDocumentsByPackageName(name, findDocumentsRequest.getCategories(),
                 descendants, fetchContent));
@@ -135,70 +126,61 @@ public class PackageController {
         return ResponseEntity.ok(xmlDocs);
     }
 
-    @PostMapping(path = "/package/find-by-id/{id}/documents",
-            consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE} )
-    public ResponseEntity<LeosDocumentList> findDocumentsByPackageId(@PathVariable("id") BigDecimal id,
-                                                           @RequestParam(value = "descendants", required = false, defaultValue = "false") Boolean descendants,
-                                                                     @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent,
-                                                                @Valid @RequestBody FindDocumentsRequest findDocumentsRequest) {
+    @Override
+    public ResponseEntity<LeosDocumentList> findDocumentsByPackageId(BigDecimal id, Boolean descendants, Boolean fetchContent, FindDocumentsRequest findDocumentsRequest) {
         LeosDocumentList xmlDocs = new LeosDocumentList(packageService.findDocumentsByPackageId(id, findDocumentsRequest.getCategories(),
                 descendants, fetchContent));
         xmlDocs =  RestPreconditions.checkFound(xmlDocs, HttpStatus.NOT_FOUND ,"No documents found");
         return ResponseEntity.ok(xmlDocs);
     }
 
-    @GetMapping(path = "/package/find-by-id/{id}/documents")
-    public ResponseEntity<LeosDocumentList> findDocumentsByPackageId(@PathVariable("id") BigDecimal id, @RequestParam(value = "fetchContent", required = false,
-            defaultValue = "false") Boolean fetchContent) {
+    @Override
+    public ResponseEntity<LeosDocumentList> findDocumentsByPackageId(BigDecimal id, Boolean fetchContent) {
         LeosDocumentList xmlDocs = new LeosDocumentList(packageService.findDocumentsByPackageId(id, null,  false, fetchContent));
         xmlDocs =  RestPreconditions.checkFound(xmlDocs, HttpStatus.NOT_FOUND ,"No documents found");
         return ResponseEntity.ok(xmlDocs);
     }
 
-    @GetMapping(path = "/package/find-by-document-ref/{docRef}")
-    public ResponseEntity<Package> findPackageByDocumentRef(@PathVariable("docRef") String docRef) throws RepositoryException{
+    @Override
+    public ResponseEntity<Package> findPackageByDocumentRef(String docRef) throws RepositoryException {
         Package pkg = packageService.findPackageByDocumentRef(docRef);
         pkg =  RestPreconditions.checkFound(pkg, HttpStatus.NOT_FOUND ,"No packages found");
         return ResponseEntity.ok(pkg);
     }
 
-    @GetMapping(path = "/package/find-recent-packages-by-user/{userName}/{numberOfRecentPackages}")
-    public ResponseEntity<List<PackagesRecentlyChanged>> findRecentPackagesForUser(@PathVariable("userName") String userName, @PathVariable("numberOfRecentPackages") BigDecimal numberOfRecentPackages) throws RepositoryException{
+    @Override
+    public ResponseEntity<List<PackagesRecentlyChanged>> findRecentPackagesForUser(String userName, BigDecimal numberOfRecentPackages) throws RepositoryException {
         return new ResponseEntity<>(packageService.findRecentPackagesForUser(userName, numberOfRecentPackages), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/package/find-favourite-packages/{userName}")
-    public ResponseEntity<List<PackagesFavorites>> findFavouritePackagesForUser(@PathVariable("userName") String userName) throws RepositoryException{
+    @Override
+    public ResponseEntity<List<PackagesFavorites>> findFavouritePackagesForUser(String userName) throws RepositoryException {
         return new ResponseEntity<>(packageService.findFavouritePackagesForUser(userName), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/package/{ref}/get-favourite-package/{userName}")
-    public ResponseEntity<PackagesFavorites> getFavouritePackage(@PathVariable("userName") String userName, @PathVariable("ref") String ref) throws RepositoryException{
+    @Override
+    public ResponseEntity<PackagesFavorites> getFavouritePackage(String userName, String ref) throws RepositoryException {
         return new ResponseEntity<>(packageService.getFavouritePackage(userName, ref), HttpStatus.OK);
     }
 
-    @PutMapping(path = "/package/{ref}/toggle-favourite-package/{userName}")
-    public ResponseEntity<PackagesFavorites> toggleFavouritePackage(@PathVariable("userName") String userName, @PathVariable("ref") String ref) throws RepositoryException{
+    @Override
+    public ResponseEntity<PackagesFavorites> toggleFavouritePackage(String userName, String ref) throws RepositoryException {
         return new ResponseEntity<>(packageService.toggleFavouritePackage(userName, ref), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/package/package-collaborators/{packageId}")
-    public ResponseEntity<Object> getPackageCollaborators(@PathVariable("packageId") BigDecimal packageId) throws RepositoryException{
+    @Override
+    public ResponseEntity<Object> getPackageCollaborators(BigDecimal packageId) throws RepositoryException {
         return new ResponseEntity<>(collaboratorsService.getCollaborators(packageId), HttpStatus.OK);
     }
 
-    @PostMapping(path = "/package/package-collaborators/{packageId}/{userName}")
-    public ResponseEntity<Object> addPackageCollaborators(@PathVariable("packageId") BigDecimal packageId,
-                                                          @PathVariable("userName") String userName,
-                                                          @Valid @RequestBody List<Collaborator> collaborators) throws RepositoryException{
+    @Override
+    public ResponseEntity<Object> addPackageCollaborators(BigDecimal packageId, String userName, List<Collaborator> collaborators) throws RepositoryException {
         collaboratorsService.addCollaborators(packageId, collaborators, userName);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping(path = "/package/package-collaborators/{packageId}")
-    public ResponseEntity<Object> deletePackageCollaborators(@PathVariable("packageId") BigDecimal packageId,
-                                                             @Valid @RequestBody List<Collaborator> collaborators) throws RepositoryException{
+    @Override
+    public ResponseEntity<Object> deletePackageCollaborators(BigDecimal packageId, List<Collaborator> collaborators) throws RepositoryException {
         collaboratorsService.deleteCollaborators(packageId, collaborators);
         return new ResponseEntity<>(HttpStatus.OK);
     }

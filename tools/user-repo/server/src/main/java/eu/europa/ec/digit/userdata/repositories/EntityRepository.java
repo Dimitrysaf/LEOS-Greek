@@ -21,28 +21,11 @@ import org.springframework.data.repository.Repository;
 import java.util.List;
 import java.util.stream.Stream;
 
+@NoRepositoryBean
 public interface EntityRepository extends Repository<Entity, String> {
 
     @Query(value = "SELECT DISTINCT(ENTITY_ORG_NAME) FROM LEOS_ENTITY ORDER BY ENTITY_ORG_NAME", nativeQuery = true)
     Stream<String> findAllOrganizations();
 
-    @Query(value = "WITH ANCESTORS(ENTITY_ID, ENTITY_NAME, ENTITY_PARENT_ID, ENTITY_ORG_NAME) AS "
-            + " ( "
-            + " SELECT ENTITY_ID, ENTITY_NAME, ENTITY_PARENT_ID, ENTITY_ORG_NAME FROM LEOS_ENTITY WHERE ENTITY_ID IN (?1) "
-            + " UNION ALL "
-            + " SELECT T2.ENTITY_ID, T2.ENTITY_NAME, T2.ENTITY_PARENT_ID, T2.ENTITY_ORG_NAME FROM ANCESTORS T1 INNER JOIN LEOS_ENTITY T2 ON T1.ENTITY_PARENT_ID = T2.ENTITY_ID"
-            + " ) "
-            + " SELECT DISTINCT ENTITY_ID, ENTITY_NAME, ENTITY_PARENT_ID, ENTITY_ORG_NAME FROM ANCESTORS ORDER BY ENTITY_ORG_NAME, ENTITY_NAME ", nativeQuery = true)
     Stream<Entity> findAllFullPathEntities(List<String> entitiesIds);
-
-
-    // Bug https://github.com/h2database/h2database/issues/4100
-    @Query(value = "WITH RECURSIVE ANCESTORS(ENTITY_ID, ENTITY_NAME, ENTITY_PARENT_ID, ENTITY_ORG_NAME) AS "
-            + " ( "
-            + " SELECT ENTITY_ID, ENTITY_NAME, ENTITY_PARENT_ID, ENTITY_ORG_NAME FROM LEOS_ENTITY WHERE ENTITY_ID IN (?1) "
-            + " UNION ALL "
-            + " SELECT T2.ENTITY_ID, T2.ENTITY_NAME, T2.ENTITY_PARENT_ID, T2.ENTITY_ORG_NAME FROM ANCESTORS T1 INNER JOIN LEOS_ENTITY T2 ON T1.ENTITY_PARENT_ID = T2.ENTITY_ID"
-            + " ) "
-            + " SELECT DISTINCT ENTITY_ID, ENTITY_NAME, ENTITY_PARENT_ID, ENTITY_ORG_NAME FROM ANCESTORS ORDER BY ENTITY_ORG_NAME, ENTITY_NAME ", nativeQuery = true)
-    Stream<Entity> findAllFullPathEntitiesH2(List<String> entitiesIds);
 }
