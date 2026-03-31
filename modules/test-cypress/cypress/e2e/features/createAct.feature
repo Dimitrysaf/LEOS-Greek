@@ -39,6 +39,8 @@ Feature: create act regression features
             | SJ-037 - Commission decision  (State aid - entry force by its notification)                         |
         When click on template "<templateProposal>" in create new legislative document window
         When click on next button in create document page
+        When tick guidance approval checkbox in create document page
+        When click on next button in create document page
         And  provide document title "<oldProposalName>" in create document page
         And  tick eea relevance in create document page
         And  click on create button
@@ -113,6 +115,9 @@ Feature: create act regression features
         When click on upload button
         Then active upload window label contains "Upload a legislative document"
         When upload recent leg file from downloads folder
+        Then active upload window label contains "Guidance approval"
+        When tick guidance approval checkbox in create document page
+        When click on next button in create document page
         Then active upload window label contains "Document metadata"
         And  document title input field is displayed
         When provide document title "<NewProposalName>" in upload document page

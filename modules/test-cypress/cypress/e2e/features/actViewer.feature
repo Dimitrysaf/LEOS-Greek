@@ -11,6 +11,8 @@ Feature: act viewer page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     When provide document title "Automation Testing" in create document page
     When click on create button
     Then user is on act viewer page

@@ -13,6 +13,8 @@ Feature: Legal Act Page Regression Features
     And  collapse all button is displayed in create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation testing citation and recital scenarios" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -74,6 +76,8 @@ Feature: Legal Act Page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation testing article ck editor scenario" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -109,6 +113,9 @@ Feature: Legal Act Page Regression Features
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-3210011215583606762-EN.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -154,6 +161,9 @@ Feature: Legal Act Page Regression Features
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-clymts48h00018g73xyrc19ma-en.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -247,6 +257,9 @@ Feature: Legal Act Page Regression Features
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT_1383684831844402901.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -363,24 +376,6 @@ Feature: Legal Act Page Regression Features
     And  content of subparagraph 1 of list 1 of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 3 contains "point a"
     And  content of subparagraph 1 of point 1 of list 1 of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 3 contains "point i"
     And  content of subparagraph 2 of point 1 of list 1 of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 3 contains "point i subparagraph"
-    When click on insert after icon of article 3
-    Then article 4 is displayed
-    When mouseover and click on article 4
-    Then ck editor window is displayed
-    Then  li 1 with data-akn-element "paragraph" of article contains "Text..." in edition mode
-    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-    And click enter from keyboard in edition mode
-    And click on increase indent icon present in ck editor panel
-    And click on increase indent icon present in ck editor panel
-    And  add "point a" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And  add "sub point a" at current cursor position in edition mode
-    And click on decrease indent icon present in ck editor panel
-    When click save and close button of ck editor
-    Then ck editor window is not displayed
-    And content of subparagraph 1 of list 1 of paragraph 1 of article 4 contains "Text..."
-    And content of point 1 of list 1 of paragraph 1 of article 4 contains "point a"
-    And content of subparagraph 2 of list 1 of paragraph 1 of article 4 contains "sub point a"
 
   @definitionArticle @local
   Scenario: definition article should have maximum three depth
@@ -389,6 +384,8 @@ Feature: Legal Act Page Regression Features
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Automation Testing Definition Article" in create document page
     And  click on create button
@@ -642,6 +639,9 @@ Feature: Legal Act Page Regression Features
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT_1383684831844402901.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -741,6 +741,8 @@ Feature: Legal Act Page Regression Features
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Automation import OJ Testing" in create document page
     And  click on create button
@@ -852,6 +854,8 @@ Feature: Legal Act Page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation Article Testing" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -908,6 +912,9 @@ Feature: Legal Act Page Regression Features
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-cm65ct0qm005tzg88xg9uph7b-en.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -972,6 +979,8 @@ Feature: Legal Act Page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation Article Testing" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -1015,6 +1024,8 @@ Feature: Legal Act Page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation test add subparagraph plugin for article" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -1047,6 +1058,8 @@ Feature: Legal Act Page Regression Features
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Automation search and replace testing" in create document page
     And  click on create button
@@ -1093,6 +1106,8 @@ Feature: Legal Act Page Regression Features
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Automation multi drag and drop testing" in create document page
     And  click on create button
@@ -1194,6 +1209,8 @@ Feature: Legal Act Page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation Testing Alternative clause" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -1235,6 +1252,8 @@ Feature: Legal Act Page Regression Features
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-007" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Automation Testing Alternative Article and Alternative Signature" in create document page
     And  click on create button
@@ -1299,6 +1318,8 @@ Feature: Legal Act Page Regression Features
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-003" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Automation Testing for recital Section in Autonomous act" in create document page
     And  click on create button

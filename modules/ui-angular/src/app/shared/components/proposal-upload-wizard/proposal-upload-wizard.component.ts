@@ -43,7 +43,10 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
   stepSelected: any;
   isNavigationAllowed = false;
   currentStepIndex = 1;
-  stepsCount = 2;
+  stepsCount = 3;
+  isGuidanceApproved = false;
+  isStepOneCompleted = false;
+  isStepTwoCompleted = false;
 
   uploadForm: FormGroup;
   selectedTemplate: CatalogItem | null;
@@ -134,11 +137,16 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
     const newIndex: number = this.currentStepIndex + increment;
     if (newIndex >= 1 && newIndex <= this.stepsCount) {
       this.currentStepIndex = newIndex;
+      // Update completion flags based on current step
+      this.isStepOneCompleted = this.currentStepIndex >= 2;
+      this.isStepTwoCompleted = this.currentStepIndex >= 3;
     }
   }
 
   onSelectStepRemoteNav(event: any) {
     this.currentStepIndex = event.index;
+    this.isStepOneCompleted = this.currentStepIndex >= 2;
+    this.isStepTwoCompleted = this.currentStepIndex >= 3;
   }
 
   onSelectStep(event: EuiWizardStep) {
@@ -182,7 +190,11 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
   }
 
   showCreateHideNext() {
-    return this.currentStepIndex === 2;
+    return this.currentStepIndex === 3;
+  }
+
+  onGuidanceApprovalChange(approved: boolean) {
+    this.isGuidanceApproved = approved;
   }
 
   onDrop() {
@@ -197,6 +209,7 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
 
   initCreateForm() {
     this.uploadForm = this.fb.group({
+      guidanceApproval: new FormControl(false),
       legFile: new FormControl(null, Validators.required),
       templateName: new FormControl(
         { value: '', disabled: true },
@@ -245,6 +258,10 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
     this.stepSelected = null;
     this.currentStepIndex = 1;
     this.isNavigationAllowed = false;
+    this.isGuidanceApproved = false;
+    this.isStepOneCompleted = false;
+    this.isStepTwoCompleted = false;
+    this.step1Complete = false;
     this.initCreateForm();
   }
 
@@ -272,6 +289,7 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
           this.isNavigationAllowed = true;
           this.step1Complete = true;
           this.currentStepIndex = 2;
+          this.isStepOneCompleted = true;
           this.uploadForm.patchValue({
             templateName: res.documentToBeCreated.metadata.templateName,
             docPurpose: cleanDelInsert(

@@ -87,8 +87,18 @@
     </eui-tabs>
   </eui-wizard-step>
   <eui-wizard-step
+    [label]="'page.workspace.create-form.guidance.label' | translate"
+    label="Guidance approval"
+    [isCompleted]="isGuidanceApproved && isStepOneCompleted"
+  >
+    <app-proposal-create-approval
+      [approvalControl]="$any(createForm.get('guidanceApproval'))"
+      (approvalChange)="onGuidanceApprovalChange($event)"
+    ></app-proposal-create-approval>
+  </eui-wizard-step>
+  <eui-wizard-step
     label="Document metadata"
-    [isCompleted]="createForm.valid && isStepOneCompleted"
+    [isCompleted]="createForm.valid && isStepTwoCompleted"
   >
     <app-proposal-create-form
       [createForm]="createForm"
@@ -114,7 +124,7 @@
   <button
     euiButton
     type="button"
-    [disabled]="currentStepIndex === stepsCount || !isNavigationAllowed"
+    [disabled]="(currentStepIndex === 2 && !isGuidanceApproved) || currentStepIndex === stepsCount || !isNavigationAllowed"
     (click)="onNavigation(+1)"
     [hidden]="showCreateHideNext()"
   >

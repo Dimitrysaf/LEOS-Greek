@@ -58,13 +58,24 @@
             </eui-card>
     </eui-wizard-step>
     <eui-wizard-step
+            [label]="'page.workspace.create-form.guidance.label' | translate"
+            [isCompleted]="isGuidanceApproved && isStepOneCompleted"
+            class="eui-u-font-l eui-u-color-grey-90"
+            style="margin: 1rem;"
+    >
+            <app-proposal-create-approval
+                  [approvalControl]="$any(uploadForm.get('guidanceApproval'))"
+                  (approvalChange)="onGuidanceApprovalChange($event)"
+            ></app-proposal-create-approval>
+    </eui-wizard-step>
+    <eui-wizard-step
             [label]="
         (environmentService.isCouncil()
           ? 'page.workspace.create-form.draft.label'
           : 'page.workspace.create-form.document.label'
         ) | translate
       "
-            [isCompleted]="uploadForm.valid"
+            [isCompleted]="uploadForm.valid && isStepTwoCompleted"
             style="padding-top: 0px !important"
     >
             <app-proposal-create-form
@@ -95,7 +106,7 @@
     <button
             euiButton
             type="button"
-            [disabled]="currentStepIndex === stepsCount || !isNavigationAllowed"
+            [disabled]="(currentStepIndex === 2 && !isGuidanceApproved) || currentStepIndex === stepsCount || !isNavigationAllowed"
             (click)="onNavigation(+1)"
             [hidden]="showCreateHideNext()"
     >

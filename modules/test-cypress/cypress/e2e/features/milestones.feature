@@ -12,6 +12,8 @@ Feature: milestone section regression features
         Then user is on create new legislative document window
         When click on template "SJ-023" in create new legislative document window
         When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
         And  provide document title "Automation Testing Validate PDF in MileStone Explorer" in create document page
         And  click on create button
         Then user is on act viewer page
@@ -71,6 +73,8 @@ Feature: milestone section regression features
         Then user is on create new legislative document window
         When click on template "SJ-023" in create new legislative document window
         When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
         And  provide document title "Automation testing article ck editor scenario" in create document page
         And  click on create button
         Then user is on act viewer page
@@ -137,6 +141,8 @@ Feature: milestone section regression features
         Then user is on create new legislative document window
         When click on template "SJ-023" in create new legislative document window
         When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
         And  provide document title "Send Contribution in Milestone tab" in create document page
         And  click on create button
         Then user is on act viewer page
