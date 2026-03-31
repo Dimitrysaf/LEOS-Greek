@@ -94,7 +94,7 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit, A
       const aknId = aknIdMatch ? aknIdMatch[1] : '';
       const srcMatch = xml.match(/componentRef[^>]*src="([^"]+)"/);
       const src = srcMatch ? srcMatch[1] : '';
-      xml = xml.replace(/<annex[^>]*>[\s\S]*?<\/annex>/gi, `<eui-label id="label-for-annex-name" class="eui-u-font-bold">${src}</eui-label><button id="annex-download-button" class="eui-button eui-button--primary eui-button--size-s">${buttonText}</button>`);
+      xml = xml.replace(/<annex[^>]*>[\s\S]*?<\/annex>/gi, `<h3 id="label-for-annex-message" class="eui-u-font-bold eui-u-color-info">Preview of annexes in .docx, .xlsx or .pdf formats is unavailable</h3><eui-label id="label-for-annex-name" class="eui-u-font-bold">${src}</eui-label><button id="annex-download-button" class="eui-button eui-button--primary eui-button--size-s">${buttonText}</button>`);
       const akomantosoEl = this.cleanupXML(xml);
       rootEl.innerHTML = '';
       rootEl.appendChild(akomantosoEl);
