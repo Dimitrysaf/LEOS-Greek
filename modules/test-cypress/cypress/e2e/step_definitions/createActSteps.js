@@ -14,6 +14,10 @@ When('click on next button in create document page', () => {
     createActPage.clickNextBtn();
 })
 
+When('tick guidance approval checkbox in create document page', () => {
+    createActPage.clickGuidanceApprovalCheckbox();
+})
+
 When('provide document title {string} in create document page', function(title) {
     createActPage.enterProposalTitle(title);
 })

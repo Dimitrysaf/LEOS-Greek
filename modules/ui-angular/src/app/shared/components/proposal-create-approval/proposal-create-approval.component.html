@@ -1,0 +1,16 @@
+<div>
+  <div [innerHTML]="'page.workspace.create-form.guidance.text' | translate"></div>
+
+  <div class="eui-u-mt-l">
+    <input
+      type="checkbox"
+      euiInputCheckBox
+      id="guidanceApproval"
+      [formControl]="approvalControl"
+      (change)="onCheckboxChange($event)"
+    />
+    <label euiLabel for="guidanceApproval" class="eui-u-ml-s">
+      {{ 'page.workspace.create-form.guidance.checkbox' | translate }}
+    </label>
+  </div>
+</div>
