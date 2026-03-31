@@ -129,6 +129,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             context.useCustomTemplateAct(documentVO.getMetadata().isCustomTemplateAct());
             context.useOriginRef(documentVO.getRef());
             context.useIdsAndUrlsHolder(idsAndUrlsHolder);
+            context.useLanguage(documentVO.getLanguage());
             //create proposal
             Proposal proposal = context.executeCreateProposal();
 

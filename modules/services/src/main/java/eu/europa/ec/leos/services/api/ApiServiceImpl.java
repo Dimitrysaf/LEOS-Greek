@@ -53,6 +53,7 @@ import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.model.detailstab.DetailsTabExclusions;
+import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.LeosRepository;
@@ -65,6 +66,7 @@ import eu.europa.ec.leos.services.collection.CollectionContextService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
+import eu.europa.ec.leos.services.collection.ExtPackageResult;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper;
@@ -103,6 +105,7 @@ import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.model.proposal.ProposalDetailsLists;
 import eu.europa.ec.leos.services.structure.details.ProposalDetailsService;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.template.CustomTemplateService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
@@ -194,6 +197,7 @@ public abstract class ApiServiceImpl implements ApiService {
     protected final TemplateConfigurationService templateConfigurationService;
     private final LanguageHelper languageHelper;
     protected PackageRepository packageRepository;
+    private final LanguageGroupService languageGroupService;
 
     protected DocumentViewService documentViewService;
     @Value("${leos.clone.originRef}")
@@ -230,7 +234,8 @@ public abstract class ApiServiceImpl implements ApiService {
                           TrackChangesContext trackChangesContext, DocumentViewService documentViewService,
                           GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
                           ProposalDetailsService proposalDetailsService,
-                          TemplateConfigurationService templateConfigurationService, LanguageHelper languageHelper, PackageRepository packageRepository) {
+                          TemplateConfigurationService templateConfigurationService, LanguageHelper languageHelper, PackageRepository packageRepository,
+                          LanguageGroupService languageGroupService) {
         this.customTemplateService = customTemplateService;
         this.templateService = templateService;
         this.workspaceService = workspaceService;
@@ -268,6 +273,7 @@ public abstract class ApiServiceImpl implements ApiService {
         this.templateConfigurationService = templateConfigurationService;
         this.languageHelper = languageHelper;
         this.packageRepository = packageRepository;
+        this.languageGroupService = languageGroupService;
     }
 
     @Override
@@ -289,11 +295,46 @@ public abstract class ApiServiceImpl implements ApiService {
     public CreateCollectionResult copyAct(CreateProposalCopyRequest request) throws CreateCollectionException {
         List<XmlDocument> documents = getAllDocuments(request.getProposalRef());
         return createProposalFromExisting(request.getTemplateId(), request.getTemplateName(),
-                    request.getLangCode(), request.getDocPurpose(), request.isEeaRelevance(), request.isCustomTemplateAct(), request.getKey(), documents);
+                request.getLangCode(), request.getDocPurpose(), request.isEeaRelevance(), request.isCustomTemplateAct(), request.getKey(), documents);
+    }
+
+    @Override
+    public List<List<CatalogItem>> getAllTemplatesForEntity() throws IOException {
+        List<List<CatalogItem>> result = new ArrayList<>();
+
+        // Base templates
+        List<CatalogItem> baseTemplates = this.getTemplates();
+        if (CollectionUtils.isNotEmpty(baseTemplates)) {
+            result.add(baseTemplates);
+        }
+
+        // Entity-specific templates
+        List<String> organizationNames =
+                Optional.ofNullable(securityContext.getUser())
+                        .map(User::getEntities)
+                        .orElse(Collections.emptyList())
+                        .stream()
+                        .map(Entity::getOrganizationName)
+                        .filter(StringUtils::isNotBlank)
+                        .distinct()
+                        .collect(Collectors.toList());
+
+        for (String org : organizationNames) {
+            List<CatalogItem> customTemplates;
+            try {
+                customTemplates = getCustomTemplates(org);
+                if (CollectionUtils.isNotEmpty(customTemplates)) {
+                    result.add(customTemplates);
+                }
+            } catch(IllegalArgumentException illegalArgumentException) {
+                LOG.error("Error occurred while retrieving templates {} for org {}", illegalArgumentException.getMessage(), org);
+            }
+        }
+        return result;
     }
 
     private CreateCollectionResult createProposalFromExisting(String templateId, String templateName, String langCode,
-                                                 String docPurpose, boolean eeaRelevance, boolean customTemplate, String templateKey, List<XmlDocument> documents) throws CreateCollectionException {
+                                                              String docPurpose, boolean eeaRelevance, boolean customTemplate, String templateKey, List<XmlDocument> documents) throws CreateCollectionException {
         DocumentVO documentVO = new DocumentVO(LeosCategory.PROPOSAL);
         documentVO.getMetadata().setDocTemplate(templateId);
         documentVO.getMetadata().setTemplateName(templateName);
@@ -332,6 +373,55 @@ public abstract class ApiServiceImpl implements ApiService {
         documentVO.getMetadata().setCustomTemplateAct(customTemplateAct);
         return createCollectionService.createCollection(documentVO, false);
     }
+
+    @Override
+    public List<ExtPackageResult> createExtProposal(String templateKey, String[] languageCodes, String docPurpose) {
+        try {
+            List<String> languages = (languageCodes == null || languageCodes.length == 0)
+                    ? new ArrayList<>(Collections.singletonList("EN"))
+                    : Arrays.stream(languageCodes).map(StringUtils::upperCase).collect(Collectors.toList());
+
+            if (languages.size() == 1 && "ALL".equals(languages.getFirst())) {
+                languages = languageGroupService.getLanguageList().stream().map(StringUtils::upperCase).collect(Collectors.toList());
+            } else if (!languages.contains("EN")) {
+                return Collections.singletonList(new ExtPackageResult("Language list must include EN", 400));
+            }
+
+
+            DocumentVO documentVO = new DocumentVO(LeosCategory.PROPOSAL);
+            documentVO.getMetadata().setTemplate(templateKey);
+            documentVO.getMetadata().setDocPurpose(docPurpose);
+            documentVO.getMetadata().setEeaRelevance(false);
+            documentVO.getMetadata().setCustomTemplateAct(false);
+
+            documentVO.setLanguage("EN");
+            CreateCollectionResult enResult = createCollectionService.createCollection(documentVO, false);
+            languages.remove("EN");
+
+            List<ExtPackageResult> results = new ArrayList<>();
+            results.add(new ExtPackageResult(enResult, "EN"));
+
+            documentVO.setRef(enResult.getProposalId());
+            try {
+                for (String langCode : languages) {
+                    documentVO.setLanguage(langCode);
+                    CreateCollectionResult langResult = createCollectionService.createCollection(documentVO, true);
+                    results.add(new ExtPackageResult(langResult, langCode));
+                }
+            } catch (Exception ex) {
+                LeosPackage mainPackage = packageService.findPackageByDocumentRef(enResult.getProposalId(), Proposal.class);
+                packageService.deletePackage(mainPackage);
+
+                LOG.error("Error occurred while creating linguistic versions: {}", ex.getMessage());
+                return Collections.singletonList(new ExtPackageResult(ex.getMessage()));
+            }
+            return results;
+        } catch (Exception e) {
+            LOG.error("Error occurred while creating ext proposal: {}", e.getMessage());
+            return Collections.singletonList(new ExtPackageResult(e.getMessage()));
+        }
+    }
+
 
     @Override
     public List<String> createLinguisticVersionsFromMilestone(String legFileId, List<String> linguisticVersions) throws CreateCollectionException {
@@ -1111,7 +1201,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private MetadataVO createMetadataVO(Proposal proposal) {
         ProposalMetadata metadata = proposal.getMetadata().getOrError(() -> "Proposal metadata is not available!");
         MetadataVO metadataVO = new MetadataVO(metadata.getStage(), metadata.getType(), metadata.getPurpose(), metadata.getTemplate(), metadata.getLanguage(),
-            metadata.getEeaRelevance(), metadata.isCustomTemplateAct());
+                metadata.getEeaRelevance(), metadata.isCustomTemplateAct());
         metadataVO.setAuthenticLang(proposal.getMetadata().get().getAuthenticLang());
         metadataVO.setIsAuthenticLang(proposal.getMetadata().get().getIsAuthenticLang());
         metadataVO.setPackageTitle(proposal.getMetadata().get().getPackageTitle());
@@ -1204,7 +1294,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 Map<String, Object> docsAddedMap = MilestoneHelper.populateDocsAddedMap(clonedDocuments, originalDocumentFiles, clonedLegDocument,
                         getAnnexes(originalLeosPackage));
                 List<String> docsAddedList = docsAddedMap.keySet().stream().filter((n) ->
-                    !n.contains(PROCESSED) && !n.contains(ACCEPTED_ADDED)
+                        !n.contains(PROCESSED) && !n.contains(ACCEPTED_ADDED)
                 ).collect(Collectors.toList());
                 if (docsAddedList.size() > 0) {
                     contributionChanged = true;
@@ -1555,7 +1645,7 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     private List<XmlDocument> handleAnnexCreationDeletion(DocumentVO baseSourceDoc, DocumentVO finalSourceDoc, List<XmlDocument> linguisticDocuments,
-            String linguisticPackageId) throws IOException {
+                                                          String linguisticPackageId) throws IOException {
         boolean linguisticBillAttachmentsUpdated = false;
         DocumentVO baseSourceAnnex = baseSourceDoc != null ? baseSourceDoc.getChildDocument(LeosCategory.BILL).getChildDocument(LeosCategory.ANNEX) : null;
         DocumentVO finalSourceAnnex = finalSourceDoc.getChildDocument(LeosCategory.BILL).getChildDocument(LeosCategory.ANNEX);
@@ -1603,7 +1693,7 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     private void checkAndUpdateAnnexTitle(DocumentVO baseAnnex, DocumentVO finalAnnex, boolean isNewAnnex, String linguisticProposalRef,
-            XmlDocument linguisticAnnex) {
+                                          XmlDocument linguisticAnnex) {
         if (hasChangedAnnexTitle(baseAnnex, finalAnnex, isNewAnnex)) {
             updateAnnexTitle(linguisticProposalRef, linguisticAnnex.getId(), finalAnnex.getMetadata().getTitle());
         }
@@ -1632,7 +1722,7 @@ public abstract class ApiServiceImpl implements ApiService {
 
     @Override
     public void addLegDocument(String packageName, String legFileName, List<String> milestoneComments, byte[] content, LeosLegStatus status,
-            List<String> containedDocuments, boolean isCustomTemplate) {
+                               List<String> containedDocuments, boolean isCustomTemplate) {
         legService.addLegDocument(packageName, legFileName, milestoneComments, content, status, containedDocuments, isCustomTemplate);
     }
 
@@ -1667,7 +1757,7 @@ public abstract class ApiServiceImpl implements ApiService {
         String xmlContentWithoutPreface = xmlContent;
         if (!preface.isEmpty()) {
             xmlContentWithoutPreface = new String(xmlContentProcessor.removeElementById(xmlContent.getBytes(StandardCharsets.UTF_8),
-                preface.get(0).getElementId(), false), UTF_8);
+                    preface.get(0).getElementId(), false), UTF_8);
         }
         Pattern pattern = Pattern.compile("leos:action=\"|leos:softaction=\"|</ins>|</del>",
                 Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
