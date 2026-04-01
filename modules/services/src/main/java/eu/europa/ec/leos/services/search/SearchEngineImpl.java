@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -143,14 +144,17 @@ public class SearchEngineImpl implements SearchEngine {
     private void addElementNode(Node node, List<Element> elements, String content, int textStartIndex) {
         String tag = node.getNodeName();
         String xmlIdAttribute = XercesUtils.getAttributeValue(node, XMLID);
-        String elementId = xmlIdAttribute != null ? xmlIdAttribute : tag + "_generated";
-
+        String elementId = xmlIdAttribute != null ? xmlIdAttribute : tag + "_generated_" + UUID.randomUUID();
+        String xPath = xmlIdAttribute != null ? null : XercesUtils.getXPath(node);
+        String xPathPrefix = xmlIdAttribute != null ? null : XercesUtils.getXPathWithPrefix(node);
         Element element = new Element(
                 elementId,
                 content,
                 XmlContentProcessorImpl.isEditableElement(node, true),
                 tag,
-                textStartIndex);
+                textStartIndex,
+                xPath,
+                xPathPrefix);
         elements.add(element);
     }
 
@@ -271,11 +275,11 @@ public class SearchEngineImpl implements SearchEngine {
                 if (lastElement.getElementId().equals(element.elementId)) {
                     elementMatchVO = lastElement;
                 } else {
-                    elementMatchVO = new ElementMatchVO(element.elementId, idx.indexInTag, element.isEditable);
+                    elementMatchVO = new ElementMatchVO(element.elementId, idx.indexInTag, element.isEditable, element.xPath, element.xPathPrefix);
                     matchedElements.add(elementMatchVO);
                 }
             } else {
-                elementMatchVO = new ElementMatchVO(element.elementId, idx.indexInTag, element.isEditable);
+                elementMatchVO = new ElementMatchVO(element.elementId, idx.indexInTag, element.isEditable, element.xPath, element.xPathPrefix);
                 matchedElements.add(elementMatchVO);
             }
 
@@ -377,7 +381,7 @@ public class SearchEngineImpl implements SearchEngine {
             for (ElementMatchVO eVO : smVO.getMatchedElements()) {
                 if (!matchedElementsChildContentLength.containsKey(eVO.getElementId())) {
                     matchedElementsChildContentLength.put(eVO.getElementId(),
-                            getChildElementsContentLength(document, eVO.getElementId()));
+                            getChildElementsContentLength(document, eVO));
                 }
             }
 
@@ -387,16 +391,19 @@ public class SearchEngineImpl implements SearchEngine {
                 boolean emptyTag = replaceContent(document, eVO, replaceTextSegments.get(i), removeEmptyTags,
                         matchedElementsChildContentLength.get(eVO.getElementId()), user, isTrackChangesEnabled);
                 if (emptyTag) {
-                    emptyElementSet.add(eVO.getElementId());
+                    emptyElementSet.add(eVO.getXpath() == null ? eVO.getElementId() : eVO.getXpath());
                 }
             }
 
             removeEmptyElementsAndParents(document, emptyElementSet);
         }
 
-    private List<Integer> getChildElementsContentLength(Document document, String elementId) {
+    private List<Integer> getChildElementsContentLength(Document document, ElementMatchVO eVO) {
+        Node node = XercesUtils.getElementById(document, eVO.getElementId());
+        if(node == null && eVO.getXpath() != null){
+            node = XercesUtils.getFirstElementByXPath(document, eVO.getXpathprefix());
+        }
         List<Integer> childNodesContentLength = new ArrayList<>();
-        Node node = XercesUtils.getElementById(document, elementId);
         if (node != null) {
             NodeList nodeList = node.getChildNodes();
             Node nodeTemp;
@@ -425,6 +432,10 @@ public class SearchEngineImpl implements SearchEngine {
         boolean containsEmptyTextElement = false;
 
         Node node = XercesUtils.getElementById(document, eVO.getElementId());
+        if(node == null && eVO.getXpath() != null){
+            node = XercesUtils.getFirstElementByXPath(document, eVO.getXpathprefix());
+        }
+
         if (node != null) {
             int index = 0;
             int startEVO = eVO.getMatchStartIndex();
@@ -461,7 +472,9 @@ public class SearchEngineImpl implements SearchEngine {
                             containsNonEmptyElement = true;
                         }
                     }
-                    node.setTextContent(parseXml(updatedContent));
+                    String textContent = parseXml(updatedContent).replaceAll("&amp;","&");
+
+                    node.setTextContent(textContent);
 
                     lastUpdatedNode = node;
                     replaceSegment = replaceSegment.substring(minReplaceSegmentLength);
@@ -490,6 +503,9 @@ public class SearchEngineImpl implements SearchEngine {
         Map<Node, List<Node>> nodeMap = new HashMap<>();
 
         Node node = XercesUtils.getElementById(document, eVO.getElementId());
+        if(node == null && eVO.getXpath() != null){
+            node = XercesUtils.getFirstElementByXPath(document, eVO.getXpathprefix());
+        }
         if (node != null) {
             int index = 0;
             int startEVO = eVO.getMatchStartIndex();
@@ -603,9 +619,13 @@ public class SearchEngineImpl implements SearchEngine {
         nodeMap.put(node, addedElementList);
     }
 
-    private void removeEmptyElementsAndParents(Document document, Set<String> elementIds) {
-        for (String elementId : elementIds) {
-            Node node = XercesUtils.getElementById(document, elementId);
+    private void removeEmptyElementsAndParents(Document document, Set<String> elementIdsOrXpath) {
+        for (String elemIdOrXpath : elementIdsOrXpath) {
+            Node node = XercesUtils.getElementById(document, elemIdOrXpath);
+            if(node == null){
+                node = XercesUtils.getFirstElementByXPath(document, elemIdOrXpath);
+            }
+
             if (node != null) {
                 while ((node.getParentNode() != null) && XmlHelper.INLINE_ELEMENTS.contains(node.getParentNode().getNodeName()) &&
                         StringUtils.isEmpty(node.getParentNode().getTextContent())) {
@@ -622,13 +642,17 @@ public class SearchEngineImpl implements SearchEngine {
         boolean isEditable;
         String tag;
         int startIndexOfText;
+        String xPath;
+        String xPathPrefix;
 
-        Element(String elementId, String content, boolean isEditable, String tag, int startIndexOfText) {
+        Element(String elementId, String content, boolean isEditable, String tag, int startIndexOfText, String xPath, String xPathPrefix) {
             this.elementId = elementId;
             this.content = content;
             this.isEditable = isEditable;
             this.tag = tag;
             this.startIndexOfText = startIndexOfText;
+            this.xPath = xPath;
+            this.xPathPrefix = xPathPrefix;
         }
 
         @Override
@@ -636,12 +660,12 @@ public class SearchEngineImpl implements SearchEngine {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Element that = (Element) o;
-            return Objects.equals(elementId, that.elementId) && Objects.equals(tag, that.tag);
+            return Objects.equals(elementId, that.elementId) && Objects.equals(tag, that.tag) && Objects.equals(xPath, that.xPath);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(elementId, tag);
+            return Objects.hash(elementId, tag, xPath);
         }
 
         @Override
@@ -652,6 +676,7 @@ public class SearchEngineImpl implements SearchEngine {
                     ", isEditable=" + isEditable +
                     ", tag='" + tag + '\'' +
                     ", startIndexOfText='" + startIndexOfText + '\'' +
+                    ", xPath='" + xPath + '\'' +
                     '}';
         }
     }
