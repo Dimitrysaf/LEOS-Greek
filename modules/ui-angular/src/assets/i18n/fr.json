@@ -441,6 +441,7 @@
   "page.collection.drafts.annex.max.size.error.title": "Annexes",
   "page.collection.drafts.annex.max.size.error.message": "La taille maximale de 50 MB à été dépassée",
   "page.collection.drafts.foreign.annex.download": "Télécharger",
+  "page.collection.drafts.foreign.annex.msg": "L'aperçu pour les annexes au format .docx, xlsx ou .pdf n'est pas disponible.",
   "page.collection.drafts.last-updated-on-by": "Dernière mise à jour le {{ date }} par {{ name }}",
   "page.editor.actions-dropdown.label": "Actions",
   "page.editor.actions-dropdown.save": "Sauver",
