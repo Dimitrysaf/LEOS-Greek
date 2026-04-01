@@ -1,0 +1,75 @@
+<div class="col-10">
+  <div class="row">
+    <div class="col-12">
+      <app-searchbox
+             placeholder="{{ 'page.workspace.administration.search-entities' | translate }}"
+             class="filter-container"
+             (searchInitiation)="search($event)"
+      >
+        <eui-label beforeSearchInput class="eui-u-mt-s eui-u-mb-xs eui-u-font-xl eui-u-font-bold">
+          {{ 'page.workspace.administration.groups' | translate }}
+        </eui-label>
+        <button afterSearchInput euiButton euiPrimary (click)="addEntity()">
+          {{ 'page.workspace.administration.add-entities' | translate }}
+        </button>
+      </app-searchbox>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="row entities-table">
+        <div class="col-12">
+          <div class="table-container">
+            <table class="eui-u-mt-m"
+                   euiTable
+                   euiTableResponsive
+                   [rows]="paginatedEntities"
+                   [loading]="loading"
+            >
+              <ng-template euiTemplate="header">
+                <tr class="ng-star-inserted entity">
+                  <th>{{ 'page.collection.collaborators.table.td-entity' | translate }}</th>
+                  <th>{{ 'page.collection.collaborators.table.td-actions' | translate }}</th>
+                </tr>
+              </ng-template>
+              <ng-template let-row euiTemplate="body">
+                <tr class="entity" >
+                  <td [class.selected-entity]="row.name === selectedEntity?.name"><a (click)="onEntitySelect(row)">{{ row.name }}</a></td>
+                  <td>
+                    <div class="eui-u-flex">
+                      <button *ngIf="canBeDeleted(row)" euiButton euiBasicButton euiRounded euiIconButton euiDanger euiSizeS
+                              euiTooltip="Delete" euiTooltipDanger (click)="onDelete(row)">
+                        <span euiIcon iconClass="eui-icon eui-icon-delete"></span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </table>
+          </div>
+        </div>
+        <div class="row entities-table">
+            <div class="col-12">
+              <eui-paginator
+                [pageSize]="pageSize"
+                [page]="page"
+                [length]="this.entities?.length"
+                [hasPageNumberNavigation]="true"
+                [nbPageNumberNavigation]="5"
+                (pageChange)="onPageChange($event)">
+              </eui-paginator>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <app-entity-info *ngIf="!!selectedEntity" [selectedEntity]="selectedEntity" (entityEditComplete)="onEntityEditComplete($event)"></app-entity-info>
+      <eui-label *ngIf="!selectedEntity" class="eui-u-mt-s eui-u-mb-xs eui-u-font-xl eui-u-font-bold">
+        {{ "page.workspace.administration.entity-info.no-entity-selected-label" | translate }}
+      </eui-label>
+    </div>
+  </div>
+
+</div>

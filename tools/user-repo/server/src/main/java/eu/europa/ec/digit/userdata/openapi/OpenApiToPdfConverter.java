@@ -810,29 +810,37 @@ public class OpenApiToPdfConverter {
 
         // Split text into lines based on actual text width
         java.util.List<String> lines = new ArrayList<>();
-        String[] words = text.split(" ");
+        String[] wordsWithNewLines = text.split(" ");
         StringBuilder currentLine = new StringBuilder();
 
-        for (String word : words) {
-            String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
-            try {
-                float testWidth = font.getStringWidth(testLine) / 1000 * fontSize;
-                if (testWidth <= maxWidth) {
+        for (String w : wordsWithNewLines) {
+            String[] wordsSplitByNewLine = w.split("\n");
+            for (int i = 0; i < wordsSplitByNewLine.length; ++i) {
+                String word = wordsSplitByNewLine[i];
+                if (i > 0) {
+                    lines.add(currentLine.toString());
+                    currentLine = new StringBuilder();
+                }
+                String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
+                try {
+                    float testWidth = font.getStringWidth(testLine) / 1000 * fontSize;
+                    if (testWidth <= maxWidth) {
+                        if (currentLine.length() > 0) currentLine.append(" ");
+                        currentLine.append(word);
+                    } else {
+                        if (currentLine.length() > 0) {
+                            lines.add(currentLine.toString());
+                            currentLine = new StringBuilder(word);
+                        } else {
+                            // Single word is too long, force it
+                            lines.add(word);
+                        }
+                    }
+                } catch (Exception e) {
+                    // Fallback to character-based wrapping
                     if (currentLine.length() > 0) currentLine.append(" ");
                     currentLine.append(word);
-                } else {
-                    if (currentLine.length() > 0) {
-                        lines.add(currentLine.toString());
-                        currentLine = new StringBuilder(word);
-                    } else {
-                        // Single word is too long, force it
-                        lines.add(word);
-                    }
                 }
-            } catch (Exception e) {
-                // Fallback to character-based wrapping
-                if (currentLine.length() > 0) currentLine.append(" ");
-                currentLine.append(word);
             }
         }
         if (currentLine.length() > 0) {

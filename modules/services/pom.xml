@@ -161,6 +161,10 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-messaging</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-commons</artifactId>
+        </dependency>
         <!-- XStream -->
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>

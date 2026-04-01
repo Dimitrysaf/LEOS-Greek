@@ -1,0 +1,18 @@
+.table-container {
+  height: 400px;
+  overflow-y: auto;
+}
+
+.entity th:first-child,
+.entity td:first-child {
+  width: 85%;
+}
+
+.entity th:last-child,
+.entity td:last-child {
+  width: 15%;
+}
+
+.entities-table {
+  margin-bottom: 25px;
+}

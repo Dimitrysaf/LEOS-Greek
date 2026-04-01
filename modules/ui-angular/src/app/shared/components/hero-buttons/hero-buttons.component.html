@@ -1,0 +1,45 @@
+<div class="content-container">
+  <div class="label-container">
+    <eui-label class="eui-u-font-3xl hero-text">{{
+        'page.home.hero.label' | translate
+      }}</eui-label>
+  </div>
+  <div class="button-container eui-u-mt-m">
+    <button
+      euiButton
+      euiPrimary
+      (click)="handleCreateMandate()"
+      *ngIf="canUpload && !isCouncil"
+    >
+      {{ 'page.workspace.upload.button.text' | translate }}
+      <eui-icon-svg icon="eui-chevron-forward"></eui-icon-svg>
+    </button>
+    <button
+      euiButton
+      euiPrimary
+      (click)="handleCreateMandate()"
+      *ngIf="isCouncil"
+    >
+      {{ 'page.workspace.upload-cn.button.text' | translate }}
+      <eui-icon-svg icon="eui-chevron-forward"></eui-icon-svg>
+    </button>
+    <button
+      euiButton
+      euiPrimary
+      (click)="handleCreateDraft()"
+      *ngIf="isCouncil"
+    >
+      {{ 'page.home.create-your-draft' | translate }}
+      <eui-icon-svg icon="eui-chevron-forward"></eui-icon-svg>
+    </button>
+    <button
+      euiButton
+      euiPrimary
+      (click)="handleCreate()"
+      *ngIf="!isCouncil"
+    >
+      {{ 'page.workspace.create-button' | translate }}
+      <eui-icon-svg icon="eui-chevron-forward"></eui-icon-svg>
+    </button>
+  </div>
+</div>

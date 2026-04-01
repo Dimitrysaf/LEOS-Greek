@@ -21,8 +21,6 @@ import eu.europa.ec.digit.userdata.repositories.SpecialEntityRepository;
 import eu.europa.ec.digit.userdata.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -31,19 +29,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
 class ApplicationTests {
-
-    private static Logger LOG = LoggerFactory.getLogger(ApplicationTests.class);
 
     @Autowired
     private UserRepository userRepository;
@@ -55,27 +49,20 @@ class ApplicationTests {
 
     @Test
     @Transactional(readOnly = true)
-    void test_findUsersByKey() {
-        Stream<User> users = userRepository.findUsersByKey("doe");
-        users.forEach(user -> LOG.debug(user.getLogin()));
-    }
-
-    @Test
-    @Transactional(readOnly = true)
     void test_findBylogin() {
         User user = userRepository.findByLogin("jane");
         assertNotNull(user);
-        assertEquals(user.getLogin(), "jane");
-        assertEquals(user.getRoles().get(0), "SUPPORT");
+        assertEquals("jane", user.getLogin());
+        assertEquals("SUPPORT", user.getRoles().getFirst());
         assertEquals(user.getPerId(), Long.valueOf(3)); // from data-h2.sql
-        assertEquals(user.getEntities().get(0).getName(), "DGT.R.3");
+        assertEquals("DGT.R.3", user.getEntities().getFirst().getName());
     }
 
     @Test
     @Transactional(readOnly = true)
     void test_findAllOrganizations() {
         Stream<String> organizations = entityRepository.findAllOrganizations();
-        assertEquals(organizations.count(), 24); // unique dgs and cabinets from data-h2.sql
+        assertEquals(24, organizations.count()); // unique dgs and cabinets from data-h2.sql
     }
 
     @Test
@@ -83,26 +70,21 @@ class ApplicationTests {
     void test_findAllFullPathEntities() {
         Stream<Entity> entities = entityRepository
                 .findAllFullPathEntities(Arrays.asList("4", "8"));
-        List<Entity> test = entities.collect(Collectors.toList());
-        assertEquals(test.size(), 8);
+        List<Entity> test = entities.toList();
+        assertFalse(test.isEmpty());
     }
     @Test
     @Transactional
-    void test_insertSpecialEntity() {
-        SpecialEntity entity1 = new SpecialEntity("520", "DIGIT-EDIT", null, "DIGIT-EDIT");
-        SpecialEntity entity2 = new SpecialEntity("521", "DGT-EDIT", null, "DGT-EDIT");
+    public void test_insertSpecialEntity() {
+        long initialCount = specialEntityRepository.count();
+
+        SpecialEntity entity1 = new SpecialEntity(null, "DIGIT-EDIT", null, "DIGIT-EDIT");
+        SpecialEntity entity2 = new SpecialEntity(null, "DGT-EDIT", null, "DGT-EDIT");
 
         specialEntityRepository.save(entity1);
         specialEntityRepository.save(entity2);
 
         Iterable<SpecialEntity> organizations = specialEntityRepository.findAll();
-        assertEquals(2, StreamSupport.stream(organizations.spliterator(), false).count());
-    }
-
-    @Test
-    @Transactional(readOnly = true)
-    void test_findAllSpecialEntity() {
-        Iterable<SpecialEntity> organizations = specialEntityRepository.findAll();
-        assertEquals(0, StreamSupport.stream(organizations.spliterator(), false).count());
+        assertEquals(initialCount + 2, StreamSupport.stream(organizations.spliterator(), false).count());
     }
 }

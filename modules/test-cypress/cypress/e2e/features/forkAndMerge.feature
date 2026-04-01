@@ -951,7 +951,7 @@ Feature: fork and merge features
    Then user is on act viewer page
 
 # Ticket LEOS#3081: Clone Proposal : Wrong structure is creating when we outdent an unnumbered paragraph
-  @IndentAndOutdentScenarios @local 
+  @IndentAndOutdentScenarios @local
  Scenario: Indent/Outdent Scenario
     Given navigate to leos application with "User1"
     Then user is on home page

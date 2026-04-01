@@ -14,18 +14,24 @@
 package eu.europa.ec.digit.userdata.repositories;
 
 import eu.europa.ec.digit.userdata.entities.Entity;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
-import org.springframework.data.repository.Repository;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @NoRepositoryBean
-public interface EntityRepository extends Repository<Entity, String> {
+public interface EntityRepository extends JpaRepository<Entity, String> {
 
     @Query(value = "SELECT DISTINCT(ENTITY_ORG_NAME) FROM LEOS_ENTITY ORDER BY ENTITY_ORG_NAME", nativeQuery = true)
     Stream<String> findAllOrganizations();
 
     Stream<Entity> findAllFullPathEntities(List<String> entitiesIds);
+
+    Collection<Entity> findByNameIgnoreCase(String name);
+
+    Optional<Entity> findFirstByNameAndOrganizationNameAndParentIdIsNull(String name, String orgName);
 }

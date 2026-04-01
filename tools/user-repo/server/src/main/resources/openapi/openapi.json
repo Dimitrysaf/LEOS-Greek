@@ -9,30 +9,21 @@
     "bearerAuth" : [ ]
   } ],
   "paths" : {
-    "/users/{userId}" : {
+    "/" : {
       "get" : {
-        "tags" : [ "User Management" ],
-        "summary" : "Get user by ID",
-        "description" : "Retrieves user details by user ID",
-        "operationId" : "getUser",
-        "parameters" : [ {
-          "name" : "userId",
-          "in" : "path",
-          "description" : "User ID",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
+        "tags" : [ "App Info" ],
+        "summary" : "Get application information",
+        "description" : "Retrieves application version and build information",
+        "operationId" : "getAppInfo",
         "responses" : {
           "200" : {
-            "description" : "User found successfully"
-          },
-          "404" : {
-            "description" : "User not found",
+            "description" : "Application information retrieved successfully",
             "content" : {
               "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Map",
+                  "exampleSetFlag" : false
+                },
                 "exampleSetFlag" : false
               }
             }
@@ -53,14 +44,13 @@
     },
     "/entities/{org}/users" : {
       "get" : {
-        "tags" : [ "User Management" ],
-        "summary" : "Search users by organization",
+        "tags" : [ "Entity Management" ],
+        "summary" : "Search users by organization and key",
         "description" : "Search users by organization and key",
         "operationId" : "searchUsersByOrganizationAndKey",
         "parameters" : [ {
           "name" : "org",
           "in" : "path",
-          "description" : "Organization",
           "required" : true,
           "schema" : {
             "type" : "string",
@@ -69,7 +59,6 @@
         }, {
           "name" : "searchKey",
           "in" : "query",
-          "description" : "Search key",
           "required" : true,
           "schema" : {
             "type" : "string",
@@ -78,46 +67,13 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "Users found successfully"
-          },
-          "500" : {
-            "description" : "Internal server error",
+            "description" : "Users found successfully",
             "content" : {
               "application/json" : {
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/entities/{userId}" : {
-      "get" : {
-        "tags" : [ "User Management" ],
-        "summary" : "Get entities for user",
-        "description" : "Retrieves all full path entities for a user",
-        "operationId" : "getAllFullPathEntitiesForUser",
-        "parameters" : [ {
-          "name" : "userId",
-          "in" : "path",
-          "description" : "User ID",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Entities retrieved successfully"
-          },
-          "404" : {
-            "description" : "User not found",
-            "content" : {
-              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Collection",
+                  "exampleSetFlag" : false
+                },
                 "exampleSetFlag" : false
               }
             }
@@ -126,76 +82,10 @@
             "description" : "Internal server error",
             "content" : {
               "application/json" : {
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/users/connectedEntity" : {
-      "post" : {
-        "tags" : [ "User Management" ],
-        "summary" : "Add special entity for user",
-        "description" : "Adds a special entity connection for a user",
-        "operationId" : "addSpecialEntityForUser",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/SpecialEntityRequest",
-                "exampleSetFlag" : false
-              },
-              "exampleSetFlag" : false
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "Special entity added successfully"
-          },
-          "500" : {
-            "description" : "Internal server error",
-            "content" : {
-              "application/json" : {
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/users/jobTitle/{jobTitle}" : {
-      "get" : {
-        "tags" : [ "User Management" ],
-        "summary" : "Get users by job title",
-        "description" : "Retrieves users with specified job title",
-        "operationId" : "getUsersForJobTitle",
-        "parameters" : [ {
-          "name" : "jobTitle",
-          "in" : "path",
-          "description" : "Job title",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Users found successfully"
-          },
-          "500" : {
-            "description" : "Internal server error",
-            "content" : {
-              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
                 "exampleSetFlag" : false
               }
             }
@@ -208,18 +98,347 @@
     },
     "/entities" : {
       "get" : {
-        "tags" : [ "User Management" ],
+        "tags" : [ "Entity Management" ],
         "summary" : "Get all organizations",
         "description" : "Retrieves list of all organizations",
         "operationId" : "getAllOrganizations",
         "responses" : {
           "200" : {
-            "description" : "Organizations retrieved successfully"
+            "description" : "Organizations retrieved successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Collection",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
           },
           "500" : {
             "description" : "Internal server error",
             "content" : {
               "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Entity Management" ],
+        "summary" : "Create special entity",
+        "description" : "Creates a special entity",
+        "operationId" : "createEntity",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/EntityDto",
+                "exampleSetFlag" : false
+              },
+              "exampleSetFlag" : false
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Special entity created successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/EntityDto",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid DTO",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "Entity Management" ],
+        "summary" : "Update special entity",
+        "description" : "Updates a special entity",
+        "operationId" : "updateEntity",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/EntityDto",
+                "exampleSetFlag" : false
+              },
+              "exampleSetFlag" : false
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Special entity updated successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/EntityDto",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "400" : {
+            "description" : "Special entity not found or invalid DTO",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/entities/special" : {
+      "get" : {
+        "tags" : [ "Entity Management" ],
+        "summary" : "Get special entities",
+        "description" : "Retrieves all special entities for a given organization or all special entities if no organization name is passed.\nIf organization name is provided, then the organization is included in the result.",
+        "operationId" : "special",
+        "parameters" : [ {
+          "name" : "orgName",
+          "in" : "query",
+          "description" : "- If orgName is null or empty, then all SpecialEntity records are returned;\n- Matching special entities + the organization itself are returned otherwise;",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Special entities retrieved successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Collection",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/entities/{id}" : {
+      "delete" : {
+        "tags" : [ "Entity Management" ],
+        "summary" : "Delete special entity",
+        "description" : "Deletes a special entity",
+        "operationId" : "deleteEntity",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Special entity deleted successfully"
+          },
+          "400" : {
+            "description" : "Special entity with that ID was not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/entities/{userId}" : {
+      "get" : {
+        "tags" : [ "Entity Management" ],
+        "summary" : "Get entities for user",
+        "description" : "Retrieves all full path entities for a user",
+        "operationId" : "getAllFullPathEntitiesForUser",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Entities retrieved successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Collection",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/users/search" : {
+      "get" : {
+        "tags" : [ "User Management" ],
+        "summary" : "Search for users by term and/or entity",
+        "description" : "Retrieves special user by login",
+        "operationId" : "searchUsers",
+        "parameters" : [ {
+          "name" : "searchKey",
+          "in" : "query",
+          "description" : "Search key matching First Name, Last Name, Username, Email",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "entityId",
+          "in" : "query",
+          "description" : "If passed, will look for users only belonging to the given entity",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Users search OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Page",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
                 "exampleSetFlag" : false
               }
             }
@@ -266,12 +485,143 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "Users found successfully"
+            "description" : "Users found successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Collection",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
           },
           "500" : {
             "description" : "Internal server error",
             "content" : {
               "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "User Management" ],
+        "summary" : "Create user",
+        "description" : "Creates a new user",
+        "operationId" : "createUser",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UserDto",
+                "exampleSetFlag" : false
+              },
+              "exampleSetFlag" : false
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "User created successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserDto",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "400" : {
+            "description" : "On:\n- Username conflict;\n- Any of the passed entities does not exist;\n-Invalid DTO object.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      },
+      "patch" : {
+        "tags" : [ "User Management" ],
+        "summary" : "Update user",
+        "description" : "Updates an existing user",
+        "operationId" : "updateUser",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UserDto",
+                "exampleSetFlag" : false
+              },
+              "exampleSetFlag" : false
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "User updated successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserDto",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "400" : {
+            "description" : "User not found or invalid DTO object",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
                 "exampleSetFlag" : false
               }
             }
@@ -282,20 +632,189 @@
         } ]
       }
     },
-    "/" : {
+    "/users/jobTitle/{jobTitle}" : {
       "get" : {
-        "tags" : [ "App Info" ],
-        "summary" : "Get application information",
-        "description" : "Retrieves application version and build information",
-        "operationId" : "getAppInfo",
+        "tags" : [ "User Management" ],
+        "summary" : "Get users by job title",
+        "description" : "Retrieves users with specified job title",
+        "operationId" : "getUsersForJobTitle",
+        "parameters" : [ {
+          "name" : "jobTitle",
+          "in" : "path",
+          "description" : "Job Title",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
         "responses" : {
           "200" : {
-            "description" : "Application information retrieved successfully"
+            "description" : "Users found successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Collection",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
           },
           "500" : {
             "description" : "Internal server error",
             "content" : {
               "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/users/connectedEntity" : {
+      "post" : {
+        "tags" : [ "User Management" ],
+        "summary" : "Add special entity for user",
+        "description" : "Adds a special entity connection for a user",
+        "operationId" : "addSpecialEntityForUser",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/SpecialEntityRequest",
+                "exampleSetFlag" : false
+              },
+              "exampleSetFlag" : false
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Special entity added successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "boolean",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/users/{userLogin}" : {
+      "delete" : {
+        "tags" : [ "User Management" ],
+        "summary" : "Delete user",
+        "description" : "Deletes a user by login",
+        "operationId" : "deleteUser",
+        "parameters" : [ {
+          "name" : "userLogin",
+          "in" : "path",
+          "description" : "User login",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "User deleted successfully"
+          },
+          "400" : {
+            "description" : "User not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/users/{userId}" : {
+      "get" : {
+        "tags" : [ "User Management" ],
+        "summary" : "Get user by ID",
+        "description" : "Retrieves user details by user ID",
+        "operationId" : "getUser",
+        "parameters" : [ {
+          "name" : "userId",
+          "in" : "path",
+          "description" : "User ID",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "User found successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/User",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
                 "exampleSetFlag" : false
               }
             }

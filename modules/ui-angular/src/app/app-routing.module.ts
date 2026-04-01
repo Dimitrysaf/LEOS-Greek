@@ -5,7 +5,7 @@ import { ForbiddenComponent } from './features/error/components/forbidden/forbid
 import { PageNotFoundComponent } from './features/error/components/page-not-found/page-not-found.component';
 import { UnathorizedComponent } from './features/error/components/unathorized/unathorized.component';
 import { DocumentUserGuard } from './shared/guards/document-user.guard';
-import {adminGuard} from "@/shared/guards/admin-guard";
+import {permissionGuard} from "@/shared/guards/permission.guard";
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -30,12 +30,22 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'admin',
+    path: 'admin/catalogue',
     loadChildren: () =>
       import('./features/landing-page/landing-page.module').then(
         (m) => m.LandingPageModule,
       ),
-    canActivate: [adminGuard]
+    canActivate: [permissionGuard],
+    data: { permissions: ['CAN_CREATE_TEMPLATE'] },
+  },
+  {
+    path: 'admin/user-manager',
+    loadChildren: () =>
+      import('./features/administration-page/administration-page.module').then(
+        (m) => m.AdministrationPageModule,
+      ),
+    canActivate: [permissionGuard],
+    data: { permissions: ['CAN_MANAGE_ALL_USERS', 'CAN_MANAGE_ALL_ENTITIES', 'CAN_MANAGE_OWN_ENTITIES'] },
   },
   {
     path: 'workspace',

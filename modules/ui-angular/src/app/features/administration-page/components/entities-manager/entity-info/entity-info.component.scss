@@ -1,0 +1,35 @@
+.cell-edit-save-button {
+  padding-left: 0;
+  padding-right: 25px;
+}
+
+.input-button-layout {
+  display: flex;
+  gap: 10px;
+}
+
+.name-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+  flex-direction: column;
+}
+
+.group-name-input {
+  position: relative;
+
+  .prefix-readonly {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #333;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+.u-move-down-5 {
+  transform: translateY(5px);
+}

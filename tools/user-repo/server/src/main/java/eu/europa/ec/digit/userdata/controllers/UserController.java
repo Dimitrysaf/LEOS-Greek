@@ -13,20 +13,27 @@
  */
 package eu.europa.ec.digit.userdata.controllers;
 
-import eu.europa.ec.digit.userdata.entities.Entity;
+import eu.europa.ec.digit.userdata.dto.UserDto;
 import eu.europa.ec.digit.userdata.entities.SpecialEntity;
 import eu.europa.ec.digit.userdata.entities.SpecialUser;
 import eu.europa.ec.digit.userdata.entities.User;
+import eu.europa.ec.digit.userdata.exception.BadRequestException;
+import eu.europa.ec.digit.userdata.mappers.UserMapper;
 import eu.europa.ec.digit.userdata.repositories.EntityRepository;
 import eu.europa.ec.digit.userdata.repositories.SpecialEntityRepository;
 import eu.europa.ec.digit.userdata.repositories.SpecialUserRepository;
 import eu.europa.ec.digit.userdata.repositories.UserRepository;
 import eu.europa.ec.digit.userdata.request.SpecialEntityRequest;
+import eu.europa.ec.digit.userdata.services.RoleService;
+import eu.europa.ec.digit.userdata.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
 import java.util.Random;
@@ -40,50 +47,37 @@ public class UserController implements UserApi {
     private static final int MAX_RECORDS = 100;
 
     private final UserRepository userRepository;
-    private final EntityRepository entityRepository;
     private final SpecialEntityRepository specialEntityRepository;
     private final SpecialUserRepository specialUserRepository;
+    private final UserService userService;
+    private final UserMapper userMapper;
+    private final RoleService roleService;
 
+    @Transactional(readOnly = true)
     @Override
-    public Collection<User> searchUsers(
-            @RequestParam(value = "searchKey") String searchKey,
-            @RequestParam(value = "searchContext", required = false) String searchContext,
-            @RequestParam(value = "searchReference", required = false) String searchReference) {
+    public Collection<User> searchUsers(String searchKey, String searchContext, String searchReference) {
         return userRepository
                 .findUsersByKey(searchKey.trim().replace(" ", "%").concat("%"))
                 .limit(MAX_RECORDS).toList();
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public User getUser(@PathVariable(value = "userId") String userId) {
+    public User getUser(String userId) {
         return userRepository.findByLogin(userId);
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public Collection<String> getAllOrganizations() {
-        return entityRepository.findAllOrganizations().toList();
-    }
-
-    @Override
-    public Collection<User> getUsersForJobTitle(@PathVariable(value = "jobTitle") String jobTitle) {
+    public Collection<User> getUsersForJobTitle(String jobTitle) {
         return userRepository.findByJobTitle(jobTitle).collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
-    public Collection<User> searchUsersByOrganizationAndKey(
-            @PathVariable(value = "org", required = false) String organization,
-            @RequestParam(value = "searchKey", required = true) String searchKey) {
-        return userRepository
-                .findUsersByKeyAndOrganization(
-                        searchKey.trim().replace(" ", "%").concat("%"),
-                        organization)
-                .limit(MAX_RECORDS).toList();
-    }
-
-    @Override
-    public Boolean addSpecialEntityForUser(@RequestBody SpecialEntityRequest request) {
+    public Boolean addSpecialEntityForUser(SpecialEntityRequest request) {
         LOG.debug("Adding special entity to LEOS_SPECIAL_ENTITY table in ud-repo ---Started");
-        SpecialUser specialUser = specialUserRepository.findByLogin(request.getUserId());
+        SpecialUser specialUser = specialUserRepository.getByLogin(request.getUserId());
         if (specialUser == null) {
             LOG.debug("Special user does not exists, adding to the special user table");
             User user = userRepository.findByLogin(request.getUserId());
@@ -99,7 +93,7 @@ public class UserController implements UserApi {
                 LOG.debug("Special entity in LEOS_SPECIAL_ENTITY table not found, adding to the table");
                 Random random = new Random();
                 // generate random number from 0 to 10000
-                Integer number = random.nextInt(10000);
+                int number = random.nextInt(10000);
                 specialEntity = new SpecialEntity(String.valueOf(number), request.getEntity(), null,
                         request.getEntity());
                 SpecialEntity insertedEntity = specialEntityRepository.save(specialEntity);
@@ -113,11 +107,31 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public Collection<Entity> getAllFullPathEntitiesForUser(@PathVariable(value = "userId") String userId) {
-        User user = userRepository.findByLogin(userId);
-        return entityRepository
-                .findAllFullPathEntities(user.getEntities().stream()
-                        .map(Entity::getId).toList())
-                .toList();
+    public Page<UserDto> searchUsers(String searchKey, String entityId, Pageable pageable) {
+        return userService.search(searchKey, entityId, pageable).map(userMapper::mapToDto);
+    }
+
+    @Transactional
+    @Override
+    public UserDto createUser(UserDto userDto) {
+        final SpecialUser specialUser = userMapper.mapToSpecial(userDto, roleService.getRoles());
+        final SpecialUser created = this.userService.addSpecialUser(specialUser);
+        return userMapper.mapToDto(created);
+    }
+
+    @Transactional
+    @Override
+    public UserDto updateUser(UserDto userDto) {
+        final SpecialUser specialUser = userService.getSpecialUser(userDto.getLogin())
+                .map(user -> userMapper.merge(userDto, user, roleService.getRoles()))
+                .orElseThrow(BadRequestException::new);
+        return userMapper.mapToDto(userService.updateSpecialUser(specialUser));
+    }
+
+    @Transactional
+    @Override
+    public ResponseEntity<Void> deleteUser(String userLogin) {
+        userService.deleteSpecialUser(userLogin);
+        return ResponseEntity.noContent().build();
     }
 }
