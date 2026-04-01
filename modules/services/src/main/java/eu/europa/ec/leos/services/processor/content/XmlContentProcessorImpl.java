@@ -1338,7 +1338,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             Node pOfSubparagraph = getPOfSubparagraph(subpara);
             if (subpara.getAttributes().getNamedItem(REFERS_TO_ATTR) != null
                     && subpara.getAttributes().getNamedItem(REFERS_TO_ATTR).getNodeValue().equals(ENDING_PART)
-                    && pOfSubparagraph != null && !Character.isLowerCase(pOfSubparagraph.getTextContent().trim().charAt(0))) {
+                    && pOfSubparagraph != null && !pOfSubparagraph.getTextContent().trim().isEmpty()
+                    && !Character.isLowerCase(pOfSubparagraph.getTextContent().trim().charAt(0))) {
                 if (subparaParentSibbling != null) {
                     subparaParent.getParentNode().insertBefore(subpara, subparaParentSibbling);
                 } else {
@@ -1365,7 +1366,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             Node pOfSubparagraph = getPOfSubparagraph(subpara);
             if (!moved && pOfSubparagraph != null
                     && (subpara.getTextContent().isEmpty()
-                    || Character.isLowerCase(pOfSubparagraph.getTextContent().trim().charAt(0)))) {
+                    || (!pOfSubparagraph.getTextContent().trim().isEmpty()
+                    && Character.isLowerCase(pOfSubparagraph.getTextContent().trim().charAt(0))))) {
                 Node previousSiblingList = XercesUtils.getPrevSibling(subpara);
                 if (previousSiblingList != null && is(previousSiblingList, LIST)
                         && ((!isSoftDeletedOrMovedTo(subpara) && !isSoftDeletedOrMovedTo(previousSiblingList))
