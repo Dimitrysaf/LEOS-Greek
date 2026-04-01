@@ -14,19 +14,18 @@
 package eu.europa.ec.digit.userdata.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @jakarta.persistence.Entity
 @Table(name = "LEOS_ENTITY")
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(of = { "id" })
 @AllArgsConstructor
 @NoArgsConstructor
 public class Entity {
@@ -39,7 +38,7 @@ public class Entity {
     private String name;
 
     @JsonIgnore
-    @Column(name = "ENTITY_PARENT_ID", nullable = true, insertable = false, updatable = false)
+    @Column(name = "ENTITY_PARENT_ID", insertable = false, updatable = false)
     private String parentId;
 
     @Column(name = "ENTITY_ORG_NAME", nullable = false, insertable = false, updatable = false)

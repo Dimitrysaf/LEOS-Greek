@@ -70,11 +70,11 @@ public class User implements Serializable {
         if (getConnectedEntity() != null) {
             return connectedEntity;
         }
-        return entities != null && !entities.isEmpty() ? entities.get(0) : null;
+        return entities != null && !entities.isEmpty() ? entities.getFirst() : null;
     }
 
     public boolean isEntityUser() {
-        return this.getEmail().equals(ENTITY_EMAIL_ADDRESS) && this.getId().equals(-1L);
+        return ENTITY_EMAIL_ADDRESS.equals(this.getEmail()) && Long.valueOf(-1L).equals(this.getId());
     }
 
     public String getEmail() {

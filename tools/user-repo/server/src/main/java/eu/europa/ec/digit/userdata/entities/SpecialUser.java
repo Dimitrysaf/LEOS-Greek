@@ -16,23 +16,31 @@ package eu.europa.ec.digit.userdata.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @jakarta.persistence.Entity
 @Table(name = "LEOS_SPECIAL_USER")
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(of = {"login"})
 @NoArgsConstructor
+@AllArgsConstructor
 public class SpecialUser implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -242509624358432413L;
 
     @Id
@@ -60,7 +68,11 @@ public class SpecialUser implements Serializable {
     @OneToMany
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinTable(name = "LEOS_SPECIAL_USER_ENTITY", joinColumns = @JoinColumn(name = "USER_LOGIN"), inverseJoinColumns = @JoinColumn(name = "ENTITY_ID"))
-    private List<Entity> entities;
+    private List<SpecialEntity> entities;
+
+    @Column(name = "DATE_CREATED")
+    @CreationTimestamp
+    private Date dateCreated;
 
     public SpecialUser(String login, Long perId, String lastName, String firstName,String email) {
         this.login = login;
@@ -68,19 +80,20 @@ public class SpecialUser implements Serializable {
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
-        this.roleEntities = roleEntities;
-        this.entities = entities;
     }
 
-
-    public List<Role> getRoleEntities() {
-        roleEntities.add(new Role("USER","Default USER role"));
-        return roleEntities;
-    }
-
+    /**
+     * Retrieves an unmodifiable list of role names associated with the user.
+     * This includes the roles obtained from the user's role entities and the default
+     * role "USER".
+     *
+     * @return a list of role names, combining existing roles and a default "USER" role.
+     */
     public List<String> getRoles() {
-        roleEntities.add(new Role("USER","Default USER role"));
-        return roleEntities.stream().map(r -> r.getRole())
-                .collect(Collectors.toList());
+        return Stream
+                .concat(
+                        (roleEntities != null ? roleEntities : new ArrayList<Role>()).stream().map(Role::getRole),
+                        Stream.of("USER"))
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 }

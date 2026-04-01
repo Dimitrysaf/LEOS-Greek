@@ -6,7 +6,6 @@ import {
   I18nState,
   UpdateUserPreferencesAction,
   UserPreferences,
-  UserService,
   UserState,
 } from '@eui/core';
 import {Store} from '@ngrx/store';
@@ -16,16 +15,14 @@ import {Observable, Subject, take, takeUntil,} from 'rxjs';
 import {AppConfigService} from '@/core/services/app-config.service';
 import {AppLocalStorageService} from '@/core/services/app-local-storage.service';
 
-import {Profile} from './shared/models/leos.model';
+import {Permission, Profile} from '@/shared';
 import {Notification} from './shared/models/notification.model';
 import {CoEditionServiceWS} from './shared/services/coEdition.websocket.service';
 import {NotificationsService} from './shared/services/notifications.service';
 import {DocumentService} from "@/shared/services/document.service";
-import {DomSanitizer, Title} from '@angular/platform-browser';
-import {CreateProposalService} from "@/shared/services/create-proposal.service";
+import {Title} from '@angular/platform-browser';
 import {ApplicationRole} from "@/shared";
 import {Router} from "@angular/router";
-import {AuthService} from "@/core/services/auth.service";
 
 @Component({
   selector: 'app-root',
@@ -56,6 +53,7 @@ export class AppComponent implements OnInit, OnDestroy {
   profile: Profile;
   isNotificationsShown$: Observable<boolean>;
   userRoles: ApplicationRole[];
+  userPermissions: Permission[];
   listSupportButtons = [
     { id: 1, label: 'app.support.contact-us' },
     { id: 2, label: 'app.support.learn' },
@@ -63,10 +61,14 @@ export class AppComponent implements OnInit, OnDestroy {
     { id: 4, label: 'app.support.decide' },
   ];
   listAdministrationButtoms =[
-    { id: 1, label: 'app.administration.catalog' }
+    { id: 1, label: 'app.administration.catalog', permissions: ['CAN_CREATE_TEMPLATE'] as Permission[]},
+    { id: 2, label: 'page.workspace.toolbar.manage-users-entities', permissions: [
+                                                                'CAN_MANAGE_ALL_ENTITIES',
+                                                                'CAN_MANAGE_OWN_ENTITIES',
+                                                                'CAN_MANAGE_ALL_USERS'] as Permission[]}
   ];
 
-  showAdminOption =true;
+  showAdminOption = false;
   notifications: Notification[];
 
   private destroy$ = new Subject<void>();
@@ -78,13 +80,9 @@ export class AppComponent implements OnInit, OnDestroy {
     private webSocket: CoEditionServiceWS,
     private storage: AppLocalStorageService,
     private notificationsService: NotificationsService,
-    private userService: UserService,
     private documentService: DocumentService,
     private titleService: Title,
-    private domSanitizer: DomSanitizer,
-    protected createProposalService: CreateProposalService,
     private router: Router,
-    private authService: AuthService
   ) {
     this.isNotificationsShown$ = this.notificationsService.isShown$;
     this.i18nState = this.store.select(getI18nState);
@@ -107,7 +105,9 @@ export class AppComponent implements OnInit, OnDestroy {
       const plainTextTitle = this.stripHtmlTags(this.headerTitleHtml);
       this.titleService.setTitle(plainTextTitle);
       this.userRoles =  config.user.roles;
-      this.showAdminOption = config.userAppPermissions.includes('CAN_CREATE_TEMPLATE');
+      this.userPermissions = config.userAppPermissions;
+      const allPermissions = this.listAdministrationButtoms.flatMap(btn => btn.permissions);
+      this.showAdminOption = allPermissions.some(perm => config.userAppPermissions.includes(perm as Permission));
     });
 
     this.documentService.documentConfig$
@@ -178,7 +178,11 @@ export class AppComponent implements OnInit, OnDestroy {
   onAdminListItemClicked(item) {
     switch (item.id) {
       case 1: {
-        this.router.navigate(['/admin']);
+        this.router.navigate(['/admin', 'catalogue']);
+        break;
+      }
+      case 2: {
+        this.router.navigate(['/admin', 'user-manager']);
         break;
       }
     }
@@ -191,5 +195,13 @@ export class AppComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.notificationsService.toggleNotifications();
     }, 10);
+  }
+
+  hasAnyRole(roles: string[]): boolean {
+    return roles.some(r => this.userInfos.roles.includes(r));
+  }
+
+  hasAnyPermission(permissions: string[]): boolean {
+    return permissions.some(p => this.userPermissions.includes(p as Permission));
   }
 }

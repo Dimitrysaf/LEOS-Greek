@@ -107,8 +107,6 @@ public class WorkspaceApiController implements WorkspaceApi {
         return new ResponseEntity<>(results, status);
     }
 
-    @RequestMapping(value = "/getTemplates", method = RequestMethod.GET)
-    @ResponseBody
     @Override
     public ResponseEntity<Object> getTemplates() {
         try {

@@ -13,6 +13,8 @@ export interface User {
   defaultEntity: UserEntity | null;
   lang: string;
   greffeUser: boolean | null;
+  dateCreated: Date;
+  special: boolean;
 }
 
 export interface UserEntity {

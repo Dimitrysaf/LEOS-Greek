@@ -77,7 +77,7 @@ export class ErrorInterceptor implements HttpInterceptor {
         this.euiGrowl.growl({
           severity: 'danger',
           summary: title,
-          detail: message,
+          detail: this.translate.instant(message),
           sticky: true,
         });
       });

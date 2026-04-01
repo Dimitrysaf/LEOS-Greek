@@ -230,5 +230,6 @@ styles.css
 /modules/ui-angular/src/assets/css
 /modules/web/activemq-data
 /modules/web/logs
+/tools/akn4euutil/web/logs
 
 node_modules

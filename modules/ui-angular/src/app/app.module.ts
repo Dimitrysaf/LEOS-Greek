@@ -9,6 +9,7 @@ import { AppStarterService } from './app-starter.service';
 import { CoreModule } from './core/core.module';
 import { DocumentUserGuard } from './shared/guards/document-user.guard';
 import { GlobalErrorHandler } from './core/services/global-error-handler.service';
+import {RouterLink} from "@angular/router";
 
 @NgModule({
   declarations: [AppComponent],
@@ -18,6 +19,7 @@ import { GlobalErrorHandler } from './core/services/global-error-handler.service
     CoreModule,
     AppRoutingModule,
     NgxEnvModule,
+    RouterLink,
   ],
   providers: [
     DocumentUserGuard,

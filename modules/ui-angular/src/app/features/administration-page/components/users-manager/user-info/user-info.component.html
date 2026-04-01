@@ -1,0 +1,195 @@
+<eui-card [euiHighlighted]="isEditActive" (keyup.escape)="onCancel()">
+  <eui-card-header [class]="isEditActive ? '' : 'readonly'">
+    <eui-card-header-title>
+      <eui-icon-svg icon="eui-person-thin" set="eui" size="xs" fillColor="grey-100"></eui-icon-svg>
+      &nbsp;{{ 'page.workspace.administration.user-info.title' | translate }}
+    </eui-card-header-title>
+
+    <eui-card-header-right-content>
+      <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+    </eui-card-header-right-content>
+  </eui-card-header>
+
+  <eui-card-content [class]="isEditActive ? '' : 'readonly'">
+    <form [formGroup]="form">
+      <div class="row">
+        <div class="col-10">
+          <div class="row">
+            <div class="col-11">
+              <div class="user-info-controls">
+                <div euiInputGroup class="mr-10">
+                  <label euiLabel [euiRequired]="isEditActive" for="lastName">{{ 'page.workspace.administration.entity-info.lastname' | translate }}</label>
+                  <input
+                    euiInputText
+                    [readonly]="!isEditActive"
+                    formControlName="lastName"
+                    placeholder="{{ 'page.workspace.administration.entity-info.lastname' | translate }}"
+                  />
+                </div>
+                <div euiInputGroup class="mr-10">
+                  <label euiLabel [euiRequired]="isEditActive" for="firstName">{{ 'page.workspace.administration.entity-info.firstname' | translate }}</label>
+                  <input
+                    euiInputText
+                    [readonly]="!isEditActive"
+                    formControlName="firstName"
+                    placeholder="{{ 'page.workspace.administration.entity-info.firstname' | translate }}"
+                  />
+                </div>
+                <div euiInputGroup class="mr-10">
+                  <label euiLabel [euiRequired]="isEditActive" for="email">{{ 'page.workspace.administration.user-info.email' | translate }}</label>
+                  <input
+                    euiInputText
+                    [readonly]="!isEditActive"
+                    formControlName="email"
+                    placeholder="{{ 'page.workspace.administration.user-info.email' | translate }}"
+                  />
+                </div>
+                <div euiInputGroup>
+                  <label euiLabel [euiRequired]="isEditActive" for="login">{{ 'page.workspace.administration.entity-info.login' | translate }}</label>
+                  <input
+                    euiInputText
+                    [readonly]="!isEditActive || !!selectedUser.login"
+                    formControlName="login"
+                    placeholder="{{ 'page.workspace.administration.entity-info.login' | translate }}"
+                  />
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div *ngIf="isEditActive" class="row">
+            <div class="col-11">
+              <eui-alert isCloseable="true">
+                {{'page.workspace.administration.user-info.entity-adding-hint' | translate }}
+              </eui-alert>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-5">
+              <label euiLabel for="entities">
+                <span class="eui-icon eui-icon-person-group u-move-down-5"></span>
+                &nbsp;{{ 'page.workspace.administration.user-info.user-entities-label' | translate}}</label>
+              <label euiSublabel for="entities">
+                {{ 'page.workspace.administration.user-info.user-entities-sublabel' | translate}}
+              </label>
+            </div>
+            <div class="col-1"></div>
+            <div class="col-5">
+              <div class="mt-15">
+                <app-searchbox *ngIf="isEditActive"
+                               (searchInitiation)="searchEntities($event)"
+                               (searchTermChange)="searchEntities($event)"
+                  placeholder="{{ 'page.workspace.administration.search-entities' | translate }}"
+                ></app-searchbox>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-5">
+              <select *ngIf="isEditActive" #userEntitiesSelect
+                      multiple
+                      class="entities-select"
+              >
+                <option *ngIf="isEditActive && selectedEntities.size === 0" disabled>
+                  {{ 'page.workspace.administration.user-info.entity-adding-placeholder' | translate }}
+                </option>
+                <option *ngFor="let entity of selectedEntitiesArray" [value]="entity.id">
+                  {{ entity.name }}
+                </option>
+              </select>
+              <table *ngIf="!isEditActive" class="eui-u-mt-m"
+                     euiTable
+                     euiTableResponsive
+                     [rows]="selectedUser?.entities"
+              >
+                <ng-template euiTemplate="header">
+                  <tr class="ng-star-inserted entity">
+                    <th>{{ 'page.collection.collaborators.table.td-entity' | translate }}</th>
+                  </tr>
+                </ng-template>
+                <ng-template let-row euiTemplate="body">
+                  <tr class="entity" >
+                    <td>{{ row.name }}</td>
+                  </tr>
+                </ng-template>
+              </table>
+            </div>
+            <ng-container *ngIf="isEditActive">
+              <div class="col-1">
+                <div class="eui-u-flex eui-u-flex-column eui-u-flex-justify-content-center eui-u-flex-align-items-center">
+                  <button euiButton
+                          euiPrimary
+                          (click)="addEntityToUser()"
+                          class="mb-10"
+                          [euiTooltip]="'global.actions.add' | translate"
+                  >
+                    <span euiIcon iconClass="eui-icon eui-icon-angle-left"></span>
+                  </button>
+                  <button euiButton
+                          euiPrimary
+                          (click)="removeEntityFromUser()"
+                          [euiTooltip]="'global.actions.remove' | translate"
+                  >
+                    <span euiIcon iconClass="eui-icon eui-icon-angle-right"></span>
+                  </button>
+                </div>
+              </div>
+              <div class="col-5">
+                <select #availableEntitiesSelect
+                        multiple
+                        class="entities-select"
+                >
+                  <option *ngFor="let entity of availableEntitiesArray" [value]="entity.id">
+                    {{ entity.name }}
+                  </option>
+                </select>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+        <div class="col-2">
+          <div euiInputGroup formGroupName="rolesGroup" *appUserHasPermission="['CAN_MANAGE_USERS_ROLES']">
+            <label euiLabel>{{ 'page.workspace.administration.user-info.application-roles' | translate }}</label>
+            <div *ngFor="let role of APPLICATION_ROLES" class="eui-u-mb-s">
+              <input euiInputCheckBox [id]="'role-checkbox-' + role" [formControlName]="role" [readonly]="!isEditActive"/>
+              <label euiLabel [for]="'role-checkbox-' + role">{{ ('page.workspace.administration.users-info.approle.' + role) | translate}}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </eui-card-content>
+</eui-card>
+
+<ng-template #actionButtons>
+  <div class="eui-u-flex" *ngIf="!isEditActive">
+    <button
+      [euiDisabled]="!canBeEdited"
+      euiButton
+      euiPrimary
+      euiOutline
+      euiTooltip="{{ 'page.workspace.administration.user-info.edit-user-tooltip' | translate }}"
+      class="eui-u-mr-s"
+      (click)="onToggleEdit()">
+      <span euiIcon iconClass="eui-icon eui-icon-pencil"></span>
+      <span euiLabel>{{ 'global.actions.edit' | translate }}</span>
+    </button>
+  </div>
+  <div class="eui-u-flex" *ngIf="isEditActive">
+    <button
+      euiButton
+      euiSecondary
+      class="eui-u-ml-s"
+      (click)="onCancel()">
+      {{ 'global.actions.cancel' | translate }}
+    </button>
+    <button
+      [euiDisabled]="!canBeEdited"
+      euiButton
+      euiPrimary
+      class="eui-u-ml-s"
+      (click)="onSave()">
+      {{ 'global.actions.save' | translate }}
+    </button>
+  </div>
+</ng-template>
