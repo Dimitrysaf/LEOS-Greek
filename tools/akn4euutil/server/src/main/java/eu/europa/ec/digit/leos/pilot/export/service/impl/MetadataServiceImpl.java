@@ -42,6 +42,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.ELEMENT_DATE;
+import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.VALUE_FINAL;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.insertElementInCoverPage;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.isBillDocumentFile;
 import static eu.europa.ec.digit.leos.pilot.export.util.MetadataUtil.isMainDocumentFile;
@@ -262,7 +263,7 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     private void addAdoptionLocationToConclusion(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
-        Node xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.ATTRIBUTE_CONCLUSIONSNEW);
+        Node xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.ATTRIBUTE_CONCLUSIONS_NEW);
         if (xmlNodeConclusions == null) {
             xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.ELEMENT_CONCLUSIONS);
         }
@@ -319,7 +320,7 @@ public class MetadataServiceImpl implements MetadataService {
 
     private void addEmissionDateToConclusion(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
 
-        Node xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.ATTRIBUTE_CONCLUSIONSNEW);
+        Node xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.ATTRIBUTE_CONCLUSIONS_NEW);
         if (xmlNodeConclusions == null) {
             xmlNodeConclusions = xmlFile.getElementByName(MetadataUtil.ELEMENT_CONCLUSIONS);
         }
@@ -480,7 +481,7 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     private void addVersionNumberToFilename(String versionNumber, XmlUtil.XmlFile xmlFile) {
-        final String fileName = xmlFile.getName();
+        final String fileName = xmlFile.getName().replace("-" + VALUE_FINAL, "");
         final String[] splitFileName = fileName.split("-");
         final String newFileName = Arrays.stream(splitFileName).reduce("", (a, b) -> b.endsWith(".xml") ? a + versionNumber + "-" + b : a + b + "-");
         xmlFile.setName(newFileName);
