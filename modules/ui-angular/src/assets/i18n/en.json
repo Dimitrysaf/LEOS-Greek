@@ -437,6 +437,7 @@
   "page.collection.drafts.annex.max.size.error.title": "Annexes",
   "page.collection.drafts.annex.max.size.error.message": "The maximum file size of 50 MB has been exceeded",
   "page.collection.drafts.foreign.annex.download": "Download",
+  "page.collection.drafts.foreign.annex.msg": "Preview of annexes in .docx, .xlsx or .pdf formats is unavailable.",
   "page.collection.drafts.last-updated-on-by": "Last updated on {{ date }} by {{ name }}",
   "page.editor.actions-merge-contributions.title": "Merging not fully completed",
   "page.editor.actions-merge-contributions.content": "Some changes could not be merged. Please do this manually if necessary.",
