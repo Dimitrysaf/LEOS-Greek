@@ -2029,8 +2029,8 @@ Feature: Track Changes Feature
     And  ribbon toolbar is maximized
     When enable track changes
     Then enable track changes toggle bar is on in ribbon toolbar
-    And  block 1 contains the signature organisation 1 contains text "For the Commission"
-    And block 1 contains the  role 1 contains text "The President"
+   And  organization 1 of signature of block 1 contains text "For the Commission"
+    And role 1 of block 1 contains text "The President"
     And block 1 contains the signature of the person 1 contains "[...]"
     When mouseover and click on block 1
     Then ck editor window is displayed

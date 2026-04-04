@@ -410,11 +410,5 @@ class legalActPage {
         return this.getCitation(citationNumber).find('aknp');
     }
 
-    getOrganizationTagOfSignatureOfBlock(editTag, tagName, tagNumber, signatureNumber, blockNumber) {
-        return this.getBlock(blockNumber)
-            .find('signature').eq(signatureNumber - 1)
-            .find(tagName).eq(tagNumber - 1)
-            .find(editTag);
-    }
 }
 export default new legalActPage();

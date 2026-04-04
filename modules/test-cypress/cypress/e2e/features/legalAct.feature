@@ -382,7 +382,7 @@ Feature: Legal Act Page Regression Features
     Then article 4 is displayed
     When mouseover and click on article 4
     Then ck editor window is displayed
-    Then  li 1 with data-akn-element "paragraph" of article contains "Text..." in edition mode
+   And numbered paragraph 1 of article contains text "Text..." in edition mode
     When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
     And click enter from keyboard in edition mode
     And click on increase indent icon present in ck editor panel
@@ -1369,8 +1369,8 @@ Feature: Legal Act Page Regression Features
     When click close button of ck editor
     Then ck editor window is not displayed
   # Alternative Signature
-    And  block 1 contains the signature organisation 1 contains text "For the Commission"
-    And block 1 contains the  role 1 contains text "The President"
+    And organization 1 of signature of block 1 contains text "For the Commission"
+    And role 1 of block 1 contains text "The President"
     And block 1 contains the signature of the person 1 contains "[...]"
     When mouseover and click on block 1
     Then ck editor window is displayed
@@ -1385,8 +1385,8 @@ Feature: Legal Act Page Regression Features
     When click on ok button in cke dialog window
     And click save and close button of ck editor
     Then ck editor window is not displayed
-    And  block 1 contains the signature organisation 1 contains text "For the Commission"
-    And block 1 contains the  role 1 contains text "On behalf of the President"
+  And organization 1 of signature of block 1 contains text "For the Commission"
+    And  role 1 of block 1 contains text "On behalf of the President"
     And block 1 contains the signature of the person 1 contains "[...]"
     When mouseover and click on block 1
     Then ck editor window is displayed

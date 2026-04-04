@@ -2,7 +2,6 @@ import {When, Then} from "@badeball/cypress-cucumber-preprocessor";
 import legalActPage from "../pages/legalActPage";
 import headerPage from "../pages/headerPage";
 import {checkContentResult} from "../util/expectDataTable";
-import ckEditorWindow from "../pages/ckEditorWindow";
 
 
 Then('user is on legal act page', () => {
@@ -722,11 +721,11 @@ Then('recital section count is {int}', (recitalSectionCount) => {
     legalActPage.elements.recitalSection().should('have.length', recitalSectionCount);
 });
 
-Then('block {int} contains the signature organisation {int} contains text {string}', function (blockNumber,organizationIndex, text) {
+Then('organization {int} of signature of block {int} contains text {string}', function (blockNumber,organizationIndex, text) {
     legalActPage.getOrganizationFromBlock(blockNumber,organizationIndex).should("have.text", text);
 })
 
-Then ('block {int} contains the  role {int} contains text {string}', function (blockNumber,roleIndex, text) {
+Then ('role {int} of block {int} contains text {string}', function (blockNumber,roleIndex, text) {
     legalActPage.getRoleFromBlock(blockNumber,roleIndex).should("have.text", text);
 });
 
@@ -789,15 +788,10 @@ Then('subparagraph {int} of paragraph {int} of article {int} does not exist', fu
 legalActPage.getSubparagraphOfParagraphFromArticle(subparagraphNumber,paragraphNumber,articleNumber).should('not.exist');
 });
 
-Then('l1 {int} with data-akn-element {string} of article contains {string} in edition mode', function (l1Number, dataAknElement, expectedText) {
-ckEditorWindow.getParagraphElementOfArticle(l1Number, dataAknElement).should('have.text', expectedText);
-});
-
-
-Then ('li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains {string} in edition mode', function (liNumber, dataAknElement, parentLiNumber, parentDataAknElement, expectedText) {
+/*Then ('li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains {string} in edition mode', function (liNumber, dataAknElement, parentLiNumber, parentDataAknElement, expectedText) {
 ckEditorWindow. getPointOfParagraphOfArticle(liNumber, dataAknElement, parentLiNumber, parentDataAknElement).should('have.text', expectedText);
 
-});
+});*/
 
 Then('{string} tag {int} of organization {int} of signature of block {int} contains text {string}', (tagName, tagIndex, organizationIndex, blockNumber, expectedText) => {
         legalActPage
