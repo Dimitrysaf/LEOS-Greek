@@ -720,17 +720,17 @@ Then('recital {int} doest not contain subflow', function (recitalNumber) {
 Then('recital section count is {int}', (recitalSectionCount) => {
     legalActPage.elements.recitalSection().should('have.length', recitalSectionCount);
 });
-Then('block {int} contains the signature organisation text {string}', function (blockNumber, text) {
-    legalActPage.getOrganizationFromBlock(blockNumber).should("have.text", text);
 
+Then('organization {int} of signature of block {int} contains text {string}', function (blockNumber,organizationIndex, text) {
+    legalActPage.getOrganizationFromBlock(blockNumber,organizationIndex).should("have.text", text);
 })
 
-Then ('block {int} contains the  role text {string}', function (blockNumber, text) {
-    legalActPage.getRoleFromBlock(blockNumber).should("have.text", text);
+Then ('role {int} of block {int} contains text {string}', function (roleIndex,blockNumber, text) {
+    legalActPage.getRoleFromBlock(roleIndex,blockNumber).should("have.text", text);
 });
 
-Then ('block {int} contains the signature of the person {string}', function (blockNumber, text) {
-    legalActPage.getSignatureOfThePerson(blockNumber).should("have.text", text);
+Then ('signature of the person {int} of block {int} contains text {string}', function (signatureOfThePersonIndex,blockNumber,text) {
+    legalActPage.getSignatureOfThePerson(signatureOfThePersonIndex,blockNumber).should("have.text", text);
 });
 
 When('mouseover and click on block {int}',(blockNumber) => {
@@ -786,4 +786,31 @@ legalActPage.getSubparagraphOfParagraphFromArticle(subparagraphNumber,paragraphN
 
 Then('subparagraph {int} of paragraph {int} of article {int} does not exist', function (subparagraphNumber, paragraphNumber, articleNumber) {
 legalActPage.getSubparagraphOfParagraphFromArticle(subparagraphNumber,paragraphNumber,articleNumber).should('not.exist');
+});
+
+/*Then ('li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains {string} in edition mode', function (liNumber, dataAknElement, parentLiNumber, parentDataAknElement, expectedText) {
+ckEditorWindow. getPointOfParagraphOfArticle(liNumber, dataAknElement, parentLiNumber, parentDataAknElement).should('have.text', expectedText);
+
+});*/
+
+Then('{string} tag {int} of organization {int} of signature of block {int} contains text {string}', (tagName, tagIndex, organizationIndex, blockNumber, expectedText) => {
+        legalActPage
+            .getOrganizationFromBlock(blockNumber, organizationIndex)
+            .find(tagName)
+            .eq(tagIndex - 1)
+            .should('have.text', expectedText);
+    });
+
+Then('{string} tag {int} of role {int} of signature of block {int} contains text {string}', (tagName, tagIndex, roleIndex, blockNumber, expectedText) => {
+    legalActPage.getRoleFromBlock(blockNumber, roleIndex)
+        .find(tagName)
+        .eq(tagIndex - 1)
+        .should('contain.text', expectedText);
+});
+
+Then('{string} tag {int} of person {int} of signature of block {int} contains text {string}', (tagName, tagIndex, signatureOfThePersonIndex, blockNumber, expectedText) => {
+    legalActPage.getSignatureOfThePerson(blockNumber, signatureOfThePersonIndex)
+        .find(tagName)
+        .eq(tagIndex - 1)
+        .should('contain.text', expectedText);
 });
