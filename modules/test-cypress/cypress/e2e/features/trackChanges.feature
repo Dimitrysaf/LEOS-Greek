@@ -2012,6 +2012,9 @@ Feature: Track Changes Feature
   # Ticket : #3416 Autonomous acts templates: Not possible to navigate to Act view page once signature is changed to alternate one.
   @switchingAlternativeSignatureWithTC @local
   Scenario: user is able to switch alternative signature
+  # Ticket 3045 :Rejecting a point creating a wrong structure
+  @RejectIndentedPoint @local
+  Scenario: Rejecting a point creating a wrong structure
     Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
@@ -2021,6 +2024,7 @@ Feature: Track Changes Feature
     When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Automation Testing Alternative Signature " in create document page
+    And  provide document title "Reject a Indented Point  " in create document page
     And  click on create button
     Then user is on act viewer page
     When click on legal act link present in act viewer page
@@ -2053,3 +2057,43 @@ Feature: Track Changes Feature
     And 'ins' tag 1 of person 2 of signature of block 1 contains text "[...]"
     When click on close button present in legal act page
     Then user is on act viewer page
+    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+    And  click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on increase indent icon present in ck editor panel
+    And  add "point a" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And add "point b" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And add "point c" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 1 contains "Text..."
+    And  content of point 1 of list 1 of paragraph 1 of article 1 contains "point a"
+    And  content of point 2 of list 1 of paragraph 1 of article 1 contains "point b"
+    And  content of point 3 of list 1 of paragraph 1 of article 1 contains "point c"
+    When  enable track changes
+    And mouseover and click on article 1
+    And click at offset 7 in li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+    And click on increase indent icon present in ck editor panel
+    And  click on increase indent icon present in ck editor panel
+    And click save and close button of ck editor
+    Then  ck editor window is not displayed
+    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 1 contains "Text..."
+    And  content of point 1 of list 1 of paragraph 1 of article 1 contains "point a"
+    Then 'del' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 1 has html "(b)"
+    Then 'ins' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 1 has html "(i)"
+    And content of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 1 contains "point b"
+    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 1 of article 1 has attribute "leos:action-number" with value "delete"
+    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 1 of article 1 has attribute "leos:action-number" with value "insert"
+    And  content of point 2 of list 1 of paragraph 1 of article 1 contains "point c"
+    When mouseover and click on article 1
+    Then ck editor window is displayed
+    And right click in li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+    And click on reject this change context menu option in edition mode
+    And click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 1 contains "Text..."
+    And  content of point 1 of list 1 of paragraph 1 of article 1 contains "point a"
+    And  content of point 2 of list 1 of paragraph 1 of article 1 contains "point b"
+    And  content of point 3 of list 1 of paragraph 1 of article 1 contains "point c"

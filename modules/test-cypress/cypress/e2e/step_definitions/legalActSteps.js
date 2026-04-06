@@ -814,3 +814,10 @@ Then('{string} tag {int} of person {int} of signature of block {int} contains te
         .eq(tagIndex - 1)
         .should('contain.text', expectedText);
 });
+
+Then('content of num tag of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}', function (pointNumber1, listNumber1, pointNumber2, listNumber2, paragraphNumber, articleNumber, expectedText) {
+    legalActPage
+        .getPointOfPointOfParagraphFromArticle(pointNumber2,listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber)
+        .find('aknp').should('have.text', expectedText);
+
+});

@@ -735,6 +735,14 @@ class ckEditorWindow {
         return this.getSecondLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3).invoke('attr', 'id').then(id => this.moveCursor(offset, "[id='" + id + "']"))
     }
 
+    rightClickAtSpecificOffsetOfPointOfParagraphOfArticle(offset, li1, dataAknElement1, li2, dataAknElement2){
+        this.getSecondLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, 1, 'point').invoke('attr', 'id').then(id => this.elements.ckEditableInline().find("#" + id).trigger('contextmenu'));
+    };
 
+    clickTcRejectThisChangeMenuItem() {
+        this.elements.tcRejectThisChangeMenu()
+            .should('be.visible')
+            .click();
+    }
 }
 export default new ckEditorWindow();
