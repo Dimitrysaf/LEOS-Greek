@@ -1371,7 +1371,7 @@ Feature: Legal Act Page Regression Features
   # Alternative Signature
     And organization 1 of signature of block 1 contains text "For the Commission"
     And role 1 of block 1 contains text "The President"
-    And block 1 contains the signature of the person 1 contains "[...]"
+    And signature of the person 1 of block 1 contains text "[...]"
     When mouseover and click on block 1
     Then ck editor window is displayed
     And the block inside ck editor is not editable and contains attribute "contenteditable" with value "false"
@@ -1385,9 +1385,9 @@ Feature: Legal Act Page Regression Features
     When click on ok button in cke dialog window
     And click save and close button of ck editor
     Then ck editor window is not displayed
-  And organization 1 of signature of block 1 contains text "For the Commission"
+    And organization 1 of signature of block 1 contains text "For the Commission"
     And  role 1 of block 1 contains text "On behalf of the President"
-    And block 1 contains the signature of the person 1 contains "[...]"
+    And signature of the person 1 of block 1 contains text "[...]"
     When mouseover and click on block 1
     Then ck editor window is displayed
     And the block inside ck editor is not editable and contains attribute "contenteditable" with value "false"

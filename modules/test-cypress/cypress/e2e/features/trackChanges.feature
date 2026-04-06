@@ -2031,7 +2031,7 @@ Feature: Track Changes Feature
     Then enable track changes toggle bar is on in ribbon toolbar
    And  organization 1 of signature of block 1 contains text "For the Commission"
     And role 1 of block 1 contains text "The President"
-    And block 1 contains the signature of the person 1 contains "[...]"
+    And signature of the person 1 of block 1 contains text "[...]"
     When mouseover and click on block 1
     Then ck editor window is displayed
     And the block inside ck editor is not editable and contains attribute "contenteditable" with value "false"

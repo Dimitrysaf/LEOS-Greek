@@ -725,12 +725,12 @@ Then('organization {int} of signature of block {int} contains text {string}', fu
     legalActPage.getOrganizationFromBlock(blockNumber,organizationIndex).should("have.text", text);
 })
 
-Then ('role {int} of block {int} contains text {string}', function (blockNumber,roleIndex, text) {
-    legalActPage.getRoleFromBlock(blockNumber,roleIndex).should("have.text", text);
+Then ('role {int} of block {int} contains text {string}', function (roleIndex,blockNumber, text) {
+    legalActPage.getRoleFromBlock(roleIndex,blockNumber).should("have.text", text);
 });
 
-Then ('block {int} contains the signature of the person {int} contains {string}', function (blockNumber,signatureOfThePersonIndex,text) {
-    legalActPage.getSignatureOfThePerson(blockNumber,signatureOfThePersonIndex).should("have.text", text);
+Then ('signature of the person {int} of block {int} contains text {string}', function (signatureOfThePersonIndex,blockNumber,text) {
+    legalActPage.getSignatureOfThePerson(signatureOfThePersonIndex,blockNumber).should("have.text", text);
 });
 
 When('mouseover and click on block {int}',(blockNumber) => {
