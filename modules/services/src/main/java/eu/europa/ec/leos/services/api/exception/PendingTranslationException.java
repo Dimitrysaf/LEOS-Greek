@@ -24,9 +24,11 @@ public class PendingTranslationException extends Exception {
     private static final long serialVersionUID = 1644366742521353921L;
     private final ErrorCode errorCode = ErrorCode.PT001;
     private final String messageKey = "page.collection.milestones.publish-to-catalog.pending-translation.error";
+    private final String pendingLanguages;
 
-    public PendingTranslationException() {
+    public PendingTranslationException(String pendingLanguages) {
         super();
+        this.pendingLanguages = pendingLanguages;
     }
 
 }

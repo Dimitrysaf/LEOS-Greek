@@ -30,6 +30,10 @@ export interface ExceptionResponseVO {
   messageKey: string;
 }
 
+export interface PendingTranslationException extends ExceptionResponseVO {
+  pendingLanguages: string;
+}
+
 export enum ErrorCode {
   CM001 = "CM001",
   PT001 = "PT001"

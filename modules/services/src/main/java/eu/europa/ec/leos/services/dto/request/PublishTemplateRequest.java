@@ -5,7 +5,6 @@ import java.util.List;
 public class PublishTemplateRequest {
     private String templateName;
     private List<String> dgCodes;
-    private boolean cleanPendingTranslations;
 
     public String getTemplateName() {
         return templateName;
@@ -19,13 +18,6 @@ public class PublishTemplateRequest {
     }
     public void setDgCodes(List<String> dgCodes) {
         this.dgCodes = dgCodes;
-    }
-
-    public boolean isCleanPendingTranslations() {
-        return cleanPendingTranslations;
-    }
-    public void setCleanPendingTranslations(boolean cleanPendingTranslations) {
-        this.cleanPendingTranslations = cleanPendingTranslations;
     }
 }
 

@@ -684,7 +684,8 @@ public class LeosApiController implements LeosApi {
     @Override
     public ResponseEntity<Object> createMilestone(String proposalRef, String milestoneComment) throws Exception {
         proposalRef = encodeParam(proposalRef);
-        return new ResponseEntity<>(apiService.createMilestone(proposalRef, milestoneComment), HttpStatus.OK);
+        apiService.createMilestone(proposalRef, milestoneComment);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override

@@ -25,7 +25,6 @@ import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.api.exception.PendingTranslationException;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.document.SpecificDocumentInformationDTO;
@@ -3233,8 +3232,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] alignBaseVersionDocumentIds(XmlDocument sourceXmlDoc, XmlDocument targetXmlDoc) throws IllegalArgumentException {
-        Document sourceDoc = getXercesDocument(sourceXmlDoc);
-        Document targetDoc = getXercesDocument(targetXmlDoc);
+        Document sourceDoc = XercesUtils.createXercesDocument(sourceXmlDoc);
+        Document targetDoc = XercesUtils.createXercesDocument(targetXmlDoc);
         Node attachmentsNode = removeAttachmentsIfExist(targetDoc);
         alignAllIds(sourceDoc, targetDoc, sourceXmlDoc.getCategory().toString());
         reinsertAttachments(targetDoc, attachmentsNode);
@@ -3282,11 +3281,6 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return nodes;
     }
 
-    private static Document getXercesDocument(XmlDocument xmlDoc) {
-        byte[] xmlContent = xmlDoc.getContent().get().getSource().getBytes();
-        return createXercesDocument(xmlContent);
-    }
-
     private void validateNodeAlignment(Node sourceNode, Node targetNode, String category) throws IllegalArgumentException {
         if (!sourceNode.getNodeName().equals(targetNode.getNodeName())
                 || !getFirstAscendantId(sourceNode).equals(getFirstAscendantId(targetNode))
@@ -3299,7 +3293,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     public byte[] alignLatestVersionDocument(byte[] sourceXml, byte[] sourceBaseXml, XmlDocument targetXmlDoc) throws IllegalArgumentException {
         Document sourceBaseDoc = createXercesDocument(sourceBaseXml);
         Document sourceDoc = createXercesDocument(sourceXml);
-        Document targetDoc = getXercesDocument(targetXmlDoc);
+        Document targetDoc = XercesUtils.createXercesDocument(targetXmlDoc);
 
         alignMetaNode(sourceDoc, targetDoc);
         replaceUnchangedContentInSourceDocByTarget(targetDoc, sourceDoc, sourceBaseDoc);
@@ -3507,22 +3501,5 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Node targetAttachmentsNode = getFirstElementByXPath(targetDoc, xPathCatalog.getXPathAttachments());
         alignAllIds(sourceAttachmentsNode, targetAttachmentsNode, LeosCategory.BILL.toString());
         importAndReplaceNodeInDocument(sourceDoc, sourceAttachmentsNode, targetAttachmentsNode);
-    }
-
-    @Override
-    public byte[] findAndCleanPendingTranslations(XmlDocument xmlDocument, boolean clean) throws PendingTranslationException {
-        Document document = getXercesDocument(xmlDocument);
-        NodeList nodes = getElementsByXPath(document, String.format("//*[@%s='true']", LEOS_UPDATE_TRANSLATION));
-        if (nodes.getLength() > 0) {
-            if (!clean) {
-                throw new PendingTranslationException();
-            }
-            for (int i = 0; i < nodes.getLength(); i++) {
-                Node eachNode = nodes.item(i);
-                removeAttribute(eachNode, LEOS_UPDATE_TRANSLATION);
-            }
-            return XercesUtils.nodeToByteArray(document);
-        }
-        return null;
     }
 }
