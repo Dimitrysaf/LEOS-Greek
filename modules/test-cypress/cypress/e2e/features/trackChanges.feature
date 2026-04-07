@@ -2012,9 +2012,6 @@ Feature: Track Changes Feature
   # Ticket : #3416 Autonomous acts templates: Not possible to navigate to Act view page once signature is changed to alternate one.
   @switchingAlternativeSignatureWithTC @local
   Scenario: user is able to switch alternative signature
-  # Ticket 3045 :Rejecting a point creating a wrong structure
-  @RejectIndentedPoint @local
-  Scenario: Rejecting a point creating a wrong structure
     Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
@@ -2023,9 +2020,8 @@ Feature: Track Changes Feature
     When click on next button in create document page
     When tick guidance approval checkbox in create document page
     When click on next button in create document page
-    And  provide document title "Automation Testing Alternative Signature " in create document page
-    And  provide document title "Reject a Indented Point  " in create document page
-    And  click on create button
+    And  provide document title "Automation Testing Alternative Signature" in create document page
+     And  click on create button
     Then user is on act viewer page
     When click on legal act link present in act viewer page
     Then user is on legal act page
@@ -2033,7 +2029,7 @@ Feature: Track Changes Feature
     And  ribbon toolbar is maximized
     When enable track changes
     Then enable track changes toggle bar is on in ribbon toolbar
-   And  organization 1 of signature of block 1 contains text "For the Commission"
+    And  organization 1 of signature of block 1 contains text "For the Commission"
     And role 1 of block 1 contains text "The President"
     And signature of the person 1 of block 1 contains text "[...]"
     When mouseover and click on block 1
@@ -2057,6 +2053,27 @@ Feature: Track Changes Feature
     And 'ins' tag 1 of person 2 of signature of block 1 contains text "[...]"
     When click on close button present in legal act page
     Then user is on act viewer page
+
+  # Ticket 3045 :Rejecting a point creating a wrong structure
+  @RejectIndentedPoint @local 
+  Scenario: Rejecting a point creating a wrong structure
+    Given navigate to leos application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-003" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
+    And  provide document title "Reject a Indented Point  " in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  annotation side bar is present
+    And  ribbon toolbar is maximized
+    When mouseover and click on article 1
+    Then ck editor window is displayed
     When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
     And  click enter from keyboard in edition mode
     And click on increase indent icon present in ck editor panel
