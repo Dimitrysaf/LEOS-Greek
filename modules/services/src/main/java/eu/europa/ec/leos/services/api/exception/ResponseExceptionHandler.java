@@ -22,29 +22,28 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Throwable ex) {
         String errorMessage = ex.getMessage();
-        if (Arrays.stream(ex.getStackTrace()).findFirst().isPresent()) {
-            LOG.error("Unexpected error occurred :" + Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);
-        }
+        logError(ex, "Unexpected error occurred");
         return new ResponseEntity<>("{\n\t'errorCode': " + ErrorCode.G001 + " , \n\t'message': '" + errorMessage + "'\n}",
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(CreateMilestoneException.class)
     public ResponseEntity<ExceptionResponse> handleException(CreateMilestoneException ex) {
-        if (Arrays.stream(ex.getStackTrace()).findFirst().isPresent()) {
-            LOG.error("Unexpected error occurred :" + Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);
-        }
+        logError(ex, "Unexpected error occurred");
         return new ResponseEntity<>(new ExceptionResponse(ex.getErrorCode().toString(), ex.getMessageKey()),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(PendingTranslationException.class)
-    public ResponseEntity<ExceptionResponse> handleException(PendingTranslationException ex) {
+    public ResponseEntity<Object> handleException(PendingTranslationException ex) {
+        logError(ex, "Not possible to publish the custom template. There are languages with pending translations");
+        return new ResponseEntity<>(ex, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private static void logError(Throwable ex, String message) {
         if (Arrays.stream(ex.getStackTrace()).findFirst().isPresent()) {
-            LOG.error("Unexpected error occurred :" + Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);
+            LOG.error("{}: {}", message, Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);
         }
-        return new ResponseEntity<>(new ExceptionResponse(ex.getErrorCode().toString(), ex.getMessageKey()),
-                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(LeosApiException.class)

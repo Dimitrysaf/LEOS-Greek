@@ -79,6 +79,7 @@ import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.CreateProposalCopyRequest;
+import eu.europa.ec.leos.services.dto.response.CustomTemplateInfoResponse;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
@@ -112,6 +113,7 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.utils.LanguageMapUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
@@ -372,7 +374,43 @@ public abstract class ApiServiceImpl implements ApiService {
         documentVO.getMetadata().setEeaRelevance(eeaRelevance);
         documentVO.getMetadata().setTemplate(templateKey);
         documentVO.getMetadata().setCustomTemplateAct(customTemplateAct);
-        return createCollectionService.createCollection(documentVO, false);
+        CreateCollectionResult createCollectionResult = createCollectionService.createCollection(documentVO, false);
+        createLinguisticVersionsFromCustomCatalog(documentVO, createCollectionResult, templateKey);
+        return createCollectionResult;
+    }
+
+    private void createLinguisticVersionsFromCustomCatalog(DocumentVO documentVO, CreateCollectionResult createCollectionResult, String templateKey)
+            throws CreateCollectionException {
+        if (templateKey != null && templateKey.contains(StructureConfigUtils.CUSTOM_TEMPLATE_SEPARATOR)) {
+            setOriginalRefs(documentVO, createCollectionResult);
+            String packageId = templateKey.substring(templateKey.lastIndexOf(StructureConfigUtils.CUSTOM_TEMPLATE_SEPARATOR) + 1);
+            String templatePrefix = templateKey.substring(0, templateKey.lastIndexOf(StructureConfigUtils.CUSTOM_TEMPLATE_SEPARATOR) + 1);
+            List<LinkedPackage> linkedPackages = packageService.findLinkedPackagesByPackageId(packageId);
+            for (LinkedPackage linkedPackage : linkedPackages) {
+                LeosPackage languagePackage = packageService.findPackageByPackageId(linkedPackage.getLinkedPackageId());
+                String proposalRef = proposalService.findDocumentRefByPackageIdAndCategory(languagePackage.getId(), LeosCategory.PROPOSAL.name());
+                CustomTemplateInfoResponse templateInfo = customTemplateService.getTemplateInfo(proposalRef);
+                if (CollectionUtils.isNotEmpty(templateInfo.getTemplateVisibility())) {
+                    documentVO.getMetadata().setTemplate(templatePrefix + languagePackage.getId());
+                    documentVO.getMetadata().setLanguage(languagePackage.getLanguage());
+                    createCollectionService.createCollection(documentVO, true);
+                }
+            }
+        }
+    }
+
+    private static void setOriginalRefs(DocumentVO documentVO, CreateCollectionResult createCollectionResult) {
+        DocumentVO memorandum = new DocumentVO(LeosCategory.MEMORANDUM);
+        DocumentVO bill = new DocumentVO(LeosCategory.BILL);
+        DocumentVO financialStatement = new DocumentVO(LeosCategory.STAT_DIGIT_FINANC_LEGIS);
+
+        memorandum.setRef(createCollectionResult.getMemorandumId());
+        bill.setRef(createCollectionResult.getBillId());
+        financialStatement.setRef(createCollectionResult.getFinancialStatementId());
+        documentVO.setRef(createCollectionResult.getProposalId());
+        documentVO.addChildDocument(memorandum);
+        documentVO.addChildDocument(bill);
+        documentVO.addChildDocument(financialStatement);
     }
 
     @Override
@@ -1610,6 +1648,7 @@ public abstract class ApiServiceImpl implements ApiService {
             createMajorVersions(proposalRef, correctedMilestone, versionComment, collectionContextProvider.get());
             LegDocument legDocument = milestoneService.createMilestone(proposalId, correctedMilestone);
             alignLinguisticVersionsForCustomTemplateMainLanguage(previousLegDocument, legDocument, packageId);
+            return legDocument;
         }
         return null;
     }

@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.support;
 
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.util.LeosDomainUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -81,6 +82,11 @@ public class XercesUtils {
 
         String content = new String(originalBytes, StandardCharsets.UTF_8);
         return content.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public static Document createXercesDocument(XmlDocument xmlDoc) {
+        byte[] xmlContent = xmlDoc.getContent().get().getSource().getBytes();
+        return createXercesDocument(xmlContent);
     }
 
     public static Document createXercesDocument(byte[] xmlContent) {
