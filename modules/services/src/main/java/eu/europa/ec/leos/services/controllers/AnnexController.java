@@ -318,7 +318,7 @@ public class AnnexController implements AnnexApi {
             documentRef = encodeParam(documentRef);
             DocumentViewResponse annex = this.annexApiService.getDocument(documentRef);
             if (annex.getBinaryFile() != null) {
-                String extension = annex.getOriginalFilename().substring(annex.getOriginalFilename().indexOf(".") + 1).toUpperCase();
+                String extension = annex.getOriginalFilename().substring(annex.getOriginalFilename().lastIndexOf(".") + 1).toUpperCase();
                 String mimeType = getMimeType(extension);
                 return ResponseEntity.ok()
                         .contentType(MediaType.parseMediaType(mimeType))
