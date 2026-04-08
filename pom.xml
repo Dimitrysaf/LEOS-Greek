@@ -180,7 +180,7 @@
         <cxf.version>4.0.5</cxf.version>
         <angus.version>2.0.2</angus.version>
         <jetbrains-annotations.version>24.1.0</jetbrains-annotations.version>
-        <spring-boot-actuator.version>3.4.3</spring-boot-actuator.version>
+        <spring-boot-actuator.version>3.5.13</spring-boot-actuator.version>
         <h2.version>2.3.232</h2.version>
         <hikari.version>7.0.2</hikari.version>
         <springdoc-openapi.version>2.7.0</springdoc-openapi.version>
