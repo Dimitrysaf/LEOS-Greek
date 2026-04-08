@@ -31,6 +31,7 @@ export type CreateProposalBody = {
   docPurpose: string;
   eeaRelevance: boolean;
   customTemplateAct: boolean;
+  fromCustomTemplate: boolean;
   key: string;
 };
 
@@ -41,6 +42,7 @@ export type CreateProposalCopy = {
   docPurpose: string;
   eeaRelevance: boolean;
   customTemplateAct: boolean;
+  fromCustomTemplate: boolean;
   key: string;
   proposalRef: string;
 };

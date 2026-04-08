@@ -105,7 +105,7 @@ public class FinancialStatementControllerTest {
     public void getDocumentConfig() {
         final String TEST_DOC_REF = "testDocRef";
         ProposalMetadata proposalMetadata= new ProposalMetadata("", "REGULATION for EC", "",
-                "PR-00.xml", "EN", "", "proposal-id", "", "0.1.0", false, false);
+                "PR-00.xml", "EN", "", "proposal-id", "", "0.1.0", false, false, false);
         final DocumentConfigResponse TEST_RESPONSE = new DocumentConfigResponse(
                 new ArrayList<>(),
                 new ArrayList<>(),

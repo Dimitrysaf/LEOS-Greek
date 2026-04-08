@@ -530,7 +530,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
 
     private MetadataVO createMetadataVO(Proposal proposal) {
         ProposalMetadata metadata = proposal.getMetadata().getOrError(() -> "Proposal metadata is not available!");
-        return new MetadataVO(metadata.getStage(), metadata.getType(), metadata.getPurpose(), metadata.getTemplate(), metadata.getLanguage(), metadata.getEeaRelevance(), metadata.isCustomTemplateAct());
+        return new MetadataVO(metadata.getStage(), metadata.getType(), metadata.getPurpose(), metadata.getTemplate(), metadata.getLanguage(),
+                metadata.getEeaRelevance(), metadata.isCustomTemplateAct(), metadata.isFromCustomTemplate());
     }
 
     private DocumentVO getCoverPageVO(DocumentVO proposalVO, String proposalRef) {

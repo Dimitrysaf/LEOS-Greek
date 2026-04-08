@@ -96,6 +96,7 @@ export interface Metadata {
   signatures: SignatureMetadata[] | null;
   stamp: boolean | null;
   customTemplateAct: boolean;
+  fromCustomTemplate: boolean;
   availableLangs: string;
   isPublished: boolean;
   diffusionVersion: string | null;

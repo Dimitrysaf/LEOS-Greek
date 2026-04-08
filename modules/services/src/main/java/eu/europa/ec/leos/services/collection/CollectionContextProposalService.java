@@ -119,6 +119,7 @@ public class CollectionContextProposalService extends CollectionContextService {
                 .withProcedureType(templatePropertiesMap.get(PROCEDURE_TYPE))
                 .withEeaRelevance(eeaRelevance)
                 .withCustomTemplateAct(customTemplateAct)
+                .withFromCustomTemplate(fromCustomTemplate)
                 .withRef(this.originRef)
                 .build();
 
@@ -138,6 +139,7 @@ public class CollectionContextProposalService extends CollectionContextService {
             memorandumContext.usePackageTemplate(metadata.getTemplate());
             memorandumContext.usePackageRef(proposal.getMetadata().get().getRef());
             memorandumContext.useCustomTemplateAct(customTemplateAct);
+            memorandumContext.useFromCustomTemplate(fromCustomTemplate);
             memorandumContext.useOriginRef(idsAndUrlsHolder.getMemorandumId());
 
             //Repetitive Acts
@@ -164,6 +166,7 @@ public class CollectionContextProposalService extends CollectionContextService {
             billContext.useEeaRelevance(eeaRelevance);
             billContext.useActionMessageMap(actionMsgMap);
             billContext.useCustomTemplateAct(customTemplateAct);
+            billContext.useFromCustomTemplate(fromCustomTemplate);
             billContext.usePackageRef(proposal.getMetadata().get().getRef());
             billContext.useOriginRef(idsAndUrlsHolder.getBillId());
 
@@ -228,6 +231,7 @@ public class CollectionContextProposalService extends CollectionContextService {
             financialStatementContext.usePackageRef(proposal.getMetadata().get().getRef());
             financialStatementContext.useCollaborators(proposal.getCollaborators());
             financialStatementContext.useCustomTemplateAct(customTemplateAct);
+            financialStatementContext.useFromCustomTemplate(fromCustomTemplate);
             financialStatementContext.useOriginRef(idsAndUrlsHolder.getFinancialStatementId());
 
             // Repetitive Act

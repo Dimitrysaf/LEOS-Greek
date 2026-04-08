@@ -165,8 +165,7 @@ public class FinancialStatementProcessorTest extends LeosTest {
                 "LEGISLATIVE FINANCIAL AND DIGITAL STATEMENT",
                 "555",
                 "0.1.0",
-                false,
-                false);
+                false, false, false);
 
         List<Collaborator> collaborators = new ArrayList<>();
         collaborators.add(new Collaborator("test", "OWNER", "SG"));

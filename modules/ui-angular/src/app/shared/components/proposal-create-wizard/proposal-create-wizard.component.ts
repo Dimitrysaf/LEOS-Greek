@@ -169,7 +169,8 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         templateName,
         langCode,
         documentLanguage,
-        key
+        key,
+        fromCustomTemplate: !!(template.customName)
       });
       this.isNavigationAllowed = true;
     } else {
@@ -178,7 +179,8 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         templateName: '',
         langCode: '',
         documentLanguage: '',
-        key: ''
+        key: '',
+        fromCustomTemplate: false,
       });
       this.isNavigationAllowed = false;
     }
@@ -307,7 +309,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   }
 
   private getDataForCreate(): CreateProposalBody {
-    const { templateId, templateName, langCode, docPurpose, eeaRelevance, customTemplateAct, key } =
+    const { templateId, templateName, langCode, docPurpose, eeaRelevance, customTemplateAct, fromCustomTemplate, key } =
       this.createForm.getRawValue();
     return {
       templateId,
@@ -316,12 +318,13 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
       docPurpose: docPurpose.trim(),
       eeaRelevance,
       customTemplateAct,
+      fromCustomTemplate,
       key
     };
   }
 
   private getDataForCopyChange(): CreateProposalCopy {
-    let { templateId, templateName, langCode, docPurpose, eeaRelevance, customTemplateAct, key } = this.createForm.getRawValue();
+    let { templateId, templateName, langCode, docPurpose, eeaRelevance, customTemplateAct, fromCustomTemplate, key } = this.createForm.getRawValue();
     if(this.isKeepAct){
       return {
         templateId,
@@ -330,6 +333,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         docPurpose: docPurpose.trim(),
         eeaRelevance,
         customTemplateAct,
+        fromCustomTemplate,
         key: this.proposalTemplate,
         proposalRef: this.proposalRef,
       };
@@ -341,6 +345,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         docPurpose: docPurpose.trim(),
         eeaRelevance,
         customTemplateAct,
+        fromCustomTemplate,
         key,
         proposalRef: this.proposalRef,
       };
@@ -390,6 +395,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
       eeaRelevance: new FormControl(false, { validators: Validators.required }),
       eeaRelevanceText: new FormControl({ value: '', disabled: true }),
       customTemplateAct: new FormControl(false, { validators: Validators.required }),
+      fromCustomTemplate: new FormControl(false, { validators: Validators.required }),
       changeCopyAct:  new FormControl({value: 'true' as 'true' | 'false', disabled: false, }),
       guidanceApproval: new FormControl(false, { validators: Validators.required }),
     });

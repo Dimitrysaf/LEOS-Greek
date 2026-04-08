@@ -55,7 +55,7 @@ public interface ApiService {
     CreateCollectionResult copyAct(CreateProposalCopyRequest request) throws CreateCollectionException;
 
     CreateCollectionResult createProposal(String templateId, String templateName, String langCode, String docPurpose,
-                                          boolean eeaRelevance, boolean customTemplateAct, String template) throws CreateCollectionException;
+            boolean eeaRelevance, boolean customTemplateAct, boolean fromCustomTemplate, String template) throws CreateCollectionException;
 
     List<ExtPackageResult> createExtProposal(String templateKey, String[] languageCodes, String docPurpose);
 

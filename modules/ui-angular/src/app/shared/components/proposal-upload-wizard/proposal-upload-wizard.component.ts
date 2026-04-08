@@ -248,6 +248,10 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
       customTemplateAct: new FormControl(
         { value: false, disabled: true },
         { validators: Validators.required },
+      ),
+      fromCustomTemplate: new FormControl(
+        { value: false, disabled: true },
+        { validators: Validators.required },
       )
     });
   }
@@ -297,6 +301,7 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
             ),
             eeaRelevance: res.documentToBeCreated.metadata.eeaRelevance,
             customTemplateAct: res.documentToBeCreated.metadata.customTemplateAct,
+            fromCustomTemplate: res.documentToBeCreated.metadata.fromCustomTemplate,
             packageTitle: res.documentToBeCreated.metadata.packageTitle,
             internalReference: res.documentToBeCreated.metadata.internalRef,
             documentLanguage: this.getLanguage(

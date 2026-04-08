@@ -127,9 +127,9 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             context.useTranslated(isTranslated);
             context.useTemplateKey(documentVO.getMetadata().getTemplate());
             context.useCustomTemplateAct(documentVO.getMetadata().isCustomTemplateAct());
+            context.useFromCustomTemplate(documentVO.getMetadata().isFromCustomTemplate());
             context.useOriginRef(documentVO.getRef());
             context.useIdsAndUrlsHolder(idsAndUrlsHolder);
-            context.useLanguage(documentVO.getLanguage());
             //create proposal
             Proposal proposal = context.executeCreateProposal();
 
@@ -165,6 +165,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             context.usePurpose(documentVO.getMetadata().getDocPurpose());
             context.useEeaRelevance(documentVO.getMetadata().isEeaRelevance());
             context.useCustomTemplateAct(documentVO.getMetadata().isCustomTemplateAct());
+            context.useFromCustomTemplate(documentVO.getMetadata().isFromCustomTemplate());
             context.useActionMessage(ContextActionService.COPY_CONTENT, messageHelper.getMessage("operation.copy.content"));
             context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
             context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
