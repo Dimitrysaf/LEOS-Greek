@@ -365,8 +365,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
                         foundChildren.stream().filter(t -> (t.getSoftActionAttr() == null ||
                                 (!t.getSoftActionAttr().equals(SoftActionType.DELETE)
                                         && !t.getSoftActionAttr().equals(SoftActionType.MOVE_TO)))
-                                && (t.getTrackChangeAction() == null
-                                || !t.getTrackChangeAction().equals(TrackChangeActionType.DELETE))).collect(Collectors.toList());
+                                && (isNotTrackDeleted(t))).toList();
                 if ((foundChildren.size() == 1 && !foundChildren.get(0).getId().equals(sourceItem.getId())) || (foundChildren.size() > 1)) {
                     result.setSuccess(false);
                     result.setMessageKey(rule.getErrorMessage());
@@ -406,11 +405,15 @@ public abstract class TocApiServiceImpl implements TocApiService {
                     if (targetIsHigherElement && positionAsChildren) {
                         return;
                     } else {
-                        if ((!sourceIsHigherElement && targetIsHigherElement && !positionAsChildren && parentIsNotHigherElement) ||
+                        if ((!sourceIsHigherElement && targetIsHigherElement && (position.equals(TocItemPosition.AFTER)
+                                || position.equals(TocItemPosition.BEFORE)) && parentIsNotHigherElement) ||
                                 (targetAndSourceAreNotHigherElements && checkHigherDivisionExists(tableOfContentItemVO) && parentIsNotHigherElement)) {
                             setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
                         }
                     }
+                }
+                if (checkHigherDivisionExists(tableOfContentItemVO) && isTocItemOutsideHigherDivision(tocItem, tableOfContentItemVO)) {
+                    setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
                 }
                 break;
             case NOT_EMPTY_HIGHER_DIVISION:
@@ -434,7 +437,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
     private boolean isTocItemOutsideHigherDivision(AknTag tocItem, TableOfContentItemVO tableOfContentItemVO) {
         TocItem currentItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider,
                 tableOfContentItemVO.getTagName());
-        if (!currentItem.isHigherElement() && currentItem.getAknTag().equals(tocItem)) {
+        if (!currentItem.isHigherElement() && currentItem.getAknTag().equals(tocItem) && isNotTrackDeleted(tableOfContentItemVO)) {
             TocItem parentTocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider,
                     tableOfContentItemVO.getParentItem().getTagName());
             return !parentTocItem.isHigherElement();
@@ -450,8 +453,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
                     tableOfContentItemVO.getChildItems().stream().filter(t -> (t.getSoftActionAttr() == null ||
                             (!t.getSoftActionAttr().equals(SoftActionType.DELETE)
                             && !t.getSoftActionAttr().equals(SoftActionType.MOVE_TO)))
-                            && (t.getTrackChangeAction() == null
-                            || !t.getTrackChangeAction().equals(TrackChangeActionType.DELETE))).collect(Collectors.toList());
+                            && isNotTrackDeleted(t)).toList();
             return !childItems.stream()
                     .collect(Collectors.groupingBy(t -> t.getTagName().value(), Collectors.toList()))
                     .values()
@@ -470,7 +472,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
 
     private boolean checkHigherDivisionExists(TableOfContentItemVO tableOfContentItemVO) {
         TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, tableOfContentItemVO.getTagName());
-        if (tocItem.isHigherElement()) {
+        if (tocItem.isHigherElement() && isNotTrackDeleted(tableOfContentItemVO)) {
             return true;
         }
         for (TableOfContentItemVO childTableOfContentItemVO : tableOfContentItemVO.getChildItems()) {
@@ -510,7 +512,8 @@ public abstract class TocApiServiceImpl implements TocApiService {
 
     private boolean isItemExistsInToc(AknTag tocItem, List<TableOfContentItemVO> higherDivisions) {
         TableOfContentItemVO tableOfContentItemVO = higherDivisions.stream().filter(higherDivision ->
-                higherDivision.getTagName().equals(tocItem)).findFirst().orElse(null);
+                higherDivision.getTagName().equals(tocItem) && isNotTrackDeleted(higherDivision))
+                .findFirst().orElse(null);
         return tableOfContentItemVO != null;
     }
 
@@ -546,7 +549,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
         boolean matches = true;
         for (TableOfContentItemVO higherDivision : matchedHigherDivisions) {
             TocItem tocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider, higherDivision.getParentItem().getTagName());
-            if (!tocItem.isHigherElement()) {
+            if (!tocItem.isHigherElement() && isNotTrackDeleted(higherDivision)) {
                 matches = false;
                 break;
             }
@@ -569,7 +572,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
         TocItem tocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider, tableOfContentItemVO.getTagName());
         if (tocItem.isHigherElement()) {
             if (tableOfContentItemVO.getChildItems() != null && tableOfContentItemVO.getChildItems().isEmpty() &&
-                    tableOfContentItemVO.getSoftActionAttr() == null) {
+                    tableOfContentItemVO.getSoftActionAttr() == null && isNotTrackDeleted(tableOfContentItemVO)) {
                 return true;
             }
         }
@@ -901,6 +904,12 @@ public abstract class TocApiServiceImpl implements TocApiService {
     private void setStructureContext(String docTemplate) {
         structureContextProvider.get().useDocumentTemplate(docTemplate);
     }
+
+    private boolean isNotTrackDeleted(TableOfContentItemVO item) {
+        return item.getTrackChangeAction() == null
+                || !item.getTrackChangeAction().equals(TrackChangeActionType.DELETE.getTrackChangeAction());
+    }
+
 
     private static class Result {
         public final byte[] xmlContent;

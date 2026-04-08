@@ -1238,6 +1238,7 @@ Feature: Legal Act Page Regression Features
       | warning                                                                                                |
       | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
       | A higher division must contain at least one sub-element                                                |
+      | A lower division cannot exist outside a higher division element                                        |
     When click on save and close button in navigation pane
     Then toc editing button is displayed and enabled
     And  warning symbol is displayed in navigation pane
