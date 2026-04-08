@@ -24,6 +24,7 @@ import eu.europa.ec.leos.repository.interfaces.PackagesFavorites;
 import eu.europa.ec.leos.repository.interfaces.PackagesRecentlyChanged;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.CollaboratorsRepository;
+import eu.europa.ec.leos.repository.repositories.CustomTemplateEntitiesRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentContentRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneRepository;
@@ -67,6 +68,7 @@ public class PackageServiceImpl implements PackageService {
     private final DocumentMilestoneRepository documentMilestoneRepository;
     private final DocumentService documentService;
     private final EntityManager entityManager;
+    private final CustomTemplateEntitiesRepository customTemplateEntitiesRepository;
 
     @Autowired
     public PackageServiceImpl(DocumentVRepository documentVRepository, PackageRepository packageRepository, LinkedPackagedRepository linkedPackagedRepository,
@@ -75,6 +77,7 @@ public class PackageServiceImpl implements PackageService {
                               DocumentContentRepository documentContentRepository, CollaboratorsService collaboratorsService,
                               DocumentMilestoneListRepository documentMilestoneListRepository, DocumentMilestoneRepository documentMilestoneRepository,
                               EntityManager entityManager,
+                              CustomTemplateEntitiesRepository customTemplateEntitiesRepository,
                               @Lazy DocumentService documentService) {
         this.documentVRepository = documentVRepository;
         this.packageRepository = packageRepository;
@@ -88,6 +91,7 @@ public class PackageServiceImpl implements PackageService {
         this.documentMilestoneRepository = documentMilestoneRepository;
         this.documentService = documentService;
         this.entityManager = entityManager;
+        this.customTemplateEntitiesRepository = customTemplateEntitiesRepository;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -164,15 +168,17 @@ public class PackageServiceImpl implements PackageService {
                 if(!linkedPackages.isEmpty()) {
                     linkedPackages.forEach(linkedPackage -> {
                         Optional<Package> translatedPkg = packageRepository.findById(linkedPackage.getLinkedPackageId());
-                        try {
-                            deleteDocsAndCollaborators(translatedPkg);
-                        } catch (RepositoryException e) {
-                            LOG.error("Unexpected error occurred while deleting documents and collaborator of linked package");
-                        }
-                        translatedPkg.ifPresent(packageRepository::delete);
+                        translatedPkg.ifPresent(p -> {
+                            try {
+                                deletePackageDependencies(p);
+                            } catch (RepositoryException e) {
+                                LOG.error("Unexpected error occurred while deleting child entities of linked package");
+                            }
+                            packageRepository.delete(p);
+                        });
                     });
                 }
-                deleteDocsAndCollaborators(pkg);
+                deletePackageDependencies(pkg.get());
             }
             pkg.ifPresent(packageRepository::delete);
         } catch (RepositoryException e) {
@@ -180,9 +186,14 @@ public class PackageServiceImpl implements PackageService {
         }
     }
 
-    private void deleteDocsAndCollaborators(Optional<Package> pkg) throws RepositoryException {
-        // Remove all docs inside package
-        List<LeosDocument> docs = documentService.findAllDocumentsByPackageId(pkg.get().getId().toString());
+    private void deletePackageDependencies(Package pkg) throws RepositoryException {
+        deleteDocuments(pkg);
+        customTemplateEntitiesRepository.deleteByPackageId(pkg);
+        collaboratorsService.removeCollaborators(pkg);
+    }
+
+    private void deleteDocuments(Package pkg) throws RepositoryException {
+        List<LeosDocument> docs = documentService.findAllDocumentsByPackageId(pkg.getId().toString());
         for (LeosDocument d : docs) {
             try {
                 // Milestones cannot be deleted by ref, as they have multiple records with same ref
@@ -197,8 +208,6 @@ public class PackageServiceImpl implements PackageService {
                         " id : " + d.getVersionId());
             }
         }
-        // Remove all links to collaborators
-        collaboratorsService.removeCollaborators(pkg.get());
     }
 
     public List<LeosDocument> findDocumentsByPackageName(String packageName, final Set<String> categories,
