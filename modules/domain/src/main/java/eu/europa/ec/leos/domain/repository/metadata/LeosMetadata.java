@@ -21,6 +21,7 @@ public abstract class LeosMetadata implements Serializable {
     protected final String docVersion;
     protected final boolean eeaRelevance;
     protected final boolean customTemplateAct;
+    protected final boolean fromCustomTemplate;
     protected boolean translated;
     protected String packageTitle;
     protected List<String> authenticLang;
@@ -35,7 +36,7 @@ public abstract class LeosMetadata implements Serializable {
 
     protected LeosMetadata(LeosCategory category, String stage, String type, String purpose, String template,
                            String language, String docTemplate, String ref, String packageRef, String objectId, String docVersion,
-                           boolean eeaRelevance, boolean customTemplateAct, boolean translated) {
+                           boolean eeaRelevance, boolean customTemplateAct, boolean fromCustomTemplate, boolean translated) {
         this.category = category;
         this.stage = stage;
         this.type = type;
@@ -48,14 +49,15 @@ public abstract class LeosMetadata implements Serializable {
         this.docVersion = docVersion;
         this.eeaRelevance = eeaRelevance;
         this.customTemplateAct = customTemplateAct;
+        this.fromCustomTemplate = fromCustomTemplate;
         this.packageRef = packageRef;
         this.translated = translated;
     }
 
     protected LeosMetadata(LeosCategory category, String stage, String type, String purpose, String template,
                            String language, String docTemplate, String ref, String objectId, String docVersion,
-                           boolean eeaRelevance, boolean customTemplateAct) {
-        this(category, stage, type, purpose, template, language, docTemplate, ref, null, objectId, docVersion, eeaRelevance, customTemplateAct, false);
+                           boolean eeaRelevance, boolean customTemplateAct, boolean fromCustomTemplate) {
+        this(category, stage, type, purpose, template, language, docTemplate, ref, null, objectId, docVersion, eeaRelevance, customTemplateAct, fromCustomTemplate, false);
     }
 
     public String getCreationOptions() {
@@ -176,6 +178,10 @@ public abstract class LeosMetadata implements Serializable {
 
     public boolean isCustomTemplateAct() {
         return customTemplateAct;
+    }
+
+    public boolean isFromCustomTemplate() {
+        return fromCustomTemplate;
     }
 
     public boolean isTranslated() {

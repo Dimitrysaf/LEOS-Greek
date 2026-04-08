@@ -68,6 +68,7 @@ public class MemorandumContextService {
     private String template = null;
     private boolean eeaRelevance;
     private boolean customTemplateAct;
+    private boolean fromCustomTemplate;
     private boolean cloneProposal = false;
     private String originRef;
 
@@ -168,6 +169,11 @@ public class MemorandumContextService {
         this.customTemplateAct = customTemplateAct;
     }
 
+    public void useFromCustomTemplate(boolean fromCustomTemplate) {
+        LOG.trace("Using Proposal fromCustomTemplate... [fromCustomTemplate={}]", fromCustomTemplate);
+        this.fromCustomTemplate = fromCustomTemplate;
+    }
+
     public void useCloneProposal(boolean cloneProposal) {
         this.cloneProposal = cloneProposal;
     }
@@ -204,6 +210,7 @@ public class MemorandumContextService {
                 .withTemplate(template)
                 .withPackageRef(packageRef)
                 .withCustomTemplateAct(customTemplateAct)
+                .withFromCustomTemplate(fromCustomTemplate)
                 .withRef(originRef)
                 .build();
 

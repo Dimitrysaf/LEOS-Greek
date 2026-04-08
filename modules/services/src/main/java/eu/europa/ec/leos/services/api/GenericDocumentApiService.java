@@ -231,7 +231,7 @@ public class GenericDocumentApiService {
                                                     String clientContextToken) {
         this.documentLanguageContext.setDocumentLanguage(document.getMetadata().get().getLanguage());
         structure.useDocumentTemplate(this.getDocTemplate(document));
-        structure.useTranslated(this.isCustomTemplateAct(document) && this.isTranslated(document));
+        structure.useTranslated(isTranslatedNoStructureChangesAllowed(document));
         this.populateCloneProposalMetadata(document);
         LeosMetadata documentMetadata = document.getMetadata().get();
         List<LeosMetadata> documentsMetadataList = packageService.getDocumentsMetadata(documentMetadata.getRef());
@@ -253,7 +253,7 @@ public class GenericDocumentApiService {
             contextRole = tokenService.extractUserRoleFromToken(clientContextToken);
             profile = profileService.getProfile(tokenService.extractUserSystemNameFromToken(clientContextToken),
                     documentMetadata.getLanguage());
-        } else if (documentMetadata.isCustomTemplateAct() && packageService.findPackageByDocumentId(document.getId()).getTranslated()) {
+        } else if (isTranslatedNoStructureChangesAllowed(document)) {
             profile = profileService.getProfile("EDIT_MULTILINGUAL", documentMetadata.getLanguage());
         }
 
@@ -276,6 +276,10 @@ public class GenericDocumentApiService {
                 profile,
                 contextRole
         );
+    }
+
+    private boolean isTranslatedNoStructureChangesAllowed(XmlDocument document) {
+        return this.isTranslated(document) && (this.isCustomTemplateAct(document) || this.isFromCustomTemplate(document));
     }
 
     public DocumentConfigResponse getDocumentConfig(@NotNull String docRef) {
@@ -626,6 +630,12 @@ public class GenericDocumentApiService {
     private boolean isCustomTemplateAct(XmlDocument document) {
         return Optional.of(this.getDocMetadata(document))
                 .map(LeosMetadata::isCustomTemplateAct)
+                .orElse(false);
+    }
+
+    private boolean isFromCustomTemplate(XmlDocument document) {
+        return Optional.of(this.getDocMetadata(document))
+                .map(LeosMetadata::isFromCustomTemplate)
                 .orElse(false);
     }
 

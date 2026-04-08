@@ -81,7 +81,7 @@ public class ReferenceLabelServiceTest extends LeosTest {
     }
 
     private Bill getMockedBill(Content content) {
-        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill", "", "0.1.0", false, false, false);
+        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN","", "bill", "", "0.1.0", false, false, false, false);
         return new Bill("1", "Legaltext", "login", Instant.now(), "login", Instant.now(),
                 "", "", "Version 1.0.0", "", VersionType.MAJOR,
                 true, "title", null, Arrays.asList(""), "", "",

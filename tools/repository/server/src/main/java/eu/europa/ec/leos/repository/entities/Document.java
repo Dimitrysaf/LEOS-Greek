@@ -112,6 +112,8 @@ public class Document implements Serializable {
     private String categoryCode;
     @Column(name = "CUSTOM_TEMPLATE_ACT")
     private Boolean customTemplateAct;
+    @Column(name = "FROM_CUSTOM_TEMPLATE")
+    private Boolean fromCustomTemplate;
     @Column(name = " IS_PUBLISHED")
     private Boolean  isPublished;
 
@@ -324,6 +326,14 @@ public class Document implements Serializable {
 
     public void setCustomTemplateAct(Boolean customTemplateAct) {
         this.customTemplateAct = customTemplateAct;
+    }
+
+    public Boolean getFromCustomTemplate() {
+        return fromCustomTemplate;
+    }
+
+    public void setFromCustomTemplate(Boolean fromCustomTemplate) {
+        this.fromCustomTemplate = fromCustomTemplate;
     }
 
     public Boolean getPublished() { return isPublished; }

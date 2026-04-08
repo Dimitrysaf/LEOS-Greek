@@ -117,7 +117,8 @@ export class ProposalDraftsComponent
         this.permissions = perms;
       });
 
-    this.canAddDeleteAnnex = !this.proposal.metadata.customTemplateAct || !this.proposalDetailsService.getTranslated();
+    this.canAddDeleteAnnex = (!this.proposal.metadata.customTemplateAct && !this.proposal.metadata.fromCustomTemplate)
+      || !this.proposalDetailsService.getTranslated();
   }
 
   handleAnnexAdd() {

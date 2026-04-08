@@ -45,7 +45,7 @@ public class ProfileServiceTest extends LeosTest {
         when(source.getBytes()).thenReturn(bytesFile);
         when(content.getSource()).thenReturn(source);
 
-        ProfileMetaData profileMetaData =new ProfileMetaData("", "", "", "lightProfile.xml", "EN", "", "id", "", "0.0.1", false, false);
+        ProfileMetaData profileMetaData =new ProfileMetaData("", "", "", "lightProfile.xml", "EN", "", "id", "", "0.0.1", false, false, false);
         List<Collaborator> collaborators = new ArrayList<>();
         collaborators.add(new Collaborator("login", "OWNER", "SG"));
         final XmlDocument document = new eu.europa.ec.leos.domain.repository.document.Profile("555", "Profile", "login", Instant.now(), "login", Instant.now(),

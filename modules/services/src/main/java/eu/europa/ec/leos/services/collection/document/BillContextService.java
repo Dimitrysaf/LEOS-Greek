@@ -103,6 +103,7 @@ public class BillContextService {
     private boolean cloneProposal;
     private boolean eeaRelevance;
     private boolean customTemplateAct;
+    private boolean fromCustomTemplate;
     private String originRef;
     private Map<String, String> mapOldAndNewRefs;
     private HashMap<String, XmlDocument> refsMatching;
@@ -301,6 +302,11 @@ public class BillContextService {
         this.customTemplateAct = customTemplateAct;
     }
 
+    public void useFromCustomTemplate(boolean fromCustomTemplate) {
+        LOG.trace("Using Proposal fromCustomTemplate... [fromCustomTemplate={}]", fromCustomTemplate);
+        this.fromCustomTemplate = fromCustomTemplate;
+    }
+
     public void useBillContent(byte[] content) {
         LOG.trace("Using Bill content... [billContent={}]", content);
         this.billContent = content;
@@ -341,6 +347,7 @@ public class BillContextService {
                 .withPurpose(purpose)
                 .withPackageRef(packageRef)
                 .withCustomTemplateAct(customTemplateAct)
+                .withFromCustomTemplate(fromCustomTemplate)
                 .withEeaRelevance(eeaRelevance)
                 .withRef(originRef)
                 .build();
@@ -626,6 +633,7 @@ public class BillContextService {
         annexContext.useTemplate(annexTemplate);
         annexContext.useLanguage(language);
         annexContext.useCustomTemplateAct(customTemplateAct);
+        annexContext.useFromCustomTemplate(fromCustomTemplate);
         // we are using the same template for the annexes for sj-23 and sj19, the only change is this type. that's why we get it form the bill.
         Option<BillMetadata> metadataOption = bill.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), BILL_METADATA_IS_REQUIRED);
