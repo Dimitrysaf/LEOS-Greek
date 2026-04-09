@@ -310,7 +310,9 @@ public class MetadataServiceImpl implements MetadataService {
 
         Node xmlNodeDate = XmlUtil.getChildNodeWithName(xmlNodeBlock, MetadataUtil.ELEMENT_DATE);
         if (xmlNodeDate == null) {
-            return;
+            xmlNodeDate = xmlFile.newElement(MetadataUtil.ELEMENT_DATE);
+            XmlUtil.setNodeAttributeValue(xmlNodeDate, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
+            xmlNodeBlock.appendChild(xmlNodeDate);
         }
         XmlUtil.setNodeAttributeValue(xmlNodeDate, MetadataUtil.ATTRIBUTE_DATE, fieldInfo.getId().isEmpty() ? "2999-01-01" : fieldInfo.getId());
         final String displayValue = fieldInfo.getId().isEmpty() ? "" : this.readEmissionDataDisplayValue(fieldInfo, xmlFile);
