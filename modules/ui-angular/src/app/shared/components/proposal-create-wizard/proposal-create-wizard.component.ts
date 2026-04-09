@@ -39,7 +39,8 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   stepSelected: any;
   isNavigationAllowed = false;
   currentStepIndex = 1;
-  stepsCount = 2;
+  stepsCount = 3;
+  isGuidanceApproved = false;
 
   createForm: FormGroup;
   selectedTemplate: CatalogItem | null;
@@ -51,6 +52,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   proposalTemplate: string;
   userRoles: ApplicationRole[];
   isStepOneCompleted = false;
+  isStepTwoCompleted = false;
   private proposalRef:string;
   private proposalLanguage: string;
   documentCollectionName: string;
@@ -167,7 +169,8 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         templateName,
         langCode,
         documentLanguage,
-        key
+        key,
+        fromCustomTemplate: !!(template.customName)
       });
       this.isNavigationAllowed = true;
     } else {
@@ -176,7 +179,8 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         templateName: '',
         langCode: '',
         documentLanguage: '',
-        key: ''
+        key: '',
+        fromCustomTemplate: false,
       });
       this.isNavigationAllowed = false;
     }
@@ -186,9 +190,11 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     const newIndex: number = this.currentStepIndex + increment;
     if (newIndex >= 1 && newIndex <= this.stepsCount) {
       this.currentStepIndex = newIndex;
+      // Update completion flags based on current step
       this.isStepOneCompleted = this.currentStepIndex >= 2;
+      this.isStepTwoCompleted = this.currentStepIndex >= 3;
     }
-    if(this.isStepOneCompleted){
+    if(this.isStepTwoCompleted){
       this.createForm.get('changeCopyAct').disable();
       if (this.isCopyChangeAct && this.isKeepAct){
         let catalogTemplates = this.templateSelector.catalogTemplates;
@@ -220,9 +226,11 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
 
   onSelectStepRemoteNav(event: any) {
     if (this.currentStepIndex > event.index) {
-      this.isStepOneCompleted = false;
+      this.isStepOneCompleted = event.index >= 2;
+      this.isStepTwoCompleted = event.index >= 3;
     } else if (this.currentStepIndex < event.index) {
-      this.isStepOneCompleted = true;
+      this.isStepOneCompleted = event.index >= 2;
+      this.isStepTwoCompleted = event.index >= 3;
     }
     this.currentStepIndex = event.index;
   }
@@ -269,7 +277,11 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   }
 
   showCreateHideNext() {
-    return this.currentStepIndex === 2;
+    return this.currentStepIndex === 3;
+  }
+
+  onGuidanceApprovalChange(isApproved: boolean) {
+    this.isGuidanceApproved = isApproved;
   }
 
   handleKeepCopyRadioChange(event: any) {
@@ -297,7 +309,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   }
 
   private getDataForCreate(): CreateProposalBody {
-    const { templateId, templateName, langCode, docPurpose, eeaRelevance, customTemplateAct, key } =
+    const { templateId, templateName, langCode, docPurpose, eeaRelevance, customTemplateAct, fromCustomTemplate, key } =
       this.createForm.getRawValue();
     return {
       templateId,
@@ -306,12 +318,13 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
       docPurpose: docPurpose.trim(),
       eeaRelevance,
       customTemplateAct,
+      fromCustomTemplate,
       key
     };
   }
 
   private getDataForCopyChange(): CreateProposalCopy {
-    let { templateId, templateName, langCode, docPurpose, eeaRelevance, customTemplateAct, key } = this.createForm.getRawValue();
+    let { templateId, templateName, langCode, docPurpose, eeaRelevance, customTemplateAct, fromCustomTemplate, key } = this.createForm.getRawValue();
     if(this.isKeepAct){
       return {
         templateId,
@@ -320,6 +333,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         docPurpose: docPurpose.trim(),
         eeaRelevance,
         customTemplateAct,
+        fromCustomTemplate,
         key: this.proposalTemplate,
         proposalRef: this.proposalRef,
       };
@@ -331,6 +345,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         docPurpose: docPurpose.trim(),
         eeaRelevance,
         customTemplateAct,
+        fromCustomTemplate,
         key,
         proposalRef: this.proposalRef,
       };
@@ -380,7 +395,9 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
       eeaRelevance: new FormControl(false, { validators: Validators.required }),
       eeaRelevanceText: new FormControl({ value: '', disabled: true }),
       customTemplateAct: new FormControl(false, { validators: Validators.required }),
+      fromCustomTemplate: new FormControl(false, { validators: Validators.required }),
       changeCopyAct:  new FormControl({value: 'true' as 'true' | 'false', disabled: false, }),
+      guidanceApproval: new FormControl(false, { validators: Validators.required }),
     });
   }
 
@@ -390,6 +407,8 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     this.currentStepIndex = 1;
     this.initCreateForm();
     this.isNavigationAllowed = false;
+    this.isGuidanceApproved = false;
+    this.isStepTwoCompleted = false;
     if(this.isCopyChangeAct){
       this.isKeepAct = true;
       this.createForm.get('changeCopyAct').setValue('true');

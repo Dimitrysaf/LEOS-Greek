@@ -1,12 +1,18 @@
 package eu.europa.ec.leos.domain.vo;
 
-import java.util.Objects;
+import lombok.*;
 
+@Getter
+@Setter
+@ToString(exclude = {"isEditable", "xpathprefix"})
+@EqualsAndHashCode(exclude = {"isEditable", "xpathprefix"})
 public class ElementMatchVO {
     private String elementId;
     private int matchStartIndex;
     private int matchEndIndex;
     private boolean isEditable;
+    private String xpath;
+    private String xpathprefix;
 
     public ElementMatchVO() {
     }
@@ -22,61 +28,27 @@ public class ElementMatchVO {
         this.matchEndIndex = matchEndIndex;
     }
 
+    // Keep this if you really need a constructor with isEditable
     public ElementMatchVO(String elementId, int matchStartIndex, boolean isEditable) {
         this.elementId = elementId;
         this.matchStartIndex = matchStartIndex;
         this.isEditable = isEditable;
     }
 
-    public String getElementId() {
-        return elementId;
+    public ElementMatchVO(String elementId, int matchStartIndex, boolean isEditable, String xpath, String xpathprefix) {
+        this.elementId = elementId;
+        this.matchStartIndex = matchStartIndex;
+        this.isEditable = isEditable;
+        this.xpath = xpath;
+        this.xpathprefix = xpathprefix;
     }
 
     public void setElementId(String elementId) {// method needed for vaadin reflection to create JSON
         throw new UnsupportedOperationException();
     }
 
-    public int getMatchStartIndex() {
-        return matchStartIndex;
-    }
-
-    public void setMatchStartIndex(int matchStartIndex) {
-        this.matchStartIndex = matchStartIndex;
-    }
-
-    public int getMatchEndIndex() {
-        return matchEndIndex;
-    }
-
-    public void setMatchEndIndex(int matchEndIndex) {
-        this.matchEndIndex = matchEndIndex;
-    }
-
     public boolean isEditable() {
         return isEditable;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ElementMatchVO that = (ElementMatchVO) o;
-        return matchStartIndex == that.matchStartIndex &&
-                matchEndIndex == that.matchEndIndex &&
-                Objects.equals(elementId, that.elementId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(elementId, matchStartIndex, matchEndIndex);
-    }
-
-    @Override
-    public String toString() {
-        return "ElementMatchVO{" +
-                "elementId='" + elementId + '\'' +
-                ", matchStartIndex=" + matchStartIndex +
-                ", matchEndIndex=" + matchEndIndex +
-                '}';
-    }
 }

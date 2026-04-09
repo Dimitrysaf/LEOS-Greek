@@ -10,6 +10,7 @@ public class CreateProposalRequest {
     private String docPurpose;
     private boolean eeaRelevance;
     private boolean customTemplateAct;
+    private boolean fromCustomTemplate;
     private String key;
 
     public String getTemplateId() {
@@ -60,6 +61,14 @@ public class CreateProposalRequest {
         this.customTemplateAct = customTemplateAct;
     }
 
+    public boolean isFromCustomTemplate() {
+        return fromCustomTemplate;
+    }
+
+    public void setFromCustomTemplate(boolean fromCustomTemplate) {
+        this.fromCustomTemplate = fromCustomTemplate;
+    }
+
     public String getKey() {
         return key;
     }
@@ -77,6 +86,7 @@ public class CreateProposalRequest {
                 ", docPurpose='" + docPurpose + '\'' +
                 ", eeaRelevance=" + eeaRelevance +
                 ", customTemplateAct=" + customTemplateAct +
+                ", fromCustomTemplate=" + fromCustomTemplate +
                 ", key=" + key +
                 '}';
     }

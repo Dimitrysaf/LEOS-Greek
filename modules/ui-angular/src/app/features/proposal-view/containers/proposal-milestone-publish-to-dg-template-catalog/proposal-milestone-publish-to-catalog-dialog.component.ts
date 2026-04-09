@@ -7,9 +7,10 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { MilestoneDescriptor } from '@/shared/components/proposal-milestone-view/proposal-milestone-view.component';
 import { ProposalDetailsService } from '../../services/proposal-details.service';
-import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import {EuiDialogComponent, EuiDialogService} from '@eui/components/eui-dialog';
 import {AppConfigService} from "@/core/services/app-config.service";
 import {Document} from "@/shared";
+import {TranslateService} from "@ngx-translate/core";
 
 type DGOption = { code: string; label: string };
 
@@ -61,6 +62,8 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
   constructor(
     private fb: FormBuilder,
     private detailsService: ProposalDetailsService,
+    private dialogService: EuiDialogService,
+    private translateService: TranslateService,
     private appConfig: AppConfigService
   ) {}
 
@@ -300,11 +303,25 @@ export class ProposalMilestonePublishToCatalogDialogComponent implements OnInit,
       return;
     }
 
+    if (this.document.translatedProposals?.length > 0) {
+      this.dialogService.openDialog({
+        title: this.translateService.instant('page.collection.milestones.publish-to-catalog.linguistic-versions.title'),
+        content: this.translateService.instant('page.collection.milestones.publish-to-catalog.linguistic-versions.message'),
+        accept: () => {
+          this.publishTemplateToDgCatalog();
+          this.sendMilestonePublishToDgTemplateCatalog.closeDialog();
+        }
+      });
+    } else {
+      this.publishTemplateToDgCatalog();
+    }
+  }
+
+  publishTemplateToDgCatalog() {
     const templateName = this.templateNameCtrl.value as string;
     const dgCodes = this.dgCtrl.value as string[];
 
-    this.detailsService.publishTemplateToDgCatalog(this.milestone, templateName, dgCodes, false);
-
+    this.detailsService.publishTemplateToDgCatalog(this.milestone, templateName, dgCodes);
     this.close();
   }
 

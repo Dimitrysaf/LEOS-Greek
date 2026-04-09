@@ -44,9 +44,6 @@ public class CatalogController implements CatalogApi {
             throws PendingTranslationException {
         try {
             legFileId = encodeParam(legFileId);
-            if (request.isCleanPendingTranslations()) {
-                customTemplateService.cleanPendingTranslations(legFileId);
-            }
             customTemplateService.publishTemplate(
                     legFileId,
                     request.getTemplateName(),

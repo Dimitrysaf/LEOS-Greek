@@ -43,8 +43,12 @@ import eu.europa.ec.leos.services.collection.CreateCollectionService;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.TransformationService;
+import eu.europa.ec.leos.services.dto.request.PublishTemplateRequest;
+import eu.europa.ec.leos.services.dto.request.DocumentLinesRequest;
+import eu.europa.ec.leos.services.dto.response.InjectElementResponse;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.models.AnnexType;
+import eu.europa.ec.leos.services.document.InjectElementService;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.dto.response.LeosRenditionOutputResponseList;
 import eu.europa.ec.leos.services.dto.response.MilestonePDFDownloadResponse;
@@ -80,7 +84,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -135,6 +142,7 @@ public class LeosApiController implements LeosApi {
     private ConValidatorService conValidatorService;
     private NotificationService notificationService;
     private final CustomTemplateService customTemplateService;
+    private final InjectElementService injectElementService;
 
     private final ConfigService configService;
     private final SecurityContext securityContext;
@@ -161,7 +169,8 @@ public class LeosApiController implements LeosApi {
                              ExportPackageService exportPackageService, ApiService apiService, ConfigService configService,
                              SecurityContext securityContext, UserService userService, CoEditionInfoHandler coEditionInfoHandler,
                              DocumentContentService documentContentService, ConValidatorService conValidatorService,
-                             NotificationService notificationService, CustomTemplateService customTemplateService) {
+                             NotificationService notificationService, CustomTemplateService customTemplateService,
+                             InjectElementService injectElementService) {
         this.legService = legService;
         this.workspaceService = workspaceService;
         this.tokenService = tokenService;
@@ -181,6 +190,7 @@ public class LeosApiController implements LeosApi {
         this.documentContentService = documentContentService;
         this.conValidatorService = conValidatorService;
         this.notificationService = notificationService;
+        this.injectElementService = injectElementService;
     }
 
     @Override
@@ -713,7 +723,8 @@ public class LeosApiController implements LeosApi {
     @Override
     public ResponseEntity<Object> createMilestone(String proposalRef, String milestoneComment) throws Exception {
         proposalRef = encodeParam(proposalRef);
-        return new ResponseEntity<>(apiService.createMilestone(proposalRef, milestoneComment), HttpStatus.OK);
+        apiService.createMilestone(proposalRef, milestoneComment);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override
@@ -883,6 +894,29 @@ public class LeosApiController implements LeosApi {
         } catch (Exception ex) {
             LOG.error("Error occurred while find DocumentRef By PackageId and Category: " + ex.getMessage());
             return new ResponseEntity<>("Error occurred while find DocumentRef By PackageId and Category", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * API endpoint for injecting elements into EdiT documents.
+     * Handles requests from external applications (e.g., DG SANTE EMP2) to modify document content.
+     *
+     * @param request the DocumentLinesRequest containing document ID and section operations
+     * @return ResponseEntity with InjectElementResponse indicating success/failure
+     */
+    @RequestMapping(value = "/secured/injectElement", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> injectElement(@RequestBody DocumentLinesRequest request) {
+        try {
+            injectElementService.injectElements(request);
+            return new ResponseEntity<>(new InjectElementResponse(true, "Elements injected successfully"), HttpStatus.OK);
+        } catch (IllegalArgumentException ex) {
+            return new ResponseEntity<>(new InjectElementResponse(false, ex.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (SecurityException ex) {
+            return new ResponseEntity<>(new InjectElementResponse(false, ex.getMessage()), HttpStatus.FORBIDDEN);
+        } catch (Exception ex) {
+            LOG.error("Error occurred while injecting elements: {}", ex.getMessage());
+            return new ResponseEntity<>(new InjectElementResponse(false, "Error occurred while injecting elements: " + ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

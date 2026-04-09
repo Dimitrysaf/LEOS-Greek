@@ -130,7 +130,7 @@ public class BillServiceImplTest {
         Content content = mock(Content.class);
         Content.Source source = mock(Content.Source.class);
         final byte[] byteContent = new byte[]{1, 2, 3};
-        final BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN", "BL-023", "bill-id", "", "0.1.0", false, false, false);
+        final BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "SJ-023", "EN", "BL-023", "bill-id", "", "0.1.0", false, false, false, false);
         final Bill bill = new Bill("1", "Legaltext", "login", Instant.now(), "login", Instant.now(),
                 "", "", "Version 1.0.0", "", VersionType.MAJOR, true, "title",
                 Collections.emptyList(), Arrays.asList(""), "", "", "", Option.some(content), Option.some(billMetadata), false, false);

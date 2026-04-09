@@ -45,6 +45,7 @@ public class CatalogServiceImplTest extends H2TestBase {
     @Mock private DocumentService documentService;
     @Mock private MilestoneDocumentService milestoneDocumentService;
     @Mock private PackageRepository packageRepository;
+    @Mock private LinkedPackagedRepository linkedPackagedRepository;
     @Mock
     private Config config;
 

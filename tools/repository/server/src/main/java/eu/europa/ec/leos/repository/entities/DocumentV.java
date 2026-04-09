@@ -165,6 +165,8 @@ public class DocumentV implements Serializable {
     private Boolean isVersionArchived;
     @Column(name = "CUSTOM_TEMPLATE_ACT", updatable = false)
     private Boolean customTemplateAct;
+    @Column(name = "FROM_CUSTOM_TEMPLATE", updatable = false)
+    private Boolean fromCustomTemplate;
 
     @Column(name = "AVAILABLE_LANGS", updatable = false)
     private String availableLangs;
@@ -516,6 +518,14 @@ public class DocumentV implements Serializable {
 
     public void setCustomTemplateAct(Boolean customTemplateAct) {
         this.customTemplateAct = customTemplateAct;
+    }
+
+    public Boolean getFromCustomTemplate() {
+        return fromCustomTemplate;
+    }
+
+    public void setFromCustomTemplate(Boolean fromCustomTemplate) {
+        this.fromCustomTemplate = fromCustomTemplate;
     }
 
     public String getAvailableLangs() {

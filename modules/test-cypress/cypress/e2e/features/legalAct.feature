@@ -13,6 +13,8 @@ Feature: Legal Act Page Regression Features
     And  collapse all button is displayed in create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation testing citation and recital scenarios" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -74,6 +76,8 @@ Feature: Legal Act Page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation testing article ck editor scenario" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -109,6 +113,9 @@ Feature: Legal Act Page Regression Features
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-3210011215583606762-EN.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -154,6 +161,9 @@ Feature: Legal Act Page Regression Features
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-clymts48h00018g73xyrc19ma-en.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -247,6 +257,9 @@ Feature: Legal Act Page Regression Features
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT_1383684831844402901.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -363,11 +376,13 @@ Feature: Legal Act Page Regression Features
     And  content of subparagraph 1 of list 1 of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 3 contains "point a"
     And  content of subparagraph 1 of point 1 of list 1 of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 3 contains "point i"
     And  content of subparagraph 2 of point 1 of list 1 of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 3 contains "point i subparagraph"
+
+    # Ticket 2982: Issue while outdenting a point in article
     When click on insert after icon of article 3
     Then article 4 is displayed
     When mouseover and click on article 4
     Then ck editor window is displayed
-    Then  li 1 with data-akn-element "paragraph" of article contains "Text..." in edition mode
+   And numbered paragraph 1 of article contains text "Text..." in edition mode
     When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
     And click enter from keyboard in edition mode
     And click on increase indent icon present in ck editor panel
@@ -382,6 +397,69 @@ Feature: Legal Act Page Regression Features
     And content of point 1 of list 1 of paragraph 1 of article 4 contains "point a"
     And content of subparagraph 2 of list 1 of paragraph 1 of article 4 contains "sub point a"
 
+    #Ticket 2990 :MERGE: Outdent is breaking the structure
+    When click on insert after icon of article 4
+    Then article 5 is displayed
+    When mouseover and click on article 5
+    Then ck editor window is displayed
+    Then  li 1 with data-akn-element "paragraph" of article contains "Text..." in edition mode
+    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+    And click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on increase indent icon present in ck editor panel
+    And  add "point a" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And  add "point b" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And  add "point c" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And  add "point d" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 5 contains "Text..."
+    And content of point 1 of list 1 of paragraph 1 of article 5 contains "point a"
+    And content of point 2 of list 1 of paragraph 1 of article 5 contains "point b"
+    And content of point 3 of list 1 of paragraph 1 of article 5 contains "point c"
+    And content of point 4 of list 1 of paragraph 1 of article 5 contains "point d"
+    When mouseover and click on article 5
+    Then ck editor window is displayed
+    And  click at offset 7 in li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+    And click on decrease indent icon present in ck editor panel
+    And click on decrease indent icon present in ck editor panel
+    And click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 5 contains "Text..."
+    And content of point 1 of list 1 of paragraph 1 of article 5 contains "point a"
+    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 2 of article 5 contains "point b"
+    And content of point 1 of list 1 of paragraph 2 of article 5 contains "point c"
+    And content of point 2 of list 1 of paragraph 2 of article 5 contains "point d"
+
+    #Ticket #3039 :wrong structure created when we outdent a point inside unnumbered paragraph
+    When mouseover and click on article 6
+    Then ck editor window is displayed
+    Then  li 1 with data-akn-element "paragraph" of article contains "This Regulation shall enter into force on the [...] day following that of its publication in the Official Journal of the European Union" in edition mode
+    When click at offset 39 of child 1 of li 1 with data-akn-element "paragraph" of article in edition mode
+    And click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on increase indent icon present in ck editor panel
+    And  add "point a" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And  add "point b" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 6 contains "This Regulation shall enter into force on the [...] day following that of its publication in the Official Journal of the European Union"
+    And content of point 1 of list 1 of paragraph 1 of article 6 contains "point a"
+    And content of point 2 of list 1 of paragraph 1 of article 6 contains "point b"
+    When  mouseover and click on article 6
+    Then ck editor window is displayed
+    And  click at offset 7 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+    And click on decrease indent icon present in ck editor panel
+    And click save and close button of ck editor
+    Then ck editor window is not displayed
+    And content of paragraph 1 of article 6 contains "This Regulation shall enter into force on the [...] day following that of its publication in the Official Journal of the European Union"
+    And content of subparagraph refersTo "~INP" of list 1 of paragraph 2 of article 6 contains "point a"
+    And content of point 1 of list 1 of paragraph 2 of article 6 contains "point b"
+
   @definitionArticle @local
   Scenario: definition article should have maximum three depth
     Given navigate to leos application with "User1"
@@ -389,6 +467,8 @@ Feature: Legal Act Page Regression Features
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Automation Testing Definition Article" in create document page
     And  click on create button
@@ -642,6 +722,9 @@ Feature: Legal Act Page Regression Features
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT_1383684831844402901.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -741,6 +824,8 @@ Feature: Legal Act Page Regression Features
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Automation import OJ Testing" in create document page
     And  click on create button
@@ -852,6 +937,8 @@ Feature: Legal Act Page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation Article Testing" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -908,6 +995,9 @@ Feature: Legal Act Page Regression Features
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-cm65ct0qm005tzg88xg9uph7b-en.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -972,6 +1062,8 @@ Feature: Legal Act Page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation Article Testing" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -1015,6 +1107,8 @@ Feature: Legal Act Page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation test add subparagraph plugin for article" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -1047,6 +1141,8 @@ Feature: Legal Act Page Regression Features
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Automation search and replace testing" in create document page
     And  click on create button
@@ -1094,6 +1190,8 @@ Feature: Legal Act Page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation multi drag and drop testing" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -1140,6 +1238,7 @@ Feature: Legal Act Page Regression Features
       | warning                                                                                                |
       | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
       | A higher division must contain at least one sub-element                                                |
+      | A lower division cannot exist outside a higher division element                                        |
     When click on save and close button in navigation pane
     Then toc editing button is displayed and enabled
     And  warning symbol is displayed in navigation pane
@@ -1194,6 +1293,8 @@ Feature: Legal Act Page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation Testing Alternative clause" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -1236,6 +1337,8 @@ Feature: Legal Act Page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-007" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation Testing Alternative Article and Alternative Signature" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -1267,9 +1370,9 @@ Feature: Legal Act Page Regression Features
     When click close button of ck editor
     Then ck editor window is not displayed
   # Alternative Signature
-    And  block 1 contains the signature organisation text "For the Commission"
-    And block 1 contains the  role text "The President"
-    And block 1 contains the signature of the person "[...]"
+    And organization 1 of signature of block 1 contains text "For the Commission"
+    And role 1 of block 1 contains text "The President"
+    And signature of the person 1 of block 1 contains text "[...]"
     When mouseover and click on block 1
     Then ck editor window is displayed
     And the block inside ck editor is not editable and contains attribute "contenteditable" with value "false"
@@ -1283,9 +1386,9 @@ Feature: Legal Act Page Regression Features
     When click on ok button in cke dialog window
     And click save and close button of ck editor
     Then ck editor window is not displayed
-    And  block 1 contains the signature organisation text "For the Commission"
-    And block 1 contains the  role text "On behalf of the President"
-    And block 1 contains the signature of the person "[...]"
+    And organization 1 of signature of block 1 contains text "For the Commission"
+    And  role 1 of block 1 contains text "On behalf of the President"
+    And signature of the person 1 of block 1 contains text "[...]"
     When mouseover and click on block 1
     Then ck editor window is displayed
     And the block inside ck editor is not editable and contains attribute "contenteditable" with value "false"
@@ -1299,6 +1402,8 @@ Feature: Legal Act Page Regression Features
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-003" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Automation Testing for recital Section in Autonomous act" in create document page
     And  click on create button
@@ -1349,5 +1454,8 @@ Feature: Legal Act Page Regression Features
     And click on save and close button in navigation pane
     Then total recital count is 1
     And recital section count is 0
+
+
+
 
 

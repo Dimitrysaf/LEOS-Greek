@@ -9,4 +9,5 @@ export interface ElementMatchVO {
   matchStartIndex: number;
   matchEndIndex: number;
   editable: boolean;
+  xpath: string;
 }

@@ -217,6 +217,7 @@ CREATE TABLE DOCUMENT
      AUDIT_LAST_M_DATE TIMESTAMP (6),
      AUDIT_LAST_M_BY VARCHAR2(30 BYTE),
      CUSTOM_TEMPLATE_ACT NUMBER(1,0),
+     FROM_CUSTOM_TEMPLATE NUMBER(1,0),
      IS_PUBLISHED NUMBER(1,0)
 );
 
@@ -336,7 +337,7 @@ SELECT doc.id||'_'||docver.id||'_'||doccat.id unique_id
      , doc.name, doc.cloned_from,doc.revision_status,doc.contribution_status, docver.validation_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy
      , docver.audit_c_by doc_audit_c_by,docver.audit_c_date doc_audit_c_date,docver.audit_last_m_date doc_audit_last_m_date,docver.audit_last_m_by doc_audit_last_m_by
      , docver.version_label, docver.version_series_id, docver.version_type, docver.is_latest_major_version, docver.is_latest_version, docver.is_major_version, docver.is_version_series_checked_out
-     , docxml.act_type, docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title, docver.comments, doc.is_archived, doc.custom_template_act, docver.is_version_archived, (SELECT
+     , docxml.act_type, docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title, docver.comments, doc.is_archived, doc.custom_template_act, doc.from_custom_template, docver.is_version_archived, (SELECT
                                                                                                                                                                                                               count(*) FROM document_property_values dpv WHERE dpv.version_id = docver.id) AS num_props,
     (SELECT LISTAGG(p.language, ',') WITHIN GROUP (ORDER BY p.language) FROM linked_package lp, package p WHERE p.id = lp.linked_package_id AND lp.package_id = doc.package_id ) AS available_langs,
         doc.is_published, pkg.is_translated

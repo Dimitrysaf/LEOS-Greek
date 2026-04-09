@@ -13,17 +13,56 @@
  */
 package eu.europa.ec.digit.userdata.repositories;
 
+import eu.europa.ec.digit.userdata.entities.SpecialUser;
 import eu.europa.ec.digit.userdata.entities.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.stream.Stream;
 
-public interface UserRepository extends Repository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
+
+    // language=SQL
+    String SEARCH_BY_KEY = """
+            SELECT * FROM LEOS_USER
+                WHERE (
+                   deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey)
+                OR
+                   deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey)
+                OR
+                   deAccent(USER_EMAIL) LIKE deAccent(:searchKey)
+                OR
+                   deAccent(USER_LOGIN) LIKE deAccent(:searchKey))
+                AND
+                   USER_PER_ID != -1
+                AND
+                   USER_EMAIL != 'entity@mail.com'""";
+
+    // language=SQL
+    String SEARCH_BY_KEY_AND_ENTITY = """
+            SELECT DISTINCT u.USER_LOGIN, u.USER_EMAIL, u.USER_PER_ID, u.USER_LASTNAME, u.USER_FIRSTNAME, u.JOB_TITLE, u.DATE_CREATED, u.SPECIAL FROM LEOS_USER u
+              INNER JOIN LEOS_USER_ENTITY ue on u.USER_LOGIN = ue.USER_LOGIN
+              INNER JOIN LEOS_ENTITY e on e.ENTITY_ID = ue.ENTITY_ID
+              WHERE (
+                  deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey)
+                OR
+                  deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey)
+                OR
+                  deAccent(USER_EMAIL) LIKE deAccent(:searchKey)
+                OR
+                  deAccent(u.USER_LOGIN) LIKE deAccent(:searchKey))
+              AND
+                e.ENTITY_ID = :entityId
+              AND
+                USER_PER_ID != -1
+              AND
+                USER_EMAIL != 'entity@mail.com'""";
 
     User findByLogin(String login);
-
-    User findByEmail(String email);
 
     @Query(value = "SELECT * FROM LEOS_USER " + " WHERE "
             + " JOB_TITLE LIKE ?1% "
@@ -39,14 +78,42 @@ public interface UserRepository extends Repository<User, Long> {
     Stream<User> findUsersByKey(String key);
 
     // FIXME: shift functions to DB later
-    @Query(value = "SELECT DISTINCT LEOS_USER.* FROM LEOS_USER INNER JOIN LEOS_USER_ENTITY ON LEOS_USER.USER_LOGIN = LEOS_USER_ENTITY.USER_LOGIN "
-            + " INNER JOIN LEOS_ENTITY ON LEOS_USER_ENTITY.ENTITY_ID = LEOS_ENTITY.ENTITY_ID "
+    @Query(value = "SELECT DISTINCT LEOS_USER.* FROM LEOS_USER"
+            + " INNER JOIN LEOS_USER_ENTITY"
+            + "   ON LEOS_USER.USER_LOGIN = LEOS_USER_ENTITY.USER_LOGIN "
+            + " INNER JOIN LEOS_ENTITY"
+            + "   ON LEOS_USER_ENTITY.ENTITY_ID = LEOS_ENTITY.ENTITY_ID "
             + " WHERE "
-            + " (deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(?1) "
+            + "   (deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(?1) "
             + " OR "
-            + " deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(?1)) "
+            + "   deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(?1)) "
             + " AND "
-            + " deAccent(LEOS_ENTITY.ENTITY_ORG_NAME) LIKE deAccent(?2) "
+            + "   deAccent(LEOS_ENTITY.ENTITY_ORG_NAME) LIKE deAccent(?2) "
             + " ORDER BY USER_LASTNAME, USER_FIRSTNAME ", nativeQuery = true)
     Stream<User> findUsersByKeyAndOrganization(String key, String organization);
+
+    Long countByEntitiesIdAndPerIdNotAndEmailNot(String entityId, Long perId, String email);
+
+    /**
+     * Search for users in the LEOS_USER view, matching the given searchKey on the
+     * USER_LASTNAME, USER_FIRSTNAME, USER_EMAIL, USER_LOGIN columns.
+     * @param searchKey the search term
+     * @param pageable pagination parameters
+     * @return Page of {@link SpecialUser} objects
+     */
+    @Query(value = SEARCH_BY_KEY, countQuery = SEARCH_BY_KEY, nativeQuery = true)
+    Page<User> findNonEntityUsersByKey(@Param("searchKey") String searchKey, Pageable pageable);
+
+    /**
+     * Search for users in the LEOS_USER view, matching the given searchKey on the
+     * USER_LASTNAME, USER_FIRSTNAME, USER_EMAIL, USER_LOGIN columns.
+     * @param searchKey the search term
+     * @param entityId entity ID
+     * @param pageable pagination parameters
+     * @return Page of {@link SpecialUser} objects
+     */
+    @Query(value = SEARCH_BY_KEY_AND_ENTITY, countQuery = SEARCH_BY_KEY_AND_ENTITY, nativeQuery = true)
+    Page<User> findNonEntityUsersByKeyAndEntity(@Param("searchKey") String searchKey, @Param("entityId") String entityId, Pageable pageable);
+
+    Collection<User> findByLoginIgnoreCase(String login);
 }

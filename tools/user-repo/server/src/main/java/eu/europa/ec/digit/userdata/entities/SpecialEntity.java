@@ -14,27 +14,31 @@
 package eu.europa.ec.digit.userdata.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 @jakarta.persistence.Entity
 @Table(name = "LEOS_SPECIAL_ENTITY")
-@Getter
-@Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(of = {"id"})
+@Data
 public class SpecialEntity implements Serializable {
 
-    private static final long serialVersionUID = -242509624358432413L;
+    @Serial
+    private static final long serialVersionUID = -8839395581283283812L;
+
     @Id
+    @StringSequenceId(sequence = "LEOS_SPECIAL_ENTITY_SEQ")
     @Column(name = "ENTITY_ID", nullable = false)
     private String id;
 

@@ -4,12 +4,16 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 
 public final class BillMetadata extends LeosMetadata {
 
-    public BillMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String objectId, String docVersion, boolean eeaRelevance, boolean customTemplateAct, boolean translated) {
-        this(stage, type, purpose, template, language, docTemplate, ref, null, objectId, docVersion, eeaRelevance, customTemplateAct, translated);
+    public BillMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String objectId,
+            String docVersion, boolean eeaRelevance, boolean customTemplateAct, boolean fromCustomTemplate, boolean translated) {
+        this(stage, type, purpose, template, language, docTemplate, ref, null, objectId, docVersion, eeaRelevance, customTemplateAct, fromCustomTemplate,
+                translated);
     }
 
-    public BillMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String packageRef, String objectId, String docVersion, boolean eeaRelevance, boolean customTemplateAct, boolean translated) {
-        super(LeosCategory.BILL, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance, customTemplateAct, translated);
+    public BillMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String packageRef,
+            String objectId, String docVersion, boolean eeaRelevance, boolean customTemplateAct, boolean fromCustomTemplate, boolean translated) {
+        super(LeosCategory.BILL, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance, customTemplateAct,
+                fromCustomTemplate, translated);
     }
 
     public  BillMetadataBuilder builder() {
@@ -27,6 +31,7 @@ public final class BillMetadata extends LeosMetadata {
         private String docVersion;
         private boolean eeaRelevance;
         private boolean customTemplateAct;
+        private boolean fromCustomTemplate;
         private boolean translated;
         private String packageRef;
         private BillMetadataBuilder() {
@@ -43,6 +48,7 @@ public final class BillMetadata extends LeosMetadata {
             this.docVersion = metadata.docVersion;
             this.eeaRelevance = metadata.eeaRelevance;
             this.customTemplateAct = metadata.customTemplateAct;
+            this.fromCustomTemplate = metadata.fromCustomTemplate;
             this.translated = metadata.translated;
             this.packageRef = metadata.packageRef;
         }
@@ -90,6 +96,10 @@ public final class BillMetadata extends LeosMetadata {
             this.customTemplateAct = customTemplateAct;
             return this;
         }
+        public BillMetadataBuilder withFromCustomTemplate(boolean fromCustomTemplate) {
+            this.fromCustomTemplate = fromCustomTemplate;
+            return this;
+        }
         public BillMetadataBuilder withPackageRef(String packageRef) {
             this.packageRef = packageRef;
             return this;
@@ -97,7 +107,7 @@ public final class BillMetadata extends LeosMetadata {
 
         public BillMetadata build() {
             return new BillMetadata(this.stage, this.type, this.purpose, this.template, this.language, this.docTemplate, this.ref, this.packageRef,
-                    this.objectId, this.docVersion, this.eeaRelevance, this.customTemplateAct, this.translated);
+                    this.objectId, this.docVersion, this.eeaRelevance, this.customTemplateAct, this.fromCustomTemplate, this.translated);
         }
     }
 }

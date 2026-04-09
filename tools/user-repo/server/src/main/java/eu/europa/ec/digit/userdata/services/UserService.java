@@ -1,0 +1,136 @@
+package eu.europa.ec.digit.userdata.services;
+
+import eu.europa.ec.digit.userdata.entities.SpecialUser;
+import eu.europa.ec.digit.userdata.entities.User;
+import eu.europa.ec.digit.userdata.exception.BadRequestException;
+import eu.europa.ec.digit.userdata.mappers.PageMapper;
+import eu.europa.ec.digit.userdata.mappers.UserMapper;
+import eu.europa.ec.digit.userdata.repositories.SpecialEntityRepository;
+import eu.europa.ec.digit.userdata.repositories.SpecialUserRepository;
+import eu.europa.ec.digit.userdata.repositories.UserRepository;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.lang.Nullable;
+import org.springframework.stereotype.Service;
+
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class UserService {
+    public static final String DEFAULT_SORT_COLUMN = "USER_LASTNAME";
+    private final UserRepository userRepository;
+
+    private final SpecialUserRepository specialUserRepository;
+    private final SpecialEntityRepository specialEntityRepository;
+
+    private final PageMapper pageMapper;
+
+    public User getUser(String userId) {
+        return userRepository.findByLogin(userId);
+    }
+
+    public Collection<User> search(@NonNull final String searchKey, @NonNull final String organization, final Long limit) {
+        return userRepository
+                .findUsersByKeyAndOrganization(
+                        searchKey.trim().replace(" ", "%").concat("%"),
+                        organization)
+                .limit(limit != null && limit > 0 ? limit : Long.MAX_VALUE).collect(Collectors.toList());
+    }
+
+    /**
+     * Search users by the passed search key. The key match criteria is firstName OR lastName OR email OR login.
+     * @param searchKey the search key. Could be null - then all users are returned (paginated).
+     * @param pageable pagination parameters. Could be null - then default sorting is applied and page size is Integer.MAX_VALUE
+     *                 The first sorting field is considered only (if any).
+     *                 Both class field and column name are supported.
+     * @return a {@link Page} of {@link SpecialUser} objects.
+     */
+    public Page<User> search(@Nullable final String searchKey, @Nullable final Pageable pageable) {
+        return this.search(searchKey, null, pageable);
+    }
+
+    /**
+     * Search users by the passed search key. The key match criteria is firstName OR lastName OR email OR login.
+     * @param searchKey the search key. Could be null - then all users are returned (paginated).
+     * @param entityId optional entity ID. If passed, then only the users with a relationship to the given entity are returned
+     * @param pageable pagination parameters. Could be null - then default sorting is applied and page size is Integer.MAX_VALUE
+     *                 The first sorting field is considered only (if any).
+     *                 Both class field and column name are supported.
+     * @return a {@link Page} of {@link SpecialUser} objects.
+     */
+    public Page<User> search(@Nullable final String searchKey, @Nullable final String entityId, @Nullable final Pageable pageable) {
+        final Pageable mappedPageable = pageMapper.map(pageable, UserMapper.SORT_COLUMN_MAPPING, DEFAULT_SORT_COLUMN);
+        final String decodedKey = StringUtils.isBlank(searchKey)
+                ? null
+                : URLDecoder.decode(searchKey, StandardCharsets.UTF_8).trim();
+        final String term = StringUtils.isBlank(decodedKey)
+                ? "%"
+                : "%" + decodedKey.replaceAll("\\s+", "% %") + "%";
+        return StringUtils.isBlank(entityId)
+                ? userRepository.findNonEntityUsersByKey(term, mappedPageable)
+                : userRepository.findNonEntityUsersByKeyAndEntity(term, entityId, mappedPageable);
+    }
+
+    /**
+     * Adds a new special user to the repository if no existing user with the same login is found.
+     *
+     * @param user the special user to be added; must not be null.
+     * @return the saved special user.
+     * @throws BadRequestException if a user with the same login (case-insensitive) already exists,
+     *                              or if the user cannot be associated to any entity.
+     */
+    public SpecialUser addSpecialUser(@NonNull final SpecialUser user) {
+        if (!userRepository.findByLoginIgnoreCase(user.getLogin()).isEmpty()) {
+            throw new BadRequestException(
+                    "Cannot create SpecialUser(%s): User with the same login (case-insensitive) already exists".formatted(user.getLogin()),
+                    "page.workspace.administration.user-info.user-login-conflict");
+        }
+        if (user.getEntities() != null) {
+            user.getEntities().forEach(e -> {
+                if (!specialEntityRepository.existsById(e.getId())) {
+                    throw new BadRequestException(
+                            "Cannot create SpecialUser(%s): Cannot associate to Entity(%s): Entity does not exist.".formatted(user.getLogin(), e.getId()),
+                            "page.workspace.administration.user-info.entity-not-found");
+                }
+            });
+        }
+        return specialUserRepository.save(user);
+    }
+
+    public SpecialUser updateSpecialUser(@NonNull final SpecialUser user) {
+        final SpecialUser existing = specialUserRepository.getByLogin(user.getLogin());
+        if (existing == null) {
+            throw new BadRequestException(
+                    "Cannot update SpecialUser(%s): User does not exist.".formatted(user.getLogin()),
+                    "page.workspace.administration.user-info.cannot-update");
+        }
+        return specialUserRepository.save(user);
+    }
+
+    public void deleteSpecialUser(@NonNull final String login) {
+        final SpecialUser existing = specialUserRepository.getByLogin(login);
+        if (existing == null) {
+            throw new BadRequestException(
+                    "Cannot delete SpecialUser(%s): User does not exist.".formatted(login),
+                    "page.workspace.administration.user-info.cannot-delete");
+        }
+        if (existing.getEntities() != null && !existing.getEntities().isEmpty()) {
+            throw new BadRequestException(
+                    "Cannot delete SpecialUser(%s): User has entities associated with her.".formatted(login),
+                    "page.workspace.administration.user-info.user-has-entities");
+        }
+        specialUserRepository.delete(existing);
+    }
+
+    public Optional<SpecialUser> getSpecialUser(String userId) {
+        return specialUserRepository.findByLogin(userId);
+    }
+}

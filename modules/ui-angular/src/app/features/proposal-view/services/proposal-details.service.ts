@@ -11,7 +11,7 @@ import {
   ErrorCode,
   LeosAppConfig,
   Permission,
-  User, AuthenticLanguage, CoverPageType, ProposalDetails, Document, SignatureMetadata
+  User, AuthenticLanguage, CoverPageType, ProposalDetails, Document, SignatureMetadata, PendingTranslationException
 } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
@@ -54,6 +54,7 @@ export class ProposalDetailsService implements OnDestroy {
   permissions$: Observable<Permission[]>;
   clonedProposalCount: number;
   exceptionResponseVO: ExceptionResponseVO = null;
+  pendingTranslationException: PendingTranslationException = null;
   private repetitiveActsEnabled: boolean;
   private linguisticVersionsEnabled: boolean;
 
@@ -573,13 +574,11 @@ export class ProposalDetailsService implements OnDestroy {
    * @param milestone The milestone to publish from.
    * @param templateName The display name of the template in the catalog.
    * @param dgCodes Array of DG codes (e.g. ['CLIMA','RTD']).
-   * @param cleanPendingTranslations Whether to clean pending translations before publishing.
    */
   publishTemplateToDgCatalog(
     milestone: MilestoneDescriptor,
     templateName: string,
-    dgCodes: string[],
-    cleanPendingTranslations: boolean
+    dgCodes: string[]
   ) {
     this.loadingService.setLoading(true);
 
@@ -587,8 +586,7 @@ export class ProposalDetailsService implements OnDestroy {
     const body = {
       legDocumentName: milestone.legDocumentName,
       templateName,
-      dgCodes,
-      cleanPendingTranslations
+      dgCodes
     };
 
     return this.http
@@ -609,16 +607,15 @@ export class ProposalDetailsService implements OnDestroy {
         },
         error: (err) => {
           console.log('PUBLISH ERROR')
-          this.exceptionResponseVO = err.error;
-          if (this.exceptionResponseVO.errorCode === ErrorCode.PT001) {
+          this.pendingTranslationException = err.error;
+          if (this.pendingTranslationException.errorCode === ErrorCode.PT001) {
             this.dialogService.openDialog({
-              title: this.translateService.instant(this.exceptionResponseVO.messageKey + '.title'),
-              content: this.translateService.instant(this.exceptionResponseVO.messageKey + '.message'),
-              hasDismissButton: true,
-              acceptLabel: this.translateService.instant(this.exceptionResponseVO.messageKey + '.clean-all'),
-              accept: () => {
-                this.publishTemplateToDgCatalog(milestone, templateName, dgCodes, true);
-              },
+              title: this.translateService.instant(this.pendingTranslationException.messageKey + '.title'),
+              content: this.translateService.instant(
+                this.pendingTranslationException.messageKey + '.message',
+                { pendingLanguages: this.pendingTranslationException.pendingLanguages }
+              ),
+              hasDismissButton: false
             });
             this.growlService.clearGrowl();
           } else {

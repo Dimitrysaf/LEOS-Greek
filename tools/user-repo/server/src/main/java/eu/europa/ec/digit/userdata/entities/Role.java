@@ -18,14 +18,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "LEOS_ROLE")
-@Setter
-@Getter
+@EqualsAndHashCode(of = {"role"})
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {

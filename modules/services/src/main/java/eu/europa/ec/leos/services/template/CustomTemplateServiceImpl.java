@@ -17,6 +17,7 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
@@ -24,6 +25,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.api.exception.LeosExceptionResponse;
 import eu.europa.ec.leos.services.dto.response.CustomTemplateInfoResponse;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -46,8 +48,11 @@ import jakarta.inject.Provider;
 import java.io.IOException;
 import java.util.*;
 
+import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.api.exception.PendingTranslationException;
 
+import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XercesUtils.hasDescendantWithAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 @Service
@@ -68,6 +73,8 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
     private final XmlContentProcessor xmlContentProcessor;
     private final LanguageGroupService languageGroupService;
     private final DocumentLanguageContext documentLanguageContext;
+    // Provider used to break circular dependency: ApiServiceImpl -> CustomTemplateService -> ApiService
+    private final Provider<ApiService> apiServiceProvider;
 
 
     @Override
@@ -77,7 +84,7 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
     }
 
     @Override
-    public void publishTemplate(String legFileId,String templateName, List<String> dgCodes) throws PendingTranslationException {
+    public void publishTemplate(String legFileId,String templateName, List<String> dgCodes) throws Exception {
         // Get all valid organizations from user repository for validation
         List<String> validOrganizations = userService.getAllOrganizations();
         Set<String> validOrgSet = new HashSet<>(validOrganizations);
@@ -100,10 +107,15 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
             }
         }
 
-        validateNoPendingTranslations(legFileId);
+        List<LinkedPackage> languagePackages = getLanguagePackages(legFileId);
+        validateNoPendingTranslations(languagePackages);
+        List<String> languageMilestoneLegIds = createMilestonesForLanguagePackages(languagePackages);
 
         // Publish template with validated DG codes
         leosRepository.publishCustomTemplate(legFileId, templateName, finalDgCodes, user.getLogin(), originalDg);
+        for (String languageMilestoneLegId : languageMilestoneLegIds) {
+            leosRepository.publishCustomTemplate(languageMilestoneLegId, templateName, finalDgCodes, user.getLogin(), originalDg);
+        }
     }
     @Override
     public void updateTemplate(String packageId,String templateName, List<String> dgCodes) {
@@ -187,42 +199,47 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         return new CustomTemplateInfoResponse(templateName, templateVisibility);
     }
 
-    @Override
-    public void cleanPendingTranslations(String legFileId) throws Exception {
-        findPendingTranslationsInLinkedPackages(legFileId, true);
+    private List<String> createMilestonesForLanguagePackages(List<LinkedPackage> languagePackages) throws Exception {
+        List<String> milestoneLegIds = new ArrayList<>();
+        for (LinkedPackage lp : languagePackages) {
+            String proposalRef = apiServiceProvider.get().findDocumentRefByPackageIdAndCategory(lp.getLinkedPackageId(), LeosCategory.PROPOSAL.name());
+            try {
+                LegDocument languageLeg = apiServiceProvider.get().createMilestone(proposalRef, "");
+                milestoneLegIds.add(languageLeg.getId());
+            } catch (LeosExceptionResponse e) {
+                LOG.info("Milestone already exists for proposal {}, using latest", proposalRef);
+                packageService.findDocumentsByPackageId(lp.getLinkedPackageId(), LegDocument.class, false, false).stream()
+                        .max(Comparator.comparing(LegDocument::getInitialCreationInstant))
+                        .map(LegDocument::getId)
+                        .ifPresent(milestoneLegIds::add);
+            }
+        }
+        return milestoneLegIds;
     }
 
-    private void validateNoPendingTranslations(String legFileId) throws PendingTranslationException {
-        findPendingTranslationsInLinkedPackages(legFileId, false);
-    }
-    
-    private void findPendingTranslationsInLinkedPackages(String legFileId, boolean clean) throws PendingTranslationException {
+    private List<LinkedPackage> getLanguagePackages(String legFileId) throws PendingTranslationException {
         LeosPackage mainPackage = packageService.findPackageByLegFileId(legFileId);
         if (mainPackage == null) {
             throw new IllegalArgumentException("Package not found for leg file: " + legFileId);
         }
+        return packageService.findLinkedPackagesByPackageId(mainPackage.getId());
+    }
 
-        List<LinkedPackage> linkedPackages = packageService.findLinkedPackagesByPackageId(mainPackage.getId());
-        for (LinkedPackage linkedPackage : linkedPackages) {
-            findPendingTranslationsInPackage(linkedPackage.getLinkedPackageId(), clean);
+    private void validateNoPendingTranslations(List<LinkedPackage> languagePackages) throws PendingTranslationException {
+        List<String> pendingLanguages = languagePackages.stream()
+                .map(lp -> findPendingTranslationsInPackage(lp.getLinkedPackageId()))
+                .flatMap(Optional::stream).toList();
+
+        if (!pendingLanguages.isEmpty()) {
+            throw new PendingTranslationException(String.join(", ", pendingLanguages));
         }
     }
-    
-    private void findPendingTranslationsInPackage(String packageId, boolean clean) throws PendingTranslationException {
-        List<XmlDocument> xmlDocuments = packageService.findDocumentsByPackageId(packageId, XmlDocument.class, false, true);
-        for (XmlDocument xmlDocument : xmlDocuments) {
-            byte[] cleanedContent = xmlContentProcessor.findAndCleanPendingTranslations(xmlDocument, clean);
-            if (cleanedContent != null) {
-                LOG.info("Cleaning pending translations in document: {}", xmlDocument.getName());
-                leosRepository.updateDocument(
-                    xmlDocument.getId(),
-                    cleanedContent,
-                    VersionType.TECHNICAL,
-                    "Cleaned pending translations",
-                    XmlDocument.class
-                );
-            }
-        }
+
+    private Optional<String> findPendingTranslationsInPackage(String packageId) {
+        return packageService.findDocumentsByPackageId(packageId, XmlDocument.class, false, true).stream()
+                .filter(doc -> hasDescendantWithAttribute(createXercesDocument(doc), LEOS_UPDATE_TRANSLATION))
+                .map(doc -> doc.getMetadata().get().getLanguage())
+                .findFirst();
     }
 
     public void alignDocumentsFromBaseVersion(List<? extends XmlDocument> sourceXmlDocs, List<? extends XmlDocument> targetXmlDocs, DocumentVO documentToAlignWith, String ref) {

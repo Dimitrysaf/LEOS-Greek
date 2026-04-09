@@ -14,6 +14,8 @@ Feature: CK Editor Regression Features
     And  collapse all button is displayed in create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "ck editor scenarios" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -207,6 +209,8 @@ Feature: CK Editor Regression Features
     And  collapse all button is displayed in create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "ck editor scenarios for annexes" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -275,6 +279,8 @@ Feature: CK Editor Regression Features
     Then user is on create new legislative document window
     And  collapse all button is displayed in create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "ck editor scenario for table creation" in create document page
     And  click on create button
@@ -372,6 +378,8 @@ Feature: CK Editor Regression Features
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Automation Article Testing" in create document page
     And  click on create button
@@ -584,6 +592,8 @@ Feature: CK Editor Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation saveAddNext Testing" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -648,6 +658,8 @@ Feature: CK Editor Regression Features
     Then user is on create new legislative document window
     And  collapse all button is displayed in create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Automation Testing Accept All and Reject All Plugin" in create document page
     And  click on create button
@@ -1184,6 +1196,8 @@ Feature: CK Editor Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "ck editor plugin scenarios in LFDS" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -1209,6 +1223,8 @@ Feature: CK Editor Regression Features
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "accept all and reject all ck editor plugin scenarios in LFDS" in create document page
     And  click on create button
@@ -1306,6 +1322,8 @@ Feature: CK Editor Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-008" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "CK Editor Scenarios for Recital in Autonomous Act" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -1387,6 +1405,8 @@ Feature: CK Editor Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "insert special character using the plugin" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -1419,6 +1439,8 @@ Feature: CK Editor Regression Features
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "ConvalValidation" in create document page
     And  click on create button

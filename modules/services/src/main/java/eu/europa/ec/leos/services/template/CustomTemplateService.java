@@ -13,11 +13,9 @@ public interface CustomTemplateService {
 
     List<CatalogItem> getCustomTemplatesCatalog(String entityName) throws IOException;
 
-    void publishTemplate(String legFileId, String templateName, List<String> dgCodes) throws PendingTranslationException;
+    void publishTemplate(String legFileId, String templateName, List<String> dgCodes) throws Exception;
 
-    void cleanPendingTranslations(String legFileId) throws Exception;
-
-    CustomTemplateInfoResponse getTemplateInfo(String packageId);
+    CustomTemplateInfoResponse getTemplateInfo(String proposalRef);
 
     void updateTemplate(String packageId,String templateName, List<String> dgCodes);
 

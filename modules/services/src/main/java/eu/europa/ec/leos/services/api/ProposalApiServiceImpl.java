@@ -61,6 +61,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.structure.details.ProposalDetailsService;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.template.CustomTemplateService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
@@ -113,13 +114,14 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
             DocumentViewService documentViewService, ConValidatorService conValidatorService,
             GenericDocumentTocApiService genericDocumentTocApiService, CoverPageApiService coverPageApiService,
             ProposalDetailsService proposalDetailsService, TemplateConfigurationService templateConfigurationService,
-            LanguageHelper languageHelper, PackageRepository packageRepository) {
+            LanguageHelper languageHelper, PackageRepository packageRepository,
+            LanguageGroupService languageGroupService) {
         super(customTemplateService, templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap, exportService,
                 collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService, xmlContentProcessor,
                 archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService, validationService,
                 applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository, trackChangesContext,
                 documentViewService, genericDocumentTocApiService, coverPageApiService, proposalDetailsService, templateConfigurationService,
-                languageHelper, packageRepository);
+                languageHelper, packageRepository, languageGroupService);
         this.conValidatorService = conValidatorService;
     }
 

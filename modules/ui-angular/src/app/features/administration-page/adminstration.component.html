@@ -1,0 +1,22 @@
+<eui-page>
+  <eui-page-content style="padding: 0">
+    <div class="body-container">
+      <div class="eui-b-pl-xl middle-body-content">
+        <eui-tabs>
+          <eui-tab>
+            <euiTabLabel>
+              {{ "page.workspace.administration.manage-users" | translate }}
+            </euiTabLabel>
+            <euiTabContent><app-users-manager/></euiTabContent>
+          </eui-tab>
+          <eui-tab>
+            <euiTabLabel>
+              {{ "page.workspace.administration.manage-entities" | translate }}
+            </euiTabLabel>
+            <euiTabContent ><app-entities-manager/></euiTabContent>
+          </eui-tab>
+        </eui-tabs>
+      </div>
+    </div>
+  </eui-page-content>
+</eui-page>

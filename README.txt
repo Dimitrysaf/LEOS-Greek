@@ -1,5 +1,5 @@
 PROJECT: LEOS
-Release: 5.3.1
+Release: 5.7.0
 Date: 2024-XX-XX
 
 INTRODUCTION

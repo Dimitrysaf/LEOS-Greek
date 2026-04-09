@@ -12,6 +12,7 @@ public enum PropertiesMetadata {
     ACT_TYPE("actType", false),
     EEA_RELEVANCE("eeaRelevance", false),
     CUSTOM_TEMPLATE_ACT("customTemplateAct", false),
+    FROM_CUSTOM_TEMPLATE("fromCustomTemplate", false),
     AUTHENTIC_LANGUAGE("authenticLanguage", false),
     COVERPAGE_TYPE("coverPageType", false),
     CREATED_BY("initialCreatedBy", false),
