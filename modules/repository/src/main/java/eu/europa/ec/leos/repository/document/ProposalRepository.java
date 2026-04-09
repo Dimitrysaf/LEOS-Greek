@@ -200,4 +200,6 @@ public interface ProposalRepository {
 
     String findDocumentRefByPackageIdAndCategory(String packageId, String category);
 
+    String getProposalsReport(String applnUrl);
+
 }

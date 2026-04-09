@@ -189,6 +189,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private ProposalConverterService proposalConverterService;
     private PostProcessingDocumentService postProcessingDocumentService;
     private ValidationService validationService;
+    private Properties applicationProperties;
     private ExplanatoryService explanatoryService;
     private ExportPackageService exportPackageService;
     protected NotificationService notificationService;
@@ -262,6 +263,7 @@ public abstract class ApiServiceImpl implements ApiService {
         this.proposalConverterService = proposalConverterService;
         this.postProcessingDocumentService = postProcessingDocumentService;
         this.validationService = validationService;
+        this.applicationProperties=applicationProperties;
         this.userHelper = userHelper;
         this.explanatoryService = explanatoryService;
         this.exportPackageService = exportPackageService;
@@ -2110,5 +2112,11 @@ public abstract class ApiServiceImpl implements ApiService {
     @Override
     public String findDocumentRefByPackageIdAndCategory(String packageId, String category) {
         return proposalService.findDocumentRefByPackageIdAndCategory(packageId, category);
+    }
+
+    @Override
+    public String getProposalsReport() {
+        String applnUrl = applicationProperties.getProperty("leos.mapping.url") + "/ui/collection/";
+        return proposalService.getProposalsReport(applnUrl);
     }
 }
