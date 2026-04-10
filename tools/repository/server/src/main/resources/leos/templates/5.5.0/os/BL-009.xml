@@ -28,10 +28,10 @@
                     <FRBRuri value=""/>
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
-                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
-                        <akn4eu:akn4euVersion value="4.2 AA"/>
-                        <akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
-                    </preservation>
+					<preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                		<akn4eu:akn4euVersion value="4.2 AA"/>
+						<akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
+                	</preservation>
                 </FRBRManifestation>
             </identification>
             <references source="~COM">
@@ -46,8 +46,8 @@
             <proprietary source="~COM">
                 <leos:templateVersion>1.0.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
-                <leos:template>SJ-010</leos:template>
-                <leos:docTemplate>BL-010</leos:docTemplate>
+                <leos:template>SJ-009</leos:template>
+                <leos:docTemplate>BL-009</leos:docTemplate>
             </proprietary>
         </meta>
         <preface>
@@ -58,7 +58,7 @@
             </container>
             <longTitle>
                 <p>
-                    <docType refersTo="~DEC_IMPL">{{docType.010}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
+                    <docType refersTo="~DEC_IMPL">{{docType.009}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
                     <docPurpose>{{docPurpose}}</docPurpose>
                 </p>
             </longTitle>
@@ -73,6 +73,9 @@
                 </citation>
                 <citation leos:editable="true">
                     <p>{{bl.citation2Before}}<authorialNote marker="1" placement="bottom"><p>{{bl.citation2inside}}</p></authorialNote>{{bl.citation2after}}</p>
+                </citation>
+                <citation leos:editable="true">
+                    <p>{{bl.citation3.009}}</p>
                 </citation>
             </citations>
             <recitals leos:editable="false">
@@ -125,8 +128,8 @@
             <p>{{bl.conclusionDate}}</p>
             <block name="signatory" leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption2" leos:selectedoption="1">
                 <signature leos:optionlist="listOption2">
-                    <organization refersTo="~COM">{{bl.forCommission}}</organization>
-                    <role refersTo="~PRESID">{{bl.role.president}}</role>
+                    <organization refersTo="~_COM">{{bl.forCommission}}</organization>
+                    <role refersTo="~_PRESID">{{bl.role.president}}</role>
                     <person refersTo="">[...]</person>
                 </signature>
             </block>
