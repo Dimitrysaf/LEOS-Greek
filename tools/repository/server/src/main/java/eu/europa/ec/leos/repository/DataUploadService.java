@@ -150,9 +150,12 @@ abstract class DataUploadService {
         String updateAllIsLastVersionTo0 = "update config_version set is_latest_version = 0 where REGEXP_COUNT(version_label, '\\.') <= 3";
         jdbcTemplate.update(updateAllIsLastVersionTo0);
 
+        String versionLabelFormat = "(NVL(REGEXP_SUBSTR(%s, '[^.]+', 1, 1), 0)*1000000) + (NVL(REGEXP_SUBSTR(%s, '[^.]+', 1, 2), 0)*1000) + NVL(REGEXP_SUBSTR(%s, '[^.]+', 1, 3), 0)";
+        String versionLabel = versionLabelFormat.formatted(versionLabelFormat, "version_label", "version_label", "version_label");
+        String versionLabelParameter = versionLabelFormat.formatted(versionLabelFormat, "?", "?", "?");
         String updateAllIsLastVersionAccordingToVersionStart = "update config_version v set is_latest_version = 1 " +
-                "where (NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 1), 0)*1000000000) + (NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 2), 0)*1000000) + (NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 3), 0)*1000) +NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 4), 0) = " +
-                "(select max((NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 1), 0)*1000000000) + (NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 2), 0)*1000000) + (NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 3), 0)*1000) +NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 4), 0)) from config, config_version, config_content " +
+                "where " + versionLabel + " = " +
+                "(select max(" + versionLabel + ") from config, config_version, config_content " +
                 "where config.id = config_version.config_id and config_content.version_id = config_version.id " +
                 "and config.id = v.config_id " +
                 "and REGEXP_COUNT(version_label, '\\.') <= 3 ";
@@ -165,9 +168,9 @@ abstract class DataUploadService {
         } else {
             String updateAllIsLastVersionAccordingToVersion =
                 updateAllIsLastVersionAccordingToVersionStart +
-                "and (NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 1), 0)*1000000000) + (NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 2), 0)*1000000) + (NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 3), 0)*1000) + NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 4), 0) <= (NVL(REGEXP_SUBSTR(?, '[^.]+', 1, 1), 0)*1000000000) + (NVL(REGEXP_SUBSTR(?, '[^.]+', 1, 2), 0)*1000000) + (NVL(REGEXP_SUBSTR(?, '[^.]+', 1, 3), 0)*1000) + NVL(REGEXP_SUBSTR(?, '[^.]+', 1, 4), 0) " +
+                "and " + versionLabel + " <= " + versionLabelParameter + " " +
                 updateAllIsLastVersionAccordingToVersionEnd;
-            jdbcTemplate.update(updateAllIsLastVersionAccordingToVersion, version, version, version, version);
+            jdbcTemplate.update(updateAllIsLastVersionAccordingToVersion, version, version, version);
         }
 
     }
