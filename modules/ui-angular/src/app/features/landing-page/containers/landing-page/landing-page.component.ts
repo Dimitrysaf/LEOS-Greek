@@ -1,10 +1,7 @@
-import {Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, NavigationEnd, ParamMap, Params, Router} from '@angular/router';
 import { UserState } from '@eui/base';
-import {
-  EuiPaginationEvent,
-  EuiPaginatorComponent,
-} from '@eui/components/eui-paginator';
+import {EuiPaginationEvent} from '@eui/components/eui-paginator';
 import { Store } from '@ngrx/store';
 import {
   combineLatest,
@@ -16,7 +13,6 @@ import {
 } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
-import { ProposalFilterHomeComponent } from '@/features/landing-page/components/proposal-filter-home/proposal-filter-home.component';
 import {
   DEFAULT_HOME_LIMIT,
   DEFAULT_LIMIT,
@@ -52,9 +48,6 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   totalResults$: Observable<number>;
   sortOrder = DEFAULT_SORT_ORDER;
   latestPackages$: Observable<PackagesRecentlyChanged[]>;
-  @ViewChild('paginatorComponent')
-  paginatorComponent: EuiPaginatorComponent;
-  @ViewChild('filters') filtersComponent: ProposalFilterHomeComponent;
   showProposalCard = false;
   isAdminView = false;
   documentCollectionName: string;
@@ -63,8 +56,6 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   canCreateMandate = false;
   canCreateProposal = false;
   canUpload = false;
-  isCNInstance;
-  isNotificationShown$: Observable<boolean>;
   isNotificationShown = true;
   userName: string;
   userRoles: ApplicationRole[];
@@ -149,21 +140,6 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  handleCreate() {
-    this.createProposalService.openProposalCreateDialog(this.userRoles);
-  }
-
-  handleUpload() {
-    this.createProposalService.openProposalUploadDialog();
-  }
-
-  handleCreateMandate() {
-    this.createProposalService.openProposalUploadDialog();
-  }
-
-  handleCreateDraft() {
-    this.createProposalService.openProposalCreateDraftDialog(false);
-  }
 
   handlePagerChange($event: EuiPaginationEvent) {
     this.proposalService.setLimit($event.pageSize);
@@ -178,10 +154,6 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     } else {
       this.showProposalCard = false;
     }
-  }
-
-  resetFilter() {
-    this.filtersComponent.resetFilters();
   }
 
   private setPermissions() {

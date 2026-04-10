@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.ResponseErrorHandler;
 
 import java.io.IOException;
@@ -38,7 +37,7 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
         }
 
         if (exceptionResponse.isPresent()) {
-            throw new IllegalArgumentException(exceptionResponse.get().getMessage() + "|" + exceptionResponse.get().getType());
+            throw new RestTemplateResponseException(exceptionResponse.get(), httpResponse.getStatusCode());
         } else {
             if (httpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
                 throw new IllegalArgumentException("Resource not found");

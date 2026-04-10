@@ -9,12 +9,16 @@ public class ExplanatoryMetadata extends LeosMetadata{
         return title;
     }
 
-    public ExplanatoryMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String title, String objectId, String docVersion, boolean eeaRelevance, boolean customTemplateAct) {
-        this(stage, type, purpose, template, language, docTemplate, ref, null, title, objectId, docVersion, eeaRelevance, customTemplateAct);
+    public ExplanatoryMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String title,
+            String objectId, String docVersion, boolean eeaRelevance, boolean customTemplateAct, boolean fromCustomTemplate) {
+        this(stage, type, purpose, template, language, docTemplate, ref, null, title, objectId, docVersion, eeaRelevance, customTemplateAct,
+                fromCustomTemplate);
     }
 
-    public ExplanatoryMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String packageRef, String title, String objectId, String docVersion, boolean eeaRelevance, boolean customTemplateAct) {
-        super(LeosCategory.COUNCIL_EXPLANATORY, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance, customTemplateAct, false);
+    public ExplanatoryMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String packageRef,
+            String title, String objectId, String docVersion, boolean eeaRelevance, boolean customTemplateAct, boolean fromCustomTemplate) {
+        super(LeosCategory.COUNCIL_EXPLANATORY, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance,
+                customTemplateAct, fromCustomTemplate, false);
         this.title = title;
     }
 
@@ -33,6 +37,7 @@ public class ExplanatoryMetadata extends LeosMetadata{
         private String docVersion;
         private boolean eeaRelevance;
         private boolean customTemplateAct;
+        private boolean fromCustomTemplate;
         private String title;
         private String packageRef;
 
@@ -110,6 +115,11 @@ public class ExplanatoryMetadata extends LeosMetadata{
             return this;
         }
 
+        public ExplanatoryMetadataBuilder withFromCustomTemplate(boolean fromCustomTemplate) {
+            this.fromCustomTemplate = fromCustomTemplate;
+            return this;
+        }
+
         public ExplanatoryMetadataBuilder withTitle(String title) {
             this.title = title;
             return this;
@@ -121,7 +131,8 @@ public class ExplanatoryMetadata extends LeosMetadata{
         }
 
         public ExplanatoryMetadata build() {
-            return new ExplanatoryMetadata(this.stage, this.type, this.purpose, this.template, this.language, this.docTemplate, this.ref, this.packageRef, this.title, this.objectId, this.docVersion, this.eeaRelevance, this.customTemplateAct);
+            return new ExplanatoryMetadata(this.stage, this.type, this.purpose, this.template, this.language, this.docTemplate, this.ref, this.packageRef,
+                    this.title, this.objectId, this.docVersion, this.eeaRelevance, this.customTemplateAct, this.fromCustomTemplate);
         }
     }
 }

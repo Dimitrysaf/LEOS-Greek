@@ -12,6 +12,8 @@ Feature: collaborator section regression features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Reviewer role access testing" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -75,6 +77,8 @@ Feature: collaborator section regression features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "edit role" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -101,6 +105,8 @@ Feature: collaborator section regression features
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "delete role" in create document page
     And  click on create button

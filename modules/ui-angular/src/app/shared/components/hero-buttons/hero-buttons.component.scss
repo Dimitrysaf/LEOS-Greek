@@ -1,0 +1,162 @@
+/* HeroButtons component styles */
+.hero-image {
+  position: relative;
+  background-image: url('~src/assets/images/home_image.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  height: 25vh;
+}
+
+.content-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 90px;
+}
+
+.hero-text {
+  color: rgb(255, 255, 255);
+  text-align: start;
+  width: 75%;
+}
+
+.button-container {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+}
+
+.button-container button {
+  outline: none;
+  margin-right: 23px;
+}
+
+.label-container,
+.button-container {
+  display: flex;
+  width: 83%;
+}
+
+@media (max-width: 766px) {
+  .search-container {
+    width: 98%;
+  }
+
+  .hero-image {
+    justify-content: center;
+    padding: 0px;
+  }
+
+  .content-container {
+    max-width: 100%;
+    padding-left: 0px;
+  }
+
+  .hero-text {
+    text-align: center;
+    width: 100%;
+  }
+
+  .button-container {
+    justify-content: center;
+    padding: 20px 0;
+  }
+
+  .button-container button {
+    margin: 10px 5px;
+  }
+
+  .label-container,
+  .button-container {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+  }
+  .cards-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card-container {
+    width: 100%;
+  }
+
+  .input-label-container {
+    max-width: 100%;
+  }
+
+  .input-button-layout {
+    max-width: 100%;
+  }
+
+  .search-card-container {
+    width: 110%;
+  }
+
+  .middle-body-content {
+    gap: 20px;
+  }
+
+  .notification-container {
+    width: 70%;
+  }
+
+  @media (max-height: 414px) {
+    .cards-containers {
+      padding: 20px 20px;
+    }
+    .content-container {
+      padding-left: 0px;
+    }
+  }
+
+  @media (orientation: landscape) {
+    .hero-image {
+      height: 40vh;
+    }
+    .eui-page-content {
+      gap: 30px;
+    }
+  }
+}
+
+@media (max-width: 376px) {
+  .content-container {
+    max-width: 100%;
+    padding-left: 0px;
+    padding-top: 0px;
+  }
+
+  .notification-container {
+    width: 100%;
+  }
+}
+
+@media (max-height: 740px) {
+  .cards-containers {
+    padding: 20px 20px;
+  }
+  @media (orientation: landscape) {
+    .hero-image {
+      height: 40vh;
+    }
+    .body-container {
+      gap: 30px;
+    }
+  }
+}
+
+@media (max-height: 376px) {
+  .total-results-sort {
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .hero-image {
+    padding: 0px, 0px;
+  }
+}

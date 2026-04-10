@@ -64,7 +64,7 @@ public class MetadataUtil {
     public static final String LINKED_DOCUMENT_HREF_PATTERN = "http://data.europa.eu/eli/%s/%s/%s";
     public static final String LINKED_DOCUMENT_PARSE_PATTERN = "([A-Za-z0-9]+)\\((\\d{4})\\)(\\s?)(\\d+)(\\s?)([A-Za-z0-9]*)";
     public static final String ELEMENT_CONCLUSIONS = "conclusions";
-    public static final String ATTRIBUTE_CONCLUSIONSNEW = "_" + ELEMENT_CONCLUSIONS;
+    public static final String ATTRIBUTE_CONCLUSIONS_NEW = "_" + ELEMENT_CONCLUSIONS;
     public static final String VALUE_CONCLUSION_NODE_ID = "conclusions__p_1";
     public static final String VALUE_CONCLUSION_NODE_IDNEW = "_" + VALUE_CONCLUSION_NODE_ID;
     public static final String ATTRIBUTE_STATUS_CODE ="statusCode";
@@ -649,45 +649,39 @@ public class MetadataUtil {
 
     public static String buildPrefinalizationLegName(ApplyMetadataRequest request) {
         Optional<ApplyMetadataRequest.TaskNode> firstTask = request.getTasks().stream().findFirst();
-        if (!firstTask.isPresent()) {
-            return "prefinalized";
-        }
-        return buildPrefinalizationLegName(firstTask.get());
+        return firstTask.map(MetadataUtil::buildPrefinalizationLegName).orElse("prefinalized");
     }
 
     public static String buildPrefinalizationLegName(ApplyMetadataRequest.TaskNode task) {
-        final String documentFilename = task.getDocument().getFileName();
+        String documentFilename = task.getDocument().getFileName();
+        int pos = documentFilename.indexOf("-");
+        if (pos == -1) {
+            return documentFilename;
+        }
+
         Optional<ApplyMetadataRequest.ActionNode> action = task.getActions().stream().findFirst();
-        if (!action.isPresent()) {
+        if (action.isEmpty()) {
             return documentFilename;
         }
 
         Optional<ApplyMetadataRequest.FieldNode> coteField = action.get().getFieldWithKey(MetadataFieldType.COTE.toString());
         Optional<ApplyMetadataRequest.FieldNode> finalCote = action.get().getFieldWithKey(MetadataFieldType.FINAL_COTE.toString());
         Optional<ApplyMetadataRequest.FieldNode> diffusionVersionField = MetadataUtil.getDiffusionVersion(action.get());
-        String diffusionVersion = diffusionVersionField.isPresent() ? diffusionVersionField.get().getValue() : null;
-        if (!coteField.isPresent() && !finalCote.isPresent()) {
+        String diffusionVersion = diffusionVersionField.map(ApplyMetadataRequest.FieldNode::getValue).orElse(null);
+        if (coteField.isEmpty() && finalCote.isEmpty()) {
             return documentFilename;
-        }
-        if (finalCote.isPresent()) {
+        } else if (finalCote.isPresent()) {
             coteField = finalCote;
         }
 
         final String coteValue = coteField.get().getValue().replace(" ", "_");
-                //+(diffusionVersion != null ? diffusionVersion : "");
-
-        String prefinalisationName = "";
-        int pos = documentFilename.indexOf("-");
-        if (pos == -1) {
-            return documentFilename;
-        }
-
-        prefinalisationName = documentFilename.substring(0, pos+1) + coteValue;
+        String prefinalisationName = documentFilename.substring(0, pos + 1) + coteValue;
         if (finalCote.isPresent()) {
+            documentFilename = documentFilename.replace("-" + VALUE_FINAL, "");
             prefinalisationName = prefinalisationName + "-" + VALUE_FINAL;
         }
 
-        pos = documentFilename.indexOf("-", pos+1);
+        pos = documentFilename.indexOf("-", pos + 1);
         if (pos == -1) {
             return documentFilename;
         }
@@ -695,11 +689,10 @@ public class MetadataUtil {
     }
 
     public static Optional<ApplyMetadataRequest.FieldNode> getDiffusionVersion(ApplyMetadataRequest.ActionNode action) {
-        final Optional<ApplyMetadataRequest.FieldNode> optField = action.getFields()
+        return action.getFields()
                 .stream()
                 .filter((field) -> field.getKey().equals(MetadataFieldType.DIFFUSION_VERSION.toString()))
                 .findFirst();
-        return optField.isPresent() ? optField : Optional.empty();
     }
 
     public static void addRefersToAttribute(Node xmlNode, final String id) {
@@ -836,8 +829,7 @@ public class MetadataUtil {
 
     public static boolean valueContainsSpelling(final String value, final Collection<String> spellings) {
         return !StringUtil.isEmpty(value) && spellings.stream()
-                .filter((spelling) -> value.toLowerCase().contains(spelling))
-                .findFirst().isPresent();
+                .anyMatch((spelling) -> value.toLowerCase().contains(spelling));
     }
 
     public static MetadataFieldInfo parseDiffusionVersion(String fieldValue) throws MetadataFieldInvalidValueException {

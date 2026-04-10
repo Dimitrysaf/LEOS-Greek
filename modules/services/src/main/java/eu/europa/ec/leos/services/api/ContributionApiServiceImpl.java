@@ -533,7 +533,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
 
     private MetadataVO createMetadataVO(Proposal proposal) {
         ProposalMetadata metadata = proposal.getMetadata().getOrError(() -> "Proposal metadata is not available!");
-        return new MetadataVO(metadata.getStage(), metadata.getType(), metadata.getPurpose(), metadata.getTemplate(), metadata.getLanguage(), metadata.getEeaRelevance(), metadata.isCustomTemplateAct());
+        return new MetadataVO(metadata.getStage(), metadata.getType(), metadata.getPurpose(), metadata.getTemplate(), metadata.getLanguage(),
+                metadata.getEeaRelevance(), metadata.isCustomTemplateAct(), metadata.isFromCustomTemplate());
     }
 
     private DocumentVO getCoverPageVO(DocumentVO proposalVO, String proposalRef) {
@@ -670,12 +671,14 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 // Check if the element is an <ins> tag.
                 if (LEOS_TC_INSERT_ELEMENT_NAME.equals(child.getNodeName())) {
                     Node parent = child.getParentNode();
-                    String textContent = child.getTextContent();
-                    if (textContent != null && !textContent.trim().isEmpty()) {
-                        // Create a new text node with the content.
-                        Text newTextNode = parent.getOwnerDocument().createTextNode(textContent);
-                        // Insert the new text node before the <ins> element.
-                        parent.insertBefore(newTextNode, child);
+                    NodeList insChildren = child.getChildNodes();
+                    for (int i = 0; i < insChildren.getLength(); i++) {
+                        Node insChild = insChildren.item(i);
+                        if (insChild.getNodeType() == Node.TEXT_NODE && insChild.getTextContent().trim().isEmpty()) {
+                            continue;
+                        }
+                        // Insert the new node before the <ins> element.
+                        parent.insertBefore(insChild.cloneNode(true), child);
                     }
                     // Remove the original <ins> element.
                     parent.removeChild(child);

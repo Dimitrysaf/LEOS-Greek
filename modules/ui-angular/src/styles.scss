@@ -644,3 +644,14 @@ a:not([href]):not([tabindex]):not(eui-breadcrumb-item a):hover {
 .cke_combo__trackchangeactions .cke_combo_open {
   margin: 1px 5px;
 }
+
+.hero-image {
+  position: relative;
+  background-image: url('~src/assets/images/home_image.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  height: 30vh;
+}

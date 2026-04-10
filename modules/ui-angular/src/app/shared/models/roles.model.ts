@@ -1,4 +1,12 @@
-export type ApplicationRole = 'USER' | 'SUPPORT' | 'ADMIN' | 'TEMPLATE_MANAGER';
+export const APPLICATION_ROLES = [
+  'USER',
+  'SUPPORT',
+  'ADMIN',
+  'TEMPLATE_MANAGER',
+  'USER_MANAGER',
+] as const;
+
+export type ApplicationRole = typeof APPLICATION_ROLES[number];
 
 export type DocumentRole = 'OWNER' | 'CONTRIBUTOR' | 'REVIEWER' | 'AUTHOR' | 'VIEWER';
 
@@ -36,4 +44,8 @@ export type Permission =
   | 'CAN_VALIDATE'
   | 'CAN_UPLOAD_XML_DOC'
   | 'CAN_ARCHIVE_VERSION'
-  | 'CAN_CREATE_TEMPLATE';
+  | 'CAN_CREATE_TEMPLATE'
+  | 'CAN_MANAGE_OWN_ENTITIES'
+  | 'CAN_MANAGE_ALL_ENTITIES'
+  | 'CAN_MANAGE_ALL_USERS'
+  | 'CAN_MANAGE_USERS_ROLES';

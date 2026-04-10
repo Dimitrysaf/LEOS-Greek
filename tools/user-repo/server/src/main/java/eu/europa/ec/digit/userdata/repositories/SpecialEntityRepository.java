@@ -14,8 +14,28 @@
 package eu.europa.ec.digit.userdata.repositories;
 
 import eu.europa.ec.digit.userdata.entities.SpecialEntity;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
-public interface SpecialEntityRepository extends CrudRepository<SpecialEntity, String> {
+import java.util.Collection;
+import java.util.List;
+
+public interface SpecialEntityRepository extends JpaRepository<SpecialEntity, String> {
+
+    // language=SQL
+    String QUERY_UPDATE_PARENTS = """
+            UPDATE LEOS_SPECIAL_ENTITY
+                SET ENTITY_PARENT_ID = :newParentId
+                WHERE ENTITY_PARENT_ID = :oldParentId""";
+
     SpecialEntity findByName(String entity);
+
+    Collection<SpecialEntity> findAllByOrganizationName(String organizationName);
+
+    @Modifying
+    @Query(value = QUERY_UPDATE_PARENTS, nativeQuery = true)
+    void replaceParents(String oldParentId, String newParentId);
+
+    List<SpecialEntity> findByParentId(String parentId);
 }

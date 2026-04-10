@@ -50,7 +50,7 @@ public class ModelHelper {
         Content content = mock(Content.class);
         Content.Source source = mock(Content.Source.class);
         String docId = "1";
-        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "BL-000.xml", "EN", "", "bill-id", "", "0.0.1", false, false, false);
+        BillMetadata billMetadata = new BillMetadata("", "REGULATION", "", "BL-000.xml", "EN", "", "bill-id", "", "0.0.1", false, false, false, false);
         List<Collaborator> collaborators = new ArrayList<>();
         collaborators.add(new Collaborator("login", "OWNER", "SG", null));
 

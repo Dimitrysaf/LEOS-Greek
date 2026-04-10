@@ -1,0 +1,119 @@
+<eui-card [euiHighlighted]="editing" (keyup.escape)="cancelEdit()">
+  <eui-card-header [class]="editing ? '' : 'readonly'">
+    <eui-card-header-title>
+      <span class="eui-icon eui-icon-person-group u-move-down-5"></span>
+      &nbsp;{{ "page.workspace.administration.entity-info.entity-selected-label" | translate }}
+    </eui-card-header-title>
+
+    <eui-card-header-right-content>
+      <ng-container *ngTemplateOutlet="actionButtons"></ng-container>
+    </eui-card-header-right-content>
+  </eui-card-header>
+
+  <eui-card-content [class]="editing ? '' : 'readonly'">
+    <form [formGroup]="entityForm" (ngSubmit)="editSaveEntity()" (reset)="cancelEdit()" >
+      <div *ngIf="!!selectedEntity" class="input-button-layout">
+        <eui-label class="eui-u-mt-s eui-u-mb-xs eui-u-font-xl eui-u-font-bold">
+          {{ 'page.workspace.administration.entity-info.entity' | translate }}
+        </eui-label>
+        <div class="group-name-input">
+          <span *ngIf="entityPrefix" class="prefix-readonly">{{ entityPrefix }}</span>
+          <input
+            [readonly]="!editing"
+            euiInputText
+            id="entityName"
+            formControlName="name"
+            [style.padding-left]="entityPrefix ? (entityPrefix.length * 8 + 12) + 'px' : '10px'"
+            placeholder="{{ 'page.workspace.administration.entity-info.entity-placeholder' | translate }}"
+          />
+        </div>
+      </div>
+    </form>
+      <div *ngIf="!!selectedEntity">
+        <div *ngIf="!editing" class="row">
+          <div class="col-12">
+            <div class="table-container">
+              <table class="eui-u-mt-m"
+                     euiTable
+                     euiTableResponsive
+                     euiLoading
+                     [rows]="users"
+                     [loading]="loading"
+                     (sortChange)="sortChanged($event)"
+              >
+                <ng-template euiTemplate="header">
+                  <tr class="ng-star-inserted">
+                    <th sortable [sortOn]="'firstName'">{{ 'page.workspace.administration.entity-info.firstname' | translate }}</th>
+                    <th sortable [sortOn]="'lastName'" [defaultOrder]="'asc'">{{ 'page.workspace.administration.entity-info.lastname' | translate }}</th>
+                    <th sortable [sortOn]="'login'">{{ 'page.workspace.administration.entity-info.login' | translate }}</th>
+                    <th sortable [sortOn]="'dateCreated'">{{ 'page.workspace.administration.entity-info.creationdate' | translate }}</th>
+                    <th>{{ 'global.actions' | translate }}</th>
+                  </tr>
+                </ng-template>
+                <ng-template let-row euiTemplate="body">
+                  <tr>
+                    <td>{{ row.firstName }}</td>
+                    <td>{{ row.lastName }}</td>
+                    <td>{{ row.login }}</td>
+                    <td>{{ row.dateCreated | date }}</td>
+                    <td><a>
+                      <eui-icon-svg icon="eui-ecl-external" set="eui" size="m" fillColor="grey-100"></eui-icon-svg>
+                    </a></td>
+                  </tr>
+                </ng-template>
+              </table>
+            </div>
+          </div>
+          <eui-label *ngIf="!users?.length && !loading"
+                     class="eui-u-mt-s eui-u-mb-xs eui-u-font-xl eui-u-font-bold">
+            {{ 'page.workspace.administration.entity-info.no-user' | translate }}
+          </eui-label>
+          <div *ngIf="users?.length" class="row">
+            <div class="col-8">
+              <eui-paginator
+                [pageSize]="pageSize"
+                [page]="page"
+                [length]="totalElements"
+                [hasPageNumberNavigation]="true"
+                [nbPageNumberNavigation]="5"
+                (pageChange)="onPageChange($event)">
+              </eui-paginator>
+            </div>
+          </div>
+        </div>
+      </div>
+  </eui-card-content>
+</eui-card>
+
+<ng-template #actionButtons>
+  <div class="eui-u-flex" *ngIf="!editing">
+    <button
+      [euiDisabled]="!canBeEdited"
+      euiButton
+      euiPrimary
+      euiOutline
+      euiTooltip="{{ 'page.workspace.administration.user-info.edit-user-tooltip' | translate }}"
+      class="eui-u-mr-s"
+      (click)="onToggleEdit()">
+      <span euiIcon iconClass="eui-icon eui-icon-pencil"></span>
+      <span euiLabel>{{ 'global.actions.edit' | translate }}</span>
+    </button>
+  </div>
+  <div class="eui-u-flex" *ngIf="editing">
+    <button
+      euiButton
+      euiSecondary
+      class="eui-u-ml-s"
+      (click)="cancelEdit()">
+      {{ 'global.actions.cancel' | translate }}
+    </button>
+    <button
+      [euiDisabled]="!canBeEdited"
+      euiButton
+      euiPrimary
+      class="eui-u-ml-s"
+      (click)="editSaveEntity()">
+      {{ 'global.actions.save' | translate }}
+    </button>
+  </div>
+</ng-template>

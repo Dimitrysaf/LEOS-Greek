@@ -14,18 +14,23 @@
 package eu.europa.ec.leos.integration.rest;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import eu.europa.ec.leos.domain.repository.metadata.LeosJobTitle;
 import eu.europa.ec.leos.integration.UsersProvider;
+import eu.europa.ec.leos.integration.dto.EntityDTO;
+import eu.europa.ec.leos.integration.dto.UserDTO;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -35,8 +40,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 class UsersClientImpl implements UsersProvider {
     private static final String SEARCH_KEY_MUST_NOT_BE_NULL = "Search Key must not be null!";
-    private static final String SEARCH_KEY = "searchKey";
+    private static final String QUERY_PARAM_SEARCH_KEY = "searchKey";
+    private static final String QUERY_PARAM_ENTITY_ID = "entityId";
+    private static final String QUERY_PARAM_ORG_NAME = "orgName";
+    private static final String QUERY_PARAM_USER_LOGIN = "userLogin";
     private static final Logger LOG = LoggerFactory.getLogger(UsersClientImpl.class);
+
 
     @Value("#{integrationProperties['leos.user.repository.url']}")
     private String repositoryUrl;
@@ -53,6 +62,24 @@ class UsersClientImpl implements UsersProvider {
     @Value("#{integrationProperties['leos.user.repository.searchbyJobTitle.uri']}")
     private String findByJobTitleUri;
 
+    @Value("#{integrationProperties['leos.user.repository.entities.create_update.uri']}")
+    private String createEntityUri;
+
+    @Value("#{integrationProperties['leos.user.repository.users.search.uri']}")
+    private String searchSpecialUsersUri;
+
+    @Value("#{integrationProperties['leos.user.repository.users.create_update.uri']}")
+    private String createUpdateUserUri;
+
+    @Value("#{integrationProperties['leos.user.repository.users.get_delete.uri']}")
+    private String getDeleteUserUri;
+
+    @Value("#{integrationProperties['leos.user.repository.entities.special.uri']}")
+    private String specialEntitiesUri;
+
+    @Value("#{integrationProperties['leos.user.repository.entities.get_delete.uri']}")
+    private String getDeleteEntityUri;
+
     @Autowired
     private RestOperations restTemplate;
     
@@ -63,7 +90,7 @@ class UsersClientImpl implements UsersProvider {
 
         final String uri = repositoryUrl +  searchByKeyUri;
         Map<String, String> params = new HashMap<>();
-        params.put(SEARCH_KEY, searchKey);
+        params.put(QUERY_PARAM_SEARCH_KEY, searchKey);
 
         List<UserJSON> results = null;
         try {
@@ -82,7 +109,7 @@ class UsersClientImpl implements UsersProvider {
         final String uri = repositoryUrl +  "/users";
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(uri)
-                .queryParam(SEARCH_KEY, searchKey)
+                .queryParam(QUERY_PARAM_SEARCH_KEY, searchKey)
                 .queryParam("searchContext", searchContext.replace(" ",""))
                 .queryParam("searchReference", searchReference);
 
@@ -123,7 +150,7 @@ class UsersClientImpl implements UsersProvider {
 
         Map<String, String> params = new HashMap<>();
         params.put("entity", entity);
-        params.put(SEARCH_KEY, searchKey);
+        params.put(QUERY_PARAM_SEARCH_KEY, searchKey);
 
         List<String> results = null;
         try {
@@ -169,6 +196,106 @@ class UsersClientImpl implements UsersProvider {
             return response.getBody();
         } catch (RestClientException e) {
             throw new RuntimeException("Unable to search for user. Failed calling: " + uri, e);
+        }
+    }
+
+    @Override
+    public EntityDTO createEntity(EntityDTO entity) {
+        final String uri = repositoryUrl + createEntityUri;
+        try {
+            return restTemplate.postForObject(uri, entity, EntityDTO.class);
+        } catch (RestClientException e) {
+            throw new RuntimeException("Unable to create entity with name " + entity.getName() + ". Failed calling: " + uri, e);
+        }
+    }
+
+    @Override
+    public Page<UserDTO> searchSpecialUsers(String searchKey, String entityId, Pageable pageable) {
+        final String uri = repositoryUrl + searchSpecialUsersUri;
+        final Map<String, Object> params = new HashMap<>();
+        params.put(QUERY_PARAM_SEARCH_KEY, searchKey);
+        params.put(QUERY_PARAM_ENTITY_ID, entityId);
+        PaginationHelper.preparePagingParams(pageable, params);
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(uri).uriVariables(params);
+
+        try {
+            // Use ParameterizedTypeReference with our RestPageImpl until spring-data integration is configured
+            ResponseEntity<RestPageImpl<UserDTO>> response = restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<>() {}
+            );
+            return response.getBody();
+        } catch (RestClientException e) {
+                throw new RuntimeException("Unable to get users", e);
+        }
+    }
+
+    @Override
+    public UserDTO addSpecialUser(final UserDTO userDTO) {
+        final String uri = repositoryUrl + createUpdateUserUri;
+        try {
+            return restTemplate.postForObject(uri, userDTO, UserDTO.class);
+        } catch (RestClientException e) {
+            throw new RuntimeException("Unable to create user with login " + userDTO.getLogin() + ". Failed calling: " + uri, e);
+        }
+    }
+
+    @Override
+    public UserDTO updateSpecialUser(final UserDTO userDTO) {
+        final String uri = repositoryUrl + createUpdateUserUri;
+        try {
+            return restTemplate.patchForObject(uri, userDTO, UserDTO.class);
+        } catch (RestClientException e) {
+            throw new RuntimeException("Unable to update user with login " + userDTO.getLogin() + ". Failed calling: " + uri, e);
+        }
+    }
+
+    @Override
+    public List<EntityDTO> specialEntities(String orgName) {
+        final String uri = repositoryUrl + specialEntitiesUri;
+        final Map<String, Object> params = Collections.singletonMap(QUERY_PARAM_ORG_NAME, orgName);
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(uri).uriVariables(params);
+        try {
+            return restTemplate.exchange(builder.toUriString(), HttpMethod.GET, null,
+                    new ParameterizedTypeReference<List<EntityDTO>>() {}).getBody();
+        } catch (RestClientException e) {
+            throw new RuntimeException("Unable to get special entities. Failed calling: " + uri, e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteSpecialUser(final String userLogin) {
+        final String uri = repositoryUrl + getDeleteUserUri;
+        final Map<String, Object> params = Collections.singletonMap(QUERY_PARAM_USER_LOGIN, userLogin);
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(uri).uriVariables(params);
+        try {
+            return restTemplate.exchange(builder.toUriString(), HttpMethod.DELETE, null, Void.class);
+        } catch (RestClientException e) {
+            throw new RuntimeException("Unable to delete user with login " + userLogin + ". Failed calling: " + uri, e);
+        }
+    }
+
+    @Override
+    public EntityDTO updateEntity(final EntityDTO entityDto) {
+        final String uri = repositoryUrl + createEntityUri;
+        try {
+            return restTemplate.patchForObject(uri, entityDto, EntityDTO.class);
+        } catch (RestClientException e) {
+            throw new RuntimeException("Unable to update entity " + entityDto.getId() + ". Failed calling: " + uri, e);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteEntity(String entityId) {
+        final String uri = repositoryUrl + getDeleteEntityUri;
+        final Map<String, Object> params = Collections.singletonMap(QUERY_PARAM_ENTITY_ID, entityId);
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(uri).uriVariables(params);
+        try {
+            return restTemplate.exchange(builder.toUriString(), HttpMethod.DELETE, null, Void.class);
+        } catch (RestClientException e) {
+            throw new RuntimeException("Unable to delete entity " + entityId + ". Failed calling: " + uri, e);
         }
     }
 }

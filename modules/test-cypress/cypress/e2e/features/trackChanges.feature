@@ -13,6 +13,9 @@ Feature: Track Changes Feature
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -88,6 +91,8 @@ Feature: Track Changes Feature
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation Testing TC" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -124,6 +129,9 @@ Feature: Track Changes Feature
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -209,6 +217,9 @@ Feature: Track Changes Feature
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -415,6 +426,8 @@ Feature: Track Changes Feature
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Automation testing recital track changes scenario" in create document page
     And  click on create button
@@ -710,6 +723,9 @@ Feature: Track Changes Feature
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode7.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -961,6 +977,9 @@ Feature: Track Changes Feature
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode7.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -1305,6 +1324,9 @@ Feature: Track Changes Feature
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode7.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -1505,6 +1527,9 @@ Feature: Track Changes Feature
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -1590,6 +1615,8 @@ Feature: Track Changes Feature
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation Testing Move Point in Annex" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -1666,6 +1693,8 @@ Feature: Track Changes Feature
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "Automation Testing Enter in Level with Track Changes" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -1695,6 +1724,8 @@ Feature: Track Changes Feature
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Automation import OJ Testing with track changes" in create document page
     And  click on create button
@@ -1739,6 +1770,8 @@ Feature: Track Changes Feature
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "deletion element through track changes" in create document page
     And  click on create button
@@ -1801,6 +1834,8 @@ Feature: Track Changes Feature
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Automation Sole Recital Testing" in create document page
     And  click on create button
@@ -1877,6 +1912,8 @@ Feature: Track Changes Feature
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Automation Sole Article Testing" in create document page
     And  click on create button
@@ -1972,27 +2009,47 @@ Feature: Track Changes Feature
     When click on cancel button in cke dialog window
     And  click close button of ck editor
 
-  @3045 @local
-  Scenario: 3045 Scenario @focus
+  # Ticket : #3416 Autonomous acts templates: Not possible to navigate to Act view page once signature is changed to alternate one.
+  @switchingAlternativeSignatureWithTC @local
+  Scenario: user is able to switch alternative signature
     Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
     Then user is on create new legislative document window
-    When click on template "SJ-023" in create new legislative document window
+    When click on template "SJ-003" in create new legislative document window
     When click on next button in create document page
-    And  provide document title "3045 " in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
+    And  provide document title "Automation Testing Alternative Signature " in create document page
     And  click on create button
     Then user is on act viewer page
     When click on legal act link present in act viewer page
     Then user is on legal act page
-    When mouseover and click on article 1
+    And  annotation side bar is present
+    And  ribbon toolbar is maximized
+    When enable track changes
+    Then enable track changes toggle bar is on in ribbon toolbar
+   And  organization 1 of signature of block 1 contains text "For the Commission"
+    And role 1 of block 1 contains text "The President"
+    And signature of the person 1 of block 1 contains text "[...]"
+    When mouseover and click on block 1
     Then ck editor window is displayed
-    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-    And  click enter from keyboard in edition mode
-    And click on increase indent icon present in ck editor panel
-    And click on increase indent icon present in ck editor panel
-    And  add "point a" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And add "point b" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And add "point c" at current cursor position in edition mode
+    And the block inside ck editor is not editable and contains attribute "contenteditable" with value "false"
+    When click on alternative icon present in ck editor panel
+    Then Alternative dropdown displays the following options:
+      | The President              |
+      | On behalf of the President |
+    When click on role from the dropdown button which contains text "On behalf of the President"
+    Then cke dialog window is displayed with title "Confirm alternative change"
+    And  cke dialog window is displayed with body "If any changes were made to the default content, selecting an alternative will discard them. Are you sure to continue?"
+    When click on ok button in cke dialog window
+    And click save and close button of ck editor
+    Then ck editor window is not displayed
+    Then "del" tag 1 of organization 1 of signature of block 1 contains text "For the Commission"
+    And  'del' tag 1 of role 1 of signature of block 1 contains text "The President"
+    And  'del' tag 1 of person 1 of signature of block 1 contains text "[...]"
+    And  'ins' tag 1 of organization 2 of signature of block 1 contains text "For the Commission"
+    And 'ins' tag 1 of role 2 of signature of block 1 contains text "On behalf of the President"
+    And 'ins' tag 1 of person 2 of signature of block 1 contains text "[...]"
+    When click on close button present in legal act page
+    Then user is on act viewer page

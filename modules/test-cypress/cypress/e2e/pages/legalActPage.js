@@ -21,7 +21,7 @@ class legalActPage {
         leosSoftMoveLabel: () => this.elements.aknBody().find('span.leos-soft-move-label'),
         recitals: () => cy.xpath('//recitals'),
         recitalSection: () => this.elements.recitals().children('recitals'),
-        SignatureBlock: () => cy.get('conclusions block')
+        SignatureBlock: () => cy.get('conclusions>block')
     }
 
     clickCloseBtn() {
@@ -378,24 +378,24 @@ class legalActPage {
     }
 
     getBlock(blockNumber) {
-       return  this.elements.SignatureBlock(blockNumber - 1);
+       return  this.elements.SignatureBlock(blockNumber);
     }
 
     getSignatureFromBlock(blockNumber) {
-        return this.getBlock(blockNumber).find('signature');
+        return this.getBlock(blockNumber).children('signature');
     }
 
 
-    getOrganizationFromBlock(blockNumber) {
-        return this.getSignatureFromBlock(blockNumber).find('organization');
+    getOrganizationFromBlock(blockNumber, organizationIndex) {
+        return this.getSignatureFromBlock(blockNumber).children('organization').eq(organizationIndex-1);
     }
 
-    getRoleFromBlock(blockNumber) {
-        return this.getSignatureFromBlock(blockNumber).find('role');
+    getRoleFromBlock(blockNumber,roleIndex) {
+        return this.getSignatureFromBlock(blockNumber).children('role').eq(roleIndex-1);
     }
 
-    getSignatureOfThePerson(blockNumber) {
-        return this.getSignatureFromBlock(blockNumber).find('person');
+    getSignatureOfThePerson(blockNumber,signatureOfThePersonIndex) {
+        return this.getSignatureFromBlock(blockNumber).find('person').eq(signatureOfThePersonIndex-1);
     }
 
     mouseHoverAndClickOnBlockNumber(blockNumber) {
@@ -409,5 +409,6 @@ class legalActPage {
     getAknpTagOfCitation(citationNumber) {
         return this.getCitation(citationNumber).find('aknp');
     }
+
 }
 export default new legalActPage();

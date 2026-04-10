@@ -29,6 +29,7 @@ import { NotificationUploadComponent } from './components/notification-upload/no
 import { ProposalCreateDraftComponent } from './components/proposal-create-draft/proposal-create-draft.component';
 import { ProposalCreateFormComponent } from './components/proposal-create-form/proposal-create-form.component';
 import { ProposalCreateTemplateSelectorComponent } from './components/proposal-create-template-selector/proposal-create-template-selector.component';
+import { ProposalCreateApprovalComponent } from './components/proposal-create-approval/proposal-create-approval.component';
 import { ProposalMilestoneViewComponent } from './components/proposal-milestone-view/proposal-milestone-view.component';
 import { ResizeHandleComponent } from './components/resize-handle/resize-handle.component';
 import { ZoomScrollbarComponent } from './components/zoom-scrollbar/zoom-scrollbar.component';
@@ -44,6 +45,8 @@ import { EuiDropdownModule } from '@eui/components/eui-dropdown';
 import { DynamicDropdownHoverComponent } from '@/shared/components/dynamic-dropdown-hover/dynamic-dropdown-hover.component';
 import { DynamicDropdownClickComponent } from '@/shared/components/dynamic-dropdown-click/dynamic-dropdown-click.component';
 import { MoveToLeftSideToolbarDirective } from './directives/MoveToLeftSideToolbar.directive';
+import {SearchBoxComponent} from "@/shared/components/searchbox/searchbox.component";
+import {HeroButtonsComponent} from "@/shared/components/hero-buttons/hero-buttons.component";
 
 export const MY_FORMATS = {
   parse: {
@@ -88,6 +91,7 @@ export const MY_FORMATS = {
     ProposalCreateDraftComponent,
     ProposalCreateFormComponent,
     ProposalCreateTemplateSelectorComponent,
+    ProposalCreateApprovalComponent,
     ConfirmDeleteDialogComponent,
     ConfirmDialogComponent,
     CoEditionInfoComponent,
@@ -103,6 +107,8 @@ export const MY_FORMATS = {
     NotificationCardContainerComponent,
     NotificationCardComponent,
     NotificationUploadComponent,
+    SearchBoxComponent,
+    HeroButtonsComponent
   ],
     exports: [
         EuiAllModule,
@@ -139,6 +145,8 @@ export const MY_FORMATS = {
         NotificationUploadComponent,
         DynamicDropdownHoverComponent,
         ProposalCreateWizardComponent,
+        SearchBoxComponent,
+        HeroButtonsComponent,
     ],
   providers: [ProposalService,
     CommonModule,

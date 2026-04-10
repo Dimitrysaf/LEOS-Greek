@@ -1,6 +1,8 @@
 package eu.europa.ec.leos.services.api.exception;
 
 import eu.europa.ec.leos.exception.LeosErrorMessage;
+import eu.europa.ec.leos.rest.handlers.ExceptionType;
+import eu.europa.ec.leos.rest.handlers.RestTemplateResponseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -45,12 +47,32 @@ public class ResponseExceptionHandler {
     }
 
     @ExceptionHandler(PendingTranslationException.class)
-    public ResponseEntity<LeosExceptionResponse> handleException(PendingTranslationException ex) {
+    public ResponseEntity<Object> handleException(PendingTranslationException ex) {
+        logError(ex, "Not possible to publish the custom template. There are languages with pending translations");
+        return new ResponseEntity<>(ex, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    private static void logError(Throwable ex, String message) {
+        if (Arrays.stream(ex.getStackTrace()).findFirst().isPresent()) {
+            LOG.error("{}: {}", message, Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);
+        }
+    }
+
+    @ExceptionHandler(LeosApiException.class)
+    public ResponseEntity<eu.europa.ec.leos.rest.handlers.ExceptionResponse> handleException(LeosApiException ex) {
         if (Arrays.stream(ex.getStackTrace()).findFirst().isPresent()) {
             LOG.error("Unexpected error occurred :" + Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);
         }
-        return new ResponseEntity<>(new LeosExceptionResponse(ex.getErrorCode().toString(), ex.getMessageKey()),
-                HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new eu.europa.ec.leos.rest.handlers.ExceptionResponse(ex.getMessageKey(), ExceptionType.ERROR),
+                ex.getHttpStatus());
+    }
+
+    @ExceptionHandler(RestTemplateResponseException.class)
+    public ResponseEntity<eu.europa.ec.leos.rest.handlers.ExceptionResponse> handleException(RestTemplateResponseException ex) {
+        if (Arrays.stream(ex.getStackTrace()).findFirst().isPresent()) {
+            LOG.error("Unexpected error occurred :" + Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);
+        }
+        return new ResponseEntity<>(ex.getResponse(), ex.getStatus());
     }
 
 }

@@ -1,36 +1,16 @@
 package eu.europa.ec.leos.rest.handlers;
 
-public class ExceptionResponse {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-    public enum ExceptionType {
-        ERROR,
-        WARNING
-    }
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class ExceptionResponse {
 
     private String message;
     private ExceptionType type;
-
-    public ExceptionResponse() {
-    }
-
-    public ExceptionResponse(String message, ExceptionType type) {
-        this.message = message;
-        this.type = type;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public ExceptionType getType() {
-        return type;
-    }
-
-    public void setType(ExceptionType type) {
-        this.type = type;
-    }
 }

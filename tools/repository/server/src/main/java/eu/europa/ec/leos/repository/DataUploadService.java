@@ -150,14 +150,14 @@ abstract class DataUploadService {
         String updateAllIsLastVersionTo0 = "update config_version set is_latest_version = 0";
         jdbcTemplate.update(updateAllIsLastVersionTo0);
 
-        if (StringUtils.isNotEmpty(version)) {
+        if (StringUtils.isEmpty(version)) {
             String updateAllIsLastVersionAccordingToVersion = "update config_version v set is_latest_version = 1 \n" +
                     "where version_label = (select max(version_label) from config, config_version where config.id = config_version.config_id and config.id=v.config_id group by config.id, name)";
             jdbcTemplate.update(updateAllIsLastVersionAccordingToVersion);
         } else {
             String updateAllIsLastVersionAccordingToVersion = "update config_version v set is_latest_version = 1 \n" +
                     "where version_label = (select max(version_label) from config, config_version where config.id = config_version.config_id and config.id=v.config_id and version_label <= ? group by config.id, name)";
-            jdbcTemplate.update(updateAllIsLastVersionAccordingToVersion, version, version);
+            jdbcTemplate.update(updateAllIsLastVersionAccordingToVersion, version);
         }
 
     }

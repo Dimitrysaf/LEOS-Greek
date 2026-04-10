@@ -148,6 +148,7 @@ public class LeosMetadataExtensions {
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_ACT_TYPE), leosMetadata.getActType());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_EEA_RELEVANCE), leosMetadata.getEeaRelevance());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_CUSTOM_TEMPLATE_ACT), leosMetadata.isCustomTemplateAct());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_FROM_CUSTOM_TEMPLATE), leosMetadata.isFromCustomTemplate());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TEMPLATE), leosMetadata.getTemplate());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_LANGUAGE), leosMetadata.getLanguage());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_DOCTEMPLATE), leosMetadata.getDocTemplate());

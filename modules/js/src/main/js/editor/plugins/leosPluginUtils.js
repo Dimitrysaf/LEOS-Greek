@@ -1789,7 +1789,7 @@ define(function leosPluginUtilsModule(require) {
         // If selection crosses table boundary, handle it specially
         var startInTable = startBlock.getAscendant('table', true);
         var endInTable = endBlock.getAscendant('table', true);
-        
+
         // Check if range contains a table even if start/end blocks are outside
         var rangeContainsTable = false;
         if (!startInTable && !endInTable) {

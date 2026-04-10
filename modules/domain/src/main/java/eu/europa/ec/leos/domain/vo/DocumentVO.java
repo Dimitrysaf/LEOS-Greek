@@ -123,6 +123,7 @@ public class DocumentVO {
                 this.getMetadata().setEeaRelevance(metadataB.getEeaRelevance());
                 this.setRef(metadataB.getRef());
                 this.getMetadata().setCustomTemplateAct(metadataB.isCustomTemplateAct());
+                this.getMetadata().setFromCustomTemplate(metadataB.isFromCustomTemplate());
 
                 break;
             case ANNEX:
@@ -145,6 +146,7 @@ public class DocumentVO {
                 this.getMetadata().setEeaRelevance(metadataA.getEeaRelevance());
                 this.setRef(metadataA.getRef());
                 this.getMetadata().setCustomTemplateAct(metadataA.isCustomTemplateAct());
+                this.getMetadata().setFromCustomTemplate(metadataA.isFromCustomTemplate());
 
                 break;
             case COUNCIL_EXPLANATORY:
@@ -164,6 +166,7 @@ public class DocumentVO {
                 this.getMetadata().setEeaRelevance(metadataE.getEeaRelevance());
                 this.setRef(metadataE.getRef());
                 this.getMetadata().setCustomTemplateAct(metadataE.isCustomTemplateAct());
+                this.getMetadata().setFromCustomTemplate(metadataE.isFromCustomTemplate());
 
                 break;
             case PROPOSAL:
@@ -183,6 +186,7 @@ public class DocumentVO {
                 this.getMetadata().setIsAuthenticLang(metadataP.getIsAuthenticLang());
                 this.getMetadata().setCrossReferences(metadataP.getCrossReferences());
                 this.getMetadata().setCustomTemplateAct(metadataP.isCustomTemplateAct());
+                this.getMetadata().setFromCustomTemplate(metadataP.isFromCustomTemplate());
                 this.getMetadata().setAvailableLangs(metadataP.getAvailableLangs());
                 this.getMetadata().setIsPublished(metadataP.getIsPublished());
 
@@ -207,6 +211,7 @@ public class DocumentVO {
                 this.getMetadata().setTemplateName(metadataM.getTemplate());
                 this.getMetadata().setEeaRelevance(metadataM.getEeaRelevance());
                 this.getMetadata().setCustomTemplateAct(metadataM.isCustomTemplateAct());
+                this.getMetadata().setFromCustomTemplate(metadataM.isFromCustomTemplate());
                 this.setRef(metadataM.getRef());
 
                 break;

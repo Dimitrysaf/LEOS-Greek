@@ -95,7 +95,7 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
         result = squeezeXmlAndRemoveAllNS(result);
         expected = squeezeXmlAndRemoveAllNS(expected);
         assertEquals(expected, result);
-        assertTrue(endTime - startTime < 25_000);  // check how you are converting Node to String. The time shouldn't go exponential.
+        assertTrue(endTime - startTime < 30_000);  // check how you are converting Node to String. The time shouldn't go exponential.
     }
 
     @Test

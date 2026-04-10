@@ -27,6 +27,7 @@ import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.document.models.AnnexType;
+import eu.europa.ec.leos.services.collection.ExtPackageResult;
 import eu.europa.ec.leos.services.dto.request.CreateProposalCopyRequest;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
@@ -50,10 +51,14 @@ public interface ApiService {
 
     List<CatalogItem> getCustomTemplates(String entityName) throws IOException;
 
+    List<List<CatalogItem>> getAllTemplatesForEntity() throws IOException;
+
     CreateCollectionResult copyAct(CreateProposalCopyRequest request) throws CreateCollectionException;
 
     CreateCollectionResult createProposal(String templateId, String templateName, String langCode, String docPurpose,
-                                          boolean eeaRelevance, boolean customTemplateAct, String template) throws CreateCollectionException;
+            boolean eeaRelevance, boolean customTemplateAct, boolean fromCustomTemplate, String template) throws CreateCollectionException;
+
+    List<ExtPackageResult> createExtProposal(String templateKey, String[] languageCodes, String docPurpose);
 
     CreateCollectionResult uploadProposal(LeosFile legDocument) throws CreateCollectionException;
 

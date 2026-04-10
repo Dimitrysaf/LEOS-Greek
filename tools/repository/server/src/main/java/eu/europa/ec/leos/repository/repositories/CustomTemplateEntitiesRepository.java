@@ -25,4 +25,6 @@ import java.util.Optional;
 public interface CustomTemplateEntitiesRepository extends JpaRepository<CustomTemplateEntities, BigDecimal> {
     
     Optional<CustomTemplateEntities> findByPackageId(Package packageId);
+
+    void deleteByPackageId(Package packageId);
 }

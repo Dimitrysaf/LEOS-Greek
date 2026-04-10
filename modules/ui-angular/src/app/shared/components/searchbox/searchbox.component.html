@@ -1,0 +1,35 @@
+<div class="search-container">
+  <div *ngIf="label" euiInputGroup class="input-label-container">
+    <eui-label class="eui-u-mt-s eui-u-mb-xs eui-u-font-xl eui-u-font-bold">
+      {{ label }}
+    </eui-label>
+  </div>
+  <div class="input-button-layout">
+    <ng-content select="[beforeSearchInput]"></ng-content>
+    <div class="eui-input-group-addon">
+      <input
+        euiInputText
+        id="searchInput"
+        placeholder="{{ placeholder }}"
+        (keydown.enter)="buttonWatchForChanges()"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="searchTermChange.emit($event)"
+      />
+      <button
+        class="input-container clear-button"
+        (click)="clear()"
+      >
+        <eui-icon-svg icon="eui-close"></eui-icon-svg>
+      </button>
+      <button
+        euiButton
+        class="input-container eui-u-p-xs"
+        (click)="buttonWatchForChanges()"
+      >
+        <eui-icon-svg icon="eui-search"></eui-icon-svg>
+      </button>
+    </div>
+    <ng-content select="[afterSearchInput]"></ng-content>
+
+  </div>
+</div>

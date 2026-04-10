@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.digit.userdata;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -20,6 +21,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.web.WebApplicationInitializer;
 
 @SpringBootApplication
+@Slf4j
 public class Application extends SpringBootServletInitializer implements WebApplicationInitializer {
 
     @Override
@@ -27,8 +29,22 @@ public class Application extends SpringBootServletInitializer implements WebAppl
         return application.sources(Application.class);
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
+        initH2OracleMode();
         SpringApplication.run(Application.class, args);
     }
 
+    /**
+     * Set the limit mode for H2 database for local execution only.
+     * We do not import H2 classes here, as we want to keep H2 as a runtime dependency.
+     */
+    public static void initH2OracleMode() {
+        try {
+            final Class<?> h2Mode = Class.forName("org.h2.engine.Mode");
+            final Object oracleMode = h2Mode.getMethod("getInstance", String.class).invoke(null, "ORACLE");
+            oracleMode.getClass().getField("limit").set(oracleMode, true);
+        } catch (Exception e) {
+            log.info("Not in H2 Oracle mode", e);
+        }
+    }
 }

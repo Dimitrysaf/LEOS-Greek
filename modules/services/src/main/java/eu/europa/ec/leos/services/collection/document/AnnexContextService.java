@@ -83,6 +83,7 @@ public class AnnexContextService {
     private String milestoneComment;
     private boolean eeaRelevance;
     private boolean customTemplateAct;
+    private boolean fromCustomTemplate;
     private boolean cloneProposal = false;
     private String originRef;
     private String language;
@@ -236,6 +237,11 @@ public class AnnexContextService {
         this.customTemplateAct = customTemplateAct;
     }
 
+    public void useFromCustomTemplate(boolean fromCustomTemplate) {
+        LOG.trace("Using Proposal fromCustomTemplate... [fromCustomTemplate={}]", fromCustomTemplate);
+        this.fromCustomTemplate = fromCustomTemplate;
+    }
+
     public void useCloneProposal(boolean cloneProposal) {
         this.cloneProposal = cloneProposal;
     }
@@ -280,6 +286,7 @@ public class AnnexContextService {
                 .withPackageRef(packageRef)
                 .withRef(originRef)
                 .withCustomTemplateAct(customTemplateAct)
+                .withFromCustomTemplate(fromCustomTemplate)
                 .build();
 
         if (binaryContent != null) {

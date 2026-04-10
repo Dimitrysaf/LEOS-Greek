@@ -14,6 +14,8 @@ Feature: Annex Page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     When provide document title "Automation Annex Numbering Testing" in create document page
     When click on create button
     Then user is on act viewer page
@@ -226,6 +228,8 @@ Feature: Annex Page Regression Features
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     And  provide document title "paragraph level validation" in create document page
     And  click on create button
     Then user is on act viewer page
@@ -295,6 +299,9 @@ Feature: Annex Page Regression Features
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode7.leg"
+    Then active upload window label contains "Guidance approval"
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
@@ -384,6 +391,8 @@ Feature: Annex Page Regression Features
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "level numbering" in create document page
     And  click on create button
@@ -575,6 +584,8 @@ Feature: Annex Page Regression Features
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
     When click on next button in create document page
     And  provide document title "Internal Reference for Full annex" in create document page
     And  click on create button

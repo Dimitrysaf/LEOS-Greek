@@ -13,22 +13,21 @@
  */
 package eu.europa.ec.digit.userdata.entities;
 
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OrderBy;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -42,6 +41,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @AllArgsConstructor
 public class User implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -242509624358432413L;
 
     @Id
@@ -63,6 +63,10 @@ public class User implements Serializable {
     @Column(name = "JOB_TITLE", nullable = false, insertable = false, updatable = false)
     private String jobTitle;
 
+    @CreationTimestamp
+    @Column(name = "DATE_CREATED", nullable = false, insertable = false, updatable = false)
+    private Date dateCreated;
+
     @JsonIgnore
     @OneToMany
     @LazyCollection(LazyCollectionOption.FALSE)
@@ -75,14 +79,32 @@ public class User implements Serializable {
     @OrderBy("ENTITY_ORG_NAME, ENTITY_NAME")
     private List<Entity> entities;
 
-    public List<Role> getRoleEntities() {
-        roleEntities.add(new Role("USER","Default USER role"));
-        return roleEntities;
+    @Column(name = "SPECIAL", insertable = false, updatable = false)
+    private Boolean special;
+
+    public User(String login, Long perId, String lastName, String firstName, String email, String jobTitle, List<Role> roleEntities, List<Entity> entities) {
+        this.login = login;
+        this.perId = perId;
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.email = email;
+        this.jobTitle = jobTitle;
+        this.roleEntities = roleEntities;
+        this.entities = entities;
     }
 
+    /**
+     * Retrieves an unmodifiable list of role names associated with the user.
+     * This includes the roles obtained from the user's role entities and the default
+     * role "USER".
+     *
+     * @return a list of role names, combining existing roles and a default "USER" role.
+     */
     public List<String> getRoles() {
-        roleEntities.add(new Role("USER","Default USER role"));
-        return roleEntities.stream().map(r -> r.getRole())
-                .collect(Collectors.toList());
+        return Stream
+                .concat(
+                        roleEntities.stream().map(Role::getRole),
+                        Stream.of("USER"))
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 }

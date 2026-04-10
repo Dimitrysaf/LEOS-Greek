@@ -1,56 +1,10 @@
 <eui-page>
   <eui-page-content style="padding: 0px">
     <!-- Results column -->
-    <!-- Hero Banner and Buttons-->
+
     <div class="body-container">
-      <div class="hero-image">
-        <div class="content-container">
-          <div class="label-container">
-            <eui-label class="eui-u-font-3xl hero-text">{{
-              'page.home.hero.label' | translate
-            }}</eui-label>
-          </div>
-          <!-- Hero buttons -->
-          <div class="button-container eui-u-mt-m">
-            <button
-              euiButton
-              euiPrimary
-              (click)="handleCreateMandate()"
-              *ngIf="canUpload && !environmentService.isCouncil()"
-            >
-              {{ 'page.workspace.upload.button.text' | translate }}
-              <eui-icon-svg icon="eui-chevron-forward"></eui-icon-svg>
-            </button>
-            <button
-              euiButton
-              euiPrimary
-              (click)="handleCreateMandate()"
-              *ngIf="environmentService.isCouncil()"
-            >
-              {{ 'page.workspace.upload-cn.button.text' | translate }}
-              <eui-icon-svg icon="eui-chevron-forward"></eui-icon-svg>
-            </button>
-            <button
-              euiButton
-              euiPrimary
-              (click)="handleCreateDraft()"
-              *ngIf="environmentService.isCouncil()"
-            >
-              {{ 'page.home.create-your-draft' | translate }}
-              <eui-icon-svg icon="eui-chevron-forward"></eui-icon-svg>
-            </button>
-            <button
-              euiButton
-              euiPrimary
-              (click)="handleCreate()"
-              *ngIf="!environmentService.isCouncil()"
-            >
-              {{ 'page.workspace.create-button' | translate }}
-              <eui-icon-svg icon="eui-chevron-forward"></eui-icon-svg>
-            </button>
-          </div>
-        </div>
-      </div>
+      <!-- Hero Banner and Buttons-->
+      <div class="hero-image"></div>
       <!-- Searchbar-->
       <div class="eui-b-pl-xl middle-body-content"  *ngIf="!isAdminView">
         <app-proposal-filter-home

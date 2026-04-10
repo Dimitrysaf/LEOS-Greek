@@ -468,7 +468,7 @@
                     <numberingType>SOLE_ARTICLE_GREEK</numberingType>
                 </langNumConfig>
             </soleNumbering>
-            <itemHeading>optional</itemHeading>
+            <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>false</numberEditable>
             <contentDisplayed>true</contentDisplayed>
