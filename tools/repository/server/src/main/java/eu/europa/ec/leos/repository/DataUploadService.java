@@ -147,16 +147,26 @@ abstract class DataUploadService {
 
     public void setIsLastVersionAccordingToVersion(String version) {
 
-        String updateAllIsLastVersionTo0 = "update config_version set is_latest_version = 0";
+        String updateAllIsLastVersionTo0 = "update config_version set is_latest_version = 0 where REGEXP_COUNT(version_label, '\\.') <= 3";
         jdbcTemplate.update(updateAllIsLastVersionTo0);
 
+        String updateAllIsLastVersionAccordingToVersionStart = "update config_version v set is_latest_version = 1 " +
+                "where version_label = " +
+                "(select max(version_label) from config, config_version, config_content " +
+                "where config.id = config_version.config_id and config_content.version_id = config_version.id " +
+                "and config.id = v.config_id " +
+                "and REGEXP_COUNT(version_label, '\\.') <= 3 ";
+        String updateAllIsLastVersionAccordingToVersionEnd = "group by config.id, name)";
         if (StringUtils.isEmpty(version)) {
-            String updateAllIsLastVersionAccordingToVersion = "update config_version v set is_latest_version = 1 \n" +
-                    "where version_label = (select max(version_label) from config, config_version where config.id = config_version.config_id and config.id=v.config_id group by config.id, name)";
+            String updateAllIsLastVersionAccordingToVersion =
+                updateAllIsLastVersionAccordingToVersionStart +
+                updateAllIsLastVersionAccordingToVersionEnd;
             jdbcTemplate.update(updateAllIsLastVersionAccordingToVersion);
         } else {
-            String updateAllIsLastVersionAccordingToVersion = "update config_version v set is_latest_version = 1 \n" +
-                    "where version_label = (select max(version_label) from config, config_version where config.id = config_version.config_id and config.id=v.config_id and version_label <= ? group by config.id, name)";
+            String updateAllIsLastVersionAccordingToVersion =
+                updateAllIsLastVersionAccordingToVersionStart +
+                "and version_label <= ? " +
+                updateAllIsLastVersionAccordingToVersionEnd;
             jdbcTemplate.update(updateAllIsLastVersionAccordingToVersion, version);
         }
 
