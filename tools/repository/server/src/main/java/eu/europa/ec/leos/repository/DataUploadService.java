@@ -147,18 +147,18 @@ abstract class DataUploadService {
 
     public void setIsLastVersionAccordingToVersion(String version) {
 
-        String updateAllIsLastVersionTo0 = "update config_version set is_latest_version = 0 where REGEXP_COUNT(version_label, '\\.') <= 3";
+        String updateAllIsLastVersionTo0 = "update config_version set is_latest_version = 0 where REGEXP_COUNT(version_label, '\\.') < 3";
         jdbcTemplate.update(updateAllIsLastVersionTo0);
 
         String versionLabelFormat = "(NVL(REGEXP_SUBSTR(%s, '[^.]+', 1, 1), 0)*1000000) + (NVL(REGEXP_SUBSTR(%s, '[^.]+', 1, 2), 0)*1000) + NVL(REGEXP_SUBSTR(%s, '[^.]+', 1, 3), 0)";
-        String versionLabel = versionLabelFormat.formatted(versionLabelFormat, "version_label", "version_label", "version_label");
-        String versionLabelParameter = versionLabelFormat.formatted(versionLabelFormat, "?", "?", "?");
+        String versionLabel = versionLabelFormat.formatted("version_label", "version_label", "version_label");
+        String versionLabelParameter = versionLabelFormat.formatted("?", "?", "?");
         String updateAllIsLastVersionAccordingToVersionStart = "update config_version v set is_latest_version = 1 " +
                 "where " + versionLabel + " = " +
                 "(select max(" + versionLabel + ") from config, config_version, config_content " +
                 "where config.id = config_version.config_id and config_content.version_id = config_version.id " +
                 "and config.id = v.config_id " +
-                "and REGEXP_COUNT(version_label, '\\.') <= 3 ";
+                "and REGEXP_COUNT(version_label, '\\.') < 3 ";
         String updateAllIsLastVersionAccordingToVersionEnd = "group by config.id, name)";
         if (StringUtils.isEmpty(version)) {
             String updateAllIsLastVersionAccordingToVersion =
