@@ -371,4 +371,13 @@ public interface LeosApi {
     @RequestMapping(value = "/secured/document-ref/{packageId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     ResponseEntity<Object> findDocumentRefByPackageIdAndCategory(@Parameter(description = "Package ID") @PathVariable("packageId") String packageId);
+
+    @Operation(summary = "Get proposals report", description = "Retrieves proposals report in CSV format from Report service")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Report retrieved successfully"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @RequestMapping(value = "/secured/proposals-report", method = RequestMethod.GET, produces = "text/csv")
+    @ResponseBody
+    ResponseEntity<String> getProposalsReport();
 }

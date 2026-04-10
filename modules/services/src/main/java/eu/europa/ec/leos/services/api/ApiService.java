@@ -139,4 +139,6 @@ public interface ApiService {
     String findDocumentRefByPackageIdAndCategory(String packageId, String category);
 
     Package findPackageByName(String packageName);
+
+    String getProposalsReport();
 }

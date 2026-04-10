@@ -865,6 +865,19 @@ public class LeosApiController implements LeosApi {
         }
     }
 
+    @Override
+    public ResponseEntity<String> getProposalsReport() {
+        try {
+            LOG.info("Starting proposals report generation...");
+            String csvData = apiService.getProposalsReport();
+            LOG.info("Proposals report generated successfully");
+            return ResponseEntity.ok(csvData);
+        } catch (Exception ex) {
+            LOG.error("Error occurred while getting proposals report: " + ex.getMessage(), ex);
+            return new ResponseEntity<>("Error occurred while getting proposals report", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     /**
      * API endpoint for injecting elements into EdiT documents.
      * Handles requests from external applications (e.g., DG SANTE EMP2) to modify document content.

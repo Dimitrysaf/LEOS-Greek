@@ -191,6 +191,9 @@ public class RestRepository extends AbstractRestClient {
     @Value("${leos.rest.repository.documents.search.clones}")
     private String leosRestSearchClonedDocumentsURI;
 
+    @Value("${leos.rest.repository.proposals.report}")
+    private String leosRestProposalReportURI;
+
     @Autowired
     private RepositoryPropertiesMapper repositoryPropertiesMapper;
 
@@ -761,5 +764,25 @@ public class RestRepository extends AbstractRestClient {
         String url = getUrl(leosRestSearchClonedDocumentsURI);
         LOGGER.info("Search in url={}]", url);
         return getEntity(url, LeosDocumentList.class, proposalRef);
+    }
+
+    public String getProposalsReport(String applnUrl) {
+        String url = leosRestRepositoryURL + leosRestProposalReportURI;
+        String urlTemplate = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("applnUrl", "{applnUrl}")
+                .encode()
+                .toUriString();
+        LOGGER.info("Calling Report service with extended timeout: {}", urlTemplate);
+        
+        // Create a RestTemplate with extended timeout only for this call
+        org.springframework.http.client.SimpleClientHttpRequestFactory requestFactory = 
+            new org.springframework.http.client.SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(300000); // 5 minutes
+        requestFactory.setReadTimeout(-1); // No timeout
+        
+        org.springframework.web.client.RestTemplate longTimeoutRestTemplate = 
+            new org.springframework.web.client.RestTemplate(requestFactory);
+        
+        return longTimeoutRestTemplate.getForObject(urlTemplate, String.class, applnUrl);
     }
 }
