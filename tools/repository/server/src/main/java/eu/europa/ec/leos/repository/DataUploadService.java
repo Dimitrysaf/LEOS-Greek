@@ -151,8 +151,8 @@ abstract class DataUploadService {
         jdbcTemplate.update(updateAllIsLastVersionTo0);
 
         String updateAllIsLastVersionAccordingToVersionStart = "update config_version v set is_latest_version = 1 " +
-                "where version_label = " +
-                "(select max(version_label) from config, config_version, config_content " +
+                "where (NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 1), 0)*1000000000) + (NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 2), 0)*1000000) + (NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 3), 0)*1000) +NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 4), 0) = " +
+                "(select max((NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 1), 0)*1000000000) + (NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 2), 0)*1000000) + (NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 3), 0)*1000) +NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 4), 0)) from config, config_version, config_content " +
                 "where config.id = config_version.config_id and config_content.version_id = config_version.id " +
                 "and config.id = v.config_id " +
                 "and REGEXP_COUNT(version_label, '\\.') <= 3 ";
@@ -165,9 +165,9 @@ abstract class DataUploadService {
         } else {
             String updateAllIsLastVersionAccordingToVersion =
                 updateAllIsLastVersionAccordingToVersionStart +
-                "and version_label <= ? " +
+                "and (NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 1), 0)*1000000000) + (NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 2), 0)*1000000) + (NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 3), 0)*1000) + NVL(REGEXP_SUBSTR(version_label, '[^.]+', 1, 4), 0) <= (NVL(REGEXP_SUBSTR(?, '[^.]+', 1, 1), 0)*1000000000) + (NVL(REGEXP_SUBSTR(?, '[^.]+', 1, 2), 0)*1000000) + (NVL(REGEXP_SUBSTR(?, '[^.]+', 1, 3), 0)*1000) + NVL(REGEXP_SUBSTR(?, '[^.]+', 1, 4), 0) " +
                 updateAllIsLastVersionAccordingToVersionEnd;
-            jdbcTemplate.update(updateAllIsLastVersionAccordingToVersion, version);
+            jdbcTemplate.update(updateAllIsLastVersionAccordingToVersion, version, version, version, version);
         }
 
     }
