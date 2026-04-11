@@ -951,6 +951,7 @@ Feature: fork and merge features
    Then user is on act viewer page
 
 # Ticket LEOS#3081: Clone Proposal : Wrong structure is creating when we outdent an unnumbered paragraph
+#Ticket LEOS#3139 wrong numbering created when we indent the paragraph and again outdent to its previous position
   @IndentAndOutdentScenarios @local
  Scenario: Indent/Outdent Scenario
     Given navigate to leos application with "User1"
@@ -968,6 +969,38 @@ Feature: fork and merge features
     Then user is on legal act page
     When mouseover and click on article 1
     Then ck editor window is displayed
+    Then numbered paragraph 1 of article contains "Text..." in edition mode
+    And  numbered paragraph 2 of article contains "Text..." in edition mode
+    When click at offset 7 of li 2 with data-akn-element "paragraph" of article in edition mode
+    And  click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on increase indent icon present in ck editor panel
+    And  add "point a" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on increase indent icon present in ck editor panel
+    And add "point i" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And  click on decrease indent icon present in ck editor panel
+    And click on decrease indent icon present in ck editor panel
+    And  click on decrease indent icon present in ck editor panel
+    And click on decrease indent icon present in ck editor panel
+    And add "paragraph3" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on increase indent icon present in ck editor panel
+    And  add "parag3 point a" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And  click on decrease indent icon present in ck editor panel
+    And click on decrease indent icon present in ck editor panel
+    And  click on decrease indent icon present in ck editor panel
+    And click on decrease indent icon present in ck editor panel
+    And add "paragraph4" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    When click on insert after icon of article 1
+    When mouseover and click on article 2
+    Then ck editor window is displayed
     When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
     And  click enter from keyboard in edition mode
     And click on increase indent icon present in ck editor panel
@@ -979,7 +1012,7 @@ Feature: fork and merge features
     And add "point c" at current cursor position in edition mode
     When click save and close button of ck editor
     Then ck editor window is not displayed
-    When mouseover and click on article 2
+    When mouseover and click on article 3
     Then ck editor window is displayed
     When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
     And  click enter from keyboard in edition mode
@@ -993,9 +1026,9 @@ Feature: fork and merge features
     And click save and close button of ck editor
     Then ck editor window is not displayed
     And  content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 2 contains "Text..."
-    And  content of point 1 of list 1 of paragraph 1 of article 2 contains "point 1"
-    And  content of point 2 of list 1 of paragraph 1 of article 2 contains "point 2"
-    And  content of point 3 of list 1 of paragraph 1 of article 2 contains "point 3"
+    And  content of point 1 of list 1 of paragraph 1 of article 3 contains "point 1"
+    And  content of point 2 of list 1 of paragraph 1 of article 3 contains "point 2"
+    And  content of point 3 of list 1 of paragraph 1 of article 3 contains "point 3"
     When click on close button present in legal act page
     Then user is on act viewer page
     When click on milestones tab in act view page
@@ -1018,40 +1051,81 @@ Feature: fork and merge features
     And  chip content container 2 of act header contains "LEOS"
     When click on legal act link present in act viewer page
     Then user is on legal act page
+    When mouseover on article 1
+    And num tag of paragraph 1 of article 1 contains "1."
+    Then content of paragraph 1 of article 1 contains "Text..."
+    And num tag of paragraph 2 of article 1 contains "2."
+    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 2 of article 1 contains "Text..."
+    And num tag of point 1 of list 1 of paragraph 2 of article 1 contains "(a)"
+    And  content of point 1 of list 1 of paragraph 2 of article 1 contains "point a"
+    And  num tag of point 1 of list 1 of point 1 of list 1 of paragraph 2 of article 1 contains "(i)"
+    And content of point 1 of list 1 of point 1 of list 1 of paragraph 2 of article 1 contains "point i"
+    And num tag of paragraph 3 of article 1 contains "3."
+    Then content of paragraph 3 of article 1 contains "paragraph3"
+    And num tag of point 1 of list 1 of paragraph 2 of article 1 contains "(a)"
+    And num tag of paragraph 3 of article 1 contains "3."
+    And  content of point 1 of list 1 of paragraph 3 of article 1 contains "parag3 point a"
+    And num tag of paragraph 4 of article 1 contains "4."
+    Then content of paragraph 4 of article 1 contains "paragraph4"
     When mouseover and click on article 1
+    Then ck editor window is displayed
+    When click at offset 7 of li 1 with data-akn-element "subparagraph" of li 2 with data-akn-element "paragraph" of article in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on decrease indent icon present in ck editor panel
+    And click save and close button of ck editor
+    Then ck editor window is not displayed
+    And num tag of paragraph 1 of article 1 contains "1."
+    Then content of paragraph 1 of article 1 contains "Text..."
+    And num tag of paragraph 2 of article 1 contains "2."
+    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 2 of article 1 contains "Text..."
+    And num tag of point 1 of list 1 of paragraph 2 of article 1 contains "(a)"
+    And  content of point 1 of list 1 of paragraph 2 of article 1 contains "point a"
+    And  num tag of point 1 of list 1 of point 1 of list 1 of paragraph 2 of article 1 contains "(i)"
+    And content of point 1 of list 1 of point 1 of list 1 of paragraph 2 of article 1 contains "point i"
+    And num tag of paragraph 3 of article 1 contains "3."
+    Then content of paragraph 3 of article 1 contains "paragraph3"
+    And num tag of point 1 of list 1 of paragraph 2 of article 1 contains "(a)"
+    And num tag of paragraph 3 of article 1 contains "3."
+    And  content of point 1 of list 1 of paragraph 3 of article 1 contains "parag3 point a"
+    And num tag of paragraph 4 of article 1 contains "4."
+    Then content of paragraph 4 of article 1 contains "paragraph4"
+    When mouseover and click on article 2
     Then ck editor window is displayed
     When click at offset 7 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
     And click on decrease indent icon present in ck editor panel
     And click on decrease indent icon present in ck editor panel
     And  click save and close button of ck editor
     Then ck editor window is not displayed
-    Then del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 2 of article 1 contains value "(a)"
-    And ins tag with attribute "leos\:action-number" and value "insert" of num tag of paragraph 2 of article 1 contains value "2."
-    And content of subparagraph 1 of list 1 of paragraph 2 of article 1 contains "point a"
-    And "del" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 1 has attribute "leos:action-number" with value "delete"
-    And "del" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 1 contains "(b)"
-    And "ins" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 1 has attribute "leos:action-number" with value "insert"
-    And "ins" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 1 contains "(a)"
-    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 1 has attribute "leos:action-number" with value "delete"
-    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 1 contains "(c)"
-    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 1 has attribute "leos:action-number" with value "insert"
-    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 1 contains "(b)"
-    And content of point 1 of list 1 of paragraph 2 of article 1 contains "point b"
-    And content of point 2 of list 1 of paragraph 2 of article 1 contains "point c"
-    When mouseover and click on article 2
+    Then del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 2 of article 2 contains value "(a)"
+    And ins tag with attribute "leos\:action-number" and value "insert" of num tag of paragraph 2 of article 2 contains value "2."
+    And content of subparagraph 1 of list 1 of paragraph 2 of article 2 contains "point a"
+    And "del" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 2 has attribute "leos:action-number" with value "delete"
+    And "del" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 2 contains "(b)"
+    And "ins" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 2 has attribute "leos:action-number" with value "insert"
+    And "ins" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 2 contains "(a)"
+    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 2 has attribute "leos:action-number" with value "delete"
+    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 2 contains "(c)"
+    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 2 has attribute "leos:action-number" with value "insert"
+    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 2 contains "(b)"
+    And content of point 1 of list 1 of paragraph 2 of article 2 contains "point b"
+    And content of point 2 of list 1 of paragraph 2 of article 2 contains "point c"
+    When mouseover and click on article 3
     Then ck editor window is displayed
     And  click at offset 7 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
     And click on decrease indent icon present in ck editor panel
     And click save and close button of ck editor
-    Then del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 2 of article 2 contains value "(1)"
-    And content of subparagraph 1 of list 1 of paragraph 2 of article 2 contains "point 1"
-    And "del" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 1 has attribute "leos:action-number" with value "delete"
-    And "del" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 2 contains "(2)"
-    And "ins" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 2 has attribute "leos:action-number" with value "insert"
-    And "ins" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 2 contains "(1)"
-    And  content of point 1 of list 1 of paragraph 2 of article 2 contains "point 2"
-    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 1 has attribute "leos:action-number" with value "delete"
-    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 2 contains "(3)"
-    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 1 has attribute "leos:action-number" with value "insert"
-    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 2 contains "(2)"
-    And content of point 2 of list 1 of paragraph 2 of article 2 contains "point 3"
+    Then del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 2 of article 3 contains value "(1)"
+    And content of subparagraph 1 of list 1 of paragraph 2 of article 3 contains "point 1"
+    And "del" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 3 has attribute "leos:action-number" with value "delete"
+    And "del" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 3 contains "(2)"
+    And "ins" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 3 has attribute "leos:action-number" with value "insert"
+    And "ins" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 3 contains "(1)"
+    And  content of point 1 of list 1 of paragraph 2 of article 3 contains "point 2"
+    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 3 has attribute "leos:action-number" with value "delete"
+    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 3 contains "(3)"
+    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 3 has attribute "leos:action-number" with value "insert"
+    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 3 contains "(2)"
+    And content of point 2 of list 1 of paragraph 2 of article 3 contains "point 3"
+
+
+

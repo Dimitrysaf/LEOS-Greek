@@ -735,6 +735,14 @@ class ckEditorWindow {
     moveCursorToSpecificOffsetInSecondLayerPointOfParagraphOfArticle(offset, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3) {
         return this.getSecondLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3).invoke('attr', 'id').then(id => this.moveCursor(offset, "[id='" + id + "']"))
     }
+    getSubparagraphOfParagraphOfArticle(subparaoffset, subparaLi, subparaDataAknElement, paragraphLi, paragraphDataAknElement) {
+        return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find("ol li[data-akn-element='" + subparaDataAknElement + "']").eq(subparaLi - 1);
+    }
+
+    moveCursorToSpecificOffsetInSubaragraphOfParagraphOfArticle(subparaoffset, subparaLi, SubparaDataAknElement, paragraphLi, paragraphDataAknElement) {
+        this.getSubparagraphOfParagraphOfArticle(subparaoffset, subparaLi, SubparaDataAknElement, paragraphLi, paragraphDataAknElement).invoke('attr', 'id').then(id => this.moveCursor(subparaoffset, "#" + id));
+    }
+
 
     clickTcRejectThisChangeMenuItem() {
         this.elements.tcRejectThisChangeMenu()

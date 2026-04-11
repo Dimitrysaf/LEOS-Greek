@@ -931,3 +931,7 @@ Then('click on reject this change context menu option in edition mode', function
 });
 
 
+
+When(`click at offset {int} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode`, (subparaoffset, subparaLi, SubparaDataAknElement, paragraphLi, paragraphDataAknElement) => {
+    ckEditorWindow.moveCursorToSpecificOffsetInSubaragraphOfParagraphOfArticle(subparaoffset, subparaLi, SubparaDataAknElement, paragraphLi, paragraphDataAknElement);
+});

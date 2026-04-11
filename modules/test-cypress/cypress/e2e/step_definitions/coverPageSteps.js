@@ -31,3 +31,7 @@ When(/^click on edit icon of docPurpose$/, function () {
 Then('text of eeaRelevance container of cover page is {string}', function (text) {
     coverPage.elements.eeaRelevanceContainer().should("have.text", text);
 });
+
+Then(`title of cover page contains {string}`, (title) => {
+    coverPage.elements.docPurpose().should("have.text", title);
+});
