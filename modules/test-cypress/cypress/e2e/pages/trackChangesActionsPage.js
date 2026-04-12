@@ -3,7 +3,6 @@ class trackChangesActionsPage {
         trackChangesActions: () => cy.get('app-track-changes-actions'),
         rejectThisChangeBtn: () => this.elements.trackChangesActions().find("button[title='Reject this change']"),
         acceptThisChangeBTn: () => this.elements.trackChangesActions().find("button[title='Accept this change']"),
-        tcRejectThisChangeMenu: () => cy.get('a[title="Reject this change"]'),
     }
 
 
@@ -18,10 +17,6 @@ class trackChangesActionsPage {
 
     }
 
-    clickTcRejectThisChangeMenuItem() {
-        this.elements.tcRejectThisChangeMenu()
-            .should('be.visible')
-            .click();
-    }
+
 }
 export default new trackChangesActionsPage();

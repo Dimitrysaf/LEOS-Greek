@@ -924,4 +924,10 @@ Then('right click in li {int} with data-akn-element {string} of li {int} with da
     }
 );
 
+Then('click on reject this change context menu option in edition mode', function () {
+    ckEditorWindow.getIframeBodyTcPlugin().within(() => {
+        ckEditorWindow.clickTcRejectThisChangeMenuItem();
+    });
+});
+
 
