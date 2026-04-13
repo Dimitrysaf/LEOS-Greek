@@ -1520,7 +1520,6 @@ Feature: Track Changes Feature
     And ins tag of num tag of paragraph 3 of article 1 contains attribute 'leos:action-number' with value 'insert'
     And num tag of paragraph 3 of article 1 doesn't contain "del" tag
 
-  #Ticket 3045 :Rejecting a point creating a wrong structure also included
   @rejectingTrackChanges @local
   Scenario: to test rejecting track changes for different scenarios
     Given navigate to leos application with "User1"
@@ -1578,6 +1577,7 @@ Feature: Track Changes Feature
     And  enacting terms doesn't contain new element in navigation pane
     When disable track changes
     Then enable track changes toggle bar is off in ribbon toolbar
+    # Start Ticket 3045 :Rejecting a point creating a wrong structure also included
     When click on insert after icon of article 10
     When mouseover and click on article 11
     Then ck editor window is displayed
@@ -1614,8 +1614,7 @@ Feature: Track Changes Feature
     And  content of point 2 of list 1 of paragraph 1 of article 11 contains "point c"
     When mouseover and click on article 11
     Then ck editor window is displayed
-   # And do right click in li 2 with data-akn-element "paragraph" of li 1 with data-akn-element "paragraph" of article in edition mode
-    And right click in li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+    And do right click on the extreme top left corner of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
     And click on reject this change context menu option in edition mode
     And click save and close button of ck editor
     Then ck editor window is not displayed
@@ -1625,6 +1624,8 @@ Feature: Track Changes Feature
     And  content of point 3 of list 1 of paragraph 1 of article 11 contains "point c"
     When click on close button present in legal act page
     Then user is on act viewer page
+    #End Ticket 3045  : Rejecting a point creating a wrong structure also included
+
     When click on add button in annexes section
     Then total number of annexes present in act viewer page is 1
     When click on annex 1 link

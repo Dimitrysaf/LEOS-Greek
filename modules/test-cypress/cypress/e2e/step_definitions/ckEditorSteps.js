@@ -917,7 +917,7 @@ Then(`cut icon is disabled in ck editor panel`, () => {
 });
 
 
-Then('right click in li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode',
+Then('do right click on the extreme top left corner of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode',
     function (pointLi, pointDataAknElement1, paragraphLi, paragraphDataAknElement) {
     ckEditorWindow.getPointOfParagraphOfArticle(pointLi, pointDataAknElement1, paragraphLi, paragraphDataAknElement)
             .rightclick(0,0);
