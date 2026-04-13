@@ -1575,8 +1575,57 @@ Feature: Track Changes Feature
     And  click on reject this change option under track changes action
     Then total article count is 10
     And  enacting terms doesn't contain new element in navigation pane
+    When disable track changes
+    Then enable track changes toggle bar is off in ribbon toolbar
+    # Start Ticket 3045 :Rejecting a point creating a wrong structure also included
+    When click on insert after icon of article 10
+    When mouseover and click on article 11
+    Then ck editor window is displayed
+    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+    And  click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on increase indent icon present in ck editor panel
+    And  add "point a" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And add "point b" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And add "point c" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 11 contains "Text..."
+    And  content of point 1 of list 1 of paragraph 1 of article 11 contains "point a"
+    And  content of point 2 of list 1 of paragraph 1 of article 11 contains "point b"
+    And  content of point 3 of list 1 of paragraph 1 of article 11 contains "point c"
+    When  enable track changes
+    And mouseover and click on article 11
+    Then ck editor window is displayed
+    And click at offset 7 in li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+    And click on increase indent icon present in ck editor panel
+    And  click on increase indent icon present in ck editor panel
+    And click save and close button of ck editor
+    Then  ck editor window is not displayed
+    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 11 contains "Text..."
+    And  content of point 1 of list 1 of paragraph 1 of article 11 contains "point a"
+    Then 'del' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 11 has html "(b)"
+    Then 'ins' tag 1 of num tag of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 11 has html "(i)"
+    And content of point 1 of list 1 of point 1 of list 1 of paragraph 1 of article 11 contains "point b"
+    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 1 of article 11 has attribute "leos:action-number" with value "delete"
+    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 1 of article 11 has attribute "leos:action-number" with value "insert"
+    And  content of point 2 of list 1 of paragraph 1 of article 11 contains "point c"
+    When mouseover and click on article 11
+    Then ck editor window is displayed
+    And do right click on the extreme top left corner of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+    And click on reject this change context menu option in edition mode
+    And click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 11 contains "Text..."
+    And  content of point 1 of list 1 of paragraph 1 of article 11 contains "point a"
+    And  content of point 2 of list 1 of paragraph 1 of article 11 contains "point b"
+    And  content of point 3 of list 1 of paragraph 1 of article 11 contains "point c"
     When click on close button present in legal act page
     Then user is on act viewer page
+    #End Ticket 3045  : Rejecting a point creating a wrong structure also included
+
     When click on add button in annexes section
     Then total number of annexes present in act viewer page is 1
     When click on annex 1 link
@@ -2020,8 +2069,8 @@ Feature: Track Changes Feature
     When click on next button in create document page
     When tick guidance approval checkbox in create document page
     When click on next button in create document page
-    And  provide document title "Automation Testing Alternative Signature " in create document page
-    And  click on create button
+    And  provide document title "Automation Testing Alternative Signature" in create document page
+     And  click on create button
     Then user is on act viewer page
     When click on legal act link present in act viewer page
     Then user is on legal act page
@@ -2029,7 +2078,7 @@ Feature: Track Changes Feature
     And  ribbon toolbar is maximized
     When enable track changes
     Then enable track changes toggle bar is on in ribbon toolbar
-   And  organization 1 of signature of block 1 contains text "For the Commission"
+    And  organization 1 of signature of block 1 contains text "For the Commission"
     And role 1 of block 1 contains text "The President"
     And signature of the person 1 of block 1 contains text "[...]"
     When mouseover and click on block 1

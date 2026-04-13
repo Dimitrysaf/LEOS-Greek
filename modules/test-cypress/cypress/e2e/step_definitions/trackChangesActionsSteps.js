@@ -1,4 +1,4 @@
-import {When} from "@badeball/cypress-cucumber-preprocessor";
+import { When} from "@badeball/cypress-cucumber-preprocessor";
 import trackChangesActionsPage from "../pages/trackChangesActionsPage";
 
 When(/^click on reject this change option under track changes action$/, function () {

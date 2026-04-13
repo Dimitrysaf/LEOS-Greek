@@ -915,3 +915,19 @@ When('click at offset {int} in li {int} with data-akn-element {string} of li {in
 Then(`cut icon is disabled in ck editor panel`, () => {
     ckEditorWindow.elements.cutIcon().invoke('attr', 'class').should('contain', 'disabled');
 });
+
+
+Then('do right click on the extreme top left corner of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode',
+    function (pointLi, pointDataAknElement1, paragraphLi, paragraphDataAknElement) {
+    ckEditorWindow.getPointOfParagraphOfArticle(pointLi, pointDataAknElement1, paragraphLi, paragraphDataAknElement)
+            .rightclick(0,0);
+    }
+);
+
+Then('click on reject this change context menu option in edition mode', function () {
+    ckEditorWindow.getIframeBodyTcPlugin().within(() => {
+        ckEditorWindow.clickTcRejectThisChangeMenuItem();
+    });
+});
+
+
