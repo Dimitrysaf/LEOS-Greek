@@ -96,7 +96,7 @@ public interface MetadataService {
      * @param diffusionVersion Diffusion number of a final document (can be null)
      * @param xmlFile XML file to add the cote data
      * */
-    void processDiffusionVersion(String diffusionVersion, XmlUtil.XmlFile xmlFile);
+    void processDiffusionVersion(String diffusionVersion, boolean isCoteOrFinalCotePresent, XmlUtil.XmlFile xmlFile);
 
     /**
      * Process the final cote field and add the data to the xml
