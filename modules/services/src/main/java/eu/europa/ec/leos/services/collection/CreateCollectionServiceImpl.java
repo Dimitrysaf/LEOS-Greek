@@ -121,6 +121,8 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             CollectionContextService context = proposalContextProvider.get();
             context.usePurpose(documentVO.getMetadata().getDocPurpose());
             context.useEeaRelevance(documentVO.getMetadata().isEeaRelevance());
+            context.useConfidentiality(documentVO.getMetadata().getConfidentiality());
+            context.useNonSensitivityTitle(documentVO.getMetadata().getNonSensitivityTitle());
             context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
             context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
             context.useLanguage(documentVO.getMetadata().getLanguage());

@@ -12,6 +12,8 @@ public class CreateProposalRequest {
     private boolean customTemplateAct;
     private boolean fromCustomTemplate;
     private String key;
+    private String confidentiality;
+    private String nonSensitivityTitle;
 
     public String getTemplateId() {
         return templateId;
@@ -77,6 +79,22 @@ public class CreateProposalRequest {
         this.key = key;
     }
 
+    public String getConfidentiality() {
+        return confidentiality;
+    }
+
+    public void setConfidentiality(String confidentiality) {
+        this.confidentiality = confidentiality;
+    }
+
+    public String getNonSensitivityTitle() {
+        return nonSensitivityTitle;
+    }
+
+    public void setNonSensitivityTitle(String nonSensitivityTitle) {
+        this.nonSensitivityTitle = nonSensitivityTitle;
+    }
+
     @Override
     public String toString() {
         return "ProposalRequest{" +
@@ -88,6 +106,8 @@ public class CreateProposalRequest {
                 ", customTemplateAct=" + customTemplateAct +
                 ", fromCustomTemplate=" + fromCustomTemplate +
                 ", key=" + key +
+                ", confidentiality=" + confidentiality +
+                ", nonSensitivityTitle=" + nonSensitivityTitle +
                 '}';
     }
 
