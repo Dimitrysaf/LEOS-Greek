@@ -155,8 +155,8 @@ public class LeosApiController implements LeosApi {
     @Value("${leos.api.jwt.auth.access.token.expire.min}")
     private String accessTokenExpirationInMin;
 
-    @Value("${notification.functional.mailbox}")
-    private String notificationRecipient;
+    @Value("#{'${conval.notification.functional.mailbox}'.split(',')}")
+    private List<String> notificationRecipient;
 
     @Autowired
     public LeosApiController(LegService legService, WorkspaceService workspaceService, TokenService tokenService,
@@ -829,9 +829,9 @@ public class LeosApiController implements LeosApi {
                 if (email != null) {
                     notificationService.sendNotification(new DocumentExternalValidationNotification(email, "", new Date(), "", legFile.getOriginalFileName(), resultZipFile.getBytes()));
                 }
-                if (email == null || !notificationRecipient.equals(email)) {
-                    notificationService.sendNotification(new DocumentExternalValidationNotification(notificationRecipient, "", new Date(), "", legFile.getOriginalFileName(), resultZipFile.getBytes()));
-                }
+                notificationRecipient.stream()
+                        .filter(r -> email == null || !r.equals(email))
+                        .forEach(r -> notificationService.sendNotification(new DocumentExternalValidationNotification(r, "", new Date(), "", legFile.getOriginalFileName(), resultZipFile.getBytes())));
             }
 
             return new ResponseEntity<>(HttpStatus.OK);
