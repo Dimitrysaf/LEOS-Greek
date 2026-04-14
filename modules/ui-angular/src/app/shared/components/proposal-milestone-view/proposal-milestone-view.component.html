@@ -103,7 +103,7 @@
                 <app-resize-handle
                   [leftEl]="tocPaneElement?.nativeElement"
                   [rightEl]="documentPaneElement?.nativeElement"
-                  *ngIf="!isTocPaneCollapsed"
+                  *ngIf="!isTocPaneCollapsed && !getFilenameExtension(doc.xml)"
                 ></app-resize-handle>
 
                 <!-- Document -->
