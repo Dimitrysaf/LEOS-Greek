@@ -51,7 +51,7 @@ define(function aknCrossHeadingProfileModule(require) {
     pluginTools.addExternalPlugins(externalPluginsNames);
     var extraPlugins = pluginNames.concat(externalPluginsNames).join(",");
     var transformationConfigResolver = transformationConfigManager.getTransformationConfigResolverForPlugins(pluginNames);
-    var leosPasteFilter = pluginTools.createFilterList(transformationConfigResolver);
+    var leosPasteFilter = pluginTools.createFilterList(transformationConfigResolver, pluginNames);
 
     var profileName = "AKN Cross Heading";
 
