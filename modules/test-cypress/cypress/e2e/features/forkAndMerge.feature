@@ -967,6 +967,7 @@ Feature: fork and merge features
     Then user is on act viewer page
     When click on legal act link present in act viewer page
     Then user is on legal act page
+    # Ticket Start #3139 wrong numbering created when we indent the paragraph and again outdent to its previous position
     When mouseover and click on article 1
     Then ck editor window is displayed
     Then numbered paragraph 1 of article contains "Text..." in edition mode
@@ -998,6 +999,7 @@ Feature: fork and merge features
     And add "paragraph4" at current cursor position in edition mode
     When click save and close button of ck editor
     Then ck editor window is not displayed
+   # End :#3139 wrong numbering created when we indent the paragraph and again outdent to its previous position
     When click on insert after icon of article 1
     When mouseover and click on article 2
     Then ck editor window is displayed
@@ -1051,6 +1053,7 @@ Feature: fork and merge features
     And  chip content container 2 of act header contains "LEOS"
     When click on legal act link present in act viewer page
     Then user is on legal act page
+    #Ticket #3139 wrong numbering created when we indent the paragraph and again outdent to its previous position (Validation ))
     When mouseover on article 1
     And num tag of paragraph 1 of article 1 contains "1."
     Then content of paragraph 1 of article 1 contains "Text..."
@@ -1069,7 +1072,7 @@ Feature: fork and merge features
     Then content of paragraph 4 of article 1 contains "paragraph4"
     When mouseover and click on article 1
     Then ck editor window is displayed
-    When click at offset 7 of li 1 with data-akn-element "subparagraph" of li 2 with data-akn-element "paragraph" of article in edition mode
+    When click at offset 7 in li 1 with data-akn-element "subparagraph" of li 2 with data-akn-element "paragraph" of article in edition mode
     And click on increase indent icon present in ck editor panel
     And click on decrease indent icon present in ck editor panel
     And click save and close button of ck editor
@@ -1089,6 +1092,7 @@ Feature: fork and merge features
     And  content of point 1 of list 1 of paragraph 3 of article 1 contains "parag3 point a"
     And num tag of paragraph 4 of article 1 contains "4."
     Then content of paragraph 4 of article 1 contains "paragraph4"
+   #End :Ticket#3139 wrong numbering created when we indent the paragraph and again outdent to its previous position
     When mouseover and click on article 2
     Then ck editor window is displayed
     When click at offset 7 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode

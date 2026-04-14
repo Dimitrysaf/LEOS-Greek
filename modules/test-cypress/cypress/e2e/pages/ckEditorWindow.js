@@ -244,7 +244,7 @@ class ckEditorWindow {
         return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement + "']").eq(li - 1);
     }
 
-    getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
+    getSubElementOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
         return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find("ol li[data-akn-element='" + pointDataAknElement + "']").eq(pointLi - 1);
     }
 
@@ -253,7 +253,7 @@ class ckEditorWindow {
     }
 
     getElementPTagOfPointOfParagraphOfArticle(pTag, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
-        return this.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).find('p').eq(pTag - 1);
+        return this.getSubElementOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).find('p').eq(pTag - 1);
     }
 
     getLiTagFromOlOfBlockContainer(attributeName, attributeValue) {
@@ -301,12 +301,12 @@ class ckEditorWindow {
         this.getPTagFromBlockContainer(attributeName, attributeValue).invoke('attr', 'id').then(id => this.moveCursor(offSet, "#" + id));
     }
 
-    moveCursorToSpecificOffsetInPointOfParagraphOfArticle(pointOffset, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
-        this.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).invoke('attr', 'id').then(id => this.moveCursor(pointOffset, "#" + id));
+    moveCursorToSpecificOffsetInSubElementOfParagraphOfArticle(pointOffset, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
+        this.getSubElementOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).invoke('attr', 'id').then(id => this.moveCursor(pointOffset, "#" + id));
     }
 
     moveCursorToSpecificOffsetInPTagOfPointOfParagraphOfArticle(pointOffset, pTag, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
-        this.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).find('p').eq(pTag - 1).invoke('attr', 'id').then(id => this.moveCursor(pointOffset, "#" + id));
+        this.getSubElementOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).find('p').eq(pTag - 1).invoke('attr', 'id').then(id => this.moveCursor(pointOffset, "#" + id));
     }
 
     appendContentInParagraphOfArticle(newContent, offset, paragraphNumber, child) {
@@ -318,7 +318,7 @@ class ckEditorWindow {
     }
 
     addContentInPointOfParagraphOfArticle(newContent, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
-        this.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).type(newContent);
+        this.getSubElementOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).type(newContent);
     }
 
     addContentInSecondLayerPointOfParagraphOfArticle(newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3) {
@@ -734,13 +734,6 @@ class ckEditorWindow {
     }
     moveCursorToSpecificOffsetInSecondLayerPointOfParagraphOfArticle(offset, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3) {
         return this.getSecondLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3).invoke('attr', 'id').then(id => this.moveCursor(offset, "[id='" + id + "']"))
-    }
-    getSubparagraphOfParagraphOfArticle(subparaoffset, subparaLi, subparaDataAknElement, paragraphLi, paragraphDataAknElement) {
-        return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find("ol li[data-akn-element='" + subparaDataAknElement + "']").eq(subparaLi - 1);
-    }
-
-    moveCursorToSpecificOffsetInSubaragraphOfParagraphOfArticle(subparaoffset, subparaLi, SubparaDataAknElement, paragraphLi, paragraphDataAknElement) {
-        this.getSubparagraphOfParagraphOfArticle(subparaoffset, subparaLi, SubparaDataAknElement, paragraphLi, paragraphDataAknElement).invoke('attr', 'id').then(id => this.moveCursor(subparaoffset, "#" + id));
     }
 
 

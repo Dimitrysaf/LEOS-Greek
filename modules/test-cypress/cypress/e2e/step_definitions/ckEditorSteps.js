@@ -294,7 +294,7 @@ Then('li {int} with data-akn-element {string} of article contains attribute {str
 });
 
 When(`click at offset {int} in li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode`, (pointOffset, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) => {
-    ckEditorWindow.moveCursorToSpecificOffsetInPointOfParagraphOfArticle(pointOffset, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement);
+    ckEditorWindow.moveCursorToSpecificOffsetInSubElementOfParagraphOfArticle(pointOffset, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement);
 });
 
 When(`p tag {int} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains {string} in edition mode`, (pTag, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement, newContent) => {
@@ -410,7 +410,7 @@ Then('{int} paragraphs are present in article in edition mode', function (paragr
 });
 
 When('do right click in li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode', function (pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
-    ckEditorWindow.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).rightclick({force: true});
+    ckEditorWindow.getSubElementOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).rightclick({force: true});
 });
 
 When('do right click in li {int} with data-akn-element {string} of article in edition mode', function (paragraphLi, paragraphDataAknElement) {
@@ -418,11 +418,11 @@ When('do right click in li {int} with data-akn-element {string} of article in ed
 });
 
 Then("li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article doesn't contain attribute {string} in edition mode", function (pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement, attributeName) {
-    ckEditorWindow.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).should('not.have.attr', attributeName);
+    ckEditorWindow.getSubElementOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).should('not.have.attr', attributeName);
 });
 
 Then('li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains attribute {string} in edition mode', function (pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement, attributeName) {
-    ckEditorWindow.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).should('have.attr', attributeName);
+    ckEditorWindow.getSubElementOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).should('have.attr', attributeName);
 });
 
 Then("li {int} with data-akn-element {string} of article doesn't contain attribute {string} in edition mode", function (paragraphLi, paragraphDataAknElement, attributeName) {
@@ -430,7 +430,7 @@ Then("li {int} with data-akn-element {string} of article doesn't contain attribu
 });
 
 Then('li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains attribute {string} with value {string} in edition mode', function (pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement, attributeName, attributeValue) {
-    ckEditorWindow.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).should('have.attr', attributeName, attributeValue);
+    ckEditorWindow.getSubElementOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).should('have.attr', attributeName, attributeValue);
 });
 
 Then('li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains attribute {string} with value {string} in edition mode', function (pointLiSecondLayer, pointDataAknElementSecondLayer, pointLiFirstLayer, pointDataAknElementFirstLayer, paragraphLi, paragraphDataAknElement, attributeName, attributeValue) {
@@ -446,7 +446,7 @@ Then('background color of li {int} with data-akn-element {string} of article is 
 });
 
 Then('background color of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article is {string} in edition mode', function (pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement, backgroundColor) {
-    ckEditorWindow.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).should('have.css', 'background-color').and('eq', backgroundColor);
+    ckEditorWindow.getSubElementOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).should('have.css', 'background-color').and('eq', backgroundColor);
 });
 
 When('click on cut icon present in ck editor panel', function () {
@@ -919,7 +919,7 @@ Then(`cut icon is disabled in ck editor panel`, () => {
 
 Then('do right click on the extreme top left corner of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode',
     function (pointLi, pointDataAknElement1, paragraphLi, paragraphDataAknElement) {
-    ckEditorWindow.getPointOfParagraphOfArticle(pointLi, pointDataAknElement1, paragraphLi, paragraphDataAknElement)
+    ckEditorWindow.getSubElementOfParagraphOfArticle(pointLi, pointDataAknElement1, paragraphLi, paragraphDataAknElement)
             .rightclick(0,0);
     }
 );
@@ -928,10 +928,4 @@ Then('click on reject this change context menu option in edition mode', function
     ckEditorWindow.getIframeBodyTcPlugin().within(() => {
         ckEditorWindow.clickTcRejectThisChangeMenuItem();
     });
-});
-
-
-
-When(`click at offset {int} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode`, (subparaoffset, subparaLi, SubparaDataAknElement, paragraphLi, paragraphDataAknElement) => {
-    ckEditorWindow.moveCursorToSpecificOffsetInSubaragraphOfParagraphOfArticle(subparaoffset, subparaLi, SubparaDataAknElement, paragraphLi, paragraphDataAknElement);
 });

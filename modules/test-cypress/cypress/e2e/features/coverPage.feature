@@ -61,7 +61,7 @@ Feature: cover page Regression Features
         And  special character button is enabled in ck editor
         And  show blocks button is enabled in ck editor
         And  source button is enabled in ck editor
-        When replace content "Automation Testing Cover Page" with the existing content in cover page long title 
+        When replace content "Automation Testing Cover Page" with the existing content in cover page long title
         And  click save and close button of ck editor
         Then long title docPurpose of cover page is "Automation Testing Cover Page"
         When click on versions pane accordion
@@ -109,72 +109,64 @@ Feature: cover page Regression Features
         When click on home link in breadcrumb item
         Then user is on home page
 
-     #Ticket 3150: Revert version: Revert changes in cover page is not updating the title in legal act
-    @CoverPageTitle @local
-    Scenario: Revert version: Revert changes in cover page is not updating the title in legal act
-        And  title of the act contains "Automation Cover Page Testing" keyword
-        When click on cover page link present in act viewer page
-        Then user is on cover page
-        And title of cover page contains "Automation Cover Page Testing"
-        When  click on close button present in cover page
-        Then user is on act viewer page
-        When click on legal act link present in act viewer page
-        Then user is on legal act page
-        And  annotation side bar is present
-        And  ribbon toolbar is maximized
-        And  toc editing button is displayed and enabled
-        And  preface long title docPurpose contains "Automation Cover Page Testing"
-        When click on close button present in legal act page
-        Then user is on act viewer page
-        When click on cover page link present in act viewer page
-        Then user is on cover page
-        When click search button in ribbon toolbar
-        Then document search bar is displayed
-        When put keyword "Automation" in document search input box
-        When click on the replace button from search bar
-        Then document replace bar is displayed
-        When put keyword "Title" in replace document search input box
-        When click on replace all button from document replace bar
-        Then "Replace all text" dialog box window is displayed
-        When click on ok button in dialog box window
-        And  click on save and close button from search bar
-        Then title of cover page contains "Title Cover Page Testing"
-        When click on versions pane accordion
-        And click on three vertical dots of card header title "Version 0.1.0 - Document created" in version pane
-        Then only below options are displayed in dropdown content
-            | dropdownContent        |
-            | View this version      |
-            | Revert to this version |
-            | Export this version    |
-        When click on revert to this version
-        Then "Restore Version" dialog box window is displayed
-        When click on revert button in dialog box
-        Then title of cover page contains "Automation Cover Page Testing"
-        When click on show more button in "Recent changes" eui-card
-        And click on three vertical dots of eui-card containing "Search and replace" with index 2 in version pane
-        Then only below options are displayed in dropdown content
-            | dropdownContent        |
-            | View this version      |
-            | Revert to this version |
-            | Export this version    |
-            | Archive this version   |
-        When click on revert to this version
-        Then "Restore Version" dialog box window is displayed
-        When click on revert button in dialog box
-        Then title of cover page contains "Title Cover Page Testing"
-        When click on close button present in cover page
-        Then user is on act viewer page
-        When click on legal act link present in act viewer page
-        Then user is on legal act page
-        And preface long title docPurpose contains "Title Cover Page Testing"
-        When click on versions pane accordion
-        And click on three vertical dots of card header title "Version 0.1.0 - Document created" in version pane
-        Then preface long title docPurpose contains "Title Cover Page Testing"
-        When click on close button present in legal act page
-        Then user is on act viewer page
-        And  title of the act contains "Title Cover Page Testing" keyword
-        When click on cover page link present in act viewer page
-        Then user is on cover page
-        And title of cover page contains "Title Cover Page Testing"
-
-
+        #Ticket 3150: Revert version: Revert changes in cover page is not updating the title in legal act
+      When click on proposal 1 in my latest activity table
+      Then user is on act viewer page
+      When click on cover page link present in act viewer page
+      Then user is on cover page
+      And long title docPurpose of cover page is "Automation Testing Cover Page"
+      When click search button in ribbon toolbar
+      Then document search bar is displayed
+      When put keyword "Automation" in document search input box
+      When click on the replace button from search bar
+      Then document replace bar is displayed
+      When put keyword "Title" in replace document search input box
+      When click on replace all button from document replace bar
+      Then "Replace all text" dialog box window is displayed
+      When click on ok button in dialog box window
+      And  click on save and close button from search bar
+      Then long title docPurpose of cover page is "Title Testing Cover Page"
+      When click on home button
+      Then user is on home page
+      And  my latest activity table is displayed
+      When click on proposal 1 in my latest activity table
+      Then user is on act viewer page
+      And  title of the act contains "Title Testing Cover Page" keyword
+      When click on legal act link present in act viewer page
+      Then user is on legal act page
+      And preface long title docPurpose contains "Title Testing Cover Page"
+      When click on versions pane accordion
+      And click on three vertical dots of card header title "Version 0.1.0 - Document created" in version pane
+      Then only below options are displayed in dropdown content
+        | dropdownContent        |
+        | View this version      |
+        | Revert to this version |
+        | Export this version    |
+      When click on revert to this version
+      Then "Restore Version" dialog box window is displayed
+      When click on revert button in dialog box
+      Then preface long title docPurpose contains "Title Testing Cover Page"
+      When click on close button present in legal act page
+      Then user is on act viewer page
+      When click on cover page link present in act viewer page
+      Then user is on cover page
+      When click on versions pane accordion
+      And click on three vertical dots of card header title "Version 0.1.0 - Document created" in version pane
+      Then only below options are displayed in dropdown content
+        | dropdownContent        |
+        | View this version      |
+        | Revert to this version |
+        | Export this version    |
+      When click on revert to this version
+      Then "Restore Version" dialog box window is displayed
+      When click on revert button in dialog box
+      Then long title docPurpose of cover page is "Automation Cover Page Testing"
+      When click on close button present in cover page
+      Then user is on act viewer page
+      Then user is on act viewer page
+      And  title of the act contains "Automation Cover Page Testing" keyword
+      When click on legal act link present in act viewer page
+      Then user is on legal act page
+      And preface long title docPurpose contains "Automation Cover Page Testing"
+      When click on close button present in legal act page
+      Then user is on act viewer page

@@ -1179,6 +1179,9 @@ Feature: Legal Act Page Regression Features
     Then search result is showing "3 of 4"
     When click previous button in document search bar
     Then search result is showing "2 of 4"
+   # Ticket : 3150
+    When put keyword "Automation Testing Cover pge" in document search input box
+    Then search result is showing "Not Found"
     When click on cancel button in document search bar
     Then document search bar is not present
 
