@@ -507,7 +507,7 @@
   "page.collection.drafts.annex.same.name.error.yes": "Oui",
   "page.collection.drafts.annex.same.name.error.no": "Non",
   "page.collection.drafts.annex.invalid.file.title": "Annexes",
-  "page.collection.drafts.annex.invalid.file.message": "Fichier invalide",
+  "page.collection.drafts.annex.invalid.file.message": "Le fichier doit être dans l'un de ces formats: PDF/A (standard d'archivage), DOCX ou XLSX.<br>Veuillez convertir votre document avant de réessayer.",
   "page.collection.drafts.annex.max.size.error.title": "Annexes",
   "page.collection.drafts.annex.max.size.error.message": "La taille maximale de 50 MB à été dépassée",
   "page.collection.drafts.foreign.annex.download": "Télécharger",
