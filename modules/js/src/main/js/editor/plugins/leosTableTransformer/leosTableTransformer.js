@@ -180,10 +180,11 @@ define(function leosTableTransformer(require) {
             var TH_BODY_MATCH_FROM = new RegExp(_anchor([htmlTableTag,'tbody',rowTransformationConfig.html,cellTransformationConfig.html.head].join(PSR)),'i');
             var TH_HEAD_MATCH_FROM = new RegExp(_anchor([htmlTableTag,'thead',rowTransformationConfig.html,cellTransformationConfig.html.head].join(PSR)),'i');
 
-            // Reg exps to match paths /table/tr/td for AKN and /table/tbody/tr/td for HTML
+            // Reg exps to match paths /table/tr/td for AKN and /table/tbody/tr/td or /table/thead/tr/td for HTML
             // REMARK: Added tbody in the AKN reg exp because browsers add by default tbody in the DOM
             var TD_MATCH_TO = new RegExp(_anchor([aknTableTag,'(\/tbody)?\/',rowTransformationConfig.akn,'\/',cellTransformationConfig.akn.body].join('')),'i');
             var TD_MATCH_FROM = new RegExp(_anchor([htmlTableTag,'tbody',rowTransformationConfig.html,cellTransformationConfig.html.body].join(PSR)),'i');
+            var TD_HEAD_MATCH_FROM = new RegExp(_anchor([htmlTableTag,'thead',rowTransformationConfig.html,cellTransformationConfig.html.body].join(PSR)),'i');
 
             // Is element part of the heading row. If true, to be placed in the HTML thead tag
             // To be part of the heading rows, a row should contain only 'th' tags
@@ -242,7 +243,7 @@ define(function leosTableTransformer(require) {
                                 //Matches all content elements of caption to /table/caption
                                 _createContentChildrenFromHtmlToAkn.call(this, element, targetPath, false);
                             // From /table/tbody/tr or /table/thead/tr to /table/tr
-                            } else if ((TR_BODY_MATCH_FROM.test(path)) || (TR_HEAD_MATCH_FROM.test(path))) { 
+                            } else if ((TR_BODY_MATCH_FROM.test(path)) || (TR_HEAD_MATCH_FROM.test(path))) {
                                 var targetPath = aknTableTag + '/' + rowTransformationConfig.akn; // table/tr
                                 this.mapToProducts(element, {
                                     toPath: targetPath,
@@ -256,6 +257,15 @@ define(function leosTableTransformer(require) {
                                     attrs: _convertAttrs.call(this, cellTransformationConfig.attr)
                                 });
                                 //Matches all content elements of th to td to /table/tr/th or /table/tr/th/mp if these are inline elements
+                                _createContentChildrenFromHtmlToAkn.call(this, element, targetPath, true);
+                            // From /table/thead/tr/td to /table/tr/th (Desktop Word uses <td> in <thead>)
+                            } else if (TD_HEAD_MATCH_FROM.test(path)) {
+                                var targetPath = aknTableTag + '/' + rowTransformationConfig.akn + '/' + cellTransformationConfig.akn.head; // table/tr/th
+                                this.mapToProducts(element, {
+                                    toPath: targetPath,
+                                    attrs: _convertAttrs.call(this, cellTransformationConfig.attr)
+                                });
+                                //Matches all content elements to /table/tr/th or /table/tr/th/mp if these are inline elements
                                 _createContentChildrenFromHtmlToAkn.call(this, element, targetPath, true);
                             // From /table/tbody/tr/td to /table/tr/td
                             } else if (TD_MATCH_FROM.test(path)) {
@@ -295,6 +305,36 @@ define(function leosTableTransformer(require) {
                                     toPath : targetPath,
                                     toChild : 'tbody',
                                 });
+                            // Handle table/thead element - pass it through
+                            } else if (path.match(/^table\/thead$/i)) {
+                                var targetPath = htmlTableTag + '/thead';
+                                this.mapToChildProducts(element, {
+                                    toPath: htmlTableTag,
+                                    toChild: 'thead'
+                                });
+                            // Handle table/thead/tr - map to table/thead/tr
+                            } else if (path.match(/^table\/thead\/tr$/i)) {
+                                var targetPath = htmlTableTag + '/thead/tr';
+                                this.mapToProducts(element, {
+                                    toPath: targetPath,
+                                    attrs: _convertAttrs.call(this, rowTransformationConfig.attr)
+                                });
+                            // Handle table/thead/tr/th - map to table/thead/tr/th
+                            } else if (path.match(/^table\/thead\/tr\/th$/i)) {
+                                var targetPath = htmlTableTag + '/thead/tr/th';
+                                this.mapToProducts(element, {
+                                    toPath: targetPath,
+                                    attrs: _convertAttrs.call(this, cellTransformationConfig.attr)
+                                });
+                                _createContentChildrenAknToHtml.call(this, element, targetPath, true);
+                            // Handle table/thead/tr/td - convert to th (Desktop Word uses <td> in <thead>)
+                            } else if (path.match(/^table\/thead\/tr\/td$/i)) {
+                                var targetPath = htmlTableTag + '/thead/tr/th';
+                                this.mapToProducts(element, {
+                                    toPath: targetPath,
+                                    attrs: _convertAttrs.call(this, cellTransformationConfig.attr)
+                                });
+                                _createContentChildrenAknToHtml.call(this, element, targetPath, true);
                             // From /table/caption to /table/caption
                             } else if (CAPTION_MATCH_TO.test(path)) {
                                 var targetPath = htmlTableTag + '/caption';

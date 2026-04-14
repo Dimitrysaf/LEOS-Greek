@@ -85,7 +85,7 @@ define(function pluginToolsModule(require) {
         transformationConfigManager.addTransformationConfigForPlugin(transformationConfig, pluginName);
     }
 
-    function createFilterList(transformationConfigResolver) {
+    function createFilterList(transformationConfigResolver, pluginNames, tableOnlyMode) {
         var filterList = [];
         var config = transformationConfigResolver._.resolverConfigs.from;
         for (var el in config) {
@@ -99,7 +99,16 @@ define(function pluginToolsModule(require) {
                 }
             }
         }
-        return filterList.join("; ");
+        var filter = filterList.join("; ");
+        
+        // Automatically append table paste filter if leosTable plugin is present
+        // BUT exclude if tableOnlyMode is enabled (table structure already exists, only cell content editable)
+        if (pluginNames && pluginNames.indexOf('leosTable') > -1 && !tableOnlyMode) {
+            var leosPluginUtils = require("plugins/leosPluginUtils");
+            filter += leosPluginUtils.LEOS_TABLE_PASTE_FILTER;
+        }
+        
+        return filter;
     }
 
     // return module definition
