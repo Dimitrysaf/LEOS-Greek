@@ -79,11 +79,11 @@
       "list": [
         {
           "index": "1",
-          "content": "<article xml:id=\"art2\" leos:editable=\"true\" leos:deletable=\"true\" leos:autonumbering=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\"><num leos:editable=\"false\">{{bl.num2}}</num><heading xml:id=\"art2Heading\">{{bl.heading}}</heading><paragraph><content><p>{{bl.firstParagraphOfArticle2.decision}}</p></content></paragraph></article>"
+          "content": "<article xml:id=\"art2\" leos:editable=\"true\" leos:deletable=\"true\" leos:autonumbering=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\"><num xml:id=\"art2Num\" leos:editable=\"false\">{{bl.num2}}</num><heading xml:id=\"art2Heading\">{{bl.heading}}</heading><paragraph xml:id=\"art1Para1\"><content xml:id=\"art1Para1Content\"><p>{{bl.firstParagraphOfArticle2.decision}}</p></content></paragraph></article>"
         },
         {
           "index": "2",
-          "content": "<article xml:id=\"art2\" leos:editable=\"true\" leos:deletable=\"true\" leos:autonumbering=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\"><num leos:editable=\"false\">{{bl.num2}}</num><heading xml:id=\"art2Heading\">{{bl.heading}}</heading><paragraph><content><p>{{bl.firstParagraphOfArticle2Alternative.decision}}</p></content></paragraph></article>"
+          "content": "<article xml:id=\"artN2\" leos:editable=\"true\" leos:deletable=\"true\" leos:autonumbering=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\"><num xml:id=\"art2Num\" leos:editable=\"false\">{{bl.num2}}</num><heading xml:id=\"art2Heading\">{{bl.heading}}</heading><paragraph xml:id=\"art1Para1\"><content xml:id=\"art1Para1Content\"><p>{{bl.firstParagraphOfArticle2Alternative.decision}}</p></content></paragraph></article>"
         }
       ]
     },
