@@ -118,6 +118,8 @@ public class CollectionContextProposalService extends CollectionContextService {
                 .withActType(templatePropertiesMap.get(ACT_TYPE))
                 .withProcedureType(templatePropertiesMap.get(PROCEDURE_TYPE))
                 .withEeaRelevance(eeaRelevance)
+                .withConfidentiality(confidentiality)
+                .withNonSensitivityTitle(nonSensitivityTitle)
                 .withCustomTemplateAct(customTemplateAct)
                 .withFromCustomTemplate(fromCustomTemplate)
                 .withRef(this.originRef)

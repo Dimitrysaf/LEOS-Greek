@@ -200,6 +200,8 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
         metadataConfig.put(DOC_TYPE_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:docType", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "leos:docType"), new XmlNodeConfig.Attribute("source", "~COM", "proprietary"))));
         metadataConfig.put(DOC_PURPOSE_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:docPurpose", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "leos:docPurpose"), new XmlNodeConfig.Attribute("source", "~COM", "proprietary"))));
         metadataConfig.put(DOC_REF_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:ref", true, Collections.emptyList()));
+        metadataConfig.put(CONFIDENTIALITY, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:confidentiality", true, Collections.emptyList()));
+        metadataConfig.put(NON_SENSITIVITY_TITLE, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:nonSensitivityTitle", true, Collections.emptyList()));
         metadataConfig.put(DOC_OBJECT_ID, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:objectId", true, Collections.emptyList()));
         metadataConfig.put(DOC_TEMPLATE, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:template", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "leos:template"))));
         metadataConfig.put(DOC_SPECIFIC_TEMPLATE, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:docTemplate", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "leos:docTemplate"))));

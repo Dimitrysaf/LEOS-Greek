@@ -48,6 +48,15 @@ public interface WorkspaceApi {
     @ResponseBody
     ResponseEntity<Object> createPackage(@Parameter(description = "Create proposal request") @RequestBody CreateProposalRequest request);
 
+    @Operation(summary = "Create package V2", description = "Creates a new proposal package with specified configuration")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Package created successfully"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @RequestMapping(value = "/v2/createPackage", method = RequestMethod.POST)
+    @ResponseBody
+    ResponseEntity<Object> createPackageV2(@Parameter(description = "Create proposal request") @RequestBody CreateProposalRequest request);
+
     @Operation(summary = "Get templates", description = "Retrieves all available document templates")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Templates retrieved successfully"),
