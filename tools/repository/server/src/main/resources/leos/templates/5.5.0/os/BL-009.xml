@@ -58,7 +58,7 @@
             </container>
             <longTitle>
                 <p>
-                    <docType refersTo="~DEC_IMPL">{{docType.009}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
+                    <docType refersTo="~DEC_IMPL">{{docType.impl.decision}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
                     <docPurpose>{{docPurpose}}</docPurpose>
                 </p>
             </longTitle>
@@ -75,7 +75,7 @@
                     <p>{{bl.citation2Before}}<authorialNote marker="1" placement="bottom"><p>{{bl.citation2inside}}</p></authorialNote>{{bl.citation2after}}</p>
                 </citation>
                 <citation leos:editable="true">
-                    <p>{{bl.citation3.009}}</p>
+                    <p>{{bl.citation3.committee}}</p>
                 </citation>
             </citations>
             <recitals leos:editable="false">

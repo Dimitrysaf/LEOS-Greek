@@ -38,15 +38,14 @@
                 <TLCLocation xml:id="BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
                 <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
                 <TLCReference xml:id="ACT_AUTO_COM" href="http://publications.europa.eu/resource/authority/resource-type/ACT_AUTO_COM" name="docType" showAs="Commission autonomous act"/>
-                <TLCReference xml:id="EXPL_MEMORANDUM" href="http://publications.europa.eu/resource/authority/resource-type/EXPL_MEMORANDUM" name="docType" showAs="Explanatory memorandum"/>
                 <TLCReference xml:id="DEC_IMPL" href="http://publications.europa.eu/resource/authority/resource-type/DEC_IMPL" name="docType" showAs="Implementing decision"/>
                 <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/{{language3}}" name="language" showAs="{{language}}"/>
             </references>
             <proprietary source="~COM">
                 <leos:templateVersion>1.0.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
-                <leos:template>SJ-009</leos:template>
-                <leos:docTemplate>PR-009</leos:docTemplate>
+                <leos:template>SJ-031</leos:template>
+                <leos:docTemplate>PR-031</leos:docTemplate>
             </proprietary>
         </meta>
         <coverPage>
@@ -69,7 +68,7 @@
             </container>
             <longTitle>
                 <p>
-                    <docType refersTo="~DEC_IMPL">{{docType.impl.decision}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>
+                    <docType refersTo="~DEC_IMPL">{{docType.impl.decision}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
                     <docPurpose  leos:editable="true" leos:deletable="false">{{docPurpose}}</docPurpose>
                 </p>
             </longTitle>
