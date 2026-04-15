@@ -951,7 +951,6 @@ Feature: fork and merge features
    Then user is on act viewer page
 
 # Ticket LEOS#3081: Clone Proposal : Wrong structure is creating when we outdent an unnumbered paragraph
-#Ticket LEOS#3139 wrong numbering created when we indent the paragraph and again outdent to its previous position
   @IndentAndOutdentScenarios @local
  Scenario: Indent/Outdent Scenario
     Given navigate to leos application with "User1"
