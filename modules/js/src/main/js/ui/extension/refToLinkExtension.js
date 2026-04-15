@@ -49,7 +49,7 @@ define(function refToLinkExtensionModule(require) {
 
         if (Array.isArray(elementsMetadata) && elementsMetadata.length > 0 && elementsMetadata[0]?.language) {
             let lang = elementsMetadata[0].language.toUpperCase();
-            require(['text!lib/ref2Link_1.3.36/data/rules.' + lang + '.json'], function (rulesJson) {
+            require(['text!lib/ref2Link_1.3.37/data/rules.' + lang + '.json'], function (rulesJson) {
                 const rules = JSON.parse(rulesJson);
                 R2L.importRules(rules);
                 R2L.bindTooltips();
