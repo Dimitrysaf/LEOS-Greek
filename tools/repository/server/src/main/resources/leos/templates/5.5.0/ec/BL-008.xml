@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?>
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" xmlns:xml="http://www.w3.org/XML/1998/namespace">
-    <bill name="DIR">
+    <bill name="DIR_IMPL">
         <meta>
             <identification source="~COM">
                 <FRBRWork>
@@ -38,7 +38,7 @@
                 <TLCLocation xml:id="BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
                 <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
                 <TLCRole xml:id="PRESID" href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
-                <TLCReference xml:id="DIR" href="http://publications.europa.eu/resource/authority/resource-type/DIR" name="docType" showAs="Directive"/>
+                <TLCReference xml:id="DIR_IMPL" href="http://publications.europa.eu/resource/authority/resource-type/DIR_IMPL" name="docType" showAs="Implementing directive"/>
                 <TLCReference xml:id="legalBasis" href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis"/>
                 <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/{{language3}}" name="language" showAs="{{language}}"/>
                 <TLCConcept xml:id="ART_DEF" href="http://publications.europa.eu/resource/authority/subdivision-content/ART_DEF" showAs="Article on definitions"/>
@@ -46,8 +46,8 @@
             <proprietary source="~COM">
                 <leos:templateVersion>1.0.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
-                <leos:template>SJ-005</leos:template>
-                <leos:docTemplate>BL-005</leos:docTemplate>
+                <leos:template>SJ-008</leos:template>
+                <leos:docTemplate>BL-008</leos:docTemplate>
             </proprietary>
         </meta>
         <preface>
@@ -55,10 +55,10 @@
                 <p>
                     <docketNumber class="template" />
                 </p>
-            </container>  
+            </container>
             <longTitle>
                 <p>
-                    <docType refersTo="~DIR">{{docType.005}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
+                    <docType refersTo="~DIR_IMPL">{{docType.008}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>
                     <docPurpose>{{docPurpose}}</docPurpose>
                 </p>
             </longTitle>
@@ -73,7 +73,10 @@
                 </citation>
                 <citation leos:editable="true">
                     <p>{{bl.citation2Before}}<authorialNote marker="1" placement="bottom"><p>{{bl.citation2inside}}</p></authorialNote>{{bl.citation2after}}</p>
-                </citation>                
+                </citation>
+                <citation leos:editable="true">
+                    <p>{{bl.citation3}}</p>
+                </citation>
             </citations>
             <recitals leos:editable="false">
                 <intro><p>{{bl.intro}}</p></intro>
@@ -88,10 +91,10 @@
                 <recital leos:editable="true">
                     <num>(3)</num>
                     <p>{{bl.recital}}</p>
-                </recital>                
+                </recital>
                 <recital leos:editable="true">
                     <num>(4)</num>
-                    <p>{{bl.recital4.directive}}</p>
+                    <p>{{bl.recital3.008}}</p>
                 </recital>
             </recitals>
             <formula name="enactingFormula">
@@ -161,8 +164,8 @@
             <p>{{bl.conclusionDate}}</p>
             <block name="signatory" leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption2" leos:selectedoption="1">
                 <signature leos:optionlist="listOption2">
-                    <organization refersTo="~COM">{{bl.forCommission}}</organization>
-                    <role refersTo="~PRESID">{{bl.role.president}}</role>
+                    <organization refersTo="~_COM">{{bl.forCommission}}</organization>
+                    <role refersTo="~_PRESID">{{bl.role.president}}</role>
                     <person refersTo="">[...]</person>
                 </signature>
             </block>
