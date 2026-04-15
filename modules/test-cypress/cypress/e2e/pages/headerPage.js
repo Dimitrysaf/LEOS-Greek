@@ -1,6 +1,8 @@
 class headerPage {
     elements = {
         homeBtn: () => cy.get('div.eui-toolbar__left a').contains('Home'),
+        administrationDropDownBtn: () => cy.get('div.eui-dropdown__trigger-container button.ng-star-inserted'),
+        manageUsersAndEntityItem: () => cy.get('eui-dropdown-content[role=\'menu\'] li').contains('Manage users and entities'),
         breadCrumbItem: () => cy.get('div.eui-breadcrumb__items button'),
         actViewBreadCrumbItem: () => this.elements.breadCrumbItem().contains('Act View'),
         workspaceBreadCrumbItem: () => this.elements.breadCrumbItem().contains('Workspace'),
@@ -30,6 +32,14 @@ class headerPage {
 
     clickHomeLink(){
         this.elements.homeLink().click();
+    }
+
+    clickAdministrationDropDownButton(){
+        this.elements.administrationDropDownBtn().click();
+    }
+
+    clickManageUsersAndEntityItem(){
+        this.elements.manageUsersAndEntityItem().click();
     }
 
     getLoadingIcon(){
