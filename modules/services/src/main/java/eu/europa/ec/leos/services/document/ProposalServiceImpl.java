@@ -929,4 +929,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
         final String documentRef = proposalRepository.findDocumentRefByPackageIdAndCategory(packageId, category);
         return documentRef;
     }
+
+    @Override
+    public String getProposalsReport(String applnUrl) {
+        return proposalRepository.getProposalsReport(applnUrl);
+    }
 }

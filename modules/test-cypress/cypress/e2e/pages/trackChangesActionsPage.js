@@ -16,5 +16,7 @@ class trackChangesActionsPage {
         cy.wait(500);
 
     }
+
+
 }
 export default new trackChangesActionsPage();

@@ -41,13 +41,6 @@
         <url>https://ec.europa.eu</url>
     </organization>
 
-    <repositories>
-        <repository>
-            <id>shibboleth</id>
-            <url>https://build.shibboleth.net/nexus/content/repositories/releases</url>
-        </repository>
-    </repositories>
-
     <modules>
         <module>modules</module>
     </modules>
@@ -159,7 +152,8 @@
         <icu4j.version>78.1</icu4j.version>
         <jaxen-version>1.2.0</jaxen-version>
         <commons-text.version>1.14.0</commons-text.version>
-        <spring-security-extensions-saml2.version>1.0.9.RELEASE</spring-security-extensions-saml2.version>
+        <spring-security-extensions-saml2.version>1.0.10.RELEASE</spring-security-extensions-saml2.version>
+        <opensaml.version>2.6.6.wso2v4</opensaml.version>
         <commons-codec.version>1.20.0</commons-codec.version>
         <xml-sec.version>4.0.4</xml-sec.version>
         <xml-apis.version>1.4.01</xml-apis.version>

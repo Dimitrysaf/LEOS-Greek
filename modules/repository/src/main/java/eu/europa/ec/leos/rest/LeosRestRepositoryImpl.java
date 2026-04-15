@@ -1325,4 +1325,10 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         return toLeosDocuments(docs.getLeosDocumentList(), type, false);
     }
 
+    @Override
+    @PerformanceLogger
+    public String getProposalsReport(String applnUrl) {
+        logger.trace("Getting proposals report from Report service");
+        return repository.getProposalsReport(applnUrl);
+    }
 }

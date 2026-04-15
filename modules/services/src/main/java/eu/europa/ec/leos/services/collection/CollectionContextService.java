@@ -115,6 +115,8 @@ public abstract class CollectionContextService {
     private String versionComment;
     private String milestoneComment;
     protected Boolean eeaRelevance;
+    protected String confidentiality;
+    protected String nonSensitivityTitle;
     protected Boolean customTemplateAct;
     protected Boolean fromCustomTemplate;
     protected String packageTitle;
@@ -250,6 +252,14 @@ public abstract class CollectionContextService {
     public void useEeaRelevance(Boolean eeaRelevance) {
         LOG.trace("Using Proposal eeaRelevance... [eeaRelevance={}]", eeaRelevance);
         this.eeaRelevance = eeaRelevance;
+    }
+
+    public void useConfidentiality(String confidentiality) {
+        this.confidentiality = confidentiality;
+    }
+
+    public void useNonSensitivityTitle(String nonSensitivityTitle) {
+        this.nonSensitivityTitle = nonSensitivityTitle;
     }
 
     public void useCustomTemplateAct(Boolean customTemplateAct) {

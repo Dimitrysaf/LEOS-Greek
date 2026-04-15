@@ -47,8 +47,8 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
     private final LeosPrefinalisationService leosPrefinalisationService;
     private final Akn4EUUtilRestClient restClient;
 
-    @Value("${notification.functional.mailbox}")
-    private String notificationRecipient;
+    @Value("#{'${notification.functional.mailbox}'.split(',')}")
+    private List<String> notificationRecipients;
 
     @Autowired
     public LeosDocumentServiceImpl(LeosLegDocumentService leosLegDocumentService,
@@ -97,7 +97,7 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
 
     public void callLeosValidation(MultipartFile inputFile, String email) {
         try {
-            String recipient = (StringUtil.isEmpty(email) || !StringUtil.isEmailValid(email)) ? notificationRecipient : email;
+            String recipient = (StringUtil.isEmpty(email) || !StringUtil.isEmailValid(email)) ? notificationRecipients.getFirst() : email;
             restClient.callLeosValidation(convertFileToByteArray(inputFile), recipient);
         } catch (IOException e) {
             LOG.error("Error while calling leos validation - {}", e.getMessage());

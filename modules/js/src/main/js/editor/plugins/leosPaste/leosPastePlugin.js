@@ -20,46 +20,144 @@ define(function leosPastePluginModule(require) {
     'use strict';
 
     // load module dependencies
-    var pluginTools = require('plugins/pluginTools');
-    var pluginName = 'leosPaste';
-    var REF = "ref";
-    var MREF = "mref";
+    let pluginTools = require('plugins/pluginTools');
+    let pluginName = 'leosPaste';
+    let REF = "ref";
+    let MREF = "mref";
 
-    var pluginDefinition = {
+    let pluginDefinition = {
         init: function init(editor) {
 
             editor.on('paste', function (evt) {
-                // Parse the HTML string to pseudo-DOM structure.
-                var dataValue = evt.data.dataValue.replaceAll(/\sid=".*?"/g, '')
-                    .replaceAll(/\sdata-akn-mp-id=".*?"/g, '')
-                    .replaceAll(/<em /g, '<i ')
-                    .replaceAll(/<em>/g, '<i>')
-                    .replaceAll(/<\/em>/g, '<\/i>')
-                    .replaceAll(/<strong/g, '<b')
-                    .replaceAll(/strong>/g, 'b>')
-                    .replace(/&amp;nbsp;/g, ' ')// process non breaking spaces
-                    .replace(/&nbsp;/g, ' ')
-                    .replace(/&#xa0;/g, ' ')
-                    .replace(/&amp;#xa0;/g, ' ')
-                    .replace(/\u00A0/g, ' ')
-                    .replace(/&#160;/g, ' ');
+                let dataValue = evt.data.dataValue.trim();
+                let hasTable = dataValue.includes('<table');
+                let isWordContent = isContentFromWordOrXls(dataValue);
 
-                dataValue = _stripHtmlSecurely(dataValue);
-                var fragment = CKEDITOR.htmlParser.fragment.fromHtml(dataValue);
-                fragment.forEach( function( node ) {//saving editor to reuse later
-                    node.editor = editor;
-                });
-
-                //Process the structure
-                _processPaste(editor, fragment, evt.data.type);
-
-                //Write back the object structure in dataValue
-                var writer = new CKEDITOR.htmlParser.basicWriter();
-                fragment.writeHtml(writer);
-                evt.data.dataValue = writer.getHtml(false);
+                // In tableOnlyMode, treat table paste as regular content (only extract text, don't create new tables)
+                if (hasTable && (isWordContent || dataValue.startsWith('<table')) && !editor.config.tableOnlyMode) {
+                    evt.data.dataValue = cleanWordTable(dataValue);
+                } else {
+                    evt.data.dataValue = processRegularContent(editor, dataValue, evt.data.type);
+                }
             }, 7);
         }
     };
+
+    // Process regular (non-table, non-image) content
+    function processRegularContent(editor, dataValue, type) {
+        // Clean up HTML entities and tags
+        dataValue = dataValue.replaceAll(/\sid=".*?"/g, '')
+            .replaceAll(/\sdata-akn-mp-id=".*?"/g, '')
+            .replaceAll(/<em /g, '<i ')
+            .replaceAll(/<em>/g, '<i>')
+            .replaceAll(/<\/em>/g, '<\/i>')
+            .replaceAll(/<strong/g, '<b')
+            .replaceAll(/strong>/g, 'b>')
+            .replace(/&amp;nbsp;/g, ' ')
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&#xa0;/g, ' ')
+            .replace(/&amp;#xa0;/g, ' ')
+            .replace(/\u00A0/g, ' ')
+            .replace(/&#160;/g, ' ');
+
+        dataValue = _stripHtmlSecurely(dataValue);
+        let fragment = CKEDITOR.htmlParser.fragment.fromHtml(dataValue);
+        fragment.forEach(function (node) {
+            node.editor = editor;
+        });
+
+        _processPaste(editor, fragment, type);
+
+        let writer = new CKEDITOR.htmlParser.basicWriter();
+        fragment.writeHtml(writer);
+        return writer.getHtml(false);
+    }
+
+    function isContentFromWordOrXls(htmlString) {
+        return htmlString.includes('MsoTable') || htmlString.includes('data-tablestyle') ||
+        htmlString.includes('mso-') || htmlString.includes('class=Mso') || htmlString.includes('xmlns:w=') ;
+    }
+
+    function cleanWordTable(htmlString, isWordContent) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlString, 'text/html');
+        const table = doc.querySelector('table');
+
+        if (!table) return '';
+
+        // 1. Remove Word/Excel specific attributes from table
+        const wordAttrs = ['border', 'dir', 'data-tablestyle', 'data-tablelook', 'aria-rowcount',
+            'cellspacing', 'cellpadding', 'class', 'style'];
+        wordAttrs.forEach(attr => table.removeAttribute(attr));
+
+        // 2. Normalize table structure (keep tbody for proper HTML)
+        let tbody = table.querySelector('tbody');
+        if (!tbody) {
+            tbody = doc.createElement('tbody');
+            const rows = Array.from(table.querySelectorAll('tr'));
+            rows.forEach(row => tbody.appendChild(row));
+            table.appendChild(tbody);
+        }
+
+        // 3. Process all Rows
+        const rows = table.querySelectorAll('tr');
+        rows.forEach(row => {
+            // Remove Word-specific row attributes
+            const rowAttrsToRemove = [];
+            for (let i = 0; i < row.attributes.length; i++) {
+                const attr = row.attributes[i];
+                // Keep only data-akn-* attributes
+                if (!attr.name.startsWith('data-akn-')) {
+                    rowAttrsToRemove.push(attr.name);
+                }
+            }
+            rowAttrsToRemove.forEach(attr => row.removeAttribute(attr));
+
+            // 4. Process all Cells (td and th)
+            const cells = row.querySelectorAll('td, th');
+            cells.forEach(cell => {
+                // Preserve colspan/rowspan before cleaning
+                const colspan = cell.getAttribute('colspan');
+                const rowspan = cell.getAttribute('rowspan');
+                const width = cell.getAttribute('width');
+
+                // Get clean text content
+                const cleanText = cell.textContent.trim();
+
+                // Remove all attributes
+                while (cell.attributes.length > 0) {
+                    cell.removeAttribute(cell.attributes[0].name);
+                }
+
+                // Restore structural attributes if they existed and are meaningful
+                if (colspan && colspan !== '1') {
+                    cell.setAttribute('colspan', colspan);
+                }
+                if (rowspan && rowspan !== '1') {
+                    cell.setAttribute('rowspan', rowspan);
+                }
+
+                // Optionally preserve width for better layout
+                if (width && isWordContent) {
+                    cell.setAttribute('width', width);
+                }
+
+                // Replace messy innerHTML with clean <p> tag
+                if (cleanText) {
+                    cell.innerHTML = `<p>${cleanText}</p>`;
+                } else {
+                    // Handle empty cells
+                    cell.innerHTML = '<p>&nbsp;</p>';
+                }
+            });
+        });
+
+        table.setAttribute('border', '1');
+        table.setAttribute('style', 'width: 100%; border-collapse: collapse;');
+        table.setAttribute('data-akn-name', 'leosTable');
+
+        return table.outerHTML;
+    }
 
     var numberingRegex = new RegExp(/^\s*[([{]?.{1,3}(\..{1,2})*[.)\]}]?\s*$/);
     var htmlFilter = new CKEDITOR.htmlParser.filter({
@@ -76,7 +174,7 @@ define(function leosPastePluginModule(require) {
                 //remove element if element is block element and not allowed in editor
                 if (element.parent
                     && (CKEDITOR.dtd.$block[element.name] // p etc any block element
-                    || !allowedInEditor(element) )) { //TODO find solution for table in article
+                        || !allowedInEditor(element) )) { //TODO find solution for table in article
                     element.replaceWithChildren();
                 }
 
@@ -216,10 +314,10 @@ define(function leosPastePluginModule(require) {
             _wrapUnderMref(fragment);
         }
         else if (type === 'text') {
-			if(_hasElementNodes(fragment)) {
-				fragment.filter(htmlFilter);//clean using filter for html and text
-            	_convertToAknXmlFragment(editor, fragment);
-			}
+            if(_hasElementNodes(fragment)) {
+                fragment.filter(htmlFilter);//clean using filter for html and text
+                _convertToAknXmlFragment(editor, fragment);
+            }
             //it will come here as text for PDF
             //TODO
         }
@@ -232,7 +330,7 @@ define(function leosPastePluginModule(require) {
         for ( var idx = 0, len = fragment.children.length; idx < len; idx++ ) {
             if(fragment.children[idx].type == CKEDITOR.NODE_ELEMENT) {
                 return fragment.children[idx].attributes && fragment.children[idx].attributes.class &&
-                    fragment.children[idx].attributes.class.includes('cke_widget_wrapper') ? idx : -1;
+                fragment.children[idx].attributes.class.includes('cke_widget_wrapper') ? idx : -1;
             }
         }
     }
@@ -256,17 +354,17 @@ define(function leosPastePluginModule(require) {
         }
     }
 
-	function _hasElementNodes(fragment) {
-		if(!fragment || !fragment.children || fragment.children.length <= 0) {
-			return false;
-		}
-		for ( var idx = 0, len = fragment.children.length; idx < len; idx++ ) {
-			if(fragment.children[idx].type == CKEDITOR.NODE_ELEMENT) {
-				return true;
-			}
-		}
-		return false;
-	}
+    function _hasElementNodes(fragment) {
+        if(!fragment || !fragment.children || fragment.children.length <= 0) {
+            return false;
+        }
+        for ( var idx = 0, len = fragment.children.length; idx < len; idx++ ) {
+            if(fragment.children[idx].type == CKEDITOR.NODE_ELEMENT) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     function _convertToAknXmlFragment(editor, fragment) {
         var configElement = editor.config.defaultPasteElement;// this should come from profile

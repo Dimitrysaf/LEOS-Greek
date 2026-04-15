@@ -695,6 +695,14 @@ public class MetadataUtil {
                 .findFirst();
     }
 
+    public static boolean isCoteOrFinalCoteFieldPresent(ApplyMetadataRequest.ActionNode action) {
+        return action.getFields()
+                .stream()
+                .anyMatch(field -> field.getKey().equals(MetadataFieldType.COTE.toString())
+                        || field.getKey().equals(MetadataFieldType.FINAL_COTE.toString()));
+    }
+
+
     public static void addRefersToAttribute(Node xmlNode, final String id) {
         XmlUtil.setNodeAttributeValue(xmlNode, ATTRIBUTE_REFERSTO, "~" + id);
     }

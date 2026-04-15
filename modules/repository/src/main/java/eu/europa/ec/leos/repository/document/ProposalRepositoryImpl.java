@@ -205,4 +205,9 @@ public class ProposalRepositoryImpl implements ProposalRepository {
         return leosRepository.findConfigByName(name);
     }
 
+    @Override
+    public String getProposalsReport(String applnUrl) {
+        return leosRepository.getProposalsReport(applnUrl);
+    }
+
 }

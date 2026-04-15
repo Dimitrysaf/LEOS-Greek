@@ -71,7 +71,7 @@ define(function aknSignatoryProfileModule(require) {
     var externalPluginsNames = [];
     pluginTools.addExternalPlugins(externalPluginsNames);
     var extraPlugins = pluginNames.concat(externalPluginsNames).join(",");
-    var leosPasteFilter = pluginTools.createFilterList(transformationConfigResolver);
+    var leosPasteFilter = pluginTools.createFilterList(transformationConfigResolver, pluginNames);
 
     var profileName = "AKN Signatory";
 

@@ -23,6 +23,7 @@ public class CreateCollectionResult {
     private List<String> notFoundLanguages;
     private boolean collectionCreated;
     private CreateCollectionError error;
+    private String adoptionPlace;
 
     // For Jackson
     public CreateCollectionResult() {
@@ -106,5 +107,12 @@ public class CreateCollectionResult {
 
     public void setNotFoundLanguages(List<String> notFoundLanguages) {
         this.notFoundLanguages = notFoundLanguages;
+    }
+    public String getAdoptionPlace() {
+        return adoptionPlace;
+    }
+
+    public void setAdoptionPlace(String adoptionPlace) {
+        this.adoptionPlace = adoptionPlace;
     }
 }
