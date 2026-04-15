@@ -375,12 +375,12 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     private void addFinalVersionNumberToFilename(String diffusionVersion, XmlUtil.XmlFile xmlFile) {
-        final String versionNumber = MetadataUtil.VALUE_FINAL + (StringUtil.isEmpty(diffusionVersion) ? "" : "_" + diffusionVersion);
+        final String versionNumber = "-" + VALUE_FINAL + (StringUtil.isEmpty(diffusionVersion) ? "" : "_" + diffusionVersion);
         addVersionNumberToFilename(versionNumber, xmlFile);
     }
 
     private void addFinalVersionNumberToIdentification(String diffusionVersion, XmlUtil.XmlFile xmlFile) {
-        final String versionNumber = MetadataUtil.VALUE_FINAL + (StringUtil.isEmpty(diffusionVersion) ? "" : "/" + diffusionVersion);
+        final String versionNumber = VALUE_FINAL + (StringUtil.isEmpty(diffusionVersion) ? "" : "/" + diffusionVersion);
         addVersionNumberToIdentification(versionNumber, xmlFile);
     }
 
@@ -397,7 +397,7 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     private void addFinalToCoverPage(String diffusionVersion, XmlUtil.XmlFile xmlFile) {
-        final String versionNumber = MetadataUtil.VALUE_FINAL + (StringUtil.isEmpty(diffusionVersion) ? "" : "/" + diffusionVersion);
+        final String versionNumber = VALUE_FINAL + (StringUtil.isEmpty(diffusionVersion) ? "" : "/" + diffusionVersion);
         addVersionNumberToCoverPage(versionNumber, xmlFile);
     }
 
@@ -428,8 +428,8 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     @Override
-    public void processDiffusionVersion(String diffusionVersion, XmlUtil.XmlFile xmlFile) {
-        this.addDiffusionVersion(diffusionVersion, xmlFile);
+    public void processDiffusionVersion(String diffusionVersion, boolean isCoteOrFinalCotePresent, XmlUtil.XmlFile xmlFile) {
+        this.addDiffusionVersion(diffusionVersion, isCoteOrFinalCotePresent, xmlFile);
     }
 
     private void processCote(ReferenceFieldInfo fieldInfo, String diffusionVersion, boolean isFinal, XmlUtil.XmlFile xmlFile) {
@@ -475,17 +475,18 @@ public class MetadataServiceImpl implements MetadataService {
         }
     }
 
-    private void addDiffusionVersion(String diffusionVersion, XmlUtil.XmlFile xmlFile) {
-        if (!StringUtil.isEmpty(diffusionVersion)) {
+    private void addDiffusionVersion(String diffusionVersion, boolean isCoteOrFinalCotePresent, XmlUtil.XmlFile xmlFile) {
+        if (!StringUtil.isEmpty(diffusionVersion) && !isCoteOrFinalCotePresent && MetadataUtil.isMainDocumentFile(xmlFile)) {
             addVersionNumberToCoverPage("/" + diffusionVersion, xmlFile);
             addVersionNumberToFilename("_" + diffusionVersion, xmlFile);
         }
     }
 
     private void addVersionNumberToFilename(String versionNumber, XmlUtil.XmlFile xmlFile) {
-        final String fileName = xmlFile.getName().replace("-" + VALUE_FINAL, "");
+        final String fileName = xmlFile.getName().replaceAll("-(?:" + VALUE_FINAL + ")?(?:_\\d+)?(?=-)", "");
         final String[] splitFileName = fileName.split("-");
-        final String newFileName = Arrays.stream(splitFileName).reduce("", (a, b) -> b.endsWith(".xml") ? a + versionNumber + "-" + b : a + b + "-");
+        final String newFileName = Arrays.stream(splitFileName).reduce("", (a, b) -> b.endsWith(".xml") ? a.substring(0, a.length() - 1)
+                + versionNumber + "-" + b : a + b + "-");
         xmlFile.setName(newFileName);
     }
 

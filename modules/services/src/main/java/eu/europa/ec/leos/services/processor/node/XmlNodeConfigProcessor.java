@@ -36,6 +36,8 @@ public interface XmlNodeConfigProcessor {
     String DOC_SPECIFIC_TEMPLATE = "docSpecificTemplate";
 
     String DOC_REF_META = "docRef";
+    String CONFIDENTIALITY ="confidentiality";
+    String NON_SENSITIVITY_TITLE ="nonSensitivityTitle";
     String DOC_OBJECT_ID = "objectId";
     String DOC_PURPOSE_META = "docPurposeMeta";
     String DOC_STAGE_META = "docStageMeta";
@@ -105,6 +107,7 @@ public interface XmlNodeConfigProcessor {
     String SIGNATURE_PERSON_TC_DEL = "personDeleteTrackChange";
 
     List<String> docEEATagList = Arrays.asList(DOC_EEA_RELEVANCE_COVER, DOC_EEA_RELEVANCE_PREFACE, DOC_EEA_RELEVANCE_META);
+    List<String> newDecideAttributes = Arrays.asList(CONFIDENTIALITY,NON_SENSITIVITY_TITLE);
 
     Map<String, XmlNodeConfig> getConfig(LeosCategory proposal);
     Map<String, XmlNodeConfig> getOldPrefaceOfAnnexConfig();
@@ -215,7 +218,8 @@ public interface XmlNodeConfigProcessor {
         keyValueMap.put(DOC_LANGUAGE_COVER, metadata.getLanguage().toUpperCase());
         keyValueMap.put(DOC_VERSION, metadata.getDocVersion());
         keyValueMap.put(DOC_EEA_RELEVANCE_COVER, String.valueOf(metadata.getEeaRelevance()));
-
+        keyValueMap.put(CONFIDENTIALITY, metadata.getConfidentiality());
+        keyValueMap.put(NON_SENSITIVITY_TITLE, metadata.getNonSensitivityTitle());
         keyValueMap.put(FILE_CUID_PRESERVATION, metadata.getRef().split("-")[1]);
         keyValueMap.put(DOC_CUID_PRESERVATION, metadata.getRef().split("-")[1]);
 
@@ -378,5 +382,9 @@ public interface XmlNodeConfigProcessor {
 
     static List<String> getDocEEATagList() {
         return docEEATagList;
+    }
+
+    static List<String> getNewDecideAttributes() {
+        return newDecideAttributes;
     }
 }

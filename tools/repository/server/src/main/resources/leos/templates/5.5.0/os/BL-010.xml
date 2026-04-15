@@ -87,7 +87,7 @@
                 </recital>
                 <recital leos:editable="true">
                     <num>(3)</num>
-                    <p>{{bl.recital3.010}}</p>
+                    <p>{{bl.recital3.decision}}</p>
                 </recital>
             </recitals>
             <formula name="enactingFormula">
@@ -116,7 +116,7 @@
                 <heading>{{bl.heading}}</heading>
                 <paragraph>
                     <content>
-                        <p>{{bl.firstParagraphOfArticle2.010}}</p>
+                        <p>{{bl.firstParagraphOfArticle2.decision}}</p>
                     </content>
                 </paragraph>
             </article>

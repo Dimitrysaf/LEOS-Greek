@@ -76,7 +76,8 @@ define(function aknSubParagraphTableFSProfileModule(require) {
     pluginTools.addExternalPlugins(externalPluginsNames);
     var extraPlugins = pluginNames.concat(externalPluginsNames).join(",");
     var transformationConfigResolver = transformationConfigManager.getTransformationConfigResolverForPlugins(pluginNames);
-    var leosPasteFilter = pluginTools.createFilterList(transformationConfigResolver);
+    // Exclude table paste filter for tableOnlyMode (table structure already exists, only cell content editable)
+    var leosPasteFilter = pluginTools.createFilterList(transformationConfigResolver, pluginNames, true);
 
     var profileName = "AKN SubParagraph Table FS";
 
@@ -101,6 +102,8 @@ define(function aknSubParagraphTableFSProfileModule(require) {
         defaultPasteElement:'text',
         // force Paste as plain text
         forcePasteAsPlainText: false,
+        // Clipboard configuration - prefer HTML over plain text for tables
+        clipboard_defaultContentType: 'html',
         //Use native spellchecker
         disableNativeSpellChecker: false,
         // toolbar groups arrangement, optimized for a single toolbar row

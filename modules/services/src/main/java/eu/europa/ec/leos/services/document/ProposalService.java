@@ -144,4 +144,6 @@ public interface ProposalService {
     List<Proposal> searchClonesOfOriginalProposal(String proposalRef) throws Exception;
 
     List<CloneProposalMetadataVO> getClonedProposalMetadataVOs(String proposalRef, String proposalId, String docVersion, String legDocumentName);
+
+    String getProposalsReport(String applnUrl);
 }
