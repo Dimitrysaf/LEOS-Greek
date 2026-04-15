@@ -21,7 +21,6 @@ import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.bind.annotation.*;

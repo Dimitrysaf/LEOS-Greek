@@ -204,6 +204,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private ProposalConverterService proposalConverterService;
     private PostProcessingDocumentService postProcessingDocumentService;
     private ValidationService validationService;
+    private Properties applicationProperties;
     private ExplanatoryService explanatoryService;
     private ExportPackageService exportPackageService;
     protected NotificationService notificationService;
@@ -220,6 +221,9 @@ public abstract class ApiServiceImpl implements ApiService {
     protected DocumentViewService documentViewService;
     @Value("${leos.clone.originRef}")
     private String cloneOriginRef;
+
+    private static final String Standard ="Standard";
+    private static String adoptionPlace = "Brussels";
 
     @Autowired
     public ApiServiceImpl(CustomTemplateService customTemplateService,
@@ -277,6 +281,7 @@ public abstract class ApiServiceImpl implements ApiService {
         this.proposalConverterService = proposalConverterService;
         this.postProcessingDocumentService = postProcessingDocumentService;
         this.validationService = validationService;
+        this.applicationProperties=applicationProperties;
         this.userHelper = userHelper;
         this.explanatoryService = explanatoryService;
         this.exportPackageService = exportPackageService;
@@ -393,6 +398,31 @@ public abstract class ApiServiceImpl implements ApiService {
         documentVO.getMetadata().setFromCustomTemplate(fromCustomTemplate);
         CreateCollectionResult createCollectionResult = createCollectionService.createCollection(documentVO, false);
         createLinguisticVersionsFromCustomCatalog(documentVO, createCollectionResult, templateKey);
+        return createCollectionResult;
+    }
+
+    @Override
+    public CreateCollectionResult createProposalV2(String templateId, String templateName, String langCode,
+            String docPurpose, boolean eeaRelevance, boolean customTemplateAct, boolean fromCustomTemplate,
+            String templateKey, String confidentiality, String nonSensitivityTitle) throws CreateCollectionException {
+        if (customTemplateAct) {
+            userHelper.validateTemplateManager("This user is not allowed to create custom templates.");
+        }
+
+        DocumentVO documentVO = new DocumentVO(LeosCategory.PROPOSAL);
+        documentVO.getMetadata().setDocTemplate(templateId);
+        documentVO.getMetadata().setTemplateName(templateName);
+        documentVO.getMetadata().setLanguage(langCode);
+        documentVO.getMetadata().setDocPurpose(docPurpose);
+        documentVO.getMetadata().setEeaRelevance(eeaRelevance);
+        documentVO.getMetadata().setConfidentiality(StringUtils.isNotEmpty(confidentiality) ? confidentiality : Standard );
+        documentVO.getMetadata().setNonSensitivityTitle(nonSensitivityTitle);
+        documentVO.getMetadata().setTemplate(templateKey);
+        documentVO.getMetadata().setCustomTemplateAct(customTemplateAct);
+        documentVO.getMetadata().setFromCustomTemplate(fromCustomTemplate);
+        CreateCollectionResult createCollectionResult = createCollectionService.createCollection(documentVO, false);
+        createLinguisticVersionsFromCustomCatalog(documentVO, createCollectionResult, templateKey);
+        createCollectionResult.setAdoptionPlace(adoptionPlace);
         return createCollectionResult;
     }
 
@@ -1272,6 +1302,8 @@ public abstract class ApiServiceImpl implements ApiService {
         metadataVO.setInternalRef(proposal.getMetadata().get().getInternalRef());
         metadataVO.setCoverPageType(proposal.getMetadata().get().getCoverPageType());
         metadataVO.setCrossReferences(proposal.getMetadata().get().getCrossReferences());
+        metadataVO.setConfidentiality(proposal.getMetadata().get().getConfidentiality());
+        metadataVO.setNonSensitivityTitle(proposal.getMetadata().get().getNonSensitivityTitle());
         return metadataVO;
     }
 
@@ -2160,5 +2192,11 @@ public abstract class ApiServiceImpl implements ApiService {
     @Override
     public String findDocumentRefByPackageIdAndCategory(String packageId, String category) {
         return proposalService.findDocumentRefByPackageIdAndCategory(packageId, category);
+    }
+
+    @Override
+    public String getProposalsReport() {
+        String applnUrl = applicationProperties.getProperty("leos.mapping.url") + "/ui/collection/";
+        return proposalService.getProposalsReport(applnUrl);
     }
 }

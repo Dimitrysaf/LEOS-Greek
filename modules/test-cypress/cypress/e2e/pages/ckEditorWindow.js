@@ -49,6 +49,7 @@ class ckEditorWindow {
         tcActionDropdown: () => cy.get('ul.cke_panel_list > li.cke_panel_listItem > a'),
         insertListIcon: () => cy.get('.cke_button__leosindentlist'),
         cutIcon: () => cy.get('.cke_button__cut'),
+        tcRejectThisChangeMenu: () => cy.get('a[title="Reject this change"]'),
     }
 
     uploadImageFile(location, iframeClass) {
@@ -243,7 +244,7 @@ class ckEditorWindow {
         return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement + "']").eq(li - 1);
     }
 
-    getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
+    getSubElementOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
         return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find("ol li[data-akn-element='" + pointDataAknElement + "']").eq(pointLi - 1);
     }
 
@@ -252,7 +253,7 @@ class ckEditorWindow {
     }
 
     getElementPTagOfPointOfParagraphOfArticle(pTag, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
-        return this.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).find('p').eq(pTag - 1);
+        return this.getSubElementOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).find('p').eq(pTag - 1);
     }
 
     getLiTagFromOlOfBlockContainer(attributeName, attributeValue) {
@@ -300,12 +301,12 @@ class ckEditorWindow {
         this.getPTagFromBlockContainer(attributeName, attributeValue).invoke('attr', 'id').then(id => this.moveCursor(offSet, "#" + id));
     }
 
-    moveCursorToSpecificOffsetInPointOfParagraphOfArticle(pointOffset, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
-        this.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).invoke('attr', 'id').then(id => this.moveCursor(pointOffset, "#" + id));
+    moveCursorToSpecificOffsetInSubElementOfParagraphOfArticle(pointOffset, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
+        this.getSubElementOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).invoke('attr', 'id').then(id => this.moveCursor(pointOffset, "#" + id));
     }
 
     moveCursorToSpecificOffsetInPTagOfPointOfParagraphOfArticle(pointOffset, pTag, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
-        this.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).find('p').eq(pTag - 1).invoke('attr', 'id').then(id => this.moveCursor(pointOffset, "#" + id));
+        this.getSubElementOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).find('p').eq(pTag - 1).invoke('attr', 'id').then(id => this.moveCursor(pointOffset, "#" + id));
     }
 
     appendContentInParagraphOfArticle(newContent, offset, paragraphNumber, child) {
@@ -317,7 +318,7 @@ class ckEditorWindow {
     }
 
     addContentInPointOfParagraphOfArticle(newContent, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
-        this.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).type(newContent);
+        this.getSubElementOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).type(newContent);
     }
 
     addContentInSecondLayerPointOfParagraphOfArticle(newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3) {
@@ -736,5 +737,10 @@ class ckEditorWindow {
     }
 
 
+    clickTcRejectThisChangeMenuItem() {
+        this.elements.tcRejectThisChangeMenu()
+            .should('be.visible')
+            .click();
+    }
 }
 export default new ckEditorWindow();

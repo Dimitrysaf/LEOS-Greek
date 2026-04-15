@@ -124,6 +124,9 @@ define(function leosPluginUtilsModule(require) {
     var SPAN_ATTRIBUTES = ['style', 'tabindex', 'contenteditable', 'data-cke-widget-wrapper', 'data-cke-filter', 'data-cke-display-name', 'data-cke-widget-id', 'role', 'aria-label', 'data-akn-action', 'data-akn-action-number'];
     var SIGNATURE = 'signature';
 
+    const LEOS_TABLE_PASTE_FILTER = '; table thead tbody tr th td caption; td th[colspan,rowspan]';
+
+
     var commonAttributes = [
         { akn: "xml:id", html: "id" },
         { akn: "refersTo", html: "refersto" },
@@ -2160,5 +2163,6 @@ define(function leosPluginUtilsModule(require) {
         AKN_UNORDERED_LIST: AKN_UNORDERED_LIST,
         BLOCKCONTAINER: BLOCKCONTAINER,
         REG_EXP_FOR_UNICODE_ZERO_WIDTH_SPACE_IN_HEX: REG_EXP_FOR_UNICODE_ZERO_WIDTH_SPACE_IN_HEX,
+        LEOS_TABLE_PASTE_FILTER: LEOS_TABLE_PASTE_FILTER,
     };
 });

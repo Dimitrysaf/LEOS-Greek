@@ -58,6 +58,9 @@ public interface ApiService {
     CreateCollectionResult createProposal(String templateId, String templateName, String langCode, String docPurpose,
             boolean eeaRelevance, boolean customTemplateAct, boolean fromCustomTemplate, String template) throws CreateCollectionException;
 
+    CreateCollectionResult createProposalV2(String templateId, String templateName, String langCode, String docPurpose,
+            boolean eeaRelevance, boolean customTemplateAct, boolean fromCustomTemplate, String template,String confidentiality, String nonSensitivityTitle) throws CreateCollectionException;
+
     List<ExtPackageResult> createExtProposal(String templateKey, String[] languageCodes, String docPurpose);
 
     CreateCollectionResult uploadProposal(LeosFile legDocument) throws CreateCollectionException;
@@ -140,6 +143,8 @@ public interface ApiService {
     String findDocumentRefByPackageIdAndCategory(String packageId, String category);
 
     Package findPackageByName(String packageName);
+
+    String getProposalsReport();
 
     void updateForeignAnnex(String proposalRef, String annexId, byte[] binaryContent, String originalFilename, String binaryContentSize);
 

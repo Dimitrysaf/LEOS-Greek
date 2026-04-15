@@ -208,18 +208,19 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
 
     private ApplyMetadataResponse.ActionNode processApplyMetadataRequestAction(ApplyMetadataRequest.ActionNode action, List<XmlFile> documentXmlFiles){
         Optional<ApplyMetadataRequest.FieldNode> diffusionVersionField = MetadataUtil.getDiffusionVersion(action);
-        final String diffusionVersion = diffusionVersionField.isPresent() ? diffusionVersionField.get().getValue() : null;
+        boolean coteOrFinalCoteField = MetadataUtil.isCoteOrFinalCoteFieldPresent(action);
+        final String diffusionVersion = diffusionVersionField.map(ApplyMetadataRequest.FieldNode::getValue).orElse(null);
         int commissionerPos = 0;
         List<ApplyMetadataResponse.FieldNode> fieldResponses = new ArrayList<>();
         for (ApplyMetadataRequest.FieldNode field : action.getFields()){
-            fieldResponses.add(processApplyMetadataRequestField(field, documentXmlFiles, commissionerPos, diffusionVersion));
+            fieldResponses.add(processApplyMetadataRequestField(field, documentXmlFiles, commissionerPos, diffusionVersion, coteOrFinalCoteField));
             if (MetadataFieldType.isCommissioner(field.getKey())) {
                 commissionerPos += 1;
             }
         }
         if (!hasLinkedDocumentsField(action)) {
             // Remove associatedReferences container if no linkedDocuments are set
-            processApplyMetadataRequestField(new ApplyMetadataRequest.FieldNode(MetadataFieldType.LINKED_DOCUMENTS.toString(), ""), documentXmlFiles, commissionerPos);
+            processApplyMetadataRequestField(new ApplyMetadataRequest.FieldNode(MetadataFieldType.LINKED_DOCUMENTS.toString(), ""), documentXmlFiles, commissionerPos, coteOrFinalCoteField);
         }
         return new ApplyMetadataResponse.ActionNode(action.getName(), fieldResponses);
     }
@@ -230,16 +231,18 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
 
     private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field,
                                                                              List<XmlFile> documentXmlFiles,
-                                                                             int commissionerPos) {
-        return this.processApplyMetadataRequestField(field, documentXmlFiles, commissionerPos, null);
+                                                                             int commissionerPos,
+                                                                             boolean isCoteOrFinalCotePresent) {
+        return this.processApplyMetadataRequestField(field, documentXmlFiles, commissionerPos, null, isCoteOrFinalCotePresent);
     }
 
     private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field,
                                                                              List<XmlFile> documentXmlFiles,
                                                                              int commissionerPos,
-                                                                             String diffusionVersion) {
+                                                                             String diffusionVersion,
+                                                                             boolean isCoteOrFinalCotePresent) {
         try {
-            processMetadataFieldInfo(metadataService.lookupFieldInfo(field), documentXmlFiles, commissionerPos, diffusionVersion);
+            processMetadataFieldInfo(metadataService.lookupFieldInfo(field), documentXmlFiles, commissionerPos, diffusionVersion, isCoteOrFinalCotePresent);
             return metadataService.getFieldSuccessResult(field.getKey());
         } catch(MetadataFieldNotAvailableException | XmlUtilException | MetadataUtilsException ex) {
             LOG.debug("Lookup field info failed: {}", ex);
@@ -253,7 +256,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         }
     }
 
-    private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles, int commissionerPos, String diffusionVersion) throws MetadataUtilsException,
+    private void processMetadataFieldInfo(MetadataFieldInfo fieldInfo, List<XmlFile> documentXmlFiles, int commissionerPos, String diffusionVersion, boolean isCoteOrFinalCotePresent) throws MetadataUtilsException,
             XmlUtilException {
         LOG.debug("Process field info  '{}'", fieldInfo);
 
@@ -304,7 +307,7 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
                     metadataService.processCoverPageType((SimpleFieldInfo)fieldInfo, xmlFile);
                     break;
                 case DIFFUSION_VERSION:
-                    metadataService.processDiffusionVersion(diffusionVersion, xmlFile);
+                    metadataService.processDiffusionVersion(diffusionVersion, isCoteOrFinalCotePresent, xmlFile);
                     break;
                 default:
                     throw new MetadataUtilsException(MetadataUtil.FIELD_NOT_SUPPORTED_MESSAGE);

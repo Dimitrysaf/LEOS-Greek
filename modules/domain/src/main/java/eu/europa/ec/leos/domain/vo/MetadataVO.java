@@ -34,6 +34,8 @@ public class MetadataVO {
     private SecurityLevel securityLevel = SecurityLevel.STANDARD;
     private String language; // always should be set to language Code
     private boolean eeaRelevance;
+    private String confidentiality;
+    private String nonSensitivityTitle;
     private boolean customTemplateAct;
     private boolean fromCustomTemplate;
     private boolean translated;
@@ -113,6 +115,8 @@ public class MetadataVO {
         this.setIndex(null);
         this.setNumber(null);
         this.setEeaRelevance(false);
+        this.setConfidentiality(null);
+        this.setNonSensitivityTitle(null);
         this.setCustomTemplateAct(false);
         this.setFromCustomTemplate(false);
         this.setTranslated(false);

@@ -25,6 +25,8 @@ public final class ProposalMetadata extends LeosMetadata {
     private String interInstitutionalReference;
     private List<SignatureMetadata> signatures;
     private Boolean stamp;
+    private String confidentiality;
+    private String nonSensitivityTitle;
 
     public ProposalMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String objectId,
             String docVersion, boolean eeaRelevance, boolean customTemplateAct, boolean fromCustomTemplate) {
@@ -50,6 +52,8 @@ public final class ProposalMetadata extends LeosMetadata {
         private String procedureType;
         private String actType;
         private boolean eeaRelevance;
+        private String confidentiality;
+        private String nonSensitivityTitle;
         private boolean customTemplateAct;
         private boolean fromCustomTemplate;
         private String packageTitle;
@@ -82,6 +86,8 @@ public final class ProposalMetadata extends LeosMetadata {
             this.objectId= metadata.objectId;
             this.docVersion= metadata.docVersion;
             this.eeaRelevance= metadata.eeaRelevance;
+            this.confidentiality= metadata.confidentiality;
+            this.nonSensitivityTitle= metadata.nonSensitivityTitle;
             this.customTemplateAct = metadata.customTemplateAct;
             this.fromCustomTemplate = metadata.fromCustomTemplate;
             this.procedureType = metadata.getProcedureType();
@@ -142,6 +148,17 @@ public final class ProposalMetadata extends LeosMetadata {
             this.eeaRelevance = eeaRelevance;
             return this;
         }
+
+        public ProposalMetadataBuilder withConfidentiality(String confidentiality) {
+            this.confidentiality = confidentiality;
+            return this;
+        }
+
+        public ProposalMetadataBuilder withNonSensitivityTitle(String nonSensitivityTitle) {
+            this.nonSensitivityTitle = nonSensitivityTitle;
+            return this;
+        }
+
         public ProposalMetadataBuilder withCustomTemplateAct(boolean customTemplateAct) {
             this.customTemplateAct = customTemplateAct;
             return this;
@@ -204,6 +221,8 @@ public final class ProposalMetadata extends LeosMetadata {
             metadata.setInterInstitutionalReference(interInstitutionalReference);
             metadata.setSignatures(signatures);
             metadata.setStamp(stamp);
+            metadata.setConfidentiality(confidentiality);
+            metadata.setNonSensitivityTitle(nonSensitivityTitle);
             return metadata;
         }
     }

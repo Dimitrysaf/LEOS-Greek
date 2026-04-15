@@ -6,6 +6,7 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeConfig.Attribute;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.getDocEEATagList;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.getNewDecideAttributes;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
 
@@ -93,6 +95,12 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
             }
 
             String value = entry.getValue();
+
+            //Skip Confidentiality,Non-sensitivity Title if value is empty
+            if (getNewDecideAttributes().contains(key) && StringUtils.isEmpty(value)) {
+                continue;
+            }
+
             // EEA Relevance: Transform boolean to default EEA Relevance message (for now, before accepting custom message)
             if (getDocEEATagList().contains(key)) {
                 value = Boolean.parseBoolean(value) ?
