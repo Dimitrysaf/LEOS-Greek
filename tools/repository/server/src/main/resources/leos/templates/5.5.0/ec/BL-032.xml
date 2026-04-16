@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
 <?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?>
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" xmlns:xml="http://www.w3.org/XML/1998/namespace">
-    <bill name="DEC_DEL">
+    <bill name="DEC_IMPL">
         <meta>
             <identification source="~COM">
                 <FRBRWork>
@@ -28,17 +28,17 @@
                     <FRBRuri value=""/>
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
-					<preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
-                		<akn4eu:akn4euVersion value="4.2 AA"/>
-						<akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
-                	</preservation>
+                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:akn4euVersion value="4.2 AA"/>
+                        <akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
+                    </preservation>
                 </FRBRManifestation>
             </identification>
             <references source="~COM">
                 <TLCLocation xml:id="BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
                 <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
                 <TLCRole xml:id="PRESID" href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
-                <TLCReference xml:id="DEC_DEL" href="http://publications.europa.eu/resource/authority/resource-type/DEC_DEL" name="docType" showAs="Delegated decision"/>
+                <TLCReference xml:id="DEC_IMPL" href="http://publications.europa.eu/resource/authority/resource-type/DEC_IMPL" name="docType" showAs="Implementing decision"/>
                 <TLCReference xml:id="legalBasis" href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis"/>
                 <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/{{language3}}" name="language" showAs="{{language}}"/>
                 <TLCConcept xml:id="ART_DEF" href="http://publications.europa.eu/resource/authority/subdivision-content/ART_DEF" showAs="Article on definitions"/>
@@ -46,8 +46,8 @@
             <proprietary source="~COM">
                 <leos:templateVersion>1.0.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
-                <leos:template>SJ-033</leos:template>
-                <leos:docTemplate>BL-033</leos:docTemplate>
+                <leos:template>SJ-032</leos:template>
+                <leos:docTemplate>BL-032</leos:docTemplate>
             </proprietary>
         </meta>
         <preface>
@@ -55,10 +55,10 @@
                 <p>
                     <docketNumber class="template" />
                 </p>
-            </container>  
+            </container>
             <longTitle>
                 <p>
-                    <docType refersTo="~DEC_DEL">{{docType.033}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
+                    <docType refersTo="~DEC_IMPL">{{docType.032}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
                     <docPurpose>{{docPurpose}}</docPurpose>
                 </p>
             </longTitle>
@@ -68,11 +68,14 @@
                 <p>{{bl.commission}}</p>
             </formula>
             <citations leos:editable="false">
-                <citation leos:editable="true">
+                <citation refersTo="~_legalBasis" leos:editable="true">
                     <p>{{bl.citation1}}</p>
                 </citation>
                 <citation leos:editable="true">
                     <p>{{bl.citation2Before}}<authorialNote marker="1" placement="bottom"><p>{{bl.citation2inside}}</p></authorialNote>{{bl.citation2after}}</p>
+                </citation>
+                <citation leos:editable="true">
+                    <p>{{bl.citation3}}</p>
                 </citation>
             </citations>
             <recitals leos:editable="false">
@@ -84,6 +87,10 @@
                 <recital leos:editable="true">
                     <num>(2)</num>
                     <p>{{bl.recital}}</p>
+                </recital>
+                <recital leos:editable="true">
+                    <num>(3)</num>
+                    <p>{{bl.recital3.decision}}</p>
                 </recital>
             </recitals>
             <formula name="enactingFormula">
@@ -116,11 +123,12 @@
                     </content>
                 </paragraph>
             </article>
+
         </body>
         <conclusions>
             <p>{{bl.conclusionDate}}</p>
-            <block name="signatory" leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption2" leos:selectedoption="1">
-                <signature leos:optionlist="listOption2">
+            <block name="signatory" leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1" leos:selectedoption="1">
+                <signature leos:optionlist="listOption1">
                     <organization refersTo="~COM">{{bl.forCommission}}</organization>
                     <role refersTo="~PRESID">{{bl.role.president}}</role>
                     <person refersTo="">[...]</person>
