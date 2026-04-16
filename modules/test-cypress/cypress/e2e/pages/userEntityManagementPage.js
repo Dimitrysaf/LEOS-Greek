@@ -1,5 +1,11 @@
 class userEntityManagementPage {
     elements = {
+        manageEntitiesTab:() => cy.get('div.eui-tab-item').contains('Manage entities'),
+        addEntityBtn: () => cy.get('button[data-e2e=\'eui-button\'] > span').contains('Add an entity'),
+        customEntityInfoLabel: () => cy.get('eui-card-header-title').contains('CUSTOM ENTITY INFO'),
+        entityNameTxtBx: () => cy.get('#entityName'),
+        entityColumnInTable:() => cy.get('td a'),
+
         addUserBtn: () => cy.get('button[data-e2e=\'eui-button\'] > span').contains('Add user'),
         userInfoLabel: () => cy.get('eui-card-header-title').contains('USER INFO'),
         lastNameTxtBx: () => cy.get('input[placeholder=\'Last name\']'),
@@ -10,14 +16,49 @@ class userEntityManagementPage {
         selectEntityDropDown: () => cy.get('select.entities-select:not(.ng-star-inserted)'),
         angleLeftBtn: () => cy.get('span.eui-icon-angle-left'),
         angleRightBtn: () => cy.get('span.eui-icon-angle-right'),
-        saveUserBtn: () => cy.get('span').contains('Save'),
-        newUserDialogBxTitle: () => cy.get('#headerTitle').contains('New user created'),
-        newUserCreationMessageLocator: () => cy.get('#containerConfigId'),
-        newUserDialogBxOkBtn: () => cy.get('button.eui-dialog__footer-accept-button').contains('OK'),
+        saveBtn: () => cy.get('span').contains('Save'),
+        newUserorEntityDialogBxTitle: () => cy.get('#headerTitle'),
+        newUserorEntityCreationMessageLocator: () => cy.get('#containerConfigId'),
+        newUserorEntityDialogBxOkBtn: () => cy.get('button.eui-dialog__footer-accept-button').contains('OK'),
         searchUsersTxtBx: () => cy.get('input[placeholder=\'Search by user name, login or email\']'),
         searchIconBtn: () => cy.get('eui-icon-svg[icon=\'eui-search\']'),
         userLoginColumnInTable: () => cy.get('tr td:nth-child(3)'),
+    }
 
+    selectManageEntitiesTab(){
+        this.elements.manageEntitiesTab().click()
+    }
+
+    checkPresenceOfAddEntityButton(){
+        this.elements.addEntityBtn().should('be.visible')
+    }
+
+    clickAddEntityButton(){
+        this.elements.addEntityBtn().click()
+    }
+
+    checkPresenceOfCustomEntityInfoSection(){
+        this.elements.customEntityInfoLabel().should('be.visible')
+    }
+
+    fillEntityInfoDetails(entityName){
+        this.elements.entityNameTxtBx().clear().type(entityName)
+    }
+
+    saveEntityForm(){
+        this.elements.saveBtn().click()
+    }
+
+    confirmEntityCreation(entityName){
+        this.elements.newUserorEntityDialogBxTitle().contains('New entity created')
+        this.elements.newUserorEntityCreationMessageLocator().should('contain',`Entity ${entityName} successfully created. You can now add users to it.`)
+        this.elements.newUserorEntityDialogBxOkBtn().click()
+    }
+
+    verifyNewEntityCreation(entityName){
+        this.elements.searchEntityTxtBx().type(entityName)
+        this.elements.searchIconBtn().click()
+        this.elements.entityColumnInTable().should('contain', entityName)
     }
 
     checkPresenceOfAddUserButton()
@@ -77,13 +118,13 @@ class userEntityManagementPage {
 
     saveUserInfoForm()
     {
-        this.elements.saveUserBtn().click()
+        this.elements.saveBtn().click()
     }
 
     verifyNewUserCreation(firstName, lastName){
-        this.elements.newUserDialogBxTitle().should('be.visible')
-        this.elements.newUserCreationMessageLocator().should('contain',`User ${firstName} ${lastName} successfully created.`)
-        this.elements.newUserDialogBxOkBtn().click()
+        this.elements.newUserorEntityDialogBxTitle().contains('New user created')
+        this.elements.newUserorEntityCreationMessageLocator().should('contain',`User ${firstName} ${lastName} successfully created.`)
+        this.elements.newUserorEntityDialogBxOkBtn().click()
     }
 
     verifyUserLogin(userLogin) {
@@ -91,5 +132,6 @@ class userEntityManagementPage {
         this.elements.searchIconBtn().click()
         this.elements.userLoginColumnInTable().should('contain', userLogin)
     }
+
 }
 export default new userEntityManagementPage;

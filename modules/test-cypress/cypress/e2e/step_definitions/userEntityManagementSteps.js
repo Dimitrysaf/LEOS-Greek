@@ -50,3 +50,38 @@ Then("verify the new user details on the table", function() {
         userEntityManagementPage.verifyUserLogin(user.userLogin)
     })
 });
+
+When("select manage entities tab", function () {
+    userEntityManagementPage.selectManageEntitiesTab()
+});
+
+When("add entity button should be displayed", function () {
+    userEntityManagementPage.checkPresenceOfAddEntityButton()
+});
+
+
+Then("click on add entity button", function () {
+    userEntityManagementPage.clickAddEntityButton()
+});
+
+Then("custom entity info section should be displayed", function () {
+    userEntityManagementPage.checkPresenceOfCustomEntityInfoSection()
+});
+
+Then("create an entity by giving a name {string}", function (entityName) {
+    cy.wrap(entityName).as('entityName')
+    userEntityManagementPage.fillEntityInfoDetails(entityName)
+    userEntityManagementPage.saveEntityForm()
+});
+
+Then("show the successful message that a new entity is created", function () {
+    cy.get('@entityName').then((entityName) => {
+        userEntityManagementPage.confirmEntityCreation(entityName)
+    })
+});
+
+Then("verify the new entity presence on the table", function () {
+    cy.get('@entityName').then((entityName) => {
+        userEntityManagementPage.verifyNewEntityCreation(entityName)
+    })
+});
