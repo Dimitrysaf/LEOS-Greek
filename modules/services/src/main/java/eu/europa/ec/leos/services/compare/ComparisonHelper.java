@@ -15,7 +15,7 @@ package eu.europa.ec.leos.services.compare;
 
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.services.compare.vo.Element;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Node;
@@ -26,7 +26,7 @@ import java.util.Map;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
-import static eu.europa.ec.leos.services.support.XercesUtils.hasChildTextNode;
+import static eu.europa.ec.leos.services.support.XmlUtils.hasChildTextNode;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 
 public class ComparisonHelper {
@@ -36,7 +36,7 @@ public class ComparisonHelper {
     public static Element buildElement(Node node, Map<String, Integer> hmIndex, Map<String, Element> elementsMap) {
         String tagName = node.getNodeName();
         String tagContent = node.getTextContent();
-        String tagId = XercesUtils.getId(node);
+        String tagId = XmlUtils.getId(node);
 
         hmIndex.put(tagName, hmIndex.get(tagName) == null ? 1 : (hmIndex.get(tagName)) + 1);
         Integer nodeIndex = hmIndex.get(tagName);
@@ -44,7 +44,7 @@ public class ComparisonHelper {
         boolean hasText = hasChildTextNode(node);
         String innerText = "";  // TO DO: This value is not used. TO DO check if getTextForSimilarityMatch() is really needed
         List<Element> children = new ArrayList<>();
-        List<Node> childrenNodes = XercesUtils.getChildren(node);
+        List<Node> childrenNodes = XmlUtils.getChildren(node);
         for (int i = 0; i < childrenNodes.size(); i++) {
             Node childNode = childrenNodes.get(i);
             Element childElement = buildElement(childNode, hmIndex, elementsMap);
@@ -88,16 +88,16 @@ public class ComparisonHelper {
     }
 
     public static boolean withPlaceholderPrefix(Node node, String placeholderPrefix) {
-        String nodeId = XercesUtils.getId(node);
+        String nodeId = XmlUtils.getId(node);
         return StringUtils.isNotEmpty(nodeId) && nodeId.startsWith(placeholderPrefix);
     }
 
     public static boolean isSoftAction(Node node, SoftActionType softActionType) {
-        return XercesUtils.containsAttributeWithValue(node, LEOS_SOFT_ACTION_ATTR, softActionType.getSoftAction());
+        return XmlUtils.containsAttributeWithValue(node, LEOS_SOFT_ACTION_ATTR, softActionType.getSoftAction());
     }
 
     public static boolean isElementTransformedFrom(Node node, String attrName, String attrValue) {
-        Node foundNode = XercesUtils.getNodeContainingAttributeValue(node, attrName, attrValue);
+        Node foundNode = XmlUtils.getNodeContainingAttributeValue(node, attrName, attrValue);
         return foundNode != null;
     }
 

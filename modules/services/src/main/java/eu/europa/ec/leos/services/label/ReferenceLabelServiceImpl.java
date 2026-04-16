@@ -28,7 +28,7 @@ import eu.europa.ec.leos.services.label.ref.LabelHandler;
 import eu.europa.ec.leos.services.label.ref.Ref;
 import eu.europa.ec.leos.services.label.ref.TreeNode;
 import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.slf4j.Logger;
@@ -51,7 +51,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.ANNEX;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
 import static eu.europa.ec.leos.services.label.TreeHelper.createTree;
 import static eu.europa.ec.leos.services.label.TreeHelper.findCommonAncestor;
 import static eu.europa.ec.leos.services.label.TreeHelper.getLeaves;
@@ -105,7 +105,7 @@ abstract class ReferenceLabelServiceImpl implements ReferenceLabelService {
     @Override
     public Result<String> generateLabelStringRef(List<String> refsString, String sourceDocumentRef, byte[] sourceBytes){
         final List refs = buildRefs(refsString, sourceDocumentRef);
-        return generateLabel(refs, createXercesDocument(sourceBytes));
+        return generateLabel(refs, createDocument(sourceBytes));
     }
     
     /**
@@ -147,7 +147,7 @@ abstract class ReferenceLabelServiceImpl implements ReferenceLabelService {
     @Override
     public Result<String> generateLabelStringRef(List<String> refsString, String sourceDocumentRef, String sourceRefId, byte[] sourceBytes) {
         final List refs = buildRefs(refsString, sourceDocumentRef);
-        return generateLabel(refs, sourceDocumentRef, sourceRefId, createXercesDocument(sourceBytes), false);
+        return generateLabel(refs, sourceDocumentRef, sourceRefId, createDocument(sourceBytes), false);
     }
     
     /**
@@ -197,7 +197,7 @@ abstract class ReferenceLabelServiceImpl implements ReferenceLabelService {
     public Result<String> generateLabelStringRef(List<String> refsString, String sourceDocumentRef, String sourceRefId, byte[] sourceBytes, String targetDocumentRef,
                                                  boolean capital) {
         final List<Ref> refs = buildRefs(refsString, targetDocumentRef);
-        return generateLabel(refs, sourceDocumentRef, sourceRefId, createXercesDocument(sourceBytes), capital);
+        return generateLabel(refs, sourceDocumentRef, sourceRefId, createDocument(sourceBytes), capital);
     }
 
     @Override
@@ -224,7 +224,7 @@ abstract class ReferenceLabelServiceImpl implements ReferenceLabelService {
     @Cacheable(value = "referenceLabelTargetDocumentCache")
     public Node getTargetDocument(String targetDocumentRef) {
         XmlDocument targetXmlDocument = workspaceService.findDocumentByRef(targetDocumentRef, XmlDocument.class);
-        return createXercesDocument(targetXmlDocument.getContent().get().getSource().getBytes());
+        return createDocument(targetXmlDocument.getContent().get().getSource().getBytes());
     }
 
     /**
@@ -256,10 +256,10 @@ abstract class ReferenceLabelServiceImpl implements ReferenceLabelService {
     }
 
     private String getDocType(Node sourceNode) {
-        Node node = XercesUtils.getFirstElementByXPath(sourceNode, xPathCatalog.getXPathDocType(), true);
+        Node node = XmlUtils.getFirstElementByXPath(sourceNode, xPathCatalog.getXPathDocType(), true);
         String docType = null;
         if (node != null) {
-            docType = XercesUtils.getAttributeValue(node, XML_SHOW_AS);
+            docType = XmlUtils.getAttributeValue(node, XML_SHOW_AS);
         }
         return docType;
     }

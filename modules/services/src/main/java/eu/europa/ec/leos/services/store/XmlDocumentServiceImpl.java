@@ -13,7 +13,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.coedition.UpdateCoEditionResponse;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.vo.coedition.InfoType;
 import io.atlassian.fugue.Pair;
 import org.slf4j.Logger;
@@ -27,13 +27,12 @@ import org.w3c.dom.Node;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import static eu.europa.ec.leos.rest.support.RepositoryUtil.updateDocumentProperties;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.nodeToByteArray;
 
 @Service
 public class XmlDocumentServiceImpl implements XmlDocumentService {
@@ -136,16 +135,16 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
         if(!result.right().isEmpty()) {
             xmlDocument = workspaceService.findDocumentById(xmlDocument.getId(), XmlDocument.class);
             byte[] content = xmlDocument.getContent().get().getSource().getBytes();
-            Document document = createXercesDocument(content);
+            Document document = createDocument(content);
 
             for (Element element : result.right()) {
-                Node elementNode = XercesUtils.getElementById(document, element.getElementId());
+                Node elementNode = XmlUtils.getElementById(document, element.getElementId());
                 if (elementNode != null) {
-                    XercesUtils.replaceElement(elementNode, element.getElementFragment());
+                    XmlUtils.replaceElement(elementNode, element.getElementFragment());
                 }
             }
 
-            content = XercesUtils.nodeToByteArray(document);
+            content = XmlUtils.nodeToByteArray(document);
             String message = messageHelper.getMessage("internal.ref.checkinComment");
             leosRepository.updateDocument(xmlDocument.getId(), content,
                     (Map<String, Object>) updateDocumentProperties(xmlDocument.getMetadata().get()), VersionType.MINOR,

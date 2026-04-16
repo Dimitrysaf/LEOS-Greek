@@ -42,7 +42,6 @@ import eu.europa.ec.leos.services.collection.CreateCollectionService;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.TransformationService;
-import eu.europa.ec.leos.services.dto.request.PublishTemplateRequest;
 import eu.europa.ec.leos.services.dto.request.DocumentLinesRequest;
 import eu.europa.ec.leos.services.dto.response.InjectElementResponse;
 import eu.europa.ec.leos.services.document.DocumentContentService;
@@ -60,8 +59,8 @@ import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
-import eu.europa.ec.leos.services.support.LeosXercesUtils;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.LeosXmlUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.template.CustomTemplateService;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
@@ -82,11 +81,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -278,8 +275,8 @@ public class LeosApiController implements LeosApi {
                         .withRemovedValue(CONTENT_REMOVED_CLASS)
                         .withAddedValue(CONTENT_ADDED_CLASS)
                         .build());
-                Document document = XercesUtils.createXercesDocument(comparedContent.getBytes(UTF_8));
-                comparedContent = new String(LeosXercesUtils.wrapWithPageOrientationDivs(document), UTF_8);
+                Document document = XmlUtils.createDocument(comparedContent.getBytes(UTF_8));
+                comparedContent = new String(LeosXmlUtils.wrapWithPageOrientationDivs(document), UTF_8);
                 return new ResponseEntity<>(new String[]{comparedContent}, HttpStatus.OK);
             }
             return new ResponseEntity<>(comparatorService.twoColumnsCompareContents(new ContentComparatorContext.Builder(firstContentHtml, secondContentHtml).build()), HttpStatus.OK);

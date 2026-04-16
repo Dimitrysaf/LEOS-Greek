@@ -4,6 +4,7 @@ import eu.europa.ec.leos.services.dto.request.AknType;
 import eu.europa.ec.leos.services.dto.request.LineItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.ApplicationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -21,7 +22,6 @@ import java.util.List;
 import eu.europa.ec.leos.services.document.operation.builder.*;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import jakarta.inject.Provider;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -65,7 +65,7 @@ public class ElementInjectionHelperTest {
         );
         when(structureContext.getTocItems()).thenReturn(tocItems);
         HigherDivisionBuilder higherDivisionBuilder = new HigherDivisionBuilder(structureContextProvider);
-        XmlFactoryConfig config = new XmlFactoryConfig();
+        XmlFactoryConfig config = new XmlFactoryConfig(mock(ApplicationContext.class));
         helper = new ElementInjectionHelper(List.of(
                 new CitationBuilder(),
                 new AuthorialNoteBuilder(),

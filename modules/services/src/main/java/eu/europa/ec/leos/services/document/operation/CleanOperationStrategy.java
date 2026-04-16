@@ -102,7 +102,7 @@ public class CleanOperationStrategy implements OperationStrategy {
             org.w3c.dom.NodeList children = sectionNode.getChildNodes();
             for (int i = children.getLength() - 1; i >= 0; i--) {
                 Node child = children.item(i);
-                if (XmlHelper.RECITAL.equals(child.getLocalName()) || XmlHelper.RECITALS.equals(child.getLocalName())) {
+                if (XmlHelper.RECITAL.equals(child.getNodeName()) || XmlHelper.RECITALS.equals(child.getNodeName())) {
                     sectionNode.removeChild(child);
                 }
             }
@@ -110,7 +110,7 @@ public class CleanOperationStrategy implements OperationStrategy {
             org.w3c.dom.NodeList children = sectionNode.getChildNodes();
             for (int i = children.getLength() - 1; i >= 0; i--) {
                 Node child = children.item(i);
-                if (!XmlHelper.CLAUSE.equals(child.getLocalName())) {
+                if (!XmlHelper.CLAUSE.equals(child.getNodeName())) {
                     sectionNode.removeChild(child);
                 }
             }

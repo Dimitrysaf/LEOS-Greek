@@ -145,7 +145,7 @@ import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneH
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_DELETED;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.PROCESSED;
 import static eu.europa.ec.leos.services.converter.ProposalConverterServiceImpl.createFileFromXmlSource;
-import static eu.europa.ec.leos.services.support.LeosXercesUtils.getTitleValue;
+import static eu.europa.ec.leos.services.support.LeosXmlUtils.getTitleValue;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml10;
 import static org.apache.commons.lang3.StringUtils.normalizeSpace;

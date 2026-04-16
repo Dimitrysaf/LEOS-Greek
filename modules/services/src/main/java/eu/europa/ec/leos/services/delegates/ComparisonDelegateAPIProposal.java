@@ -23,8 +23,8 @@ import eu.europa.ec.leos.services.compare.processor.LeosPreDiffingProcessor;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
-import eu.europa.ec.leos.services.support.LeosXercesUtils;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.LeosXmlUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -60,8 +60,8 @@ public class ComparisonDelegateAPIProposal<T extends XmlDocument> extends Compar
         secondItemHtml = leosPreDiffingProcessor.adjustTrackChanges(secondItemHtml);
 
         //Remove highlight before comparison
-        firstItemHtml = new String(LeosXercesUtils.removeHighlights(XercesUtils.createXercesDocument(firstItemHtml.getBytes())));
-        secondItemHtml = new String(LeosXercesUtils.removeHighlights(XercesUtils.createXercesDocument(secondItemHtml.getBytes())));
+        firstItemHtml = new String(LeosXmlUtils.removeHighlights(XmlUtils.createDocument(firstItemHtml.getBytes())));
+        secondItemHtml = new String(LeosXmlUtils.removeHighlights(XmlUtils.createDocument(secondItemHtml.getBytes())));
 
         return compareService.compareContents(new ContentComparatorContext.Builder(firstItemHtml, secondItemHtml)
                 .withAttrName(ATTR_NAME)

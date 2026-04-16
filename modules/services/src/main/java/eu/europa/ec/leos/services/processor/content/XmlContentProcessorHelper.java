@@ -19,7 +19,7 @@ import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.support.IdGenerator;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.Attribute;
@@ -54,22 +54,22 @@ import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_TO;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.searchInRules;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessorImpl.getTocItemFromNumberingType;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorImpl.NBSP;
-import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
-import static eu.europa.ec.leos.services.support.XercesUtils.createElement;
-import static eu.europa.ec.leos.services.support.XercesUtils.createElementAsLastChildOfNode;
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeForSoftAction;
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeForType;
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValue;
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValueAsBoolean;
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValueAsGregorianCalendar;
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValueAsInteger;
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValueAsIntegerOrZero;
-import static eu.europa.ec.leos.services.support.XercesUtils.getChildren;
-import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
-import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
-import static eu.europa.ec.leos.services.support.XercesUtils.getParentTagName;
-import static eu.europa.ec.leos.services.support.XercesUtils.insertOrUpdateAttributeValue;
-import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
+import static eu.europa.ec.leos.services.support.XmlUtils.addAttribute;
+import static eu.europa.ec.leos.services.support.XmlUtils.createElement;
+import static eu.europa.ec.leos.services.support.XmlUtils.createElementAsLastChildOfNode;
+import static eu.europa.ec.leos.services.support.XmlUtils.getAttributeForSoftAction;
+import static eu.europa.ec.leos.services.support.XmlUtils.getAttributeForType;
+import static eu.europa.ec.leos.services.support.XmlUtils.getAttributeValue;
+import static eu.europa.ec.leos.services.support.XmlUtils.getAttributeValueAsBoolean;
+import static eu.europa.ec.leos.services.support.XmlUtils.getAttributeValueAsGregorianCalendar;
+import static eu.europa.ec.leos.services.support.XmlUtils.getAttributeValueAsInteger;
+import static eu.europa.ec.leos.services.support.XmlUtils.getAttributeValueAsIntegerOrZero;
+import static eu.europa.ec.leos.services.support.XmlUtils.getChildren;
+import static eu.europa.ec.leos.services.support.XmlUtils.getFirstChild;
+import static eu.europa.ec.leos.services.support.XmlUtils.getNumTag;
+import static eu.europa.ec.leos.services.support.XmlUtils.getParentTagName;
+import static eu.europa.ec.leos.services.support.XmlUtils.insertOrUpdateAttributeValue;
+import static eu.europa.ec.leos.services.support.XmlUtils.removeAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.ANNEX_FILE_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
@@ -163,7 +163,7 @@ public class XmlContentProcessorHelper {
             Node nameNode = node.getAttributes().getNamedItem("name");
             String nodeName = nameNode != null ? nameNode.getNodeValue() : null;
             if (node.getNodeName().equals(DOC) && ANNEX_FILE_PREFIX.equalsIgnoreCase(nodeName)) {
-                String annexNumNode  = XercesUtils.getFirstElementByXPath(node, "//leos:annexNumber", true).getTextContent();
+                String annexNumNode  = XmlUtils.getFirstElementByXPath(node, "//leos:annexNumber", true).getTextContent();
                 TableOfContentItemVO newItem = new TableOfContentItemVO();
                 newItem.setNumber(annexNumNode);
                 TocItem tocItem = tocItems.stream().filter(item -> item.getAknTag().value().equalsIgnoreCase(DOC)).findFirst().get();
@@ -176,14 +176,14 @@ public class XmlContentProcessorHelper {
     }
 
     public static boolean isSoftDeletedOrMovedTo(Node node) {
-        return node != null && XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR) != null
-                && (XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR).equals(DELETE.getSoftAction()) || XercesUtils.getAttributeValue(node,
-                LEOS_SOFT_ACTION_ATTR).equals(DELETE_TRANSFORM.getSoftAction()) || XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR).equals(MOVE_TO.getSoftAction()));
+        return node != null && XmlUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR) != null
+                && (XmlUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR).equals(DELETE.getSoftAction()) || XmlUtils.getAttributeValue(node,
+                LEOS_SOFT_ACTION_ATTR).equals(DELETE_TRANSFORM.getSoftAction()) || XmlUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR).equals(MOVE_TO.getSoftAction()));
     }
 
     public static boolean isSoftAdded(Node node) {
-        return node != null && XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR) != null
-                && (XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR).equals(SoftActionType.ADD.getSoftAction()));
+        return node != null && XmlUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR) != null
+                && (XmlUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR).equals(SoftActionType.ADD.getSoftAction()));
     }
 
     private static void addTocItemVoToList(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, List<NumberingConfig> numberingConfigs, Node node,
@@ -297,7 +297,7 @@ public class XmlContentProcessorHelper {
             originNumAttr = getAttributeValue(numNode, LEOS_ORIGIN_ATTR);
             numId = getAttributeValue(numNode, XMLID);
             numSoftActionAttribute = getAttributeForSoftAction(numNode, LEOS_SOFT_ACTION_ATTR);
-            String numStr = XercesUtils.nodeToString(numNode);
+            String numStr = XmlUtils.nodeToString(numNode);
             if (numStr.contains("<" + LEOS_TC_DELETE_ELEMENT_NAME + " ")) {
                 Node insNode = getFirstChild(numNode, LEOS_TC_INSERT_ELEMENT_NAME);
                 if (insNode != null) {
@@ -339,7 +339,7 @@ public class XmlContentProcessorHelper {
                     tocItem = StructureConfigUtils.getTocItemByNumberingType(tocItems, numberingType, tocItem.getAknTag().name(), language);
                 }
             }
-            String isInList = XercesUtils.getAttributeValue(node, LEOS_CROSSHEADING_TYPE);
+            String isInList = XmlUtils.getAttributeValue(node, LEOS_CROSSHEADING_TYPE);
             if (isInList != null && isInList.equalsIgnoreCase(LIST)) {
                 isCrossheadingInList = true;
             }
@@ -395,7 +395,7 @@ public class XmlContentProcessorHelper {
         String trackChangeAction = getAttributeValue(node, LEOS_ACTION_ATTR);
 
         //get attribute set to determine if article is a definition article
-        TocItemTypeName tocItemType = StructureConfigUtils.getTocItemTypeFromTagNameAndAttributes(tocItems, tagName, XercesUtils.getAttributes(node));
+        TocItemTypeName tocItemType = StructureConfigUtils.getTocItemTypeFromTagNameAndAttributes(tocItems, tagName, XmlUtils.getAttributes(node));
 
         // build the table of content item and return it
         TableOfContentItemVO item =  new TableOfContentItemVO(tocItem, elementId, originAttr, number, originNumAttr, heading, originalHeading, originalTocItemType, originHeadingAttr, node, list, content,
@@ -482,24 +482,24 @@ public class XmlContentProcessorHelper {
     private static String extractContentForTocItemsExceptNumAndHeadingAndIntro(Node node, String elementName) {
         if (!ELEMENTS_TO_HIDE_CONTENT.contains(elementName)) {
         	if(PARAGRAPH.equals(elementName) || LEVEL.equals(elementName)) {
-        		Node current = XercesUtils.getFirstChild(node, SUBPARAGRAPH);
+        		Node current = XmlUtils.getFirstChild(node, SUBPARAGRAPH);
         		if(current != null) {
         			return current.getTextContent();
         		}
-        		Node list = XercesUtils.getFirstChild(node, LIST);
+        		Node list = XmlUtils.getFirstChild(node, LIST);
         		if(list != null) {
-        			current = XercesUtils.getFirstChild(list, SUBPARAGRAPH);
+        			current = XmlUtils.getFirstChild(list, SUBPARAGRAPH);
             		if(current != null) {
             			return current.getTextContent();
             		}
         		}
         	}
-            Node current = XercesUtils.getFirstChild(node, HEADING);
+            Node current = XmlUtils.getFirstChild(node, HEADING);
             if (current == null) {
-                current = XercesUtils.getFirstChild(node, getNumTag(node.getNodeName()));
+                current = XmlUtils.getFirstChild(node, getNumTag(node.getNodeName()));
             }
             if (current == null) {
-                current = XercesUtils.getFirstChild(node, INTRO);
+                current = XmlUtils.getFirstChild(node, INTRO);
             }
             if (current != null) {
                 if (ELEMENTS_WITH_TEXT.contains(elementName.toLowerCase())) {
@@ -511,7 +511,7 @@ public class XmlContentProcessorHelper {
                     }
                     return nodeContent.toString();
                 } else {
-                    current = XercesUtils.getNextSibling(current);
+                    current = XmlUtils.getNextSibling(current);
                 }
                 if (current == null) {
                     return StringUtils.EMPTY;
@@ -555,16 +555,16 @@ public class XmlContentProcessorHelper {
         TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, tocVo.getTagName());
         if (StringUtils.isNotEmpty(tocVo.getNumber()) || tocItem.getSoleNumbering() != null) {
             String newNum = createNumContent(structureContextProvider, tocVo);
-            numNode = XercesUtils.getFirstChild(node, XercesUtils.getNumTag(getTagValueFromTocItemVo(tocVo)));
+            numNode = XmlUtils.getFirstChild(node, XmlUtils.getNumTag(getTagValueFromTocItemVo(tocVo)));
             if (numNode != null) {
                 if (getFirstChild(numNode, "del") == null && getFirstChild(numNode, "ins") == null && !newNum.equals(numNode.getTextContent())) {
                     numNode.setTextContent(newNum);
                 }
                 if (tocVo.isUndeleted()) {
-                    XercesUtils.updateXMLIDAttributeFullStructureNode(numNode, EMPTY_STRING, true);
+                    XmlUtils.updateXMLIDAttributeFullStructureNode(numNode, EMPTY_STRING, true);
                 }
             } else {
-                numNode = createElement(node.getOwnerDocument(), XercesUtils.getNumTag(getTagValueFromTocItemVo(tocVo)), newNum);
+                numNode = createElement(node.getOwnerDocument(), XmlUtils.getNumTag(getTagValueFromTocItemVo(tocVo)), newNum);
             }
             if (!EC.equals(tocVo.getOriginNumAttr())) { //TODO temp solution of not setting origin only for LS
                 addAttribute(numNode, LEOS_ORIGIN_ATTR, tocVo.getOriginNumAttr());
@@ -615,25 +615,25 @@ public class XmlContentProcessorHelper {
                         ((newHeading != null) && !StringUtils.isEmpty(newHeading.replaceAll(NBSP, EMPTY_STRING).trim()))) {
             headingNode = extractOrBuildHeaderElement(node,tocVo.isNewNode(), tocItems, newHeading, isTrackChangesEnabled, userLogin, title);
             if (tocVo.isUndeleted()) {
-                XercesUtils.updateXMLIDAttributeFullStructureNode(headingNode, EMPTY_STRING, true);
+                XmlUtils.updateXMLIDAttributeFullStructureNode(headingNode, EMPTY_STRING, true);
             }
         } else if (tocItem.getItemHeading().equals(OptionsType.OPTIONAL)
                 && EC.equalsIgnoreCase(tocVo.getOriginHeadingAttr()) && DELETE.equals(tocVo.getHeadingSoftActionAttr())) {
             headingNode = extractOrBuildHeaderElement(node,tocVo.isNewNode(), tocItems, EMPTY_STRING, isTrackChangesEnabled, userLogin, title);
-            XercesUtils.updateXMLIDAttributeFullStructureNode(headingNode, SOFT_DELETE_PLACEHOLDER_ID_PREFIX, true);
+            XmlUtils.updateXMLIDAttributeFullStructureNode(headingNode, SOFT_DELETE_PLACEHOLDER_ID_PREFIX, true);
             updateSoftInfo(headingNode, DELETE, null, user, CN, null, null, null);
         }
         return headingNode;
     }
 
     private static Node extractOrBuildHeaderElement(Node node, Boolean isNewNode, List<TocItem> tocItems, String newHeading, boolean isTrackChangesEnabled, String userLogin, String title) {
-        Node headingNode = XercesUtils.getFirstChild(node, HEADING);
+        Node headingNode = XmlUtils.getFirstChild(node, HEADING);
         if (headingNode == null) {
             headingNode = createElement(node.getOwnerDocument(), HEADING, newHeading);
         } else if (!StringUtils.equals(newHeading, StringEscapeUtils.unescapeXml(getHeadingTextContentWithoutDel(headingNode)))) {
             if (!isNewNode) {
                 if(isTrackChangesEnabled) {
-                    TocItemTypeName tocItemType = StructureConfigUtils.getTocItemTypeFromTagNameAndAttributes(tocItems,  headingNode.getNodeName(), XercesUtils.getAttributes(headingNode));
+                    TocItemTypeName tocItemType = StructureConfigUtils.getTocItemTypeFromTagNameAndAttributes(tocItems,  headingNode.getNodeName(), XmlUtils.getAttributes(headingNode));
                     Node delNode = getFirstChild(headingNode, LEOS_TC_DELETE_ELEMENT_NAME);
                     if(delNode != null) {
                         if(delNode.getTextContent().equals(newHeading)) {
@@ -735,9 +735,9 @@ public class XmlContentProcessorHelper {
         TableOfContentItemVO itemVO = null;
         List<TableOfContentItemVO> itemVOList;
         try {
-            Node document = XercesUtils.createXercesDocument(xmlContent);
+            Node document = XmlUtils.createDocument(xmlContent);
             String xPath = "//*[@xml:id = '" + startingNodeId + "']";
-            Node node = XercesUtils.getFirstElementByXPath(document, xPath);
+            Node node = XmlUtils.getFirstElementByXPath(document, xPath);
             if (node != null) {
                 itemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language, null, true);
                 itemVOList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode, language, null, true);
@@ -778,7 +778,7 @@ public class XmlContentProcessorHelper {
                     insertOrUpdateAttributeValue(node, LEOS_SOFT_MOVE_FROM, moveId);
                     break;
                 case UNDELETE:
-                    if(XercesUtils.getId(node).startsWith(SOFT_DELETE_PLACEHOLDER_ID_PREFIX)) {
+                    if(XmlUtils.getId(node).startsWith(SOFT_DELETE_PLACEHOLDER_ID_PREFIX)) {
                     	restoreOldId(node);
                     }
                     removeAttribute(node, LEOS_EDITABLE_ATTR);
@@ -815,7 +815,7 @@ public class XmlContentProcessorHelper {
     }
 
     protected static void restoreOldId(Node node) {
-        XercesUtils.updateXMLIDAttributeFullStructureNode(node, EMPTY_STRING, true);
+        XmlUtils.updateXMLIDAttributeFullStructureNode(node, EMPTY_STRING, true);
     }
 
     private static void updateUserDetails(Node node, TableOfContentItemVO tocVo, SoftActionType action, User user) {
@@ -841,16 +841,16 @@ public class XmlContentProcessorHelper {
         // Clean attributes first
         tocItemTypes.forEach(tocItemType -> {
             if (tocItemType.getAttribute() != null) {
-                XercesUtils.removeAttribute(node, tocItemType.getAttribute().getAttributeName());
+                XmlUtils.removeAttribute(node, tocItemType.getAttribute().getAttributeName());
             }
         });
         // Add attribute
         Attribute attribute = getAttributeByTagNameAndTocItemType(tocItems, item.getTocItemType(), tagName);
         if (attribute != null) {
-            XercesUtils.addAttribute(node, attribute.getAttributeName(), attribute.getAttributeValue());
+            XmlUtils.addAttribute(node, attribute.getAttributeName(), attribute.getAttributeValue());
         }
         if (tagName.equals(ARTICLE)) {
-            XercesUtils.insertAttributeIfNotPresent(node, LEOS_HTML_OL_ID_ATTR,
+            XmlUtils.insertAttributeIfNotPresent(node, LEOS_HTML_OL_ID_ATTR,
                     IdGenerator.generateId());
         }
     }

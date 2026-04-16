@@ -68,9 +68,9 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.processor.rendition.HtmlRenditionProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
-import eu.europa.ec.leos.services.support.LeosXercesUtils;
+import eu.europa.ec.leos.services.support.LeosXmlUtils;
 import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemHtmlVO;
@@ -116,7 +116,7 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE_COMPARE_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE_COMPARE_RETAIN_CLASS;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.*;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC_FILE_NAME_SEPARATOR;
@@ -947,7 +947,7 @@ public class LegServiceImpl implements LegService {
         }
         xmlContent = addMetadataToProposal(proposal, xmlContent);
         if (totalPageCount > 0) {
-            xmlContent = XercesUtils.addTotalPageCountTag(xmlContent, pageCounter.countPages(totalPageCount));
+            xmlContent = XmlUtils.addTotalPageCountTag(xmlContent, pageCounter.countPages(totalPageCount));
         }
         contentToZip.put(proposalService.generateProposalName(proposal.getMetadata().get().getRef(),
                 proposal.getMetadata().get().getLanguage()), xmlContent);
@@ -1537,8 +1537,8 @@ public class LegServiceImpl implements LegService {
         RenderedDocument tocHtmlDocumentJS = new RenderedDocument();
 
         if (xmlDocumentName.startsWith(XmlHelper.STAT_DIGIT_FINANC_LEGIS)) {
-            Document document = XercesUtils.createXercesDocument(xmlContent);
-            byte[] htmlRenditionContent = LeosXercesUtils.wrapWithPageOrientationDivs(document);
+            Document document = XmlUtils.createDocument(xmlContent);
+            byte[] htmlRenditionContent = LeosXmlUtils.wrapWithPageOrientationDivs(document);
             htmlDocument.setContent(new ByteArrayInputStream(htmlRenditionContent));
             tocHtmlDocument.setContent(new ByteArrayInputStream(htmlRenditionContent));
             tocHtmlDocumentJS.setContent(new ByteArrayInputStream(htmlRenditionContent));
@@ -1561,8 +1561,8 @@ public class LegServiceImpl implements LegService {
     }
 
     private String createTrackChangesCss(byte[] xmlContent, String proposalRef) {
-        Document document = createXercesDocument(xmlContent);
-        NodeList elements = XercesUtils.getElementsByXPath(document, xPathCatalog.getXPathTrackChanges());
+        Document document = createDocument(xmlContent);
+        NodeList elements = XmlUtils.getElementsByXPath(document, xPathCatalog.getXPathTrackChanges());
         List<String> usersId = new ArrayList();
         for (int i = 0; i < elements.getLength(); i++) {
             Node element = elements.item(i);

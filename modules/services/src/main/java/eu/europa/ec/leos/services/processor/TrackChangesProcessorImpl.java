@@ -19,12 +19,12 @@ import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
+import static eu.europa.ec.leos.services.support.XmlUtils.nodeToString;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
 
@@ -89,12 +89,12 @@ public class TrackChangesProcessorImpl<T extends XmlDocument> implements TrackCh
         String fragmentForMoveFrom;
         switch (trackChangeAction) {
             case DELETE:
-                nodeToBeRemoved = XercesUtils.getElementById(xmlContent, elementId.replace(SOFT_DELETE_PLACEHOLDER_ID_PREFIX, ""));
+                nodeToBeRemoved = XmlUtils.getElementById(xmlContent, elementId.replace(SOFT_DELETE_PLACEHOLDER_ID_PREFIX, ""));
                 elementFragment = nodeToBeRemoved != null ? nodeToString(nodeToBeRemoved) : "";
                 coEditionContext.sendUpdatedElements(docRef, presenterId, new SaveElementResponse(elementId, tagName, elementFragment), null);
                 break;
             case ADD:
-                nodeToBeAdded = XercesUtils.getElementById(xmlContent, elementId);
+                nodeToBeAdded = XmlUtils.getElementById(xmlContent, elementId);
                 elementFragment = nodeToBeAdded != null ? nodeToString(nodeToBeAdded) : "";
                 coEditionContext.sendUpdatedElements(docRef, presenterId, new SaveElementResponse(elementId, tagName, elementFragment), null);
                 break;
@@ -102,11 +102,11 @@ public class TrackChangesProcessorImpl<T extends XmlDocument> implements TrackCh
                 movedFromElementId = elementId.replace(SOFT_MOVE_PLACEHOLDER_ID_PREFIX, "");
                 movedToElementId = elementId;
                 if (accept) {
-                    nodeToBeAdded = XercesUtils.getElementById(xmlContent, movedFromElementId);
+                    nodeToBeAdded = XmlUtils.getElementById(xmlContent, movedFromElementId);
                     fragmentForMoveFrom = nodeToBeAdded != null ? nodeToString(nodeToBeAdded) : "";
                     fragmentForMoveTo = "";
                 } else {
-                    nodeToBeAdded = XercesUtils.getElementById(xmlContent, movedFromElementId);
+                    nodeToBeAdded = XmlUtils.getElementById(xmlContent, movedFromElementId);
                     fragmentForMoveTo = nodeToBeAdded != null ? nodeToString(nodeToBeAdded) : "";
                     fragmentForMoveFrom = "";
                 }
@@ -117,11 +117,11 @@ public class TrackChangesProcessorImpl<T extends XmlDocument> implements TrackCh
                 movedToElementId = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + elementId;
                 movedFromElementId = elementId;
                 if (accept) {
-                    nodeToBeAdded = XercesUtils.getElementById(xmlContent, movedFromElementId);
+                    nodeToBeAdded = XmlUtils.getElementById(xmlContent, movedFromElementId);
                     fragmentForMoveFrom = nodeToBeAdded != null ? nodeToString(nodeToBeAdded) : "";
                     fragmentForMoveTo = "";
                 } else {
-                    nodeToBeAdded = XercesUtils.getElementById(xmlContent, movedFromElementId);
+                    nodeToBeAdded = XmlUtils.getElementById(xmlContent, movedFromElementId);
                     fragmentForMoveTo = nodeToBeAdded != null ? nodeToString(nodeToBeAdded) : "";
                     fragmentForMoveFrom = "";
                 }

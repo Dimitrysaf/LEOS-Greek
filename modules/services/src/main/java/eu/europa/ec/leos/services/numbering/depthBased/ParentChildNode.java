@@ -10,10 +10,10 @@ import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.DIVISION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DEPTH_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValue;
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValueAsInteger;
-import static eu.europa.ec.leos.services.support.XercesUtils.getChildContent;
-import static eu.europa.ec.leos.services.support.XercesUtils.getId;
+import static eu.europa.ec.leos.services.support.XmlUtils.getAttributeValue;
+import static eu.europa.ec.leos.services.support.XmlUtils.getAttributeValueAsInteger;
+import static eu.europa.ec.leos.services.support.XmlUtils.getChildContent;
+import static eu.europa.ec.leos.services.support.XmlUtils.getId;
 import static eu.europa.ec.leos.util.LeosDomainUtil.calculateLeftPadd;
 
 public class ParentChildNode {
