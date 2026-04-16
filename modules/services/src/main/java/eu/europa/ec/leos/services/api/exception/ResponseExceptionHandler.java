@@ -2,8 +2,6 @@ package eu.europa.ec.leos.services.api.exception;
 
 import eu.europa.ec.leos.rest.handlers.ExceptionType;
 import eu.europa.ec.leos.rest.handlers.RestTemplateResponseException;
-import eu.europa.ec.leos.rest.handlers.ExceptionType;
-import eu.europa.ec.leos.rest.handlers.RestTemplateResponseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -63,4 +61,12 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(ex.getResponse(), ex.getStatus());
     }
 
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<eu.europa.ec.leos.rest.handlers.ExceptionResponse> handleException(ForbiddenException ex) {
+        if (Arrays.stream(ex.getStackTrace()).findFirst().isPresent()) {
+            LOG.error("Unexpected error occurred :" + Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);
+        }
+        return new ResponseEntity<>(new eu.europa.ec.leos.rest.handlers.ExceptionResponse(ex.getMessageKey(), ExceptionType.ERROR),
+                HttpStatus.FORBIDDEN);
+    }
 }

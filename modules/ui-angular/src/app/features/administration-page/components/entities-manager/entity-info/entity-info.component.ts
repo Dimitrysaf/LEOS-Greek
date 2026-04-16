@@ -12,6 +12,7 @@ import {validate} from "@/shared/utils/form.utils";
 import {SortEvent} from "@eui/components/eui-table";
 import {AppConfigService} from "@/core/services/app-config.service";
 import {Observable} from "rxjs";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-entity-info',
@@ -49,7 +50,7 @@ export class EntityInfoComponent implements OnInit {
     this._selectedEntity = value;
     if (!!value) {
       if (this.config) {
-        this.setupNameValue(value.name);
+        this.setValue(value);
       }
       if (value.id === undefined) {
         this.editing = true;
@@ -74,7 +75,8 @@ export class EntityInfoComponent implements OnInit {
   constructor(private adminService: AdministrationService,
               private fb: FormBuilder,
               private dialogService: LeosDialogService,
-              private appConfig: AppConfigService) {
+              private appConfig: AppConfigService,
+              private router: Router) {
     this.entityForm = this.fb.group({
       name: ['', [Validators.required, Validators.pattern(/^([a-zA-Z0-9_])+(\.?[a-zA-Z0-9_])*$/)]]
     });
@@ -83,11 +85,16 @@ export class EntityInfoComponent implements OnInit {
   ngOnInit(): void {
     this.appConfig.config.subscribe( config => {
       this.config = config;
-      this.setupNameValue(this.selectedEntity?.name);
+      this.setValue(this.selectedEntity);
     });
   }
 
-  private setupNameValue(name: string) {
+  private setValue(value?: Entity) {
+    if (!value) {
+      this.entityForm.patchValue({name: null}, {emitEvent: false});
+      return
+    }
+    const name = value.name;
     if (!this.config.userAppPermissions.includes('CAN_MANAGE_ALL_ENTITIES')) {
       this.entityPrefix = !this.isTheDefaultEntityOrganization
         ? this.config.user.defaultEntity.organizationName + '.'
@@ -177,11 +184,16 @@ export class EntityInfoComponent implements OnInit {
 
   cancelEdit() {
     this.editing = false;
+    this.setValue(this.selectedEntity);
     this.entityEditComplete.emit(this.selectedEntity?.id ? this.selectedEntity : null);
   }
 
   onToggleEdit() {
     this.editing = !this.editing;
+  }
+
+  navigateToUser(login: string) {
+    this.router.navigate(['/admin/user-manager'], {queryParams: {'login': login}});
   }
 
   get canBeEdited() {
