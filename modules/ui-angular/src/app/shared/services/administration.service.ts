@@ -81,4 +81,8 @@ export class AdministrationService implements OnDestroy {
   deleteEntity(id: string) {
     return this.httpClient.delete(`${apiBaseUrl}/secured/administration/entities/${id}`);
   }
+
+  getUserDetails(login: string): Observable<User> {
+    return this.httpClient.get<User>(`${apiBaseUrl}/secured/administration/users/${login}`);
+  }
 }

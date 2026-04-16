@@ -1,7 +1,7 @@
 package eu.europa.ec.leos.services.compare.processor;
 
 import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -17,30 +17,30 @@ public class LeosPreDiffingProcessor {
 
     public String adjustTrackChanges(String content) {
 
-        Document document = XercesUtils.createXercesDocument(content.getBytes(UTF_8));
-        NodeList elements = XercesUtils.getElementsByXPath(document, xPathCatalog.getXPathTrackChanges());
+        Document document = XmlUtils.createDocument(content.getBytes(UTF_8));
+        NodeList elements = XmlUtils.getElementsByXPath(document, xPathCatalog.getXPathTrackChanges());
         for (int countElements = 0; countElements < elements.getLength(); countElements++) {
             Node element = elements.item(countElements);
-            if(XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR) != null
+            if(XmlUtils.getAttributeValue(element, LEOS_ACTION_ATTR) != null
                     || element.getNodeName().equals("ins") || element.getNodeName().equals("del")){
-                if ((XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR) != null && XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR).equals(LEOS_TC_DELETE_ACTION))
+                if ((XmlUtils.getAttributeValue(element, LEOS_ACTION_ATTR) != null && XmlUtils.getAttributeValue(element, LEOS_ACTION_ATTR).equals(LEOS_TC_DELETE_ACTION))
                         || element.getNodeName().equals("del")) {
                     element.getParentNode().removeChild(element);
-                } else if (element.getNodeName().equals("ins") || (XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR) != null
+                } else if (element.getNodeName().equals("ins") || (XmlUtils.getAttributeValue(element, LEOS_ACTION_ATTR) != null
                         && element.getNodeName().equalsIgnoreCase("inline")
-                        && XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR).equals(LEOS_TC_INSERT_ACTION))) {
+                        && XmlUtils.getAttributeValue(element, LEOS_ACTION_ATTR).equals(LEOS_TC_INSERT_ACTION))) {
                     for(int countChildren = 0; countChildren < element.getChildNodes().getLength(); countChildren++) {
                         Node child = element.getChildNodes().item(countChildren);
                         element.getParentNode().insertBefore(child, element);
                     }
                     element.getParentNode().removeChild(element);
-                } else if (XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR) != null && XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR).equals(LEOS_TC_INSERT_ACTION)) {
-                    XercesUtils.removeTrackChangesAttributes(element);
+                } else if (XmlUtils.getAttributeValue(element, LEOS_ACTION_ATTR) != null && XmlUtils.getAttributeValue(element, LEOS_ACTION_ATTR).equals(LEOS_TC_INSERT_ACTION)) {
+                    XmlUtils.removeTrackChangesAttributes(element);
                 }
             }
         }
 
-        String xmlContent = new String(XercesUtils.nodeToByteArray(document));
+        String xmlContent = new String(XmlUtils.nodeToByteArray(document));
         return this.removeEmptyTablesMultiPass(xmlContent);
 
     }

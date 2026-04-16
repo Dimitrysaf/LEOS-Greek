@@ -1185,7 +1185,7 @@ Feature: Legal Act Page Regression Features
     When click on cancel button in document search bar
     Then document search bar is not present
 
-  @multiDragAndDrop @higherDivisionValidation @local
+  @multiDragAndDrop @higherDivisionValidation @local 
   Scenario: user is able to drag and drop multiple element with same type
     Given navigate to leos application with "User1"
     Then user is on home page

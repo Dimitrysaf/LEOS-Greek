@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
 
 import static eu.europa.ec.leos.services.numbering.NumberProcessorHandler.skipAutoRenumbering;
-import static eu.europa.ec.leos.services.support.XercesUtils.getId;
-import static eu.europa.ec.leos.services.support.XercesUtils.getNodeNum;
+import static eu.europa.ec.leos.services.support.XmlUtils.getId;
+import static eu.europa.ec.leos.services.support.XmlUtils.getNodeNum;
 import static eu.europa.ec.leos.services.support.XmlHelper.DIVISION;
 
 @Component

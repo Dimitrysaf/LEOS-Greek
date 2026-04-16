@@ -10,7 +10,7 @@ import eu.europa.ec.leos.services.numbering.processor.NumberProcessor;
 import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDepthBased;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XmlHelper;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.vo.structure.NumberingType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -25,13 +25,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeForSoftAction;
-import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
-import static eu.europa.ec.leos.services.support.XercesUtils.getId;
-import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
-import static eu.europa.ec.leos.services.support.XercesUtils.getNodeNum;
-import static eu.europa.ec.leos.services.support.XercesUtils.hasAttributeWithValue;
-import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
+import static eu.europa.ec.leos.services.support.XmlUtils.getAttributeForSoftAction;
+import static eu.europa.ec.leos.services.support.XmlUtils.getFirstChild;
+import static eu.europa.ec.leos.services.support.XmlUtils.getId;
+import static eu.europa.ec.leos.services.support.XmlUtils.getNumTag;
+import static eu.europa.ec.leos.services.support.XmlUtils.getNodeNum;
+import static eu.europa.ec.leos.services.support.XmlUtils.hasAttributeWithValue;
+import static eu.europa.ec.leos.services.support.XmlUtils.removeAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_AUTO_NUM_OVERWRITE;
@@ -94,7 +94,7 @@ public abstract class NumberProcessorHandler {
      */
     public void renumberDocument(Document document, String elementName, String language, boolean renumberChildren) {
         NodeList elements = document.getElementsByTagName(elementName);
-        List<Node> nodeList = XercesUtils.getNodesAsList(elements);
+        List<Node> nodeList = XmlUtils.getNodesAsList(elements);
         LOG.trace("renumberElementsAndChildren - Found {} '{}'s to number inside nodeName '{}', nodeId '{}'", nodeList.size(), elementName, document.getNodeName(), getId(document));
         renumber(nodeList, language, renumberChildren);
     }
@@ -132,15 +132,15 @@ public abstract class NumberProcessorHandler {
      */
     public void renumberElement(Node node, String elementName, boolean renumberChildren, String language) {
         if (Arrays.asList(POINT, INDENT).contains(elementName)) {
-            List<Node> LISTs = XercesUtils.getChildren(node, LIST);
+            List<Node> LISTs = XmlUtils.getChildren(node, LIST);
             LOG.trace("getChildren. Found {} LISTs inside nodeName {}, nodeId {}", LISTs.size(), node.getNodeName(), getId(node));
             for (int i = 0; i < LISTs.size(); i++) {
                 Node list = LISTs.get(i);
-                List<Node> nodeList = XercesUtils.getChildren(list, elementName);
+                List<Node> nodeList = XmlUtils.getChildren(list, elementName);
                 renumber(nodeList, language, renumberChildren);
             }
         } else {
-            List<Node> nodeList = XercesUtils.getChildren(node, elementName);
+            List<Node> nodeList = XmlUtils.getChildren(node, elementName);
             renumber(nodeList, language, renumberChildren);
         }
     }
@@ -205,7 +205,7 @@ public abstract class NumberProcessorHandler {
             for (int i = 0; i < nodeList.size(); i++) {
                 final ParentChildNode parentChildNode = nodeList.get(i);
                 final Node node = parentChildNode.getNode();
-                boolean leosRenumberedForNode = XercesUtils.getAttributeValueAsSimpleBoolean(node, LEOS_RENUMBERED);
+                boolean leosRenumberedForNode = XmlUtils.getAttributeValueAsSimpleBoolean(node, LEOS_RENUMBERED);
                 if (!leosRenumberedForNode || !skipAutoRenumbering(node)) {
                     numberProcessorsDepthBased.stream()
                             .filter(numberProcessor -> numberProcessor.canRenumber(node))
@@ -220,11 +220,11 @@ public abstract class NumberProcessorHandler {
     private void renumber(List<Node> nodeList, String language, boolean renumberChildren) {
         if (nodeList.size() > 0) {
             final Node firstElement = nodeList.get(0);
-            final int elementDepth = XercesUtils.getPointDepth(firstElement);
+            final int elementDepth = XmlUtils.getPointDepth(firstElement);
             final String elementName = firstElement.getNodeName();
             final NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement, language);
             numberConfig.setComplex(setComplexNumbering(nodeList));
-            boolean leosRenumbered = XercesUtils.getAttributeValueAsSimpleBoolean(firstElement, LEOS_RENUMBERED);
+            boolean leosRenumbered = XmlUtils.getAttributeValueAsSimpleBoolean(firstElement, LEOS_RENUMBERED);
             if (!leosRenumbered) {
                 updateStartingNumber(nodeList, numberConfig, elementName);
             }
@@ -247,7 +247,7 @@ public abstract class NumberProcessorHandler {
                             numNode.setTextContent(getFirstChild(numNode, "del").getTextContent());
                         }
                     }
-                    boolean leosRenumberedForNode = XercesUtils.getAttributeValueAsSimpleBoolean(node, LEOS_RENUMBERED);
+                    boolean leosRenumberedForNode = XmlUtils.getAttributeValueAsSimpleBoolean(node, LEOS_RENUMBERED);
                     if (!leosRenumberedForNode) {
                         incrementValue(numberConfig);
                     }
@@ -352,7 +352,7 @@ public abstract class NumberProcessorHandler {
         SoftActionType actionType = getAttributeForSoftAction(node, LEOS_SOFT_ACTION_ATTR);
         boolean containsSoftAttribute = softActionTypesToSkip.contains(actionType);
 
-        Boolean isOverWritten = XercesUtils.getAttributeValueAsBoolean(node, LEOS_AUTO_NUM_OVERWRITE);
+        Boolean isOverWritten = XmlUtils.getAttributeValueAsBoolean(node, LEOS_AUTO_NUM_OVERWRITE);
         isOverWritten = isOverWritten != null && isOverWritten;
 
         return containsSoftAttribute || isOverWritten;

@@ -9,21 +9,22 @@ import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.api.exception.ResponseExceptionHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,33 +32,32 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import static org.mockito.Mockito.*;
-
-@ContextConfiguration(locations = {
-        "classpath:test-servicesContext.xml"
-})
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = MvcTestConfig.class)
 @WebAppConfiguration
 public class AdministrationControllerTest {
-    private MockMvc mockMvc;
 
-    @Mock
+    @Autowired
+    private WebApplicationContext wac;
+
+    @Autowired
     private SecurityContext securityContext;
 
-    @Mock
+    @Autowired
     private UsersProvider usersClient;
+
+    private MockMvc mockMvc;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     public void setup() {
-        MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders
-                .standaloneSetup(new AdministrationController(securityContext, usersClient))
-                .setControllerAdvice(new ResponseExceptionHandler())
-                .build();
+        reset(securityContext, usersClient);
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }
 
     @Test
@@ -127,6 +127,7 @@ public class AdministrationControllerTest {
                 "a@b.com",
                 Collections.singletonList("SUPPORT"));
         when(securityContext.getUser()).thenReturn(user);
+        when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(true);
         ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
 
         UserDTO returnedUser = new UserDTO("login", null, null, null, null, null, null, null, null, null, null);
@@ -344,7 +345,7 @@ public class AdministrationControllerTest {
         when(usersClient.deleteEntity("1")).thenReturn(ResponseEntity.ok().build());
 
         mockMvc.perform(delete("/secured/administration/entities/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
         verify(usersClient, times(1)).deleteEntity("1");
     }
 
@@ -360,7 +361,7 @@ public class AdministrationControllerTest {
         when(usersClient.specialEntities(eq("Entity"))).thenReturn(Collections.singletonList(new EntityDTO("1", "Entity.updatedName", "Entity")));
 
         mockMvc.perform(delete("/secured/administration/entities/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
         verify(usersClient, times(1)).deleteEntity("1");
     }
 
@@ -378,5 +379,75 @@ public class AdministrationControllerTest {
         mockMvc.perform(delete("/secured/administration/entities/1"))
                 .andExpect(status().isForbidden());
         verify(usersClient, times(0)).deleteEntity(anyString());
+    }
+
+    @Test
+    public void GIVEN_user_CAN_MANAGE_ALL_USERS_WHEN_deleteUser_THEN_user_deleted() throws Exception {
+        User user = new User(1L, "user", "User",
+                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                "a@b.com",
+                Collections.singletonList("ADMIN"));
+        when(securityContext.getUser()).thenReturn(user);
+        // CAN_MANAGE_ALL_USERS: TRUE
+        when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(true);
+        when(usersClient.deleteSpecialUser("test")).thenReturn(ResponseEntity.ok().build());
+
+        mockMvc.perform(delete("/secured/administration/users/test"))
+                .andExpect(status().isNoContent());
+        verify(usersClient, times(1)).deleteSpecialUser( "test");
+    }
+
+    @Test
+    public void GIVEN_user_with_no_permission_WHEN_deleteUser_THEN_forbidden() throws Exception {
+        User user = new User(1L, "user", "User",
+                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                "a@b.com",
+                Collections.singletonList("USER"));
+        when(securityContext.getUser()).thenReturn(user);
+        // CAN_MANAGE_ALL_USERS: FALSE
+        when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(false);
+
+        mockMvc.perform(delete("/secured/administration/users/test"))
+                .andExpect(status().isForbidden());
+
+        verify(usersClient, times(0)).deleteSpecialUser(any());
+    }
+
+    @Test
+    public void GIVEN_user_CAN_MANAGE_ALL_USERS_WHEN_getUserDetails_THEN_user_details_returned() throws Exception {
+        User user = new User(1L, "user", "User",
+                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                "a@b.com",
+                Collections.singletonList("ADMIN"));
+        when(securityContext.getUser()).thenReturn(user);
+        // CAN_MANAGE_ALL_USERS: TRUE
+        when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(true);
+
+        List<EntityDTO> entities = Arrays.asList(
+                new EntityDTO("1", "Entity1", "Org1"),
+                new EntityDTO("2", "Entity2", "Org1"));
+        UserDTO dto = new UserDTO("test",null, "Last", "First", "a@b.c", "Boss", Collections.singletonList("USER"), "1", entities, null, null);
+        when(usersClient.getUserDetails("test")).thenReturn(dto);
+
+        mockMvc.perform(get("/secured/administration/users/test"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(objectMapper.writeValueAsString(dto)));
+        verify(usersClient, times(1)).getUserDetails( "test");
+    }
+
+    @Test
+    public void GIVEN_user_with_no_permission_WHEN_getUserDetails_THEN_forbidden() throws Exception {
+        User user = new User(1L, "user", "User",
+                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                "a@b.com",
+                Collections.singletonList("USER"));
+        when(securityContext.getUser()).thenReturn(user);
+        // CAN_MANAGE_ALL_USERS: FALSE
+        when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(false);
+
+        mockMvc.perform(get("/secured/administration/users/test"))
+                .andExpect(status().isForbidden());
+
+        verify(usersClient, times(0)).deleteSpecialUser(any());
     }
 }

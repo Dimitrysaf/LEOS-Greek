@@ -11,14 +11,14 @@ import org.w3c.dom.NodeList;
 import java.util.Arrays;
 import java.util.List;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.getChildren;
-import static eu.europa.ec.leos.services.support.XercesUtils.getElementById;
-import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
-import static eu.europa.ec.leos.services.support.XercesUtils.getId;
-import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
-import static eu.europa.ec.leos.services.support.XercesUtils.hasAttribute;
-import static eu.europa.ec.leos.services.support.XercesUtils.hasAttributeWithValue;
-import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
+import static eu.europa.ec.leos.services.support.XmlUtils.getChildren;
+import static eu.europa.ec.leos.services.support.XmlUtils.getElementById;
+import static eu.europa.ec.leos.services.support.XmlUtils.getFirstChild;
+import static eu.europa.ec.leos.services.support.XmlUtils.getId;
+import static eu.europa.ec.leos.services.support.XmlUtils.getNumTag;
+import static eu.europa.ec.leos.services.support.XmlUtils.hasAttribute;
+import static eu.europa.ec.leos.services.support.XmlUtils.hasAttributeWithValue;
+import static eu.europa.ec.leos.services.support.XmlUtils.removeAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ENTER;
@@ -131,10 +131,10 @@ public class MergeUtils {
     private static boolean undoCleanTrackChangesKeepingStructure(Node node) {
         boolean isNodeDeleted = false;
         if (LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName())) {
-            XercesUtils.replaceElement(node.getFirstChild(), node);
+            XmlUtils.replaceElement(node.getFirstChild(), node);
             isNodeDeleted = true;
         } else if (isInsertOrMoveFrom(node)) {
-            XercesUtils.deleteElement(node);
+            XmlUtils.deleteElement(node);
             isNodeDeleted = true;
         } else if (hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION)
                 || hasAttributeWithValue(node, LEOS_SOFT_ACTION_ATTR, MOVE_TO)) {
@@ -146,7 +146,7 @@ public class MergeUtils {
     private static boolean undoCleanTrackChanges(Node node, boolean resetNum) {
         boolean isNodeDeleted = false;
         if (LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName())) {
-            XercesUtils.replaceElement(node.getFirstChild(), node);
+            XmlUtils.replaceElement(node.getFirstChild(), node);
             isNodeDeleted = true;
         } else if (isInsertOrMoveFrom(node)) {
             isNodeDeleted = handleInsertOrMove(node, resetNum);
@@ -165,16 +165,16 @@ public class MergeUtils {
 
     private static boolean handleInsertOrMove(Node node, boolean resetNum) {
         Node parent = node.getParentNode();
-        XercesUtils.deleteElement(node);
+        XmlUtils.deleteElement(node);
 
        while (parent != null
                 && !parent.getNodeName().equals(NUM)
-                && !XercesUtils.hasAscendantOfType(parent, "subparagraph")
+                && !XmlUtils.hasAscendantOfType(parent, "subparagraph")
                 && isParentRemovable(parent)) {
             Node tmp = parent;
             parent = parent.getParentNode();
             if (tmp.getParentNode() != null) {
-                XercesUtils.deleteElement(tmp);
+                XmlUtils.deleteElement(tmp);
             }
         }
 
@@ -201,10 +201,10 @@ public class MergeUtils {
                 LEOS_INDENT_ORIGIN_TYPE_ATTR, LEOS_INDENT_ORIGIN_INDENT_LEVEL_ATTR, LEOS_INDENT_ORIGIN_NUM_ID_ATTR,
                 LEOS_INDENT_ORIGIN_NUM_ATTR, LEOS_INDENT_ORIGIN_NUM_ORIGIN_ATTR, LEOS_INDENT_UNUMBERED_PARAGRAPH);
         for (String attrToRemove: attrsToRemove) {
-            XercesUtils.removeAttribute(nodeToRestore, attrToRemove);
+            XmlUtils.removeAttribute(nodeToRestore, attrToRemove);
         }
         if (getId(nodeToRestore).startsWith(SOFT_MOVE_PLACEHOLDER_ID_PREFIX)) {
-            XercesUtils.updateXMLIDAttribute(nodeToRestore, EMPTY_STRING, true);
+            XmlUtils.updateXMLIDAttribute(nodeToRestore, EMPTY_STRING, true);
         }
         if (resetNum) {
             Node numNode = getFirstChild(nodeToRestore, NUM);
@@ -258,11 +258,11 @@ public class MergeUtils {
                 LEOS_INDENT_ORIGIN_NUM_ATTR, LEOS_INDENT_ORIGIN_NUM_ORIGIN_ATTR, LEOS_INDENT_UNUMBERED_PARAGRAPH);
         TocItem tocItem = getTocItemByName(tocItemsList, sourceElement.getNodeName().replace("akn", ""));
         for (String attr : attrsToCopy) {
-            if (XercesUtils.hasAttribute(sourceElement, attr)) {
+            if (XmlUtils.hasAttribute(sourceElement, attr)) {
                 if (tocItem == null || ((!attr.equals(LEOS_EDITABLE_ATTR) || tocItem.isEditable()) && (!attr.equals(LEOS_DELETABLE_ATTR) || tocItem.isDeletable())) ) {
                     xmlContent = xmlContentProcessor.insertAttributeToElement(xmlContent, sourceElement.getNodeName().toLowerCase(), elementId,
                             attr,
-                            XercesUtils.getAttributeValue(sourceElement, attr));
+                            XmlUtils.getAttributeValue(sourceElement, attr));
                 } else {
                     xmlContent = xmlContentProcessor.removeAttributeFromElement(xmlContent, elementId,
                             attr);
@@ -272,7 +272,7 @@ public class MergeUtils {
         if (!getId(sourceElement).equals(elementId)) {
             xmlContent = xmlContentProcessor.insertAttributeToElement(xmlContent, sourceElement.getNodeName().toLowerCase(), elementId,
                     XMLID,
-                    XercesUtils.getAttributeValue(sourceElement, XMLID));
+                    XmlUtils.getAttributeValue(sourceElement, XMLID));
         }
         Node sourceNumNode = getFirstChild(sourceElement, getNumTag(sourceElement.getNodeName()));
         Node destNumNode = getFirstChild(destNode, getNumTag(destNode.getNodeName()));
@@ -293,20 +293,20 @@ public class MergeUtils {
                 LEOS_INDENT_ORIGIN_NUM_ATTR, LEOS_INDENT_ORIGIN_NUM_ORIGIN_ATTR, LEOS_INDENT_UNUMBERED_PARAGRAPH);
         TocItem tocItem = getTocItemByName(tocItemsList, destElement.getNodeName().replace("akn", ""));
         for (String attr : attrsToCopy) {
-            if (XercesUtils.hasAttribute(sourceElement, attr)) {
+            if (XmlUtils.hasAttribute(sourceElement, attr)) {
                 if (tocItem == null || ((!attr.equals(LEOS_EDITABLE_ATTR) || tocItem.isEditable()) && (!attr.equals(LEOS_DELETABLE_ATTR) || tocItem.isDeletable())) ) {
-                    XercesUtils.addAttribute(destElement,
+                    XmlUtils.addAttribute(destElement,
                             attr,
-                            XercesUtils.getAttributeValue(sourceElement, attr));
+                            XmlUtils.getAttributeValue(sourceElement, attr));
                 } else {
-                    XercesUtils.removeAttribute(destElement,
+                    XmlUtils.removeAttribute(destElement,
                             attr);
                 }
             }
         }
-        XercesUtils.addAttribute(destElement,
+        XmlUtils.addAttribute(destElement,
                 XMLID,
-                XercesUtils.getAttributeValue(sourceElement, XMLID));
+                XmlUtils.getAttributeValue(sourceElement, XMLID));
         Node sourceNumNode = getFirstChild(sourceElement, getNumTag(sourceElement.getNodeName()));
         Node destNumNode = getFirstChild(destElement, getNumTag(sourceElement.getNodeName()));
         if (sourceNumNode != null && destNumNode != null) {
@@ -315,10 +315,10 @@ public class MergeUtils {
     }
 
     public static Node getSiblingForRenumbering(Node node) {
-        Node sibling = XercesUtils.getPrevSibling(node,
+        Node sibling = XmlUtils.getPrevSibling(node,
                 node.getNodeName());
         if (sibling == null) {
-            sibling = XercesUtils.getNextSibling(node,
+            sibling = XmlUtils.getNextSibling(node,
                     node.getNodeName());
         }
         if (sibling == null) {

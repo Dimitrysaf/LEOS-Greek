@@ -898,6 +898,61 @@ Feature: CK Editor Regression Features
     And  content of point 3 of list 1 of paragraph 1 of article 1 contains "point c sub point c"
     And  content of paragraph 2 of article 1 contains "second paragraph"
     And  content of paragraph 3 of article 1 contains "Text...last Paragraph"
+     # Start : https://code.europa.eu/leos/core/-/issues/2984
+    When disable track changes
+    And click on insert after icon of article 1
+    When mouseover and click on article 2
+    Then ck editor window is displayed
+    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+    And  click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on increase indent icon present in ck editor panel
+    And  add "point a" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And add "point b" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And  click on decrease indent icon present in ck editor panel
+    And add "subpara 1" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And add "paragraph 2" at current cursor position in edition mode
+    And click save and close button of ck editor
+    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 2 contains "Text..."
+    And  content of point 1 of list 1 of paragraph 1 of article 2 contains "point a"
+    And  content of point 2 of list 1 of paragraph 1 of article 2 contains "point b"
+    And  content of subparagraph refersTo "~WRP" of list 1 of paragraph 1 of article 2 contains "subpara 1"
+    And content of paragraph 2 of article 2 contains "paragraph 2"
+    And content of paragraph 3 of article 2 contains "Text..."
+    When enable track changes
+    Then enable track changes toggle bar is on in ribbon toolbar
+    When mouseover and click on article 2
+    Then ck editor window is displayed
+    When click at offset 7 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+    And click on decrease indent icon present in ck editor panel
+    And click on decrease indent icon present in ck editor panel
+    And click save and close button of ck editor
+    Then ck editor window is not displayed
+    And content of paragraph 1 of article 1 contains "Text..."
+    And "del" tag 1 of num tag of paragraph 2 of article 2 has text "(a)"
+    And "ins" tag 1 of num tag of paragraph 2 of article 2 has text "2."
+    And  content of subparagraph refersTo "~WRP" of list 1 of paragraph 2 of article 2 contains "subpara 1"
+    And "del" tag 1 of num tag of paragraph 3 of article 2 has text "2."
+    And "ins" tag 1 of num tag of paragraph 3 of article 2 has text "3."
+    When mouseover and click on article 2
+    Then ck editor window is displayed
+    And  user clicks on the track changes action plugin
+    Then track changes action dropdown displays the following options:
+      | Accept All |
+      | Reject All |
+    When click on reject all changes dropdown button
+    And click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 2 contains "Text..."
+    And  content of point 1 of list 1 of paragraph 1 of article 2 contains "point a"
+    And  content of point 2 of list 1 of paragraph 1 of article 2 contains "point b"
+    And  content of subparagraph refersTo "~WRP" of list 1 of paragraph 1 of article 2 contains "subpara 1"
+    And content of paragraph 2 of article 2 contains "paragraph 2"
+    And content of paragraph 3 of article 2 contains "Text..."
+#End of  ticket 2984 : https://code.europa.eu/leos/core/-/issues/2984
     When click on close button present in legal act page
     Then user is on act viewer page
     When click on add button in annexes section

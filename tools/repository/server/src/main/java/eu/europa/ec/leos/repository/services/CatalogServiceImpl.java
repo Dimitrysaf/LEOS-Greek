@@ -22,11 +22,11 @@ import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.CustomTemplateInfo;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.*;
-import eu.europa.ec.leos.repository.utils.XercesUtils;
+import eu.europa.ec.leos.repository.utils.XmlHelper;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -37,6 +37,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
@@ -56,6 +57,7 @@ import java.util.zip.ZipInputStream;
  * concurrent catalog modifications that could lead to data inconsistency.</p>
  */
 @Service
+@RequiredArgsConstructor
 public class CatalogServiceImpl implements CatalogService {
     private static final Logger LOG = LoggerFactory.getLogger(CatalogServiceImpl.class);
     private static final String CUSTOM_TEMPLATE_COMMENT = "Custom Template";
@@ -79,36 +81,8 @@ public class CatalogServiceImpl implements CatalogService {
     private final MilestoneDocumentService milestoneDocumentService;
     private final PackageRepository packageRepository;
     private final LinkedPackagedRepository linkedPackagedRepository;
-
-    @Autowired
-    public CatalogServiceImpl(DocumentRepository documentRepository,
-                              DocumentMilestoneRepository documentMilestoneRepository,
-                              CustomTemplateEntitiesRepository customTemplateEntitiesRepository,
-                              DocumentVRepository documentVRepository,
-                              ConfigService configService,
-                              ConfigurationVRepository configurationVRepository,
-                              ConfigCategoryRepository configCategoryRepository,
-                              DocumentService documentService,
-                              MilestoneDocumentService milestoneDocumentService,
-                              ConfigRepository configRepository,
-                              ConfigVersionRepository configVersionRepository,
-                              ConfigContentRepository configContentRepository, PackageRepository packageRepository,
-                              LinkedPackagedRepository linkedPackagedRepository) {
-        this.documentRepository = documentRepository;
-        this.documentMilestoneRepository = documentMilestoneRepository;
-        this.customTemplateEntitiesRepository = customTemplateEntitiesRepository;
-        this.documentVRepository = documentVRepository;
-        this.configService = configService;
-        this.configurationVRepository = configurationVRepository;
-        this.configCategoryRepository = configCategoryRepository;
-        this.documentService = documentService;
-        this.milestoneDocumentService = milestoneDocumentService;
-        this.configRepository = configRepository;
-        this.configVersionRepository = configVersionRepository;
-        this.configContentRepository = configContentRepository;
-        this.packageRepository = packageRepository;
-        this.linkedPackagedRepository = linkedPackagedRepository;
-    }
+    private final XmlHelper xmlHelper;
+    private final TransformerFactory transformerFactory;
 
     // =============================================================================
     // PUBLIC API METHODS
@@ -581,8 +555,8 @@ public class CatalogServiceImpl implements CatalogService {
         try {
             String catalogContent = getCatalogFromDatabase();
 
-            org.w3c.dom.Document sourceDoc = XercesUtils.createXercesDocument(catalogContent.getBytes(StandardCharsets.UTF_8), false);
-            org.w3c.dom.Document targetDoc = XercesUtils.createNewDocument(false);
+            org.w3c.dom.Document sourceDoc = xmlHelper.createDocument(catalogContent.getBytes(StandardCharsets.UTF_8), false);
+            org.w3c.dom.Document targetDoc = xmlHelper.createNewDocument(false);
 
             // Copy the root element with its attributes
             Element sourceRoot = sourceDoc.getDocumentElement();
@@ -692,8 +666,8 @@ public class CatalogServiceImpl implements CatalogService {
             String fullCatalogContent = getCatalogFromDatabase();
 
             // Parse both documents
-            org.w3c.dom.Document existingCatalogDoc = XercesUtils.createXercesDocument(existingCatalogXml.getBytes(StandardCharsets.UTF_8), false);
-            org.w3c.dom.Document fullCatalogDoc = XercesUtils.createXercesDocument(fullCatalogContent.getBytes(StandardCharsets.UTF_8), false);
+            org.w3c.dom.Document existingCatalogDoc = xmlHelper.createDocument(existingCatalogXml.getBytes(StandardCharsets.UTF_8), false);
+            org.w3c.dom.Document fullCatalogDoc = xmlHelper.createDocument(fullCatalogContent.getBytes(StandardCharsets.UTF_8), false);
 
             // Find the template in the full catalog
             Element templateElement = findTemplateByKey(fullCatalogDoc, templateKey);
@@ -972,7 +946,7 @@ public class CatalogServiceImpl implements CatalogService {
         }
 
         try {
-            org.w3c.dom.Document catalogDoc = XercesUtils.createXercesDocument(catalogXml.getBytes(StandardCharsets.UTF_8), false);
+            org.w3c.dom.Document catalogDoc = xmlHelper.createDocument(catalogXml.getBytes(StandardCharsets.UTF_8), false);
 
             if (customKey.startsWith("*_")) {
                 // Remove all templates with matching packageId
@@ -1013,7 +987,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     private String documentToString(org.w3c.dom.Document doc) throws Exception {
-        Transformer transformer = XercesUtils.createSecureTransformer();
+        Transformer transformer = xmlHelper.createTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 
@@ -1033,7 +1007,7 @@ public class CatalogServiceImpl implements CatalogService {
     private String insertTemplateIntoCatalogAndExtractKeys(String existingCatalogXml, String templateKey, String templateName, String packageId, Set<String> extractedKeys, String originalDg, boolean isTranslated, String mainLanguagePackageId) throws CatalogException {
         try {
             String fullCatalogContent = getCatalogFromDatabase();
-            org.w3c.dom.Document fullCatalogDoc = XercesUtils.createXercesDocument(fullCatalogContent.getBytes(StandardCharsets.UTF_8), false);
+            org.w3c.dom.Document fullCatalogDoc = xmlHelper.createDocument(fullCatalogContent.getBytes(StandardCharsets.UTF_8), false);
 
             Element templateElement = findTemplateByKey(fullCatalogDoc, templateKey);
             if (templateElement != null) {
@@ -1255,10 +1229,10 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     private String clearXmlIdAttributes(String xmlString) throws Exception {
-        org.w3c.dom.Document doc = XercesUtils.createXercesDocument(xmlString.getBytes(StandardCharsets.UTF_8), true);
+        org.w3c.dom.Document doc = xmlHelper.createDocument(xmlString.getBytes(StandardCharsets.UTF_8), true);
         clearXmlIdAttributes(doc.getDocumentElement());
 
-        Transformer transformer = XercesUtils.createSecureTransformer();
+        Transformer transformer = xmlHelper.createTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         StringWriter writer = new StringWriter();
         transformer.transform(new DOMSource(doc), new StreamResult(writer));
@@ -1282,7 +1256,7 @@ public class CatalogServiceImpl implements CatalogService {
 
 
     private String modifyTemplateValues(String xmlContent, String suffix) throws Exception {
-        org.w3c.dom.Document doc = XercesUtils.createXercesDocument(xmlContent.getBytes(StandardCharsets.UTF_8), true);
+        org.w3c.dom.Document doc = xmlHelper.createDocument(xmlContent.getBytes(StandardCharsets.UTF_8), true);
         // Modify leos:template
         NodeList templateNodes = doc.getElementsByTagNameNS("urn:eu:europa:ec:leos", "template");
         for (int i = 0; i < templateNodes.getLength(); i++) {
@@ -1300,7 +1274,7 @@ public class CatalogServiceImpl implements CatalogService {
         }
 
         // Convert back to string
-        Transformer transformer = XercesUtils.createSecureTransformer();
+        Transformer transformer = xmlHelper.createTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 
@@ -1324,7 +1298,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     private void extractTemplateKeysFromCatalog(String catalogXml, String packageId, Set<String> templateKeys) throws CatalogException {
         try {
-            org.w3c.dom.Document catalogDoc = XercesUtils.createXercesDocument(catalogXml.getBytes(StandardCharsets.UTF_8), false);
+            org.w3c.dom.Document catalogDoc = xmlHelper.createDocument(catalogXml.getBytes(StandardCharsets.UTF_8), false);
 
             NodeList items = catalogDoc.getElementsByTagName("item");
             for (int i = 0; i < items.getLength(); i++) {
@@ -1447,7 +1421,7 @@ public class CatalogServiceImpl implements CatalogService {
             String customKey = baseTemplate + CUSTOM_TEMPLATE_SEPARATOR + packageId;
 
             try {
-                org.w3c.dom.Document catalogDoc = XercesUtils.createXercesDocument(content.getContentString().getBytes(StandardCharsets.UTF_8), false);
+                org.w3c.dom.Document catalogDoc = xmlHelper.createDocument(content.getContentString().getBytes(StandardCharsets.UTF_8), false);
                 Element template = findTemplateByKey(catalogDoc, customKey);
                 if (template != null) {
                     return template.getAttribute("custom-name");

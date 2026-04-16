@@ -13,7 +13,7 @@
  */
 package integration.saveToc.mandate;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
 import static integration.saveToc.TocVOCreateUtils.getElementById;
 import static org.hamcrest.CoreMatchers.is;
@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import integration.saveToc.TocVOCreateMandateUtils;
@@ -83,10 +83,10 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
 
         // Then
-        Document documentExpected = createXercesDocument(xmlExpected);
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(xmlResult);
-        String result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(xmlExpected);
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(xmlResult);
+        String result = XmlUtils.nodeToString(documentResult);
         result = squeezeXml(result);
         expectedStr = squeezeXml(expectedStr);
         assertThat(result, is(expectedStr));
@@ -112,10 +112,10 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
 
         // Then
-        Document documentExpected = createXercesDocument(xmlExpected);
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(xmlResult);
-        String result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(xmlExpected);
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(xmlResult);
+        String result = XmlUtils.nodeToString(documentResult);
         result = squeezeXml(result);
         expectedStr = squeezeXml(expectedStr);
         assertEquals(expectedStr, result);
@@ -143,10 +143,10 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
 
         // Then
-        Document documentExpected = createXercesDocument(xmlExpected);
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(xmlResult);
-        String result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(xmlExpected);
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(xmlResult);
+        String result = XmlUtils.nodeToString(documentResult);
         result = squeezeXml(result);
         expectedStr = squeezeXml(expectedStr);
         assertThat(result, is(expectedStr));
@@ -174,10 +174,10 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
 
         // Then
-        Document documentExpected = createXercesDocument(xmlExpected);
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(xmlResult);
-        String result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(xmlExpected);
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(xmlResult);
+        String result = XmlUtils.nodeToString(documentResult);
         result = squeezeXml(result);
         expectedStr = squeezeXml(expectedStr);
         assertEquals(expectedStr, result);
@@ -203,10 +203,10 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
 
         // Then
-        Document documentExpected = createXercesDocument(xmlExpected);
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(xmlResult);
-        String result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(xmlExpected);
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(xmlResult);
+        String result = XmlUtils.nodeToString(documentResult);
         result = squeezeXml(result);
         expectedStr = squeezeXml(expectedStr);
         assertEquals(expectedStr, result);
@@ -239,10 +239,10 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
 
         // Then
-        Document documentExpected = createXercesDocument(xmlExpected);
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(xmlResult);
-        String result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(xmlExpected);
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(xmlResult);
+        String result = XmlUtils.nodeToString(documentResult);
         result = squeezeXml(result);
         expectedStr = squeezeXml(expectedStr);
         assertEquals(expectedStr, result);
@@ -269,10 +269,10 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
 
         // Then
-        Document documentExpected = createXercesDocument(xmlExpected);
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(xmlResult);
-        String result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(xmlExpected);
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(xmlResult);
+        String result = XmlUtils.nodeToString(documentResult);
         result = squeezeXml(result);
         expectedStr = squeezeXml(expectedStr);
         assertEquals(expectedStr, result);
@@ -302,10 +302,10 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
 
         // Then
-        Document documentExpected = createXercesDocument(xmlExpected);
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(xmlResult);
-        String result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(xmlExpected);
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(xmlResult);
+        String result = XmlUtils.nodeToString(documentResult);
         result = squeezeXml(result);
         expectedStr = squeezeXml(expectedStr);
         assertThat(result, is(expectedStr));
@@ -334,10 +334,10 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
 
         // Then
-        Document documentExpected = createXercesDocument(xmlExpected);
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(xmlResult);
-        String result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(xmlExpected);
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(xmlResult);
+        String result = XmlUtils.nodeToString(documentResult);
         result = squeezeXml(result);
         expectedStr = squeezeXml(expectedStr);
         assertEquals(expectedStr, result);

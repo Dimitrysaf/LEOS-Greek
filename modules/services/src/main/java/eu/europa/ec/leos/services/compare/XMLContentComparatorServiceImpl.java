@@ -20,7 +20,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.compare.vo.Element;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
@@ -60,9 +60,9 @@ import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.i
 import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.isRemovedElementIndentedInNewContext;
 import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.shouldBeMarkedAsSoftAdded;
 import static eu.europa.ec.leos.services.compare.IndentContentComparatorHelper.wasChildOfPreviousSibling;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.insertAttributeIfNotPresent;
-import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttribute;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.insertAttributeIfNotPresent;
+import static eu.europa.ec.leos.services.support.XmlUtils.updateXMLIDAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DELETABLE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
@@ -119,25 +119,25 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
         computeDifferencesAtNodeLevel(context);
         
         // LEOS-5819: re-generate soft action label attributes
-        byte[] xmlContent = XercesUtils.nodeToByteArray(context.getResultNode());
-        Document document = createXercesDocument(xmlContent);
+        byte[] xmlContent = XmlUtils.nodeToByteArray(context.getResultNode());
+        Document document = createDocument(xmlContent);
         Node result = document.getFirstChild();
         xmlContentProcessor.updateSoftMoveLabelAttribute(result, LEOS_SOFT_MOVE_TO);
         xmlContentProcessor.updateSoftMoveLabelAttribute(result, LEOS_SOFT_MOVE_FROM);
 
         LOG.debug("Comparison finished!  ({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        return XercesUtils.nodeToString(result);
+        return XmlUtils.nodeToString(result);
     }
 
     private void resetResultNode(ContentComparatorContext context, Node node) {
-        node = XercesUtils.importNodeInDocument(node.getOwnerDocument(), node);
+        node = XmlUtils.importNodeInDocument(node.getOwnerDocument(), node);
         node.setTextContent(EMPTY_STRING);
         context.setResultNode(node);
     }
 
     protected void addToResultNode(ContentComparatorContext context, Node node) {
         if (node.getOwnerDocument() != context.getResultNode().getOwnerDocument()) {
-            node = XercesUtils.importNodeInDocument(context.getResultNode().getOwnerDocument(), node);
+            node = XmlUtils.importNodeInDocument(context.getResultNode().getOwnerDocument(), node);
         }
         context.getResultNode().appendChild(node);
     }
@@ -154,7 +154,7 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
         String attrName = context.getAttrName();
         String attrValue = getStartTagValueForRemovedElement(softDeletedNewElement, context);
         if (attrName != null && attrValue != null) {
-            XercesUtils.addAttribute(node, attrName, attrValue);
+            XmlUtils.addAttribute(node, attrName, attrValue);
         }
         addToResultNode(context, node);
     }
@@ -165,7 +165,7 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
         String attrName = context.getAttrName();
         String attrValue = getStartTagValueForRemovedElement(softMovedToOrDeletedNewElement, context);
         if (attrName != null && attrValue != null) {
-            XercesUtils.addAttribute(node, attrName, attrValue);
+            XmlUtils.addAttribute(node, attrName, attrValue);
         }
         addToResultNode(context, node);
     }
@@ -551,7 +551,7 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
             if (Boolean.TRUE.equals(context.getThreeWayDiff())) {
                 node = buildNodeForAddedElement(context.getNewElement(), context.getIntermediateElement(), context);
             } else if (!(isElementContentEqual(context) && !containsIgnoredElements(node)) && context.getStartTagAttrName() != null && shouldBeMarkedAsAdded(context)) {
-                XercesUtils.insertOrUpdateAttributeValue(node, context.getStartTagAttrName(), context.getStartTagAttrValue());
+                XmlUtils.insertOrUpdateAttributeValue(node, context.getStartTagAttrName(), context.getStartTagAttrValue());
             }
             addToResultNode(context, node);
         } else if (!shouldIgnoreElement(context.getOldElement()) && (!context.getIgnoreElements() || !shouldIgnoreElement(context.getNewElement()))) {
@@ -589,11 +589,11 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
                 node.setTextContent(getRemovedNumContent(context));
                 addToResultNode(context, node);
             } else if ((context.getNewElement() != null && context.getNewElement().hasTextChild()) || (context.getOldElement() != null && context.getOldElement().hasTextChild())) {
-                String oldContent = XercesUtils.getContentNodeAsXmlFragment(getNodeFromElement(context.getOldElement()));
-                String newContent = XercesUtils.getContentNodeAsXmlFragment(getNodeFromElement(context.getNewElement()));
+                String oldContent = XmlUtils.getContentNodeAsXmlFragment(getNodeFromElement(context.getOldElement()));
+                String newContent = XmlUtils.getContentNodeAsXmlFragment(getNodeFromElement(context.getNewElement()));
                 String intermediateContent = null;
                 if (isThreeWayDiffEnabled(context) && context.getIntermediateElement().hasTextChild()) {
-                    intermediateContent = XercesUtils.getContentNodeAsXmlFragment(context.getIntermediateElement().getNode());
+                    intermediateContent = XmlUtils.getContentNodeAsXmlFragment(context.getIntermediateElement().getNode());
                 }
                 String result;
                 try {
@@ -604,12 +604,12 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
                     result = messageHelper.getMessage("leos.version.compare.error.message");
                 }
                 result = "<fake xmlns:leos=\"urn:eu:europa:ec:leos\">" + result + FAKE;
-                Node comparedContentNode = XercesUtils.createNodeFromXmlFragment(node.getOwnerDocument(), result.getBytes(UTF_8));
+                Node comparedContentNode = XmlUtils.createNodeFromXmlFragment(node.getOwnerDocument(), result.getBytes(UTF_8));
                 node.setTextContent(EMPTY_STRING);
-                node = XercesUtils.copyContent(comparedContentNode, node);
+                node = XmlUtils.copyContent(comparedContentNode, node);
                 addToResultNode(context, node);
             } else {
-                node = XercesUtils.importNodeInDocument(context.getResultNode().getOwnerDocument(), node);
+                node = XmlUtils.importNodeInDocument(context.getResultNode().getOwnerDocument(), node);
                 node.setTextContent(EMPTY_STRING);
                 ContentComparatorContext newContext = new ContentComparatorContext.Builder(context)
                         .withOldContentRoot(context.getOldElement())
@@ -699,7 +699,7 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
         Node node = buildNode(element);
         // Indented should be considered as added
         if ((attrName != null) && shouldBeMarkedAsSoftAdded(element, attrValue)) {
-            XercesUtils.insertOrUpdateAttributeValue(node, attrName, attrValue);
+            XmlUtils.insertOrUpdateAttributeValue(node, attrName, attrValue);
         }
         return node;
     }
@@ -714,8 +714,8 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
     }
 
     protected void addReadOnlyAttributes(Node node) {
-        XercesUtils.insertOrUpdateAttributeValue(node, LEOS_DELETABLE_ATTR, Boolean.FALSE.toString());
-        XercesUtils.insertOrUpdateAttributeValue(node, LEOS_EDITABLE_ATTR, Boolean.FALSE.toString());
+        XmlUtils.insertOrUpdateAttributeValue(node, LEOS_DELETABLE_ATTR, Boolean.FALSE.toString());
+        XmlUtils.insertOrUpdateAttributeValue(node, LEOS_EDITABLE_ATTR, Boolean.FALSE.toString());
     }
 
     protected final void appendRemovedElementContentIfRequired(ContentComparatorContext context) {
@@ -755,7 +755,7 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
 
     protected boolean isAddedElement(Node node) {
         if (node != null) {
-            String attrValue = XercesUtils.getAttributeValue(node, XMLID);
+            String attrValue = XmlUtils.getAttributeValue(node, XMLID);
             return attrValue == null;
         }
         return false;
@@ -813,11 +813,11 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
     }
 
     protected Node getNonIgnoredChangedElementContent(Node contentNode, Element element, String attrName, String attrValue) {
-        Node node = XercesUtils.getElementById(contentNode, element.getTagId());
+        Node node = XmlUtils.getElementById(contentNode, element.getTagId());
         if (!containsIgnoredElements(node)) {
             node = getChangedElementContent(contentNode, element, attrName, attrValue);
         } else if (!shouldIgnoreElement(element)) {
-            XercesUtils.insertOrUpdateAttributeValue(node, attrName, attrValue);
+            XmlUtils.insertOrUpdateAttributeValue(node, attrName, attrValue);
             for (Element child : element.getChildren()) {
                 if (!shouldIgnoreElement(child)) {
                     // add child without changing the start tag
@@ -836,7 +836,7 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
         computeDeletedNodesAtEachLevel(context);
 
         LOG.debug("Comparison finished!  ({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        String result = XercesUtils.nodeToString(context.getResultNode());
+        String result = XmlUtils.nodeToString(context.getResultNode());
         return usesFakeParentNode ? result.substring(result.indexOf("<", result.indexOf("<fake") + 1), result.indexOf("</fake")) : result;
     }
 
@@ -991,7 +991,7 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
         if ((context.getNewElement() != null && context.getNewElement().hasTextChild())) {
             addToResultNode(context, node);
         } else {
-            node = XercesUtils.importNodeInDocument(context.getResultNode().getOwnerDocument(), node);
+            node = XmlUtils.importNodeInDocument(context.getResultNode().getOwnerDocument(), node);
             node.setTextContent(EMPTY_STRING);
             ContentComparatorContext newContext = new ContentComparatorContext.Builder(context)
                     .withOldContentRoot(context.getOldElement())
@@ -1033,17 +1033,17 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
         final String oldXml = enableFakeEncapsulation ? "<fake>" + context.getComparedVersions()[0] + FAKE : context.getComparedVersions()[0];
         final String newXml = enableFakeEncapsulation ? "<fake>" + context.getComparedVersions()[1] + FAKE : context.getComparedVersions()[1];
         boolean usesFakeEncapsulation = false;
-        Node oldNode = XercesUtils.createXercesDocument(oldXml.getBytes(UTF_8), false).getDocumentElement();
-        Node newNode = XercesUtils.createXercesDocument(newXml.getBytes(UTF_8), false).getDocumentElement();
+        Node oldNode = XmlUtils.createDocument(oldXml.getBytes(UTF_8), false).getDocumentElement();
+        Node newNode = XmlUtils.createDocument(newXml.getBytes(UTF_8), false).getDocumentElement();
 
-        XercesUtils.addLeosNamespace(oldNode);
-        XercesUtils.addLeosNamespace(newNode);
+        XmlUtils.addLeosNamespace(oldNode);
+        XmlUtils.addLeosNamespace(newNode);
 
-        if (enableFakeEncapsulation && XercesUtils.countChildren(oldNode, Collections.emptyList()) == 1 && XercesUtils.countChildren(newNode, Collections.emptyList()) == 1) {
-            oldNode = XercesUtils.createXercesDocument(context.getComparedVersions()[0].getBytes(UTF_8), false).getDocumentElement();
-            newNode = XercesUtils.createXercesDocument(context.getComparedVersions()[1].getBytes(UTF_8), false).getDocumentElement();
-            XercesUtils.addLeosNamespace(oldNode);
-            XercesUtils.addLeosNamespace(newNode);
+        if (enableFakeEncapsulation && XmlUtils.countChildren(oldNode, Collections.emptyList()) == 1 && XmlUtils.countChildren(newNode, Collections.emptyList()) == 1) {
+            oldNode = XmlUtils.createDocument(context.getComparedVersions()[0].getBytes(UTF_8), false).getDocumentElement();
+            newNode = XmlUtils.createDocument(context.getComparedVersions()[1].getBytes(UTF_8), false).getDocumentElement();
+            XmlUtils.addLeosNamespace(oldNode);
+            XmlUtils.addLeosNamespace(newNode);
         } else {
             usesFakeEncapsulation = enableFakeEncapsulation;
         }
@@ -1062,7 +1062,7 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
 
         if (Boolean.TRUE.equals(context.getThreeWayDiff())) {
             final String intermediateXml = context.getComparedVersions()[2];
-            final Node intermediateNode = XercesUtils.createXercesDocument(intermediateXml.getBytes(UTF_8), false).getDocumentElement();
+            final Node intermediateNode = XmlUtils.createDocument(intermediateXml.getBytes(UTF_8), false).getDocumentElement();
 
             context.setIntermediateContentElements(new HashMap<>());
             final Element intermediateElement = buildElement(intermediateNode, new HashMap<>(), context.getIntermediateContentElements());
@@ -1186,7 +1186,7 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
             String attrName = context.getAttrName();
             String attrValue = getStartTagValueForRemovedElement(listWrapper, context);
             if (attrName != null && attrValue != null) {
-                XercesUtils.addAttribute(listWrapper.getNode(), attrName, attrValue);
+                XmlUtils.addAttribute(listWrapper.getNode(), attrName, attrValue);
             }
             addToResultNode(context, listWrapper.getNode());
         }
@@ -1290,7 +1290,7 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
 
     protected boolean isActionRoot(Node node) {
         if (isClonedProposalOrContribution()) {
-            return XercesUtils.containsAttributeWithValue(node, LEOS_SOFT_ACTION_ROOT_ATTR, Boolean.TRUE.toString());
+            return XmlUtils.containsAttributeWithValue(node, LEOS_SOFT_ACTION_ROOT_ATTR, Boolean.TRUE.toString());
         }
         return false;
     }
@@ -1303,19 +1303,19 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
         Node node = null;
         if (isClonedProposalOrContribution()) {
             if (!shouldIgnoreElement(element)) {
-                node = XercesUtils.getElementById(contentNode, element.getTagId());
+                node = XmlUtils.getElementById(contentNode, element.getTagId());
                 if (node == null) {
                     //LEOS-5691:If getElementById returns null, look for element by Name (Only case with metadata elements)
-                    node = XercesUtils.getFirstElementByName(contentNode, element.getTagName());
+                    node = XmlUtils.getFirstElementByName(contentNode, element.getTagName());
                 }
                 // Lists should not be marked as added
                 if (attrName != null && attrValue != null && !isList(element)) {
-                    XercesUtils.insertOrUpdateAttributeValue(node, attrName, attrValue);
+                    XmlUtils.insertOrUpdateAttributeValue(node, attrName, attrValue);
                 }
             }
         } else {
             node = element.getNode();
-            XercesUtils.insertOrUpdateAttributeValue(node, attrName, attrValue);
+            XmlUtils.insertOrUpdateAttributeValue(node, attrName, attrValue);
         }
         return node;
     }
@@ -1411,7 +1411,7 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
     private void appendSoftActionPrefix(ContentComparatorContext context, String softActionPrefix) {
         Element softDeletedNewElement = context.getNewContentElements().get(softActionPrefix + context.getOldElement().getTagId());
         Node node = softDeletedNewElement.getNode();
-        XercesUtils.insertOrUpdateAttributeValue(node, context.getAttrName(), context.getRemovedValue());
+        XmlUtils.insertOrUpdateAttributeValue(node, context.getAttrName(), context.getRemovedValue());
         addReadOnlyAttributes(node);
         addToResultNode(context, node);
     }
@@ -1477,9 +1477,9 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
                     Element softDeletedNewElement = context.getNewContentElements().get(SOFT_DELETE_PLACEHOLDER_ID_PREFIX + context.getOldElement().getTagId());
                     int indexOfSoftDeletedElementInNewContent = getBestMatchInList(softDeletedNewElement.getParent().getChildren(), softDeletedNewElement);
 
-                    String oldNum = XercesUtils.getAttributeValue(softDeletedNewElement.getNode(), LEOS_INITIAL_NUM);
+                    String oldNum = XmlUtils.getAttributeValue(softDeletedNewElement.getNode(), LEOS_INITIAL_NUM);
                     if (oldNum != null) {
-                        Node newNumNode = XercesUtils.getFirstChild(softDeletedNewElement.getNode(), NUM);
+                        Node newNumNode = XmlUtils.getFirstChild(softDeletedNewElement.getNode(), NUM);
                         newNumNode.setTextContent(oldNum);
                     }
 
@@ -1523,8 +1523,8 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
     }
 
     private void appendMovedOrTransformedContent(ContentComparatorContext context, Element element) {
-        Node node = XercesUtils.getElementById(context.getNewContentNode(), element.getTagId());
-        XercesUtils.insertOrUpdateAttributeValue(node, context.getAttrName(), context.getRemovedValue());
+        Node node = XmlUtils.getElementById(context.getNewContentNode(), element.getTagId());
+        XmlUtils.insertOrUpdateAttributeValue(node, context.getAttrName(), context.getRemovedValue());
         addReadOnlyAttributes(node);
         addToResultNode(context, node);
     }

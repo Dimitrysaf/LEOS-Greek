@@ -1,7 +1,6 @@
 package eu.europa.ec.leos.services.document.operation;
 
 import eu.europa.ec.leos.domain.repository.LeosCategory;
-import eu.europa.ec.leos.services.dto.request.AknType;
 import eu.europa.ec.leos.services.dto.request.LineItem;
 import eu.europa.ec.leos.services.dto.request.Operation;
 import eu.europa.ec.leos.services.dto.request.SectionRequest;
@@ -12,13 +11,12 @@ import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import jakarta.inject.Provider;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.TransformerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationContext;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -40,7 +38,7 @@ class CleanOperationStrategyTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        XmlFactoryConfig config = new XmlFactoryConfig();
+        XmlFactoryConfig config = new XmlFactoryConfig(mock(ApplicationContext.class));
         strategy = new CleanOperationStrategy(
                 injectionHelper, xmlContentProcessor, numberService, sectionContentValidator,
                 structureContextProvider, documentLanguageContext,

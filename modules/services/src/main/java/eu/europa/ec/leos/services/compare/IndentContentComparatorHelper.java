@@ -4,7 +4,7 @@ import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.services.compare.vo.Element;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.w3c.dom.Node;
@@ -170,7 +170,7 @@ class IndentContentComparatorHelper {
     }
 
     public static boolean isECOrigin(Element element) {
-        return XercesUtils.containsAttributeWithValue(element.getNode(), LEOS_ORIGIN_ATTR, EC);
+        return XmlUtils.containsAttributeWithValue(element.getNode(), LEOS_ORIGIN_ATTR, EC);
     }
 
     public static boolean hasIndentedChild(Element element) {
@@ -336,7 +336,7 @@ class IndentContentComparatorHelper {
     }
 
     private static boolean isIndentAction(Node node) {
-        return XercesUtils.containsAttribute(node, LEOS_INDENT_ORIGIN_TYPE_ATTR);
+        return XmlUtils.containsAttribute(node, LEOS_INDENT_ORIGIN_TYPE_ATTR);
     }
 
     private static boolean isDifferentIndent(Element firstElement, Element secondElement) {
@@ -416,7 +416,7 @@ class IndentContentComparatorHelper {
             grandParentInOtherContext = contentElements.get(XmlHelper.SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + grandParent.getTagId());
         }
         String softTransAttr = grandParentInOtherContext != null && grandParentInOtherContext.getNode() != null
-                ? XercesUtils.getAttributeValue(grandParentInOtherContext.getNode(), XmlHelper.LEOS_SOFT_TRANS_FROM) : null;
+                ? XmlUtils.getAttributeValue(grandParentInOtherContext.getNode(), XmlHelper.LEOS_SOFT_TRANS_FROM) : null;
         return  softTransAttr != null && softTransAttr.equals(element.getTagId());
     }
 }

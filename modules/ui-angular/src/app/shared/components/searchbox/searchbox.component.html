@@ -15,7 +15,7 @@
         [(ngModel)]="searchTerm"
         (ngModelChange)="searchTermChange.emit($event)"
       />
-      <button
+      <button *ngIf="searchTerm"
         class="input-container clear-button"
         (click)="clear()"
       >

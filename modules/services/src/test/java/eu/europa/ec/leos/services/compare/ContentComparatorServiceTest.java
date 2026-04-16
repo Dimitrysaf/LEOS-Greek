@@ -18,8 +18,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
-import eu.europa.ec.leos.services.support.XercesUtils;
-import eu.europa.ec.leos.services.util.TestUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -30,7 +29,7 @@ import org.w3c.dom.Document;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -63,10 +62,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -96,10 +95,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -117,10 +116,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -137,10 +136,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -155,10 +154,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -173,10 +172,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -193,10 +192,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
 
@@ -212,10 +211,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
 
@@ -247,10 +246,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -267,10 +266,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -294,10 +293,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -320,10 +319,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -340,10 +339,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -360,10 +359,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -380,10 +379,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -405,10 +404,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -442,10 +441,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -472,10 +471,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -508,10 +507,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -541,10 +540,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -575,10 +574,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }
@@ -608,10 +607,10 @@ public class ContentComparatorServiceTest extends LeosTest {
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
                 .withAddedValue(CONTENT_ADDED_CLASS)
                 .build());
-        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8));
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(result.getBytes(UTF_8));
-        result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(expectedResult.getBytes(UTF_8));
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(result.getBytes(UTF_8));
+        result = XmlUtils.nodeToString(documentResult);
 
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
     }

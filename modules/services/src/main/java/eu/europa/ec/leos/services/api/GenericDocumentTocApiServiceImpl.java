@@ -32,9 +32,9 @@ import eu.europa.ec.leos.services.processor.rendition.HtmlRenditionProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
-import eu.europa.ec.leos.services.support.LeosXercesUtils;
+import eu.europa.ec.leos.services.support.LeosXmlUtils;
 import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemHtmlVO;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -112,8 +112,8 @@ public class GenericDocumentTocApiServiceImpl implements GenericDocumentTocApiSe
     public List<TableOfContentItemVO> getTableOfContent(@NotNull String docRef,
                                                         @NotNull TocMode mode) throws NotFoundException {
         XmlDocument document = this.findDocumentByRef(docRef);
-        String docTemplate = LeosXercesUtils.getDocTemplate(document);
-        byte[] content = LeosXercesUtils.getDocumentContent(document);
+        String docTemplate = LeosXmlUtils.getDocTemplate(document);
+        byte[] content = LeosXmlUtils.getDocumentContent(document);
         String startingNode = Optional.ofNullable(DOCUMENT_TOC_STARTING_NODE.get(document.getCategory()))
                 .orElseThrow(
                         () -> new RuntimeException(String.format("Starting node not found for document %s", docRef)));
@@ -181,8 +181,8 @@ public class GenericDocumentTocApiServiceImpl implements GenericDocumentTocApiSe
             RenderedDocument tocHtmlDocumentJS = new RenderedDocument();
 
             if (xmlDocumentName.startsWith(XmlHelper.STAT_DIGIT_FINANC_LEGIS)) {
-                Document document = XercesUtils.createXercesDocument(xmlContent);
-                byte[] htmlRenditionContent = LeosXercesUtils.wrapWithPageOrientationDivs(document);
+                Document document = XmlUtils.createDocument(xmlContent);
+                byte[] htmlRenditionContent = LeosXmlUtils.wrapWithPageOrientationDivs(document);
                 htmlDocument.setContent(new ByteArrayInputStream(htmlRenditionContent));
                 tocHtmlDocument.setContent(new ByteArrayInputStream(htmlRenditionContent));
                 tocHtmlDocumentJS.setContent(new ByteArrayInputStream(htmlRenditionContent));

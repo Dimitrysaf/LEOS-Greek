@@ -14,7 +14,7 @@
 package integration.saveToc.mandate;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
 import static integration.saveToc.TocVOCreateUtils.getElementById;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import eu.europa.ec.leos.model.action.SoftActionType;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
@@ -72,10 +72,10 @@ public class SaveTocBillUnDeleteMandateTest_IT extends SaveTocBillMandateTest_IT
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
 
         // Then
-        Document documentExpected = createXercesDocument(xmlExpected);
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(xmlResult);
-        String result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(xmlExpected);
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(xmlResult);
+        String result = XmlUtils.nodeToString(documentResult);
         result = squeezeXml(result);
         expectedStr = squeezeXml(expectedStr);
         assertEquals(expectedStr, result);
@@ -95,10 +95,10 @@ public class SaveTocBillUnDeleteMandateTest_IT extends SaveTocBillMandateTest_IT
         byte[] xmlResult = processSaveTocBill(xmlInput, toc);
 
         // Then
-        Document documentExpected = createXercesDocument(xmlExpected);
-        String expectedStr = XercesUtils.nodeToString(documentExpected);
-        Document documentResult = createXercesDocument(xmlResult);
-        String result = XercesUtils.nodeToString(documentResult);
+        Document documentExpected = createDocument(xmlExpected);
+        String expectedStr = XmlUtils.nodeToString(documentExpected);
+        Document documentResult = createDocument(xmlResult);
+        String result = XmlUtils.nodeToString(documentResult);
         result = squeezeXml(result);
         expectedStr = squeezeXml(expectedStr);
         assertEquals(expectedStr, result);
