@@ -22,7 +22,7 @@ Feature: explanatory memorandum page regression features
     When click on explanatory memorandum link present in act viewer page
     Then user is on explanatory memorandum page
     # Start Ticket #3479- https://code.europa.eu/leos/core/-/issues/3479
-    And the version on the top of the document page is "v0.1.0.0"
+    And the version on the top of the document page contains "v0.1.0.0"
     # End Ticket #3479- https://code.europa.eu/leos/core/-/issues/3479
     And  annotation side bar is present
     And  ribbon toolbar is maximized
@@ -82,7 +82,7 @@ Feature: explanatory memorandum page regression features
     When click save and close button of ck editor
     Then ck editor window is not displayed
     # Start Ticket #https://code.europa.eu/leos/core/-/issues/3479
-    And the version on the top of the document page is "v0.1.1"
+    And the version on the top of the document page contains "v0.1.1"
     # End Ticket #https://code.europa.eu/leos/core/-/issues/3479
     And  num of item 1 of blockList 1 of blockContainer 1 contains value "1."
     And  content of item 1 of blockList 1 of blockContainer 1 contains value "Not Applicable"

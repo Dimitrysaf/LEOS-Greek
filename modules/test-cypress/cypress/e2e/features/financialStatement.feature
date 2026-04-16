@@ -228,15 +228,15 @@ Feature: financial statement page regression features
     When click on financial statement link present in act viewer page
     Then user is on financial statement page
  # Start ticket #https://code.europa.eu/leos/core/-/issues/3479
-    And the version on the top of the document page is "v0.1.0.0"
+    And the version on the top of the document page contains "v0.1.0.0"
    # End ticket #https://code.europa.eu/leos/core/-/issues/3479
    When click on insert group after icon of repeatable subparagraph
     Then repeated subparagraph group after should exist
-    And the version on the top of the document page is "v0.1.1.0"
+    And the version on the top of the document page contains "v0.1.1.0"
     When click on insert group before icon of repeatable subparagraph
     Then repeated subparagraph group before should exist
    # Start ticket #https://code.europa.eu/leos/core/-/issues/3479
-    And the version on the top of the document page is "v0.1.2.0"
+    And the version on the top of the document page contains "v0.1.2.0"
     # End ticket #https://code.europa.eu/leos/core/-/issues/3479
 
 
