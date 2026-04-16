@@ -65,8 +65,8 @@ import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.searchInRules;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.getTagValueFromTocItemVo;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.buildTableOfContentsItemVO;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.getElementById;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.getElementById;
 import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
 import static eu.europa.ec.leos.services.support.XmlHelper.DIVISION;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
@@ -206,7 +206,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         List<NumberingConfig> numberingConfigs = structureContextProvider.get().getNumberingConfigs();
 
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         String language = documentLanguageContext.getDocumentLanguage();
 
         TableOfContentItemVO draggedTocItemVO = getTableOfContentItemVO(request.getDraggedNodeId().get(0),

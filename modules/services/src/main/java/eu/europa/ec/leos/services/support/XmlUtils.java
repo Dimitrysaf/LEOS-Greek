@@ -3,6 +3,8 @@ package eu.europa.ec.leos.services.support;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.util.LeosDomainUtil;
+import eu.europa.ec.leos.xml.LeosDocumentBuilderFactory;
+import eu.europa.ec.leos.xml.LeosTransformerFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.jaxen.dom.DOMXPath;
@@ -17,10 +19,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -38,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -48,27 +48,16 @@ import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN_NAME
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN_URI;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
-public class XercesUtils {
+public class XmlUtils {
     private static final String XML_DEFINITION_REGEX = "^<\\?xml *version=[\"\']1\\.[01][\"\'] *encoding=([\"\'])UTF-8([\"\'])?( *standalone=([\"\'])((yes)|(no))([\"\']))? *\\?>";
+    private static final String XMLNS_NS_URI = "http://www.w3.org/2000/xmlns/";
+    private static final String NAMESPACE_LEOS_URI = "urn:eu:europa:ec:leos";
 
-    private static final Logger LOG = LoggerFactory.getLogger(XercesUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmlUtils.class);
 
-    private static DocumentBuilder getDocumentBuilder(boolean namespaceEnabled) throws ParserConfigurationException {
-        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-        builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        builderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-        builderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        builderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-        builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        builderFactory.setExpandEntityReferences(false);
-        builderFactory.setNamespaceAware(namespaceEnabled);
-        builderFactory.setXIncludeAware(false);
-        return builderFactory.newDocumentBuilder();
-    }
-
-    public static Document createXercesDocument(byte[] xmlContent, boolean namespaceEnabled) {
+    public static Document createDocument(byte[] xmlContent, boolean namespaceEnabled) {
         try {
-            DocumentBuilder builder = getDocumentBuilder(namespaceEnabled);
+            DocumentBuilder builder = LeosDocumentBuilderFactory.newDocumentBuilder(namespaceEnabled);
             Document doc = builder.parse(new ByteArrayInputStream(fixUtf8Bytes(xmlContent)));
             doc.getDocumentElement().normalize();
             return doc;
@@ -84,22 +73,22 @@ public class XercesUtils {
         return content.getBytes(StandardCharsets.UTF_8);
     }
 
-    public static Document createXercesDocument(XmlDocument xmlDoc) {
+    public static Document createDocument(XmlDocument xmlDoc) {
         byte[] xmlContent = xmlDoc.getContent().get().getSource().getBytes();
-        return createXercesDocument(xmlContent);
+        return createDocument(xmlContent);
     }
 
-    public static Document createXercesDocument(byte[] xmlContent) {
-        return createXercesDocument(xmlContent, true);
+    public static Document createDocument(byte[] xmlContent) {
+        return createDocument(xmlContent, true);
     }
 
     public static Node createNodeFromXmlFragment(byte[] xmlFragment) {
-        Document document = createXercesDocument(xmlFragment, true);
+        Document document = createDocument(xmlFragment, true);
         return document.getFirstChild();
     }
 
     public static Node createNodeFromXmlFragment(byte[] xmlFragment, boolean namespaceEnabled) {
-        Document document = createXercesDocument(xmlFragment, namespaceEnabled);
+        Document document = createDocument(xmlFragment, namespaceEnabled);
         return document.getFirstChild();
     }
 
@@ -108,7 +97,7 @@ public class XercesUtils {
     }
 
     public static Node createNodeFromXmlFragment(Document document, byte[] xmlFragment, boolean namespaceEnabled) {
-        Document externalDoc = createXercesDocument(xmlFragment, namespaceEnabled);
+        Document externalDoc = createDocument(xmlFragment, namespaceEnabled);
         Node externalNode = externalDoc.getDocumentElement();
         return document.importNode(externalNode, true);
     }
@@ -173,16 +162,20 @@ public class XercesUtils {
     public static String nodeToStringWithTransformer(Node node, boolean omitXmlDeclaration) {
         StringWriter sw = new StringWriter();
         StreamResult output = new StreamResult(sw);
+        if (node instanceof Element element) {
+            element.setAttribute("xmlns:leos", NAMESPACE_LEOS_URI);
+        }
         saveNodeToOutput(node, output, omitXmlDeclaration);
         String xmlString = sw.getBuffer().toString();
-        xmlString = xmlString.replaceAll("xmlns:leos=\""+NAMESPACE_AKN_URI+"\"", "");
+        xmlString = xmlString.replace("xmlns:leos=\""+NAMESPACE_AKN_URI+"\"", "");
+        xmlString = xmlString.replace("xmlns=\"\"", "");
         return xmlString;
     }
 
     private static void saveNodeToOutput(Node node, StreamResult output,boolean omitXmlDeclaration) {
         try {
             final Source input = new DOMSource(node);
-            Transformer transformer = getTransformer();
+            Transformer transformer = LeosTransformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             if (omitXmlDeclaration) {
                 transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
@@ -195,26 +188,10 @@ public class XercesUtils {
             throw new IllegalStateException("Cannot save Node to output", e);
         }
     }
-
-    private static Transformer getTransformer() throws TransformerConfigurationException {
-        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-        // Secure the factory to prevent XXE attacks
-        transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        transformerFactory.setURIResolver((href, base) -> {
-            throw new TransformerException("External URI resolution blocked");
-        });
-        try {
-            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
-        } catch (IllegalArgumentException e) {
-            // Some implementations (Xerces, Xalan 2.7.3 and Saxon) doesn't support JAXP 1.5
-            //LOG.error("Error: {} - {}", transformerFactory.getClass().getName(), e.getMessage());
-        }
-        return transformerFactory.newTransformer();
-    }
+    
 
     private static DOMSource createNamespaceAwareDOMSource(Node node) throws Exception {
-        Document document = getDocumentBuilder(true).newDocument();
+        Document document = LeosDocumentBuilderFactory.newDocumentBuilder(true).newDocument();
         document.appendChild(document.importNode(node, true));
         return new DOMSource(document);
     }
@@ -263,7 +240,7 @@ public class XercesUtils {
     }
 
     public static byte[] sanitize(byte[] content) {
-        Document doc = createXercesDocument(content);
+        Document doc = createDocument(content);
         sanitize(doc.getDocumentElement());
         return nodeToByteArray(doc);
     }
@@ -312,7 +289,7 @@ public class XercesUtils {
     }
 
     public static Node getElementById(byte[] xmlContent, String elementId) {
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         return getElementById(document, elementId, true);
     }
 
@@ -670,7 +647,24 @@ public class XercesUtils {
     }
 
     public static Element addLeosNamespace(Node node) {
-        return addAttribute(node, "xmlns:leos", "urn:eu:europa:ec:leos");
+        Validate.notNull(node, "Node cannot be null!");
+        Element element = (node instanceof Document)
+                ? ((Document) node).getDocumentElement() : (Element) node;
+        element.setAttributeNS(XMLNS_NS_URI, "xmlns:leos", NAMESPACE_LEOS_URI);
+        return element;
+    }
+
+    public static boolean addLeosNamespace(StringBuilder xmlContentString) {
+//        String xmlContentString = new String(xmlContent, StandardCharsets.UTF_8);
+//        boolean leosNamespaceAdded = false;
+        Matcher aknTagMatcher = Pattern.compile("(<akomaNtoso\\b[^>]*)(>)").matcher(xmlContentString);
+        if (aknTagMatcher.find() && !aknTagMatcher.group(0).contains("xmlns:leos")) {
+            String replaced = aknTagMatcher.replaceFirst("$1 xmlns:leos=\"" + NAMESPACE_LEOS_URI + "\"$2");
+            xmlContentString.delete(0, xmlContentString.length());
+            xmlContentString.append(replaced);
+            return true;
+        }
+        return false;
     }
 
     public static Element addAttribute(Node node, String attrName, String attrValue) {
@@ -687,9 +681,17 @@ public class XercesUtils {
         }
 
         if (attrValue != null) {
-            element.setAttribute(attrName, attrValue);
+            if (attrName.startsWith("leos:")) {
+                element.removeAttribute(attrName);
+                element.setAttributeNS(NAMESPACE_LEOS_URI, attrName, attrValue);
+            } else {
+                element.setAttribute(attrName, attrValue);
+            }
         } else {
             element.removeAttribute(attrName);
+            if (attrName.startsWith("leos:")) {
+                element.removeAttributeNS(NAMESPACE_LEOS_URI, attrName.substring("leos:".length()));
+            }
         }
 
         return element;
@@ -819,15 +821,15 @@ public class XercesUtils {
     }
 
     public static boolean isTCDeleted(Node node) {
-        return XercesUtils.hasAttribute(node, LEOS_ACTION_ATTR) && XercesUtils.getAttributeValue(node, LEOS_ACTION_ATTR).equals(LEOS_TC_DELETE_ACTION);
+        return XmlUtils.hasAttribute(node, LEOS_ACTION_ATTR) && XmlUtils.getAttributeValue(node, LEOS_ACTION_ATTR).equals(LEOS_TC_DELETE_ACTION);
     }
 
     public static boolean isSoftDeleted(Node node) {
-        return XercesUtils.hasAttribute(node, LEOS_SOFT_ACTION_ATTR) && XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR).equals(LEOS_SOFT_ACTION_DELETE);
+        return XmlUtils.hasAttribute(node, LEOS_SOFT_ACTION_ATTR) && XmlUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR).equals(LEOS_SOFT_ACTION_DELETE);
     }
 
     public static boolean isSoftMovedTo(Node node) {
-        return XercesUtils.hasAttribute(node, LEOS_SOFT_MOVE_TO);
+        return XmlUtils.hasAttribute(node, LEOS_SOFT_MOVE_TO);
     }
 
     public static boolean checkAttributeValue(Node node, String attribute, String attributeValue) {
@@ -1268,6 +1270,7 @@ public class XercesUtils {
 
     public static Element createElementWithAknNS(Document document, String elementName, String elementContent) {
         Element element = document.createElementNS(NAMESPACE_AKN_URI, elementName);
+//        removeAttribute(element, "xmlns:leos");
         element.setTextContent(elementContent);
         return element;
     }
@@ -1280,7 +1283,7 @@ public class XercesUtils {
 
     public static Element createElement(Document document, String elementName, String attr, String attrValue, String elementContent) {
         Element element = createElement(document, elementName, elementContent);
-        XercesUtils.addAttribute(element, attr, attrValue);
+        XmlUtils.addAttribute(element, attr, attrValue);
         return element;
     }
 
@@ -1466,7 +1469,7 @@ public class XercesUtils {
     public static SoftActionType getSoftAction(Node node) {
         SoftActionType softActionType = null;
         String tagName = node.getNodeName();
-        String attrVal = XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR);
+        String attrVal = XmlUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR);
         if (!isExcludedNode(tagName) && attrVal != null) {
             softActionType = SoftActionType.of(attrVal);
         }
@@ -1484,7 +1487,7 @@ public class XercesUtils {
 
     public static String removeXmlNSAttributes(String input) {
         if(!StringUtils.isEmpty(input)) {
-            Document document = createXercesDocument(input.getBytes(UTF_8), true);
+            Document document = createDocument(input.getBytes(UTF_8), input.contains("xmlns:leos"));
             Node node = document.getFirstChild();
             Map<String, String> attrMap = getAttributes(node);
             attrMap.keySet().forEach(attrName -> {
@@ -1551,7 +1554,7 @@ public class XercesUtils {
 
     public static boolean hasNodeContainingAttributeValue(NodeList bodyNodes, String attrName, String attrValue) {
         for (int i=0; i<bodyNodes.getLength(); i++) {
-            List<Node> children = XercesUtils.getChildren(bodyNodes.item(i));
+            List<Node> children = XmlUtils.getChildren(bodyNodes.item(i));
             for (Node childNode : children) {
                 if (hasAttributeValue(attrName, attrValue, childNode)) {
                     return true;
@@ -1586,7 +1589,7 @@ public class XercesUtils {
             return false;
         }
         if (is(node, SUBPARAGRAPH)) {
-            Node prevSibling = XercesUtils.getPrevSibling(isListIntro(node) ? node.getParentNode(): node);
+            Node prevSibling = XmlUtils.getPrevSibling(isListIntro(node) ? node.getParentNode(): node);
             return prevSibling == null || !is(prevSibling, Arrays.asList(SUBPARAGRAPH, LIST));
         }
         return false;
@@ -1595,7 +1598,7 @@ public class XercesUtils {
     public static boolean isListIntro(Node node) {
         if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
             boolean isInsideAList = is(node.getParentNode(), LIST);
-            boolean isFirstElement = XercesUtils.getPrevSibling(node) == null;
+            boolean isFirstElement = XmlUtils.getPrevSibling(node) == null;
             return is(node, SUBPARAGRAPH) && isInsideAList && isFirstElement;
         }
         return false;
@@ -1604,35 +1607,10 @@ public class XercesUtils {
     public static boolean isListWrapper(Node node) {
         if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
             boolean isInsideAList = is(node.getParentNode(), LIST);
-            boolean isLastElement = XercesUtils.getNextSibling(node) == null;
+            boolean isLastElement = XmlUtils.getNextSibling(node) == null;
             return is(node, SUBPARAGRAPH) && isInsideAList && isLastElement;
         }
         return false;
-    }
-
-    static class XPathSanitizer {
-
-        // Define a pattern for allowed characters in
-        // The following provided is not compiling but gives an hint
-        //private static final Pattern VALID_XPATH_PATTERN = Pattern.compile("\"^(/|(\\.\\./)|(\\./)|\\.\\.//)?([a-zA-Z_][a-zA-Z0-9_\\-]*|\\\\*)(/([a-zA-Z_][a-zA-Z0-9_\\-]*|\\\\*))*((\\\\[@?[a-zA-Z_][a-zA-Z0-9_\\-]*\\\\s*(=|!=|<|>|<=|>=|\\\\s*contains\\\\(|\\\\s*starts-with\\\\()\\\\s*('[^']*'|\\\"[^\\\"]*\\\")\\\\s*\\\\])|\\\\s*::\\\\s*[a-zA-Z_][a-zA-Z0-9_\\-]*\\\\s*)*)*$\"");
-
-        //TODO The current pattern is mundane and needs to be replaced by a more restrictive one since any string is accpted
-        private static String XPATH_PATTERN_STRING = "^(/|(\\.\\./)|(\\./)|\\.\\.//)?.*";
-        private static final Pattern VALID_XPATH_PATTERN = Pattern.compile(XPATH_PATTERN_STRING);
-
-        public static String sanitizeXPath(String xPath) throws IllegalArgumentException {
-            if (xPath == null) {
-                throw new IllegalArgumentException("XPath cannot be null");
-            }
-
-            // Validate against the allowed pattern
-            if (!VALID_XPATH_PATTERN.matcher(xPath).matches()) {
-                throw new IllegalArgumentException("XPath contains invalid characters "+xPath);
-            }
-
-            return xPath;
-        }
-
     }
 
     public static boolean cleanTrackChangesForElement(Node node) {
@@ -1644,7 +1622,7 @@ public class XercesUtils {
                 if(isNodeDeleted) {
                     index--;
                     if (nodeList.getLength() == 0) {
-                        XercesUtils.deleteElement(node);
+                        XmlUtils.deleteElement(node);
                         return true;
                     }
                 } else {
@@ -1652,7 +1630,7 @@ public class XercesUtils {
                     if(isNodeDeleted) {
                         index--;
                         if (nodeList.getLength() == 0) {
-                            XercesUtils.deleteElement(node);
+                            XmlUtils.deleteElement(node);
                             return true;
                         }
                     }
@@ -1665,21 +1643,21 @@ public class XercesUtils {
     private static boolean doCleanTrackChanges(Node node) {
         boolean isNodeDeleted = false;
         if(LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName())) {
-            XercesUtils.deleteElement(node);
+            XmlUtils.deleteElement(node);
             isNodeDeleted = true;
         } else if(LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName())) {
             if (node.getFirstChild() != null) {
-                XercesUtils.replaceNodeWithSelfContent(node);
+                XmlUtils.replaceNodeWithSelfContent(node);
             } else {
-                XercesUtils.deleteElement(node);
+                XmlUtils.deleteElement(node);
             }
             isNodeDeleted = true;
         } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION)) {
-            XercesUtils.deleteElement(node);
+            XmlUtils.deleteElement(node);
             isNodeDeleted = true;
         } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION) || hasAttributeWithValue(node, LEOS_ACTION_NUMBER, LEOS_TC_INSERT_ACTION)) {
             if("span".equals(node.getNodeName())) {
-                XercesUtils.replaceElement(node.getFirstChild(), node);
+                XmlUtils.replaceElement(node.getFirstChild(), node);
                 isNodeDeleted = true;
             } else {
                 removeTrackChangesAttributes(node);
@@ -1705,7 +1683,7 @@ public class XercesUtils {
                 if (isNodeDeleted) {
                     index--;
                     if (nodeList.getLength() == 0) {
-                        XercesUtils.deleteElement(node);
+                        XmlUtils.deleteElement(node);
                         return true;
                     }
                 } else {
@@ -1713,7 +1691,7 @@ public class XercesUtils {
                     if(isNodeDeleted) {
                         index--;
                         if (nodeList.getLength() == 0) {
-                            XercesUtils.deleteElement(node);
+                            XmlUtils.deleteElement(node);
                             return true;
                         }
                     }
@@ -1727,15 +1705,15 @@ public class XercesUtils {
         boolean isNodeDeleted = false;
         if(LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName())
                 && (LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getParentNode().getNodeName()) || LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getParentNode().getNodeName()))) {
-            XercesUtils.deleteElement(node);
+            XmlUtils.deleteElement(node);
             isNodeDeleted = true;
         } else if(LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName())
                 && (LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getParentNode().getNodeName()) || LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getParentNode().getNodeName()))) {
-            XercesUtils.deleteElement(node);
+            XmlUtils.deleteElement(node);
             isNodeDeleted = true;
         } else if((LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName()) || LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName()))
                 && (node.getFirstChild() == null)) {
-            XercesUtils.deleteElement(node);
+            XmlUtils.deleteElement(node);
             isNodeDeleted = true;
         }
         return isNodeDeleted;
@@ -1756,7 +1734,7 @@ public class XercesUtils {
                 if (isNodeDeleted) {
                     index--;
                     if (nodeList.getLength() == 0) {
-                        XercesUtils.deleteElement(node);
+                        XmlUtils.deleteElement(node);
                         return true;
                     }
                 } else {
@@ -1764,7 +1742,7 @@ public class XercesUtils {
                     if(isNodeDeleted) {
                         index--;
                         if (nodeList.getLength() == 0) {
-                            XercesUtils.deleteElement(node);
+                            XmlUtils.deleteElement(node);
                             return true;
                         }
                     }
@@ -1778,14 +1756,14 @@ public class XercesUtils {
         boolean isNodeDeleted = false;
         if(LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName())
                 && (StringUtils.isBlank(node.getTextContent()))) {
-            XercesUtils.deleteElement(node);
+            XmlUtils.deleteElement(node);
             isNodeDeleted = true;
         } else if(LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName())
                 && (StringUtils.isBlank(node.getTextContent()))) {
             if (node.getFirstChild() != null) {
-                XercesUtils.replaceNodeWithSelfContent(node);
+                XmlUtils.replaceNodeWithSelfContent(node);
             } else {
-                XercesUtils.deleteElement(node);
+                XmlUtils.deleteElement(node);
             }
             isNodeDeleted = true;
         }
@@ -1807,7 +1785,7 @@ public class XercesUtils {
                 if(isNodeDeleted) {
                     index--;
                     if (nodeList.getLength() == 0) {
-                        XercesUtils.deleteElement(node);
+                        XmlUtils.deleteElement(node);
                         return true;
                     }
                 } else {
@@ -1815,7 +1793,7 @@ public class XercesUtils {
                     if(isNodeDeleted) {
                         index--;
                         if (nodeList.getLength() == 0) {
-                            XercesUtils.deleteElement(node);
+                            XmlUtils.deleteElement(node);
                             return true;
                         }
                     }
@@ -1828,24 +1806,24 @@ public class XercesUtils {
     private static boolean doUndoTrackChanges(Node node) {
         boolean isNodeDeleted = false;
         if(LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName())) {
-            XercesUtils.deleteElement(node);
+            XmlUtils.deleteElement(node);
             isNodeDeleted = true;
         } else if(LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName())) {
             if (node.getFirstChild() != null) {
-                XercesUtils.replaceNodeWithSelfContent(node);
+                XmlUtils.replaceNodeWithSelfContent(node);
             } else {
-                XercesUtils.deleteElement(node);
+                XmlUtils.deleteElement(node);
             }
             isNodeDeleted = true;
         } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION)) {
             if("span".equals(node.getNodeName())) {
-                XercesUtils.replaceElement(node.getFirstChild(), node);
+                XmlUtils.replaceElement(node.getFirstChild(), node);
                 isNodeDeleted = true;
             } else {
                 removeTrackChangesAttributes(node);
             }
         } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION) || hasAttributeWithValue(node, LEOS_ACTION_NUMBER, LEOS_TC_INSERT_ACTION)) {
-            XercesUtils.deleteElement(node);
+            XmlUtils.deleteElement(node);
             isNodeDeleted = true;
         } else if(hasAttribute(node, LEOS_ACTION_NUMBER) || hasAttribute(node, LEOS_ACTION_ENTER) || hasAttribute(node, LEOS_SPLIT_CONTENT_ATTR)) {
             removeTrackChangesAttributes(node);
@@ -1854,19 +1832,19 @@ public class XercesUtils {
     }
 
     public static void removeTrackChangesAttributes(Node node) {
-        XercesUtils.removeAttribute(node, LEOS_ACTION_ATTR);
-        XercesUtils.removeAttribute(node, LEOS_ACTION_NUMBER);
-        XercesUtils.removeAttribute(node, LEOS_ACTION_ENTER);
-        XercesUtils.removeAttribute(node, LEOS_TITLE);
-        XercesUtils.removeAttribute(node, LEOS_TITLE_NUMBER);
-        XercesUtils.removeAttribute(node, LEOS_TITLE_ENTER);
-        XercesUtils.removeAttribute(node, LEOS_UID);
-        XercesUtils.removeAttribute(node, LEOS_UID_NUMBER);
-        XercesUtils.removeAttribute(node, LEOS_UID_ENTER);
-        XercesUtils.removeAttribute(node, LEOS_TC_ORIGINAL_NUMBER);
-        XercesUtils.removeAttribute(node, LEOS_SOFT_USER_ATTR);
-        XercesUtils.removeAttribute(node, LEOS_SOFT_DATE_ATTR);
-        XercesUtils.removeAttribute(node, LEOS_SPLIT_CONTENT_ATTR);
+        XmlUtils.removeAttribute(node, LEOS_ACTION_ATTR);
+        XmlUtils.removeAttribute(node, LEOS_ACTION_NUMBER);
+        XmlUtils.removeAttribute(node, LEOS_ACTION_ENTER);
+        XmlUtils.removeAttribute(node, LEOS_TITLE);
+        XmlUtils.removeAttribute(node, LEOS_TITLE_NUMBER);
+        XmlUtils.removeAttribute(node, LEOS_TITLE_ENTER);
+        XmlUtils.removeAttribute(node, LEOS_UID);
+        XmlUtils.removeAttribute(node, LEOS_UID_NUMBER);
+        XmlUtils.removeAttribute(node, LEOS_UID_ENTER);
+        XmlUtils.removeAttribute(node, LEOS_TC_ORIGINAL_NUMBER);
+        XmlUtils.removeAttribute(node, LEOS_SOFT_USER_ATTR);
+        XmlUtils.removeAttribute(node, LEOS_SOFT_DATE_ATTR);
+        XmlUtils.removeAttribute(node, LEOS_SPLIT_CONTENT_ATTR);
     }
 
 
@@ -1894,9 +1872,9 @@ public class XercesUtils {
     }
 
     public static String generateNewIds(String purposeFromXml) {
-        Document doc = createXercesDocument(LeosDomainUtil.wrapXmlFragment(purposeFromXml).getBytes());
+        Document doc = createDocument(LeosDomainUtil.wrapXmlFragment(purposeFromXml).getBytes());
         regenerateIds(doc.getDocumentElement());
-        purposeFromXml = XercesUtils.nodeToString(doc);
+        purposeFromXml = XmlUtils.nodeToString(doc);
         purposeFromXml = LeosDomainUtil.unWrapXmlFragment(purposeFromXml);
         return purposeFromXml;
     }
@@ -1905,12 +1883,12 @@ public class XercesUtils {
         if (value == null) {
             return xmlContent;
         } else {
-            Document document = createXercesDocument(xmlContent);
-            Node pageCountNode = XercesUtils.getFirstElementByXPath(document, XPathCatalog.getXPathProprietary() + "/leos:totalPageCount");
+            Document document = createDocument(xmlContent);
+            Node pageCountNode = XmlUtils.getFirstElementByXPath(document, XPathCatalog.getXPathProprietary() + "/leos:totalPageCount");
             if (pageCountNode != null) {
                 pageCountNode.setTextContent(value);
             } else {
-                NodeList nodeList = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathProprietary());
+                NodeList nodeList = XmlUtils.getElementsByXPath(document, XPathCatalog.getXPathProprietary());
                 Node node = nodeList.item(0);
                 Element pageCountTag = document.createElement("leos:totalPageCount");
                 pageCountTag.setTextContent(value);
@@ -1927,7 +1905,7 @@ public class XercesUtils {
         StringBuilder xpath = new StringBuilder();
         while (node != null && node.getNodeType() != Node.DOCUMENT_NODE) {
             if (node.getNodeType() == Node.ELEMENT_NODE) {
-                String id = XercesUtils.getAttributeValue(node, XMLID);
+                String id = XmlUtils.getAttributeValue(node, XMLID);
                 if (id != null) {
                     xpath.insert(0, "//" + node.getNodeName() + "[@xml:id='" + id + "']");
                     break; // id is unique, no need to go further up

@@ -8,8 +8,8 @@ import org.w3c.dom.NodeList;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.DIVISION;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.getId;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.getId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ParentChildConverterTest {
@@ -38,7 +38,7 @@ public class ParentChildConverterTest {
     public void test_basedOnDepth_to_parentChildStructure() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_division_expected.xml");
 
-        Document document = createXercesDocument(xmlInput);
+        Document document = createDocument(xmlInput);
         NodeList elements = document.getElementsByTagName(DIVISION);
 
         List<ParentChildNode> parentChildList = parentChildConverter.getParentChildStructure(elements, false);
@@ -93,7 +93,7 @@ public class ParentChildConverterTest {
     public void test_basedOnDepth_to_parentChildStructure_missingTypeAttribute() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_division_missingTypeAttribute.xml");
 
-        Document document = createXercesDocument(xmlInput);
+        Document document = createDocument(xmlInput);
         NodeList elements = document.getElementsByTagName(DIVISION);
 
         List<ParentChildNode> parentChildList = parentChildConverter.getParentChildStructure(elements, false);

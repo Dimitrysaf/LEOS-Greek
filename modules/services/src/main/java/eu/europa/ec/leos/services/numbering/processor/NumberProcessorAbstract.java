@@ -1,10 +1,10 @@
 package eu.europa.ec.leos.services.numbering.processor;
 
 import static eu.europa.ec.leos.services.numbering.NumberProcessorHandler.skipAutoRenumbering;
-import static eu.europa.ec.leos.services.support.LeosXercesUtils.buildNumElement;
-import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
-import static eu.europa.ec.leos.services.support.XercesUtils.getId;
-import static eu.europa.ec.leos.services.support.XercesUtils.isSoftChanged;
+import static eu.europa.ec.leos.services.support.LeosXmlUtils.buildNumElement;
+import static eu.europa.ec.leos.services.support.XmlUtils.getFirstChild;
+import static eu.europa.ec.leos.services.support.XmlUtils.getId;
+import static eu.europa.ec.leos.services.support.XmlUtils.isSoftChanged;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_RENUMBERED;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
@@ -20,7 +20,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
 import eu.europa.ec.leos.services.numbering.config.NumberConfig;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 
 public class NumberProcessorAbstract {
 
@@ -70,7 +70,7 @@ public class NumberProcessorAbstract {
             elementNum = elementNum.substring(0, elementNum.length()-1);
         }
         if (skipAutoRenumbering(node)) {
-            String insertedNum = XercesUtils.getContentByTagName(node, NUM);
+            String insertedNum = XmlUtils.getContentByTagName(node, NUM);
             LOG.trace("{} (depth {}) '{}', skipping calculated number '{}', keeping manual insertion '{}'", node.getNodeName(), depth, getId(node), elementNum, insertedNum);
         } else {
             elementNum = numberConfig.isSoleNumbering() ? messageHelper.getMessage(numberConfig.getSoleNumberLabel()) : messageHelper.getMessage("numbering.label." + elementName, elementNum);
@@ -88,7 +88,7 @@ public class NumberProcessorAbstract {
          * But then, to change it to if:
          * ( numberProcessorHandler.isElementSameOrigin(node) && (leosRenumbered == null || !leosRenumbered.equals("true")) )
          */
-        String leosRenumbered = XercesUtils.getAttributeValue(node, LEOS_RENUMBERED);
+        String leosRenumbered = XmlUtils.getAttributeValue(node, LEOS_RENUMBERED);
         if (numberProcessorHandler.isElementSameOrigin(node) && (leosRenumbered == null || !leosRenumbered.equals("true"))) {
             // found an CN element
             // complex numbering, CN element in CN runningInstance

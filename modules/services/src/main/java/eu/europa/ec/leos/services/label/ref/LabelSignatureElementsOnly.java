@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.services.label.ref;
 
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
@@ -77,8 +77,8 @@ public class LabelSignatureElementsOnly extends LabelHandler {
 
         label.append(String.join(" of ", listLabels));
         if (capital) {
-            Node node = XercesUtils.createXercesDocument(("<fakeNodeToReadTextContent>" + label + "</fakeNodeToReadTextContent>").getBytes(), false);
-            String onlyText = XercesUtils.getContentByTagName(node, "fakeNodeToReadTextContent");
+            Node node = XmlUtils.createDocument(("<fakeNodeToReadTextContent>" + label + "</fakeNodeToReadTextContent>").getBytes(), false);
+            String onlyText = XmlUtils.getContentByTagName(node, "fakeNodeToReadTextContent");
             String firstWord = onlyText.split(" ")[0].replaceAll(",", "");
             int firstWordPosition = label.indexOf(firstWord);
             label.setCharAt(firstWordPosition, label.substring(firstWordPosition, firstWordPosition+1).toUpperCase(Locale.ROOT).charAt(0));

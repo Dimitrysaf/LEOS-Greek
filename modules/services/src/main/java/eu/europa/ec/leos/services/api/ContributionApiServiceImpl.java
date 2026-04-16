@@ -71,10 +71,10 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
-import eu.europa.ec.leos.services.support.LeosXercesUtils;
+import eu.europa.ec.leos.services.support.LeosXmlUtils;
 import eu.europa.ec.leos.services.support.MergeUtils;
 import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
@@ -289,8 +289,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 contributionContent, contextPath,
                 securityContext.getPermissions(contributionVersion));
         if (document.getMetadata().get().getCategory().equals(STAT_DIGIT_FINANC_LEGIS)) {
-            Document doc = XercesUtils.createXercesDocument(contributionHtml.getBytes(StandardCharsets.UTF_8));
-            contributionHtml = new String(LeosXercesUtils.wrapWithPageOrientationDivs(doc), UTF_8);
+            Document doc = XmlUtils.createDocument(contributionHtml.getBytes(StandardCharsets.UTF_8));
+            contributionHtml = new String(LeosXmlUtils.wrapWithPageOrientationDivs(doc), UTF_8);
         }
         cloneContext.setContribution(Boolean.TRUE);
         final String temporaryAnnotationsId = this.storeRevisionAnnotationsTemporary(contributionVersion.getMetadata().get().getRef(), legFileName, contributionsVersionRef);
@@ -414,10 +414,10 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 .collect(Collectors.toList()).stream().findFirst();
         if(elementIds.isPresent()) {
             String elementId = elementIds.get();
-            Document doc = XercesUtils.createXercesDocument(xmlContent);
-            Node block = XercesUtils.getElementByNameAndId(doc, BLOCK, elementId);
+            Document doc = XmlUtils.createDocument(xmlContent);
+            Node block = XmlUtils.getElementByNameAndId(doc, BLOCK, elementId);
             if (block != null) {
-                String newTitle = removeEnclosingTags(XercesUtils.nodeToString(block));
+                String newTitle = removeEnclosingTags(XmlUtils.nodeToString(block));
                 newTitle = transformInsToDelAndConcat(newTitle);
                 Annex annex = (Annex) document;
                 AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
@@ -649,17 +649,17 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     }
 
     private void removeTrackChangesFromDoc(DocumentVO annexVO) {
-        Node xmlDocNode = XercesUtils.createXercesDocument(annexVO.getSource());
-        NodeList bodyNodes = XercesUtils.getElementsByXPath(xmlDocNode, XPathCatalog.getXPathElement(MAIN_BODY));
+        Node xmlDocNode = XmlUtils.createDocument(annexVO.getSource());
+        NodeList bodyNodes = XmlUtils.getElementsByXPath(xmlDocNode, XPathCatalog.getXPathElement(MAIN_BODY));
         if (bodyNodes != null && bodyNodes.getLength() > 0) {
             Node mainBody = bodyNodes.item(0);
             removeTrackChanges(mainBody);
-            annexVO.setSource(XercesUtils.nodeToByteArray(xmlDocNode));
+            annexVO.setSource(XmlUtils.nodeToByteArray(xmlDocNode));
         }
     }
     private void removeTrackChanges(Node node) {
         MergeUtils.removeTrackChangesAttributes(node, false);
-        List<Node> children = XercesUtils.getChildren(node);
+        List<Node> children = XmlUtils.getChildren(node);
 
         // This loop now includes the logic to handle <ins> elements.
         for (Node child : children) {

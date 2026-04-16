@@ -55,7 +55,7 @@ class OJDocumentProviderImpl implements ExternalDocumentProvider {
     private String proxyHost;
     @Value("#{integrationProperties['leos.proxy.port']}")
     private String proxyPort;
-    
+
     private static final String DOC_TYPE = "/DOC_2";
     private static final String PARAM_DEBUG_VALUE = "on";
     private static final long PARAM_TIMEOUT_VALUE = 60000;
@@ -98,9 +98,8 @@ class OJDocumentProviderImpl implements ExternalDocumentProvider {
             queryStr.append("cdm:manifestation_type ?type filter(regex(str(?type),'fmx4'))");
             queryStr.append("}");
             Query query = queryStr.asQuery();
-            QueryEngineHTTP qexec = QueryExecutionFactory.createServiceRequest(uri, query);
-            try(ByteArrayOutputStream outputStream = new ByteArrayOutputStream();) {
-            	String uuid = UUID.randomUUID().toString();
+            try (QueryEngineHTTP qexec = QueryExecutionFactory.createServiceRequest(uri, query); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                String uuid = UUID.randomUUID().toString();
                 LOG.info("Calling OJ with Sparql query at URL: {} with uuid: {}", uri, uuid);
                 qexec.addDefaultGraph("");
                 qexec.addParam("debug", PARAM_DEBUG_VALUE);
@@ -108,19 +107,17 @@ class OJDocumentProviderImpl implements ExternalDocumentProvider {
                 qexec.addParam("format", PARAM_FORMAT_VALUE);
                 qexec.addParam("uuid", uuid);
                 qexec.setTimeout(PARAM_TIMEOUT_VALUE, PARAM_TIMEOUT_VALUE);
-                if(LOG.isDebugEnabled()){
+                if (LOG.isDebugEnabled()) {
                     LOG.debug("OJ Sparql Query: {}", qexec.getQuery().toString(qexec.getQuery().getSyntax()));
                 }
                 ResultSet results = qexec.execSelect();
                 ResultSetFormatter.outputAsJSON(outputStream, results);
                 String json = new String(outputStream.toByteArray());
-                LOG.debug("OJ Sparql Response: {}", json);                
+                LOG.debug("OJ Sparql Response: {}", json);
                 LOG.info("OJ Sparql query OK,  executed in {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
                 unsetProxy();
-                
+
                 return getDocumentUrl(json);
-            } finally {
-                qexec.close();
             }
         } catch (Exception e) {
             throw new RuntimeException("Unable to perform the getOJFormexDocumentUrl operation. Failed calling: " + uri, e);
@@ -133,9 +130,9 @@ class OJDocumentProviderImpl implements ExternalDocumentProvider {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode rootNode = mapper.readTree(json);
             JsonNode bindings = rootNode.get("results").get("bindings");
-            if(bindings.size() > 0 && bindings.get(0) != null) {
+            if(!bindings.isEmpty() && bindings.get(0) != null) {
                 JsonNode manifestation = bindings.get(0).get("manifestation");
-                uriDocument = manifestation.size() > 0 ? manifestation.get("value").textValue() : null;
+                uriDocument = !manifestation.isEmpty() ? manifestation.get("value").textValue() : null;
             }
         } catch (Exception e) {
             throw new RuntimeException("Exception occurred during retreival of document url", e);
@@ -144,7 +141,7 @@ class OJDocumentProviderImpl implements ExternalDocumentProvider {
     }
 
     String getOJFormexDocumentByUrl(String uriDocument) {
-        String formexDocument = null;
+        String formexDocument;
         try {
             setProxy();
             uriDocument = uriDocument + DOC_TYPE;

@@ -34,6 +34,7 @@ import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
@@ -51,8 +52,8 @@ import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.api.exception.CreateMilestoneException;
 import eu.europa.ec.leos.services.api.exception.PendingTranslationException;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.hasDescendantWithAttribute;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.hasDescendantWithAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 @Service
@@ -237,7 +238,7 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
 
     private Optional<String> findPendingTranslationsInPackage(String packageId) {
         return packageService.findDocumentsByPackageId(packageId, XmlDocument.class, false, true).stream()
-                .filter(doc -> hasDescendantWithAttribute(createXercesDocument(doc), LEOS_UPDATE_TRANSLATION))
+                .filter(doc -> hasDescendantWithAttribute(XmlUtils.createDocument(doc), LEOS_UPDATE_TRANSLATION))
                 .map(doc -> doc.getMetadata().get().getLanguage())
                 .findFirst();
     }

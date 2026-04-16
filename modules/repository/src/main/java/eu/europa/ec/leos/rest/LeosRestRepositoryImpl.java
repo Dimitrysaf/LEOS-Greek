@@ -52,6 +52,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
 import eu.europa.ec.leos.vo.response.LeosClientResponse;
 import eu.europa.ec.leos.vo.response.RecentPackageResponse;
+import eu.europa.ec.leos.xml.LeosDocumentBuilderFactory;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,16 +130,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     }
 
     private void populateTemplateMetadataFromContent(eu.europa.ec.leos.rest.support.model.LeosDocument doc) throws ParserConfigurationException, IOException, SAXException {
-        DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-        builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        builderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-        builderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        builderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-        builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        builderFactory.setExpandEntityReferences(false);
-        builderFactory.setNamespaceAware(true);
-        builderFactory.setXIncludeAware(false);
-        DocumentBuilder builder = builderFactory.newDocumentBuilder();
+        DocumentBuilder builder = LeosDocumentBuilderFactory.newDocumentBuilder(true);
 
         Document xmlDoc = builder.parse(new ByteArrayInputStream(doc.getSource()));
         xmlDoc.getDocumentElement().normalize();

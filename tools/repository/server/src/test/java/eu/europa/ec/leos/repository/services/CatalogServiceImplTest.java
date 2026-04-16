@@ -8,6 +8,7 @@ import eu.europa.ec.leos.repository.exceptions.CatalogException;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.*;
+import eu.europa.ec.leos.repository.utils.XmlHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,8 +16,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.xml.sax.InputSource;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.TransformerFactory;
+import java.io.StringReader;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,6 +37,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class CatalogServiceImplTest extends H2TestBase {
 
+    public static final String MOCK_CATALOG_CONFIG_XML = "<catalog><item type='CATEGORY' key='test'></item></catalog>";
     @Mock private DocumentRepository documentRepository;
     @Mock private DocumentMilestoneRepository documentMilestoneRepository;
     @Mock private CustomTemplateEntitiesRepository customTemplateEntitiesRepository;
@@ -55,6 +62,8 @@ public class CatalogServiceImplTest extends H2TestBase {
     @Mock
     private ConfigContent configContent;
 
+    @Mock
+    private XmlHelper xmlHelper;
 
     @InjectMocks
     private CatalogServiceImpl catalogService;
@@ -142,7 +151,7 @@ public class CatalogServiceImplTest extends H2TestBase {
     }
 
     @Test
-    void testPublishCustomTemplate_NewEntities_CatalogCreation() throws CatalogException {
+    void testPublishCustomTemplate_NewEntities_CatalogCreation() throws Exception {
         // Arrange - Test first-time publishing (catalog creation scenario)
         String legFileId = "123";
         List<String> dgs = Arrays.asList("DG1");
@@ -155,7 +164,10 @@ public class CatalogServiceImplTest extends H2TestBase {
             .thenReturn(Optional.empty()); // No existing entities - triggers catalog creation
         setupCatalogCreationMocks();
 
-
+        when (xmlHelper.createDocument(MOCK_CATALOG_CONFIG_XML.getBytes(StandardCharsets.UTF_8), false)).thenReturn(
+                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(MOCK_CATALOG_CONFIG_XML))));
+        when(xmlHelper.createNewDocument(false)).thenReturn(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument());
+        when(xmlHelper.createTransformer()).thenReturn(TransformerFactory.newInstance().newTransformer());
 
         // Act
         catalogService.publishCustomTemplate(legFileId, "Template", dgs, userId, originalDg);
@@ -337,7 +349,7 @@ public class CatalogServiceImplTest extends H2TestBase {
         }
 
         ConfigurationV mockCatalogConfig = new ConfigurationV();
-        mockCatalogConfig.setContent("<catalog><item type='CATEGORY' key='test'></item></catalog>");
+        mockCatalogConfig.setContent(MOCK_CATALOG_CONFIG_XML);
         when(configurationVRepository.findConfigurationByName("catalog"))
             .thenReturn(Optional.of(mockCatalogConfig));
         
@@ -360,7 +372,7 @@ public class CatalogServiceImplTest extends H2TestBase {
             .thenReturn(new ConfigContent());
     }
     @Test
-    void testUnpublishCustomTemplate_Success() throws CatalogException {
+    void testUnpublishCustomTemplate_Success() throws Exception {
         // Arrange
         String packageId = "123";
         String userId = "testUser";
@@ -400,6 +412,10 @@ public class CatalogServiceImplTest extends H2TestBase {
         // Arrange
         when(documentVRepository.findAllVersionsByPackageIdAndCategoryCode(eq(new BigDecimal(1)), eq("PROPOSAL")))
                 .thenReturn(Arrays.asList(documentV));
+
+        when (xmlHelper.createDocument(VALID_XML.getBytes(StandardCharsets.UTF_8), false)).thenReturn(
+                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(VALID_XML))));
+        when(xmlHelper.createTransformer()).thenReturn(TransformerFactory.newInstance().newTransformer());
 
         // Act
         Boolean result = catalogService.unpublishCustomTemplate(packageId, userId);

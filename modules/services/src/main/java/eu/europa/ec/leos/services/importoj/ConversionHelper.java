@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
+import javax.xml.transform.Templates;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.StringReader;
@@ -31,8 +31,8 @@ public class ConversionHelper {
     private static final Logger LOG = LoggerFactory.getLogger(ConversionHelper.class);
 
     @Autowired
-    @Qualifier("xsltTransformer")
-    private Transformer transformer;
+    @Qualifier("xsltTemplates")
+    private Templates templates;
     
     public String convertFormexToAKN(String formexDocument) {
         LOG.trace("Converting document from formex to akn...");
@@ -43,7 +43,7 @@ public class ConversionHelper {
             Source xmlSource = new StreamSource(new StringReader(formexDocument));
             StringWriter outWriter = new StringWriter();
             StreamResult result = new StreamResult(outWriter);
-            transformer.transform(xmlSource, result);
+            templates.newTransformer().transform(xmlSource, result);
             StringBuffer sb = outWriter.getBuffer();
             LOG.trace("conversion finished");
             return sb.toString();

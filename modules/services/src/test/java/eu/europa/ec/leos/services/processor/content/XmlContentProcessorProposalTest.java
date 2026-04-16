@@ -46,8 +46,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.getId;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.getId;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlRemovingAttributeAndRemoveAllNS;
 import static org.hamcrest.Matchers.any;
@@ -680,7 +680,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         byte[] expected = TestUtils.getFileContent(FILE_PREFIX + "/test_doImportedElementPreProcessing_defArticle_expected.xml");
         assertEquals(squeezeXmlAndRemoveAllNS(new String(expected, UTF_8)), squeezeXmlAndRemoveAllNS(returnedElement));
 
-        Document document = createXercesDocument(returnedElement.getBytes(XmlHelper.UTF_8));
+        Document document = createDocument(returnedElement.getBytes(XmlHelper.UTF_8));
         Node node = document.getFirstChild();
         String id = getId(node);
         assertNotNull(id);
@@ -695,7 +695,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         byte[] expected = TestUtils.getFileContent(FILE_PREFIX + "/test_doImportedElementPreProcessing_article_expected.xml");
         assertEquals(squeezeXmlAndRemoveAllNS(new String(expected, UTF_8)), squeezeXmlAndRemoveAllNS(returnedElement));
 
-        Document document = createXercesDocument(returnedElement.getBytes(XmlHelper.UTF_8));
+        Document document = createDocument(returnedElement.getBytes(XmlHelper.UTF_8));
         Node node = document.getFirstChild();
         String id = getId(node);
         assertNotNull(id);
