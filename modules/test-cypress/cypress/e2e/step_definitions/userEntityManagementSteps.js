@@ -9,7 +9,7 @@ When("click on manage users and entities link under administration dropdown", fu
 });
 
 Then("add user button should be displayed", function () {
-    userEntityManagementPage.checkPresenceOfAddUserButton()
+    userEntityManagementPage.elements.addUserBtn().should('be.visible')
 });
 
 When("click on add user button", function () {
@@ -17,7 +17,7 @@ When("click on add user button", function () {
 });
 
 Then("user info section should be displayed", function () {
-    userEntityManagementPage.checkPresenceOfUserInfoSection()
+    userEntityManagementPage.elements.userInfoLabel().should('be.visible')
 });
 
 When("fill the user info details", function (dataTable) {
@@ -41,13 +41,16 @@ When ("click on save button", function () {
 
 Then("show the successful message that a new user is created", function () {
     cy.get('@userData').then((user) => {    
-        userEntityManagementPage.verifyNewUserCreation(user.firstName, user.lastName)
+        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().contains('New user created')
+        userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain',`User ${user.firstName} ${user.lastName} successfully created.`)
+        userEntityManagementPage.confirmNewUserCreationDialogBox()
     })
 });
 
 Then("verify the new user details on the table", function() {
     cy.get('@userData').then((user) => {
-        userEntityManagementPage.verifyUserLogin(user.userLogin)
+        userEntityManagementPage.searchNewUserLogin(user.userLogin)
+        userEntityManagementPage.elements.userLoginColumnInTable().should('contain', user.userLogin)
     })
 });
 
@@ -56,7 +59,7 @@ When("select manage entities tab", function () {
 });
 
 When("add entity button should be displayed", function () {
-    userEntityManagementPage.checkPresenceOfAddEntityButton()
+    userEntityManagementPage.elements.addEntityBtn().should('be.visible')
 });
 
 
@@ -65,7 +68,7 @@ Then("click on add entity button", function () {
 });
 
 Then("custom entity info section should be displayed", function () {
-    userEntityManagementPage.checkPresenceOfCustomEntityInfoSection()
+    userEntityManagementPage.elements.customEntityInfoLabel().should('be.visible')
 });
 
 Then("create an entity by giving a name {string}", function (entityName) {
@@ -76,12 +79,15 @@ Then("create an entity by giving a name {string}", function (entityName) {
 
 Then("show the successful message that a new entity is created", function () {
     cy.get('@entityName').then((entityName) => {
-        userEntityManagementPage.confirmEntityCreation(entityName)
+        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().contains('New entity created')
+        userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain',`Entity ${entityName} successfully created. You can now add users to it.`)
+        userEntityManagementPage.confirmNewEntityCreationDialogBox()
     })
 });
 
 Then("verify the new entity presence on the table", function () {
     cy.get('@entityName').then((entityName) => {
-        userEntityManagementPage.verifyNewEntityCreation(entityName)
+        userEntityManagementPage.searchNewEntity(entityName)
+        userEntityManagementPage.elements.entityColumnInTable().should('contain', entityName)
     })
 });

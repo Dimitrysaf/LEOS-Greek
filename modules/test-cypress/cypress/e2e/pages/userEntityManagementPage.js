@@ -15,7 +15,7 @@ class userEntityManagementPage {
         searchEntityTxtBx: () => cy.get('input[placeholder=\'Search by entity name\']'),
         selectEntityDropDown: () => cy.get('select.entities-select:not(.ng-star-inserted)'),
         angleLeftBtn: () => cy.get('span.eui-icon-angle-left'),
-        angleRightBtn: () => cy.get('span.eui-icon-angle-right'),
+        //angleRightBtn: () => cy.get('span.eui-icon-angle-right'),
         saveBtn: () => cy.get('span').contains('Save'),
         newUserorEntityDialogBxTitle: () => cy.get('#headerTitle'),
         newUserorEntityCreationMessageLocator: () => cy.get('#containerConfigId'),
@@ -29,16 +29,8 @@ class userEntityManagementPage {
         this.elements.manageEntitiesTab().click()
     }
 
-    checkPresenceOfAddEntityButton(){
-        this.elements.addEntityBtn().should('be.visible')
-    }
-
     clickAddEntityButton(){
         this.elements.addEntityBtn().click()
-    }
-
-    checkPresenceOfCustomEntityInfoSection(){
-        this.elements.customEntityInfoLabel().should('be.visible')
     }
 
     fillEntityInfoDetails(entityName){
@@ -49,30 +41,17 @@ class userEntityManagementPage {
         this.elements.saveBtn().click()
     }
 
-    confirmEntityCreation(entityName){
-        this.elements.newUserorEntityDialogBxTitle().contains('New entity created')
-        this.elements.newUserorEntityCreationMessageLocator().should('contain',`Entity ${entityName} successfully created. You can now add users to it.`)
+    confirmNewEntityCreationDialogBox(){
         this.elements.newUserorEntityDialogBxOkBtn().click()
     }
 
-    verifyNewEntityCreation(entityName){
+    searchNewEntity(entityName){
         this.elements.searchEntityTxtBx().type(entityName)
         this.elements.searchIconBtn().click()
-        this.elements.entityColumnInTable().should('contain', entityName)
-    }
-
-    checkPresenceOfAddUserButton()
-    {
-        this.elements.addUserBtn().should('be.visible')
     }
 
     clickAddUserButton(){
         this.elements.addUserBtn().click()
-    }
-
-    checkPresenceOfUserInfoSection()
-    {
-        this.elements.userInfoLabel().should('be.visible')
     }
 
     fillUserInfoSection(user)
@@ -121,16 +100,13 @@ class userEntityManagementPage {
         this.elements.saveBtn().click()
     }
 
-    verifyNewUserCreation(firstName, lastName){
-        this.elements.newUserorEntityDialogBxTitle().contains('New user created')
-        this.elements.newUserorEntityCreationMessageLocator().should('contain',`User ${firstName} ${lastName} successfully created.`)
+    confirmNewUserCreationDialogBox(){
         this.elements.newUserorEntityDialogBxOkBtn().click()
     }
 
-    verifyUserLogin(userLogin) {
+    searchNewUserLogin(userLogin) {
         this.elements.searchUsersTxtBx().type(userLogin)
         this.elements.searchIconBtn().click()
-        this.elements.userLoginColumnInTable().should('contain', userLogin)
     }
 
 }

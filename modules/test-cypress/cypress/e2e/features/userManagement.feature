@@ -8,7 +8,7 @@ Feature: User Management Entities Regression Features
     Given navigate to leos application with "User1"
     Then user is on home page
 
-  @addingNewUser @local
+  @addingNewEntity @local
   Scenario: creating a new custom entity
     When click on manage users and entities link under administration dropdown
     Then select manage entities tab
@@ -19,7 +19,7 @@ Feature: User Management Entities Regression Features
     Then show the successful message that a new entity is created
     Then verify the new entity presence on the table
 
-  @addingNewUser @local
+  @addingNewUserToExistingEntity @local
   Scenario: creating new user and assigning existing entities to the user
     When click on manage users and entities link under administration dropdown
     Then add user button should be displayed
