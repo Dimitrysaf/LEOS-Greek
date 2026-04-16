@@ -62,7 +62,7 @@ class ApplicationTests {
     @Transactional(readOnly = true)
     void test_findAllOrganizations() {
         Stream<String> organizations = entityRepository.findAllOrganizations();
-        assertEquals(24, organizations.count()); // unique dgs and cabinets from data-h2.sql
+        assertEquals(36, organizations.count()); // unique dgs and cabinets from data-h2.sql
     }
 
     @Test

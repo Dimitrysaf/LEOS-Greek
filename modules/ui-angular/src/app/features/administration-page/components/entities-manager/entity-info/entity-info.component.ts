@@ -49,7 +49,7 @@ export class EntityInfoComponent implements OnInit {
     this._selectedEntity = value;
     if (!!value) {
       if (this.config) {
-        this.setupNameValue(value.name);
+        this.setValue(value);
       }
       if (value.id === undefined) {
         this.editing = true;
@@ -83,11 +83,16 @@ export class EntityInfoComponent implements OnInit {
   ngOnInit(): void {
     this.appConfig.config.subscribe( config => {
       this.config = config;
-      this.setupNameValue(this.selectedEntity?.name);
+      this.setValue(this.selectedEntity);
     });
   }
 
-  private setupNameValue(name: string) {
+  private setValue(value?: Entity) {
+    if (!value) {
+      this.entityForm.patchValue({name: null}, {emitEvent: false});
+      return
+    }
+    const name = value.name;
     if (!this.config.userAppPermissions.includes('CAN_MANAGE_ALL_ENTITIES')) {
       this.entityPrefix = !this.isTheDefaultEntityOrganization
         ? this.config.user.defaultEntity.organizationName + '.'
@@ -177,6 +182,7 @@ export class EntityInfoComponent implements OnInit {
 
   cancelEdit() {
     this.editing = false;
+    this.setValue(this.selectedEntity);
     this.entityEditComplete.emit(this.selectedEntity?.id ? this.selectedEntity : null);
   }
 

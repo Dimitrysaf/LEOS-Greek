@@ -13,7 +13,7 @@
   <eui-card-content [class]="editing ? '' : 'readonly'">
     <form [formGroup]="entityForm" (ngSubmit)="editSaveEntity()" (reset)="cancelEdit()" >
       <div *ngIf="!!selectedEntity" class="input-button-layout">
-        <eui-label class="eui-u-mt-s eui-u-mb-xs eui-u-font-xl eui-u-font-bold">
+        <eui-label class="eui-u-mt-xs eui-u-mb-xs eui-u-font-l eui-u-font-bold">
           {{ 'page.workspace.administration.entity-info.entity' | translate }}
         </eui-label>
         <div class="group-name-input">

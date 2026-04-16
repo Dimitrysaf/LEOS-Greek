@@ -167,6 +167,7 @@
   "page.workspace.administration.entity-info.no-user": "Aucun utilisateur trouvé",
   "page.workspace.administration.entity-info.entity-placeholder": "Nom d'entité",
   "page.workspace.administration.entity-info.entity-name-conflict": "Il existe déjà une entité avec ce nom.",
+  "page.workspace.administration.entity-info.comref-name-conflict": "Ce nom ne peut pas être utilisé comme il existe déjà dans COMREF",
   "page.workspace.administration.entity-info.invalid-request": "Requete de gestion d'entités invalide",
   "page.workspace.administration.entity-info.entity-create-success-title": "Nouvelle entité créée",
   "page.workspace.administration.entity-info.entity-create-success-content": "L'entité {{entityName}} a été créée avec succès. Vous pouvez maintenant y ajouter des utilisateurs.",
