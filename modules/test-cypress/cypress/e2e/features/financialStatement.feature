@@ -213,9 +213,6 @@ Feature: financial statement page regression features
     When click on reject this change option under track changes action
     Then repeatable subparagraph 1 of level "3.2.1.2." does not contain attribute name "leos:softaction" with value "del"
 
-
-
-
   @repeatSubparagraphGroupInFinancialStatement @local
   Scenario: repeat subparagraph group in financial statement document
     When click on Create act button
@@ -230,10 +227,18 @@ Feature: financial statement page regression features
     And  title of the act contains "Automation Testing FS" keyword
     When click on financial statement link present in act viewer page
     Then user is on financial statement page
-    When click on insert group after icon of repeatable subparagraph
+ # Start ticket #https://code.europa.eu/leos/core/-/issues/3479
+    And the version on the top of the document page contains "v0.1.0.0"
+   # End ticket #https://code.europa.eu/leos/core/-/issues/3479
+   When click on insert group after icon of repeatable subparagraph
     Then repeated subparagraph group after should exist
+    And the version on the top of the document page contains "v0.1.1.0"
     When click on insert group before icon of repeatable subparagraph
     Then repeated subparagraph group before should exist
+   # Start ticket #https://code.europa.eu/leos/core/-/issues/3479
+    And the version on the top of the document page contains "v0.1.2.0"
+    # End ticket #https://code.europa.eu/leos/core/-/issues/3479
+
 
   @LFDSConfiguration @local
   Scenario: LFDS configuration of document depending on template
