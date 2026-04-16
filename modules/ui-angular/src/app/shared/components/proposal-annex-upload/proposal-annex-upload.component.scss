@@ -1,0 +1,21 @@
+
+.app-dialog-footer-content-left {
+  display: flex;
+  flex-direction: row;
+  gap: var(--eui-base-spacing-m);
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+form {
+  width: 50%;
+}
+
+.extension {
+  margin-left: -10px;
+}
+
+.message {
+  margin-top: 10px !important;
+}
