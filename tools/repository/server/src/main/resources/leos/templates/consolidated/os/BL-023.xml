@@ -42,7 +42,7 @@
                 <TLCRole xml:id="PRESID"  href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
                 <TLCReference xml:id="REG"  href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation"/>
                 <TLCReference xml:id="legalBasis"  href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis"/>
-                <TLCReference xml:id="language"  href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en"/>                
+                <TLCReference xml:id="language"  href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en"/>
                 <TLCConcept xml:id="ART_DEF"  href="http://publications.europa.eu/resource/authority/subdivision-content/ART_DEF" showAs="Article on definitions"/>
             </references>
             <proprietary source="~COM">
@@ -57,7 +57,7 @@
                 <p>
                     <docketNumber class="template" />
                 </p>
-            </container>  
+            </container>
             <longTitle>
                 <p>
                     <docStage>Proposal for a</docStage>
