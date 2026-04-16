@@ -30,10 +30,15 @@ public class EntityService {
             throw new BadRequestException("Cannot create entity with existing ID");
         }
         final String name = entity.getName();
+        if (!specialEntityRepository.findByNameIgnoreCase(name).isEmpty()) {
+            throw new BadRequestException(
+                    "An entity with the same name already exists",
+                    "page.workspace.administration.entity-info.entity-name-conflict");
+        }
         if (!entityRepository.findByNameIgnoreCase(name).isEmpty()) {
             throw new BadRequestException(
-                    "Cannot create entity: Entity with the same name (case-insensitive) already exists",
-                    "page.workspace.administration.entity-info.entity-name-conflict");
+                    "This entity name cannot be used as already present in COMREF",
+                    "page.workspace.administration.entity-info.comref-name-conflict");
         }
         return specialEntityRepository.save(entity);
     }

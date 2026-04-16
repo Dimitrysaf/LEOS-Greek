@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {AdministrationService} from "@/shared/services/administration.service";
 import {User} from "@/shared";
 import {EuiPaginationEvent} from "@eui/components/eui-paginator";
@@ -13,7 +13,9 @@ import {TranslateService} from "@ngx-translate/core";
   styleUrl: './users-manager.component.scss',
   providers: [AdministrationService]
 })
-export class UsersManagerComponent implements OnInit {
+export class UsersManagerComponent implements OnInit, OnChanges {
+
+  @Input() initialLogin: string;
 
   query: string = '';
   users: User[] = [];
@@ -36,7 +38,31 @@ export class UsersManagerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.search();
+    if (this.initialLogin) {
+      this.selectUserByLogin(this.initialLogin);
+    } else {
+      this.search();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['initialLogin'] && !changes['initialLogin'].isFirstChange()) {
+      const login = changes['initialLogin'].currentValue;
+      if (login) {
+        this.selectUserByLogin(login);
+      }
+    }
+  }
+
+  private selectUserByLogin(login: string) {
+    this.loading = true;
+    this.adminService.getUserDetails(login)
+      .subscribe((response) => {
+        this.loading = false;
+        if (response) {
+          this.selectedUser = response;
+        }
+      });
   }
 
   protected search(query = this.query, page = this.page, pageSize = this.pageSize, sortBy = this.sort, sortOrder = this.order) {

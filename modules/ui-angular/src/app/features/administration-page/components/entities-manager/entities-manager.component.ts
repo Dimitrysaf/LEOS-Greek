@@ -84,6 +84,22 @@ export class EntitiesManagerComponent implements OnInit {
   }
 
   protected onDelete(entity: Entity) {
+    this.loading = true;
+    this.adminService.getEntityUsers(entity.id, 0, 1, 'lastName', 'asc')
+      .subscribe((response) => {
+        this.loading = false;
+        if (response.totalElements > 0) {
+          this.leosDialogService.showError(
+            "page.workspace.administration.entity-info.entity-has-users.title",
+            "page.workspace.administration.entity-info.entity-has-users.content");
+          this.selectedEntity = entity;
+        } else {
+          this.delete(entity);
+        }
+      });
+  }
+
+  private delete(entity: Entity) {
     this.euiDialogService.openDialog({
       title: "page.workspace.administration.entity-info.entity-delete-dialog.title",
       content: this.translateService.instant("page.workspace.administration.entity-info.entity-delete-dialog.content", {entity: entity}),
