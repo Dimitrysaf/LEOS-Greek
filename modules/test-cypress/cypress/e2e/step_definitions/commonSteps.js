@@ -84,3 +84,7 @@ Then(/^"([^"]*)" is displayed$/, function (content) {
 When('click on tab key from keyboard', function () {
     cy.realPress('Tab', {});
 });
+
+Then('the version on the top of the document page is {string}', function (version) {
+    headerPage.elements.documentVersionLabel().should('contain.text', version);
+});
