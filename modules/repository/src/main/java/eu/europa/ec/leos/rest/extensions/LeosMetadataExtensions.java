@@ -30,6 +30,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.FILE_FORMAT_VALUE;
+import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.FOREIGN_ANNEX_NUMBER;
+import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.FOREIGN_ANNEX_SOURCE;
+import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.TLC_REFERENCE_NAME_FORMAT_HREF;
+import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.TLC_REFERENCE_NAME_FORMAT_ID;
+import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.TLC_REFERENCE_NAME_FORMAT_SHOW_AS;
 import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -112,6 +118,14 @@ public class LeosMetadataExtensions {
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_NUMBER), annexMetadata.getNumber());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_TITLE), annexMetadata.getTitle());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_CLONED_REF), annexMetadata.getClonedRef());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.FILE_FORMAT_REFERS_TO), annexMetadata.getFileFormatRefersTo());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.FILE_FORMAT_VALUE), annexMetadata.getFileFormatValue());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TLC_REFERENCE_NAME_FORMAT_HREF), annexMetadata.getTlcReferenceNameFormatHref());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TLC_REFERENCE_NAME_FORMAT_SHOW_AS), annexMetadata.getTlcReferenceNameFormatShowAs());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TLC_REFERENCE_NAME_FORMAT_ID), annexMetadata.getTlcReferenceNameFormatId());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.FOREIGN_ANNEX_NUMBER), annexMetadata.getForeignAnnexNumber());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.FOREIGN_ANNEX_SOURCE), annexMetadata.getForeignAnnexSource());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.FOREIGN_FILE_SIZE), annexMetadata.getForeignFileSize());
 
         return leosProperties;
     }

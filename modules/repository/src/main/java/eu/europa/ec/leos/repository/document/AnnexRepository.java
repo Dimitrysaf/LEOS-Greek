@@ -70,11 +70,14 @@ public interface AnnexRepository {
      * @param path     the path where to create the annex.
      * @param name     the name of the annex.
      * @param metadata the metadata of the annex.
-     * @param cloned metadata the cloned metadata of the annex.
+     * @param cloneDocumentMetadataVO metadata the cloned metadata of the annex.
      * @param content  the content of the annex.
+     * @param binaryContent the binary content of the foreign annex.
+     * @param originalFilename the original filename of the foreign annex.
+     * @param binaryContentSize the size of the binary file of the foreign annex, in kb and in string.
      * @return the created annex document.
      */
-    Annex createClonedAnnexFromContent(String path, String name, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, byte[] content);
+    Annex createClonedAnnexFromContent(String path, String name, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, byte[] content, byte[] binaryContent, String originalFilename, String binaryContentSize);
 
     /**
      * Updates an [Annex] document with the given metadata.
@@ -112,6 +115,20 @@ public interface AnnexRepository {
     Annex updateAnnex(String id, byte[] content, VersionType versionType, String comment);
 
     /**
+     * Updates an [Annex] document with the given content.
+     *
+     * @param id      the ID of the annex document to update.
+     * @param content the content of the annex.
+     * @param versionType  the version type to be created
+     * @param comment the comment of the update, optional.
+     * @param binaryContent the binary content of the foreign annex.
+     * @param originalFilename the original filename of the foreign annex.
+     * @param binaryContentSize the size of the binary file of the foreign annex, in kb and in string.
+     * @return the updated annex document.
+     */
+    Annex updateAnnex(String id, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize);
+
+    /**
      * Updates a [Annex] document with the given metadata and content.
      *
      * @param id       the ID of the annex document to update.
@@ -123,9 +140,24 @@ public interface AnnexRepository {
      */
     Annex updateAnnex(String id, AnnexMetadata metadata, byte[] content, VersionType versionType, String comment);
 
-    Annex updateMilestoneComments(String id, List<String> milestoneComments, byte[] content, VersionType versionType, String comment);
+    /**
+     * Updates a [Annex] document with the given metadata and content.
+     *
+     * @param id       the ID of the annex document to update.
+     * @param metadata the metadata of the annex.
+     * @param content  the content of the annex.
+     * @param versionType  the version type to be created
+     * @param comment  the comment of the update, optional.
+     * @param binaryContent     the binary content of the document.
+     * @param originalFilename the binary content type of the document.
+     * @param binaryContentSize the size of the binary content in KB.
+     * @return the updated annex document.
+     */
+    Annex updateAnnex(String id, AnnexMetadata metadata, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize);
 
-    Annex updateMilestoneComments(String ref, String id, List<String> milestoneComments);
+    Annex updateMilestoneComments(String id, List<String> milestoneComments, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize);
+
+    Annex updateMilestoneComments(String ref, String id, List<String> milestoneComments, byte[] binaryContent, String originalFilename, String binaryContentSize);
 
     /**
      * Finds a [Annex] document with the specified characteristics.

@@ -115,4 +115,19 @@
       outline-color: rgb(0 0 0 / 40%);
     }
   }
+
+  #label-for-annex-name {
+    margin-top: 50px;
+    margin-left: -30px;
+    margin-right: 30px;
+  }
+
+  #label-for-annex-message {
+    margin-left: -30px;
+  }
+
+  mainbody:has(#label-for-annex-name) {
+    padding-top: 20px;
+  }
+
 }

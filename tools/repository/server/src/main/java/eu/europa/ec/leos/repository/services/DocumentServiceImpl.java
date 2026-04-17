@@ -219,6 +219,13 @@ public class DocumentServiceImpl implements DocumentService {
     @Transactional(rollbackFor = Exception.class)
     public LeosDocument updateDocument(final BigDecimal versionId, Map<String, ?> metadata,
             VersionType versionType, String category, byte[] contentBytes, String comments, String userId) throws Exception {
+        return this.updateDocument(versionId, metadata, versionType, category, contentBytes, comments, userId, null, null, null);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public LeosDocument updateDocument(final BigDecimal versionId, Map<String, ?> metadata,
+            VersionType versionType, String category, byte[] contentBytes, String comments, String userId,
+            byte[] binaryContent, String originalFilename, String binaryContentSize) throws Exception {
 
         switch (category) {
             case "LEG":
@@ -243,7 +250,7 @@ public class DocumentServiceImpl implements DocumentService {
                     latestMajorVersion = documentVersionRepository.findLastMajorVersionByDocumentId(doc.getId());
                 }
 
-                Map<DocumentContent, DocumentVersion> docs = updateDocument(doc, metadata, labelVersion, versionType.value(), contentBytes, comments, userId);
+                Map<DocumentContent, DocumentVersion> docs = updateDocument(doc, metadata, labelVersion, versionType.value(), contentBytes, comments, userId, binaryContent, originalFilename, binaryContentSize);
                 doc = updateDocumentMetadata(doc, docs.values().stream().findFirst().get(), (Map<String, Object>) metadata, userId);
 
                 boolean toUpdatePackage = false;
@@ -1101,12 +1108,12 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     private Map<DocumentContent, DocumentVersion> updateDocument(final Document doc, Map<String, ?> metadata, final String labelVersion,
-            int versionType, byte[] contentBytes, String comments, String userId) throws RepositoryException {
+            int versionType, byte[] contentBytes, String comments, String userId, byte[] binaryContent, String originalFilename, String binaryContentSize) throws RepositoryException {
         Optional<DocumentV> docView = documentVRepository.findLastVersionByDocumentId(doc.getId());
 
         if (docView.isPresent()) {
             DocumentVersion docVersion = updateDocumentVersion(doc, userId, versionType, labelVersion, comments);
-            DocumentContent docContent = updateDocumentContent(docVersion, docView.get(), userId, new String(contentBytes, StandardCharsets.UTF_8), metadata);
+            DocumentContent docContent = updateDocumentContent(docVersion, docView.get(), userId, new String(contentBytes, StandardCharsets.UTF_8), metadata, binaryContent, originalFilename, binaryContentSize);
             return Collections.singletonMap(docContent, docVersion);
         } else {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentV.class.getName());
@@ -1213,6 +1220,11 @@ public class DocumentServiceImpl implements DocumentService {
 
     private DocumentContent updateDocumentContent(DocumentVersion docVersion, final DocumentV prevVersion, String userId,
             String contentString, Map<String, ?> metadata) {
+        return this.updateDocumentContent(docVersion, prevVersion, userId, contentString, metadata, null, null, null);
+    }
+
+    private DocumentContent updateDocumentContent(DocumentVersion docVersion, final DocumentV prevVersion, String userId,
+            String contentString, Map<String, ?> metadata, byte[] binaryContent, String originalFilename, String binaryContentSize) {
         DocumentContent content = new DocumentContent();
         content.setContent(contentString);
         content.setCreatedBy(userId);
@@ -1220,7 +1232,11 @@ public class DocumentServiceImpl implements DocumentService {
         content.setCreationDate(localDateTime);
         content.setLastModifiedBy(userId);
         content.setLastModificationDate(localDateTime);
-
+        if (binaryContent != null) {
+            content.setBinaryContent(binaryContent);
+            content.setOriginalFilename(originalFilename);
+            content.setBinaryContentSize(binaryContentSize);
+        }
 
         Boolean eeaRelevance = ConversionUtils.convertBoolean(metadata.get(PropertiesMetadata.EEA_RELEVANCE.getLeosName()));
         if (eeaRelevance != null) {

@@ -240,7 +240,7 @@ public class PackageServiceImpl implements PackageService {
 
         List<LeosDocument> xmlDocs = ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docs.isEmpty() ?
                         Collections.emptyList() : ConversionUtils.fetchCollaborators(collaboratorsService, docs.get(0).getPackageId()), documentContentRepository, docs
-                , fetchContent);
+                , fetchContent, true);
         xmlDocs.addAll(ConversionUtils.buildLegDocuments(milestones, documentMilestoneRepository, documentMilestoneListRepository, fetchContent));
         return xmlDocs;
     }

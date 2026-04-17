@@ -71,6 +71,15 @@ public class MetadataVO {
     private String availableLangs;
     private Boolean isPublished;
 
+    private String fileFormatRefersTo;
+    private String fileFormatValue;
+    private String tlcReferenceNameFormatHref;
+    private String tlcReferenceNameFormatShowAs;
+    private String tlcReferenceNameFormatId;
+    private String foreignAnnexNumber;
+    private String foreignAnnexSource;
+    private String foreignFileSize;
+
     public MetadataVO() {
     }// added for early binding
 

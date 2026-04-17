@@ -54,6 +54,26 @@ public class MilestoneHelper {
                         (e1, e2) -> e2, LinkedHashMap::new));
     }
 
+    public static Map<String, Object> filterAndSortFiles(Map<String, Object> files, String fileFilter, String startingWith) {
+        final List<String> tabOrder = Arrays.asList(XmlHelper.ANNEX_FILE_PREFIX, XmlHelper.STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX, XmlHelper.REG_FILE_PREFIX,
+                DIR_FILE_PREFIX,
+                DEC_FILE_PREFIX,
+                XmlHelper.MEMORANDUM_FILE_PREFIX);
+        return files.entrySet().stream().
+                filter(e -> (!e.getKey().contains(TOC_HTML) && e.getKey().endsWith(fileFilter) && ((LeosFile) e.getValue()).getOriginalFileName().startsWith(startingWith))).
+                sorted(Collections.reverseOrder(Comparator.comparing((Map.Entry e) -> {
+                    String key = e.getKey().toString();
+                    int prefixSeparatorIndex = key.indexOf("-");
+                    if (prefixSeparatorIndex > 0) {
+                        return tabOrder.indexOf(key.substring(0, prefixSeparatorIndex));
+                    } else {
+                        return (int) (key.toLowerCase().charAt(0));
+                    }
+                }))).
+                collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (e1, e2) -> e2, LinkedHashMap::new));
+    }
+
     public static Map<String, Object> getMilestoneFiles(LegDocument legDocument) throws IOException {
         Content content = legDocument.getContent().getOrError(() -> "Document content is required!");
         return ZipPackageUtil.unzipFilesFromByteArray(content.getSource().getBytes());

@@ -75,6 +75,15 @@ public class RestProperties implements RepositoryPropertiesMapper {
         ids.put(TRACK_CHANGES_ENABLED, "trackChangesEnabled");
         ids.put(CALLBACK_ADDRESS, "callbackAddress");
         ids.put(IMPORTED, "imported");
+        ids.put(VALIDATION_STATUS, "validationStatus");
+        ids.put(FILE_FORMAT_REFERS_TO, "fileFormatRefersTo");
+        ids.put(FILE_FORMAT_VALUE, "fileFormatValue");
+        ids.put(TLC_REFERENCE_NAME_FORMAT_HREF, "tlcReferenceNameFormatHref");
+        ids.put(TLC_REFERENCE_NAME_FORMAT_SHOW_AS, "tlcReferenceNameFormatShowAs");
+        ids.put(TLC_REFERENCE_NAME_FORMAT_ID, "tlcReferenceNameFormatId");
+        ids.put(FOREIGN_ANNEX_NUMBER, "foreignAnnexNumber");
+        ids.put(FOREIGN_ANNEX_SOURCE, "foreignAnnexSource");
+        ids.put(FOREIGN_FILE_SIZE, "foreignFileSize");
     }
 
     @Override

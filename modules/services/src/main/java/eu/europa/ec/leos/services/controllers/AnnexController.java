@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,6 +52,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+import static eu.europa.ec.leos.services.support.XmlHelper.getMimeType;
 
 @RestController
 @RequestMapping("/secured/annex/")
@@ -315,7 +317,16 @@ public class AnnexController implements AnnexApi {
         try {
             documentRef = encodeParam(documentRef);
             DocumentViewResponse annex = this.annexApiService.getDocument(documentRef);
-            return ResponseEntity.ok().body(annex);
+            if (annex.getBinaryFile() != null) {
+                String extension = annex.getOriginalFilename().substring(annex.getOriginalFilename().lastIndexOf(".") + 1).toUpperCase();
+                String mimeType = getMimeType(extension);
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(mimeType))
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + annex.getOriginalFilename() + "\"")
+                        .body(annex.getBinaryFile());
+            } else {
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(annex);
+            }
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex document - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while getting annex document",

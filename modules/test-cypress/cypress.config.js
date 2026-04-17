@@ -33,6 +33,15 @@ module.exports = defineConfig({
         // messages: { enabled: true, output: 'cucumber-messages.ndjson' }, // For low-level messages
         // json: { enabled: true, output: 'cucumber-report.json' }, // For Cucumber JSON output
       });
+      on('before:browser:launch', (browser = {}, launchOptions) => {
+        if (browser.name === 'chrome') {
+          launchOptions.args.push('--disable-popup-blocking');
+          launchOptions.args.push('--disable-web-security');
+          launchOptions.args.push('--disable-features=VizDisplayCompositor');
+          launchOptions.args.push('--no-sandbox');
+        }
+        return launchOptions;
+      });
       on("file:preprocessor", createBundler({
         plugins: [createEsbuildPlugin(config)],
       }));

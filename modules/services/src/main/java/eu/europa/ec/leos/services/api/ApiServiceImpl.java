@@ -60,7 +60,7 @@ import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.api.exception.CreateMilestoneException;
+import eu.europa.ec.leos.services.api.exception.LeosExceptionResponse;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.CollectionContextService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
@@ -77,6 +77,7 @@ import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.document.models.AnnexType;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.CreateProposalCopyRequest;
 import eu.europa.ec.leos.services.dto.response.CustomTemplateInfoResponse;
@@ -134,13 +135,27 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.StampedLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static eu.europa.ec.leos.services.api.exception.ErrorCode.CM001;
+import static eu.europa.ec.leos.services.api.exception.ErrorCode.CA001;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_ADDED;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_DELETED;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.PROCESSED;
@@ -1253,6 +1268,8 @@ public abstract class ApiServiceImpl implements ApiService {
                         annex.getLastModifiedBy(),
                         Date.from(annex.getLastModificationInstant()), annex.isTrackChangesEnabled());
 
+        annexVO.setOriginalFilename(annex.getOriginalFilename());
+        annexVO.setBinaryFileSize(annex.getBinaryContentSize());
         if (annex.getMetadata().isDefined()) {
             AnnexMetadata metadata = annex.getMetadata().get();
             annexVO.setDocNumber(metadata.getIndex());
@@ -1305,12 +1322,12 @@ public abstract class ApiServiceImpl implements ApiService {
         return packageService.findDocumentsByPackagePath(leosPackage.getPath(), FinancialStatement.class, false);
     }
 
-    @Override
-    public void createProposalAnnex(String proposalRef) throws IOException {
-        createProposalAnnex(proposalRef, null);
+    public void createProposalAnnex(String proposalRef, String originRef) throws IOException {
+        createProposalAnnex(proposalRef, originRef, AnnexType.NORMAL, null, null, null);
     }
 
-    public void createProposalAnnex(String proposalRef, String originRef) throws IOException {
+    @Override
+    public void createProposalAnnex(String proposalRef, String originRef, AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) throws IOException {
         LOG.trace("Creating annex...");
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
@@ -1318,16 +1335,18 @@ public abstract class ApiServiceImpl implements ApiService {
             try {
                 populateTrackChangesContext(proposal);
                 LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
-
+                List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
+                boolean annexExistWithSameName = StringUtils.isEmpty(originalFilename) ? false : documents.stream().filter(xmlDocument -> xmlDocument.getCategory().equals(LeosCategory.ANNEX) && StringUtils.isNotEmpty(xmlDocument.getOriginalFilename()) && xmlDocument.getOriginalFilename().toUpperCase().equals(originalFilename.toUpperCase())).findAny().isPresent();
+                if (annexExistWithSameName) {
+                    throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.same.name.error");
+                }
                 if (proposal.getMetadata() != null && proposal.getMetadata().get().isCustomTemplateAct()){
-                    List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
                     documents.forEach(document -> {
                         if (document.getCategory().equals(LeosCategory.ANNEX)){
                             throw new RuntimeException("You cannot add more than one Annex to a Custom Template.");
                         }
                     });
                 }
-
                 Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
                 BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
                 BillContextService billContext = billContextProvider.get();
@@ -1339,17 +1358,17 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
 
                 CatalogItem templateItem = templateService.getTemplateItem(metadata.getDocTemplate());
-                String annexTemplate = templateItem.getItems().get(0).getId();
+                String annexTemplate = templateItem.getItems().get(annexType.ordinal()).getId();
                 String language = metadata.getLanguage();
                 billContext.useAnnexTemplate(annexTemplate + LanguageMapUtils.getLanguageTemplateSuffix(language));
-                billContext.useLanguage(metadata.getLanguage());
+                billContext.useLanguage(language);
                 billContext.useCustomTemplateAct(metadata.isCustomTemplateAct());
                 billContext.useCloneProposal(isClonedProposal);
                 billContext.useOriginRef(isClonedProposal ? cloneOriginRef : originRef);
                 billContext.usePackageRef(proposalRef);
-                billContext.executeCreateBillAnnex();
+                billContext.executeCreateBillAnnex(annexType, binaryContent, originalFilename, binaryContentSize);
                 billService.updateExternalReferencesAsync(leosPackage);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 LOG.error("Unexpected error occurred while creating new annex", e);
                 throw e;
             }
@@ -1584,6 +1603,9 @@ public abstract class ApiServiceImpl implements ApiService {
     @Override
     public void updateAnnexTitle(String proposalRef, String annexId, String annexTitle) {
         Annex annex = annexService.findAnnex(annexId, true);
+        byte[] binaryContent = annex.getBinaryContent();
+        String originalFilename = annex.getOriginalFilename();
+        String binaryContentSize = annex.getBinaryContentSize();
         AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
 
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
@@ -1596,7 +1618,35 @@ public abstract class ApiServiceImpl implements ApiService {
         }
 
         AnnexMetadata updatedMetadata = metadata.builder().withTitle(annexTitle).build();
-        annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED), false);
+        annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED), false, binaryContent, originalFilename, binaryContentSize);
+        documentViewService.updateDocumentView(annex);
+    }
+
+    @Override
+    public void updateForeignAnnex(String proposalRef, String annexId, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+        List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
+        boolean annexExistWithSameName = documents.stream().filter(xmlDocument -> { return xmlDocument.getCategory().equals(LeosCategory.ANNEX) && !xmlDocument.getId().equals(annexId) && StringUtils.isNotEmpty(xmlDocument.getOriginalFilename()) && xmlDocument.getOriginalFilename().toUpperCase().equals(originalFilename.toUpperCase()); }).findAny().isPresent();
+        if (annexExistWithSameName) {
+            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.same.name.error");
+        }
+        Annex annex = annexService.findAnnex(annexId, true);
+        AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
+        if (binaryContent != null) {
+            String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toUpperCase();
+            String mimeType = getMimeType(extension);
+            String showAs = getShowAsForForeignAnnex(extension);
+            metadata = metadata.builder()
+                .withFileFormatRefersTo("~" + extension)
+                .withFileFormatValue(mimeType)
+                .withTlcReferenceNameFormatId(extension)
+                .withTlcReferenceNameFormatHref("http://publications.europa.eu/resource/authority/file-type/" + extension)
+                .withTlcReferenceNameFormatShowAs(showAs)
+                .withForeignAnnexSource(originalFilename)
+                .withForeignFileSize(binaryContentSize)
+                .build();
+        }
+        annexService.updateAnnex(annex, metadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED), false, binaryContent, originalFilename, binaryContentSize);
         documentViewService.updateDocumentView(annex);
     }
 
@@ -1676,7 +1726,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 populateCloneProposalMetadataVO(proposal);
             }
             if (hasNotChanged(proposal)) {
-                throw new CreateMilestoneException();
+                throw new LeosExceptionResponse(CM001.name(), "page.milestone.already.exist.for.this.major.version.error");
             }
             LegDocument previousLegDocument = null;
             String packageId = getPackageIdForCustomTemplateMainLanguage(proposal);
@@ -1868,7 +1918,7 @@ public abstract class ApiServiceImpl implements ApiService {
         Map<String, Map> versionAndAnnexNumberMap = populateVersionAndAnnexNumberMap(unzippedFiles, legDocument.getContainedDocuments());
         Map<String, String> docVersionMap = versionAndAnnexNumberMap.get("docVersionMap");
         Map<String, Integer> annexKeyMap = versionAndAnnexNumberMap.get("annexKeyMap");
-        Map<String, Object> pdfRenditions = MilestoneHelper.filterAndSortFiles(unzippedFiles, PDF);
+        Map<String, Object> pdfRenditions = MilestoneHelper.filterAndSortFiles(unzippedFiles, PDF, "renditions");
         List<MilestoneDocumentView> listDocuments = new ArrayList<>();
         boolean isContributionChanged = false;
         Map<String, Object> annexAddedMap = new HashMap<>();
@@ -1964,7 +2014,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 versionAndAnnexNumberMap = populateVersionAndAnnexNumberMap(contributionFiles, clonedLegDoc.getContainedDocuments());
                 docVersionMap = versionAndAnnexNumberMap.get("docVersionMap");
                 annexKeyMap = versionAndAnnexNumberMap.get("annexKeyMap");
-                pdfRenditions = MilestoneHelper.filterAndSortFiles(contributionFiles, PDF);
+                pdfRenditions = MilestoneHelper.filterAndSortFiles(contributionFiles, PDF, "renditions");
                 legDocument = clonedLegDoc;
             } catch (Exception e) {
                 LOG.debug("Couldn't get contribution's leg document");
@@ -2074,7 +2124,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private MilestonePDFDownloadResponse doDownloadMilestonePDF(LegDocument legDocument) throws IOException {
         byte[] content = null;
         Map<String, Object> unzippedFiles = MilestoneHelper.getMilestoneFiles(legDocument);
-        Map<String, Object> pdfRenditions = MilestoneHelper.filterAndSortFiles(unzippedFiles, PDF);
+        Map<String, Object> pdfRenditions = MilestoneHelper.filterAndSortFiles(unzippedFiles, PDF, "renditions");
         String fileName = null;
         if (!pdfRenditions.isEmpty()) {
             Map.Entry<String, Object> entry = pdfRenditions.entrySet().iterator().next();

@@ -62,6 +62,7 @@ public interface XmlNodeConfigProcessor {
     String DOC_TRANSLATION_FROM_HREF = "docTranslationFromHref";
 
     String DOC_VERSION = "docVersion";
+    String FOREIGN_FILE_SIZE = "foreignFileSize";
     String DOC_REF_COVER = "coverPage";
 
     String PROPOSAL_DOC_COLLECTION = "docCollectionName";
@@ -73,6 +74,13 @@ public interface XmlNodeConfigProcessor {
     String ANNEX_NUMBER_COVER = "annexNumberCover";
     String ANNEX_NUMBER_PREFACE = "annexNumberPreface";
     String ANNEX_TITLE_PREFACE = "annexTitlePreface";
+    String FILE_FORMAT_REFERS_TO = "fileFormatRefersTo";
+    String FILE_FORMAT_VALUE = "fileFormatValue";
+    String TLC_REFERENCE_NAME_FORMAT_HREF = "tlcReferenceNameFormatHref";
+    String TLC_REFERENCE_NAME_FORMAT_SHOW_AS = "tlcReferenceNameFormatShowAs";
+    String TLC_REFERENCE_NAME_FORMAT_ID = "tlcReferenceNameFormatId";
+    String FOREIGN_ANNEX_NUMBER = "foreignAnnexNumber";
+    String FOREIGN_ANNEX_SOURCE = "foreignAnnexSource";
 
     String EXPLANATORY_TITLE_PREFACE = "explanatoryTitlePreface";
     String FIN_STMT_TITLE_PREFACE = "financialStatementTitlePreface";
@@ -351,6 +359,18 @@ public interface XmlNodeConfigProcessor {
         keyValueMap.put(DOC_VERSION, metadata.getDocVersion());
 
         keyValueMap.put(ANNEX_NUMBER_COVER, metadata.getNumber());
+
+        keyValueMap.put(FILE_FORMAT_REFERS_TO, metadata.getFileFormatRefersTo());
+        keyValueMap.put(FILE_FORMAT_VALUE, metadata.getFileFormatValue());
+        keyValueMap.put(TLC_REFERENCE_NAME_FORMAT_HREF, metadata.getTlcReferenceNameFormatHref());
+        keyValueMap.put(TLC_REFERENCE_NAME_FORMAT_SHOW_AS, metadata.getTlcReferenceNameFormatShowAs());
+        keyValueMap.put(TLC_REFERENCE_NAME_FORMAT_ID, metadata.getTlcReferenceNameFormatId());
+        keyValueMap.put(FOREIGN_ANNEX_NUMBER, metadata.getForeignAnnexNumber());
+        keyValueMap.put(FOREIGN_ANNEX_SOURCE, metadata.getForeignAnnexSource());
+
+        if (metadata.getForeignFileSize() != null) {
+            keyValueMap.put(FOREIGN_FILE_SIZE, metadata.getForeignFileSize());
+        }
 
         if (metadata.getPackageRef() != null) {
             keyValueMap.put(FILE_CUID_PRESERVATION, metadata.getRef().split("-")[1]);

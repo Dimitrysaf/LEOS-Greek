@@ -15,6 +15,7 @@ package eu.europa.ec.leos.repository.repositories;
 
 import eu.europa.ec.leos.repository.entities.DocumentContent;
 import eu.europa.ec.leos.repository.entities.DocumentVersion;
+import eu.europa.ec.leos.repository.interfaces.SimpleDocumentContentView;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -25,6 +26,9 @@ public interface DocumentContentRepository extends JpaRepository<DocumentContent
 
     @Query(value = "SELECT * FROM DOCUMENT_CONTENT c WHERE c.VERSION_ID = ?1", nativeQuery = true)
     Optional<DocumentContent> findDocumentContentByVersionId(BigDecimal versionId);
+
+    @Query(value = "SELECT c.ORIGINAL_FILE_NAME as originalFilename, c.BINARY_CONTENT_SIZE as binaryContentSize FROM DOCUMENT_CONTENT c WHERE c.VERSION_ID = ?1", nativeQuery = true)
+    Optional<SimpleDocumentContentView> findSimpleDocumentContentByVersionId(BigDecimal versionId);
 
     Optional<DocumentContent> findDocumentContentByVersion(DocumentVersion version);
 }

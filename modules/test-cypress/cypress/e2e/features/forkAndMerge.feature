@@ -789,6 +789,11 @@ Feature: fork and merge features
     And  click on create button
     Then user is on act viewer page
     When click on add button in annexes section
+    And  below options are displayed in add annex dropdown
+      | TypeOptions |
+      |  Annex drafted in EdiT  |
+      |  Annex in another format  |
+  When click on "Annex drafted in EdiT" option from add annex dropdown
     Then total number of annexes present in act viewer page is 1
     When click on milestones tab in act view page
     When click on add button in milestones tab
@@ -845,290 +850,290 @@ Feature: fork and merge features
     When click on close button present in annex page
     Then user is on act viewer page
 
-# Ticket LEOS#3049 :Soft enter icon is showing when insert a table into an in a clone proposal .
-  #Ticket LEOS#3055:Soft enter icon appears if we add any point in an article in a clone proposal
- @softEnterIcon @contributionPane @local
- Scenario: softEnterIcon should not be visible when we add a point
-   Given navigate to leos application with "User1"
-   Then user is on home page
-   When click on Create act button
-   Then user is on create new legislative document window
-   When click on template "SJ-023" in create new legislative document window
-   When click on next button in create document page
-   When tick guidance approval checkbox in create document page
-   When click on next button in create document page
-   And  provide document title "Soft Enter Icon should not be visible when we any point. " in create document page
-   And  click on create button
-   Then user is on act viewer page
-   When click on legal act link present in act viewer page
-   Then user is on legal act page
-   When mouseover and click on article 1
-   Then ck editor window is displayed
-   When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-   And  click enter from keyboard in edition mode
-   And click on increase indent icon present in ck editor panel
-   And click on increase indent icon present in ck editor panel
-   And  add "point a" at current cursor position in edition mode
-   And click enter from keyboard in edition mode
-   And add "point b" at current cursor position in edition mode
-   And click enter from keyboard in edition mode
-   And add "point c" at current cursor position in edition mode
-   And click enter from keyboard in edition mode
-   And click on increase indent icon present in ck editor panel
-   And click on increase indent icon present in ck editor panel
-   And  add "point i" at current cursor position in edition mode
-   And  click enter from keyboard in edition mode
-   And  add "point ii" at current cursor position in edition mode
-   And  click enter from keyboard in edition mode
-   And  add "point iii" at current cursor position in edition mode
-   And click enter from keyboard in edition mode
-   And click on increase indent icon present in ck editor panel
-   And click on increase indent icon present in ck editor panel
-   And  add "point 1" at current cursor position in edition mode
-   When click save and close button of ck editor
-   Then ck editor window is not displayed
-   And  content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 1 contains "Text..."
-   And  content of point 1 of list 1 of paragraph 1 of article 1 contains "point a"
-   And  content of point 2 of list 1 of paragraph 1 of article 1 contains "point b"
-   And  content of point 3 of list 1 of paragraph 1 of article 1 contains "point c"
-   And  content of point 1 of list 1 of point 3 of list 1 of paragraph 1 of article 1 contains "point i"
-   And  content of point 2 of list 1 of point 3 of list 1 of paragraph 1 of article 1 contains "point ii"
-   And  content of point 3 of list 1 of point 3 of list 1 of paragraph 1 of article 1 contains "point iii"
-   And  content of point 1 of list 1 of point 3 of list 1 of point 3 of list 1 of paragraph 1 of article 1 contains "point 1"
-   When click on insert after icon of article 1
-   Then heading of article 2 contains "Article heading..."
-   And  2 paragraphs are present in article 2
-   When click on close button present in legal act page
-   Then user is on act viewer page
-   When click on milestones tab in act view page
-   When click on add button in milestones tab
-   And  click on create milestone button
-   Then successful message contains "Milestone created"
-   And  "File ready" is showing under status column of row 1 of milestones table
-   When click on three dots under actions column of row 1 of milestones table
-   When click on option "Send a copy for contribution" under milestone actions
-   Then "Send a copy of the milestone for contribution" dialog box window is displayed
-   When provide input "demo" dialog box window
-   And  click on row 1 from the user list
-   And  click on send for contribution button
-   Then successful message contains "Copy sent for contribution"
-   When click on workspace button in breadcrumb item
-   Then user is on repository browser page
-   When click on act 1
-   Then user is on act viewer page
-   And  chip content container 1 of act header contains "Contribution"
-   And  chip content container 2 of act header contains "LEOS"
-   When click on legal act link present in act viewer page
-   Then user is on legal act page
-   When mouseover and click on article 1
-   Then ck editor window is displayed
-   And  click at offset 7 in li 1 with data-akn-element "subparagraph" of li 3 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-   And  click enter from keyboard in edition mode
-   And click on decrease indent icon present in ck editor panel
-   And add "point d" at current cursor position in edition mode
-   And click save and close button of ck editor
-   Then ck editor window is not displayed
-   And  content of point 1 of list 1 of paragraph 1 of article 1 contains "point a"
-   And  content of point 2 of list 1 of paragraph 1 of article 1 contains "point b"
-   And  content of point 3 of list 1 of paragraph 1 of article 1 contains "point c"
-   And ins tag of content of subparagraph 1 of list 1 of point 4 of list 1 of paragraph 1 of article 1 contains "point d"
-   And  content of point 1 of list 1 of point 4 of list 1 of paragraph 1 of article 1 contains "point i"
-   And  content of point 2 of list 1 of point 4 of list 1 of paragraph 1 of article 1 contains "point ii"
-   And  content of point 3 of list 1 of point 4 of list 1 of paragraph 1 of article 1 contains "point iii"
-   And content of point 1 of list 1 of point 3 of list 1 of point 4 of list 1 of paragraph 1 of article 1 contains "point 1"
-   When mouseover and click on article 2
-   Then ck editor window is displayed
-   When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-   And click on table icon present in ck editor panel
-   Then cke dialog window is displayed with title "Table Properties"
-   When click on ok button in cke dialog window
-   And  click save and close button of ck editor
-   Then ck editor window is not displayed
-   Then content of subparagraph 1 of paragraph 1 of article 2 contains "Text..."
-   And subparagraph 2 of paragraph 1 of article 2 contains a table
-   And subparagraph 3 of paragraph 1 of article 2 does not exist
-   When click on close button present in legal act page
-   Then user is on act viewer page
-
-# Ticket LEOS#3081: Clone Proposal : Wrong structure is creating when we outdent an unnumbered paragraph
-  @IndentAndOutdentScenarios @local
- Scenario: Indent/Outdent Scenario
-    Given navigate to leos application with "User1"
-    Then user is on home page
-    When click on Create act button
-    Then user is on create new legislative document window
-    When click on template "SJ-023" in create new legislative document window
-    When click on next button in create document page
-    When tick guidance approval checkbox in create document page
-    When click on next button in create document page
-    And  provide document title "Indent And Outdent Scenario " in create document page
-    And  click on create button
-    Then user is on act viewer page
-    When click on legal act link present in act viewer page
-    Then user is on legal act page
-    # Ticket Start #3139 wrong numbering created when we indent the paragraph and again outdent to its previous position
-    When mouseover and click on article 1
-    Then ck editor window is displayed
-    Then numbered paragraph 1 of article contains "Text..." in edition mode
-    And  numbered paragraph 2 of article contains "Text..." in edition mode
-    When click at offset 7 of li 2 with data-akn-element "paragraph" of article in edition mode
-    And  click enter from keyboard in edition mode
-    And click on increase indent icon present in ck editor panel
-    And click on increase indent icon present in ck editor panel
-    And  add "point a" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And click on increase indent icon present in ck editor panel
-    And click on increase indent icon present in ck editor panel
-    And add "point i" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And  click on decrease indent icon present in ck editor panel
-    And click on decrease indent icon present in ck editor panel
-    And  click on decrease indent icon present in ck editor panel
-    And click on decrease indent icon present in ck editor panel
-    And add "paragraph3" at current cursor position in edition mode
-    And  click enter from keyboard in edition mode
-    And click on increase indent icon present in ck editor panel
-    And click on increase indent icon present in ck editor panel
-    And  add "parag3 point a" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And  click on decrease indent icon present in ck editor panel
-    And click on decrease indent icon present in ck editor panel
-    And  click on decrease indent icon present in ck editor panel
-    And click on decrease indent icon present in ck editor panel
-    And add "paragraph4" at current cursor position in edition mode
-    When click save and close button of ck editor
-    Then ck editor window is not displayed
-   # End :#3139 wrong numbering created when we indent the paragraph and again outdent to its previous position
-    When click on insert after icon of article 1
-    When mouseover and click on article 2
-    Then ck editor window is displayed
-    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-    And  click enter from keyboard in edition mode
-    And click on increase indent icon present in ck editor panel
-    And click on increase indent icon present in ck editor panel
-    And  add "point a" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And add "point b" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And add "point c" at current cursor position in edition mode
-    When click save and close button of ck editor
-    Then ck editor window is not displayed
-    When mouseover and click on article 3
-    Then ck editor window is displayed
-    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-    And  click enter from keyboard in edition mode
-    And click on increase indent icon present in ck editor panel
-    And click on increase indent icon present in ck editor panel
-    And  add "point 1" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And add "point 2" at current cursor position in edition mode
-    And click enter from keyboard in edition mode
-    And add "point 3" at current cursor position in edition mode
-    And click save and close button of ck editor
-    Then ck editor window is not displayed
-    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 2 contains "Text..."
-    And  content of point 1 of list 1 of paragraph 1 of article 3 contains "point 1"
-    And  content of point 2 of list 1 of paragraph 1 of article 3 contains "point 2"
-    And  content of point 3 of list 1 of paragraph 1 of article 3 contains "point 3"
-    When click on close button present in legal act page
-    Then user is on act viewer page
-    When click on milestones tab in act view page
-    When click on add button in milestones tab
-    And  click on create milestone button
-    Then successful message contains "Milestone created"
-    And  "File ready" is showing under status column of row 1 of milestones table
-    When click on three dots under actions column of row 1 of milestones table
-    When click on option "Send a copy for contribution" under milestone actions
-    Then "Send a copy of the milestone for contribution" dialog box window is displayed
-    When provide input "demo" dialog box window
-    And  click on row 1 from the user list
-    And  click on send for contribution button
-    Then successful message contains "Copy sent for contribution"
-    When click on workspace button in breadcrumb item
-    Then user is on repository browser page
-    When click on act 1
-    Then user is on act viewer page
-    And  chip content container 1 of act header contains "Contribution"
-    And  chip content container 2 of act header contains "LEOS"
-    When click on legal act link present in act viewer page
-    Then user is on legal act page
-    #Ticket #3139 wrong numbering created when we indent the paragraph and again outdent to its previous position (Validation ))
-    When mouseover on article 1
-    And num tag of paragraph 1 of article 1 contains "1."
-    Then content of paragraph 1 of article 1 contains "Text..."
-    And num tag of paragraph 2 of article 1 contains "2."
-    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 2 of article 1 contains "Text..."
-    And num tag of point 1 of list 1 of paragraph 2 of article 1 contains "(a)"
-    And  content of point 1 of list 1 of paragraph 2 of article 1 contains "point a"
-    And  num tag of point 1 of list 1 of point 1 of list 1 of paragraph 2 of article 1 contains "(i)"
-    And content of point 1 of list 1 of point 1 of list 1 of paragraph 2 of article 1 contains "point i"
-    And num tag of paragraph 3 of article 1 contains "3."
-    Then content of paragraph 3 of article 1 contains "paragraph3"
-    And num tag of point 1 of list 1 of paragraph 2 of article 1 contains "(a)"
-    And num tag of paragraph 3 of article 1 contains "3."
-    And  content of point 1 of list 1 of paragraph 3 of article 1 contains "parag3 point a"
-    And num tag of paragraph 4 of article 1 contains "4."
-    Then content of paragraph 4 of article 1 contains "paragraph4"
-    When mouseover and click on article 1
-    Then ck editor window is displayed
-    When click at offset 7 in li 1 with data-akn-element "subparagraph" of li 2 with data-akn-element "paragraph" of article in edition mode
-    And click on increase indent icon present in ck editor panel
-    And click on decrease indent icon present in ck editor panel
-    And click save and close button of ck editor
-    Then ck editor window is not displayed
-    And num tag of paragraph 1 of article 1 contains "1."
-    Then content of paragraph 1 of article 1 contains "Text..."
-    And num tag of paragraph 2 of article 1 contains "2."
-    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 2 of article 1 contains "Text..."
-    And num tag of point 1 of list 1 of paragraph 2 of article 1 contains "(a)"
-    And  content of point 1 of list 1 of paragraph 2 of article 1 contains "point a"
-    And  num tag of point 1 of list 1 of point 1 of list 1 of paragraph 2 of article 1 contains "(i)"
-    And content of point 1 of list 1 of point 1 of list 1 of paragraph 2 of article 1 contains "point i"
-    And num tag of paragraph 3 of article 1 contains "3."
-    Then content of paragraph 3 of article 1 contains "paragraph3"
-    And num tag of point 1 of list 1 of paragraph 2 of article 1 contains "(a)"
-    And num tag of paragraph 3 of article 1 contains "3."
-    And  content of point 1 of list 1 of paragraph 3 of article 1 contains "parag3 point a"
-    And num tag of paragraph 4 of article 1 contains "4."
-    Then content of paragraph 4 of article 1 contains "paragraph4"
-   #End :Ticket#3139 wrong numbering created when we indent the paragraph and again outdent to its previous position
-    When mouseover and click on article 2
-    Then ck editor window is displayed
-    When click at offset 7 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-    And click on decrease indent icon present in ck editor panel
-    And click on decrease indent icon present in ck editor panel
-    And  click save and close button of ck editor
-    Then ck editor window is not displayed
-    Then del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 2 of article 2 contains value "(a)"
-    And ins tag with attribute "leos\:action-number" and value "insert" of num tag of paragraph 2 of article 2 contains value "2."
-    And content of subparagraph 1 of list 1 of paragraph 2 of article 2 contains "point a"
-    And "del" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 2 has attribute "leos:action-number" with value "delete"
-    And "del" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 2 contains "(b)"
-    And "ins" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 2 has attribute "leos:action-number" with value "insert"
-    And "ins" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 2 contains "(a)"
-    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 2 has attribute "leos:action-number" with value "delete"
-    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 2 contains "(c)"
-    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 2 has attribute "leos:action-number" with value "insert"
-    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 2 contains "(b)"
-    And content of point 1 of list 1 of paragraph 2 of article 2 contains "point b"
-    And content of point 2 of list 1 of paragraph 2 of article 2 contains "point c"
-    When mouseover and click on article 3
-    Then ck editor window is displayed
-    And  click at offset 7 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-    And click on decrease indent icon present in ck editor panel
-    And click save and close button of ck editor
-    Then del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 2 of article 3 contains value "(1)"
-    And content of subparagraph 1 of list 1 of paragraph 2 of article 3 contains "point 1"
-    And "del" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 3 has attribute "leos:action-number" with value "delete"
-    And "del" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 3 contains "(2)"
-    And "ins" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 3 has attribute "leos:action-number" with value "insert"
-    And "ins" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 3 contains "(1)"
-    And  content of point 1 of list 1 of paragraph 2 of article 3 contains "point 2"
-    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 3 has attribute "leos:action-number" with value "delete"
-    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 3 contains "(3)"
-    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 3 has attribute "leos:action-number" with value "insert"
-    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 3 contains "(2)"
-    And content of point 2 of list 1 of paragraph 2 of article 3 contains "point 3"
-
-
-
+## Ticket LEOS#3049 :Soft enter icon is showing when insert a table into an in a clone proposal .
+#  #Ticket LEOS#3055:Soft enter icon appears if we add any point in an article in a clone proposal
+# @softEnterIcon @contributionPane @local
+# Scenario: softEnterIcon should not be visible when we add a point
+#   Given navigate to leos application with "User1"
+#   Then user is on home page
+#   When click on Create act button
+#   Then user is on create new legislative document window
+#   When click on template "SJ-023" in create new legislative document window
+#   When click on next button in create document page
+#   When tick guidance approval checkbox in create document page
+#   When click on next button in create document page
+#   And  provide document title "Soft Enter Icon should not be visible when we any point. " in create document page
+#   And  click on create button
+#   Then user is on act viewer page
+#   When click on legal act link present in act viewer page
+#   Then user is on legal act page
+#   When mouseover and click on article 1
+#   Then ck editor window is displayed
+#   When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+#   And  click enter from keyboard in edition mode
+#   And click on increase indent icon present in ck editor panel
+#   And click on increase indent icon present in ck editor panel
+#   And  add "point a" at current cursor position in edition mode
+#   And click enter from keyboard in edition mode
+#   And add "point b" at current cursor position in edition mode
+#   And click enter from keyboard in edition mode
+#   And add "point c" at current cursor position in edition mode
+#   And click enter from keyboard in edition mode
+#   And click on increase indent icon present in ck editor panel
+#   And click on increase indent icon present in ck editor panel
+#   And  add "point i" at current cursor position in edition mode
+#   And  click enter from keyboard in edition mode
+#   And  add "point ii" at current cursor position in edition mode
+#   And  click enter from keyboard in edition mode
+#   And  add "point iii" at current cursor position in edition mode
+#   And click enter from keyboard in edition mode
+#   And click on increase indent icon present in ck editor panel
+#   And click on increase indent icon present in ck editor panel
+#   And  add "point 1" at current cursor position in edition mode
+#   When click save and close button of ck editor
+#   Then ck editor window is not displayed
+#   And  content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 1 contains "Text..."
+#   And  content of point 1 of list 1 of paragraph 1 of article 1 contains "point a"
+#   And  content of point 2 of list 1 of paragraph 1 of article 1 contains "point b"
+#   And  content of point 3 of list 1 of paragraph 1 of article 1 contains "point c"
+#   And  content of point 1 of list 1 of point 3 of list 1 of paragraph 1 of article 1 contains "point i"
+#   And  content of point 2 of list 1 of point 3 of list 1 of paragraph 1 of article 1 contains "point ii"
+#   And  content of point 3 of list 1 of point 3 of list 1 of paragraph 1 of article 1 contains "point iii"
+#   And  content of point 1 of list 1 of point 3 of list 1 of point 3 of list 1 of paragraph 1 of article 1 contains "point 1"
+#   When click on insert after icon of article 1
+#   Then heading of article 2 contains "Article heading..."
+#   And  2 paragraphs are present in article 2
+#   When click on close button present in legal act page
+#   Then user is on act viewer page
+#   When click on milestones tab in act view page
+#   When click on add button in milestones tab
+#   And  click on create milestone button
+#   Then successful message contains "Milestone created"
+#   And  "File ready" is showing under status column of row 1 of milestones table
+#   When click on three dots under actions column of row 1 of milestones table
+#   When click on option "Send a copy for contribution" under milestone actions
+#   Then "Send a copy of the milestone for contribution" dialog box window is displayed
+#   When provide input "demo" dialog box window
+#   And  click on row 1 from the user list
+#   And  click on send for contribution button
+#   Then successful message contains "Copy sent for contribution"
+#   When click on workspace button in breadcrumb item
+#   Then user is on repository browser page
+#   When click on act 1
+#   Then user is on act viewer page
+#   And  chip content container 1 of act header contains "Contribution"
+#   And  chip content container 2 of act header contains "LEOS"
+#   When click on legal act link present in act viewer page
+#   Then user is on legal act page
+#   When mouseover and click on article 1
+#   Then ck editor window is displayed
+#   And  click at offset 7 in li 1 with data-akn-element "subparagraph" of li 3 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+#   And  click enter from keyboard in edition mode
+#   And click on decrease indent icon present in ck editor panel
+#   And add "point d" at current cursor position in edition mode
+#   And click save and close button of ck editor
+#   Then ck editor window is not displayed
+#   And  content of point 1 of list 1 of paragraph 1 of article 1 contains "point a"
+#   And  content of point 2 of list 1 of paragraph 1 of article 1 contains "point b"
+#   And  content of point 3 of list 1 of paragraph 1 of article 1 contains "point c"
+#   And ins tag of content of subparagraph 1 of list 1 of point 4 of list 1 of paragraph 1 of article 1 contains "point d"
+#   And  content of point 1 of list 1 of point 4 of list 1 of paragraph 1 of article 1 contains "point i"
+#   And  content of point 2 of list 1 of point 4 of list 1 of paragraph 1 of article 1 contains "point ii"
+#   And  content of point 3 of list 1 of point 4 of list 1 of paragraph 1 of article 1 contains "point iii"
+#   And content of point 1 of list 1 of point 3 of list 1 of point 4 of list 1 of paragraph 1 of article 1 contains "point 1"
+#   When mouseover and click on article 2
+#   Then ck editor window is displayed
+#   When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+#   And click on table icon present in ck editor panel
+#   Then cke dialog window is displayed with title "Table Properties"
+#   When click on ok button in cke dialog window
+#   And  click save and close button of ck editor
+#   Then ck editor window is not displayed
+#   Then content of subparagraph 1 of paragraph 1 of article 2 contains "Text..."
+#   And subparagraph 2 of paragraph 1 of article 2 contains a table
+#   And subparagraph 3 of paragraph 1 of article 2 does not exist
+#   When click on close button present in legal act page
+#   Then user is on act viewer page
+#
+## Ticket LEOS#3081: Clone Proposal : Wrong structure is creating when we outdent an unnumbered paragraph
+#  @IndentAndOutdentScenarios @local
+# Scenario: Indent/Outdent Scenario
+#    Given navigate to leos application with "User1"
+#    Then user is on home page
+#    When click on Create act button
+#    Then user is on create new legislative document window
+#    When click on template "SJ-023" in create new legislative document window
+#    When click on next button in create document page
+#    When tick guidance approval checkbox in create document page
+#    When click on next button in create document page
+#    And  provide document title "Indent And Outdent Scenario " in create document page
+#    And  click on create button
+#    Then user is on act viewer page
+#    When click on legal act link present in act viewer page
+#    Then user is on legal act page
+#    # Ticket Start #3139 wrong numbering created when we indent the paragraph and again outdent to its previous position
+#    When mouseover and click on article 1
+#    Then ck editor window is displayed
+#    Then numbered paragraph 1 of article contains "Text..." in edition mode
+#    And  numbered paragraph 2 of article contains "Text..." in edition mode
+#    When click at offset 7 of li 2 with data-akn-element "paragraph" of article in edition mode
+#    And  click enter from keyboard in edition mode
+#    And click on increase indent icon present in ck editor panel
+#    And click on increase indent icon present in ck editor panel
+#    And  add "point a" at current cursor position in edition mode
+#    And click enter from keyboard in edition mode
+#    And click on increase indent icon present in ck editor panel
+#    And click on increase indent icon present in ck editor panel
+#    And add "point i" at current cursor position in edition mode
+#    And click enter from keyboard in edition mode
+#    And  click on decrease indent icon present in ck editor panel
+#    And click on decrease indent icon present in ck editor panel
+#    And  click on decrease indent icon present in ck editor panel
+#    And click on decrease indent icon present in ck editor panel
+#    And add "paragraph3" at current cursor position in edition mode
+#    And  click enter from keyboard in edition mode
+#    And click on increase indent icon present in ck editor panel
+#    And click on increase indent icon present in ck editor panel
+#    And  add "parag3 point a" at current cursor position in edition mode
+#    And click enter from keyboard in edition mode
+#    And  click on decrease indent icon present in ck editor panel
+#    And click on decrease indent icon present in ck editor panel
+#    And  click on decrease indent icon present in ck editor panel
+#    And click on decrease indent icon present in ck editor panel
+#    And add "paragraph4" at current cursor position in edition mode
+#    When click save and close button of ck editor
+#    Then ck editor window is not displayed
+#   # End :#3139 wrong numbering created when we indent the paragraph and again outdent to its previous position
+#    When click on insert after icon of article 1
+#    When mouseover and click on article 2
+#    Then ck editor window is displayed
+#    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+#    And  click enter from keyboard in edition mode
+#    And click on increase indent icon present in ck editor panel
+#    And click on increase indent icon present in ck editor panel
+#    And  add "point a" at current cursor position in edition mode
+#    And click enter from keyboard in edition mode
+#    And add "point b" at current cursor position in edition mode
+#    And click enter from keyboard in edition mode
+#    And add "point c" at current cursor position in edition mode
+#    When click save and close button of ck editor
+#    Then ck editor window is not displayed
+#    When mouseover and click on article 3
+#    Then ck editor window is displayed
+#    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+#    And  click enter from keyboard in edition mode
+#    And click on increase indent icon present in ck editor panel
+#    And click on increase indent icon present in ck editor panel
+#    And  add "point 1" at current cursor position in edition mode
+#    And click enter from keyboard in edition mode
+#    And add "point 2" at current cursor position in edition mode
+#    And click enter from keyboard in edition mode
+#    And add "point 3" at current cursor position in edition mode
+#    And click save and close button of ck editor
+#    Then ck editor window is not displayed
+#    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 2 contains "Text..."
+#    And  content of point 1 of list 1 of paragraph 1 of article 3 contains "point 1"
+#    And  content of point 2 of list 1 of paragraph 1 of article 3 contains "point 2"
+#    And  content of point 3 of list 1 of paragraph 1 of article 3 contains "point 3"
+#    When click on close button present in legal act page
+#    Then user is on act viewer page
+#    When click on milestones tab in act view page
+#    When click on add button in milestones tab
+#    And  click on create milestone button
+#    Then successful message contains "Milestone created"
+#    And  "File ready" is showing under status column of row 1 of milestones table
+#    When click on three dots under actions column of row 1 of milestones table
+#    When click on option "Send a copy for contribution" under milestone actions
+#    Then "Send a copy of the milestone for contribution" dialog box window is displayed
+#    When provide input "demo" dialog box window
+#    And  click on row 1 from the user list
+#    And  click on send for contribution button
+#    Then successful message contains "Copy sent for contribution"
+#    When click on workspace button in breadcrumb item
+#    Then user is on repository browser page
+#    When click on act 1
+#    Then user is on act viewer page
+#    And  chip content container 1 of act header contains "Contribution"
+#    And  chip content container 2 of act header contains "LEOS"
+#    When click on legal act link present in act viewer page
+#    Then user is on legal act page
+#    #Ticket #3139 wrong numbering created when we indent the paragraph and again outdent to its previous position (Validation ))
+#    When mouseover on article 1
+#    And num tag of paragraph 1 of article 1 contains "1."
+#    Then content of paragraph 1 of article 1 contains "Text..."
+#    And num tag of paragraph 2 of article 1 contains "2."
+#    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 2 of article 1 contains "Text..."
+#    And num tag of point 1 of list 1 of paragraph 2 of article 1 contains "(a)"
+#    And  content of point 1 of list 1 of paragraph 2 of article 1 contains "point a"
+#    And  num tag of point 1 of list 1 of point 1 of list 1 of paragraph 2 of article 1 contains "(i)"
+#    And content of point 1 of list 1 of point 1 of list 1 of paragraph 2 of article 1 contains "point i"
+#    And num tag of paragraph 3 of article 1 contains "3."
+#    Then content of paragraph 3 of article 1 contains "paragraph3"
+#    And num tag of point 1 of list 1 of paragraph 2 of article 1 contains "(a)"
+#    And num tag of paragraph 3 of article 1 contains "3."
+#    And  content of point 1 of list 1 of paragraph 3 of article 1 contains "parag3 point a"
+#    And num tag of paragraph 4 of article 1 contains "4."
+#    Then content of paragraph 4 of article 1 contains "paragraph4"
+#    When mouseover and click on article 1
+#    Then ck editor window is displayed
+#    When click at offset 7 in li 1 with data-akn-element "subparagraph" of li 2 with data-akn-element "paragraph" of article in edition mode
+#    And click on increase indent icon present in ck editor panel
+#    And click on decrease indent icon present in ck editor panel
+#    And click save and close button of ck editor
+#    Then ck editor window is not displayed
+#    And num tag of paragraph 1 of article 1 contains "1."
+#    Then content of paragraph 1 of article 1 contains "Text..."
+#    And num tag of paragraph 2 of article 1 contains "2."
+#    And  content of subparagraph refersTo "~INP" of list 1 of paragraph 2 of article 1 contains "Text..."
+#    And num tag of point 1 of list 1 of paragraph 2 of article 1 contains "(a)"
+#    And  content of point 1 of list 1 of paragraph 2 of article 1 contains "point a"
+#    And  num tag of point 1 of list 1 of point 1 of list 1 of paragraph 2 of article 1 contains "(i)"
+#    And content of point 1 of list 1 of point 1 of list 1 of paragraph 2 of article 1 contains "point i"
+#    And num tag of paragraph 3 of article 1 contains "3."
+#    Then content of paragraph 3 of article 1 contains "paragraph3"
+#    And num tag of point 1 of list 1 of paragraph 2 of article 1 contains "(a)"
+#    And num tag of paragraph 3 of article 1 contains "3."
+#    And  content of point 1 of list 1 of paragraph 3 of article 1 contains "parag3 point a"
+#    And num tag of paragraph 4 of article 1 contains "4."
+#    Then content of paragraph 4 of article 1 contains "paragraph4"
+#   #End :Ticket#3139 wrong numbering created when we indent the paragraph and again outdent to its previous position
+#    When mouseover and click on article 2
+#    Then ck editor window is displayed
+#    When click at offset 7 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+#    And click on decrease indent icon present in ck editor panel
+#    And click on decrease indent icon present in ck editor panel
+#    And  click save and close button of ck editor
+#    Then ck editor window is not displayed
+#    Then del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 2 of article 2 contains value "(a)"
+#    And ins tag with attribute "leos\:action-number" and value "insert" of num tag of paragraph 2 of article 2 contains value "2."
+#    And content of subparagraph 1 of list 1 of paragraph 2 of article 2 contains "point a"
+#    And "del" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 2 has attribute "leos:action-number" with value "delete"
+#    And "del" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 2 contains "(b)"
+#    And "ins" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 2 has attribute "leos:action-number" with value "insert"
+#    And "ins" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 2 contains "(a)"
+#    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 2 has attribute "leos:action-number" with value "delete"
+#    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 2 contains "(c)"
+#    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 2 has attribute "leos:action-number" with value "insert"
+#    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 2 contains "(b)"
+#    And content of point 1 of list 1 of paragraph 2 of article 2 contains "point b"
+#    And content of point 2 of list 1 of paragraph 2 of article 2 contains "point c"
+#    When mouseover and click on article 3
+#    Then ck editor window is displayed
+#    And  click at offset 7 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+#    And click on decrease indent icon present in ck editor panel
+#    And click save and close button of ck editor
+#    Then del tag with attribute "leos\:action-number" and value "delete" of num tag of paragraph 2 of article 3 contains value "(1)"
+#    And content of subparagraph 1 of list 1 of paragraph 2 of article 3 contains "point 1"
+#    And "del" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 3 has attribute "leos:action-number" with value "delete"
+#    And "del" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 3 contains "(2)"
+#    And "ins" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 3 has attribute "leos:action-number" with value "insert"
+#    And "ins" tag 1 of num tag of point 1 of list 1 of paragraph 2 of article 3 contains "(1)"
+#    And  content of point 1 of list 1 of paragraph 2 of article 3 contains "point 2"
+#    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 3 has attribute "leos:action-number" with value "delete"
+#    And "del" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 3 contains "(3)"
+#    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 3 has attribute "leos:action-number" with value "insert"
+#    And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 3 contains "(2)"
+#    And content of point 2 of list 1 of paragraph 2 of article 3 contains "point 3"
+#
+#
+#

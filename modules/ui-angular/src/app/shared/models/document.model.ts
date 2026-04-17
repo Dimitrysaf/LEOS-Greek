@@ -16,6 +16,8 @@ export interface Document {
   template: string; // TemplateKey
   docNumber: number;
   source: unknown | null; // FIXME: docs say `byte[]`
+  originalFilename: string | null;
+  binaryContentSize: string | null;
   uploaded: boolean;
   versionSeriesId: string | null;
   ref: string | null;

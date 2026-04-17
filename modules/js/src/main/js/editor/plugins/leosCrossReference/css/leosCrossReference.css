@@ -150,6 +150,7 @@ article subparagraph {
 
 .cke_dialog_tabs {
     margin: 19px 0 0;
+    display: flex;
 }
 
 .cke_dialog_tab {
@@ -166,6 +167,9 @@ a.cke_dialog_tab {
     font-weight: 500;
     line-height: 16px;
     border-radius: 5px 5px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 a.cke_dialog_tab:hover {

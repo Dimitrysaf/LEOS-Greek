@@ -24,8 +24,12 @@ import eu.europa.ec.leos.repository.entities.DocumentMilestone;
 import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
 import eu.europa.ec.leos.repository.entities.DocumentV;
 import eu.europa.ec.leos.repository.entities.MilestoneV;
-import eu.europa.ec.leos.repository.model.*;
+import eu.europa.ec.leos.repository.interfaces.SimpleDocumentContentView;
+import eu.europa.ec.leos.repository.model.Collaborator;
+import eu.europa.ec.leos.repository.model.LeosDocument;
+import eu.europa.ec.leos.repository.model.LinkedPackage;
 import eu.europa.ec.leos.repository.model.Package;
+import eu.europa.ec.leos.repository.model.PackageInfo;
 import eu.europa.ec.leos.repository.repositories.DocumentContentRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneRepository;
@@ -156,17 +160,31 @@ public class ConversionUtils {
     }
 
     public static List<LeosDocument> buildXmlDocument(DocumentPropertyValuesRepository documentPropertyValuesRepository,
+            List<Collaborator> collaborators, DocumentContentRepository documentContentRepository,
+            List<DocumentV> docs, boolean fetchContent) {
+        return buildXmlDocument(documentPropertyValuesRepository, collaborators, documentContentRepository, docs, fetchContent, false);
+    }
+
+    public static List<LeosDocument> buildXmlDocument(DocumentPropertyValuesRepository documentPropertyValuesRepository,
                                                       List<Collaborator> collaborators, DocumentContentRepository documentContentRepository,
-                                                List<DocumentV> docs, boolean fetchContent) {
+                                                List<DocumentV> docs, boolean fetchContent, boolean fetchBinarySimpleOnly) {
         List<LeosDocument> convertedDocs = new ArrayList<>();
         for (DocumentV doc : docs) {
             List<DocumentPropertyValues> docProps = getDocumentProperties(documentPropertyValuesRepository, doc.getNumProps(),
                     doc.getVersionId());
             Optional<DocumentContent> content = Optional.empty();
+            String originalFilename = "";
+            String binarySourceSize = "";
             if (fetchContent) {
                 content = documentContentRepository.findDocumentContentByVersionId(doc.getVersionId());
+            } else if (fetchBinarySimpleOnly) {
+                Optional<SimpleDocumentContentView> simpleDocumentContentView = documentContentRepository.findSimpleDocumentContentByVersionId(doc.getVersionId());
+                if (simpleDocumentContentView.isPresent()) {
+                    originalFilename = simpleDocumentContentView.get().getOriginalFilename();
+                    binarySourceSize = simpleDocumentContentView.get().getBinaryContentSize();
+                }
             }
-            convertedDocs.add(content.isPresent() ? new LeosDocument(doc, content.get(), collaborators, docProps) : new LeosDocument(doc, collaborators, docProps));
+            convertedDocs.add(content.isPresent() ? new LeosDocument(doc, content.get(), collaborators, docProps) : new LeosDocument(doc, originalFilename, binarySourceSize, collaborators, docProps));
         }
 
         return convertedDocs;
@@ -185,14 +203,14 @@ public class ConversionUtils {
             }
             LeosDocument leosDoc = content.isPresent() ? new LeosDocument(doc, content.get(), fetchCollaborators(collaboratorsService, doc.getPackageId()), docProps) :
                     new LeosDocument(doc, fetchCollaborators(collaboratorsService, doc.getPackageId()), docProps);
-            
+
             // Set package info if available
             PackageInfo packageInfo = packageInfoMap.get(doc.getPackageId());
             if (packageInfo != null) {
                 leosDoc.setPkgLastUpdatedOn(Date.from(packageInfo.getLastUpdatedOn().atZone(ZoneId.systemDefault()).toInstant()));
                 leosDoc.setPkgLastUpdatedBy(packageInfo.getLastUpdatedBy());
             }
-            
+
             convertedDocs.add(leosDoc);
         }
         return convertedDocs;

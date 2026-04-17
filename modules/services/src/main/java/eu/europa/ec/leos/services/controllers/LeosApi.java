@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.controllers;
 
+import eu.europa.ec.leos.exception.LeosErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Tag(name = "LEOS API")
 public interface LeosApi {
@@ -178,6 +181,18 @@ public interface LeosApi {
     @ResponseBody
     ResponseEntity<Object> createProposalAnnex(@Parameter(description = "Proposal reference") @PathVariable("proposalRef") String proposalRef);
 
+    @Operation(summary = "Create foreign annex", description = "Create foreign annex for hybrid documents")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Annex created successfully"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @LeosErrorMessage("Unexpected error occurred while creating new bill foreign annex")
+    @RequestMapping(value = "/secured/proposals/{proposalRef}/createForeignAnnex", method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> createProposalForeignAnnex(@PathVariable("proposalRef") String proposalRef,
+            @RequestParam("foreignAnnexFile") MultipartFile foreignAnnexFile) throws IOException;
+
     @Operation(summary = "Update annex title", description = "Updates the title of a specific annex document")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Title updated successfully"),
@@ -189,6 +204,19 @@ public interface LeosApi {
             @Parameter(description = "Proposal reference") @PathVariable("proposalRef") String proposalRef,
             @Parameter(description = "Annex ID") @PathVariable("annexId") String annexId,
             @Parameter(description = "Title") @RequestParam("title") String title);
+
+    @Operation(summary = "Update foreign annex", description = "Update foreign annex for hybrid documents")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Title updated successfully"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @LeosErrorMessage("Unexpected error occurred while updating new bill foreign annex")
+    @RequestMapping(value = "/secured/proposals/{proposalRef}/updateForeignAnnex/{annexId}", method = RequestMethod.POST,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> updateForeignAnnex(@PathVariable("proposalRef") String proposalRef,
+            @PathVariable("annexId") String annexId,
+            @RequestParam("foreignAnnexFile") MultipartFile foreignAnnexFile) throws IOException;
 
     @Operation(summary = "Update explanatory title", description = "Updates the title of a specific explanatory document")
     @ApiResponses({

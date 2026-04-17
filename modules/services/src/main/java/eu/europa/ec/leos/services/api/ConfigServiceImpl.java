@@ -99,6 +99,7 @@ public class ConfigServiceImpl implements ConfigService {
         int maxSearchLimit = Integer.parseInt(applicationProperties.getProperty("leos.maximum.search.limit"));
         boolean repetitiveActsEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.repetitive.acts.enabled"));
         boolean linguisticVersionsEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.custom.template.linguistic.versions.enabled"));
+        boolean annexHybridDocumentsEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.annex.hybrid.documents.enabled"));
 
         appConfigResponse.setMappingUrl(mappingUrl);
         appConfigResponse.setImplicitSaveAndClose(implicitSaveEnabled);
@@ -132,6 +133,7 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setRepetitiveActsEnabled(repetitiveActsEnabled);
         appConfigResponse.setLinguisticVersionsEnabled(linguisticVersionsEnabled);
         appConfigResponse.setLanguages(languages);
+        appConfigResponse.setAnnexHybridDocumentsEnabled(annexHybridDocumentsEnabled);
 
         return appConfigResponse;
     }
