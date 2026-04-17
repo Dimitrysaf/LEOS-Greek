@@ -80,7 +80,7 @@ Then("create an entity by giving a name {string}", function (entityName) {
 Then("show the successful message that a new entity is created", function () {
     cy.get('@entityName').then((entityName) => {
         userEntityManagementPage.elements.newUserorEntityDialogBxTitle().contains('New entity created')
-        userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain',`Entity ${entityName} successfully created. You can now add users to it.`)
+        userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain',`Entity ${entityName} successfully created.`)
         userEntityManagementPage.confirmNewEntityCreationDialogBox()
     })
 });
