@@ -21,6 +21,9 @@ Feature: explanatory memorandum page regression features
     Then user is on act viewer page
     When click on explanatory memorandum link present in act viewer page
     Then user is on explanatory memorandum page
+    # Start Ticket #3479- https://code.europa.eu/leos/core/-/issues/3479
+    And the version on the top of the document page contains "v0.1.0.0"
+    # End Ticket #3479- https://code.europa.eu/leos/core/-/issues/3479
     And  annotation side bar is present
     And  ribbon toolbar is maximized
     And  navigation pane is expanded
@@ -78,6 +81,9 @@ Feature: explanatory memorandum page regression features
     And  content of li with attribute "data-akn-num" with value "3." of ol tag of blockContainer contains "test4" in edition mode
     When click save and close button of ck editor
     Then ck editor window is not displayed
+    # Start Ticket #https://code.europa.eu/leos/core/-/issues/3479
+    And the version on the top of the document page contains "v0.1.1"
+    # End Ticket #https://code.europa.eu/leos/core/-/issues/3479
     And  num of item 1 of blockList 1 of blockContainer 1 contains value "1."
     And  content of item 1 of blockList 1 of blockContainer 1 contains value "Not Applicable"
     And  num of item 2 of blockList 1 of blockContainer 1 contains value "2."
@@ -102,6 +108,5 @@ Feature: explanatory memorandum page regression features
     And  content of item 3 of blockList 1 of blockContainer 1 contains value "test3"
     And  num of item 4 of blockList 1 of blockContainer 1 contains value "4."
     And  content of item 4 of blockList 1 of blockContainer 1 contains value "test4"
-
     When click on close button on explanatory memorandum page
     Then user is on act viewer page
