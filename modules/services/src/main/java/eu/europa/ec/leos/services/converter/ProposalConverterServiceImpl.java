@@ -28,7 +28,7 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,13 +130,13 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                     }
                     LeosFile docFile = (LeosFile) unzippedFiles.get(docName);
                     DocumentVO doc = createDocument(docName, docFile, canModifySource);
-                    Node srcOfComponentReg = XercesUtils.getFirstElementByXPath(XercesUtils.createXercesDocument(docFile.getBytes()), "//akn:mainBody/akn:annex/akn:componentRef/@src");
+                    Node srcOfComponentReg = XmlUtils.getFirstElementByXPath(XmlUtils.createDocument(docFile.getBytes()), "//akn:mainBody/akn:annex/akn:componentRef/@src");
                     if (srcOfComponentReg != null) {
                         String originalFileName = srcOfComponentReg.getTextContent();
                         LeosFile binaryFile = (LeosFile) unzippedFiles.get(originalFileName);
                         doc.setBinaryFile(binaryFile.getBytes());
                         doc.setOriginalFilename(originalFileName);
-                        Node binaryFileSize = XercesUtils.getFirstElementByXPath(XercesUtils.createXercesDocument(docFile.getBytes()), "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:foreignFileSize");
+                        Node binaryFileSize = XmlUtils.getFirstElementByXPath(XmlUtils.createDocument(docFile.getBytes()), "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:foreignFileSize");
                         doc.setBinaryFileSize(binaryFileSize.getTextContent());
                     }
                     if (doc != null) {

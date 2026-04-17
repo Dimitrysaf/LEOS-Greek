@@ -95,7 +95,6 @@ import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 
 import jakarta.inject.Provider;
 import java.io.IOException;
@@ -716,7 +715,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             Proposal proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
             if (isAdded) {
                 DocumentVO annexVO = proposalConverterService.createDocument(docName, docFile, true);
-                Node srcOfComponentReg = XercesUtils.getFirstElementByXPath(XercesUtils.createXercesDocument(docFile.getBytes()), "//akn:mainBody/akn:annex/akn:componentRef/@src");
+                Node srcOfComponentReg = XmlUtils.getFirstElementByXPath(XmlUtils.createDocument(docFile.getBytes()), "//akn:mainBody/akn:annex/akn:componentRef/@src");
                 if (srcOfComponentReg != null) {
                     String originalFilename = srcOfComponentReg.getTextContent();
                     List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
@@ -726,7 +725,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                     }
                     annexVO.setBinaryFile((byte[]) legContent.get(originalFilename));
                     annexVO.setOriginalFilename(originalFilename);
-                    Node binaryFileSize = XercesUtils.getFirstElementByXPath(XercesUtils.createXercesDocument(docFile.getBytes()), "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:foreignFileSize");
+                    Node binaryFileSize = XmlUtils.getFirstElementByXPath(XmlUtils.createDocument(docFile.getBytes()), "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:foreignFileSize");
                     annexVO.setBinaryFileSize(binaryFileSize.getTextContent());
                 }
                 removeTrackChangesFromDoc(annexVO);
