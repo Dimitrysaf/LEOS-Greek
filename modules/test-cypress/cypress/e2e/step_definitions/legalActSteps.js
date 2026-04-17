@@ -3,7 +3,6 @@ import legalActPage from "../pages/legalActPage";
 import headerPage from "../pages/headerPage";
 import {checkContentResult} from "../util/expectDataTable";
 
-
 Then('user is on legal act page', () => {
     headerPage.getCurrentPageName().should("have.text", "Legal Act");
     cy.wait(7000);

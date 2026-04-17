@@ -3,7 +3,7 @@ package eu.europa.ec.leos.services.support;
 import static eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType.TYPE_1;
 import static eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType.TYPE_2;
 import static eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType.TYPE_3;
-import static eu.europa.ec.leos.services.support.XercesUtils.*;
+import static eu.europa.ec.leos.services.support.XmlUtils.*;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 import eu.europa.ec.leos.domain.repository.Content;
@@ -25,9 +25,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class LeosXercesUtils {
+public class LeosXmlUtils {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LeosXercesUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LeosXmlUtils.class);
     public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
     public static final String AKN_BODY = "aknBody";
 
@@ -168,8 +168,8 @@ public class LeosXercesUtils {
     
     private static Node getBoldNode(Node node, Node divisionNodePart, String textContent) {
     	Node bNode;
-    	if(XercesUtils.getFirstElementByName(divisionNodePart, BOLD) != null) {
-    		bNode = XercesUtils.getFirstElementByName(divisionNodePart, BOLD).cloneNode(true);
+    	if(XmlUtils.getFirstElementByName(divisionNodePart, BOLD) != null) {
+    		bNode = XmlUtils.getFirstElementByName(divisionNodePart, BOLD).cloneNode(true);
     		bNode.setTextContent(textContent);
     	} else {
     		bNode = createElement(node.getOwnerDocument(), BOLD, textContent);
@@ -180,9 +180,9 @@ public class LeosXercesUtils {
     
     private static Node getItalicNode(Node node, Node divisionNodePart, String textContent) {
     	Node iNode;
-    	Node bNode = XercesUtils.getFirstElementByName(divisionNodePart, BOLD);
-    	if(bNode != null && XercesUtils.getFirstElementByName(bNode, ITALICS) != null) {
-    		iNode = XercesUtils.getFirstElementByName(bNode, ITALICS).cloneNode(true);
+    	Node bNode = XmlUtils.getFirstElementByName(divisionNodePart, BOLD);
+    	if(bNode != null && XmlUtils.getFirstElementByName(bNode, ITALICS) != null) {
+    		iNode = XmlUtils.getFirstElementByName(bNode, ITALICS).cloneNode(true);
     		iNode.setTextContent(textContent);
     	} else {
     		iNode = createElement(node.getOwnerDocument(), ITALICS, textContent);
@@ -192,23 +192,23 @@ public class LeosXercesUtils {
     }
 
     private static byte[] wrapWithPageOrientationDivsFinancialStatement(Document document) {
-        Element landscapeDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR, ORIENTATION_LANDSCAPE, "");
-        Element portraitDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR, ORIENTATION_PORTRAIT, "");
+        Element landscapeDiv = XmlUtils.createElement(document, DIV, CLASS_ATTR, ORIENTATION_LANDSCAPE, "");
+        Element portraitDiv = XmlUtils.createElement(document, DIV, CLASS_ATTR, ORIENTATION_PORTRAIT, "");
 
-        NodeList bodyNodes = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(MAIN_BODY));
-        boolean hasLandscapeNode = XercesUtils.hasNodeContainingAttributeValue(bodyNodes, CLASS_ATTR, ORIENTATION_LANDSCAPE);
+        NodeList bodyNodes = XmlUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(MAIN_BODY));
+        boolean hasLandscapeNode = XmlUtils.hasNodeContainingAttributeValue(bodyNodes, CLASS_ATTR, ORIENTATION_LANDSCAPE);
 
         if (bodyNodes.getLength() == 0 || !hasLandscapeNode) {
-            return XercesUtils.nodeToByteArray(document);
+            return XmlUtils.nodeToByteArray(document);
         }
         Node mainBody = bodyNodes.item(0);
-        List<Node> children = XercesUtils.getChildren(mainBody);
+        List<Node> children = XmlUtils.getChildren(mainBody);
         String prevElement = null;
         mainBody.setTextContent("");
         for (int i = 0; i < children.size(); i++) {
             Node node = children.get(i);
             if (XmlHelper.isOrientableNode(node.getNodeName())) {
-                String orientationClass = XercesUtils.getAttributeValue(node, "class");
+                String orientationClass = XmlUtils.getAttributeValue(node, "class");
                 if (orientationClass != null && orientationClass.contains(ORIENTATION_LANDSCAPE)) {
 
                     if (ORIENTATION_LANDSCAPE.equals(prevElement) || (prevElement == null)) {
@@ -217,7 +217,7 @@ public class LeosXercesUtils {
                         }
                         landscapeDiv.appendChild(node);
                     } else {
-                        landscapeDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR, ORIENTATION_LANDSCAPE, "");
+                        landscapeDiv = XmlUtils.createElement(document, DIV, CLASS_ATTR, ORIENTATION_LANDSCAPE, "");
                         landscapeDiv.appendChild(node);
                         mainBody.appendChild(landscapeDiv);
                     }
@@ -229,7 +229,7 @@ public class LeosXercesUtils {
                         }
                         portraitDiv.appendChild(node);
                     } else {
-                        portraitDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR, ORIENTATION_PORTRAIT, "");
+                        portraitDiv = XmlUtils.createElement(document, DIV, CLASS_ATTR, ORIENTATION_PORTRAIT, "");
                         portraitDiv.appendChild(node);
                         mainBody.appendChild(portraitDiv);
                     }
@@ -240,7 +240,7 @@ public class LeosXercesUtils {
             }
         }
 
-        return XercesUtils.nodeToByteArray(document);
+        return XmlUtils.nodeToByteArray(document);
     }
 
     /**
@@ -249,69 +249,69 @@ public class LeosXercesUtils {
      * @return
      */
     private static byte[] wrapWithPageOrientationDivsExplanatoryMemorandum(Document document) {
-        NodeList bodyNodes =  XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(BLOCKCONTAINER));
+        NodeList bodyNodes =  XmlUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(BLOCKCONTAINER));
         for (int i = 0; i < bodyNodes.getLength(); i++) {
             Node node = bodyNodes.item(i);
-            Element orientationDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR, ORIENTATION, "");
+            Element orientationDiv = XmlUtils.createElement(document, DIV, CLASS_ATTR, ORIENTATION, "");
             Node parentNode = node.getParentNode();
             parentNode.getParentNode().replaceChild(orientationDiv, parentNode);
             orientationDiv.appendChild(parentNode);
         }
-        return XercesUtils.nodeToByteArray(document);
+        return XmlUtils.nodeToByteArray(document);
     }
 
     private static byte[] wrapWithPageOrientationDivsBill(Document document) {
         Stream.of(PART, "aknTitle", CHAPTER, SECTION).forEach( higherElement -> {
-            NodeList nodeList = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(higherElement));
+            NodeList nodeList = XmlUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(higherElement));
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
-                Element div = XercesUtils.createElement(document, DIV, CLASS_ATTR,  HIGHER_DIVISION, "");
+                Element div = XmlUtils.createElement(document, DIV, CLASS_ATTR,  HIGHER_DIVISION, "");
                 node.getParentNode().replaceChild(div, node);
                 div.appendChild(node);
             }
         });
-        NodeList articleNodes = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(ARTICLE));// instead of AKN_BODY
+        NodeList articleNodes = XmlUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(ARTICLE));// instead of AKN_BODY
         for (int i = 0; i < articleNodes.getLength(); i++) {
             Node node = articleNodes.item(i);
             addPortraitAttributeToNode(node);
-            Element div = XercesUtils.createElement(document, DIV, CLASS_ATTR,  ORIENTATION, "");
+            Element div = XmlUtils.createElement(document, DIV, CLASS_ATTR,  ORIENTATION, "");
             node.getParentNode().replaceChild(div, node);
             div.appendChild(node);
         }
         addPortraitAttributeToHeading(document);
-        return XercesUtils.nodeToByteArray(document);
+        return XmlUtils.nodeToByteArray(document);
     }
 
     public static byte[] wrapWithPageOrientationDivs(Document document) {
         // check if financial statement
-        NodeList bodyNodes = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathFinancialStatement());
+        NodeList bodyNodes = XmlUtils.getElementsByXPath(document, XPathCatalog.getXPathFinancialStatement());
         if(bodyNodes.getLength() > 0){
             return wrapWithPageOrientationDivsFinancialStatement(document);
         }
         // check if explanatory memorandum
-        bodyNodes = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathExplanatoryMemorandum());
+        bodyNodes = XmlUtils.getElementsByXPath(document, XPathCatalog.getXPathExplanatoryMemorandum());
         if(bodyNodes.getLength() > 0){
-            return XercesUtils.nodeToByteArray(document);
+            return XmlUtils.nodeToByteArray(document);
         }
         // check if bill
-        bodyNodes = XercesUtils.getElementsByXPath(document,  XPathCatalog.getXPathElement("bill"));
+        bodyNodes = XmlUtils.getElementsByXPath(document,  XPathCatalog.getXPathElement("bill"));
         if(bodyNodes.getLength() > 0){
             return wrapWithPageOrientationDivsBill(document);
         }
         // check if Annex
-        bodyNodes = XercesUtils.getElementsByXPath(document,  XPathCatalog.getXPathAnnex());
+        bodyNodes = XmlUtils.getElementsByXPath(document,  XPathCatalog.getXPathAnnex());
         if(bodyNodes.getLength() > 0){
             return wrapWithPageOrientationDivsAnnex(document);
         }
 
-        return XercesUtils.nodeToByteArray(document);
+        return XmlUtils.nodeToByteArray(document);
     }
 
     private static byte[] wrapWithPageOrientationDivsAnnex(Document document) {
-        NodeList bodyNodes =  XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement("heading"));
+        NodeList bodyNodes =  XmlUtils.getElementsByXPath(document, XPathCatalog.getXPathElement("heading"));
         for (int i = 0; i < bodyNodes.getLength(); i++) {
             Node node = bodyNodes.item(i);
-            Element orientationDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR, HIGHER_DIVISION, "");
+            Element orientationDiv = XmlUtils.createElement(document, DIV, CLASS_ATTR, HIGHER_DIVISION, "");
             Node parentNode = node.getParentNode();
             parentNode.getParentNode().replaceChild(orientationDiv, parentNode);
             orientationDiv.appendChild(parentNode);
@@ -322,7 +322,7 @@ public class LeosXercesUtils {
         List<String> newOrientable = new ArrayList<>(orientableNodes);
         newOrientable.add(PARAGRAPH);
         for(String nodeName : newOrientable){
-            bodyNodes = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(nodeName));
+            bodyNodes = XmlUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(nodeName));
             if(bodyNodes != null && bodyNodes.getLength() > 0){
                 isOrientableFound = true;
 
@@ -331,7 +331,7 @@ public class LeosXercesUtils {
                     if(nodeName.equalsIgnoreCase(PARAGRAPH) && node.getParentNode().getNodeName().equalsIgnoreCase(ARTICLE)){
                         continue;
                     }
-                    String isEditable = XercesUtils.getAttributeValue(node, "leos:editable");
+                    String isEditable = XmlUtils.getAttributeValue(node, "leos:editable");
                     if (isEditable != null && isEditable.equals("false")) {
                         continue;
                     }
@@ -339,9 +339,9 @@ public class LeosXercesUtils {
                     if(classAttr == null
                             || (!classAttr.getTextContent().contains(ORIENTATION_LANDSCAPE)
                             && !classAttr.getTextContent().contains(ORIENTATION_PORTRAIT))){
-                        XercesUtils.addAttribute(node, CLASS_ATTR, (classAttr == null ? "" : classAttr.getTextContent()) + " " + ORIENTATION_PORTRAIT );
+                        XmlUtils.addAttribute(node, CLASS_ATTR, (classAttr == null ? "" : classAttr.getTextContent()) + " " + ORIENTATION_PORTRAIT );
                     }
-                    Element orientationDiv = XercesUtils.createElement(document, DIV, CLASS_ATTR,  ORIENTATION, "");
+                    Element orientationDiv = XmlUtils.createElement(document, DIV, CLASS_ATTR,  ORIENTATION, "");
                     node.getParentNode().replaceChild(orientationDiv, node);
 
 
@@ -353,7 +353,7 @@ public class LeosXercesUtils {
         if (isOrientableFound) {
             addPortraitAttributeToHeading(document);
         }
-        return XercesUtils.nodeToByteArray(document);
+        return XmlUtils.nodeToByteArray(document);
     }
 
     /**
@@ -361,7 +361,7 @@ public class LeosXercesUtils {
      * @param document
      */
     private static void addPortraitAttributeToHeading(Document document) {
-        NodeList nodeList = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(HEADING));
+        NodeList nodeList = XmlUtils.getElementsByXPath(document, XPathCatalog.getXPathElement(HEADING));
         for (int i = 0; i < nodeList.getLength(); i++) {
             addPortraitAttributeToNode(nodeList.item(i));
         }
@@ -369,10 +369,10 @@ public class LeosXercesUtils {
 
     public static String addOrientationPortraitIfNone(String elementContent) {
 
-        Document document = createXercesDocument(elementContent.getBytes(StandardCharsets.UTF_8), false);
+        Document document = createDocument(elementContent.getBytes(StandardCharsets.UTF_8), false);
         Node node= document.getFirstChild();
         addPortraitAttributeToNode(node);
-        return XercesUtils.nodeToStringSimple(node);
+        return XmlUtils.nodeToStringSimple(node);
     }
 
     private static void addPortraitAttributeToNode(Node node) {
@@ -381,7 +381,7 @@ public class LeosXercesUtils {
             if (classAttr == null
                     || (!classAttr.getTextContent().contains(ORIENTATION_LANDSCAPE)
                     && !classAttr.getTextContent().contains(ORIENTATION_PORTRAIT))) {
-                XercesUtils.addAttribute(node, CLASS_ATTR,
+                XmlUtils.addAttribute(node, CLASS_ATTR,
                         classAttr == null ? ORIENTATION_PORTRAIT : new StringBuilder(classAttr.getTextContent())
                                 .append(" ").append(ORIENTATION_PORTRAIT).toString());
             }
@@ -389,23 +389,23 @@ public class LeosXercesUtils {
     }
 
     public static String removeSoftDeletedNodes(String elementContent){
-        Document xercesDocument = XercesUtils.createXercesDocument(elementContent.getBytes(StandardCharsets.UTF_8), false);
-        List<Node> children = XercesUtils.getChildren(xercesDocument);
+        Document xercesDocument = XmlUtils.createDocument(elementContent.getBytes(StandardCharsets.UTF_8), false);
+        List<Node> children = XmlUtils.getChildren(xercesDocument);
         for (Node node : children){
             removeDeletedNodes(node);
         }
-       return  XercesUtils.nodeToStringSimple(xercesDocument);
+       return  XmlUtils.nodeToStringSimple(xercesDocument);
     }
 
     private static void removeDeletedNodes(Node node) {
         if(node == null){
             return;
         }
-        String nodeId = XercesUtils.getId(node);
+        String nodeId = XmlUtils.getId(node);
         if(nodeId != null && nodeId.startsWith("deleted" + IdGenerator.PREFIX_DELIMITER)){
-            XercesUtils.deleteElement(node);
+            XmlUtils.deleteElement(node);
         }else if(node.hasChildNodes()){
-            List<Node> children = XercesUtils.getNodesAsList(node.getChildNodes());
+            List<Node> children = XmlUtils.getNodesAsList(node.getChildNodes());
             for (Node child : children){
                 removeDeletedNodes(child);
             }
@@ -413,11 +413,11 @@ public class LeosXercesUtils {
     }
 
     public static byte[] removeHighlights(Document document) {
-        NodeList highlightNodes = XercesUtils.getElementsByXPath(document,"//*[@name='bgcolor']");
+        NodeList highlightNodes = XmlUtils.getElementsByXPath(document,"//*[@name='bgcolor']");
         for (int i = 0; i < highlightNodes.getLength(); i++) {
-            XercesUtils.replaceNodeWithSelfContent(highlightNodes.item(i));
+            XmlUtils.replaceNodeWithSelfContent(highlightNodes.item(i));
         }
-        return XercesUtils.nodeToByteArray(document);
+        return XmlUtils.nodeToByteArray(document);
     }
 
     public static byte[] getDocumentContent(XmlDocument document) throws RuntimeException {

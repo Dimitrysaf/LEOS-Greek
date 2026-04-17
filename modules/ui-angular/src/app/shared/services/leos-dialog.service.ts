@@ -21,7 +21,8 @@ export class LeosDialogService {
       title: this.translateService.instant(title, messageParams),
       content: this.translateService.instant(message, messageParams),
       typeClass: typeClass,
-      isMessageBox: true
+      isMessageBox: true,
+      hasDismissButton: false
     });
     if(clearGrowl) {
       this.growlService.clearGrowl();

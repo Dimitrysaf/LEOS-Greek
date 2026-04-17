@@ -40,9 +40,9 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.nodeToByteArray;
+import static eu.europa.ec.leos.services.support.XmlUtils.nodeToString;
 import static eu.europa.ec.leos.services.utils.StructureConfigUtils.isAutoNumberingEnabled;
 
 @Component
@@ -72,7 +72,7 @@ public class NumberServiceMandate implements NumberService {
     public String renumberImportedArticle(String xmlContent) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, ARTICLE, documentLanguageContext.getDocumentLanguage())) {
-            Document document = createXercesDocument(xmlContent.getBytes(UTF_8));
+            Document document = createDocument(xmlContent.getBytes(UTF_8));
             numberProcessorHandler.renumberDocument(document, ARTICLE, documentLanguageContext.getDocumentLanguage(), true);
             return nodeToString(document);
         }
@@ -94,7 +94,7 @@ public class NumberServiceMandate implements NumberService {
     public byte[] renumberArticles(byte[] xmlContent) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, ARTICLE, documentLanguageContext.getDocumentLanguage())) {
-            Document document = createXercesDocument(xmlContent);
+            Document document = createDocument(xmlContent);
             numberProcessorHandler.renumberDocument(document, ARTICLE, documentLanguageContext.getDocumentLanguage(), true);
             return nodeToByteArray(document);
         }
@@ -115,7 +115,7 @@ public class NumberServiceMandate implements NumberService {
     public byte[] renumberRecitals(byte[] xmlContent) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, RECITAL, documentLanguageContext.getDocumentLanguage())) {
-            Document document = createXercesDocument(xmlContent);
+            Document document = createDocument(xmlContent);
             numberProcessorHandler.renumberDocument(document, RECITAL, documentLanguageContext.getDocumentLanguage(), true);
             return nodeToByteArray(document);
         }
@@ -127,7 +127,7 @@ public class NumberServiceMandate implements NumberService {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, LEVEL, documentLanguageContext.getDocumentLanguage())) {
             Stopwatch stopwatch = Stopwatch.createStarted();
-            Document document = createXercesDocument(xmlContent);
+            Document document = createDocument(xmlContent);
             NodeList nodeList = document.getElementsByTagName(LEVEL);
             List<ParentChildNode> parentChildList = parentChildConverter.getParentChildStructure(nodeList, true);
             LOG.trace("renumberLevel - Found {} '{}'s element in the document, and grouped them in {} top elements", nodeList.getLength(), LEVEL, parentChildList.size());
@@ -142,7 +142,7 @@ public class NumberServiceMandate implements NumberService {
     public byte[] renumberParagraph(byte[] xmlContent) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, PARAGRAPH, documentLanguageContext.getDocumentLanguage())) {
-            Document document = createXercesDocument(xmlContent);
+            Document document = createDocument(xmlContent);
             numberProcessorHandler.renumberDocument(document, PARAGRAPH, documentLanguageContext.getDocumentLanguage(), true);
             return nodeToByteArray(document);
         }
@@ -154,7 +154,7 @@ public class NumberServiceMandate implements NumberService {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, DIVISION, documentLanguageContext.getDocumentLanguage())) {
             Stopwatch stopwatch = Stopwatch.createStarted();
-            Document document = createXercesDocument(xmlContent);
+            Document document = createDocument(xmlContent);
             NodeList nodeList = document.getElementsByTagName(DIVISION);
             List<ParentChildNode> parentChildList = parentChildConverter.getParentChildStructure(nodeList, false);
             LOG.trace("renumberDivisions - Found {} '{}'s element in the document, and grouped them in {} top elements", nodeList.getLength(), DIVISION, parentChildList.size());

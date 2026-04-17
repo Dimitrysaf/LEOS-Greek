@@ -4,7 +4,7 @@ import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.services.numbering.config.NumberConfig;
 import eu.europa.ec.leos.services.numbering.depthBased.ParentChildNode;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
 
@@ -34,7 +34,7 @@ public class NumberProcessorHandlerProposal extends NumberProcessorHandler {
 
     @Override
     public boolean isElementSameOrigin(Node node) {
-        String origin = XercesUtils.getAttributeValue(node, LEOS_ORIGIN_ATTR);
+        String origin = XmlUtils.getAttributeValue(node, LEOS_ORIGIN_ATTR);
         return origin == null || EC.equals(origin);
     }
 

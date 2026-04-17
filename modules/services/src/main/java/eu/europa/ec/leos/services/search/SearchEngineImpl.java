@@ -6,7 +6,7 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorImpl;
 import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XmlHelper;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.parser.Tag;
 import org.w3c.dom.Document;
@@ -29,13 +29,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static eu.europa.ec.leos.services.support.LeosXercesUtils.DATE_FORMAT;
+import static eu.europa.ec.leos.services.support.LeosXmlUtils.DATE_FORMAT;
 import static eu.europa.ec.leos.services.support.XmlHelper.AKOMANTOSO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.parseXml;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.nodeToByteArray;
 
 public class SearchEngineImpl implements SearchEngine {
 
@@ -60,12 +60,12 @@ public class SearchEngineImpl implements SearchEngine {
 
     private boolean isHighlight;
     public SearchEngineImpl(byte[] content) {
-        Document document = createXercesDocument(content);
+        Document document = createDocument(content);
         indexContent(document);
     }
     public SearchEngineImpl(byte[] content, Boolean isHighlight) {
         this.isHighlight = isHighlight;
-        Document document = createXercesDocument(content);
+        Document document = createDocument(content);
         indexContent(document);
     }
     public static SearchEngineImpl forContent(byte[] xmlContent) {
@@ -85,8 +85,8 @@ public class SearchEngineImpl implements SearchEngine {
     private void indexContent(Document document) {
         List<Element> elements = new ArrayList<>();
 
-        Node root = XercesUtils.getFirstElementByName(document, AKOMANTOSO);
-        XercesUtils.sanitize(root);
+        Node root = XmlUtils.getFirstElementByName(document, AKOMANTOSO);
+        XmlUtils.sanitize(root);
         visitNode(root, elements);
 
         createSearchableString(elements);
@@ -94,15 +94,15 @@ public class SearchEngineImpl implements SearchEngine {
 
     private int visitNode(Node node, List<Element> elements) {
         String tagName = node.getNodeName();
-        String nodeId = XercesUtils.getId(node);
+        String nodeId = XmlUtils.getId(node);
         boolean isNodeIdStartsWithDeleted = (nodeId != null && nodeId.startsWith(DELETED_START_ID_VALUE));
         if(((isHighlight ? tagsToExcludeHighlight : tagsToExclude).contains(tagName) &&
-                !XercesUtils.hasAttributeWithValue(node, LEOS_EDITABLE_ATTR, "true"))
+                !XmlUtils.hasAttributeWithValue(node, LEOS_EDITABLE_ATTR, "true"))
                 ||  isNodeIdStartsWithDeleted){
             return 0;
         }
 
-        boolean hasText = XercesUtils.hasChildTextNode(node);
+        boolean hasText = XmlUtils.hasChildTextNode(node);
         if (hasText) {
             return visitNodeWithText(node, elements);
         } else {
@@ -133,7 +133,7 @@ public class SearchEngineImpl implements SearchEngine {
         addElementNode(node, elements, "", 0);
         int textStartIndex = 0;
 
-        List<Node> nodeList = XercesUtils.getChildren(node);
+        List<Node> nodeList = XmlUtils.getChildren(node);
         for (int i = 0; i < nodeList.size(); i++) {
             textStartIndex += visitNode(nodeList.get(i), elements);
         }
@@ -143,10 +143,10 @@ public class SearchEngineImpl implements SearchEngine {
 
     private void addElementNode(Node node, List<Element> elements, String content, int textStartIndex) {
         String tag = node.getNodeName();
-        String xmlIdAttribute = XercesUtils.getAttributeValue(node, XMLID);
+        String xmlIdAttribute = XmlUtils.getAttributeValue(node, XMLID);
         String elementId = xmlIdAttribute != null ? xmlIdAttribute : tag + "_generated_" + UUID.randomUUID();
-        String xPath = xmlIdAttribute != null ? null : XercesUtils.getXPath(node);
-        String xPathPrefix = xmlIdAttribute != null ? null : XercesUtils.getXPathWithPrefix(node);
+        String xPath = xmlIdAttribute != null ? null : XmlUtils.getXPath(node);
+        String xPathPrefix = xmlIdAttribute != null ? null : XmlUtils.getXPathWithPrefix(node);
         Element element = new Element(
                 elementId,
                 content,
@@ -301,8 +301,8 @@ public class SearchEngineImpl implements SearchEngine {
 
     @Override
     public byte[] replace(byte[] docContent, List<SearchMatchVO> searchMatchVOs, String searchText, String replaceText, boolean removeEmptyTags, User user, boolean isTrackChangesEnabled) {
-        Document document = createXercesDocument(docContent);
-        XercesUtils.sanitize(XercesUtils.getFirstElementByName(document, AKOMANTOSO));
+        Document document = createDocument(docContent);
+        XmlUtils.sanitize(XmlUtils.getFirstElementByName(document, AKOMANTOSO));
         int replacedContentDiffLength = replaceText.length() - searchText.length();
         for (int i = 0; i < searchMatchVOs.size(); i++) {
             SearchMatchVO smVO = searchMatchVOs.get(i);
@@ -399,9 +399,9 @@ public class SearchEngineImpl implements SearchEngine {
         }
 
     private List<Integer> getChildElementsContentLength(Document document, ElementMatchVO eVO) {
-        Node node = XercesUtils.getElementById(document, eVO.getElementId());
+        Node node = XmlUtils.getElementById(document, eVO.getElementId());
         if(node == null && eVO.getXpath() != null){
-            node = XercesUtils.getFirstElementByXPath(document, eVO.getXpathprefix());
+            node = XmlUtils.getFirstElementByXPath(document, eVO.getXpathprefix());
         }
         List<Integer> childNodesContentLength = new ArrayList<>();
         if (node != null) {
@@ -431,9 +431,9 @@ public class SearchEngineImpl implements SearchEngine {
         boolean containsNonEmptyElement = false;
         boolean containsEmptyTextElement = false;
 
-        Node node = XercesUtils.getElementById(document, eVO.getElementId());
+        Node node = XmlUtils.getElementById(document, eVO.getElementId());
         if(node == null && eVO.getXpath() != null){
-            node = XercesUtils.getFirstElementByXPath(document, eVO.getXpathprefix());
+            node = XmlUtils.getFirstElementByXPath(document, eVO.getXpathprefix());
         }
 
         if (node != null) {
@@ -502,9 +502,9 @@ public class SearchEngineImpl implements SearchEngine {
         // remaining text node after the replaced fragment)
         Map<Node, List<Node>> nodeMap = new HashMap<>();
 
-        Node node = XercesUtils.getElementById(document, eVO.getElementId());
+        Node node = XmlUtils.getElementById(document, eVO.getElementId());
         if(node == null && eVO.getXpath() != null){
-            node = XercesUtils.getFirstElementByXPath(document, eVO.getXpathprefix());
+            node = XmlUtils.getFirstElementByXPath(document, eVO.getXpathprefix());
         }
         if (node != null) {
             int index = 0;
@@ -592,18 +592,18 @@ public class SearchEngineImpl implements SearchEngine {
             userLogin = user.getLogin();
             userName = user.getName();
         }
-        String prefixId = IdGenerator.getPrefixId(XercesUtils.getId(node.getParentNode()));
+        String prefixId = IdGenerator.getPrefixId(XmlUtils.getId(node.getParentNode()));
 
 // del element
-        org.w3c.dom.Element deleteNode =XercesUtils.createElement(document, DELETE_TAG, IdGenerator.generateId(prefixId) ,  deletedContent);
+        org.w3c.dom.Element deleteNode = XmlUtils.createElement(document, DELETE_TAG, IdGenerator.generateId(prefixId) ,  deletedContent);
 // ins element
-        org.w3c.dom.Element  insertElement = XercesUtils.createElement(document, INSERT_TAG, IdGenerator.generateId(prefixId), replaceSegmentGlobal);
+        org.w3c.dom.Element  insertElement = XmlUtils.createElement(document, INSERT_TAG, IdGenerator.generateId(prefixId), replaceSegmentGlobal);
         if(userLogin != null && userName!= null) {
-            XercesUtils.addAttribute(deleteNode, "leos:uid", userLogin);
-            XercesUtils.addAttribute(deleteNode, "leos:title",
+            XmlUtils.addAttribute(deleteNode, "leos:uid", userLogin);
+            XmlUtils.addAttribute(deleteNode, "leos:title",
                     new StringBuilder(userName).append(" : ").append(ZonedDateTime.now().format(DATE_FORMAT)).toString());
-            XercesUtils.addAttribute(insertElement, "leos:uid", userLogin);
-            XercesUtils.addAttribute(insertElement, "leos:title",
+            XmlUtils.addAttribute(insertElement, "leos:uid", userLogin);
+            XmlUtils.addAttribute(insertElement, "leos:title",
                     new StringBuilder(userName).append(" : ").append(ZonedDateTime.now().format(DATE_FORMAT)).toString());
         }
 
@@ -621,9 +621,9 @@ public class SearchEngineImpl implements SearchEngine {
 
     private void removeEmptyElementsAndParents(Document document, Set<String> elementIdsOrXpath) {
         for (String elemIdOrXpath : elementIdsOrXpath) {
-            Node node = XercesUtils.getElementById(document, elemIdOrXpath);
+            Node node = XmlUtils.getElementById(document, elemIdOrXpath);
             if(node == null){
-                node = XercesUtils.getFirstElementByXPath(document, elemIdOrXpath);
+                node = XmlUtils.getFirstElementByXPath(document, elemIdOrXpath);
             }
 
             if (node != null) {
@@ -631,7 +631,7 @@ public class SearchEngineImpl implements SearchEngine {
                         StringUtils.isEmpty(node.getParentNode().getTextContent())) {
                     node = node.getParentNode();
                 }
-                XercesUtils.deleteElement(node);
+                XmlUtils.deleteElement(node);
             }
         }
     }

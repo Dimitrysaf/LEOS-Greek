@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.services.numbering.depthBased;
 
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -15,10 +15,10 @@ import java.util.stream.Collectors;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.DIVISION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DEPTH_ATTR;
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValue;
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValueAsInteger;
-import static eu.europa.ec.leos.services.support.XercesUtils.getId;
-import static eu.europa.ec.leos.services.support.XercesUtils.getNodesAsList;
+import static eu.europa.ec.leos.services.support.XmlUtils.getAttributeValue;
+import static eu.europa.ec.leos.services.support.XmlUtils.getAttributeValueAsInteger;
+import static eu.europa.ec.leos.services.support.XmlUtils.getId;
+import static eu.europa.ec.leos.services.support.XmlUtils.getNodesAsList;
 
 @Component
 public class ParentChildConverter {
@@ -107,7 +107,7 @@ public class ParentChildConverter {
                     if (lastNode.getDepth() > prevLastNode.getDepth() || isNodeRemoved(lastNode)) {
                         addSiblingOrInRoot(basedOnDepthList, prevLastNode, lastNode);
                         lastNode.setDepth(prevLastNode.getDepth() != null ? prevLastNode.getDepth() : 1);
-                        XercesUtils.addAttribute(lastNode.getNode(), LEOS_DEPTH_ATTR, String.valueOf(lastNode.getDepth()));
+                        XmlUtils.addAttribute(lastNode.getNode(), LEOS_DEPTH_ATTR, String.valueOf(lastNode.getDepth()));
                     } else if (!nodeList.isEmpty()) {
                         if (lastNode.getDepth() == prevLastNode.getDepth()) {
                             addSiblingOrInRoot(basedOnDepthList, prevLastNode, lastNode);
@@ -137,8 +137,8 @@ public class ParentChildConverter {
     }
 
     private static boolean isNodeRemoved(ParentChildNode node) {
-        return XercesUtils.isTCDeleted(node.getNode())
-                || XercesUtils.isSoftMovedTo(node.getNode());
+        return XmlUtils.isTCDeleted(node.getNode())
+                || XmlUtils.isSoftMovedTo(node.getNode());
     }
 
     private static ParentChildNode findChildrenForNode(List<ParentChildNode> basedOnDepthList, List<ParentChildNode> nodeList, ParentChildNode lastNode) {
@@ -154,7 +154,7 @@ public class ParentChildConverter {
             addSiblingOrInRoot(basedOnDepthList, lastNode, node); // add as sibling
         } else {
             if(lastDepth < depth) { // decreasing
-                XercesUtils.addAttribute(node.getNode(), LEOS_DEPTH_ATTR, String.valueOf(lastDepth + 1));
+                XmlUtils.addAttribute(node.getNode(), LEOS_DEPTH_ATTR, String.valueOf(lastDepth + 1));
                 node.setDepth(lastDepth + 1);
 //                LOG.trace("Added [ {} ] as child of [ {} ]", node, lastNode);
                 lastNode.addChild(node);
@@ -190,7 +190,7 @@ public class ParentChildConverter {
                 .collect(Collectors.toList());
         if (flatNodeList.size() == 0) {
             //throw new IllegalStateException("No element found with depth: " + depthNode);
-            XercesUtils.addAttribute(node.getNode(), LEOS_DEPTH_ATTR, String.valueOf(1));
+            XmlUtils.addAttribute(node.getNode(), LEOS_DEPTH_ATTR, String.valueOf(1));
             node.setDepth(1);
             addSiblingOrInRoot(nodeList, null, node);
             return;

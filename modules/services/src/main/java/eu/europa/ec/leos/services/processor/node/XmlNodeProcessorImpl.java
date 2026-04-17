@@ -4,7 +4,7 @@ import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfig.Attribute;
 import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.getDocEEATagList;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.getNewDecideAttributes;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
 
 @Service
@@ -46,10 +46,10 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
     public Map<String, String> getValuesFromXml(byte[] xmlContent, String[] keys, Map<String, XmlNodeConfig> config) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         Map<String, String> metaDataMap = new HashMap<>();
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         for (String key : keys) {
             if (config.get(key) != null) {
-                Node node = XercesUtils.getFirstElementByXPath(document, config.get(key).xPath);
+                Node node = XmlUtils.getFirstElementByXPath(document, config.get(key).xPath);
                 if (node != null) {
                     String value = StringEscapeUtils.unescapeXml(node.getTextContent());
                     metaDataMap.put(key, value);
@@ -64,10 +64,10 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
     public Map<String, List<String>> getMultipleValuesFromXml(byte[] xmlContent, String[] keys, Map<String, XmlNodeConfig> config) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         Map<String, List<String>> metaDataMap = new HashMap<>();
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         for (String key : keys) {
             if (config.get(key) != null) {
-                NodeList nodes = XercesUtils.getElementsByXPath(document, config.get(key).xPath);
+                NodeList nodes = XmlUtils.getElementsByXPath(document, config.get(key).xPath);
                 if (nodes != null) {
                     List<String> values = new ArrayList<>();
                     for (int i = 0; i < nodes.getLength(); i++) {
@@ -86,7 +86,7 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
     @Override
     public byte[] setValuesInXml(byte[] xmlContent, Map<String, String> keyValue, Map<String, XmlNodeConfig> config, Map<String, XmlNodeConfig> oldConfig) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         for (Map.Entry<String, String> entry : keyValue.entrySet()) {
             String key = entry.getKey();
             if (config.get(key) == null) {
@@ -108,10 +108,10 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
             }
 
             String xPath = config.get(key).xPath;
-            Node node = XercesUtils.getFirstElementByXPath(document, xPath);
+            Node node = XmlUtils.getFirstElementByXPath(document, xPath);
             if (oldConfig != null && oldConfig.get(key) != null) {
                 String oldXPath = oldConfig.get(key).xPath;
-                Node oldNode = XercesUtils.getFirstElementByXPath(document, oldXPath);
+                Node oldNode = XmlUtils.getFirstElementByXPath(document, oldXPath);
                 if (oldNode != null) {
                     node = oldNode;
                 }
@@ -122,13 +122,13 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
             } else if (node != null && config.get(key).delete && value.isEmpty()) {
                 // Delete the XML element
                 String parentXPath = config.get(key).xPathParent;
-                Node parentNode = XercesUtils.getFirstElementByXPath(document, parentXPath);
-                XercesUtils.deleteElementsByXPath(parentNode, parentXPath);
+                Node parentNode = XmlUtils.getFirstElementByXPath(document, parentXPath);
+                XmlUtils.deleteElementsByXPath(parentNode, parentXPath);
             } else if (node != null) {
                 // Update existing node
                 if(isGivenNodeContaningTrackChangeTags(node, value)){
-                    String newValue = XercesUtils.generateNewIds(value);
-                    XercesUtils.addContentToNode(node, newValue);
+                    String newValue = XmlUtils.generateNewIds(value);
+                    XmlUtils.addContentToNode(node, newValue);
                 } else {
                     updateNode(node, value);
                 }
@@ -139,7 +139,7 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
             }
         }
         LOG.trace("Values set in xml ({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        return XercesUtils.nodeToByteArray(document, false);
+        return XmlUtils.nodeToByteArray(document, false);
     }
 
     private static boolean isGivenNodeContaningTrackChangeTags(Node node, String value) {
@@ -177,9 +177,9 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
     @Override
     public byte[] setValuesInXml(byte[] xmlContent, String xPath, String value) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
 
-        Node node = XercesUtils.getFirstElementByXPath(document, xPath);
+        Node node = XmlUtils.getFirstElementByXPath(document, xPath);
         if (node != null) {
             // Update existing node
             updateNode(node, value);
@@ -187,7 +187,7 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
             // Create the node
             createAndUpdateNode(document, xPath, Arrays.asList(), value);
         }
-        return XercesUtils.nodeToByteArray(document);
+        return XmlUtils.nodeToByteArray(document);
     }
 
     private void updateNode(Node node, String value) {
@@ -203,7 +203,7 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
         Node node = null;
         for (; index < nodes.length; index++) {
             partialXPath.append(nodes[index]);
-            Node found = XercesUtils.getFirstElementByXPath(document, partialXPath.toString());
+            Node found = XmlUtils.getFirstElementByXPath(document, partialXPath.toString());
             if (!nodes[index].isEmpty() && nodes[index].contains("collectionBody") && found != null) {// ignore nodes
                 LOG.debug("Node not found:{}", nodes[index]);
                 node = found;
@@ -243,7 +243,7 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
         Node node = null;
         for (; index < nodes.length; index++) {
             partialXPath.append(nodes[index]);
-            Node found = XercesUtils.getFirstElementByXPath(document, partialXPath.toString());
+            Node found = XmlUtils.getFirstElementByXPath(document, partialXPath.toString());
             if (!nodes[index].isEmpty() && found == null) {// ignore nodes
                 LOG.debug("Node not found:{}", nodes[index]);
                 break;
@@ -302,13 +302,13 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
             // 3. Inject newly created node in XML
             Node newNode = null;
             if(XPathCatalog.TAG_AKN4EU_NAME.equalsIgnoreCase(tagName)) {
-            	newNode = XercesUtils.createElement(document, tagName, content);
+            	newNode = XmlUtils.createElement(document, tagName, content);
             } else {
-            	newNode = XercesUtils.createElementWithAknNS(document, tagName, content);
+            	newNode = XmlUtils.createElementWithAknNS(document, tagName, content);
             }
-            node = XercesUtils.addChild(newNode, node);
+            node = XmlUtils.addChild(newNode, node);
             for (Attribute attr : attributes) {
-                XercesUtils.addAttribute(node, attr.name, attr.value);
+                XmlUtils.addAttribute(node, attr.name, attr.value);
             }
             attributes.clear();
         }

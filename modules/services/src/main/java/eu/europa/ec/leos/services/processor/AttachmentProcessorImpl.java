@@ -16,7 +16,7 @@ package eu.europa.ec.leos.services.processor;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.HREF;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_SHOW_AS;
@@ -103,12 +103,12 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
     @Override
     public Map<String, String> getAttachmentsHrefFromBill(byte[] xmlContent) {
         Map<String, String> attachmentRefs = new HashMap<>();
-        Document document = createXercesDocument(xmlContent);
-        NodeList documentRefs = XercesUtils.getElementsByXPath(document, xPathCatalog.getXPathDocumentRef());
+        Document document = createDocument(xmlContent);
+        NodeList documentRefs = XmlUtils.getElementsByXPath(document, xPathCatalog.getXPathDocumentRef());
         for (int nodeIdx = 0; nodeIdx < documentRefs.getLength(); nodeIdx++) {
             Node documentRef = documentRefs.item(nodeIdx);
-            String showAs = XercesUtils.getAttributeValue(documentRef, XML_SHOW_AS).replaceAll(XML_DOC_EXT, "");
-            String docRef = XercesUtils.getAttributeValue(documentRef, HREF).replaceAll(XML_DOC_EXT, "");
+            String showAs = XmlUtils.getAttributeValue(documentRef, XML_SHOW_AS).replaceAll(XML_DOC_EXT, "");
+            String docRef = XmlUtils.getAttributeValue(documentRef, HREF).replaceAll(XML_DOC_EXT, "");
             if(showAs.equals("ANNEX")) {
                 showAs = showAs + " I";
             }
@@ -172,8 +172,8 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
     }
 
     private byte[] sortAttributesByAnnexRoman(byte[] xmlContent) {
-        XercesUtils xercesUtils = new XercesUtils();
-        Document document = xercesUtils.createXercesDocument(xmlContent, true);
+        XmlUtils xmlUtils = new XmlUtils();
+        Document document = xmlUtils.createDocument(xmlContent, true);
         NodeList nodeList = document.getElementsByTagName("attachments");
         if (nodeList.getLength() > 0){
             Node parentNode = nodeList.item(0);
@@ -181,7 +181,7 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
             TreeMap<Integer,Node> list = new TreeMap<Integer,Node>();
             for (int i = attachments.getLength()-1; i >= 0 ; --i){
                 Node attachment = attachments.item(i);
-                String showAsAttr = XercesUtils.getAttributeValue(attachment.getFirstChild(), XmlHelper.XML_SHOW_AS);
+                String showAsAttr = XmlUtils.getAttributeValue(attachment.getFirstChild(), XmlHelper.XML_SHOW_AS);
                 if(ANNEX.equalsIgnoreCase(showAsAttr)) {
                     showAsAttr = "I";
                 } else {
@@ -194,7 +194,7 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
             list.forEach((key,node)->{
                 parentNode.appendChild(node);
             });
-            xmlContent = xercesUtils.nodeToByteArray(document);
+            xmlContent = xmlUtils.nodeToByteArray(document);
             xmlContent = xmlContentProcessor.doXMLPostProcessingWithInternalRefs(xmlContent);
         }
         return xmlContent;

@@ -1,7 +1,7 @@
 package eu.europa.ec.leos.services.numbering;
 
 import static eu.europa.ec.leos.services.numbering.depthBased.ParentChildConverter.getNodeDepth;
-import static eu.europa.ec.leos.services.support.XercesUtils.getNodeNum;
+import static eu.europa.ec.leos.services.support.XmlUtils.getNodeNum;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 import java.util.List;
@@ -13,7 +13,7 @@ import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.services.numbering.config.NumberConfig;
 import eu.europa.ec.leos.services.numbering.depthBased.ParentChildNode;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 
 @Component
 @Instance(InstanceType.COUNCIL)
@@ -44,15 +44,15 @@ public class NumberProcessorHandlerMandate extends NumberProcessorHandler {
 
     @Override
     public boolean isElementSameOrigin(Node node) {
-        String origin = XercesUtils.getAttributeValue(node, LEOS_ORIGIN_ATTR);
+        String origin = XmlUtils.getAttributeValue(node, LEOS_ORIGIN_ATTR);
         boolean isNodeCNOrigin = origin == null || CN.equals(origin);
 
         boolean isNumCNOrigin = true;
         if (!isNodeCNOrigin) {
             //check if NUM is of CN origin; in case node is EC
-            Node numNode = XercesUtils.getFirstChild(node, NUM);
+            Node numNode = XmlUtils.getFirstChild(node, NUM);
             if (numNode != null) {
-                origin = XercesUtils.getAttributeValue(numNode, LEOS_ORIGIN_ATTR);
+                origin = XmlUtils.getAttributeValue(numNode, LEOS_ORIGIN_ATTR);
                 isNumCNOrigin = CN.equals(origin);
             }
         }
@@ -65,7 +65,7 @@ public class NumberProcessorHandlerMandate extends NumberProcessorHandler {
         if (numberConfig.isComplex()) {
             Node node = nodeList
                     .stream()
-                    .filter(n -> !isElementSameOrigin(n) || XercesUtils.getAttributeValueAsSimpleBoolean(n, LEOS_RENUMBERED))
+                    .filter(n -> !isElementSameOrigin(n) || XmlUtils.getAttributeValueAsSimpleBoolean(n, LEOS_RENUMBERED))
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("Incongruent situation. If is a COMPLEX numbering, 1 Node should be of the same instance type"));
             String labelNumber = getNodeNum(node);

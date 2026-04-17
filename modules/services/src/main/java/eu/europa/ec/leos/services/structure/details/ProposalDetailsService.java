@@ -23,7 +23,7 @@ import eu.europa.ec.leos.model.proposal.ProposalDetailsLists;
 import eu.europa.ec.leos.repository.store.ConfigurationRepository;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,18 +79,18 @@ public class ProposalDetailsService {
     private List<SignatureMetadata> extractSignatures(byte[] source) {
         List<SignatureMetadata> signatures = new ArrayList<>();
         try {
-            Document document = XercesUtils.createXercesDocument(source, true);
-            NodeList signatureNodes = XercesUtils.getElementsByName(document, SIGNATURE);
+            Document document = XmlUtils.createDocument(source, true);
+            NodeList signatureNodes = XmlUtils.getElementsByName(document, SIGNATURE);
             for (int i=0;i < signatureNodes.getLength();i++) {
                 Node signatureNode = signatureNodes.item(i);
                 SignatureMetadata signature = new SignatureMetadata();
-                List<Node> children = XercesUtils.getChildren(signatureNode);
+                List<Node> children = XmlUtils.getChildren(signatureNode);
                 for (Node child : children) {
                     if (child.getNodeName().equals(ROLE)) {
-                        signature.setCommissionerTitle(XercesUtils.getAttributeValue(child, REFERS_TO_ATTR).replaceAll("~",""));
+                        signature.setCommissionerTitle(XmlUtils.getAttributeValue(child, REFERS_TO_ATTR).replaceAll("~",""));
                     }
                     if (child.getNodeName().equals(ORGANIZATION)) {
-                        signature.setSpecialMention(XercesUtils.getAttributeValue(child, REFERS_TO_ATTR).replaceAll("~",""));
+                        signature.setSpecialMention(XmlUtils.getAttributeValue(child, REFERS_TO_ATTR).replaceAll("~",""));
                     }
                     if (child.getNodeName().equals(PERSON)) {
                         signature.setSigningCommissioner(child.getTextContent());

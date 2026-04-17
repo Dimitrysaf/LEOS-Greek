@@ -298,4 +298,16 @@ class UsersClientImpl implements UsersProvider {
             throw new RuntimeException("Unable to delete entity " + entityId + ". Failed calling: " + uri, e);
         }
     }
+
+    @Override
+    public UserDTO getUserDetails(String userLogin) {
+        final String uri = repositoryUrl + getDeleteUserUri;
+        final Map<String, Object> params = Collections.singletonMap(QUERY_PARAM_USER_LOGIN, userLogin);
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(uri).uriVariables(params);
+        try {
+            return restTemplate.getForObject(builder.toUriString(), UserDTO.class);
+        } catch (RestClientException e) {
+            throw new RuntimeException("Unable to fetch user details for login " + userLogin + ". Failed calling: " + uri, e);
+        }
+    }
 }

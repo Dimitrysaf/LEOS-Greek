@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.services.compare.processor;
 
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -18,8 +18,8 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE_COMPARE_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE_COMPARE_INTERMEDIATE_STYLE;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.DOUBLE_COMPARE_ORIGINAL_STYLE;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.nodeToByteArray;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ROOT_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
@@ -184,16 +184,16 @@ public class LeosPostDiffingProcessor {
      * TO DO generic function to check parent of child nodes instead of only SUBPARAGRAPH
      */
     public String adjustSoftRootSubParagraph(String xmlContent) {
-        Document document = createXercesDocument(xmlContent.getBytes(UTF_8));
+        Document document = createDocument(xmlContent.getBytes(UTF_8));
         NodeList elements = document.getElementsByTagName(SUBPARAGRAPH);
-        List<org.w3c.dom.Node> nodeList = XercesUtils.getNodesAsList(elements);
+        List<org.w3c.dom.Node> nodeList = XmlUtils.getNodesAsList(elements);
 
         if (!nodeList.isEmpty()) {
             for (int nodeIter = 0; nodeIter < nodeList.size(); nodeIter++) {
                 final org.w3c.dom.Node node = nodeList.get(nodeIter);
-                org.w3c.dom.Node previous = XercesUtils.getPrevSibling(node);
+                org.w3c.dom.Node previous = XmlUtils.getPrevSibling(node);
                 if(previous != null && previous.getNodeName().equals(NUM)) {
-                    previous = XercesUtils.getPrevSibling(previous);
+                    previous = XmlUtils.getPrevSibling(previous);
                 }
                 org.w3c.dom.Node softActionRootAttr = node.getAttributes().getNamedItem(LEOS_SOFT_ACTION_ROOT_ATTR);
                 if (softActionRootAttr != null
@@ -201,7 +201,7 @@ public class LeosPostDiffingProcessor {
                     && previous != null) {
                         org.w3c.dom.Node softActionRootAttrPrevious = previous.getAttributes().getNamedItem(LEOS_SOFT_ACTION_ROOT_ATTR);
                         if (softActionRootAttrPrevious == null) {
-                            XercesUtils.insertOrUpdateAttributeValue(node, LEOS_SOFT_ACTION_ROOT_ATTR, "true");
+                            XmlUtils.insertOrUpdateAttributeValue(node, LEOS_SOFT_ACTION_ROOT_ATTR, "true");
                         }
                 }
             }
@@ -218,16 +218,16 @@ public class LeosPostDiffingProcessor {
      * @return diffing result adjusted
      */
     public String adjustDeletedElements(String xmlContent, String classRemoved, String classAdded) {
-        Document document = createXercesDocument(xmlContent.getBytes(UTF_8));
+        Document document = createDocument(xmlContent.getBytes(UTF_8));
         NodeList elements = document.getElementsByTagName("span");
-        List<org.w3c.dom.Node> nodeList = XercesUtils.getNodesAsList(elements);
+        List<org.w3c.dom.Node> nodeList = XmlUtils.getNodesAsList(elements);
 
         if (!nodeList.isEmpty()) {
             for (int nodeIter = 0; nodeIter < nodeList.size(); nodeIter++) {
                 final org.w3c.dom.Node node = nodeList.get(nodeIter);
                 if (node.getAttributes().getNamedItem(CLASS_ATTR) != null && node.getAttributes().getNamedItem(CLASS_ATTR).getTextContent().equals(classAdded)) {
                     String textNode = node.getTextContent();
-                    String parentId = XercesUtils.getParentId(node);
+                    String parentId = XmlUtils.getParentId(node);
                     if(parentId != null && parentId.startsWith(SOFT_DELETE_PLACEHOLDER_ID_PREFIX)) {
                         xmlContent = xmlContent.replace(SPAN_CLASS + classAdded + "\">" + textNode, SPAN_CLASS + classAdded + "\"><span class=\"" + classRemoved + "\">" + textNode + "</span>");
                     }

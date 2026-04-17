@@ -122,19 +122,19 @@
                     <num>1.</num>
                     <subparagraph>
                         <content>
-                            <p>{{bl.firstParagraphOfArticle2.007}}</p>
+                            <p>{{bl.firstParagraphOfArticle2.directive}}</p>
                         </content>
                     </subparagraph>
                     <subparagraph>
                         <content>
-                            <p>{{bl.secondParagraphOfArticle2.007}}</p>
+                            <p>{{bl.secondParagraphOfArticle2.directive}}</p>
                         </content>
                     </subparagraph>
                 </paragraph>
                 <paragraph>
                     <num>2.</num>
                     <content>
-                        <p>{{bl.thirdParagraphOfArticle2.007}}</p>
+                        <p>{{bl.thirdParagraphOfArticle2.directive}}</p>
                     </content>
                 </paragraph>
             </article>
@@ -143,7 +143,7 @@
                 <heading>{{bl.heading}}</heading>
                 <paragraph>
                     <content>
-                        <p>{{bl.article3.007}}</p>
+                        <p>{{bl.article3.directive}}</p>
                     </content>
                 </paragraph>
             </article>
@@ -152,7 +152,7 @@
                 <heading>{{bl.heading}}</heading>
                 <paragraph>
                     <content>
-                        <p>{{bl.article4.007}}</p>
+                        <p>{{bl.article4.directive}}</p>
                     </content>
                 </paragraph>
             </article>
