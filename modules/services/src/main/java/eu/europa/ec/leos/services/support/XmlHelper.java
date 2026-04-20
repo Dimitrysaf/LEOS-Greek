@@ -723,11 +723,21 @@ public class XmlHelper {
         int textCounter = -1;
         boolean stopCounting = false;
         boolean stopCountingAfterLineBreak = false;
+        xmlStartIndex = getXmlStartIndex(text, txtStartOffset, xmlStartIndex, textCounter, stopCounting, stopCountingAfterLineBreak);
+        text = text.substring(xmlStartIndex);
+
+        int xmlEndIndex = xmlStartIndex;
+        xmlEndIndex = getXmlStartIndex(text, txtEndOffset, xmlEndIndex, txtStartOffset, stopCounting, stopCountingAfterLineBreak);
+        String matchingText = text.substring(0, xmlEndIndex - xmlStartIndex);
+        return new ImmutableTriple<>(matchingText, xmlStartIndex, xmlEndIndex);
+    }
+
+    private static int getXmlStartIndex(String text, int txtStartOffset, int xmlStartIndex, int textCounter, boolean stopCounting, boolean stopCountingAfterLineBreak) {
         for (char c : text.toCharArray()) {
             if (textCounter == txtStartOffset) {
                 break;
             }
-            if (c == '\n' && !stopCounting) {
+            if ((c == '\r' || c == '\n') && !stopCounting) {
                 stopCountingAfterLineBreak = true;
             } else if (c != ' ' && stopCountingAfterLineBreak) {
                 stopCountingAfterLineBreak = false;
@@ -743,34 +753,7 @@ public class XmlHelper {
             }
             xmlStartIndex++;
         }
-        text = text.substring(xmlStartIndex);
-
-        int xmlEndIndex = xmlStartIndex;
-        int textCounterI = txtStartOffset;
-        stopCounting = false;
-        stopCountingAfterLineBreak = false;
-        for (char c : text.toCharArray()) {
-            if (textCounterI == txtEndOffset) {
-                break;
-            }
-            if (c == '\n' && !stopCounting) {
-                stopCountingAfterLineBreak = true;
-            } else if (c != ' ' && stopCountingAfterLineBreak) {
-                stopCountingAfterLineBreak = false;
-                // Keep one space
-                xmlEndIndex--;
-            }
-            if (c == '<') {
-                stopCounting = true;
-            } else if (c == '>') {
-                stopCounting = false;
-            } else if (!stopCounting && !stopCountingAfterLineBreak) {
-                textCounterI++;
-            }
-            xmlEndIndex++;
-        }
-        String matchingText = text.substring(0, xmlEndIndex - xmlStartIndex);
-        return new ImmutableTriple<>(matchingText, xmlStartIndex, xmlEndIndex);
+        return xmlStartIndex;
     }
 
     public static String normalizeNewText(String origText, String newText) {
