@@ -681,7 +681,7 @@ class LegServiceImplTest {
         return new Annex("555", "annex_cl3yjnpcz0007k485t5p989mq.xml", "login", Instant.now(), "login", Instant.now(),
                 "0.1.0", "", "0.1.0", "", VersionType.MINOR, true,
                 "title", Collections.emptyList(), Arrays.asList(""), "", false, "", "",
-                Option.some(content), Option.some(annexMetadata), false, false);
+                Option.some(content), Option.some(annexMetadata), false, false, null, null, null);
     }
 
     private MessageHelper getMessageHelper() {

@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.controllers;
 
+import eu.europa.ec.leos.exception.LeosErrorMessage;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
 import eu.europa.ec.leos.services.dto.request.SendFeedbackRequest;
@@ -16,6 +17,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @Tag(name = "Contribution", description = "Contribution management API")
 public interface ContributionApi {
@@ -127,6 +130,7 @@ public interface ContributionApi {
             @ApiResponse(responseCode = "200", description = "Document accepted successfully"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
+    @LeosErrorMessage("Unexpected error occurred while handling accept annex on milestone")
     @GetMapping(value = "/milestones/accept-doc/{proposalRef}/{annexRef}/{legFileName}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Object> milestoneAcceptAnnex(
             @Parameter(description = "Proposal reference", required = true) @PathVariable("proposalRef") String proposalRef,
@@ -134,18 +138,19 @@ public interface ContributionApi {
             @Parameter(description = "LEG file name", required = true) @PathVariable("legFileName") String legFileName,
             @Parameter(description = "Original LEG file ID", required = true) @RequestParam(value = "originalLegFileId") String originalLegFileId,
             @Parameter(description = "Is added", required = true) @RequestParam("isAdded") boolean isAdded,
-            @Parameter(description = "Document category") @RequestParam(value = "docCategory", required = false) String docCategory);
+            @Parameter(description = "Document category") @RequestParam(value = "docCategory", required = false) String docCategory) throws IOException;
 
     @Operation(summary = "Reject milestone document", description = "Rejects a document in milestone")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Document rejected successfully"),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
+    @LeosErrorMessage("Unexpected error occurred while handling reject annex on milestone")
     @GetMapping(value = "/milestones/reject-doc/{proposalRef}/{docRef}/{milestoneLegFileName}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Object> milestoneRejectAnnex(
             @Parameter(description = "Proposal reference", required = true) @PathVariable("proposalRef") String proposalRef,
             @Parameter(description = "Document reference", required = true) @PathVariable("docRef") String docRef,
             @Parameter(description = "Milestone LEG file name", required = true) @PathVariable("milestoneLegFileName") String milestoneLegFileName,
             @Parameter(description = "Is added", required = true) @RequestParam("isAdded") boolean isAdded,
-            @Parameter(description = "Original LEG file ID", required = true) @RequestParam(value = "originalLegFileId") String originalLegFileId);
+            @Parameter(description = "Original LEG file ID", required = true) @RequestParam(value = "originalLegFileId") String originalLegFileId) throws IOException;
 }

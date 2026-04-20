@@ -60,6 +60,13 @@ public class DocumentContent implements Serializable {
     @Lob
     @Column(name = "CONTENT", nullable = false)
     private String content;
+    @Lob
+    @Column(name = "BINARY_CONTENT", nullable = true)
+    private byte[] binaryContent;
+    @Column(name = "ORIGINAL_FILE_NAME", length = 255, nullable = true)
+    private String originalFilename;
+    @Column(name = "BINARY_CONTENT_SIZE", length = 30, nullable = true)
+    private String binaryContentSize;
     @Column(name = "ACT_TYPE", length = 100)
     private String actType;
     @Column(name = "DOC_PURPOSE", nullable = false, length = 400)
@@ -215,6 +222,30 @@ public class DocumentContent implements Serializable {
         this.version = version;
     }
 
+    public byte[] getBinaryContent() {
+        return binaryContent;
+    }
+
+    public void setBinaryContent(byte[] binaryContent) {
+        this.binaryContent = binaryContent;
+    }
+
+    public String getOriginalFilename() {
+        return originalFilename;
+    }
+
+    public void setOriginalFilename(String originalFilename) {
+        this.originalFilename = originalFilename;
+    }
+
+    public String getBinaryContentSize() {
+        return binaryContentSize;
+    }
+
+    public void setBinaryContentSize(String binaryContentSize) {
+        this.binaryContentSize = binaryContentSize;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -239,5 +270,5 @@ public class DocumentContent implements Serializable {
     public String toString() {
         return "eu.europa.ec.leos.repository.entity.DocumentContent[ id=" + id + " ]";
     }
-    
+
 }

@@ -872,12 +872,38 @@ public class XmlHelper {
         return pattern.matcher(fileName).matches();
     }
 
-    public static boolean isValidFileNameForZipFile(String fileName) {
-        Pattern pattern = Pattern.compile("^[A-Za-z0-9\\.\\-_]+\\.zip$");
+    public static boolean isValidFileNameForBinaryFile(String fileName) {
+        Pattern pattern = Pattern.compile("^[A-Za-z0-9\\.\\-_ ()]+\\.(pdf|docx|xlsx|PDF|DOCX|XLSX)$");
         if (fileName.length() > 400) {
             return false;
         }
         return pattern.matcher(fileName).matches();
+    }
+
+    public static boolean isValidMimeTypeForBinaryFile(byte[] binaryContent, String fileName) throws IOException {
+        Tika tika = new Tika();
+        String mimeType = tika.detect(TikaInputStream.get(binaryContent), fileName);
+        List<String> allowedTypes = Arrays.asList(
+                "application/pdf",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        return allowedTypes.contains(mimeType);
+    }
+
+    public static String getMimeType(String extension) {
+        String mimeType = "";
+        switch (extension) {
+            case "DOCX":
+                mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+                break;
+            case "XLSX":
+                mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                break;
+            case "PDF":
+                mimeType = "application/pdf";
+                break;
+        }
+        return mimeType;
     }
 
     public static boolean isValidSizeFileForBinaryFile(long sizeofBinaryFile) {
@@ -886,6 +912,14 @@ public class XmlHelper {
             return false;
         }
         return true;
+    }
+
+    public static boolean isValidFileNameForZipFile(String fileName) {
+        Pattern pattern = Pattern.compile("^[A-Za-z0-9\\.\\-_]+\\.zip$");
+        if (fileName.length() > 400) {
+            return false;
+        }
+        return pattern.matcher(fileName).matches();
     }
 
     public static boolean isValidMimeTypeForLegFile(byte[] binaryContent) throws IOException {
@@ -946,4 +980,21 @@ public class XmlHelper {
     private static InputStream loadSchema(String schemaPath) {
         return XmlHelper.class.getClassLoader().getResourceAsStream(schemaPath);
     }
+
+    public static String getShowAsForForeignAnnex(String extension) {
+        String showAs = "";
+        switch (extension) {
+            case "DOCX":
+                showAs = "Word DOCX";
+                break;
+            case "XLSX":
+                showAs = "Excel XLSX";
+                break;
+            case "PDF":
+                showAs = "Adobe PDF";
+                break;
+        }
+        return showAs;
+    }
+
 }

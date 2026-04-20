@@ -114,11 +114,20 @@ class LeosRepositoryMetadataExtensions {
         String title = getAnnexTitle(leosDocument);
         String annexTitle = title == null ? "" : title;
         String clonedRef = getAnnexClonedRef(leosDocument);
+        String fileFormatRefersTo = getFileFormatRefersTo(leosDocument);
+        String fileFormatValue = getFileFormatValue(leosDocument);
+        String tlcReferenceNameFormatHref = getTlcReferenceNameFormatHref(leosDocument);
+        String tlcReferenceNameFormatShowAs = getTlcReferenceNameFormatShowAs(leosDocument);
+        String tlcReferenceNameFormatId = getTlcReferenceNameFormatId(leosDocument);
+        String foreignAnnexNumber = getForeignAnnexNumber(leosDocument);
+        String foreignAnnexSource = getForeignAnnexSource(leosDocument);
+        String foreignFileSize = getForeignFileSize(leosDocument);
 
         return buildMetadata(leosDocument, props -> {
-            AnnexMetadata metadata = new AnnexMetadata(props.stage, props.type, props.purpose, props.template, props.language, props.docTemplate, props.ref,
-                    index, number, annexTitle, null, "0.1.0", props.eeaRelevance, props.customTemplateAct, props.fromCustomTemplate, props.translated,
-                    clonedRef);
+            AnnexMetadata metadata = new AnnexMetadata(props.stage, props.type, props.purpose, props.template,
+                    props.language, props.docTemplate, props.ref, null, index, number, annexTitle, null, "0.1.0", props.eeaRelevance, props.customTemplateAct, props.fromCustomTemplate, props.translated, clonedRef,
+                    fileFormatRefersTo, fileFormatValue, tlcReferenceNameFormatHref, tlcReferenceNameFormatShowAs, tlcReferenceNameFormatId,
+                    foreignAnnexNumber, foreignAnnexSource, foreignFileSize);
             metadata.setCallbackAddress(props.callbackAddress);
             metadata.setImported(props.imported);
             return Option.some(metadata);
@@ -219,7 +228,7 @@ class LeosRepositoryMetadataExtensions {
         Boolean fromCustomTemplate = (Boolean) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_FROM_CUSTOM_TEMPLATE));
         return fromCustomTemplate != null ? fromCustomTemplate : false;
     }
-    
+
     protected static Boolean getTranslated(LeosDocument leosDocument) {
         Boolean translated = (Boolean) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_IS_TRANSLATED));
         return translated != null ? translated : false;
@@ -257,6 +266,38 @@ class LeosRepositoryMetadataExtensions {
 
     private static String getAnnexClonedRef(LeosDocument leosDocument) {
         return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.ANNEX_CLONED_REF));
+    }
+
+    private static String getFileFormatRefersTo(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.FILE_FORMAT_REFERS_TO));
+    }
+
+    private static String getFileFormatValue(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.FILE_FORMAT_VALUE));
+    }
+
+    private static String getTlcReferenceNameFormatHref(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.TLC_REFERENCE_NAME_FORMAT_HREF));
+    }
+
+    private static String getTlcReferenceNameFormatShowAs(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.TLC_REFERENCE_NAME_FORMAT_SHOW_AS));
+    }
+
+    private static String getTlcReferenceNameFormatId(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.TLC_REFERENCE_NAME_FORMAT_ID));
+    }
+
+    private static String getForeignAnnexNumber(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.FOREIGN_ANNEX_NUMBER));
+    }
+
+    private static String getForeignAnnexSource(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.FOREIGN_ANNEX_SOURCE));
+    }
+
+    private static String getForeignFileSize(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.FOREIGN_FILE_SIZE));
     }
 
     private static String getExplanatoryTitle(LeosDocument leosDocument) {

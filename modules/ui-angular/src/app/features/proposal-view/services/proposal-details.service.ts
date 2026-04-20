@@ -162,6 +162,68 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
+  createForeignAnnex(data: File) {
+    const formData: FormData = new FormData();
+    this.loadingService.setLoading(true);
+    formData.append('foreignAnnexFile', data);
+    this.http
+      .post<any>(
+        `${apiBaseUrl}/secured/proposals/${this.proposalRef}/createForeignAnnex`,
+        formData,
+        {},
+      )
+      .subscribe({
+        next: (val) => {
+          this.setProposalRef(this.proposalRef);
+          this.loadingService.setLoading(false);
+        },
+        error: (res) => {
+          this.setProposalRef(this.proposalRef);
+          this.loadingService.setLoading(false);
+          this.exceptionResponseVO = res.error;
+          if (this.exceptionResponseVO.errorCode === ErrorCode.CA001) {
+            this.dialogService.openDialog({
+              title: this.translateService.instant(this.exceptionResponseVO.messageKey + '.title'),
+              content: this.translateService.instant(this.exceptionResponseVO.messageKey + '.message'),
+              hasDismissButton: false,
+            });
+            this.growlService.clearGrowl();
+          }
+        }
+      });
+  }
+
+  updateForeignAnnex(annexId: string, data: File) {
+    const formData: FormData = new FormData();
+    this.loadingService.setLoading(true);
+    formData.append('foreignAnnexFile', data);
+    this.http
+      .post<any>(
+        `${apiBaseUrl}/secured/proposals/${this.proposalRef}/updateForeignAnnex/${annexId}`,
+        formData,
+        {},
+      )
+      .subscribe({
+        next: (val) => {
+          this.setProposalRef(this.proposalRef);
+          this.loadingService.setLoading(false);
+        },
+        error: (res) => {
+          this.setProposalRef(this.proposalRef);
+          this.loadingService.setLoading(false);
+          this.exceptionResponseVO = res.error;
+          if (this.exceptionResponseVO.errorCode === ErrorCode.CA001) {
+            this.dialogService.openDialog({
+              title: this.translateService.instant(this.exceptionResponseVO.messageKey + '.title'),
+              content: this.translateService.instant(this.exceptionResponseVO.messageKey + '.message'),
+              hasDismissButton: false,
+            });
+            this.growlService.clearGrowl();
+          }
+        }
+      });
+  }
+
   updateAnnexTitle(annexId: string, annexTitle: string) {
     this.loadingService.setLoading(true);
     this.http

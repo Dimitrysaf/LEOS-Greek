@@ -28,10 +28,10 @@ public class MaxUploadSizeFilter implements Filter {
         String contentType = httpRequest.getContentType();
         if (contentType != null && contentType.startsWith("multipart/form-data")) {
             long contentLength = httpRequest.getContentLengthLong();
-            if (contentLength > 209715200L) { // 200MB
+            if (contentLength > 104857600L) { // 100MB
                 httpResponse.setStatus(413);
                 httpResponse.setContentType("application/json");
-                httpResponse.getWriter().write("Invalid file");
+                httpResponse.getWriter().write("page.collection.drafts.annex.max.size.error");
                 return;
             }
         }

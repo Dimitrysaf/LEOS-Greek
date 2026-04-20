@@ -2,6 +2,7 @@ package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.exception.LeosErrorMessage;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.api.ContributionApiService;
@@ -25,6 +26,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.IOException;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
@@ -160,42 +163,32 @@ public class ContributionController implements ContributionApi {
 
     @Override
     public ResponseEntity<Object> milestoneAcceptAnnex(String proposalRef, String annexRef, String legFileName,
-                                                       String originalLegFileId, boolean isAdded, String docCategory) {
-        try {
-            LeosCategory category = docCategory != null ? LeosCategory.valueOf(docCategory) : LeosCategory.ANNEX;
-            originalLegFileId = encodeParam(originalLegFileId);
-            annexRef = encodeParam(annexRef);
-            proposalRef = encodeParam(proposalRef);
-            legFileName = encodeParam(legFileName);
-            contributionApiService.handleMilestoneAccept(
-                    proposalRef,
-                    legFileName,
-                    isAdded,
-                    annexRef,
-                    category);
-            return ResponseEntity.ok().body(apiService.listContributionsView(proposalRef, legFileName, originalLegFileId));
-        } catch (Exception e) {
-            LOG.error("Unexpected error occurred while handling annex on milestone - " + proposalRef, e);
-            return new ResponseEntity<>("Unexpected error occurred while handling annex on milestone", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+                                                       String originalLegFileId, boolean isAdded, String docCategory) throws IOException {
+        LeosCategory category = docCategory != null ? LeosCategory.valueOf(docCategory) : LeosCategory.ANNEX;
+        originalLegFileId = encodeParam(originalLegFileId);
+        annexRef = encodeParam(annexRef);
+        proposalRef = encodeParam(proposalRef);
+        legFileName = encodeParam(legFileName);
+        contributionApiService.handleMilestoneAccept(
+                proposalRef,
+                legFileName,
+                isAdded,
+                annexRef,
+                category);
+        return ResponseEntity.ok().body(apiService.listContributionsView(proposalRef, legFileName, originalLegFileId));
     }
 
     @Override
     public ResponseEntity<Object> milestoneRejectAnnex(String proposalRef, String docRef, String milestoneLegFileName,
-                                                       boolean isAdded, String originalLegFileId) {
-        try {
-            originalLegFileId = encodeParam(originalLegFileId);
-            docRef = encodeParam(docRef);
-            proposalRef = encodeParam(proposalRef);
-            milestoneLegFileName = encodeParam(milestoneLegFileName);
-            contributionApiService.handleMilestoneReject(proposalRef,
-                    milestoneLegFileName, originalLegFileId,
-                    docRef, isAdded);
-            return ResponseEntity.ok().body(apiService.listContributionsView(proposalRef, milestoneLegFileName, originalLegFileId));
-        } catch (Exception e) {
-            LOG.error("Unexpected error occurred while handling annex on milestone - " + proposalRef, e);
-            return new ResponseEntity<>("Unexpected error occurred while handling annex on milestone", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+                                                       boolean isAdded, String originalLegFileId) throws IOException {
+        originalLegFileId = encodeParam(originalLegFileId);
+        docRef = encodeParam(docRef);
+        proposalRef = encodeParam(proposalRef);
+        milestoneLegFileName = encodeParam(milestoneLegFileName);
+        contributionApiService.handleMilestoneReject(proposalRef,
+                milestoneLegFileName, originalLegFileId,
+                docRef, isAdded);
+        return ResponseEntity.ok().body(apiService.listContributionsView(proposalRef, milestoneLegFileName, originalLegFileId));
     }
 
 }

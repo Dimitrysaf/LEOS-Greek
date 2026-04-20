@@ -53,6 +53,7 @@ public class AppConfigResponse {
     private boolean repetitiveActsEnabled;
     private boolean linguisticVersionsEnabled;
     private List<String> languages;
+    private boolean annexHybridDocumentsEnabled;
 
     public AppConfigResponse() {
     }
@@ -279,4 +280,13 @@ public class AppConfigResponse {
     public void setLanguages(List<String> languages) {
         this.languages = languages;
     }
+
+    public boolean isAnnexHybridDocumentsEnabled() {
+        return this.annexHybridDocumentsEnabled;
+    }
+
+    public void setAnnexHybridDocumentsEnabled(final boolean annexHybridDocumentsEnabled) {
+        this.annexHybridDocumentsEnabled = annexHybridDocumentsEnabled;
+    }
+
 }

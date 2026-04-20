@@ -70,6 +70,7 @@ export type LeosConfig = {
   repetitiveActsEnabled: boolean;
   linguisticVersionsEnabled: boolean;
   languages: string[];
+  annexHybridDocumentsEnabled: boolean;
 };
 
 export type LeosAppConfig = LeosConfig & {

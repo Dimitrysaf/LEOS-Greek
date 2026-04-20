@@ -34,6 +34,7 @@ import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.api.exception.LeosExceptionResponse;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.clone.InternalRefMap;
 import eu.europa.ec.leos.services.collection.CollectionContextService;
@@ -81,6 +82,7 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +95,6 @@ import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 
 import jakarta.inject.Provider;
 import java.io.IOException;
@@ -111,6 +112,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC_LEGIS;
+import static eu.europa.ec.leos.services.api.exception.ErrorCode.CA001;
 import static eu.europa.ec.leos.services.converter.ProposalConverterServiceImpl.createFileFromXmlSource;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
@@ -713,6 +715,19 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             Proposal proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
             if (isAdded) {
                 DocumentVO annexVO = proposalConverterService.createDocument(docName, docFile, true);
+                Node srcOfComponentReg = XmlUtils.getFirstElementByXPath(XmlUtils.createDocument(docFile.getBytes()), "//akn:mainBody/akn:annex/akn:componentRef/@src");
+                if (srcOfComponentReg != null) {
+                    String originalFilename = srcOfComponentReg.getTextContent();
+                    List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
+                    boolean annexExistWithSameName = StringUtils.isEmpty(originalFilename) ? false : documents.stream().filter(xmlDocument -> xmlDocument.getCategory().equals(LeosCategory.ANNEX) && StringUtils.isNotEmpty(xmlDocument.getOriginalFilename()) && xmlDocument.getOriginalFilename().toUpperCase().equals(originalFilename.toUpperCase())).findAny().isPresent();
+                    if (annexExistWithSameName) {
+                        throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.same.name.error");
+                    }
+                    annexVO.setBinaryFile((byte[]) legContent.get(originalFilename));
+                    annexVO.setOriginalFilename(originalFilename);
+                    Node binaryFileSize = XmlUtils.getFirstElementByXPath(XmlUtils.createDocument(docFile.getBytes()), "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:foreignFileSize");
+                    annexVO.setBinaryFileSize(binaryFileSize.getTextContent());
+                }
                 removeTrackChangesFromDoc(annexVO);
                 annexVO.getMetadata().setIndex(null);
                 BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");

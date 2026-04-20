@@ -156,9 +156,10 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
     }
 
     private static Map<String, XmlNodeConfig> createAnnexConfig() {
-        Map<String, XmlNodeConfig> annexConfigMap = new HashMap<>();
-        final Map<String, XmlNodeConfig> metadataConfig = populateMetadataConfigMap();
 
+        Map<String, XmlNodeConfig> annexConfigMap = new HashMap<>();
+
+        final Map<String, XmlNodeConfig> metadataConfig = populateMetadataConfigMap();
         metadataConfig.put(ANNEX_INDEX_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:annexIndex", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "leos:annexIndex"), new XmlNodeConfig.Attribute("source", "~COM", "proprietary"))));
         metadataConfig.put(ANNEX_NUMBER_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:annexNumber", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "leos:annexNumber"), new XmlNodeConfig.Attribute("source", "~COM", "proprietary"))));
         metadataConfig.put(ANNEX_TITLE_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:annexTitle", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "leos:annexTitle"), new XmlNodeConfig.Attribute("source", "~COM", "proprietary"))));
@@ -166,9 +167,19 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
         annexConfigMap.putAll(metadataConfig);
 
         final Map<String, XmlNodeConfig> prefaceConfig = new HashMap<>(2);
-        prefaceConfig.put(ANNEX_NUMBER_PREFACE, new XmlNodeConfig("//akn:preface/akn:container/akn:block[@name='num']", true, Arrays.asList(new XmlNodeConfig.Attribute("name", "headerOfAnnex", "container"), new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "container"), new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "block"))));
-        prefaceConfig.put(ANNEX_TITLE_PREFACE, new XmlNodeConfig("//akn:preface/akn:container/akn:block[@name='heading']", true, Arrays.asList(new XmlNodeConfig.Attribute("name", "headerOfAnnex", "container"), new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "container"), new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "block"))));
+        prefaceConfig.put(ANNEX_NUMBER_PREFACE, new XmlNodeConfig("//akn:preface/akn:container/akn:block[@name='num']", false, Arrays.asList(new XmlNodeConfig.Attribute("name", "headerOfAnnex", "container"), new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "container"), new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "block"))));
+        prefaceConfig.put(ANNEX_TITLE_PREFACE, new XmlNodeConfig("//akn:preface/akn:container/akn:block[@name='heading']", false, Arrays.asList(new XmlNodeConfig.Attribute("name", "headerOfAnnex", "container"), new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "container"), new XmlNodeConfig.Attribute("xml:id", Cuid.createCuid(), "block"))));
         annexConfigMap.putAll(prefaceConfig);
+
+        final Map<String, XmlNodeConfig> binaryAnnexFileConfig = new HashMap<>(7);
+        binaryAnnexFileConfig.put(FILE_FORMAT_REFERS_TO, new XmlNodeConfig("//akn:meta/akn:identification/akn:FRBRManifestation/akn:FRBRformat/@refersTo", false, Collections.emptyList()));
+        binaryAnnexFileConfig.put(FILE_FORMAT_VALUE, new XmlNodeConfig("//akn:meta/akn:identification/akn:FRBRManifestation/akn:FRBRformat/@value", false, Collections.emptyList()));
+        binaryAnnexFileConfig.put(TLC_REFERENCE_NAME_FORMAT_HREF, new XmlNodeConfig("//akn:meta/akn:references/akn:TLCReference[@name='format']/@href", false, Collections.emptyList()));
+        binaryAnnexFileConfig.put(TLC_REFERENCE_NAME_FORMAT_SHOW_AS, new XmlNodeConfig("//akn:meta/akn:references/akn:TLCReference[@name='format']/@showAs", false, Collections.emptyList()));
+        binaryAnnexFileConfig.put(TLC_REFERENCE_NAME_FORMAT_ID, new XmlNodeConfig("//akn:meta/akn:references/akn:TLCReference[@name='format']/@xml:id", false, Collections.emptyList()));
+        binaryAnnexFileConfig.put(FOREIGN_ANNEX_NUMBER, new XmlNodeConfig("//akn:mainBody/akn:annex/akn:num", false, Collections.emptyList()));
+        binaryAnnexFileConfig.put(FOREIGN_ANNEX_SOURCE, new XmlNodeConfig("//akn:mainBody/akn:annex /akn:componentRef/@src", false, Collections.emptyList()));
+        annexConfigMap.putAll(binaryAnnexFileConfig);
 
         final Map<String, XmlNodeConfig> otherConfig = populateOtherConfig();
         annexConfigMap.putAll(otherConfig);
@@ -208,6 +219,7 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
         metadataConfig.put(DOC_LANGUAGE, new XmlNodeConfig("//akn:meta/akn:identification/akn:FRBRExpression/akn:FRBRlanguage/@language", false, Collections.emptyList()));
         metadataConfig.put(DOC_VERSION, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:docVersion", true, Collections.emptyList()));
         metadataConfig.put(DOC_EEA_RELEVANCE_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:eeaRelevance", true, Collections.emptyList(), true, "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:eeaRelevance"));
+        metadataConfig.put(FOREIGN_FILE_SIZE, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:foreignFileSize", true, Collections.emptyList()));
 
         metadataConfig.put(FILE_CUID_PRESERVATION, new XmlNodeConfig("//akn:meta/akn:identification/akn:FRBRWork/akn:preservation/akn4eu:fileCUID/@value", false, Collections.emptyList()));
         metadataConfig.put(DOC_CUID_PRESERVATION, new XmlNodeConfig("//akn:meta/akn:identification/akn:FRBRWork/akn:preservation/akn4eu:docCUID/@value", false, Collections.emptyList()));

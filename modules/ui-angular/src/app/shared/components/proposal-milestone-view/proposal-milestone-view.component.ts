@@ -26,8 +26,11 @@ import {DocumentService} from '@/shared/services/document.service';
 import {ProposalMilestonesService} from '@/shared/services/proposal-milestones.service';
 import {ConfirmDeleteDialogComponent} from "@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component";
 import {EuiGrowlService} from "@eui/core";
-import {Permission} from "@/shared";
+import {ErrorCode, Permission} from "@/shared";
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
+import {
+  ExceptionResponseVO
+} from '@leos/shared';
 
 type MilestoneDocument = {
   ref: string;
@@ -89,6 +92,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   isTocPaneCollapsed = false;
   isAnnotationsPaneCollapsed = false;
   isProcessing = false;
+  exceptionResponseVO: ExceptionResponseVO = null;
 
   hiddenCategories = [
     ...(process.env.NG_APP_LEOS_INSTANCE !== 'ec'
@@ -480,17 +484,27 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
         this.isProcessing = false;
       },
       error: (res) => {
-        this.appShell.growl({
-          severity: 'danger',
-          summary: this.translateService.instant(
-            'page.collection.milestone-view-dialog.handle-doc.error',
-          ),
-          detail: res,
-          life: 3000,
-          isGrowlSticky: false,
-          position: 'bottom-right',
+        this.exceptionResponseVO = res.error;
+        if (this.exceptionResponseVO.errorCode === ErrorCode.CA001) {
+          this.dialogService.openDialog({
+            title: this.translateService.instant(this.exceptionResponseVO.messageKey + '.title'),
+            content: this.translateService.instant(this.exceptionResponseVO.messageKey + '.message'),
+            hasDismissButton: false,
+          });
+          this.appShell.clearGrowl();
+        } else {
+          this.appShell.growl({
+            severity: 'danger',
+            summary: this.translateService.instant(
+              'page.collection.milestone-view-dialog.handle-doc.error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
 
-        });
+          });
+        }
         this.isProcessing = false;
       },
     });
@@ -500,4 +514,10 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     const parts = version.split('.');
     return parts.slice(0, 3).join('.');
   }
+
+  getFilenameExtension(xml: string): string {
+    const srcMatch = xml.match(/componentRef[^>]*src="([^"]+)"/);
+    return srcMatch ? srcMatch[1].toLowerCase().substring(srcMatch[1].lastIndexOf('.')+1) : '';
+  }
+
 }

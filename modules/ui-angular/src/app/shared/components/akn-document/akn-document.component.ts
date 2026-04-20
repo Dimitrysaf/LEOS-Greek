@@ -17,6 +17,11 @@ import { DOCUMENT_STYLES } from '@/shared';
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 import { MilestoneViewConnectorsService } from "@/shared/services/milestone-view-connectors.service";
+import {apiBaseUrl} from "../../../../config";
+import {downloadBlob} from "@/shared/utils";
+import {LoadingService} from "@/shared/services/loading.service";
+import {HttpClient} from "@angular/common/http";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-akn-document',
@@ -45,6 +50,9 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit, A
     public doc: DocumentService,
     private config: AppConfigService,
     private milestoneViewConnectorsService: MilestoneViewConnectorsService,
+    private loadingService: LoadingService,
+    private http: HttpClient,
+    private translateService: TranslateService,
     @Inject(DOCUMENT) private domDocument: Document,
   ) {}
 
@@ -76,9 +84,42 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit, A
 
   private loadDocument(xml: string) {
     const rootEl = this.containerElRef.nativeElement;
-    const akomantosoEl = this.cleanupXML(xml);
-    rootEl.innerHTML = '';
-    rootEl.appendChild(akomantosoEl);
+    if (!xml.includes('TECHNICAL DOCUMENTATION</heading>')) {
+      const akomantosoEl = this.cleanupXML(xml);
+      rootEl.innerHTML = '';
+      rootEl.appendChild(akomantosoEl);
+    } else {
+      const buttonText = this.translateService.instant('page.collection.drafts.foreign.annex.download');
+      const msg = this.translateService.instant('page.collection.drafts.foreign.annex.msg');
+      const aknIdMatch = xml.match(/akomaNtoso id="([^"]+)"/);
+      var aknId = aknIdMatch ? aknIdMatch[1] : '';
+      if (!aknId) {
+        const aknIdMatchProp = xml.match(/<leos:ref[^>]*>([^<]+)<\/leos:ref>/);
+        aknId = aknIdMatchProp ? aknIdMatchProp[1] : '';
+      }
+      const srcMatch = xml.match(/componentRef[^>]*src="([^"]+)"/);
+      const src = srcMatch ? srcMatch[1] : '';
+      xml = xml.replace(/<annex[^>]*>[\s\S]*?<\/annex>/gi, `<h3 id="label-for-annex-message" class="eui-u-font-bold eui-u-color-info">${msg}</h3><eui-label id="label-for-annex-name" class="eui-u-font-bold">${src}</eui-label><button id="annex-download-button" class="eui-button eui-button--primary eui-button--size-s">${buttonText}</button>`);
+      const akomantosoEl = this.cleanupXML(xml);
+      rootEl.innerHTML = '';
+      rootEl.appendChild(akomantosoEl);
+      const button = rootEl.querySelector('#annex-download-button');
+      if (button) {
+        button.addEventListener('click', () => this.downloadForeignAnnex(aknId, src));
+      }
+    }
+  }
+
+  downloadForeignAnnex(ref: string, originalFilename: string) {
+    this.loadingService.setLoading(true);
+    this.http
+      .get(`${apiBaseUrl}/secured/annex/${ref}`, {
+        responseType: 'blob',
+      })
+      .subscribe({
+        next: (blob) => downloadBlob(blob, `${originalFilename}`),
+        complete: () => this.loadingService.setLoading(false),
+      });
   }
 
   private loadStyleSheet() {

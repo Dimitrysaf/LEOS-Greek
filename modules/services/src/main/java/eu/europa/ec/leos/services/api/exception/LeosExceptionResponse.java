@@ -1,11 +1,11 @@
 package eu.europa.ec.leos.services.api.exception;
 
-public class ExceptionResponse {
+public class LeosExceptionResponse extends RuntimeException {
 
     private String errorCode;
     private String messageKey;
 
-    public ExceptionResponse(String errorCode, String messageKey) {
+    public LeosExceptionResponse(String errorCode, String messageKey) {
         this.errorCode = errorCode;
         this.messageKey = messageKey;
     }

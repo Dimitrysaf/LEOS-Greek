@@ -61,7 +61,10 @@
                [euiAccent]="doc.selected === true"
           >
         <eui-tab-label>
-          <div [title]="getIconTabHelp(doc.state)">
+          <div [title]="getIconTabHelp(doc.state)" class="tab-label">
+            <span *ngIf="getFilenameExtension(doc.xml) === 'pdf'" class="eui-icon eui-icon-2x eui-icon-filetype-pdf" euiIconColored></span>
+            <span *ngIf="getFilenameExtension(doc.xml) === 'docx'" class="eui-icon eui-icon-2x eui-icon-filetype-doc" euiIconColored></span>
+            <span *ngIf="getFilenameExtension(doc.xml) === 'xlsx'" class="eui-icon eui-icon-2x eui-icon-filetype-xls" euiIconColored></span>
             {{ doc.label }}
             <small class="eui-u-font-regular"> [{{ getDisplayVersion(doc.version) }}] </small>
             <eui-icon-svg
@@ -89,8 +92,8 @@
                   [label]="'page.editor.toc-pane.label' | translate"
                   isCollapsible
                   (collapsed)="onToggleTocPaneCollapsed()"
-
                   style="flex-basis: 400px"
+                  *ngIf="!getFilenameExtension(doc.xml)"
                 >
                   <eui-page-column-body>
                     <app-milestone-toc [toc]="doc.tocData"></app-milestone-toc>
@@ -100,7 +103,7 @@
                 <app-resize-handle
                   [leftEl]="tocPaneElement?.nativeElement"
                   [rightEl]="documentPaneElement?.nativeElement"
-                  *ngIf="!isTocPaneCollapsed"
+                  *ngIf="!isTocPaneCollapsed && !getFilenameExtension(doc.xml)"
                 ></app-resize-handle>
 
                 <!-- Document -->
@@ -136,6 +139,7 @@
                   (collapsed)="onToggleAnnotationsPaneCollapsed()"
 
                   style="flex-basis: 580px"
+                  *ngIf="!getFilenameExtension(doc.xml)"
                 >
                   <eui-page-column-body class="eui-u-flex-grow">
                     <app-document-annotations

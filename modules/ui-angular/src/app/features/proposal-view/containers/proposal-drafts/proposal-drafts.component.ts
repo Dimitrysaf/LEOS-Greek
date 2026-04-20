@@ -16,7 +16,7 @@ import {
   EuiDialogComponent,
   EuiDialogService,
 } from '@eui/components/eui-dialog';
-import { Document, DocumentType, Permission } from '@leos/shared';
+import { Document, DocumentType, Permission, LeosConfig } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -28,8 +28,12 @@ import { CreateProposalService } from '@/shared/services/create-proposal.service
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 import { LoadingService } from "@/shared/services/loading.service";
 import { EuiGrowlService } from "@eui/core";
-import { HttpStatusCode } from "@angular/common/http";
+import {HttpClient, HttpStatusCode} from "@angular/common/http";
 import { cleanDelInsert } from '@/shared/utils/string.utils';
+import {AUTONOMOUS_ACT_DOC_COLLECTION} from "@/shared/constants";
+import {apiBaseUrl} from "../../../../../config";
+import {downloadBlob} from "@/shared/utils";
+import { AppConfigService } from '@/core/services/app-config.service';
 
 @Component({
   selector: 'app-proposal-drafts',
@@ -56,6 +60,7 @@ export class ProposalDraftsComponent
   permissions: Permission[];
   annexCreateOption: string;
   fsCreateOption: string;
+  leosConfig: LeosConfig;
 
   @ViewChild('editAnnexTitleDialog') editAnnexTitleDialog: EuiDialogComponent;
   @ViewChild('editAnnexOrder') annexOrderDialog: EuiDialogComponent;
@@ -71,6 +76,7 @@ export class ProposalDraftsComponent
 
   title: string;
   activeAnnexId: string;
+  AUTONOMOUS_ACT_DOC_COLLECTION: string = AUTONOMOUS_ACT_DOC_COLLECTION;
   canAddDeleteAnnex: boolean = true;
 
   private destroy$: Subject<void> = new Subject();
@@ -85,6 +91,8 @@ export class ProposalDraftsComponent
     private loadingService: LoadingService,
     private growlService: EuiGrowlService,
     private translateService: TranslateService,
+    private http: HttpClient,
+    private appConfigService: AppConfigService,
   ) {}
 
   ngOnDestroy(): void {
@@ -116,7 +124,11 @@ export class ProposalDraftsComponent
       .subscribe((perms) => {
         this.permissions = perms;
       });
-
+    this.appConfigService.config
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((config) => {
+        this.leosConfig = config;
+      });
     this.canAddDeleteAnnex = (!this.proposal.metadata.customTemplateAct && !this.proposal.metadata.fromCustomTemplate)
       || !this.proposalDetailsService.getTranslated();
   }
@@ -126,6 +138,49 @@ export class ProposalDraftsComponent
       this.proposalStateChange.emit('active');
       this.proposalDetailsService.createAnnex();
     }
+  }
+
+  handleAnnexUploadPopup(annex?: Document) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.docx, .xlsx, .pdf';
+    input.onchange = (event: any) => {
+      if (this.proposalState !== 'loading' && this.proposalState !== 'active') {
+        this.proposalStateChange.emit('active');
+      }
+      const file = event.target.files[0];
+      if (file && !annex) {
+        let annexWithSameName = this.proposal?.childDocuments?.find(e => e.category === 'BILL')?.childDocuments?.find(e => e.category === 'ANNEX' && e.originalFilename === file.name);
+        if (annexWithSameName) {
+          this.dialogService.openDialog({
+            title: this.translateService.instant(
+              'page.collection.drafts.annex.same.name.error.title',
+            ),
+            content: this.translateService.instant(
+              'page.collection.drafts.annex.same.name.error.warning',
+            ),
+            acceptLabel: this.translateService.instant('page.collection.drafts.annex.same.name.error.yes'),
+            dismissLabel: this.translateService.instant('page.collection.drafts.annex.same.name.error.no'),
+            accept: () => {
+              this.proposalDetailsService.updateForeignAnnex(annexWithSameName.id, file);
+            },
+            dismiss: () => {
+              this.proposalDetailsService.setProposalRef(this.proposalRef);
+              this.loadingService.setLoading(false);
+            },
+            close: () => {
+              this.proposalDetailsService.setProposalRef(this.proposalRef);
+              this.loadingService.setLoading(false);
+            }
+          });
+        } else {
+          this.proposalDetailsService.createForeignAnnex(file);
+        }
+      } else if (file && annex) {
+        this.proposalDetailsService.updateForeignAnnex(annex.id, file);
+      }
+    };
+    input.click();
   }
 
   handleAnnexReorder() {
@@ -243,6 +298,23 @@ export class ProposalDraftsComponent
         );
         this.explToDelete = null;
       });
+  }
+
+  downloadForeignAnnex(ref: string, originalFilename: string) {
+    this.loadingService.setLoading(true);
+    this.http
+      .get(`${apiBaseUrl}/secured/annex/${ref}`, {
+        responseType: 'blob',
+      })
+      .subscribe({
+        next: (blob) => downloadBlob(blob, `${originalFilename}`),
+        complete: () => this.loadingService.setLoading(false),
+      });
+  }
+
+  getFileExtension(filename: string): string {
+    if (!filename) return '';
+    return filename.slice((filename.lastIndexOf('.') + 1)).toLowerCase();
   }
 
   onFinancialStatementCreate() {

@@ -35,6 +35,7 @@ class actViewerPage {
         confidentialityLevelLabelValue: () => this.elements.rowLabel().contains('Confidentiality Level').closest('div').next('div'),
         eeARelevanceCheckBoxValue: () => this.elements.rowLabel().contains('EEA Relevance').prev('input'),
         favouriteIcon: () => this.elements.appProposalHeader().find("eui-icon-svg svg[class*='eui-bookmark']"),
+        annexDropdownBtn :()=>cy.get('eui-dropdown-content button'),
         }
 
     clickCloseBtn(){
@@ -133,6 +134,11 @@ class actViewerPage {
     clickFavouriteIcon() {
         this.elements.favouriteIcon().click({force:true});
     }
+
+        clickOptionFromAddAnnexDropdown(optionText) {
+            this.elements.annexDropdownBtn().contains(optionText).click();
+        }
+
 }
 export default new actViewerPage();
 import '@cypress/xpath';

@@ -35,6 +35,7 @@ import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.importoj.ImportService;
 import eu.europa.ec.leos.services.numbering.NumberService;
+import eu.europa.ec.leos.services.document.models.AnnexType;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
@@ -416,7 +417,7 @@ public class BillContextService {
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Annex not found index " + annex.getMetadata().get().getIndex()));
             byte[] updatedAnnexBytes = xmlContentProcessor.doXMLPostProcessing(docChild.getSource());  //updateRefs
-            annexService.updateAnnex(annex, updatedAnnexBytes, annex.getMetadata().get(), VersionType.MINOR, updateRefsComment, false);
+            annexService.updateAnnex(annex, updatedAnnexBytes, annex.getMetadata().get(), VersionType.MINOR, updateRefsComment, false, docChild.getBinaryFile(), docChild.getOriginalFilename(), docChild.getBinaryFileSize());
             idsAndUrlsHolder.addDocCloneAndOriginIdMap(annex.getMetadata().get().getRef(), docChild.getRef());
             refsMatching.put(docChild.getRef(), annex);
         }
@@ -622,6 +623,10 @@ public class BillContextService {
     }
 
     public void executeCreateBillAnnex() {
+        executeCreateBillAnnex(null, null, null, null);
+    }
+
+    public void executeCreateBillAnnex(AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) {
         LOG.trace("Executing 'Create Bill Annex' use case...");
 
         Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
@@ -656,7 +661,7 @@ public class BillContextService {
             annexContext.useExistingTitle(existingAnnexTitle);
             annexContext.useExistingContent(existingAnnexContent, true);
         }
-        Annex annex = annexContext.executeCreateAnnex();
+        Annex annex = annexContext.executeCreateAnnex(annexType, binaryContent, originalFilename, binaryContentSize);
 
         String href = annex.getName();
         String showAs = annexNumber; //createdAnnex.getMetadata().get().getNumber(); //ShowAs attribute is not used so it is kept as blank as of now.
@@ -755,6 +760,14 @@ public class BillContextService {
                 .withPackageRef(packageRef)
                 .withClonedRef(annexDocument.getRef())
                 .withLanguage(docLanguage)
+                .withFileFormatRefersTo(annexMetadataVO.getFileFormatRefersTo())
+                .withFileFormatValue(annexMetadataVO.getFileFormatValue())
+                .withTlcReferenceNameFormatId(annexMetadataVO.getTlcReferenceNameFormatId())
+                .withTlcReferenceNameFormatHref(annexMetadataVO.getTlcReferenceNameFormatHref())
+                .withTlcReferenceNameFormatShowAs(annexMetadataVO.getTlcReferenceNameFormatShowAs())
+                .withForeignAnnexNumber(annexMetadataVO.getForeignAnnexNumber())
+                .withForeignAnnexSource(annexMetadataVO.getForeignAnnexSource())
+                .withForeignFileSize(annexMetadataVO.getForeignFileSize())
                 .build();
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(annexDocument.getSource(), createValueMap(updatedAnnexMetadata),
                 xmlNodeConfigProcessor.getConfig(updatedAnnexMetadata.getCategory()), xmlNodeConfigProcessor.getOldPrefaceOfAnnexConfig());

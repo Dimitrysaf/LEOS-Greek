@@ -25,6 +25,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.api.exception.LeosExceptionResponse;
 import eu.europa.ec.leos.services.dto.response.CustomTemplateInfoResponse;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -49,7 +50,6 @@ import java.io.IOException;
 import java.util.*;
 
 import eu.europa.ec.leos.services.api.ApiService;
-import eu.europa.ec.leos.services.api.exception.CreateMilestoneException;
 import eu.europa.ec.leos.services.api.exception.PendingTranslationException;
 
 import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
@@ -207,7 +207,7 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
             try {
                 LegDocument languageLeg = apiServiceProvider.get().createMilestone(proposalRef, "");
                 milestoneLegIds.add(languageLeg.getId());
-            } catch (CreateMilestoneException e) {
+            } catch (LeosExceptionResponse e) {
                 LOG.info("Milestone already exists for proposal {}, using latest", proposalRef);
                 packageService.findDocumentsByPackageId(lp.getLinkedPackageId(), LegDocument.class, false, false).stream()
                         .max(Comparator.comparing(LegDocument::getInitialCreationInstant))

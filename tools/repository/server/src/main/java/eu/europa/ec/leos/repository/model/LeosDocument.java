@@ -57,6 +57,9 @@ public class LeosDocument {
     private String updatedBy;
     private Date updatedOn;
     private byte[] source;
+    private byte[] binarySource;
+    private String originalFilename;
+    private String binarySourceSize;
 
     private VersionType versionType;
     private Boolean isLatestVersion = false;
@@ -159,6 +162,34 @@ public class LeosDocument {
         this.metadata.putAll(xmlDocumentMetadata.generateMetadataMap(otherMetadata));
     }
 
+    public LeosDocument(DocumentV doc, String originalFilename, String binarySourceSize, List<Collaborator> collaborators, List<DocumentPropertyValues> otherMetadata) {
+        Validate.notNull(doc, "Document must not be null");
+        this.name = doc.getName();
+        this.createdBy = doc.getCreatedBy();
+        this.createdOn = Date.from(doc.getCreatedOn().atZone(ZoneId.systemDefault()).toInstant());
+        this.updatedBy = doc.getUpdatedBy();
+        this.updatedOn = doc.getUpdatedOn() != null ? Date.from(doc.getUpdatedOn().atZone(ZoneId.systemDefault()).toInstant()) : null;
+        this.originalFilename = originalFilename;
+        this.binarySourceSize = binarySourceSize;
+        this.setRef(doc.getRef());
+        this.setVersionId(doc.getVersionId());
+        this.isLatestVersion = doc.isLatestVersion();
+        this.versionLabel = doc.getVersionLabel();
+        this.versionType = VersionType.fromValue(Integer.parseInt(doc.getVersionType()));
+        this.comments = doc.getComments();
+        this.isVersionArchived = doc.isVersionArchived();
+        this.validationStatus = doc.getValidationStatus();
+
+        this.packageId = doc.getPackageId().toString();
+
+        this.setCategory(doc.getCategoryCode());
+
+        this.metadata.put("documentType", doc.getCategoryCode());
+
+        XmlDocumentMetadata xmlDocumentMetadata = new XmlDocumentMetadata(doc, collaborators);
+        this.metadata.putAll(xmlDocumentMetadata.generateMetadataMap(otherMetadata));
+    }
+
     public LeosDocument(DocumentV doc, DocumentContent content, List<Collaborator> collaborators, List<DocumentPropertyValues> otherMetadata) {
         Validate.notNull(doc, "Document must not be null");
         this.name = doc.getName();
@@ -167,6 +198,9 @@ public class LeosDocument {
         this.updatedBy = doc.getUpdatedBy();
         this.updatedOn = doc.getUpdatedOn() != null ? Date.from(doc.getUpdatedOn().atZone(ZoneId.systemDefault()).toInstant()) : null;
         this.source = content.getContent().getBytes(StandardCharsets.UTF_8);
+        this.binarySource = content.getBinaryContent();
+        this.originalFilename = content.getOriginalFilename();
+        this.binarySourceSize = content.getBinaryContentSize();
         this.setRef(doc.getRef());
         this.setVersionId(doc.getVersionId());
 
@@ -199,6 +233,9 @@ public class LeosDocument {
         this.updatedOn = docVersion.getAuditLastMDate() != null ? Date.from(docVersion.getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) :
                 null;
         this.source = docContent.getContent().getBytes(StandardCharsets.UTF_8);
+        this.binarySource = docContent.getBinaryContent();
+        this.originalFilename = docContent.getOriginalFilename();
+        this.binarySourceSize = docContent.getBinaryContentSize();
         this.setRef(doc.getRef());
         this.setVersionId(docVersion.getId());
 
@@ -588,6 +625,30 @@ public class LeosDocument {
 
     public void setPkgLastUpdatedBy(String pkgLastUpdatedBy) {
         this.pkgLastUpdatedBy = pkgLastUpdatedBy;
+    }
+
+    public byte[] getBinarySource() {
+        return binarySource;
+    }
+
+    public void setBinarySource(byte[] binarySource) {
+        this.binarySource = binarySource;
+    }
+
+    public String getOriginalFilename() {
+        return originalFilename;
+    }
+
+    public void setOriginalFilename(String originalFilename) {
+        this.originalFilename = originalFilename;
+    }
+
+    public String getBinarySourceSize() {
+        return binarySourceSize;
+    }
+
+    public void setBinarySourceSize(String binarySourceSize) {
+        this.binarySourceSize = binarySourceSize;
     }
 
 }
