@@ -980,4 +980,12 @@ public class XmlHelper {
         return showAs;
     }
 
+    public static String getOpeningTag(String attrName, String attrValue) {
+        return "<span " + attrName + "=\"" + attrValue + "\">";
+    }
+
+    public static String getClosingTag() {
+        return "</span>";
+    }
+
 }
