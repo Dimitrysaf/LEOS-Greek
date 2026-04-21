@@ -74,6 +74,9 @@
                 <citation leos:editable="true">
                     <p>{{bl.citation2Before}}<authorialNote marker="1" placement="bottom"><p>{{bl.citation2inside}}</p></authorialNote>{{bl.citation2after}}</p>
                 </citation>
+                <citation leos:editable="true">
+                    <p>{{bl.citation3}}</p>
+                </citation>
             </citations>
             <recitals leos:editable="false">
                 <intro><p>{{bl.intro}}</p></intro>
@@ -116,13 +119,13 @@
                 <heading>{{bl.heading}}</heading>
                 <paragraph>
                     <content>
-                        <p>{{bl.article2.003}}</p>
+                        <p>{{bl.article2.regulation}}</p>
                     </content>
                 </paragraph>
             </article>
             <clause leos:editable="true" leos:deletable="true" leos:alternative="true" leos:optionlist="listOption1" leos:selectedoption="1">
                 <content>
-                    <p>{{bl.clause.003}}</p>
+                    <p>{{bl.clause.regulation}}</p>
                 </content>
             </clause>
         </body>

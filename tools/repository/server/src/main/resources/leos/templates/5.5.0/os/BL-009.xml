@@ -75,7 +75,7 @@
                     <p>{{bl.citation2Before}}<authorialNote marker="1" placement="bottom"><p>{{bl.citation2inside}}</p></authorialNote>{{bl.citation2after}}</p>
                 </citation>
                 <citation leos:editable="true">
-                    <p>{{bl.citation3.committee}}</p>
+                    <p>{{bl.citation3}}</p>
                 </citation>
             </citations>
             <recitals leos:editable="false">
