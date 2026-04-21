@@ -799,7 +799,7 @@ public class RestRepository extends AbstractRestClient {
     }
 
     public String getProposalsReport(String applnUrl) {
-        String url = leosRestRepositoryURL + leosRestProposalReportURI;
+        String url = getUrl(leosRestProposalReportURI);
         String urlTemplate = UriComponentsBuilder.fromHttpUrl(url)
                 .queryParam("applnUrl", "{applnUrl}")
                 .encode()
