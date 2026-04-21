@@ -45,8 +45,8 @@
             <proprietary source="~COM">
                 <leos:templateVersion>1.0.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
-                <leos:template>SJ-005</leos:template>
-                <leos:docTemplate>PR-005</leos:docTemplate>
+                <leos:template>SJ-006</leos:template>
+                <leos:docTemplate>PR-006</leos:docTemplate>
             </proprietary>
         </meta>
         <coverPage>
@@ -65,7 +65,7 @@
                 </block>
                 <block name="reference" class="template">
                     <docNumber class="template"/>
-                </block>
+                </block>  
             </container>
             <longTitle>
                 <p>
