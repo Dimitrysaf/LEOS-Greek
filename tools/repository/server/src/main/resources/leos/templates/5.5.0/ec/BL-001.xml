@@ -87,7 +87,7 @@
                 </recital>
                 <recital leos:editable="true">
                     <num>(3)</num>
-                    <p>{{bl.recital3}}</p>
+                    <p>{{bl.recital.regulation}}</p>
                 </recital>
             </recitals>
             <formula name="enactingFormula">
