@@ -314,7 +314,7 @@ public class AnnexContextService {
                     getContent(annex), annexType, binaryContent, originalFilename, binaryContentSize);
 
             if (existingContent != null) {
-                metadata = metadata.builder().withTitle(existingTitle).withIndex(existingOrder).build();
+                metadata = metadata.builder().withRef(metadataOption.get().getRef()).withTitle(existingTitle).withIndex(existingOrder).build();
                 annex = annexService.updateAnnex(annex, existingContent, metadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.COPY_CONTENT), true);
             }
         }
