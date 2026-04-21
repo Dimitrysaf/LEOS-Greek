@@ -65,7 +65,7 @@
         </preface>
         <preamble>
             <formula name="actingEntity">
-                <p>{{bl.commission}}</p>
+                <p>{{bl.commission.directive}}</p>
             </formula>
             <citations leos:editable="false">
                 <citation leos:editable="true">
