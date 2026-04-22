@@ -39,21 +39,36 @@ When ("click on save button", function () {
     userEntityManagementPage.saveUserInfoForm()
 });
 
-When("fill the user info details except {string}", function (missingField, dataTable) {
+When("verify user creation fails for each missing mandatory field", function (dataTable) {
     const user = dataTable.hashes()[0]
-    userEntityManagementPage.fillUserInfoSectionExcept(user, missingField)
+    const mandatoryFields = ['firstName', 'lastName', 'email', 'userLogin']
+    mandatoryFields.forEach((field) => {
+        userEntityManagementPage.clickAddUserButton()
+        userEntityManagementPage.elements.userInfoLabel().should('be.visible')
+        userEntityManagementPage.fillUserInfoSectionExcept(user, field)
+        userEntityManagementPage.saveUserInfoForm()
+        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', 'Error creating user')
+        userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', 'Please fill-in all required information correctly')
+        userEntityManagementPage.confirmNewUserCreationDialogBox()
+        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('not.exist')
+    })
 });
 
-When("fill the user info {string} with {string}", function (fields, invalidValue, dataTable) {
-    const user = dataTable.hashes()[0]
-    userEntityManagementPage.fillUserInfoSectionWithInvalidData(user, fields, invalidValue)
-});
-
-Then("error popup should be displayed for user creation", function () {
-    userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', 'Error creating user')
-    userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', 'Please fill-in all required information correctly')
-    userEntityManagementPage.confirmNewUserCreationDialogBox()
-    userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('not.exist')
+When("verify user creation fails for each invalid field data", function (dataTable) {
+    const rows = dataTable.hashes()
+    rows.forEach((row) => {
+        userEntityManagementPage.clickAddUserButton()
+        userEntityManagementPage.elements.userInfoLabel().should('be.visible')
+        userEntityManagementPage.fillUserInfoSectionWithInvalidData(
+            { firstName: 'firstuser', lastName: 'lastuser', email: 'first@last.com', userLogin: 'firstLast' },
+            row.fields, row.invalidValue
+        )
+        userEntityManagementPage.saveUserInfoForm()
+        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', 'Error creating user')
+        userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', 'Please fill-in all required information correctly')
+        userEntityManagementPage.confirmNewUserCreationDialogBox()
+        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('not.exist')
+    })
 });
 
 Then("show the successful message that a new user is created", function () {
