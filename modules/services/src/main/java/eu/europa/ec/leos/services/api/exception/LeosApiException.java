@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-public class LeosApiException extends Exception {
+public class LeosApiException extends RuntimeException {
     private final HttpStatus httpStatus;
     private final String messageKey;
 

@@ -20,7 +20,6 @@ import {EuiLabelModule} from '@eui/components/eui-label';
 import {APPLICATION_ROLES, User, UserEntity} from "@/shared";
 import {EuiAllModule} from "@eui/components";
 import {TranslateModule} from "@ngx-translate/core";
-import {EuiAppShellService} from "@eui/core";
 import {AdministrationService} from "@/shared/services/administration.service";
 import {SharedModule} from "@/shared/shared.module";
 import {LeosDialogService} from "@/shared/services/leos-dialog.service";
@@ -78,7 +77,6 @@ export class UserInfoComponent implements OnInit, OnDestroy {
   }
   public set isEditActive(value: boolean) {
     this._isEditActive = value;
-    setTimeout(() => this.asService.setDimmerActiveState(this.isEditActive), 1);
   }
   public form: FormGroup;
   private destroy$: Subject<boolean> = new Subject<boolean>();
@@ -97,7 +95,6 @@ export class UserInfoComponent implements OnInit, OnDestroy {
 
   constructor(protected adminService: AdministrationService,
               private fb: FormBuilder,
-              private asService: EuiAppShellService,
               private dialogService: LeosDialogService) {}
 
   ngOnInit(): void {

@@ -26,7 +26,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Locale;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -66,7 +66,7 @@ public class ReferenceLabelServiceTest extends LeosTest {
         when(content.getSource()).thenReturn(source);
         xmlDocument = getMockedBill(content);
         when(workspaceService.findDocumentByRef("bill", XmlDocument.class)).thenReturn(xmlDocument);
-        document = createXercesDocument(xmlDocument.getContent().get().getSource().getBytes());
+        document = createDocument(xmlDocument.getContent().get().getSource().getBytes());
     }
 
     /**

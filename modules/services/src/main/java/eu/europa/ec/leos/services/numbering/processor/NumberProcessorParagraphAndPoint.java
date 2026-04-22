@@ -4,7 +4,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
 import eu.europa.ec.leos.services.numbering.config.NumberConfig;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +14,12 @@ import org.w3c.dom.Node;
 
 import java.util.Arrays;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.getNodeNum;
+import static eu.europa.ec.leos.services.support.XmlUtils.getNodeNum;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
-import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
+import static eu.europa.ec.leos.services.support.XmlUtils.getFirstChild;
 
 @Component
 public class NumberProcessorParagraphAndPoint extends NumberProcessorDefault {
@@ -39,7 +39,7 @@ public class NumberProcessorParagraphAndPoint extends NumberProcessorDefault {
     protected void renumberChildren(Node node, boolean numberChildren, String language) {
         Node listNode = getFirstChild(node, LIST);
         if (listNode != null && listNode.getFirstChild() != null) {
-            String elementType = XercesUtils.getFirstChildType(listNode, Arrays.asList(INDENT, POINT));
+            String elementType = XmlUtils.getFirstChildType(listNode, Arrays.asList(INDENT, POINT));
             if(elementType != null){
                 numberProcessorHandler.renumberElement(node, elementType, numberChildren, language);
             }

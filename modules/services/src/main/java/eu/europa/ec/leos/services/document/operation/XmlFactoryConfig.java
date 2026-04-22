@@ -1,34 +1,45 @@
 package eu.europa.ec.leos.services.document.operation;
 
+import eu.europa.ec.leos.xml.LeosDocumentBuilderFactory;
+import eu.europa.ec.leos.xml.LeosTransformerFactory;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamSource;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Configuration
+@RequiredArgsConstructor
 public class XmlFactoryConfig {
+
+    private static final String FMX_2_AKN_LEOS_XSLT = "classpath:eu/europa/ec/leos/xslt/templates/fmx2akn-leos.xslt";
+
+    private final ApplicationContext context;
 
     @Bean
     public DocumentBuilderFactory documentBuilderFactory() throws Exception {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setValidating(false);
-        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        return factory;
+        return LeosDocumentBuilderFactory.newInstance();
     }
 
     @Bean
     public TransformerFactory transformerFactory() throws TransformerConfigurationException {
-        TransformerFactory factory = TransformerFactory.newInstance();
-        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        try { factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, ""); } catch (IllegalArgumentException ignored) {}
-        try { factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, ""); } catch (IllegalArgumentException ignored) {}
-        return factory;
+        return LeosTransformerFactory.newInstance();
+    }
+
+    @Bean
+    public Templates xsltTemplates() throws TransformerConfigurationException, IOException {
+        final TransformerFactory transformerFactory = LeosTransformerFactory.newSaxonInstance();
+        Resource resource = context.getResource(FMX_2_AKN_LEOS_XSLT);
+        try (InputStream is = resource.getInputStream()) {
+            return transformerFactory.newTemplates(new StreamSource(is));
+        }
     }
 }

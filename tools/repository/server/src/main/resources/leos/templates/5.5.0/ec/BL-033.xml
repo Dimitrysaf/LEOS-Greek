@@ -65,7 +65,7 @@
         </preface>
         <preamble>
             <formula name="actingEntity">
-                <p>{{bl.commission}}</p>
+                <p>{{bl.commission.decision}}</p>
             </formula>
             <citations leos:editable="false">
                 <citation leos:editable="true">
@@ -112,7 +112,7 @@
                 <heading>{{bl.heading}}</heading>
                 <paragraph>
                     <content>
-                        <p>{{bl.article2.033}}</p>
+                        <p>{{bl.article2.decision}}</p>
                     </content>
                 </paragraph>
             </article>

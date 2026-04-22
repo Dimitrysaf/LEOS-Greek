@@ -98,7 +98,8 @@ public class AdministrationController {
     @DeleteMapping("/users/{userLogin}")
     @HasAnyPermission({LeosPermission.CAN_MANAGE_ALL_USERS})
     public ResponseEntity<Void> deleteUser(@PathVariable final String userLogin) {
-        return usersClient.deleteSpecialUser(userLogin);
+        usersClient.deleteSpecialUser(userLogin);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PatchMapping("/entities")
@@ -115,7 +116,14 @@ public class AdministrationController {
     public ResponseEntity<Void> deleteEntity(@PathVariable final String entityId) throws ForbiddenException {
         final User user = securityContext.getUser();
         checkAccessToEntity(user, new EntityDTO(entityId));
-        return usersClient.deleteEntity(entityId);
+        usersClient.deleteEntity(entityId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping("/users/{userLogin}")
+    @HasAnyPermission({LeosPermission.CAN_MANAGE_ALL_USERS})
+    public UserDTO getUserDetails(@PathVariable String userLogin) {
+        return usersClient.getUserDetails(userLogin);
     }
 
     private EntityDTO prepareEntityDTO(final User user, final EntityDTO requestEntity) throws LeosApiException {

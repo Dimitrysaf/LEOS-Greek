@@ -22,7 +22,7 @@ import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,9 +38,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.createNodeFromXmlFragment;
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValue;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
+import static eu.europa.ec.leos.services.support.XmlUtils.createNodeFromXmlFragment;
+import static eu.europa.ec.leos.services.support.XmlUtils.getAttributeValue;
+import static eu.europa.ec.leos.services.support.XmlUtils.nodeToString;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 @Service
@@ -159,7 +159,7 @@ public class ImportServiceImpl implements ImportService {
     }
 
     private String addLeosAttributes(String xmlElement) {
-        String updatedElement = XercesUtils.removeXmlDefinition(xmlElement);
+        String updatedElement = XmlUtils.removeXmlDefinition(xmlElement);
 
         // Check if leos:editable exists and its value
         boolean needsEditable = !hasAttribute(updatedElement, "leos:editable");

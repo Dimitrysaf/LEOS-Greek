@@ -38,4 +38,6 @@ public interface SpecialEntityRepository extends JpaRepository<SpecialEntity, St
     void replaceParents(String oldParentId, String newParentId);
 
     List<SpecialEntity> findByParentId(String parentId);
+
+    Collection<Object> findByNameIgnoreCase(String name);
 }

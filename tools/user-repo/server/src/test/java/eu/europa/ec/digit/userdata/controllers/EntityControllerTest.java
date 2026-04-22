@@ -114,7 +114,9 @@ public class EntityControllerTest {
         mockMvc.perform(post("/entities")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(entityAsJson))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("page.workspace.administration.entity-info.entity-name-conflict"));
     }
 
     @Test
@@ -185,5 +187,15 @@ public class EntityControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-
+    @Test
+    void GIVEN_name_exists_in_comref_WHEN_creating_entity_THEN_error() throws Exception {
+        EntityDto entityDto = new EntityDto(null, "HR.F.1", "HR");
+        String entityAsJson = objectMapper.writeValueAsString(entityDto);
+        mockMvc.perform(post("/entities")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(entityAsJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message")
+                        .value("page.workspace.administration.entity-info.comref-name-conflict"));
+    }
 }

@@ -4,7 +4,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
 import eu.europa.ec.leos.services.numbering.config.NumberConfig;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,7 @@ import org.w3c.dom.Node;
 
 import java.util.List;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.getNodeNum;
+import static eu.europa.ec.leos.services.support.XmlUtils.getNodeNum;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
@@ -37,10 +37,10 @@ public class NumberProcessorLevel extends NumberProcessorDepthBasedDefault {
 
     @Override
     protected void renumberChildrenOfDifferentType(Node node, boolean numberChildren, String language) {
-        List<Node> listNodes = XercesUtils.getChildren(node, LIST);
+        List<Node> listNodes = XmlUtils.getChildren(node, LIST);
         for (int i = 0; i < listNodes.size(); i++) {
             Node listNode = listNodes.get(i);
-            String elementType = XercesUtils.checkFirstChildType(listNode, INDENT) ? INDENT : POINT;
+            String elementType = XmlUtils.checkFirstChildType(listNode, INDENT) ? INDENT : POINT;
             numberProcessorHandler.renumberElement(node, elementType, numberChildren, language);
         }
     }

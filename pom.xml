@@ -20,7 +20,7 @@
 
     <groupId>eu.europa.ec.leos.pilot</groupId>
     <artifactId>leos</artifactId>
-    <version>5.6.0-SNAPSHOT</version>
+    <version>5.5.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>LEOS Pilot</name>
@@ -147,7 +147,7 @@
         <okhttp.version>5.3.1</okhttp.version>
         <kotlin-stdlib.version>2.2.21</kotlin-stdlib.version>
 
-        <saxon.version>9.8.0-3</saxon.version>
+        <saxon.version>12.9</saxon.version>
         <jena.version>3.3.0</jena.version>
         <icu4j.version>78.1</icu4j.version>
         <jaxen-version>1.2.0</jaxen-version>
@@ -182,6 +182,7 @@
         <jackson-dataformat-yaml.version>2.16.1</jackson-dataformat-yaml.version>
         <pdfbox.version>3.0.5</pdfbox.version>
         <spring-data.version>3.5.10</spring-data.version>
+        <xercesImpl.version>2.12.2</xercesImpl.version>
         <!-- Default authentication -->
         <leos.web.auth.method>BASIC</leos.web.auth.method>
     </properties>
@@ -407,6 +408,10 @@
                     <exclusion>
                         <groupId>commons-codec</groupId>
                         <artifactId>commons-codec</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.fasterxml.jackson.core</groupId>
+                        <artifactId>jackson-core</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -687,6 +692,12 @@
                 <groupId>com.zaxxer</groupId>
                 <artifactId>HikariCP</artifactId>
                 <version>${hikari.version}</version>
+            </dependency>
+            <!-- xercesImpl needed by jena-tdb. We override here with the latest xercesImpl version -->
+            <dependency>
+                <groupId>xerces</groupId>
+                <artifactId>xercesImpl</artifactId>
+                <version>${xercesImpl.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

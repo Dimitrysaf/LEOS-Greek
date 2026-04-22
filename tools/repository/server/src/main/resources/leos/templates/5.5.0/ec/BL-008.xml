@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?>
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+    <bill name="DIR_IMPL">
+        <meta>
+            <identification source="~COM">
+                <FRBRWork>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:fileCUID value="yyyyyyy"/>
+                        <akn4eu:docCUID value="xxxxxx"/>
+                    </preservation>
+                    <FRBRcountry value="EU"/>
+                    <FRBRprescriptive value="true"/>
+                </FRBRWork>
+                <FRBRExpression>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <FRBRlanguage language="{{language}}"/>
+                </FRBRExpression>
+                <FRBRManifestation>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+					<preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                		<akn4eu:akn4euVersion value="4.2 AA"/>
+						<akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
+                	</preservation>
+                </FRBRManifestation>
+            </identification>
+            <references source="~COM">
+                <TLCLocation xml:id="BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
+                <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
+                <TLCRole xml:id="PRESID" href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
+                <TLCReference xml:id="DIR_IMPL" href="http://publications.europa.eu/resource/authority/resource-type/DIR_IMPL" name="docType" showAs="Implementing directive"/>
+                <TLCReference xml:id="legalBasis" href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis"/>
+                <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/{{language3}}" name="language" showAs="{{language}}"/>
+                <TLCConcept xml:id="ART_DEF" href="http://publications.europa.eu/resource/authority/subdivision-content/ART_DEF" showAs="Article on definitions"/>
+            </references>
+            <proprietary source="~COM">
+                <leos:templateVersion>1.0.0</leos:templateVersion>
+                <leos:docVersion>0.1.0</leos:docVersion>
+                <leos:template>SJ-008</leos:template>
+                <leos:docTemplate>BL-008</leos:docTemplate>
+            </proprietary>
+        </meta>
+        <preface>
+            <container name="procedureIdentifier" class="template">
+                <p>
+                    <docketNumber class="template" />
+                </p>
+            </container>
+            <longTitle>
+                <p>
+                    <docType refersTo="~DIR_IMPL">{{docType.008}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>
+                    <docPurpose>{{docPurpose}}</docPurpose>
+                </p>
+            </longTitle>
+        </preface>
+        <preamble>
+            <formula name="actingEntity">
+                <p>{{bl.commission.directive}}</p>
+            </formula>
+            <citations leos:editable="false">
+                <citation leos:editable="true">
+                    <p>{{bl.citation1}}</p>
+                </citation>
+                <citation leos:editable="true">
+                    <p>{{bl.citation2Before}}<authorialNote marker="1" placement="bottom"><p>{{bl.citation2inside}}</p></authorialNote>{{bl.citation2after}}</p>
+                </citation>
+                <citation leos:editable="true">
+                    <p>{{bl.citation3}}</p>
+                </citation>
+            </citations>
+            <recitals leos:editable="false">
+                <intro><p>{{bl.intro}}</p></intro>
+                <recital leos:editable="true">
+                    <num>(1)</num>
+                    <p>{{bl.recital}}</p>
+                </recital>
+                <recital leos:editable="true">
+                    <num>(2)</num>
+                    <p>{{bl.recital}}</p>
+                </recital>
+                <recital leos:editable="true">
+                    <num>(3)</num>
+                    <p>{{bl.recital}}</p>
+                </recital>
+                <recital leos:editable="true">
+                    <num>(4)</num>
+                    <p>{{bl.recital.directive}}</p>
+                </recital>
+            </recitals>
+            <formula name="enactingFormula">
+                <p>{{bl.enactingFormula.directive}}</p>
+            </formula>
+        </preamble>
+        <body>
+            <article leos:editable="true" leos:deletable="true" leos:autonumbering="true">
+                <num leos:editable="false">{{bl.num1}}</num>
+                <heading>{{bl.heading}}</heading>
+                <paragraph>
+                    <num>1.</num>
+                    <content>
+                        <p>{{bl.content}}</p>
+                    </content>
+                </paragraph>
+                <paragraph>
+                    <num>2.</num>
+                    <content>
+                        <p>{{bl.content}}</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article leos:editable="true" leos:deletable="true" leos:autonumbering="true" leos:alternative="true" leos:optionlist="listOption1" leos:selectedoption="1">
+                <num leos:editable="false">{{bl.num2}}</num>
+                <heading>{{bl.heading}}</heading>
+                <paragraph>
+                    <num>1.</num>
+                    <subparagraph>
+                        <content>
+                            <p>{{bl.firstParagraphOfArticle2.directive}}</p>
+                        </content>
+                    </subparagraph>
+                    <subparagraph>
+                        <content>
+                            <p>{{bl.secondParagraphOfArticle2.directive}}</p>
+                        </content>
+                    </subparagraph>
+                </paragraph>
+                <paragraph>
+                    <num>2.</num>
+                    <content>
+                        <p>{{bl.thirdParagraphOfArticle2.directive}}</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article leos:editable="true" leos:deletable="true" leos:autonumbering="true">
+                <num leos:editable="false">{{bl.num3}}</num>
+                <heading>{{bl.heading}}</heading>
+                <paragraph>
+                    <content>
+                        <p>{{bl.article3.directive}}</p>
+                    </content>
+                </paragraph>
+            </article>
+            <article leos:editable="true" leos:deletable="true" leos:autonumbering="true">
+                <num leos:editable="false">{{bl.num4}}</num>
+                <heading>{{bl.heading}}</heading>
+                <paragraph>
+                    <content>
+                        <p>{{bl.article4.directive}}</p>
+                    </content>
+                </paragraph>
+            </article>
+        </body>
+        <conclusions>
+            <p>{{bl.conclusionDate}}</p>
+            <block name="signatory" leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption2" leos:selectedoption="1">
+                <signature leos:optionlist="listOption2">
+                    <organization refersTo="~_COM">{{bl.forCommission}}</organization>
+                    <role refersTo="~_PRESID">{{bl.role.president}}</role>
+                    <person refersTo="">[...]</person>
+                </signature>
+            </block>
+        </conclusions>
+    </bill>
+</akomaNtoso>

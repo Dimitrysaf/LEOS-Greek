@@ -16,7 +16,7 @@ package eu.europa.ec.leos.services.label;
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.services.label.ref.Ref;
 import eu.europa.ec.leos.services.label.ref.TreeNode;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +42,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREAMBLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
-import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 
 public class TreeHelper {
@@ -57,7 +56,7 @@ public class TreeHelper {
         Stopwatch watch = Stopwatch.createStarted();
 
         for (Ref ref : refs) {
-            Node elementNode = XercesUtils.getElementById(node, ref.getHref());
+            Node elementNode = XmlUtils.getElementById(node, ref.getHref());
             if (elementNode == null) {
                 //probably it is broken reference
                 //LOG.trace("Element with id: {} does not exists. Skipping", ref.getHref());
@@ -74,7 +73,7 @@ public class TreeHelper {
                     continue;
                 }
                 //find if any ancestor of current node exists in tree. If it does, break and attach all children to this node in tree. 
-                else if ((parent = find(root, TreeNode::getIdentifier, XercesUtils.getId(elementNode))) != null) {
+                else if ((parent = find(root, TreeNode::getIdentifier, XmlUtils.getId(elementNode))) != null) {
                     break;
                 }
                 nodeStack.push(elementNode);
@@ -148,7 +147,7 @@ public class TreeHelper {
 
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             tagName = node.getNodeName();
-            tagId = XercesUtils.getId(node);
+            tagId = XmlUtils.getId(node);
         } else if (node.getNodeType() == Node.TEXT_NODE) {
             tagName = "text";
         }
@@ -160,7 +159,7 @@ public class TreeHelper {
     }
 
     private static boolean isSoleNumbered(Node node, Node documentNode) {
-        NodeList listOfNodes = XercesUtils.getElementsByName(documentNode, node.getNodeName());
+        NodeList listOfNodes = XmlUtils.getElementsByName(documentNode, node.getNodeName());
         int count = 0;
         for(int i = 0; i < listOfNodes.getLength(); i++) {
             Node leosAction  = listOfNodes.item(i).getAttributes().getNamedItem("leos:action");
@@ -191,11 +190,11 @@ public class TreeHelper {
 
     private static List<String> getAncestorsIdsForElementId(Node node, String idAttributeValue) {
         LinkedList<String> ancestorsIds = new LinkedList<String>();
-        Node elementNode = XercesUtils.getElementById(node, idAttributeValue);
+        Node elementNode = XmlUtils.getElementById(node, idAttributeValue);
         if (elementNode != null) {
             ancestorsIds.add(idAttributeValue);
             while (elementNode.getParentNode() != null) {
-                ancestorsIds.addFirst(XercesUtils.getParentId(elementNode));
+                ancestorsIds.addFirst(XmlUtils.getParentId(elementNode));
                 elementNode = elementNode.getParentNode();
             }
         }
@@ -205,9 +204,9 @@ public class TreeHelper {
     private static int findSeq(Node node, String tagName) {
         int childSeq = 1;
         Node tmpNode = node;
-        while ((node = XercesUtils.getSibling(node, true)) != null) {
+        while ((node = XmlUtils.getSibling(node, true)) != null) {
             if ((tagName == null || tagName.equals(node.getNodeName())) //this considers elements of same type only.
-                    && !XercesUtils.toBeSkippedForNumbering(node)) {
+                    && !XmlUtils.toBeSkippedForNumbering(node)) {
                 childSeq++;
             }
         }
@@ -219,14 +218,14 @@ public class TreeHelper {
         if (node != null && tagName != null && tagName.equals(SUBPARAGRAPH)) {
             Node parent = node.getParentNode();
             if (LIST.equalsIgnoreCase(parent.getNodeName())) {
-                while ((parent = XercesUtils.getSibling(parent, true)) != null) {
+                while ((parent = XmlUtils.getSibling(parent, true)) != null) {
                     if ((tagName.equals(parent.getNodeName())) //this considers elements of same type only.
-                            && !XercesUtils.toBeSkippedForNumbering(parent)) {
+                            && !XmlUtils.toBeSkippedForNumbering(parent)) {
                         childSeq2Add++;
                     } else if (LIST.equalsIgnoreCase(parent.getNodeName())) {
-                        List<Node> children = XercesUtils.getChildren(parent, tagName);
+                        List<Node> children = XmlUtils.getChildren(parent, tagName);
                         for (Node child : children) {
-                            if (!XercesUtils.toBeSkippedForNumbering(child)) {
+                            if (!XmlUtils.toBeSkippedForNumbering(child)) {
                                 childSeq2Add++;
                             }
                         }
@@ -238,7 +237,7 @@ public class TreeHelper {
     }
 
     private static String findNum(Node node, boolean isSoleNumbered) {
-        String numNode = XercesUtils.getNodeNumExcludingContentRemoved(node);
+        String numNode = XmlUtils.getNodeNumExcludingContentRemoved(node);
         return numNode != null ? parseNum(numNode, isSoleNumbered) : null;
     }
 

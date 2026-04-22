@@ -31,9 +31,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -42,23 +39,19 @@ import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
-import eu.europa.ec.digit.leos.pilot.export.exception.XmlValidationException;
 
 public class XmlUtil {
 
-    private static final Logger LOG = LoggerFactory.getLogger(XmlUtil.class);
+    private static final String DOCUMENT_BUILDER_FACTORY_CLASS_NAME = "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl";
+    public static final String TRANSFORMER_FACTORY_CLASS_NAME = "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
+
     public static final String XML_DOC_EXT = ".xml";
     public static final String XML_NAME = "name";
     public static final String NAMESPACE_AKN_NAME = "akn";
@@ -67,20 +60,19 @@ public class XmlUtil {
     public static final String NAMESPACE_AKN4EU_URI = "http://imfc.europa.eu/akn4eu";
     public static final String TAG_AKN4EU_NAME = "akn4eu:akn4euVersion";
     private static final int NO_MATCH_INDEX_VALUE = -1;
+    public static final String DISALLOW_DOCTYPE_DECL = "http://apache.org/xml/features/disallow-doctype-decl";
+    public static final String EXTERNAL_GENERAL_ENTITIES = "http://xml.org/sax/features/external-general-entities";
+    public static final String EXTERNAL_PARAMETER_ENTITIES = "http://xml.org/sax/features/external-parameter-entities";
+    public static final String LOAD_EXTERNAL_DTD = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
 
     private static Transformer getTransformer() throws TransformerConfigurationException {
-        final TransformerFactory factory = TransformerFactory.newInstance();
+        final TransformerFactory factory = TransformerFactory.newInstance(TRANSFORMER_FACTORY_CLASS_NAME, null);
         factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         factory.setURIResolver((href, base) -> {
             throw new TransformerException("External URI resolution blocked");
         });
-        try {
-            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
-        } catch (IllegalArgumentException e) {
-            // Some implementations (Xerces, Xalan 2.7.3 and Saxon) doesn't support JAXP 1.5
-            //LOG.error("Error: {} - {}", factory.getClass().getName(), e.getMessage());
-        }
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
         return factory.newTransformer();
     }
 
@@ -98,32 +90,24 @@ public class XmlUtil {
         }
 
         private static DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
-            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-            builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            builderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            builderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-            builderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance(DOCUMENT_BUILDER_FACTORY_CLASS_NAME, null);
+            builderFactory.setFeature(DISALLOW_DOCTYPE_DECL, true);
+            builderFactory.setFeature(EXTERNAL_GENERAL_ENTITIES, false);
+            builderFactory.setFeature(EXTERNAL_PARAMETER_ENTITIES, false);
+            builderFactory.setFeature(LOAD_EXTERNAL_DTD, false);
             builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            try {
-                builderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-                builderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
-            } catch (IllegalArgumentException e) {
-                // Some implementations (Xerces, Xalan 2.7.3 and Saxon) doesn't support JAXP 1.5
-                //LOG.error("Error: {} - {}", builderFactory.getClass().getName(), e.getMessage());
-            }
+            builderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             builderFactory.setExpandEntityReferences(false);
             builderFactory.setNamespaceAware(true);
             builderFactory.setXIncludeAware(false);
-            DocumentBuilder builder = builderFactory.newDocumentBuilder();
-            return builder;
+            return builderFactory.newDocumentBuilder();
         }
 
         public static String parseNode(Node node) throws XmlUtilException {
             if (XmlUtil.isNodeEmpty(node)) {
                 return null;
             }
-            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-            try {
+            try (ByteArrayOutputStream buffer = new ByteArrayOutputStream()){
                 StreamResult result = new StreamResult(buffer);
                 Node securedNode = createSecureDocumentFromNode(node);
                 DOMSource source = new DOMSource(securedNode);
@@ -133,11 +117,7 @@ public class XmlUtil {
                 transformer.transform(source, result);
                 String nodeContent = new String(buffer.toByteArray(), StandardCharsets.UTF_8).replaceAll("(<\\?xml.*?\\?>)", "");
                 return nodeContent.replaceAll("xmlns(.*?)=(\".*?\")", "");
-            } catch(TransformerException e) {
-                closeOutputStream(buffer);
-                throw new XmlUtilException("Error getting xml bytes", e);
             } catch (Exception e) {
-                closeOutputStream(buffer);
                 throw new XmlUtilException("Error getting xml bytes", e);
             }
         }
@@ -206,8 +186,7 @@ public class XmlUtil {
         public byte[] getBytes() throws XmlUtilException {
             if (this.xmlDocument == null){ return null; }
 
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            try {
+            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                 Node secureNode = createSecureDocumentFromNode(this.xmlDocument);
                 StreamResult xmlStreamResult = new StreamResult(outputStream);
                 DOMSource xmlSource = new DOMSource(secureNode);
@@ -216,13 +195,8 @@ public class XmlUtil {
                 transformer.setOutputProperty(OutputKeys.VERSION, "1.0");
                 transformer.transform(xmlSource, xmlStreamResult);
                 byte [] xmlBytes = outputStream.toByteArray();
-                closeOutputStream(outputStream);
                 return xmlBytes;
-            } catch(TransformerException e){
-                closeOutputStream(outputStream);
-                throw new XmlUtilException("Error getting xml bytes", e);
             } catch (Exception e) {
-                closeOutputStream(outputStream);
                 throw new XmlUtilException("Error getting xml bytes", e);
             }
         }
@@ -263,14 +237,6 @@ public class XmlUtil {
 
         public void setName(String name) {
             this.name = name;
-        }
-
-        private static void closeOutputStream(OutputStream outputStream) throws XmlUtilException {
-            try {
-                outputStream.close();
-            } catch(IOException e){
-                throw new XmlUtilException("Unable to close byte stream", e);
-            }
         }
     }
 

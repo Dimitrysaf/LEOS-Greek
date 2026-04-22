@@ -36,9 +36,9 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
-import eu.europa.ec.leos.services.support.LeosXercesUtils;
+import eu.europa.ec.leos.services.support.LeosXmlUtils;
 import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.util.VersionComparator;
 import org.apache.commons.lang3.StringUtils;
@@ -55,7 +55,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 
 @Service
@@ -201,8 +201,8 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
             case ANNEX:
             case BILL:
             case STAT_DIGIT_FINANC_LEGIS:
-                final Document document = XercesUtils.createXercesDocument(content.getBytes(XmlHelper.UTF_8));
-                final byte[] node = LeosXercesUtils.wrapWithPageOrientationDivs(document);
+                final Document document = XmlUtils.createDocument(content.getBytes(XmlHelper.UTF_8));
+                final byte[] node = LeosXmlUtils.wrapWithPageOrientationDivs(document);
                 content = new String(node, XmlHelper.UTF_8);
                 return content;
             default:
@@ -253,8 +253,8 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     @Override
     public String getDocumentAsHtml(XmlDocument xmlDocument, String contextPath, List<LeosPermission> permissions) {
         String documentAsHtml = this.getDocumentAsHtml(xmlDocument, contextPath, permissions, false);
-        Document document = XercesUtils.createXercesDocument(documentAsHtml.getBytes(UTF_8));
-        documentAsHtml = new String(LeosXercesUtils.wrapWithPageOrientationDivs(document), UTF_8);
+        Document document = XmlUtils.createDocument(documentAsHtml.getBytes(UTF_8));
+        documentAsHtml = new String(LeosXmlUtils.wrapWithPageOrientationDivs(document), UTF_8);
         return documentAsHtml;
     }
 
@@ -378,7 +378,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
 
     @Override
     public boolean isDeprecatedDocument(byte[] xmlContent, String akn4euVersionValue, String templateVersionValue) {
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         if (!xmlContentProcessor.containsAlineas(document)) {
             String akn4euVersion = getAkn4euVersion(xmlContent);
             String leosTemplateVersion = getLeosTemplateVersion(xmlContent);

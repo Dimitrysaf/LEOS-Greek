@@ -1,7 +1,7 @@
 package eu.europa.ec.leos.services.numbering.config;
 
 import eu.europa.ec.leos.services.structure.StructureContext;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.Attribute;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
@@ -40,19 +40,19 @@ public class NumberConfigFactory {
     public NumberConfig getNumberConfig(String elementName, int depth, final Node firstElement, String language) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         List<NumberingConfig> numberingConfigs = structureContextProvider.get().getNumberingConfigs();
-        String listTypeAttributeValue = XercesUtils.getAttributeValue(firstElement.getParentNode(), LEOS_LIST_TYPE_ATTR);
+        String listTypeAttributeValue = XmlUtils.getAttributeValue(firstElement.getParentNode(), LEOS_LIST_TYPE_ATTR);
         List<TocItem> foundTocItems = getTocItemsByName(tocItems, elementName);
         NumberingType numberingType ;
         if (listTypeAttributeValue != null) {
             numberingType = NumberingType.fromValue(listTypeAttributeValue.toUpperCase());
-            XercesUtils.removeAttribute(firstElement.getParentNode(), LEOS_LIST_TYPE_ATTR);
-        } else if (foundTocItems.size() > 1 && XercesUtils.getFirstChild(firstElement, NUM) != null) {
-            String currentNum = XercesUtils.getNodeNum(firstElement);
+            XmlUtils.removeAttribute(firstElement.getParentNode(), LEOS_LIST_TYPE_ATTR);
+        } else if (foundTocItems.size() > 1 && XmlUtils.getFirstChild(firstElement, NUM) != null) {
+            String currentNum = XmlUtils.getNodeNum(firstElement);
 
             List<String> listOfTocITemWithSubElement = findTocItemsWithElementAsSubElement(tocItems, elementName);
 
             if (!CollectionUtils.isEmpty(listOfTocITemWithSubElement)) {
-                Node firstAscendant = XercesUtils.getFirstAscendant(firstElement, listOfTocITemWithSubElement);
+                Node firstAscendant = XmlUtils.getFirstAscendant(firstElement, listOfTocITemWithSubElement);
                 List<Attribute> attributeList = findAttributeValueOfElementType(tocItems, firstAscendant.getNodeName());
                 Attribute matchingAttribute = findMatchingAttributeValue(firstAscendant, attributeList);
                 NumberingType finalNumberingType = findNumberingTypeForAttribute(tocItems, matchingAttribute, elementName, language);
@@ -150,7 +150,7 @@ public class NumberConfigFactory {
     }
 
     private Attribute findMatchingAttributeValue(Node node, List<Attribute> attributeList) {
-        Map<String, String> attrMap = XercesUtils.getAttributes(node);
+        Map<String, String> attrMap = XmlUtils.getAttributes(node);
         for(Attribute attr : attributeList) {
             String attrVal = attrMap.get(attr.getAttributeName());
             if(attrVal != null && attrVal.equals(attr.getAttributeValue())) {

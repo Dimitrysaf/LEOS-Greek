@@ -20,7 +20,7 @@ import eu.europa.ec.leos.services.numbering.depthBased.ParentChildConverter;
 import eu.europa.ec.leos.services.numbering.depthBased.ParentChildNode;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.NumberingType;
@@ -42,12 +42,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
-import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
-import static eu.europa.ec.leos.services.support.XercesUtils.replaceElement;
-import static eu.europa.ec.leos.services.support.XercesUtils.addLeosNamespace;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.nodeToByteArray;
+import static eu.europa.ec.leos.services.support.XmlUtils.nodeToString;
+import static eu.europa.ec.leos.services.support.XmlUtils.getFirstChild;
+import static eu.europa.ec.leos.services.support.XmlUtils.replaceElement;
+import static eu.europa.ec.leos.services.support.XmlUtils.addLeosNamespace;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CHAPTER;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
@@ -100,10 +100,10 @@ public class NumberServiceProposal implements NumberService {
 
     @Override
     public byte[] renumberSpecificElementChildren(byte[] xmlContent, String tagName, String elementId) {
-        Document document = createXercesDocument(xmlContent, true);
-        Node specificNode = XercesUtils.getElementById(document, elementId);
+        Document document = XmlUtils.createDocument(xmlContent, true);
+        Node specificNode = XmlUtils.getElementById(document, elementId);
         if (specificNode != null) {
-            Document specificNodeDoc = createXercesDocument(nodeToByteArray(specificNode), true);
+            Document specificNodeDoc = XmlUtils.createDocument(nodeToByteArray(specificNode), true);
             numberProcessorHandler.renumberDocument(specificNodeDoc, tagName, documentLanguageContext.getDocumentLanguage(), true);
             replaceElement(specificNode, nodeToString(specificNodeDoc));
         }
@@ -121,7 +121,7 @@ public class NumberServiceProposal implements NumberService {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, RECITALS, documentLanguageContext.getDocumentLanguage())) {
             Stopwatch stopwatch = Stopwatch.createStarted();
-            Document document = createXercesDocument(xmlContent);
+            Document document = createDocument(xmlContent);
             NodeList nodeList = document.getElementsByTagName(RECITALS);
             List<ParentChildNode> parentChildList = parentChildConverter.getParentChildByHierarchicalStructure(nodeList, true);
             LOG.trace("renumberRecitalSections - Found {} '{}'s element in the document", nodeList.getLength(), RECITALS);
@@ -153,7 +153,7 @@ public class NumberServiceProposal implements NumberService {
     private byte[] renumberDocument(byte[] xmlContent, String elementName, boolean namespaceEnabled, boolean renumberChildren) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, elementName, documentLanguageContext.getDocumentLanguage())) {
-            Document document = createXercesDocument(xmlContent, namespaceEnabled);
+            Document document = XmlUtils.createDocument(xmlContent, namespaceEnabled);
             numberProcessorHandler.renumberDocument(document, elementName, documentLanguageContext.getDocumentLanguage(), renumberChildren);
             addLeosNamespace(document);
             return nodeToByteArray(document);
@@ -186,7 +186,7 @@ public class NumberServiceProposal implements NumberService {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, LEVEL, documentLanguageContext.getDocumentLanguage())) {
             Stopwatch stopwatch = Stopwatch.createStarted();
-            Document document = createXercesDocument(xmlContent);
+            Document document = createDocument(xmlContent);
             NodeList nodeList = document.getElementsByTagName(LEVEL);
             List<ParentChildNode> parentChildList = parentChildConverter.getParentChildStructure(nodeList, true);
             LOG.trace("renumberLevel - Found {} '{}'s element in the document, and grouped them in {} top elements", nodeList.getLength(), LEVEL, parentChildList.size());
@@ -219,7 +219,7 @@ public class NumberServiceProposal implements NumberService {
         }
         NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem, language);
         if (isAutoNumberingEnabled(tocItems, elementName, language)) {
-            Document document = createXercesDocument(xmlContent, false);
+            Document document = XmlUtils.createDocument(xmlContent, false);
             NodeList elements = document.getElementsByTagName(elementName);
             if (elementName.equalsIgnoreCase(CHAPTER)) {
                 for (int i=0; i<elements.getLength(); i++) {
@@ -238,7 +238,7 @@ public class NumberServiceProposal implements NumberService {
                     }
                 }
             }
-            List<Node> nodeList = XercesUtils.getNodesAsList(elements);
+            List<Node> nodeList = XmlUtils.getNodesAsList(elements);
             List<Node> subDivParentNodeList = new ArrayList<>();
             //from this list find parent and get child nodes list of same subdivision type and send that list to renumber
             for (int i = 0; i < nodeList.size(); i++) {
@@ -246,7 +246,7 @@ public class NumberServiceProposal implements NumberService {
                 if (subDivParentNodeList.indexOf(parentNode) == -1) {
                     subDivParentNodeList.add(parentNode);
                     NodeList childNodes = parentNode.getChildNodes();
-                    List<Node> subdivsionNodeList = XercesUtils.getNodesAsList(childNodes).stream()
+                    List<Node> subdivsionNodeList = XmlUtils.getNodesAsList(childNodes).stream()
                             .filter(node -> node.getNodeName().equals(elementName))
                             .collect(Collectors.toList());
                     numberProcessorHandler.renumberHighSubDiv(subdivsionNodeList, numberingType, language);
@@ -282,9 +282,9 @@ public class NumberServiceProposal implements NumberService {
         }
 
         if (isAutoNumberingEnabled(tocItems, elementName, language)) {
-            Document document = createXercesDocument(xmlContent, namespaceEnabled);
+            Document document = XmlUtils.createDocument(xmlContent, namespaceEnabled);
             NodeList elements = document.getElementsByTagName(elementName);
-            List<Node> nodeList = XercesUtils.getNodesAsList(elements);
+            List<Node> nodeList = XmlUtils.getNodesAsList(elements);
             List<Node> subDivParentNodeList = new ArrayList<>();
             //from this list find parent and get child nodes list of same subdivision type and send that list to renumber
             for (int i = 0; i < nodeList.size(); i++) {
@@ -292,7 +292,7 @@ public class NumberServiceProposal implements NumberService {
                 if (subDivParentNodeList.indexOf(parentNode) == -1) {
                     subDivParentNodeList.add(parentNode);
                     NodeList childNodes = parentNode.getChildNodes();
-                    List<Node> subdivsionNodeList = XercesUtils.getNodesAsList(childNodes).stream()
+                    List<Node> subdivsionNodeList = XmlUtils.getNodesAsList(childNodes).stream()
                             .filter(node -> node.getNodeName().equals(elementName))
                             .collect(Collectors.toList());
                     numberProcessorHandler.renumberHighSubDiv(subdivsionNodeList, numberingType, language);

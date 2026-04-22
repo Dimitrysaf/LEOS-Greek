@@ -22,8 +22,8 @@ import eu.europa.ec.leos.services.compare.processor.LeosPostDiffingProcessor;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
-import eu.europa.ec.leos.services.support.LeosXercesUtils;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.LeosXmlUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,8 +72,8 @@ public abstract class ComparisonDelegateAPI<T extends XmlDocument> {
     
     public String getMarkedContent(T oldVersion, T newVersion) {
         String markedContent = getComparedContent(oldVersion, newVersion);
-        final Document document = XercesUtils.createXercesDocument(markedContent.getBytes(XmlHelper.UTF_8));
-        markedContent = new String(LeosXercesUtils.wrapWithPageOrientationDivs(document), UTF_8);
+        final Document document = XmlUtils.createDocument(markedContent.getBytes(XmlHelper.UTF_8));
+        markedContent = new String(LeosXmlUtils.wrapWithPageOrientationDivs(document), UTF_8);
         return markedContent;
     }
 

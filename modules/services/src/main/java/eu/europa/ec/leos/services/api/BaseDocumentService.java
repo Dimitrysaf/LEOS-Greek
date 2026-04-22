@@ -31,7 +31,7 @@ import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.structure.Attribute;
@@ -126,8 +126,8 @@ public interface BaseDocumentService<T extends XmlDocument> {
         String newContentId = null;
         //Get id moved from for new short xml fragment (newContent)
         //String newContent = new String(updatedDoc.getContent().get().getSource().getBytes());
-        Document newContentDocument = XercesUtils.createXercesDocument(LeosDomainUtil.wrapXmlFragment(newContent).getBytes(StandardCharsets.UTF_8));
-        NodeList elementsByXPath = XercesUtils.getElementsByXPath(newContentDocument, String.format("//*[@%s = '%s']//*[@%s]",
+        Document newContentDocument = XmlUtils.createDocument(LeosDomainUtil.wrapXmlFragment(newContent).getBytes(StandardCharsets.UTF_8));
+        NodeList elementsByXPath = XmlUtils.getElementsByXPath(newContentDocument, String.format("//*[@%s = '%s']//*[@%s]",
                 XMLID, elementId, XmlHelper.LEOS_SOFT_MOVE_FROM));
         for (int countElements = 0; countElements < elementsByXPath.getLength(); countElements++) {
             Node element = elementsByXPath.item(countElements);
@@ -137,9 +137,9 @@ public interface BaseDocumentService<T extends XmlDocument> {
             String idXml = attributes.getNamedItem(XMLID).getNodeValue();
             idsToSearch.add(idXml);
         }
-        Document document = XercesUtils.createXercesDocument(LeosDomainUtil.wrapXmlFragment(updatedDoc.getContent().get().getSource().toString())
+        Document document = XmlUtils.createDocument(LeosDomainUtil.wrapXmlFragment(updatedDoc.getContent().get().getSource().toString())
                 .getBytes(StandardCharsets.UTF_8));
-        NodeList elementsByXPath1 = XercesUtils.getElementsByXPath(document, String.format("//*[@%s = '%s']//*[@%s]", XMLID, elementId, XmlHelper.LEOS_SOFT_MOVE_TO));
+        NodeList elementsByXPath1 = XmlUtils.getElementsByXPath(document, String.format("//*[@%s = '%s']//*[@%s]", XMLID, elementId, XmlHelper.LEOS_SOFT_MOVE_TO));
         for (int countElements = 0; countElements < elementsByXPath1.getLength(); countElements++) {
             Node element = elementsByXPath1.item(countElements);
             NamedNodeMap attributes = element.getAttributes();
@@ -149,7 +149,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
             if((!parentId.equals(newContentId))// verify not to be moved in the same parent
                     && idsToSearch.contains(movedToAttr)){
                 String parentName = parentNode.getNodeName();
-                String parentFragment = XercesUtils.nodeToString(parentNode);
+                String parentFragment = XmlUtils.nodeToString(parentNode);
                 result.add(new Element(parentId, parentName, parentFragment));
             }
         }

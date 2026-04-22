@@ -58,7 +58,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Option;
@@ -84,7 +84,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
-import static eu.europa.ec.leos.services.support.XercesUtils.getChildren;
+import static eu.europa.ec.leos.services.support.XmlUtils.getChildren;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_CREATION_DATE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_PROPOSAL_REF;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_STATUS;
@@ -529,16 +529,16 @@ public abstract class ProposalServiceImpl implements ProposalService {
                             cloneProposalMetadataVO.setCloneProposalRef(clonedProposalRef);
                             return true;
                         } else {
-                            cloneProposalMetadataVO.setRevisionStatus(XercesUtils.getChildContent(cloned, CLONED_STATUS));
+                            cloneProposalMetadataVO.setRevisionStatus(XmlUtils.getChildContent(cloned, CLONED_STATUS));
                             return false;
                         }
                     }).count() > 0;
 
                     Proposal clonedProposal = getProposalByRef(clonedProposalRef);
-                    String creationDate = XercesUtils.getChildContent(cloned, CLONED_CREATION_DATE);
+                    String creationDate = XmlUtils.getChildContent(cloned, CLONED_CREATION_DATE);
                     String status = isContributionDone ?
                             messageHelper.getMessage("clone.proposal.status.contribution.done") :
-                            XercesUtils.getChildContent(cloned, CLONED_STATUS);
+                            XmlUtils.getChildContent(cloned, CLONED_STATUS);
                     cloneProposalMetadataVO.setTargetUser(clonedProposal.getCreatedBy());
                     cloneProposalMetadataVO.setCreationDate(getLeosDateFromString(creationDate));
                     cloneProposalMetadataVO.setRevisionStatus(status);

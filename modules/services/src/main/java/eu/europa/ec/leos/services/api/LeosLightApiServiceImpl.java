@@ -75,8 +75,8 @@ import java.util.Properties;
 
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getDocumentMetadata;
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getLeosMetaData;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.getContentByTagName;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.getContentByTagName;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 @Service
@@ -140,7 +140,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
 
     @Override
     public Pair<String, String> importDocument(byte[] docContent, String locale, String callbackAddress) throws InvalidInputException {
-        Document document = createXercesDocument(docContent);
+        Document document = createDocument(docContent);
         String docRef = getContentByTagName(document, LEOS_REF);
         DocumentVO documentVO = null;
         try {

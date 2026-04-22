@@ -77,8 +77,8 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
-import eu.europa.ec.leos.services.support.LeosXercesUtils;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.LeosXmlUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
@@ -289,8 +289,8 @@ public abstract class BillApiServiceImpl implements BillApiService {
         if (newDocPurpose != null && newDocPurpose.trim().replaceAll("(^\\h*)|(\\h*$)", "").length() > 0) {
             //replace the content of proposal's docPurpose tag
             String newElementFragment = docPurposeElementsFromBill.get(0).getElementFragment();
-            Node proposalDocPurposeNode = XercesUtils.createNodeFromXmlFragment(newElementFragment.getBytes(StandardCharsets.UTF_8));
-            newElementFragment = XercesUtils.nodeToString(XercesUtils.addContentToNode(proposalDocPurposeNode, newDocPurpose));
+            Node proposalDocPurposeNode = XmlUtils.createNodeFromXmlFragment(newElementFragment.getBytes(StandardCharsets.UTF_8));
+            newElementFragment = XmlUtils.nodeToString(XmlUtils.addContentToNode(proposalDocPurposeNode, newDocPurpose));
 
             // save the new docPurpose tag inside the proposal content
             byte[] newXmlContent =
@@ -663,7 +663,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
 
         List<Element> result = getMovedFromElements(updatedBill, newContent, elementId);
 
-        newContent = LeosXercesUtils.addOrientationPortraitIfNone(newContent);
+        newContent = LeosXmlUtils.addOrientationPortraitIfNone(newContent);
         return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty, result);
     }
 

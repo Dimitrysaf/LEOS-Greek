@@ -58,14 +58,14 @@
             </container>  
             <longTitle>
                 <p>
-                    <docType refersTo="~DIR">{{docType.005}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
+                    <docType refersTo="~DIR">{{docType.directive.dots}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
                     <docPurpose>{{docPurpose}}</docPurpose>
                 </p>
             </longTitle>
         </preface>
         <preamble>
             <formula name="actingEntity">
-                <p>{{bl.commission}}</p>
+                <p>{{bl.commission.directive}}</p>
             </formula>
             <citations leos:editable="false">
                 <citation leos:editable="true">
@@ -91,7 +91,7 @@
                 </recital>                
                 <recital leos:editable="true">
                     <num>(4)</num>
-                    <p>{{bl.recital4.directive}}</p>
+                    <p>{{bl.recital.directive}}</p>
                 </recital>
             </recitals>
             <formula name="enactingFormula">
@@ -122,19 +122,19 @@
                     <num>1.</num>
                     <subparagraph>
                         <content>
-                            <p>{{bl.firstParagraphOfArticle2.007}}</p>
+                            <p>{{bl.firstParagraphOfArticle2.directive}}</p>
                         </content>
                     </subparagraph>
                     <subparagraph>
                         <content>
-                            <p>{{bl.secondParagraphOfArticle2.007}}</p>
+                            <p>{{bl.secondParagraphOfArticle2.directive}}</p>
                         </content>
                     </subparagraph>
                 </paragraph>
                 <paragraph>
                     <num>2.</num>
                     <content>
-                        <p>{{bl.thirdParagraphOfArticle2.007}}</p>
+                        <p>{{bl.thirdParagraphOfArticle2.directive}}</p>
                     </content>
                 </paragraph>
             </article>
@@ -143,7 +143,7 @@
                 <heading>{{bl.heading}}</heading>
                 <paragraph>
                     <content>
-                        <p>{{bl.article3.007}}</p>
+                        <p>{{bl.article3.directive}}</p>
                     </content>
                 </paragraph>
             </article>
@@ -152,7 +152,7 @@
                 <heading>{{bl.heading}}</heading>
                 <paragraph>
                     <content>
-                        <p>{{bl.article4.007}}</p>
+                        <p>{{bl.article4.directive}}</p>
                     </content>
                 </paragraph>
             </article>
