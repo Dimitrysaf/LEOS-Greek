@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {
-  EuiDialogComponent,
+  EuiDialogComponent, EuiDialogConfig,
   EuiDialogService,
 } from '@eui/components/eui-dialog';
 import { Document, DocumentType, Permission, LeosConfig } from '@leos/shared';
@@ -34,6 +34,7 @@ import {AUTONOMOUS_ACT_DOC_COLLECTION} from "@/shared/constants";
 import {apiBaseUrl} from "../../../../../config";
 import {downloadBlob} from "@/shared/utils";
 import { AppConfigService } from '@/core/services/app-config.service';
+import {ProposalAnnexUploadComponent} from "@/shared/components/proposal-annex-upload/proposal-annex-upload.component";
 
 @Component({
   selector: 'app-proposal-drafts',
@@ -160,29 +161,35 @@ export class ProposalDraftsComponent
         this.proposalStateChange.emit('active');
       }
       if (file && !annex) {
-        let annexWithSameName = this.proposal?.childDocuments?.find(e => e.category === 'BILL')?.childDocuments?.find(e => e.category === 'ANNEX' && e.originalFilename === file.name);
+        let annexWithSameName = this.proposal?.childDocuments?.find(e => e.category === 'BILL')?.childDocuments?.find(e => e.category === 'ANNEX' && e.originalFilename.toUpperCase() === file.name.toUpperCase());
         if (annexWithSameName) {
-          this.dialogService.openDialog({
-            title: this.translateService.instant(
-              'page.collection.drafts.annex.same.name.error.title',
-            ),
-            content: this.translateService.instant(
-              'page.collection.drafts.annex.same.name.error.warning',
-            ),
-            acceptLabel: this.translateService.instant('page.collection.drafts.annex.same.name.error.yes'),
-            dismissLabel: this.translateService.instant('page.collection.drafts.annex.same.name.error.no'),
-            accept: () => {
-              this.proposalDetailsService.updateForeignAnnex(annexWithSameName.id, file);
-            },
-            dismiss: () => {
-              this.proposalDetailsService.setProposalRef(this.proposalRef);
-              this.loadingService.setLoading(false);
-            },
-            close: () => {
-              this.proposalDetailsService.setProposalRef(this.proposalRef);
-              this.loadingService.setLoading(false);
-            }
-          });
+          const dialog = this.dialogService.openDialog(
+            new EuiDialogConfig({
+              dialogId: 'proposa-annex-upload',
+              title: this.translateService.instant('page.collection.drafts.annex.same.name.error.title'),
+              bodyComponent: {
+                component: ProposalAnnexUploadComponent,
+                config: {
+                  closeDialog: () => {
+                    this.dialogService.closeDialog(dialog.id);
+                    this.proposalDetailsService.setProposalRef(this.proposalRef);
+                  },
+                  annexId: annexWithSameName.id,
+                  file: file,
+                  childDocuments: this.proposal?.childDocuments
+                },
+              },
+              hasCloseButton: false,
+              hasFooter: false,
+              typeClass: 'warning',
+              isMessageBox: true,
+              width: '30%',
+              escape: () => {
+                this.dialogService.closeDialog(dialog.id);
+                this.proposalDetailsService.setProposalRef(this.proposalRef);
+              },
+            })
+          );
         } else {
           this.proposalDetailsService.createForeignAnnex(file);
         }

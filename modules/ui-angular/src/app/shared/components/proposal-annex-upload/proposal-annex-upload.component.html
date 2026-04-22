@@ -1,0 +1,14 @@
+<p class="message"><b>{{'page.collection.drafts.annex.same.name.error.message' | translate }}</b></p>
+<p><span [innerHTML]="'page.collection.drafts.annex.same.name.error.warning' | translate"></span></p>
+<div class="app-dialog-footer-content-left">
+  <form [formGroup]="renameFileForm">
+    <input id="renameFile" euiInputText formControlName="renameFile" />
+  </form>
+  <span class="extension">{{this.fileExtension}}</span>
+  <button euiButton (click)="closeDialog()">
+    {{ 'global.actions.cancel' | translate }}
+  </button>
+  <button euiButton euiPrimary [disabled]="!isFormValid()" (click)="updateForeignAnnex()">
+    {{ 'page.collection.drafts.annex.same.name.error.ok' | translate }}
+  </button>
+</div>
