@@ -112,7 +112,7 @@
                 <heading>{{bl.heading}}</heading>
                 <paragraph>
                     <content>
-                        <p>{{bl.firstParagraphOfArticle2.012}}</p>
+                        <p>{{bl.firstParagraphOfArticle2.decision}}</p>
                     </content>
                 </paragraph>
             </article>
