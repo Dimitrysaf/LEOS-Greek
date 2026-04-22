@@ -66,7 +66,7 @@
           </div>
           <div class="row">
             <div class="col-5">
-              <label euiLabel for="entities">
+              <label euiLabel for="entities" [euiRequired]="isEditActive">
                 <span class="eui-icon eui-icon-person-group u-move-down-5"></span>
                 &nbsp;{{ 'page.workspace.administration.user-info.user-entities-label' | translate}}</label>
               <label euiSublabel for="entities">
@@ -89,6 +89,8 @@
               <select *ngIf="isEditActive" #userEntitiesSelect
                       multiple
                       class="entities-select"
+                      formControlName="entities"
+                      euiSelect
               >
                 <option *ngIf="isEditActive && selectedEntities.size === 0" disabled>
                   {{ 'page.workspace.administration.user-info.entity-adding-placeholder' | translate }}
@@ -138,6 +140,7 @@
                 <select #availableEntitiesSelect
                         multiple
                         class="entities-select"
+                        euiSelect
                 >
                   <option *ngFor="let entity of availableEntitiesArray" [value]="entity.id">
                     {{ entity.name }}
