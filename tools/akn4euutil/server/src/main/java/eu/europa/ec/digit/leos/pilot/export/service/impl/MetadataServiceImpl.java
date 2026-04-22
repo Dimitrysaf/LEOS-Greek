@@ -1490,7 +1490,7 @@ public class MetadataServiceImpl implements MetadataService {
     }
 
     private void removeTemplateClassAttributeFromNode(Node node) {
-        if (XmlUtil.nodeHasAttribute(node, MetadataUtil.ATTRIBUTE_CLASS)) {
+        if (!XmlUtil.nodeHasAttribute(node, MetadataUtil.ATTRIBUTE_CLASS)) {
             return;
         }
 
