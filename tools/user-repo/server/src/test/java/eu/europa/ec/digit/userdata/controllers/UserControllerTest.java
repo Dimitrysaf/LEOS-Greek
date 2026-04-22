@@ -129,11 +129,15 @@ public class UserControllerTest {
     }
 
     @Test
-    void GIVEN_entities_and_roles_not_set_AND_dateCreated_set_WHEN_create_THEN_date_ignored_AND_user_role_present() throws Exception {
+    void GIVEN_roles_not_set_AND_dateCreated_set_WHEN_create_THEN_date_ignored_AND_user_role_present() throws Exception {
         Random random = new Random();
         String login = "login" + random.nextInt(10000);
-
-        UserDto userDto = new UserDto(login, "last", "first", "email@email", null, null, new Date(0), true);
+        List<SpecialEntity> allEntities = specialEntityRepo.findAll();
+        List<EntityDto> entities = allEntities.stream()
+                .map(e -> new EntityDto(e.getId(), e.getName(), e.getOrganizationName()))
+                .limit(3)
+                .toList();
+        UserDto userDto = new UserDto(login, "last", "first", "email@email", entities, null, new Date(0), true);
         mockMvc.perform(post("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto))).andExpect(status().isOk());
@@ -142,9 +146,23 @@ public class UserControllerTest {
         assertTrue(user.getDateCreated().getTime() > userDto.getDateCreated().getTime(),
                 "Expected user.DATE_CREATED " + user.getDateCreated() + " to be greater than the dto.dateCreated " + userDto.getDateCreated().getTime());
         assertArrayEquals(new String[]{"USER"}, user.getRoles().toArray());
-        assertTrue(user.getEntities().isEmpty(), "Expected created user to have no entities");
+        Set<String> expectedEntityIds = entities.stream().map(EntityDto::getId).collect(Collectors.toSet());
+        Set<String> actualEntityIds = user.getEntities().stream().map(Entity::getId).collect(Collectors.toSet());
+        assertEquals(expectedEntityIds.size(), actualEntityIds.size());
+        assertTrue(expectedEntityIds.containsAll(actualEntityIds), "Expected user to have entities " + expectedEntityIds + " but found " + actualEntityIds);
     }
 
+    @Test
+    void GIVEN_entities_not_setWHEN_create_THEN_bad_request() throws Exception {
+        Random random = new Random();
+        String login = "login" + random.nextInt(10000);
+
+        UserDto userDto = new UserDto(login, "last", "first", "email@email", null, null, null, true);
+        mockMvc.perform(post("/users")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(userDto)))
+                .andExpect(status().isBadRequest());
+    }
 
     @Test
     void GIVEN_an_existing_login_WHEN_create_THEN_conflict() throws Exception {
@@ -169,8 +187,13 @@ public class UserControllerTest {
     void GIVEN_fields_with_trailing_spaces_WHEN_create_THEN_strings_trimmed() throws Exception {
         Random random = new Random();
         String login = "login" + random.nextInt(10000);
+        List<SpecialEntity> allEntities = specialEntityRepo.findAll();
+        List<EntityDto> newEntities = allEntities.stream()
+                .map(e -> new EntityDto(e.getId(), e.getName(), e.getOrganizationName()))
+                .limit(3)
+                .toList();
 
-        UserDto userDto = new UserDto(login, "  la st", " fi rst ", "email@email", null, null, null, true);
+        UserDto userDto = new UserDto(login, "  la st", " fi rst ", "email@email", newEntities, null, null, true);
         mockMvc.perform(post("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto))).andExpect(status().isOk());

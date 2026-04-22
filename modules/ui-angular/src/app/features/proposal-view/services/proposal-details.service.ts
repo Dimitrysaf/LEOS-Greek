@@ -162,10 +162,14 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
-  createForeignAnnex(data: File) {
+  createForeignAnnex(data: File, newName?: string) {
     const formData: FormData = new FormData();
     this.loadingService.setLoading(true);
-    formData.append('foreignAnnexFile', data);
+    if (newName) {
+      formData.append('foreignAnnexFile', data, newName);
+    } else {
+      formData.append('foreignAnnexFile', data);
+    }
     this.http
       .post<any>(
         `${apiBaseUrl}/secured/proposals/${this.proposalRef}/createForeignAnnex`,

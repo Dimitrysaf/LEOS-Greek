@@ -15,6 +15,7 @@ import { ConfirmReloadDialogComponent } from '@/shared/components/confirm-reload
 import { NotificationCardContainerComponent } from '@/shared/components/notification-card-container/notification-card-container.component';
 import { ProposalCreateWizardComponent } from '@/shared/components/proposal-create-wizard/proposal-create-wizard.component';
 import { ProposalUploadWizardComponent } from '@/shared/components/proposal-upload-wizard/proposal-upload-wizard.component';
+import { ProposalAnnexUploadComponent } from '@/shared/components/proposal-annex-upload/proposal-annex-upload.component';
 import { ProposalService } from '@/shared/services/proposal.service';
 
 import { AknDocumentComponent } from './components/akn-document/akn-document.component';
@@ -82,6 +83,7 @@ export const MY_FORMATS = {
     DynamicDropdownHoverComponent,
     ProposalCreateWizardComponent,
     ProposalUploadWizardComponent,
+    ProposalAnnexUploadComponent,
     AknDocumentComponent,
     DocumentAnnotationsComponent,
     ShowOnInstanceDirective,

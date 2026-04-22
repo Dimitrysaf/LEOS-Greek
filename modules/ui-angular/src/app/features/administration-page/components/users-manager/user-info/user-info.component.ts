@@ -1,6 +1,5 @@
 import {
   Component,
-  ElementRef,
   EventEmitter,
   Input,
   OnDestroy,
@@ -8,7 +7,15 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule, ValidationErrors,
+  ValidatorFn,
+  Validators
+} from '@angular/forms';
 import {Observable, Subject} from 'rxjs';
 import {CommonModule} from '@angular/common';
 import {EuiCardModule} from '@eui/components/eui-card';
@@ -24,6 +31,7 @@ import {AdministrationService} from "@/shared/services/administration.service";
 import {SharedModule} from "@/shared/shared.module";
 import {LeosDialogService} from "@/shared/services/leos-dialog.service";
 import {validate} from "@/shared/utils/form.utils";
+import {EuiSelectComponent} from "@eui/components/eui-select";
 
 @Component({
   selector: 'app-user-info',
@@ -50,13 +58,13 @@ export class UserInfoComponent implements OnInit, OnDestroy {
     ['firstName', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[\p{L}\s'-]+$/u)]],
     ['lastName', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[\p{L}\s'-]+$/u)]],
     ['email', [Validators.required, Validators.email]],
-    ['login', [Validators.required, Validators.maxLength(50), Validators.pattern(/^\w+$/)]]
+    ['login', [Validators.required, Validators.maxLength(50), Validators.pattern(/^\w+$/)]],
   ]);
 
   protected readonly APPLICATION_ROLES = APPLICATION_ROLES.filter(role => role !== 'USER');
 
-  @ViewChild('userEntitiesSelect') userEntitiesSelect: ElementRef<HTMLSelectElement>;
-  @ViewChild('availableEntitiesSelect') availableEntitiesSelect: ElementRef<HTMLSelectElement>;
+  @ViewChild('userEntitiesSelect') userEntitiesSelect: EuiSelectComponent;
+  @ViewChild('availableEntitiesSelect') availableEntitiesSelect: EuiSelectComponent;
 
   private _selectedUser: User;
   rolesGroup: any;
@@ -127,7 +135,8 @@ export class UserInfoComponent implements OnInit, OnDestroy {
       lastName: ['', []],
       email: ['', []],
       login: ['', []],
-      rolesGroup: this.rolesGroup
+      rolesGroup: this.rolesGroup,
+      entities: [[], []]
     });
     this.selectedEntities.clear();
     this.selectedUser?.entities?.forEach(e => this.selectedEntities.set(e.id, e));
@@ -155,6 +164,10 @@ export class UserInfoComponent implements OnInit, OnDestroy {
         control.setValidators(validators);
       }
     });
+    if (this.selectedUser && !this.selectedUser.login) {
+      // Entities are mandatory on user CREATION only.
+      this.form.controls['entities'].setValidators(entitiesValidator());
+    }
   }
 
   protected onSave() {
@@ -194,21 +207,25 @@ export class UserInfoComponent implements OnInit, OnDestroy {
   }
 
   protected addEntityToUser() {
-    const len = this.availableEntitiesSelect.nativeElement.selectedOptions.length;
+    const len = this.availableEntitiesSelect["elementRef"].nativeElement.selectedOptions.length;
     for (let i = 0; i < len; i++) {
-      const selectedId = this.availableEntitiesSelect.nativeElement.selectedOptions.item(i).value;
+      const selectedId = this.availableEntitiesSelect["elementRef"]
+        .nativeElement.selectedOptions.item(i).attributes['ng-reflect-value'].value;
       this.selectedEntities.set(selectedId, this.availableEntities.get(selectedId));
       this.availableEntities.delete(selectedId);
     }
+    this.form.controls['entities'].setValue((this.selectedEntities.values() as any).toArray());
   }
 
   protected removeEntityFromUser() {
-    const len = this.userEntitiesSelect.nativeElement.selectedOptions.length;
+    const len = this.userEntitiesSelect["elementRef"].nativeElement.selectedOptions.length;
     for (let i = 0; i < len; i++) {
-      const selectedId = this.userEntitiesSelect.nativeElement.selectedOptions.item(i).value;
+      const selectedId = this.userEntitiesSelect["elementRef"]
+        .nativeElement.selectedOptions.item(i).attributes['ng-reflect-value'].value;
       this.availableEntities.set(selectedId, this.selectedEntities.get(selectedId));
       this.selectedEntities.delete(selectedId);
     }
+    this.form.controls['entities'].setValue((this.selectedEntities.values() as any).toArray());
   }
 
   protected searchEntities(searchTerm: string) {
@@ -226,8 +243,6 @@ export class UserInfoComponent implements OnInit, OnDestroy {
       firstName: this.form.get("firstName")?.dirty ? this.form.value.firstName : null,
       lastName: this.form.get("lastName")?.dirty ? this.form.value.lastName : null,
       email: this.form.get("email")?.dirty ? this.form.value.email : null,
-
-      entities: (this.selectedEntities.values() as any).toArray(),
       roles: roles,
       rolesGroup: undefined
     } as User;
@@ -251,5 +266,12 @@ export class UserInfoComponent implements OnInit, OnDestroy {
 
   get canBeEdited() {
     return !this.selectedUser.login || this.selectedUser.special;
+  }
+}
+
+export function entitiesValidator(): ValidatorFn | null {
+  return (control:AbstractControl) : ValidationErrors | null => {
+    const value = control.value as [];
+    return !value || value.length === 0 ? {empty: true}: null;
   }
 }

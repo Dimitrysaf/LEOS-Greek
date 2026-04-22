@@ -41,6 +41,7 @@ public class UserDto {
     @Email(groups = {Create.class, Update.class})
     private String email;
 
+    @NotEmpty(groups = Create.class)
     private List<EntityDto> entities;
 
     private List<String> roles;

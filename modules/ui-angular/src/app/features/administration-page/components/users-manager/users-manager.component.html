@@ -1,67 +1,65 @@
-<div class="col-10">
-  <div class="row">
-    <div class="col-12">
-      <app-searchbox
-        placeholder="{{ 'page.workspace.administration.search-users' | translate }}"
-        class="filter-container"
-        (searchInitiation)="search($event,0)">
-        <eui-label beforeSearchInput class="eui-u-mt-s eui-u-mb-xs eui-u-font-xl eui-u-font-bold">
-          {{ 'page.workspace.administration.users' | translate }}
-        </eui-label>
-        <button afterSearchInput euiButton euiPrimary (click)="addUser()">
-          {{ 'page.workspace.administration.add-user' | translate }}
-        </button>
-      </app-searchbox>
-    </div>
+<div class="row">
+  <div class="col-12">
+    <app-searchbox
+      placeholder="{{ 'page.workspace.administration.search-users' | translate }}"
+      class="filter-container"
+      (searchInitiation)="search($event,0)">
+      <eui-label beforeSearchInput class="eui-u-mt-s eui-u-mb-xs eui-u-font-xl eui-u-font-bold">
+        {{ 'page.workspace.administration.users' | translate }}
+      </eui-label>
+      <button afterSearchInput euiButton euiPrimary (click)="addUser()">
+        {{ 'page.workspace.administration.add-user' | translate }}
+      </button>
+    </app-searchbox>
   </div>
-  <div class="row">
-    <div class="col-12">
-      <div class="table-container">
-        <table class="eui-u-mt-m"
-               euiTable
-               asyncTable
-               euiTableResponsive
-               [rows]="users"
-               [loading]="loading"
-               (sortChange)="sortChanged($event)"
-        >
-          <ng-template euiTemplate="header">
-            <tr class="ng-star-inserted entity">
-              <th sortable [sortOn]="'firstName'">{{ 'page.workspace.administration.entity-info.firstname' | translate }}</th>
-              <th sortable [sortOn]="'lastName'" [defaultOrder]="'asc'">{{ 'page.workspace.administration.entity-info.lastname' | translate }}</th>
-              <th sortable [sortOn]="'login'">{{ 'page.workspace.administration.entity-info.login' | translate }}</th>
-              <th sortable [sortOn]="'dateCreated'">{{ 'page.workspace.administration.entity-info.creationdate' | translate }}</th>
-              <th>{{ 'page.collection.collaborators.table.td-actions' | translate }}</th>
-            </tr>
-          </ng-template>
-          <ng-template let-row euiTemplate="body">
-            <tr class="user">
-              <td><a (click)="onUserSelect(row)">{{ row.firstName }}</a></td>
-              <td><a (click)="onUserSelect(row)">{{ row.lastName }}</a></td>
-              <td><a (click)="onUserSelect(row)">{{ row.login }}</a></td>
-              <td><a (click)="onUserSelect(row)">{{ row.dateCreated | date:'dd/MM/yyyy' }}</a></td>
-              <td><a *ngIf="row.special" (click)="deleteUser(row)"><eui-icon-svg icon="eui-delete" fillColor="danger-100"></eui-icon-svg></a></td>
-            </tr>
-          </ng-template>
-        </table>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12">
-        <eui-paginator
-          [pageSize]="pageSize"
-          [page]="page"
-          [length]="totalElements"
-          [hasPageNumberNavigation]="true"
-          [nbPageNumberNavigation]="5"
-          (pageChange)="onPageChange($event)">
-        </eui-paginator>
-      </div>
-    </div>
-  </div>
-  <app-user-info *ngIf="!!selectedUser"
-    [ngStyle]="{display: selectedUser ? 'block' : 'none', 'margin-top': '10px'}"
-    class="margin-top-10" [selectedUser]="selectedUser"
-    (userEditComplete)="onUserEditComplete($event)"
-  ></app-user-info>
 </div>
+<div class="row">
+  <div class="col-12">
+    <div class="table-container">
+      <table class="eui-u-mt-m"
+             euiTable
+             asyncTable
+             euiTableResponsive
+             [rows]="users"
+             [loading]="loading"
+             (sortChange)="sortChanged($event)"
+      >
+        <ng-template euiTemplate="header">
+          <tr class="ng-star-inserted entity">
+            <th sortable [sortOn]="'firstName'">{{ 'page.workspace.administration.entity-info.firstname' | translate }}</th>
+            <th sortable [sortOn]="'lastName'" [defaultOrder]="'asc'">{{ 'page.workspace.administration.entity-info.lastname' | translate }}</th>
+            <th sortable [sortOn]="'login'">{{ 'page.workspace.administration.entity-info.login' | translate }}</th>
+            <th sortable [sortOn]="'dateCreated'">{{ 'page.workspace.administration.entity-info.creationdate' | translate }}</th>
+            <th>{{ 'page.collection.collaborators.table.td-actions' | translate }}</th>
+          </tr>
+        </ng-template>
+        <ng-template let-row euiTemplate="body">
+          <tr class="user">
+            <td><a (click)="onUserSelect(row)">{{ row.firstName }}</a></td>
+            <td><a (click)="onUserSelect(row)">{{ row.lastName }}</a></td>
+            <td><a (click)="onUserSelect(row)">{{ row.login }}</a></td>
+            <td><a (click)="onUserSelect(row)">{{ row.dateCreated | date:'dd/MM/yyyy' }}</a></td>
+            <td><a *ngIf="row.special" (click)="deleteUser(row)"><eui-icon-svg icon="eui-delete" fillColor="danger-100"></eui-icon-svg></a></td>
+          </tr>
+        </ng-template>
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <eui-paginator
+        [pageSize]="pageSize"
+        [page]="page"
+        [length]="totalElements"
+        [hasPageNumberNavigation]="true"
+        [nbPageNumberNavigation]="5"
+        (pageChange)="onPageChange($event)">
+      </eui-paginator>
+    </div>
+  </div>
+</div>
+<app-user-info *ngIf="!!selectedUser"
+  [ngStyle]="{display: selectedUser ? 'block' : 'none', 'margin-top': '10px'}"
+  class="margin-top-10" [selectedUser]="selectedUser"
+  (userEditComplete)="onUserEditComplete($event)"
+></app-user-info>
