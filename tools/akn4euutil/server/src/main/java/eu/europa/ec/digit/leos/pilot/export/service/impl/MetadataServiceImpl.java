@@ -1040,10 +1040,10 @@ public class MetadataServiceImpl implements MetadataService {
 
         Node tlcRoleNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_TLCROLE);
 
-        if (roleFieldInfo == null) {
-            XmlUtil.removeNodeFromParent(tlcRoleNode);
-            return;
-        }
+//        if (roleFieldInfo == null) {
+//            XmlUtil.removeNodeFromParent(tlcRoleNode);
+//            return;
+//        }
 
         if (tlcRoleNode == null) {
             tlcRoleNode = xmlFile.newElement(MetadataUtil.ELEMENT_TLCROLE);
@@ -1098,22 +1098,22 @@ public class MetadataServiceImpl implements MetadataService {
 
     private void processCommissionerPerson(ReferenceFieldInfo fieldInfo, Node signatureNode) {
         String signingCommissioner = fieldInfo.getDisplayValue();
-        final Node personNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_PERSON);
-        if (personNode == null) return;
-        personNode.setTextContent(signingCommissioner);
-        XmlUtil.setNodeAttributeValue(personNode, MetadataUtil.ATTRIBUTE_REFERSTO, "");
-        removeTemplateClassAttributeFromNode(personNode);
+        processCommissionerPerson(signingCommissioner, signatureNode);
     }
 
     private void processCommissionerPerson(SignatureMetadata signature, Node signatureNode) {
         String signingCommissioner = signature.getSigningCommissioner();
+        processCommissionerPerson(signingCommissioner, signatureNode);
+    }
+
+    private void processCommissionerPerson(String signingCommissioner, Node signatureNode) {
         final Node personNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_PERSON);
         if (personNode == null) return;
         personNode.setTextContent(signingCommissioner);
         XmlUtil.setNodeAttributeValue(personNode, MetadataUtil.ATTRIBUTE_REFERSTO, "");
         removeTemplateClassAttributeFromNode(personNode);
     }
-
+    
     @Override
     public void processPackageTitle(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         if (MetadataUtil.isMainDocumentFile(xmlFile)) {
@@ -1267,7 +1267,7 @@ public class MetadataServiceImpl implements MetadataService {
         if (!authenticLang.isEmpty()) {
             final Element authContainerElement = insertElementInCoverPage(xmlFile, MetadataUtil.VALUE_AUTHENTIC_LANGUAGES_NAME);
             final Element authPElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
-            List<String> langArray = new ArrayList();
+            List<String> langArray = new ArrayList<String>();
 
             for (String lang: authenticLang) {
                 langArray.add(ResourcesUtil.getMessage(language, "authentic.language." + lang.toUpperCase()));
@@ -1313,7 +1313,7 @@ public class MetadataServiceImpl implements MetadataService {
                 xmlNodePreface.appendChild(authContainerElement);
             }
             final Element authPElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
-            List<String> langArray = new ArrayList();
+            List<String> langArray = new ArrayList<String>();
 
             for (String lang: authenticLang) {
                 langArray.add(ResourcesUtil.getMessage(language, "authentic.language." + lang.toUpperCase()));
