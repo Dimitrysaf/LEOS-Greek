@@ -121,22 +121,32 @@ export class UsersManagerComponent implements OnInit, OnChanges {
 
   protected deleteUser(user: User) {
     this.onUserSelect(user);
-    this.euiDialogService.openDialog({
-      title: "page.workspace.administration.user-info.user-delete-dialog.title",
-      content: this.translateService.instant("page.workspace.administration.user-info.user-delete-dialog.content", {user: user}),
-      typeClass: "warning",
-      isMessageBox: true,
-      accept: () => this.adminService.deleteUser(user.login).subscribe({
+    if (user.entities?.length > 0) {
+      this.leosDialogService.showError(
+        'page.workspace.administration.user-info.cannot-delete',
+        'page.workspace.administration.user-info.user-has-entities');
+    } else {
+      this.euiDialogService.openDialog({
+        title: "page.workspace.administration.user-info.user-delete-dialog.title",
+        content: this.translateService.instant("page.workspace.administration.user-info.user-delete-dialog.content", {user: user}),
+        typeClass: "warning",
+        isMessageBox: true,
+        accept: () => this.adminService.deleteUser(user.login).subscribe({
           next: () => {
             this.selectedUser = null;
             this.search(this.query)
           },
           error: (error) => {
-          this.leosDialogService.showError(
-            "page.workspace.administration.user-info.user-delete-error-title",
-            error.error?.message ?? error.message ?? "global.actions.unknown-error", {}, true)
-        }
-      })
-    })
+            this.leosDialogService.showError(
+              "page.workspace.administration.user-info.user-delete-error-title",
+              error.error?.message ?? error.message ?? "global.actions.unknown-error", {}, true)
+          }
+        })
+      });
+    }
+  }
+
+  canDelete(user: User) {
+    return user.entities?.length === 0;
   }
 }
