@@ -65,7 +65,7 @@
         </preface>
         <preamble>
             <formula name="actingEntity">
-                <p>{{bl.commission}}</p>
+                <p>{{bl.commission.regulation}}</p>
             </formula>
             <citations leos:editable="false">
                 <citation leos:editable="true">
@@ -112,13 +112,13 @@
                 <heading>{{bl.heading}}</heading>
                 <paragraph>
                     <content>
-                        <p>{{bl.article2.003}}</p>
+                        <p>{{bl.article2.regulation}}</p>
                     </content>
                 </paragraph>
             </article>
             <clause leos:editable="true" leos:deletable="true" leos:alternative="true" leos:optionlist="listOption1" leos:selectedoption="1">
                 <content>
-                    <p>{{bl.clause.003}}</p>
+                    <p>{{bl.clause.regulation}}</p>
                 </content>
             </clause>
         </body>

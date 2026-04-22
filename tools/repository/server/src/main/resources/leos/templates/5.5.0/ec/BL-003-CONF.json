@@ -61,11 +61,11 @@
       "list": [
         {
           "index": "1",
-          "content": "<clause xml:id=\"clause1\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\"><content xml:id=\"clause1Content\"><p xml:id=\"clause1ContentP\">{{bl.clause.003}}</p></content></clause>"
+          "content": "<clause xml:id=\"clause1\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"1\"><content xml:id=\"clause1Content\"><p xml:id=\"clause1ContentP\">{{bl.clause.regulation}}</p></content></clause>"
         },
         {
           "index": "2",
-          "content": "<clause xml:id=\"clause1\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\"><content xml:id=\"clause1Content\"><p xml:id=\"clause1ContentP\">{{bl.clauseAlternative.003}}</p></content></clause>"
+          "content": "<clause xml:id=\"clause1\" leos:editable=\"true\" leos:deletable=\"true\" leos:alternative=\"true\" leos:optionlist=\"listOption1\" leos:selectedoption=\"2\"><content xml:id=\"clause1Content\"><p xml:id=\"clause1ContentP\">{{bl.clauseAlternative.regulation}}</p></content></clause>"
         }
       ]
     },

@@ -65,7 +65,7 @@
         </preface>
         <preamble>
             <formula name="actingEntity">
-                <p>{{bl.commission}}</p>
+                <p>{{bl.commission.directive}}</p>
             </formula>
             <citations leos:editable="false">
                 <citation leos:editable="true">
@@ -91,7 +91,7 @@
                 </recital>                
                 <recital leos:editable="true">
                     <num>(4)</num>
-                    <p>{{bl.recital4.directive}}</p>
+                    <p>{{bl.recital.directive}}</p>
                 </recital>
             </recitals>
             <formula name="enactingFormula">
