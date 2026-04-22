@@ -39,6 +39,23 @@ When ("click on save button", function () {
     userEntityManagementPage.saveUserInfoForm()
 });
 
+When("fill the user info details except {string}", function (missingField, dataTable) {
+    const user = dataTable.hashes()[0]
+    userEntityManagementPage.fillUserInfoSectionExcept(user, missingField)
+});
+
+When("fill the user info {string} with {string}", function (fields, invalidValue, dataTable) {
+    const user = dataTable.hashes()[0]
+    userEntityManagementPage.fillUserInfoSectionWithInvalidData(user, fields, invalidValue)
+});
+
+Then("error popup should be displayed for user creation", function () {
+    userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', 'Error creating user')
+    userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', 'Please fill-in all required information correctly')
+    userEntityManagementPage.confirmNewUserCreationDialogBox()
+    userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('not.exist')
+});
+
 Then("show the successful message that a new user is created", function () {
     cy.get('@userData').then((user) => {    
         userEntityManagementPage.elements.newUserorEntityDialogBxTitle().contains('New user created')

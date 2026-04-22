@@ -32,4 +32,54 @@ Feature: User Management Entities Regression Features
     And  click on save button
     Then show the successful message that a new user is created
     Then verify the new user details on the table
+  
+  @userCreationWithMissingMandatoryField @local
+  Scenario Outline: user creation should fail when mandatory field "<missingField>" is not filled
+    When click on manage users and entities link under administration dropdown
+    Then add user button should be displayed
+    When click on add user button
+    Then user info section should be displayed
+    When fill the user info details except "<missingField>"
+      |firstName|lastName|email|userLogin|
+      |firstuser|lastuser|first@last.com|firstLast|
+    And  click on save button
+    Then error popup should be displayed for user creation
 
+    Examples:
+      | missingField |
+      | firstName    |
+      | lastName     |
+      | email        |
+      | userLogin    |
+
+  @userCreationWithInvalidFieldData @local @focus
+  Scenario Outline: user creation should fail when "<fields>" has invalid value "<invalidValue>"
+    When click on manage users and entities link under administration dropdown
+    Then add user button should be displayed
+    When click on add user button
+    Then user info section should be displayed
+    When fill the user info "<fields>" with "<invalidValue>"
+      |firstName|lastName|email|userLogin|
+      |firstuser|lastuser|first@last.com|firstLast|
+    And  click on save button
+    Then error popup should be displayed for user creation
+
+    Examples:
+      | fields    | invalidValue       |
+      | firstName | first(user         |
+      | firstName | first[user]        |
+      | firstName | first/user         |
+      | firstName | first\\user        |
+      | firstName | first&user         |
+      | lastName  | last{user}         |
+      | lastName  | last?user          |
+      | lastName  | last\|user         |
+      | lastName  | last(user)         |
+      | lastName  | last#user          |
+      | userLogin | user.login         |
+      | userLogin | user-login         |
+      | userLogin | user@login         |
+      | userLogin | user login         |
+      | email     | missingAtSign      |
+      | email     | user@              |
+      | email     | @domain.com        |

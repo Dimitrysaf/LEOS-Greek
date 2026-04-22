@@ -63,21 +63,21 @@ class userEntityManagementPage {
     }
 
     enterLastName(lastname) {
-        this.elements.lastNameTxtBx().type(lastname)
+        this.elements.lastNameTxtBx().type(lastname, { parseSpecialCharSequences: false })
     }
 
     enterFirstName(firstname) {
-        this.elements.firstNameTxtBx().type(firstname)
+        this.elements.firstNameTxtBx().type(firstname, { parseSpecialCharSequences: false })
     }
 
     enterEmail(email)
     {
-        this.elements.emailTxtBx().type(email)
+        this.elements.emailTxtBx().type(email, { parseSpecialCharSequences: false })
     }
 
     enterUserLogin(userLogin)
     {
-        this.elements.userLoginTxtBx().type(userLogin)
+        this.elements.userLoginTxtBx().type(userLogin, { parseSpecialCharSequences: false })
     }
 
     searchEntity(entity)
@@ -98,6 +98,22 @@ class userEntityManagementPage {
     saveUserInfoForm()
     {
         this.elements.saveBtn().click()
+    }
+
+    fillUserInfoSectionExcept(user, missingField)
+    {
+        if (missingField !== 'firstName') this.enterFirstName(user.firstName)
+        if (missingField !== 'lastName') this.enterLastName(user.lastName)
+        if (missingField !== 'email') this.enterEmail(user.email)
+        if (missingField !== 'userLogin') this.enterUserLogin(user.userLogin)
+    }
+
+    fillUserInfoSectionWithInvalidData(user, field, invalidValue)
+    {
+        this.enterFirstName(field === 'firstName' ? invalidValue : user.firstName)
+        this.enterLastName(field === 'lastName' ? invalidValue : user.lastName)
+        this.enterEmail(field === 'email' ? invalidValue : user.email)
+        this.enterUserLogin(field === 'userLogin' ? invalidValue : user.userLogin)
     }
 
     confirmNewUserCreationDialogBox(){
