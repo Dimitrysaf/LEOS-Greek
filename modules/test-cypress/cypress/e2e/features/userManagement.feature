@@ -52,7 +52,7 @@ Feature: User Management Entities Regression Features
       | email        |
       | userLogin    |
 
-  @userCreationWithInvalidFieldData @local @focus
+  @userCreationWithInvalidFieldData @local
   Scenario Outline: user creation should fail when "<fields>" has invalid value "<invalidValue>"
     When click on manage users and entities link under administration dropdown
     Then add user button should be displayed
