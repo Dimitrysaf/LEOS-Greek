@@ -24,7 +24,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorMandate;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
 import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
 import static eu.europa.ec.leos.test.support.model.ModelHelper.createBillForBytes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -121,8 +121,8 @@ public class ImportServiceMandateTest_IT extends NumberServiceMandateTest {
         byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, tocList);
 
         // Then
-        Document document = createXercesDocument(xmlResult);
-        String actualResult = XercesUtils.nodeToString(document);
+        Document document = createDocument(xmlResult);
+        String actualResult = XmlUtils.nodeToString(document);
         assertFalse(actualResult.contains("xmlns:fmx"));
         assertFalse(actualResult.contains("xmlns:fn"));
 

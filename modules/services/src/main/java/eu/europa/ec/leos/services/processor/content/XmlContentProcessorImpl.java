@@ -36,7 +36,7 @@ import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.EditableAttributeValue;
 import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
@@ -85,8 +85,8 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTEN
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.isElementInToc;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.isSoftAdded;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.isSoftDeletedOrMovedTo;
-import static eu.europa.ec.leos.services.support.LeosXercesUtils.getTitleValue;
-import static eu.europa.ec.leos.services.support.XercesUtils.*;
+import static eu.europa.ec.leos.services.support.LeosXmlUtils.getTitleValue;
+import static eu.europa.ec.leos.services.support.XmlUtils.*;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 import static java.util.Objects.isNull;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml10;
@@ -135,8 +135,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     @Override
     public byte[] addTrackChangesAttributesForMovedElement(byte[] xmlContent, String elementId, SoftActionType direction, String trackUser, String softUser,
                                                            String title) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, direction.equals(SoftActionType.MOVE_TO) ? SOFT_DELETE_PLACEHOLDER_ID_PREFIX + elementId : elementId);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, direction.equals(SoftActionType.MOVE_TO) ? SOFT_DELETE_PLACEHOLDER_ID_PREFIX + elementId : elementId);
         if (node != null) {
             addAttribute(node, LEOS_UID, trackUser);
             addAttribute(node, LEOS_TITLE, title);
@@ -164,8 +164,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         if(!trackChangesContext.isTrackChangesEnabled()) {
             return  xmlContent;
         }
-        Document document = createXercesDocument(xmlContent);
-        List<Node> nodeList = XercesUtils.getDescendants(document, ELEMENTS_IN_TOC);
+        Document document = createDocument(xmlContent);
+        List<Node> nodeList = XmlUtils.getDescendants(document, ELEMENTS_IN_TOC);
         for (int i = 0; i < nodeList.size(); i++) {
             final Node node = nodeList.get(i);
             addAttribute(node, LEOS_UID, securityContext.getUser().getLogin());
@@ -177,8 +177,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] addTrackChangesAttributes(byte[] xmlContent, String elementId) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(xmlContent, elementId);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(xmlContent, elementId);
         if (node != null) {
             addAttribute(node, LEOS_UID, securityContext.getUser().getLogin());
             addAttribute(node, LEOS_TITLE, getTitleValue(securityContext));
@@ -189,8 +189,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] anonymizeTrackChanges(byte[] xmlContent) {
-        Document document = createXercesDocument(xmlContent);
-        NodeList elements = XercesUtils.getElementsByXPath(document, xPathCatalog.getXPathTrackChanges());
+        Document document = createDocument(xmlContent);
+        NodeList elements = XmlUtils.getElementsByXPath(document, xPathCatalog.getXPathTrackChanges());
         for (int i = 0; i < elements.getLength(); i++) {
             Node element = elements.item(i);
             NamedNodeMap attributes = element.getAttributes();
@@ -204,15 +204,15 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] cleanTrackChanges(byte[] xmlContent) {
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         cleanTrackChangesForElement(document);
         return nodeToByteArray(document);
     }
 
     @Override
     public byte[] cleanTrackChanges(byte[] xmlContent, String elementId) {
-        Document document = createXercesDocument(xmlContent);
-        Node element = XercesUtils.getElementById(document, elementId);
+        Document document = createDocument(xmlContent);
+        Node element = XmlUtils.getElementById(document, elementId);
         if (element != null) {
             cleanTrackChangesForElement(element);
         }
@@ -221,7 +221,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] cleanSoftActions(byte[] xmlContent) {
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         cleanSoftActionForElement(document);
         return nodeToByteArray(document);
     }
@@ -242,7 +242,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] cleanSoftActionsAndRemoveMiscAttributes(byte[] xmlContent) {
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         cleanSoftActionAndRemoveMiscAttributesForElement(document);
         return nodeToByteArray(document);
     }
@@ -277,7 +277,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     break;
                 case MOVE_TO:
                 case DELETE:
-                    XercesUtils.deleteElement(node);
+                    XmlUtils.deleteElement(node);
                     return true;
             }
         }
@@ -309,7 +309,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] cleanMiscAttributes(byte[] xmlContent) {
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         cleanMiscAttributesForChildren(document);
         return nodeToByteArray(document);
     }
@@ -326,7 +326,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private void removeMiscAttributes(Node node) {
-        if(XercesUtils.containsAttributeWithValue(node, LEOS_ORIGIN_ATTR, EC)) {
+        if(XmlUtils.containsAttributeWithValue(node, LEOS_ORIGIN_ATTR, EC)) {
             removeAttribute(node, LEOS_ORIGIN_ATTR);
         }
         removeAttribute(node, LEOS_DEPTH_ATTR);
@@ -336,7 +336,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] cleanSoftActionsForNode(byte[] xmlContent, List<TocItem> tocItemList) {
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         cleanSoftActionsForNode(document, tocItemList);
         return nodeToByteArray(document);
     }
@@ -364,13 +364,13 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         List<NumberingConfig> numberingConfigs = structureContextProvider.get().getNumberingConfigs();
         Map<TocItem, List<TocItem>> tocRules = structureContextProvider.get().getTocRules();
 
-        Document document = createXercesDocument(content);
+        Document document = createDocument(content);
         for (TableOfContentItemVO tocVo : tableOfContentItemVOs) {
             Node node = navigateToTocElement(tocVo, document);
             LOG.trace("Build content for parent TOC item '{}', node '{}'", tocVo.getTagName(), node.getNodeName());
             Node newNode = buildTocItemContent(tocItems, numberingConfigs, tocRules, document, null, tocVo, user, isTrackChangesEnabled);
             newNode = importNodeInDocument(document, newNode);
-            XercesUtils.replaceElement(newNode, node);
+            XmlUtils.replaceElement(newNode, node);
         }
 
         LOG.trace("Build the document content for the new toc list completed in {} ms", (System.currentTimeMillis() - startTime));
@@ -386,8 +386,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public String getElementValue(byte[] xmlContent, String xPath, boolean namespaceEnabled) {
-        Document document = createXercesDocument(xmlContent, namespaceEnabled);
-        Node node = XercesUtils.getFirstElementByXPath(document, xPath, namespaceEnabled);
+        Document document = createDocument(xmlContent, namespaceEnabled);
+        Node node = XmlUtils.getFirstElementByXPath(document, xPath, namespaceEnabled);
         String elementValue = null;
         if (node != null) {
             elementValue = node.getTextContent();
@@ -397,20 +397,20 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public boolean evalXPath(byte[] xmlContent, String xPath, boolean namespaceEnabled) {
-        Document document = createXercesDocument(xmlContent, namespaceEnabled);
-        return XercesUtils.evalXPath(document, xPath, namespaceEnabled);
+        Document document = createDocument(xmlContent, namespaceEnabled);
+        return XmlUtils.evalXPath(document, xPath, namespaceEnabled);
     }
 
     @Override
     public int getElementCountByXpath(byte[] xmlContent, String xPath, boolean namespaceEnabled){
-        Document document = createXercesDocument(xmlContent, namespaceEnabled);
-        return XercesUtils.getElementCountByXpath(document, xPath, namespaceEnabled);
+        Document document = createDocument(xmlContent, namespaceEnabled);
+        return XmlUtils.getElementCountByXpath(document, xPath, namespaceEnabled);
     }
 
     @Override
     public Node getElementByXpath(byte[] xmlContent, String xPath) {
-        Document document = createXercesDocument(xmlContent);
-        return XercesUtils.getFirstElementByXPath(document, xPath);
+        Document document = createDocument(xmlContent);
+        return XmlUtils.getFirstElementByXPath(document, xPath);
     }
 
     @Override
@@ -431,15 +431,15 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] removeElement(byte[] xmlContent, String xPath, boolean namespaceEnabled) {
-        Document document = createXercesDocument(xmlContent, namespaceEnabled);
-        XercesUtils.deleteElementsByXPath(document, xPath, namespaceEnabled);
+        Document document = createDocument(xmlContent, namespaceEnabled);
+        XmlUtils.deleteElementsByXPath(document, xPath, namespaceEnabled);
         return nodeToByteArray(document);
     }
 
     @Override
     public byte[] insertElement(byte[] xmlContent, String xPath, boolean namespaceEnabled, String newContent) {
-        Document document = createXercesDocument(xmlContent, namespaceEnabled);
-        Node node = XercesUtils.getFirstElementByXPath(document, xPath, namespaceEnabled);
+        Document document = createDocument(xmlContent, namespaceEnabled);
+        Node node = XmlUtils.getFirstElementByXPath(document, xPath, namespaceEnabled);
         if (node != null) {
             Node newNode = createNodeFromXmlFragment(document, newContent.getBytes(UTF_8), false);
             addSibling(newNode, node, false);
@@ -449,10 +449,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] replaceElement(byte[] xmlContent, String xPath, boolean namespaceEnabled, String newContent) {
-        Document document = createXercesDocument(xmlContent, namespaceEnabled);  //TODO remove the boolean, always coming as true
-        Node node = XercesUtils.getFirstElementByXPath(document, xPath, namespaceEnabled);
+        Document document = createDocument(xmlContent, namespaceEnabled);  //TODO remove the boolean, always coming as true
+        Node node = XmlUtils.getFirstElementByXPath(document, xPath, namespaceEnabled);
         if (node != null) {
-            node = XercesUtils.replaceElement(node, newContent);
+            node = XmlUtils.replaceElement(node, newContent);
             xmlContent = nodeToByteArray(node);
         }
         return xmlContent;
@@ -460,11 +460,11 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] replaceElementById(byte[] xmlContent, String newContent, String elementId, boolean doPostProcessing) {
-        Document document = createXercesDocument(xmlContent);
-        Node elementNode = XercesUtils.getElementById(document, elementId);
+        Document document = createDocument(xmlContent);
+        Node elementNode = XmlUtils.getElementById(document, elementId);
 
         if (elementNode != null) {
-            Document documentNode = (Document)XercesUtils.replaceElement(elementNode, newContent);
+            Document documentNode = (Document) XmlUtils.replaceElement(elementNode, newContent);
             if (doPostProcessing) documentNode = doXMLPostProcessingOnDocument(nodeToByteArray(documentNode));
             xmlContent = processUnnumberedParagraph(documentNode, newContent, elementId);
         }
@@ -474,10 +474,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     private byte[] processUnnumberedParagraph(Document updatedDocument , String newContent, String elementId) {
         byte [] xmlContent = nodeToByteArray(updatedDocument);
         if (newContent.startsWith(PARA_OPEN_TAG) && newContent.contains(LIST_CLOSE)) {
-            Document newNode = createXercesDocument(newContent.getBytes(StandardCharsets.UTF_8), false);
+            Document newNode = createDocument(newContent.getBytes(StandardCharsets.UTF_8), false);
             if (newNode.getDocumentElement().getTagName().equals(PARAGRAPH)
                     && getFirstChild(getFirstChild(newNode), NUM) == null) {
-                Node updatedNode = XercesUtils.getElementById(updatedDocument, elementId);
+                Node updatedNode = XmlUtils.getElementById(updatedDocument, elementId);
                 if(updatedNode != null) {
                     String updatedNodeContent = removeAllNameSpaces(nodeToString(updatedNode));
                     List<Node> nodeList = getChildren(updatedNode);
@@ -498,7 +498,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                         }
                         updatedNodeContent = updatedNodeContent.replaceAll(PARA_END + "[^<|>]*" + PARA_END, PARA_END);
                     }
-                    Node updatedDocumentNode = XercesUtils.replaceElement(updatedNode, updatedNodeContent);
+                    Node updatedDocumentNode = XmlUtils.replaceElement(updatedNode, updatedNodeContent);
                     xmlContent = nodeToByteArray(updatedDocumentNode);
                 }
             }
@@ -531,8 +531,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] repeatGroup(byte[] xmlContent, String idAttributeValue, boolean before, boolean isTrackChangesEnabled) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, idAttributeValue);
         if (node != null) {
             List<Node> nodeList = findAllNodesInGroup(node.getParentNode(), getAttributeValue(node, LEOS_GROUP));
             String newGroupNumber = findNextGroupNumber(document);
@@ -540,7 +540,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             for(int i = 0; i < nodeList.size(); i++) {
                 Node nodeToClone = nodeList.get(i);
                 Node newNode = createNodeFromXmlFragment(document, nodeToByteArray(nodeToClone), false);
-                XercesUtils.removeAttributeRecursively(newNode, XMLID);
+                XmlUtils.removeAttributeRecursively(newNode, XMLID);
                 addAttribute(newNode, LEOS_REPEATED_ATTR, "true");
                 addAttribute(newNode, LEOS_GROUP, newGroupNumber);
                 addSibling(newNode, targetNode, before);
@@ -561,11 +561,11 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] repeatElement(byte[] xmlContent, String idAttributeValue, boolean before, boolean isTrackChangesEnabled) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, idAttributeValue);
         if (node != null) {
             Node newNode = createNodeFromXmlFragment(document, nodeToByteArray(node), false);
-            XercesUtils.removeAttributeRecursively(newNode, XMLID);
+            XmlUtils.removeAttributeRecursively(newNode, XMLID);
             addAttribute(newNode, LEOS_REPEATED_ATTR, "true");
             addSibling(newNode, node, before);
 
@@ -580,20 +580,20 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] insertElementByTagNameAndId(byte[] xmlContent, String elementTemplate, String tagName, String idAttributeValue, boolean before, boolean isTrackChangesEnabled) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, idAttributeValue);
         if (node != null) {
             Node newNode = createNodeFromXmlFragment(document, elementTemplate.getBytes(UTF_8), false);
-            if (XercesUtils.isListIntro(node) && before) {
+            if (XmlUtils.isListIntro(node) && before) {
                 addSibling(newNode, node.getParentNode(), before);
-            } else if (XercesUtils.isListIntro(node) && !before) {
+            } else if (XmlUtils.isListIntro(node) && !before) {
                 node.getParentNode().getParentNode().insertBefore(node, node.getParentNode());
                 removeAttribute(node, REFERS_TO_ATTR);
                 node.getParentNode().insertBefore(newNode, node.getParentNode().getFirstChild());
                 addAttribute(newNode, REFERS_TO_ATTR, INTRODUCTORY_PART);
-            } else if (XercesUtils.isListWrapper(node) && !before) {
+            } else if (XmlUtils.isListWrapper(node) && !before) {
                 addSibling(newNode, node.getParentNode(), before);
-            } else if (XercesUtils.isListWrapper(node) && before) {
+            } else if (XmlUtils.isListWrapper(node) && before) {
                 Node nextSiblingOfParent = getNextSibling(node.getParentNode());
                 if (nextSiblingOfParent == null) {
                     node.getParentNode().getParentNode().appendChild(node);
@@ -618,8 +618,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     @Override
     public byte[] insertElementByTagNameAndIdWithoutCheckOnIntro(byte[] xmlContent, String elementTemplate, String idAttributeValue,
                                                                  boolean before, boolean isTrackChangesEnabled) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, idAttributeValue);
         if (node != null) {
             Node newNode = createNodeFromXmlFragment(document, elementTemplate.getBytes(UTF_8), false);
             addSibling(newNode, node, before);
@@ -635,8 +635,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] addChildToParent(byte[] xmlContent, String elementContent, String parentId) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, parentId);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, parentId);
         if (node != null) {
             Node newNode = createNodeFromXmlFragment(document, elementContent.getBytes(UTF_8), false);
             node.appendChild(newNode);
@@ -646,8 +646,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public String getElementByNameAndId(byte[] xmlContent, String tagName, String idAttributeValue) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementByNameAndId(document, tagName, idAttributeValue);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementByNameAndId(document, tagName, idAttributeValue);
         String elementAsString = null;
         if (node != null) {
             elementAsString = nodeToString(node);
@@ -658,22 +658,22 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public String getParentTagNameById(byte[] xmlContent, String idAttributeValue) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, idAttributeValue);
-        return XercesUtils.getParentTagName(node);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, idAttributeValue);
+        return XmlUtils.getParentTagName(node);
     }
 
     @Override
     public String getParentIdById(byte[] xmlContent, String idAttributeValue) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, idAttributeValue);
         return getParentId(node);
     }
 
     @Override
     public String getElementAttributeValueByNameAndId(byte[] xmlContent, String attributeName, String tagName, String idAttributeValue) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementByNameAndId(document, tagName, idAttributeValue);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementByNameAndId(document, tagName, idAttributeValue);
         String attrVal = "false";
         if (node != null) {
             String nodeAttrVal = getAttributeValue(node, attributeName);
@@ -686,8 +686,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public Element getParentElement(byte[] xmlContent, String idAttributeValue) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, idAttributeValue);
         Element element = null;
         if (node != null) {
             element = getParentElement(node);
@@ -712,18 +712,18 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public Boolean isListIntro(byte[] xmlContent, String idAttributeValue) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, idAttributeValue);
         if (node != null) {
-            return XercesUtils.isListIntro(node);
+            return XmlUtils.isListIntro(node);
         }
         return false;
     }
 
     @Override
     public Element getSiblingElement(byte[] xmlContent, String tagName, String idAttributeValue, List<String> elementTags, boolean before) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, idAttributeValue);
         Element element = null;
         if (node != null) {
             element = getSiblingElement(node, elementTags, before);
@@ -736,7 +736,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Node sibling;
         // TODO: Workaround infinite loop in lists with intro
         boolean foundIntro = false;
-        while ((sibling = XercesUtils.getSibling(node, before)) != null && !foundIntro && element == null) {
+        while ((sibling = XmlUtils.getSibling(node, before)) != null && !foundIntro && element == null) {
             String elementTagName = sibling.getNodeName();
             if (elementTags.contains(elementTagName) || elementTags.isEmpty()) {
                 String elementId = getId(sibling) != null ? getId(sibling) : "";
@@ -751,8 +751,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public Element getChildElement(byte[] xmlContent, String tagName, String idAttributeValue, List<String> elementTags, int position) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, idAttributeValue);
         Element element = null;
         if (node != null) {
             List<Node> nodeList = getChildren(node);
@@ -778,8 +778,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public Element getFirstChildElement(byte[] xmlContent, String idAttributeValue) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, idAttributeValue);
         Element element = null;
         if (node != null) {
             node = getFirstChild(node);
@@ -795,8 +795,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public Element getLastChildElement(byte[] xmlContent, String idAttributeValue) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, idAttributeValue);
         Element element = null;
         if (node != null) {
             node = getLastChild(node);
@@ -812,8 +812,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public Element getLastChildElement(byte[] xmlContent, String tagName, String idAttributeValue, List<String> elementTags) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, idAttributeValue);
         Element element = null;
         if (node != null) {
             List<Node> nodeList = getChildren(node);
@@ -834,11 +834,11 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     @Override
     public List<Map<String, String>> getElementsAttributesByPath(byte[] xmlContent, String xPath) {
         List<Map<String, String>> elementAttributesList = new ArrayList<>();
-        Document document = createXercesDocument(xmlContent);
-        NodeList elements = XercesUtils.getElementsByXPath(document, xPath);
+        Document document = createDocument(xmlContent);
+        NodeList elements = XmlUtils.getElementsByXPath(document, xPath);
         for (int i = 0; i < elements.getLength(); i++) {
             Node element = elements.item(i);
-            elementAttributesList.add(XercesUtils.getAttributes(element));
+            elementAttributesList.add(XmlUtils.getAttributes(element));
         }
         return elementAttributesList;
     }
@@ -846,39 +846,39 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     @Override
     public Map<String, String> getElementAttributesByPath(byte[] xmlContent, String xPath, boolean namespaceEnabled) {
         Map<String, String> attributes = new HashMap<>();
-        Document document = createXercesDocument(xmlContent, namespaceEnabled);
-        Node element = XercesUtils.getFirstElementByXPath(document, xPath, namespaceEnabled);
+        Document document = createDocument(xmlContent, namespaceEnabled);
+        Node element = XmlUtils.getFirstElementByXPath(document, xPath, namespaceEnabled);
         if (element != null) {
-            attributes = XercesUtils.getAttributes(element);
+            attributes = XmlUtils.getAttributes(element);
         }
         return attributes;
     }
 
     protected Map<String, String> getElementAttributesByPath(Node node, String xPath) {
         Map<String, String> attributes = new HashMap<>();
-        Node element = XercesUtils.getFirstElementByXPath(node, xPath);
+        Node element = XmlUtils.getFirstElementByXPath(node, xPath);
         if (element != null) {
-            attributes = XercesUtils.getAttributes(element);
+            attributes = XmlUtils.getAttributes(element);
         }
         return attributes;
     }
 
     @Override
     public String getElementContentFragmentByPath(byte[] xmlContent, String xPath, boolean namespaceEnabled) {
-        Document document = createXercesDocument(xmlContent, namespaceEnabled);
-        XercesUtils.addLeosNamespace(document);
-        Node element = XercesUtils.getFirstElementByXPath(document, xPath, namespaceEnabled);
+        Document document = createDocument(xmlContent, namespaceEnabled);
+        XmlUtils.addLeosNamespace(document);
+        Node element = XmlUtils.getFirstElementByXPath(document, xPath, namespaceEnabled);
         if (element != null) {
-            return XercesUtils.getContentNodeAsXmlFragment(element);
+            return XmlUtils.getContentNodeAsXmlFragment(element);
         }
         return null;
     }
 
     @Override
     public String getElementFragmentByPath(byte[] xmlContent, String xPath, boolean namespaceEnabled) {
-        Document document = createXercesDocument(xmlContent, namespaceEnabled);
-        XercesUtils.addLeosNamespace(document);
-        Node element = XercesUtils.getFirstElementByXPath(document, xPath, namespaceEnabled);
+        Document document = createDocument(xmlContent, namespaceEnabled);
+        XmlUtils.addLeosNamespace(document);
+        Node element = XmlUtils.getFirstElementByXPath(document, xPath, namespaceEnabled);
         if (element != null) {
             return nodeToString(element);
         }
@@ -886,8 +886,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     public byte[] removeAttributeForAllChildren(byte[] xmlContent, String parentTag, List<String> elementTags, String attributeName) {
-        Document document = createXercesDocument(xmlContent);
-        NodeList nodeList = XercesUtils.getElementsByName(document, parentTag);
+        Document document = createDocument(xmlContent);
+        NodeList nodeList = XmlUtils.getElementsByName(document, parentTag);
         for (int nodeIndex = 0; nodeIndex < nodeList.getLength(); nodeIndex++) {
             Node node = nodeList.item(nodeIndex);
             List<Node> children = getChildren(node);
@@ -900,8 +900,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] setAttributeForAllChildren(byte[] xmlContent, String parentTag, List<String> elementTags, String attributeName, String value) {
-        Document document = createXercesDocument(xmlContent);
-        NodeList nodeList = XercesUtils.getElementsByName(document, parentTag);
+        Document document = createDocument(xmlContent);
+        NodeList nodeList = XmlUtils.getElementsByName(document, parentTag);
         for (int nodeIndex = 0; nodeIndex < nodeList.getLength(); nodeIndex++) {
             Node node = nodeList.item(nodeIndex);
             List<Node> children = getChildren(node);
@@ -949,7 +949,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private void updatePointStructure(Node parentNode) {
-        NodeList points = XercesUtils.getElementsByName(parentNode, POINT);
+        NodeList points = XmlUtils.getElementsByName(parentNode, POINT);
         for (int i = 0; i < points.getLength(); i++) {
             Node point = points.item(i);
             Node list = getFirstChild(point, LIST);
@@ -961,7 +961,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     if(alineas != null && alineas.size() == 1) {
                         Node alinea = alineas.get(0);
                         Node content = getFirstChild(alinea, CONTENT);
-                        XercesUtils.replaceElement(content, alinea);
+                        XmlUtils.replaceElement(content, alinea);
                     }
                     point.removeChild(list);
                 }
@@ -970,7 +970,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private void updateParagraphStructure(Node parentNode) {
-        NodeList paragraphs = XercesUtils.getElementsByName(parentNode, PARAGRAPH);
+        NodeList paragraphs = XmlUtils.getElementsByName(parentNode, PARAGRAPH);
         for (int i = 0; i < paragraphs.getLength(); i++) {
             Node paragraph = paragraphs.item(i);
             Node list = getFirstChild(paragraph, LIST);
@@ -982,7 +982,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     if(subparagraphs != null && subparagraphs.size() == 1) {
                         Node subparagraph = subparagraphs.get(0);
                         Node content = getFirstChild(subparagraph, CONTENT);
-                        XercesUtils.replaceElement(content, subparagraph);
+                        XmlUtils.replaceElement(content, subparagraph);
                     }
                     paragraph.removeChild(list);
                 }
@@ -1001,7 +1001,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     @Override
     public byte[] doXMLPreProcessing(byte[] xmlContent) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         updatePointStructure(document);
         updateParagraphStructure(document);
         long preProcessingTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
@@ -1104,7 +1104,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private Document doXmlPostProcessingCommonWithInternalRefs(byte[] xmlContent) {
         long startTime = System.currentTimeMillis();
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
 
         // Inject Ids
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -1139,7 +1139,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private Document doXmlPostProcessingCommonWithExternalRefs(byte[] xmlContent) {
         long startTime = System.currentTimeMillis();
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
 
         // Inject Ids
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -1196,7 +1196,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private Document doXmlPostProcessingCommon(byte[] xmlContent) {
         long startTime = System.currentTimeMillis();
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
 
         // Inject Ids
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -1222,7 +1222,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     public abstract void specificInstanceXMLPostProcessing(Node node);
 
     protected void updateNewElements(Node parentNode, String elementTagName, String subElementTagName, String origin) {
-        NodeList elementsList = XercesUtils.getElementsByName(parentNode, elementTagName);
+        NodeList elementsList = XmlUtils.getElementsByName(parentNode, elementTagName);
         for (int i = 0; i < elementsList.getLength(); i++) {
             Node node = elementsList.item(i);
             String elementOrigin = modifySubElement(node, origin);
@@ -1267,8 +1267,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private boolean isIndented(Node node) {
-        if (!hasAttribute(node, LEOS_INDENT_ORIGIN_TYPE_ATTR) && XercesUtils.getFirstChild(node, Arrays.asList(SUBPARAGRAPH, LIST)) != null) {
-            Node firstSubParagraph = XercesUtils.getFirstDescendant(node, Arrays.asList(SUBPARAGRAPH));
+        if (!hasAttribute(node, LEOS_INDENT_ORIGIN_TYPE_ATTR) && XmlUtils.getFirstChild(node, Arrays.asList(SUBPARAGRAPH, LIST)) != null) {
+            Node firstSubParagraph = XmlUtils.getFirstDescendant(node, Arrays.asList(SUBPARAGRAPH));
             return (firstSubParagraph != null) && hasAttribute(firstSubParagraph, LEOS_INDENT_ORIGIN_TYPE_ATTR);
         }
         return hasAttribute(node, LEOS_INDENT_ORIGIN_TYPE_ATTR);
@@ -1296,7 +1296,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     public byte[] convertAlineasInDocumentContent(byte[] xmlContent) {
         long startTime = System.currentTimeMillis();
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
 
         // Convert alineas to subparagraphs
         Stopwatch stopwatch = Stopwatch.createStarted();
@@ -1316,20 +1316,20 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     public boolean containsAlineas(Node node) {
-        NodeList nodeList = XercesUtils.getElementsByName(node, SUBPOINT);
+        NodeList nodeList = XmlUtils.getElementsByName(node, SUBPOINT);
         return nodeList.getLength() > 0;
     }
 
     private void convertAlineasToSubparagraphs(Document document) {
-        int nbAlineas = XercesUtils.getElementCountByXpath(document, "//akn:" + SUBPOINT, true);
+        int nbAlineas = XmlUtils.getElementCountByXpath(document, "//akn:" + SUBPOINT, true);
         for (int i = 0; i < nbAlineas; i++) {
             Node alinea = getFirstElementByName(document, SUBPOINT);
-            XercesUtils.renameNode(document, alinea, SUBPARAGRAPH);
+            XmlUtils.renameNode(document, alinea, SUBPARAGRAPH);
         }
     }
 
     private void moveSubparagraphsInList(Node node) {
-        NodeList nodeList = XercesUtils.getElementsByName(node, SUBPARAGRAPH);
+        NodeList nodeList = XmlUtils.getElementsByName(node, SUBPARAGRAPH);
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node subpara = nodeList.item(i);
             Node subparaParent = subpara.getParentNode();
@@ -1346,7 +1346,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 }
             }
         }
-        nodeList = XercesUtils.getElementsByName(node, SUBPARAGRAPH);
+        nodeList = XmlUtils.getElementsByName(node, SUBPARAGRAPH);
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node subpara = nodeList.item(i);
             Node nextSiblingList = getNextSibling(subpara);
@@ -1367,7 +1367,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     && (subpara.getTextContent().isEmpty()
                     || (!pOfSubparagraph.getTextContent().trim().isEmpty()
                     && Character.isLowerCase(pOfSubparagraph.getTextContent().trim().charAt(0))))) {
-                Node previousSiblingList = XercesUtils.getPrevSibling(subpara);
+                Node previousSiblingList = XmlUtils.getPrevSibling(subpara);
                 if (previousSiblingList != null && is(previousSiblingList, LIST)
                         && ((!isSoftDeletedOrMovedTo(subpara) && !isSoftDeletedOrMovedTo(previousSiblingList))
                         || (isSoftDeletedOrMovedTo(subpara) && isSoftDeletedOrMovedTo(previousSiblingList)))) {
@@ -1403,7 +1403,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private static Node getPOfSubparagraph(Node subpara) {
-        Node pText = XercesUtils.getFirstElementByXPath(subpara, "akn:content/akn:p");
+        Node pText = XmlUtils.getFirstElementByXPath(subpara, "akn:content/akn:p");
         return pText != null ? pText : null;
     }
 
@@ -1428,7 +1428,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private void modifyAuthorialNoteMarkers(Node node, int markerNumber) {
-        NodeList nodeList = XercesUtils.getElementsByName(node, AUTHORIAL_NOTE);
+        NodeList nodeList = XmlUtils.getElementsByName(node, AUTHORIAL_NOTE);
 
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node child = nodeList.item(i);
@@ -1443,20 +1443,20 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] updateExternalReferencesOnAnnexesUpdate(byte[] xmlContent) {
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         updateExternalReferences(document);
         return nodeToByteArray(document);
     }
 
     @Override
     public byte[] updateReferencesOnImport(byte[] xmlContent, Map<String, String> refsMatching) {
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         updateReferencesOnImport(document, refsMatching);
         return nodeToByteArray(document);
     }
 
     private void updateReferencesOnImport(Document document, Map<String, String> refsMatching) {
-        NodeList mrefList = XercesUtils.getElementsByName(document, MREF);
+        NodeList mrefList = XmlUtils.getElementsByName(document, MREF);
         for (int i = 0; i < mrefList.getLength(); i++) {
             Node mref = mrefList.item(i);
             List<Node> refs = getChildren(mref);
@@ -1477,7 +1477,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public Pair<byte[], List<Element>> updateReferences(byte[] xmlContent) {
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         List<Element> updatedMrefs = updateReferences(document);
         if (!updatedMrefs.isEmpty()) {
             return new Pair<>(nodeToByteArray(document), updatedMrefs);
@@ -1488,7 +1488,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public Pair<byte[], List<Element>> updateExternalReferences(byte[] xmlContent) {
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         List<Element> updatedMrefs = updateExternalReferences(document);
         if (!updatedMrefs.isEmpty()) {
             return new Pair<>(nodeToByteArray(document), updatedMrefs);
@@ -1501,8 +1501,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     public String updateReferences(String content, XmlDocument xmlDocument) {
         String wrappedContentXml = LeosDomainUtil.wrapXmlFragment(content);
         byte[] xmlContent = wrappedContentXml.getBytes(StandardCharsets.UTF_8);
-        Document document = createXercesDocument(xmlContent);
-        Document sourceDoc = createXercesDocument(xmlDocument.getContent().get().getSource().getBytes());
+        Document document = createDocument(xmlContent);
+        Document sourceDoc = createDocument(xmlDocument.getContent().get().getSource().getBytes());
         if (updateReferences(document, sourceDoc)) {
             return nodeToString(document.getDocumentElement().getChildNodes().item(0));
         } else {
@@ -1513,7 +1513,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     private List<Element> updateReferences(Document document) {
         List<Element> updatedMrefs = new ArrayList<>();
         String sourceRef = getContentByTagName(document, LEOS_REF);
-        NodeList mrefList = XercesUtils.getElementsByName(document, MREF);
+        NodeList mrefList = XmlUtils.getElementsByName(document, MREF);
         boolean isRefConfigEnabled = isRefConfigEnabled(document, mrefList);
 
         HashMap<String, String> parentStatementsOfReferences = new HashMap<>();
@@ -1556,19 +1556,19 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                         labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(mref), document, capital);
                     }
                     if (labelResult.isOk()) {
-                        String childXml = XercesUtils.getContentNodeAsXmlFragment(mref);
+                        String childXml = XmlUtils.getContentNodeAsXmlFragment(mref);
                         String updatedMrefContent = labelResult.get();
                         if (!updatedMrefContent.replaceAll("\\s+", "").equals(childXml.replaceAll("\\s+", ""))) {
-                            mref = XercesUtils.addContentToNode(mref, updatedMrefContent);
-                            updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
-                        } else if (XercesUtils.hasAttributeWithValue(mref, LEOS_REF_BROKEN_ATTR, "true")) {
-                            updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
+                            mref = XmlUtils.addContentToNode(mref, updatedMrefContent);
+                            updatedMrefs.add(new Element(XmlUtils.getId(mref), MREF, nodeToString(mref)));
+                        } else if (XmlUtils.hasAttributeWithValue(mref, LEOS_REF_BROKEN_ATTR, "true")) {
+                            updatedMrefs.add(new Element(XmlUtils.getId(mref), MREF, nodeToString(mref)));
                         }
-                        XercesUtils.removeAttribute(mref, LEOS_REF_BROKEN_ATTR);
-                    } else if (!XercesUtils.hasAttribute(mref, LEOS_REF_BROKEN_ATTR)
-                            || !XercesUtils.getAttributeValue(mref, LEOS_REF_BROKEN_ATTR).equals("true")) {
-                        XercesUtils.addAttribute(mref, LEOS_REF_BROKEN_ATTR, "true");
-                        updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
+                        XmlUtils.removeAttribute(mref, LEOS_REF_BROKEN_ATTR);
+                    } else if (!XmlUtils.hasAttribute(mref, LEOS_REF_BROKEN_ATTR)
+                            || !XmlUtils.getAttributeValue(mref, LEOS_REF_BROKEN_ATTR).equals("true")) {
+                        XmlUtils.addAttribute(mref, LEOS_REF_BROKEN_ATTR, "true");
+                        updatedMrefs.add(new Element(XmlUtils.getId(mref), MREF, nodeToString(mref)));
                     }
                 }
             }
@@ -1578,7 +1578,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private List<Node> getExternalReferences(Document document) {
         List<Node> externalReferences = new ArrayList<>();
-        NodeList refList = XercesUtils.getElementsByXPath(document, XPathCatalog.getXPathExternalReferences());
+        NodeList refList = XmlUtils.getElementsByXPath(document, XPathCatalog.getXPathExternalReferences());
         for (int i = 0; i < refList.getLength(); i++) {
             externalReferences.add(refList.item(i).getParentNode());
         }
@@ -1628,20 +1628,20 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(mref), document, capital);
                 }
                 if (labelResult.isOk()) {
-                    String childXml = XercesUtils.getContentNodeAsXmlFragment(mref);
+                    String childXml = XmlUtils.getContentNodeAsXmlFragment(mref);
                     String updatedMrefContent = labelResult.get();
                     if (!updatedMrefContent.replaceAll("\\s+", "").equals(childXml.replaceAll("\\s+", ""))) {
-                        mref = XercesUtils.addContentToNode(mref, updatedMrefContent);
-                        updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
+                        mref = XmlUtils.addContentToNode(mref, updatedMrefContent);
+                        updatedMrefs.add(new Element(XmlUtils.getId(mref), MREF, nodeToString(mref)));
                     }
-                    if (XercesUtils.hasAttributeWithValue(mref, LEOS_REF_BROKEN_ATTR, "true")) {
-                        updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
+                    if (XmlUtils.hasAttributeWithValue(mref, LEOS_REF_BROKEN_ATTR, "true")) {
+                        updatedMrefs.add(new Element(XmlUtils.getId(mref), MREF, nodeToString(mref)));
                     }
-                    XercesUtils.removeAttribute(mref, LEOS_REF_BROKEN_ATTR);
-                } else if (!XercesUtils.hasAttribute(mref, LEOS_REF_BROKEN_ATTR)
-                        || !XercesUtils.getAttributeValue(mref, LEOS_REF_BROKEN_ATTR).equals("true")) {
-                    XercesUtils.addAttribute(mref, LEOS_REF_BROKEN_ATTR, "true");
-                    updatedMrefs.add(new Element(XercesUtils.getId(mref), MREF, nodeToString(mref)));
+                    XmlUtils.removeAttribute(mref, LEOS_REF_BROKEN_ATTR);
+                } else if (!XmlUtils.hasAttribute(mref, LEOS_REF_BROKEN_ATTR)
+                        || !XmlUtils.getAttributeValue(mref, LEOS_REF_BROKEN_ATTR).equals("true")) {
+                    XmlUtils.addAttribute(mref, LEOS_REF_BROKEN_ATTR, "true");
+                    updatedMrefs.add(new Element(XmlUtils.getId(mref), MREF, nodeToString(mref)));
                 }
             }
         }
@@ -1651,7 +1651,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     private boolean updateReferences(Document eltDoc, Document wholeDoc) {
         boolean updated = false;
         String sourceRef = getContentByTagName(wholeDoc, LEOS_REF);
-        NodeList mrefList = XercesUtils.getElementsByName(eltDoc, MREF);
+        NodeList mrefList = XmlUtils.getElementsByName(eltDoc, MREF);
         boolean isRefConfigEnabled = isRefConfigEnabled(wholeDoc, mrefList);
 
         HashMap<String, String> parentStatementsOfReferences = new HashMap<>();
@@ -1694,10 +1694,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                         labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(mref), wholeDoc, capital);
                     }
                     if (labelResult.isOk()) {
-                        String childXml = XercesUtils.getContentNodeAsXmlFragment(mref);
+                        String childXml = XmlUtils.getContentNodeAsXmlFragment(mref);
                         String updatedMrefContent = labelResult.get();
                         if (!updatedMrefContent.replaceAll("\\s+", "").equals(childXml.replaceAll("\\s+", ""))) {
-                            mref = XercesUtils.addContentToNode(mref, updatedMrefContent);
+                            mref = XmlUtils.addContentToNode(mref, updatedMrefContent);
                             updated = true;
                         } else if (!updated) {
                             updated = hasAttributeWithValue(mref, LEOS_REF_BROKEN_ATTR, "true");
@@ -1716,10 +1716,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     public boolean isRefConfigEnabled(Document document, NodeList mrefList) {
         RefConfig refConfig = null;
         if (mrefList.getLength() > 0) {
-            String docTemplate = XercesUtils.getElementsByXPath(document, xPathCatalog.getXPathDocTemplate()).item(0).getTextContent();
+            String docTemplate = XmlUtils.getElementsByXPath(document, xPathCatalog.getXPathDocTemplate()).item(0).getTextContent();
             List<RefConfig> refConfigs = structureService.getRefConfigs(docTemplate);
             if ((refConfigs != null) && !refConfigs.isEmpty()) {
-                String language = XercesUtils.getElementsByXPath(document, xPathCatalog.getXPathDocLanguage()).item(0).getTextContent();
+                String language = XmlUtils.getElementsByXPath(document, xPathCatalog.getXPathDocLanguage()).item(0).getTextContent();
                 refConfig = refConfigs.stream().filter(value -> value.getLanguage().equalsIgnoreCase(language) ||
                         value.getLanguage().equalsIgnoreCase("default")).findFirst().get();
             }
@@ -1729,14 +1729,14 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private void updateMetaReferences(Node node) {
 
-        NodeList metaReferencesNodeList = XercesUtils.getElementsByXPath(node, xPathCatalog.getXPathMetaReferences(), true);
+        NodeList metaReferencesNodeList = XmlUtils.getElementsByXPath(node, xPathCatalog.getXPathMetaReferences(), true);
         Node metaReferences = metaReferencesNodeList.item(0);
 
         if (metaReferences != null) {
 
-            NodeList subparagraphWithReferToINPAttributeNodeList = XercesUtils.getElementsByXPath(node,
+            NodeList subparagraphWithReferToINPAttributeNodeList = XmlUtils.getElementsByXPath(node,
                     xPathCatalog.getXPathSubparagraphWithReferToINPAttribute(), true);
-            NodeList INPListNodes = XercesUtils.getElementsByXPath(node, xPathCatalog.getXPathMetaReferenceForINP(), true);
+            NodeList INPListNodes = XmlUtils.getElementsByXPath(node, xPathCatalog.getXPathMetaReferenceForINP(), true);
             if (subparagraphWithReferToINPAttributeNodeList.getLength() > 0) {
                 if (INPListNodes.getLength() == 0) {
                     Node tclNode = createElement(node.getOwnerDocument(), TLC_CONCEPT, TLC_CONCEPT_INP_ID, EMPTY_STRING);
@@ -1750,9 +1750,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 }
             }
 
-            NodeList subparagraphWithReferToWRPAttributeNodeList = XercesUtils.getElementsByXPath(node,
+            NodeList subparagraphWithReferToWRPAttributeNodeList = XmlUtils.getElementsByXPath(node,
                     xPathCatalog.getXPathSubparagraphWithReferToWRPAttribute(), true);
-            NodeList WRPListNodes = XercesUtils.getElementsByXPath(node, xPathCatalog.getXPathMetaReferenceForWRP(), true);
+            NodeList WRPListNodes = XmlUtils.getElementsByXPath(node, xPathCatalog.getXPathMetaReferenceForWRP(), true);
             if (subparagraphWithReferToWRPAttributeNodeList.getLength() > 0) {
                 if (WRPListNodes.getLength() == 0) {
                     Node tclNode = createElement(node.getOwnerDocument(), TLC_CONCEPT, TLC_CONCEPT_WRP_ID, EMPTY_STRING);
@@ -1772,7 +1772,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private List<Ref> findReferences(Node node, String documentRefSource) {
         List<Ref> refs = new ArrayList<>();
-        NodeList nodeList = XercesUtils.getElementsByName(node, REF);
+        NodeList nodeList = XmlUtils.getElementsByName(node, REF);
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node child = nodeList.item(i);
             refs.add(getRefElement(child, documentRefSource));
@@ -1805,8 +1805,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] replaceTextInElement(byte[] xmlContent, String origText, String newText, String elementId, int startOffset, int endOffset, boolean isTrackChangesEnabled) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, elementId);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, elementId);
         byte[] newElement = null;
         if (node != null) {
             String elementContent = nodeToString(node);
@@ -1844,7 +1844,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     private static byte[] getDocumentWithReplacedNewElement(Document document, Node node, StringBuilder eltContent, ImmutableTriple<String, Integer, Integer> result, String newElements) {
         eltContent.replace(result.middle, result.right, newElements);
         Node newNode = createNodeFromXmlFragment(document, eltContent.toString().getBytes(UTF_8), false);
-        XercesUtils.replaceElement(newNode, node);
+        XmlUtils.replaceElement(newNode, node);
         return nodeToByteArray(document);
     }
 
@@ -1888,7 +1888,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         String newNodeContentFromExisting = new  StringBuilder(eltContent.substring(0,result.middle)).append(INS_END_TAG).toString();
 
         Node newNodeFromExisting = createNodeFromXmlFragment(document, newNodeContentFromExisting.getBytes(UTF_8), false);
-        XercesUtils.replaceElement(newNodeFromExisting, node);
+        XmlUtils.replaceElement(newNodeFromExisting, node);
 
         String deleteTagContent = new StringBuilder("<del ") //delete tag added
                 .append(XMLID).append("=\"").append(IdGenerator.generateId(prefixId)).append(BACKSLASH_QUOTE) //id
@@ -1989,7 +1989,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] appendElementToTag(byte[] xmlContent, String tagName, String newContent, boolean asFirstChild) {
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         NodeList nodeList = document.getElementsByTagName(tagName);
         if (nodeList.getLength() == 0) {
             throw new IllegalArgumentException("No tag found with name " + tagName);
@@ -1999,9 +1999,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
             if (asFirstChild) {
-                XercesUtils.addFirstChild(newNode, node);
+                XmlUtils.addFirstChild(newNode, node);
             } else {
-                XercesUtils.addLastChild(newNode, node);
+                XmlUtils.addLastChild(newNode, node);
             }
         }
         return nodeToByteArray(document);
@@ -2009,10 +2009,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] insertDepthAttribute(byte[] xmlContent, String tagName, String elementId) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, elementId);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, elementId);
         if (tagName.equals(NUM)) {
-            tagName = XercesUtils.getParentTagName(node);
+            tagName = XmlUtils.getParentTagName(node);
             elementId = getParentId(node);
         }
 
@@ -2027,8 +2027,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] insertCrossheadingAttributes(byte[] xmlContent, String tagName, String elementId, boolean before) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, elementId);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, elementId);
         String indentLevelStr = getAttributeValue(node, LEOS_INDENT_LEVEL_ATTR);
         String inlinePropertyStr = getAttributeValue(node, INLINE_NUM_PROPERTY);
         Node nodeToSetAttributes;
@@ -2049,9 +2049,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] searchAndReplaceText(byte[] xmlContent, String searchText, String replaceText) {
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         String xPath = String.format("//*[contains(lower-case(text()), %s)]", wrapXPathWithQuotes(searchText.toLowerCase()));
-        NodeList nodeList = XercesUtils.getElementsByXPath(document, xPath);
+        NodeList nodeList = XmlUtils.getElementsByXPath(document, xPath);
         boolean found = false;
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node child = nodeList.item(i);
@@ -2073,21 +2073,21 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     public byte[] getCoverPageContentForRendition(byte[] xmlContent) {
         byte[] coverPageContent = StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8);
 
-        Document document = createXercesDocument(xmlContent, true);
-        XercesUtils.addLeosNamespace(document);
+        Document document = createDocument(xmlContent, true);
+        XmlUtils.addLeosNamespace(document);
 
-        Node akomaNtosoNode = XercesUtils.getFirstElementByXPath(document, xPathCatalog.getXPathAkomaNtoso(), true);
-        Node meta = XercesUtils.getFirstElementByXPath(document, xPathCatalog.getXPathMeta(), true);
-        Node coverPageNode = XercesUtils.getFirstElementByXPath(document, xPathCatalog.getXPathCoverPage(), true);
+        Node akomaNtosoNode = XmlUtils.getFirstElementByXPath(document, xPathCatalog.getXPathAkomaNtoso(), true);
+        Node meta = XmlUtils.getFirstElementByXPath(document, xPathCatalog.getXPathMeta(), true);
+        Node coverPageNode = XmlUtils.getFirstElementByXPath(document, xPathCatalog.getXPathCoverPage(), true);
         if(akomaNtosoNode != null) {
             akomaNtosoNode.setTextContent(StringUtils.EMPTY);
 
             if(meta != null) {
-                XercesUtils.addChild(meta, akomaNtosoNode);
+                XmlUtils.addChild(meta, akomaNtosoNode);
             }
 
             if(coverPageNode != null) {
-                XercesUtils.addChild(coverPageNode, akomaNtosoNode);
+                XmlUtils.addChild(coverPageNode, akomaNtosoNode);
                 coverPageContent = nodeToByteArray(akomaNtosoNode);
             }
         }
@@ -2107,7 +2107,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private static EditableAttributeValue getEditableAttributeForNode(Node node) {
-        Map<String, String> attrs = XercesUtils.getAttributes(node);
+        Map<String, String> attrs = XmlUtils.getAttributes(node);
         String tagName = node.getNodeName();
         String attrVal = attrs.get(LEOS_EDITABLE_ATTR);
 
@@ -2123,9 +2123,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     @Override
     public Element getElementById(byte[] xmlContent, String idAttributeValue) {
         Validate.isTrue(idAttributeValue != null, "Id can not be null");
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         Element element = null;
-        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        Node node = XmlUtils.getElementById(document, idAttributeValue);
         if (node != null) {
             String nodeString = nodeToString(node);
             nodeString = removeXmlNSAttributes(nodeString);
@@ -2139,8 +2139,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Validate.isTrue(idAttributeValue != null, "Id can not be null");
         LinkedList<String> ancestorsIds = new LinkedList<String>();
 
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, idAttributeValue);
         if (idAttributeValue.startsWith("docNodeRef_")) {
             ancestorsIds.addFirst(idAttributeValue);
             return ancestorsIds;
@@ -2161,8 +2161,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] removeElements(byte[] xmlContent, String xpath, int levelsToRemove) {
-        Document document = createXercesDocument(xmlContent);
-        NodeList nodeList = XercesUtils.getElementsByXPath(document, xpath);
+        Document document = createDocument(xmlContent);
+        NodeList nodeList = XmlUtils.getElementsByXPath(document, xpath);
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
             Node parent = node.getParentNode();
@@ -2184,7 +2184,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     @Override
     public String doImportedElementPreProcessing(String xmlContent, String elementType) {
         xmlContent = normalizeSpace(xmlContent);
-        Document document = createXercesDocument(xmlContent.getBytes(StandardCharsets.UTF_8));
+        Document document = createDocument(xmlContent.getBytes(StandardCharsets.UTF_8));
         Node node = document.getFirstChild();
         node = setAttributeForDefinitionArticle(node);
         generateId(node);
@@ -2214,9 +2214,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             //  1. Heading text can depend on the language
             //  2. Heading text can be slightly different from exact text "Definitions"
             //  Example: Article 5 of REGULATION 575 2013.
-            Node pointOrIndent = XercesUtils.getFirstDescendant(node, Arrays.asList(POINT, INDENT));
+            Node pointOrIndent = XmlUtils.getFirstDescendant(node, Arrays.asList(POINT, INDENT));
             if (pointOrIndent != null) {
-                int depth = XercesUtils.getPointDepth(pointOrIndent);
+                int depth = XmlUtils.getPointDepth(pointOrIndent);
                 String numValue = getFirstChild(pointOrIndent, NUM).getTextContent();
                 List<TocItem> tocItems = structureContextProvider.get().getTocItems();
                 List<NumberingConfig> numberingConfigs = structureContextProvider.get().getNumberingConfigs();
@@ -2258,8 +2258,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public String getElementIdByPath(byte[] xmlContent, String xPath) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getFirstElementByXPath(document, xPath);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getFirstElementByXPath(document, xPath);
         if (node == null) {
             return null;
         }
@@ -2269,8 +2269,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     @Override
     public String removeEmptyHeading(String newContent) {
         boolean removed = false;
-        Document document = createXercesDocument(newContent.getBytes(StandardCharsets.UTF_8), false);
-        XercesUtils.addLeosNamespace(document);
+        Document document = createDocument(newContent.getBytes(StandardCharsets.UTF_8), false);
+        XmlUtils.addLeosNamespace(document);
         Node heading = getFirstElementByName(document, HEADING);
         if (heading != null && heading.getTextContent().replaceAll(NBSP, "").trim().isEmpty()) {
             removeElement(heading);
@@ -2286,7 +2286,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     public void removeElement(Node node) {
         String contentOrigin = getAttributeValue(node, LEOS_ORIGIN_ATTR);
         if(CN.equals(contentOrigin)) {
-            XercesUtils.deleteElement(node);
+            XmlUtils.deleteElement(node);
         } else {
             addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.DELETE.getSoftAction());
             addAttribute(node, LEOS_SOFT_USER_ATTR, getSoftUserAttribute(securityContext.getUser()));
@@ -2297,8 +2297,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public LevelItemVO getLevelItemVo(byte[] xmlContent, String elementId, String elementTagName) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, elementId);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, elementId);
         LevelItemVO levelItemVo = new LevelItemVO();
         if (node != null) {
             if (NUM.equals(elementTagName)) {
@@ -2351,7 +2351,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private static int calculateDepthForNewElement(Node node, String elementId) {
         int depth = 0;
-        node = XercesUtils.getElementById(node, elementId);
+        node = XmlUtils.getElementById(node, elementId);
         if (node != null) {
             depth = getElementDepth(node, elementId);
         }
@@ -2384,8 +2384,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] updateRefsWithRefOrigin(byte[] xmlContent, String newRef, String oldRef) {
-        Document document = createXercesDocument(xmlContent);
-        NodeList nodeList = XercesUtils.getElementsByName(document, REF);
+        Document document = createDocument(xmlContent);
+        NodeList nodeList = XmlUtils.getElementsByName(document, REF);
         boolean flag = false;
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node child = nodeList.item(i);
@@ -2432,10 +2432,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public List<Element> getElementsByTagName(byte[] xmlContent, List<String> elementTags, boolean withContent) {
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         List<Element> elements = new ArrayList<>();
         for (String elementTag : elementTags) {
-            NodeList nodeList = XercesUtils.getElementsByName(document, elementTag);
+            NodeList nodeList = XmlUtils.getElementsByName(document, elementTag);
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node child = nodeList.item(i);
                 String id = getId(child);
@@ -2450,7 +2450,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     @Override
     public byte[] ignoreNotSelectedElements(byte[] xmlContent, List<String> rootElements, List<String> elementIds) {
         List<String> ancestorIds = getAncestorsIdsForElements(xmlContent, elementIds);
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         for (String rootElement : rootElements) {
             Node node = getFirstElementByName(document, rootElement);
             if (node != null) {
@@ -2486,15 +2486,15 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     protected byte[] deleteElementById(byte[] xmlContent, String elementId) {
-        Document document = createXercesDocument(xmlContent);
-        XercesUtils.deleteElementById(document, elementId);
+        Document document = createDocument(xmlContent);
+        XmlUtils.deleteElementById(document, elementId);
         return nodeToByteArray(document);
     }
 
     @Override
     public void updateSoftMoveLabelAttribute(Node documentNode, String attr) {
         String sourceDocumentRef = getContentByTagName(documentNode, LEOS_REF);
-        NodeList nodeList = XercesUtils.getElementsByXPath(documentNode, String.format("//*[@%s]", attr));
+        NodeList nodeList = XmlUtils.getElementsByXPath(documentNode, String.format("//*[@%s]", attr));
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
             Result<String> labelResult = referenceLabelService.generateSoftMoveLabel(getRefFromSoftMovedElt(node, attr),
@@ -2523,7 +2523,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
             }
             if(leosAction != null) {
-                if (!XercesUtils.hasAttribute(node, LEOS_UID_ATTR)) {
+                if (!XmlUtils.hasAttribute(node, LEOS_UID_ATTR)) {
                     addAttribute(node, LEOS_UID_ATTR, userLogin);
                 }
                 addAttribute(node, LEOS_ACTION_ATTR, leosAction);
@@ -2541,8 +2541,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     protected Element getSiblingOfParentElement(byte[] xmlContent, String tagName, String id) {
         LOG.trace("getSiblingOfParentElement for node {} with id {}", tagName, id);
         Element element = null;
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, id);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, id);
         if (node != null) {
             Node parent = node.getParentNode();
             if (parent != null) {
@@ -2587,7 +2587,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         List<String> allIds = new ArrayList<>();
 
         try {
-            Document document = createXercesDocument(xmlContent);
+            Document document = createDocument(xmlContent);
 
             String[] elementNames = {"citation", "recitals", "recital", "part", "title", "chapter", "section", "article"};
 
@@ -2615,10 +2615,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     protected byte[] removeElement(byte[] xmlContent, Element element, String currentOrigin, boolean isTrackChangesEnabled) {
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         String tagName = element.getElementTagName();
         String elementId = element.getElementId();
-        Node node = XercesUtils.getElementById(document, elementId);
+        Node node = XmlUtils.getElementById(document, elementId);
         boolean isSoftMovedFrom = isSoftMovedFrom(node);
         boolean isProposalElement = isProposalElement(node) || (isTrackChangesEnabled && !cloneContext.isClonedProposal());
         boolean isSoftDeleted = isSoftDeletedOrMovedTo(node);
@@ -2648,18 +2648,18 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         if (isSoftMovedFrom) {
             softDeleteOriginalNode(node, isTrackChangesEnabled);
             restoreTransformedNodeToContent(node);
-            XercesUtils.deleteElement(node);
+            XmlUtils.deleteElement(node);
         } else if (isProposalElement && !isSoftDeleted) {
             removeMovedInElements(node, isTrackChangesEnabled);
             softDeleteElementForNode(node, isTrackChangesEnabled);
         } else {
             restoreTransformedNodeToContent(node);
-            XercesUtils.deleteElement(node);
+            XmlUtils.deleteElement(node);
         }
 
         // Delete empty lists
         if (list != null && getChildren(list).isEmpty()) {
-            XercesUtils.deleteElement(list);
+            XmlUtils.deleteElement(list);
         }
 
         doXMLPostProcessing(document);
@@ -2676,10 +2676,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private void doSoftDeleteOriginalNode(Node node, boolean isTrackChangesEnabled) {
         String originalId = getAttributeValue(node, LEOS_SOFT_MOVE_FROM);
-        Boolean originalActionRoot = XercesUtils.getAttributeValueAsBoolean(node, LEOS_SOFT_ACTION_ROOT_ATTR);
+        Boolean originalActionRoot = XmlUtils.getAttributeValueAsBoolean(node, LEOS_SOFT_ACTION_ROOT_ATTR);
         LOG.debug("Setting original node {} as MOVED. Actual node {}", originalId, getId(node));
         if (originalId != null && Boolean.TRUE.equals(originalActionRoot)) {
-            Node originalNode = XercesUtils.getElementById(node.getOwnerDocument(), originalId);
+            Node originalNode = XmlUtils.getElementById(node.getOwnerDocument(), originalId);
             if (originalNode != null) {
                 softDeleteElementForNode(originalNode, isTrackChangesEnabled);
             } else {
@@ -2695,21 +2695,21 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             String originalId = getAttributeValue(child, LEOS_SOFT_MOVE_FROM);
             if(originalId != null) {
                 LOG.debug("Deleting MOVED node {}. The original {} will be set to sofdelete ", getId(child), originalId);
-                XercesUtils.deleteElement(child);
-                Node originNode  = XercesUtils.getElementById(node.getOwnerDocument(), originalId);
+                XmlUtils.deleteElement(child);
+                Node originNode  = XmlUtils.getElementById(node.getOwnerDocument(), originalId);
                 softDeleteElementForNode(originNode, isTrackChangesEnabled);
             } else {
                 removeMovedInElements(child, isTrackChangesEnabled);
                 // If all children of LIST are removed remove LIST also
                 if(LIST.equals(child.getNodeName()) && getChildren(child).size() == 0) {
-                    XercesUtils.deleteElement(child);
+                    XmlUtils.deleteElement(child);
                 }
             }
         }
     }
 
     protected boolean isSoftTransformed(Node node) {
-        SoftActionType actionType = XercesUtils.getAttributeForSoftAction(node, LEOS_SOFT_ACTION_ATTR);
+        SoftActionType actionType = XmlUtils.getAttributeForSoftAction(node, LEOS_SOFT_ACTION_ATTR);
         return (actionType!= null && actionType.equals(SoftActionType.TRANSFORM));
     }
 
@@ -2745,8 +2745,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Node nextListNode = getNextSibling(node, LIST);
         if (!isNull(nextSameTypeNode) && !isNull(nextListNode)) {
             if(isCNNode(nextSameTypeNode)){
-                XercesUtils.deleteElement(nextSameTypeNode);
-                XercesUtils.replaceElement(contentNode, node);
+                XmlUtils.deleteElement(nextSameTypeNode);
+                XmlUtils.replaceElement(contentNode, node);
                 node = contentNode.getParentNode();
             } else {
                 throw new IllegalStateException("Wrong structure! TRANSFORMED node " + node.getNodeName() + ", id: " + getId(node) + " is not followed by CN node");
@@ -2833,11 +2833,11 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
      */
 
     protected void restoreTransformedNodeToContent(Node node) {
-        Node prevSibling = XercesUtils.getPrevSibling(node);
+        Node prevSibling = XmlUtils.getPrevSibling(node);
         Node nextSibling = getNextSibling(node);
         boolean isFirstSubParagraph = isFirstSubParagraph(prevSibling);
         if (nextSibling == null) {
-            if (XercesUtils.isListIntro(prevSibling)) {
+            if (XmlUtils.isListIntro(prevSibling)) {
                 node.getParentNode().getParentNode().insertBefore(prevSibling, node.getParentNode());
                 if (getNextSibling(node.getParentNode()) != null) {
                     return;
@@ -2845,7 +2845,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             }
             if (isFirstSubParagraph) {
                 Node contentNode = getFirstChild(prevSibling, CONTENT);
-                XercesUtils.replaceElement(contentNode, prevSibling);
+                XmlUtils.replaceElement(contentNode, prevSibling);
             }
         }
     }
@@ -2872,8 +2872,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     protected String softDeleteElement(byte[] xmlContent, boolean namespaceEnabled, boolean replacePrefix) {
-        Document document = createXercesDocument(xmlContent, namespaceEnabled);
-        XercesUtils.addLeosNamespace(document);
+        Document document = createDocument(xmlContent, namespaceEnabled);
+        XmlUtils.addLeosNamespace(document);
         Node node = document.getFirstChild();
         return softDeleteElement(node, replacePrefix);
     }
@@ -2919,7 +2919,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             if (CN.equals(origin) && is(child, Arrays.asList(SUBPARAGRAPH, SUBPOINT))) { // The CN part of the split should be
                 // removed
                 restoreTransformedNodeToContent(child);
-                XercesUtils.deleteElement(child);
+                XmlUtils.deleteElement(child);
             } else {
                 removeAttribute(child, LEOS_SOFT_ACTION_ATTR);
                 propagateSoftDeleteToChildren(child, actionType);
@@ -2961,25 +2961,25 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] insertAttributeToElement(byte[] xmlContent, String elementTag, String elementId, String attrName, String attrVal) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, elementId);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, elementId);
         addAttribute(node, attrName, attrVal);
         return nodeToByteArray(document);
     }
 
     @Override
     public byte[] removeAttributeFromElement(byte[] xmlContent, String elementId, String attrName) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, elementId);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, elementId);
         removeAttribute(node, attrName);
         return nodeToByteArray(document);
     }
 
     @Override
     public List<Element> getElementsByPath(byte[] xmlContent, String xPath) {
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         List<Element> elements = new ArrayList<>();
-        NodeList nodeList = XercesUtils.getElementsByXPath(document, xPath);
+        NodeList nodeList = XmlUtils.getElementsByXPath(document, xPath);
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node child = nodeList.item(i);
             String id = getId(child);
@@ -2993,9 +2993,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     protected Node getNode(Document document, TableOfContentItemVO tocVo) {
         Node node = tocVo.getNode();
         if (!tocVo.isNewNode() && node == null) {
-            node = XercesUtils.getElementByNameAndId(document, tocVo.getTagName().value(), tocVo.getId());
+            node = XmlUtils.getElementByNameAndId(document, tocVo.getTagName().value(), tocVo.getId());
             if (node == null && hasIDAPrefix(tocVo.getId())) {
-                node = XercesUtils.getElementByNameAndId(document, tocVo.getTagName().value(), removeIDPrefix(tocVo.getId()));
+                node = XmlUtils.getElementByNameAndId(document, tocVo.getTagName().value(), removeIDPrefix(tocVo.getId()));
             }
         }
         if (node == null) {
@@ -3079,11 +3079,11 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] updateInitialNumberForArticles(byte[] xmlContent) {
-        Document document = createXercesDocument(xmlContent);
-        NodeList nodes = XercesUtils.getElementsByName(document, ARTICLE);
+        Document document = createDocument(xmlContent);
+        NodeList nodes = XmlUtils.getElementsByName(document, ARTICLE);
         for (int i = 0; i < nodes.getLength(); i++) {
             Node node = nodes.item(i);
-            String num = XercesUtils.getNodeNum(node);
+            String num = XmlUtils.getNodeNum(node);
             if (num != null) {
                 addAttribute(node, LEOS_INITIAL_NUM, num);
             }
@@ -3093,20 +3093,20 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] insertSoftAddedClassAttribute(byte[] contentBytes) {
-        Document document = createXercesDocument(contentBytes);
+        Document document = createDocument(contentBytes);
         NodeList nodes = document.getElementsByTagName(DOC);
         if (nodes != null && nodes.getLength() > 0) {
             Node bodyNode = getFirstChild(nodes.item(0), MAIN_BODY);
-            XercesUtils.insertOrUpdateAttributeValueRecursively(bodyNode, ATTR_NAME, CONTENT_SOFT_ADDED_CLASS);
+            XmlUtils.insertOrUpdateAttributeValueRecursively(bodyNode, ATTR_NAME, CONTENT_SOFT_ADDED_CLASS);
         }
         return nodeToByteArray(document);
     }
 
     protected boolean compareSoftAction(Node firstNode, Node secondNode) {
-        SoftActionType softActionAttrSecondNode = XercesUtils.getAttributeForSoftAction(secondNode, LEOS_SOFT_ACTION_ATTR);
-        SoftActionType softActionAttrFirstNode = XercesUtils.getAttributeForSoftAction(firstNode, LEOS_SOFT_ACTION_ATTR);
+        SoftActionType softActionAttrSecondNode = XmlUtils.getAttributeForSoftAction(secondNode, LEOS_SOFT_ACTION_ATTR);
+        SoftActionType softActionAttrFirstNode = XmlUtils.getAttributeForSoftAction(firstNode, LEOS_SOFT_ACTION_ATTR);
         if (softActionAttrFirstNode == null) {
-            softActionAttrFirstNode = XercesUtils.getAttributeForSoftAction(firstNode.getParentNode(), LEOS_SOFT_ACTION_ATTR);
+            softActionAttrFirstNode = XmlUtils.getAttributeForSoftAction(firstNode.getParentNode(), LEOS_SOFT_ACTION_ATTR);
         }
         return softActionAttrSecondNode == null || softActionAttrSecondNode.equals(softActionAttrFirstNode);
     }
@@ -3114,7 +3114,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     @Override
     public boolean isRevisionAnnex(byte[] contentBytes) {
     	boolean isRevisionAnnex = false;
-        Document document = createXercesDocument(contentBytes);
+        Document document = createDocument(contentBytes);
         NodeList nodes = document.getElementsByTagName(DOC);
         if(nodes != null && nodes.getLength() > 0) {
             Node node = getFirstChild(nodes.item(0), MAIN_BODY);
@@ -3148,9 +3148,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     protected int countChildren(byte[] xmlContent, String elementId, List<String> childrenNames) {
-        Document document = createXercesDocument(xmlContent);
-        Node node = XercesUtils.getElementById(document, elementId);
-        return XercesUtils.countChildren(node, childrenNames);
+        Document document = createDocument(xmlContent);
+        Node node = XmlUtils.getElementById(document, elementId);
+        return XmlUtils.countChildren(node, childrenNames);
     }
 
     protected Element getMergedOnElement(Element mergeOnElement, byte[] xmlContent) {
@@ -3164,7 +3164,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             String contentXml = mergeOnElement.getElementFragment().replaceAll("<subparagraph.*?>", "").replaceAll("</subparagraph>", "");
             String wrappedContentXml = LeosDomainUtil.wrapXmlFragment(contentXml);
 
-            Document document = createXercesDocument(wrappedContentXml.getBytes(UTF_8));
+            Document document = createDocument(wrappedContentXml.getBytes(UTF_8));
             Node node = getFirstElementByName(document, CONTENT);
             String contentId = getId(node);
             mergeOnElement = new Element(contentId, CONTENT, contentXml);
@@ -3175,7 +3175,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     @Override
     public byte[] removeDuplicateIds(byte[] xmlContent, boolean namespaceEnabled) {
         //overriding of the ID if there is a case
-        Document document = createXercesDocument(xmlContent, namespaceEnabled);
+        Document document = createDocument(xmlContent, namespaceEnabled);
         Set idsSet = new HashSet();
         removeDuplicateIdsFromDocument(document.getDocumentElement(), idsSet);
         idsSet.clear();
@@ -3225,9 +3225,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     public SpecificDocumentInformationDTO getSpecificDocumentInformation(byte xmlContent[]) {
-        Document document = createXercesDocument(xmlContent);
+        Document document = createDocument(xmlContent);
         // We really should have this information on xml, if not, there is something wrong in template
-        NodeList nodeListForResfersTo = XercesUtils.getElementsByXPath(document, ".//akn:longTitle//*[@refersTo]");
+        NodeList nodeListForResfersTo = XmlUtils.getElementsByXPath(document, ".//akn:longTitle//*[@refersTo]");
         String refersToOfDocument = nodeListForResfersTo.item(0).getAttributes().getNamedItem("refersTo").getTextContent();
         String showAs = nodeListForResfersTo.item(0).getTextContent();
         return new SpecificDocumentInformationDTO(refersToOfDocument, showAs);
@@ -3235,8 +3235,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] alignBaseVersionDocumentIds(XmlDocument sourceXmlDoc, XmlDocument targetXmlDoc) throws IllegalArgumentException {
-        Document sourceDoc = XercesUtils.createXercesDocument(sourceXmlDoc);
-        Document targetDoc = XercesUtils.createXercesDocument(targetXmlDoc);
+        Document sourceDoc = XmlUtils.createDocument(sourceXmlDoc);
+        Document targetDoc = XmlUtils.createDocument(targetXmlDoc);
         Node attachmentsNode = removeAttachmentsIfExist(targetDoc);
         alignAllIds(sourceDoc, targetDoc, sourceXmlDoc.getCategory().toString());
         reinsertAttachments(targetDoc, attachmentsNode);
@@ -3294,9 +3294,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     @Override
     public byte[] alignLatestVersionDocument(byte[] sourceXml, byte[] sourceBaseXml, XmlDocument targetXmlDoc) throws IllegalArgumentException {
-        Document sourceBaseDoc = createXercesDocument(sourceBaseXml);
-        Document sourceDoc = createXercesDocument(sourceXml);
-        Document targetDoc = XercesUtils.createXercesDocument(targetXmlDoc);
+        Document sourceBaseDoc = createDocument(sourceBaseXml);
+        Document sourceDoc = createDocument(sourceXml);
+        Document targetDoc = XmlUtils.createDocument(targetXmlDoc);
 
         alignMetaNode(sourceDoc, targetDoc);
         replaceUnchangedContentInSourceDocByTarget(targetDoc, sourceDoc, sourceBaseDoc);
@@ -3327,7 +3327,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         NodeList targetNodes = getAllNodesWithId(targetRootNode);
         for (int i = 0; i < targetNodes.getLength(); i++) {
             Node targetNode = targetNodes.item(i);
-            Node nodeInSource = XercesUtils.getElementById(sourceRootNode, getId(targetNode));
+            Node nodeInSource = XmlUtils.getElementById(sourceRootNode, getId(targetNode));
             if (nodeInSource == null) {
                 deleteElement(targetNode);
             }
@@ -3343,14 +3343,14 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private static void addNodeToDocumentIfNotExists(Node targetRootNode, Node nodeToBeAdded) {
-        Node nodeInTargetDocument = XercesUtils.getElementById(targetRootNode, getId(nodeToBeAdded));
+        Node nodeInTargetDocument = XmlUtils.getElementById(targetRootNode, getId(nodeToBeAdded));
         if (nodeInTargetDocument == null) {
             Node importedNode = importNodeInDocument(targetRootNode.getOwnerDocument(), nodeToBeAdded);
-            Node prevSiblingInTargetDocument = XercesUtils.getElementById(targetRootNode, getPreviousSiblingId(nodeToBeAdded));
+            Node prevSiblingInTargetDocument = XmlUtils.getElementById(targetRootNode, getPreviousSiblingId(nodeToBeAdded));
             if (prevSiblingInTargetDocument != null) {
                 addSibling(importedNode, prevSiblingInTargetDocument, false);
             } else {
-                Node parentNodeInTargetDocument = XercesUtils.getElementById(targetRootNode, getId(nodeToBeAdded.getParentNode()));
+                Node parentNodeInTargetDocument = XmlUtils.getElementById(targetRootNode, getId(nodeToBeAdded.getParentNode()));
                 addFirstChild(importedNode, parentNodeInTargetDocument);
             }
         }
@@ -3360,8 +3360,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         if (originalNode != null && nodeToImport != null && !originalNode.isSameNode(nodeToImport)) {
             Node importedNode = importNodeInDocument(doc, nodeToImport);
             String originalNodeId = getId(originalNode);
-            Node nodeToBeReplaced = originalNodeId != null ? XercesUtils.getElementById(doc, originalNodeId) : originalNode;
-            XercesUtils.replaceElement(importedNode, nodeToBeReplaced);
+            Node nodeToBeReplaced = originalNodeId != null ? XmlUtils.getElementById(doc, originalNodeId) : originalNode;
+            XmlUtils.replaceElement(importedNode, nodeToBeReplaced);
         }
     }
 
@@ -3370,8 +3370,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         for (int i = 0; i < sourceNodes.getLength(); i++) {
             Node sourceNode = sourceNodes.item(i);
             highlightNodeForTranslation(sourceNode);
-            Node targetNode = XercesUtils.getElementById(targetDoc, getId(sourceNode));
-            Node sourceBaseNode = XercesUtils.getElementById(sourceBaseDoc, getId(sourceNode));
+            Node targetNode = XmlUtils.getElementById(targetDoc, getId(sourceNode));
+            Node sourceBaseNode = XmlUtils.getElementById(sourceBaseDoc, getId(sourceNode));
             if (targetNode != null && anyHasTextOrImgChildren(sourceNode, targetNode)
                     && unchangedTextContentInSource(sourceNode, sourceBaseNode)
                     && unchangedImageContentInSource(sourceNode, sourceBaseNode)) {
@@ -3414,10 +3414,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     private static Node alignChildNodes(Node sourceNode, Document targetDoc) {
         // Clone target document to avoid replacing sourceChildNodes in the original targetDoc, which can be required when aligning children nodes
         Document clonedTargetDoc = (Document) targetDoc.cloneNode(true);
-        Node clonedTargetNode = XercesUtils.getElementById(clonedTargetDoc, getId(sourceNode));
+        Node clonedTargetNode = XmlUtils.getElementById(clonedTargetDoc, getId(sourceNode));
         List<Node> sourceChildNodesWithId = getNonStylingChildren(sourceNode);
         if (sourceChildNodesWithId.stream().allMatch((Node sourceChildNodeWithId) -> {
-            Node targetChildNodeWithId = XercesUtils.getElementById(clonedTargetNode, getId(sourceChildNodeWithId));
+            Node targetChildNodeWithId = XmlUtils.getElementById(clonedTargetNode, getId(sourceChildNodeWithId));
             if (targetChildNodeWithId != null) {
                 highlightNodeAndDescendantsForTranslation(sourceChildNodeWithId);
                 // Target node's text will be returned to be replaced in source doc, but source node's children with ID will be kept (to be aligned later)
@@ -3454,7 +3454,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     private void alignInternalReferences(Document sourceDoc, Document targetDoc) {
         String targetLanguage = getFirstElementByXPath(targetDoc, xPathCatalog.getXPathDocLanguage()).getNodeValue();
-        NodeList mrefList = XercesUtils.getElementsByName(sourceDoc, MREF);
+        NodeList mrefList = XmlUtils.getElementsByName(sourceDoc, MREF);
         for (int i = 0; i < mrefList.getLength(); i++) {
             List<Node> refs = getChildren(mrefList.item(i), REF);
             for (Node ref : refs) {
@@ -3467,14 +3467,14 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private void alignAlternatives(XmlDocument targetXmlDoc, Document sourceDoc, Document sourceBaseDoc) {
-        List<Node> sourceAlternativeNodes = XercesUtils.getDescendantsWithAttribute(sourceDoc, LEOS_ALTERNATIVE_ATTR);
-        List<Node> sourceBaseAlternativeNodes = XercesUtils.getDescendantsWithAttribute(sourceBaseDoc, LEOS_ALTERNATIVE_ATTR);
+        List<Node> sourceAlternativeNodes = XmlUtils.getDescendantsWithAttribute(sourceDoc, LEOS_ALTERNATIVE_ATTR);
+        List<Node> sourceBaseAlternativeNodes = XmlUtils.getDescendantsWithAttribute(sourceBaseDoc, LEOS_ALTERNATIVE_ATTR);
 
         sourceAlternativeNodes.forEach(sourceAlternativeNode -> {
             Node sourceBaseAlternativeNode = sourceBaseAlternativeNodes.stream()
                     .filter(sourceBaseNode -> StringUtils.equals(getId(sourceAlternativeNode), getId(sourceBaseNode))).findFirst().orElse(null);
-            String selectedOption = XercesUtils.getAttributeValue(sourceAlternativeNode, LEOS_SELECTED_OPTION_ATTR);
-            if (!StringUtils.equals(selectedOption, XercesUtils.getAttributeValue(sourceBaseAlternativeNode, LEOS_SELECTED_OPTION_ATTR))) {
+            String selectedOption = XmlUtils.getAttributeValue(sourceAlternativeNode, LEOS_SELECTED_OPTION_ATTR);
+            if (!StringUtils.equals(selectedOption, XmlUtils.getAttributeValue(sourceBaseAlternativeNode, LEOS_SELECTED_OPTION_ATTR))) {
                 replaceAlternativeNodeWithContentFromLanguageTemplateConfig(targetXmlDoc, sourceAlternativeNode, selectedOption);
             }
         });
@@ -3484,7 +3484,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         LeosMetadata targetDocMetadata = targetXmlDoc.getMetadata().get();
         documentLanguageContext.setDocumentLanguage(targetDocMetadata.getLanguage());
         JsonNode targetAlternatives = templateConfigurationService.getElementJsonFromTemplateConfiguration(targetDocMetadata.getDocTemplate(), "alternatives");
-        String optionList = XercesUtils.getAttributeValue(sourceAlternativeNode, LEOS_OPTION_LIST_ATTR);
+        String optionList = XmlUtils.getAttributeValue(sourceAlternativeNode, LEOS_OPTION_LIST_ATTR);
         targetAlternatives.elements().forEachRemaining(alternativesList -> {
             if (StringUtils.equals(optionList, alternativesList.get("name").asText())) {
                 alternativesList.get("list").elements().forEachRemaining(alternativeItem -> {
@@ -3492,7 +3492,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                         String xmlFragment = alternativeItem.get("content").asText();
                         Node targetAlternativeNode = createNodeFromXmlFragment(sourceAlternativeNode.getOwnerDocument(),
                                 xmlFragment.getBytes(StandardCharsets.UTF_8), false);
-                        XercesUtils.replaceElement(targetAlternativeNode, sourceAlternativeNode);
+                        XmlUtils.replaceElement(targetAlternativeNode, sourceAlternativeNode);
                     }
                 });
             }

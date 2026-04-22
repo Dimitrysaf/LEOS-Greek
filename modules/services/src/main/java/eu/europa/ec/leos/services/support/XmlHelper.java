@@ -640,11 +640,12 @@ public class XmlHelper {
     }
 
     public static String removeAllNameSpaces(String str) {
-        return str.replaceAll(" xmlns=\"http://docs\\.oasis-open\\.org/legaldocml/ns/akn/3\\.0\"", "")
-                .replaceAll(" xmlns:leos=\"urn:eu:europa:ec:leos\"", "")
+        return str
+                .replace(" xmlns=\"http://docs.oasis-open.org/legaldocml/ns/akn/3.0\"", "")
+                .replace(" xmlns:leos=\"urn:eu:europa:ec:leos\"", "")
                 .replaceAll(" xmlns:fmx=\"http://formex.*?xd\"", "")
-                .replaceAll(" xmlns:xml=\"http://www.w3.org/XML/1998/namespace\"", "")
-                .replaceAll(" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"", "")
+                .replace(" xmlns:xml=\"http://www.w3.org/XML/1998/namespace\"", "")
+                .replace(" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"", "")
                 .replaceAll("<\\?xml *version=\"1\\.0\" *encoding=\"UTF-8\" *\\?>", "")
                 .replaceAll("<\\?xml *version=\"1\\.0\" *encoding=\"UTF-8\" *standalone=\"no\" *\\?>", "");
     }
@@ -656,28 +657,6 @@ public class XmlHelper {
     
     public static String replaceNonBreakingSpace(String str) {
     	return str == null ? str : str.replaceAll("&nbsp;", " ").replaceAll("\u00a0", " ");
-    }
-
-    /**
-     * Escape the string from only characters interfering with Xerces parsing: "<", ">" and "&". The rest of special characters
-     * are left in their UTF representation.
-     * In case a full escaping is needed use StringEscapeUtils.escapeHtml()
-     */
-    public static String escapeXml(String str) {
-        return str.replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll("&", "&amp;")
-//                .replaceAll("'", "&apos;")
-//                .replaceAll("\"", "&quot;")
-                ;
-    }
-
-    public static String getOpeningTag(String attrName, String attrValue) {
-        return "<span " + attrName + "=\"" + attrValue + "\">";
-    }
-
-    public static String getClosingTag() {
-        return "</span>";
     }
 
     public static GregorianCalendar convertStringDateToCalendar(String strDate) {
@@ -744,11 +723,21 @@ public class XmlHelper {
         int textCounter = -1;
         boolean stopCounting = false;
         boolean stopCountingAfterLineBreak = false;
+        xmlStartIndex = getXmlStartIndex(text, txtStartOffset, xmlStartIndex, textCounter, stopCounting, stopCountingAfterLineBreak);
+        text = text.substring(xmlStartIndex);
+
+        int xmlEndIndex = xmlStartIndex;
+        xmlEndIndex = getXmlStartIndex(text, txtEndOffset, xmlEndIndex, txtStartOffset, stopCounting, stopCountingAfterLineBreak);
+        String matchingText = text.substring(0, xmlEndIndex - xmlStartIndex);
+        return new ImmutableTriple<>(matchingText, xmlStartIndex, xmlEndIndex);
+    }
+
+    private static int getXmlStartIndex(String text, int txtStartOffset, int xmlStartIndex, int textCounter, boolean stopCounting, boolean stopCountingAfterLineBreak) {
         for (char c : text.toCharArray()) {
             if (textCounter == txtStartOffset) {
                 break;
             }
-            if (c == '\n' && !stopCounting) {
+            if ((c == '\r' || c == '\n') && !stopCounting) {
                 stopCountingAfterLineBreak = true;
             } else if (c != ' ' && stopCountingAfterLineBreak) {
                 stopCountingAfterLineBreak = false;
@@ -764,34 +753,7 @@ public class XmlHelper {
             }
             xmlStartIndex++;
         }
-        text = text.substring(xmlStartIndex);
-
-        int xmlEndIndex = xmlStartIndex;
-        int textCounterI = txtStartOffset;
-        stopCounting = false;
-        stopCountingAfterLineBreak = false;
-        for (char c : text.toCharArray()) {
-            if (textCounterI == txtEndOffset) {
-                break;
-            }
-            if (c == '\n' && !stopCounting) {
-                stopCountingAfterLineBreak = true;
-            } else if (c != ' ' && stopCountingAfterLineBreak) {
-                stopCountingAfterLineBreak = false;
-                // Keep one space
-                xmlEndIndex--;
-            }
-            if (c == '<') {
-                stopCounting = true;
-            } else if (c == '>') {
-                stopCounting = false;
-            } else if (!stopCounting && !stopCountingAfterLineBreak) {
-                textCounterI++;
-            }
-            xmlEndIndex++;
-        }
-        String matchingText = text.substring(0, xmlEndIndex - xmlStartIndex);
-        return new ImmutableTriple<>(matchingText, xmlStartIndex, xmlEndIndex);
+        return xmlStartIndex;
     }
 
     public static String normalizeNewText(String origText, String newText) {
@@ -1016,6 +978,14 @@ public class XmlHelper {
                 break;
         }
         return showAs;
+    }
+
+    public static String getOpeningTag(String attrName, String attrValue) {
+        return "<span " + attrName + "=\"" + attrValue + "\">";
+    }
+
+    public static String getClosingTag() {
+        return "</span>";
     }
 
 }

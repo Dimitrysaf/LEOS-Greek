@@ -21,7 +21,7 @@ import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.structure.StructureContext;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.vo.structure.OptionsType;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -36,8 +36,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.getId;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.getId;
 import static eu.europa.ec.leos.services.support.XmlHelper.HEADING;
 
 @Service
@@ -129,8 +129,8 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
 
     private void validateNoStructuralChangesInCustomTemplateLinguisticVersion(T document, String elementContent, byte[] byteXmlContent) {
         if (document.getMetadata().get().isCustomTemplateAct() && document.getMetadata().get().isTranslated()) {
-            Node newNode = createXercesDocument(elementContent.getBytes(StandardCharsets.UTF_8), false).getFirstChild();
-            Node oldNode = XercesUtils.getElementById(byteXmlContent, getId(newNode));
+            Node newNode = XmlUtils.createDocument(elementContent.getBytes(StandardCharsets.UTF_8), false).getFirstChild();
+            Node oldNode = XmlUtils.getElementById(byteXmlContent, getId(newNode));
             xmlContentProcessor.alignAllIds(oldNode, newNode, document.getCategory().toString());
         }
     }

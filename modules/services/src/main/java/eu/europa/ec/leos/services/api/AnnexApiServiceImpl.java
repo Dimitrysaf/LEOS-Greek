@@ -79,7 +79,7 @@ import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
-import eu.europa.ec.leos.services.support.LeosXercesUtils;
+import eu.europa.ec.leos.services.support.LeosXmlUtils;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.user.UserHelper;
@@ -242,7 +242,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
             splittedContentIsEmpty = true;
         }
 
-        newContent = LeosXercesUtils.addOrientationPortraitIfNone(newContent);
+        newContent = LeosXmlUtils.addOrientationPortraitIfNone(newContent);
         List<Element> result = getMovedFromElements(annex, elementContent, elementId);
         return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty, result);
     }

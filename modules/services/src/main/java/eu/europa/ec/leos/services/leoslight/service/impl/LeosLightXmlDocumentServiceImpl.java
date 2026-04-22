@@ -33,9 +33,9 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.processor.rendition.HtmlRenditionProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
-import eu.europa.ec.leos.services.support.LeosXercesUtils;
+import eu.europa.ec.leos.services.support.LeosXmlUtils;
 import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemHtmlVO;
@@ -66,7 +66,6 @@ import jakarta.inject.Provider;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -75,7 +74,7 @@ import java.util.List;
 import java.util.Map;
 
 import static eu.europa.ec.leos.services.store.LegServiceImpl.SUGGESTION;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Service
@@ -141,8 +140,8 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
         RenderedDocument tocHtmlDocumentJS = new RenderedDocument();
 
         if (xmlDocumentName.startsWith(XmlHelper.STAT_DIGIT_FINANC_LEGIS)) {
-            Document document = XercesUtils.createXercesDocument(xmlContent);
-            byte[] htmlRenditionContent = LeosXercesUtils.wrapWithPageOrientationDivs(document);
+            Document document = XmlUtils.createDocument(xmlContent);
+            byte[] htmlRenditionContent = LeosXmlUtils.wrapWithPageOrientationDivs(document);
             htmlDocument.setContent(new ByteArrayInputStream(htmlRenditionContent));
             tocHtmlDocument.setContent(new ByteArrayInputStream(htmlRenditionContent));
             tocHtmlDocumentJS.setContent(new ByteArrayInputStream(htmlRenditionContent));
@@ -321,8 +320,8 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
     }
 
     private String createTrackChangesCss(byte[] xmlContent, String proposalRef) {
-        Document document = createXercesDocument(xmlContent);
-        NodeList elements = XercesUtils.getElementsByXPath(document, xPathCatalog.getXPathTrackChanges());
+        Document document = createDocument(xmlContent);
+        NodeList elements = XmlUtils.getElementsByXPath(document, xPathCatalog.getXPathTrackChanges());
         List<String> usersId = new ArrayList();
         for (int i = 0; i < elements.getLength(); i++) {
             Node element = elements.item(i);

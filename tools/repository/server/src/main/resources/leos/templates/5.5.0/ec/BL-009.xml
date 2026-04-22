@@ -58,14 +58,14 @@
             </container>
             <longTitle>
                 <p>
-                    <docType refersTo="~DEC_IMPL">{{docType.009}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
+                    <docType refersTo="~DEC_IMPL">{{docType.impl.decision}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
                     <docPurpose>{{docPurpose}}</docPurpose>
                 </p>
             </longTitle>
         </preface>
         <preamble>
             <formula name="actingEntity">
-                <p>{{bl.commission}}</p>
+                <p>{{bl.commission.decision}}</p>
             </formula>
             <citations leos:editable="false">
                 <citation refersTo="~_legalBasis" leos:editable="true">
@@ -75,7 +75,7 @@
                     <p>{{bl.citation2Before}}<authorialNote marker="1" placement="bottom"><p>{{bl.citation2inside}}</p></authorialNote>{{bl.citation2after}}</p>
                 </citation>
                 <citation leos:editable="true">
-                    <p>{{bl.citation3.009}}</p>
+                    <p>{{bl.citation3}}</p>
                 </citation>
             </citations>
             <recitals leos:editable="false">
@@ -90,7 +90,7 @@
                 </recital>
                 <recital leos:editable="true">
                     <num>(3)</num>
-                    <p>{{bl.recital3.decision}}</p>
+                    <p>{{bl.recital.decision}}</p>
                 </recital>
             </recitals>
             <formula name="enactingFormula">
