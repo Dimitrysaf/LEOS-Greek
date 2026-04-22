@@ -145,10 +145,20 @@ export class ProposalDraftsComponent
     input.type = 'file';
     input.accept = '.docx, .xlsx, .pdf';
     input.onchange = (event: any) => {
+      const file = event.target.files[0];
+      if (file.size > (50 * 1024 * 1024)) {
+        this.loadingService.setLoading(false);
+        this.dialogService.openDialog({
+          title: this.translateService.instant('page.collection.drafts.annex.max.size.error.title'),
+          content: this.translateService.instant('page.collection.drafts.annex.max.size.error.message'),
+          hasDismissButton: false,
+        });
+        this.growlService.clearGrowl();
+        return;
+      }
       if (this.proposalState !== 'loading' && this.proposalState !== 'active') {
         this.proposalStateChange.emit('active');
       }
-      const file = event.target.files[0];
       if (file && !annex) {
         let annexWithSameName = this.proposal?.childDocuments?.find(e => e.category === 'BILL')?.childDocuments?.find(e => e.category === 'ANNEX' && e.originalFilename === file.name);
         if (annexWithSameName) {
