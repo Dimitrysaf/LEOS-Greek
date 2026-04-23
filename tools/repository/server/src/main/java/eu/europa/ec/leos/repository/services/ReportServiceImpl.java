@@ -65,9 +65,9 @@ public class ReportServiceImpl implements ReportService {
                     .append(",")
                     .append(formatDate(row[3]))//creation date
                     .append(",")
-                    .append(row[4])//lead DG
+                    .append(escapeCsv(row[4]))//lead DG
                     .append(",")
-                    .append(formatStr(row[5]))//other DG
+                    .append(escapeCsv(formatStr(row[5])))//other DG
                     .append(",")
                     .append(formatYesNo(row[6]))//Contains milestones
                     .append(",")
