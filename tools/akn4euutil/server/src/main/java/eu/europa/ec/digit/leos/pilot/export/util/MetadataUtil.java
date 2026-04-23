@@ -42,12 +42,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.Collection;
+import java.util.stream.Stream;
 
 public class MetadataUtil {
     public static final Logger LOG = LoggerFactory.getLogger(MetadataUtil.class);
@@ -152,14 +154,13 @@ public class MetadataUtil {
             "bill", "dec", "dir", "expl_council", "expl_memorandum", "financial_statement",
             "main", "memorandum", "reg", "stat_digit_financ", "stat_financ");
 
-    public static final Set<String> LIST_LANGUAGES = new LinkedHashSet<>(Arrays.asList("BG",
+    public static final Set<String> LIST_LANGUAGES = new LinkedHashSet<>(Stream.of("BG",
                     "CS", "DA", "DE", "EL", "EN", "ES", "ET", "FI",
                     "FR", "GA", "HR", "HU",
                     "IT", "LT", "LV", "MT",
                     "NL", "PL", "PT", "RO",
                     "SK", "SL",
                     "SV")
-            .stream()
             .map(String::toLowerCase)
             .collect(Collectors.toList()));
 
@@ -277,7 +278,7 @@ public class MetadataUtil {
         }
 
         final Optional<XmlFile> optMainXml = xmlFiles.stream().filter(MetadataUtil::isMainDocumentFile).findFirst();
-        if (!optMainXml.isPresent()) {
+        if (optMainXml.isEmpty()) {
             return false;
         }
 
@@ -303,7 +304,7 @@ public class MetadataUtil {
         if (!XmlUtil.nodeHasAttribute(documentNode, "name")) {
             return false;
         }
-        return XmlUtil.getNodeAttributeValue(documentNode, "name").length() > 0;
+        return !Objects.requireNonNull(XmlUtil.getNodeAttributeValue(documentNode, "name")).isEmpty();
     }
 
     public static boolean isDocumentXmlFilename(final String fileName) {
@@ -312,7 +313,7 @@ public class MetadataUtil {
             return false;
         }
         return MetadataUtil.validXmlDocumentPrefixes.stream()
-                .anyMatch((prefix) -> lowerCaseFileName.startsWith(prefix));
+                .anyMatch(lowerCaseFileName::startsWith);
     }
 
     public static boolean isMainDocumentFile(XmlFile xmlFile) {
@@ -377,7 +378,7 @@ public class MetadataUtil {
     }
 
     public static MetadataFieldInfo parseEmissionDate(String fieldValue) throws MetadataFieldInvalidValueException {
-        return ((ReferenceFieldInfo) parseEmissionDate(MetadataFieldType.EMISSION_DATE.toString(), fieldValue));
+        return parseEmissionDate(MetadataFieldType.EMISSION_DATE.toString(), fieldValue);
     }
 
     public static MetadataFieldInfo parseEmissionDate(String fieldName, String fieldValue) throws MetadataFieldInvalidValueException {
@@ -387,7 +388,7 @@ public class MetadataUtil {
         Date parsedDate = stringToDate(fieldValue, EMISSION_DATE_PARSE_PATTERN);
         if (parsedDate == null) {
             throw MetadataFieldInvalidValueException.newException(fieldName, MESSAGE_INVALID_ISO_DATE);
-        };
+        }
 
         return new ReferenceFieldInfo(fieldValue, "", "", "", MetadataFieldType.EMISSION_DATE);
     }
@@ -461,7 +462,7 @@ public class MetadataUtil {
         }
         if (startIndex == value.length()) return "";
 
-        Integer spaceIndex = value.indexOf(" ", startIndex);
+        int spaceIndex = value.indexOf(" ", startIndex);
         String coteNumber = (spaceIndex == -1) ? value.substring(startIndex) : value.substring(startIndex, spaceIndex);
         return coteNumber.trim();
     }
@@ -605,10 +606,8 @@ public class MetadataUtil {
     }
 
     public static Node getXmlNodeDocNumber(XmlFile xmlFile) {
-        Node xmlDocNumber = null;
         final NodeList elementsByName = xmlFile.getElementsByName("docNumber");
-        xmlDocNumber = elementsByName.item(0);
-        return  xmlDocNumber;
+        return elementsByName.item(0);
     }
 
     public static Node getXmlNodeMetaReferenceWithNameAttributeValue(XmlFile xmlFile, String referenceNodeName, String nameAttributeValue) {
@@ -653,38 +652,35 @@ public class MetadataUtil {
     }
 
     public static String buildPrefinalizationLegName(ApplyMetadataRequest.TaskNode task) {
-        String documentFilename = task.getDocument().getFileName();
-        int pos = documentFilename.indexOf("-");
-        if (pos == -1) {
-            return documentFilename;
-        }
-
+        final String originalFileName = task.getDocument().getFileName();
+        int pos = originalFileName.indexOf("-");
         Optional<ApplyMetadataRequest.ActionNode> action = task.getActions().stream().findFirst();
-        if (action.isEmpty()) {
-            return documentFilename;
+        if ((pos == -1) || action.isEmpty()) {
+            return originalFileName;
         }
 
         Optional<ApplyMetadataRequest.FieldNode> coteField = action.get().getFieldWithKey(MetadataFieldType.COTE.toString());
         Optional<ApplyMetadataRequest.FieldNode> finalCote = action.get().getFieldWithKey(MetadataFieldType.FINAL_COTE.toString());
-        Optional<ApplyMetadataRequest.FieldNode> diffusionVersionField = MetadataUtil.getDiffusionVersion(action.get());
-        String diffusionVersion = diffusionVersionField.map(ApplyMetadataRequest.FieldNode::getValue).orElse(null);
         if (coteField.isEmpty() && finalCote.isEmpty()) {
-            return documentFilename;
+            return originalFileName;
         } else if (finalCote.isPresent()) {
             coteField = finalCote;
         }
 
         final String coteValue = coteField.get().getValue().replace(" ", "_");
-        String prefinalisationName = documentFilename.substring(0, pos + 1) + coteValue;
+        String prefinalisationName = originalFileName.substring(0, pos + 1) + coteValue;
         if (finalCote.isPresent()) {
-            documentFilename = documentFilename.replace("-" + VALUE_FINAL, "");
             prefinalisationName = prefinalisationName + "-" + VALUE_FINAL;
         }
 
+        final String documentFilename = originalFileName.replaceAll("-(?:" + VALUE_FINAL + ")?(?:_\\d+)?(?=-)", "");
         pos = documentFilename.indexOf("-", pos + 1);
         if (pos == -1) {
-            return documentFilename;
+            return originalFileName;
         }
+
+        Optional<ApplyMetadataRequest.FieldNode> diffusionVersionField = MetadataUtil.getDiffusionVersion(action.get());
+        String diffusionVersion = diffusionVersionField.map(ApplyMetadataRequest.FieldNode::getValue).orElse(null);
         return prefinalisationName + (StringUtil.isEmpty(diffusionVersion) ? "" : "_" + diffusionVersion) + documentFilename.substring(pos);
     }
 
@@ -840,7 +836,7 @@ public class MetadataUtil {
                 .anyMatch((spelling) -> value.toLowerCase().contains(spelling));
     }
 
-    public static MetadataFieldInfo parseDiffusionVersion(String fieldValue) throws MetadataFieldInvalidValueException {
+    public static MetadataFieldInfo parseDiffusionVersion(String fieldValue) {
         return new SimpleFieldInfo(fieldValue, MetadataFieldType.DIFFUSION_VERSION);
     }
 }
