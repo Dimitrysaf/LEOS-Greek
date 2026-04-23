@@ -34,6 +34,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @jakarta.persistence.Entity
+@IdClass(User.UserId.class)
 @Table(name = "LEOS_USER")
 @Getter
 @Setter
@@ -48,8 +49,13 @@ public class User implements Serializable {
     @Column(name = "USER_LOGIN", nullable = false, insertable = false, updatable = false)
     private String login;
 
+    @Id
     @Column(name = "USER_PER_ID", nullable = false, insertable = false, updatable = false)
     private Long perId;
+
+    @Id
+    @Column(name = "SPECIAL", nullable = false, insertable = false, updatable = false)
+    private Boolean special;
 
     @Column(name = "USER_LASTNAME", nullable = false, insertable = false, updatable = false)
     private String lastName;
@@ -68,19 +74,16 @@ public class User implements Serializable {
     private Date dateCreated;
 
     @JsonIgnore
-    @OneToMany
+    @ManyToMany
     @LazyCollection(LazyCollectionOption.FALSE)
-    @JoinTable(name = "LEOS_USER_ROLE", joinColumns = @JoinColumn(name = "USER_LOGIN"), inverseJoinColumns = @JoinColumn(name = "ROLE_NAME"))
+    @JoinTable(name = "LEOS_USER_ROLE", joinColumns = @JoinColumn(name = "USER_LOGIN", referencedColumnName = "USER_LOGIN"), inverseJoinColumns = @JoinColumn(name = "ROLE_NAME"))
     private List<Role> roleEntities;
 
-    @OneToMany
+    @ManyToMany
     @LazyCollection(LazyCollectionOption.FALSE)
-    @JoinTable(name = "LEOS_USER_ENTITY", joinColumns = @JoinColumn(name = "USER_LOGIN"), inverseJoinColumns = @JoinColumn(name = "ENTITY_ID"))
+    @JoinTable(name = "LEOS_USER_ENTITY", joinColumns = @JoinColumn(name = "USER_LOGIN", referencedColumnName = "USER_LOGIN"), inverseJoinColumns = @JoinColumn(name = "ENTITY_ID"))
     @OrderBy("ENTITY_ORG_NAME, ENTITY_NAME")
     private List<Entity> entities;
-
-    @Column(name = "SPECIAL", insertable = false, updatable = false)
-    private Boolean special;
 
     public User(String login, Long perId, String lastName, String firstName, String email, String jobTitle, List<Role> roleEntities, List<Entity> entities) {
         this.login = login;
@@ -106,5 +109,14 @@ public class User implements Serializable {
                         roleEntities.stream().map(Role::getRole),
                         Stream.of("USER"))
                 .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+    }
+
+
+    public static class UserId implements Serializable {
+        @Serial
+        private static final long serialVersionUID = 1L;
+        private String login;
+        private Boolean special;
+        private Long perId;
     }
 }

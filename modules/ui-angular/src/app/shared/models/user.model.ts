@@ -17,6 +17,16 @@ export interface User {
   special: boolean;
 }
 
+export interface UserUpdate {
+  login: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  roles: ApplicationRole[];
+  addedEntities: String[];
+  removedEntities: String[]
+}
+
 export interface UserEntity {
   id: string;
   name: string;

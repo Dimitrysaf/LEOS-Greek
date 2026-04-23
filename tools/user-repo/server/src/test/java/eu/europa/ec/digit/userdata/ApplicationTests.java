@@ -50,7 +50,7 @@ class ApplicationTests {
     @Test
     @Transactional(readOnly = true)
     void test_findBylogin() {
-        User user = userRepository.findByLogin("jane");
+        User user = userRepository.findFirstByLogin("jane");
         assertNotNull(user);
         assertEquals("jane", user.getLogin());
         assertEquals("SUPPORT", user.getRoles().getFirst());

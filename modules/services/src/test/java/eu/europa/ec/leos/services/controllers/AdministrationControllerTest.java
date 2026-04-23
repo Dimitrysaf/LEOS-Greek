@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.integration.UsersProvider;
 import eu.europa.ec.leos.integration.dto.EntityDTO;
 import eu.europa.ec.leos.integration.dto.UserDTO;
+import eu.europa.ec.leos.integration.dto.UserUpdateDTO;
 import eu.europa.ec.leos.integration.rest.RestPageImpl;
 import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -450,4 +452,118 @@ public class AdministrationControllerTest {
 
         verify(usersClient, times(0)).deleteSpecialUser(any());
     }
+
+    @Test
+    public void GIVEN_user_is_support_WHEN_updateUser_THEN_userClient_invoked() throws Exception {
+        User user = new User(1L, "user", "User",
+                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                "a@b.com",
+                Collections.singletonList("SUPPORT"));
+        when(securityContext.getUser()).thenReturn(user);
+        when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(true);
+        when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_ENTITIES)).thenReturn(true);
+
+        UserUpdateDTO dto = new UserUpdateDTO("testUser", null, null, null, null, Set.of("e1"), null);
+        List<EntityDTO> entities = Collections.singletonList(new EntityDTO("e1", "Entity1", "Org1"));
+        UserDTO response = new UserDTO("testUser", null, null, null, null, null, null, null, entities, null, null);
+        when(usersClient.updateSpecialUser(dto)).thenReturn(response);
+
+        mockMvc.perform(patch("/secured/administration/users")
+                        .content(objectMapper.writeValueAsString(dto))
+                        .contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(objectMapper.writeValueAsString(response)));
+        verify(usersClient, times(1)).updateSpecialUser(dto);
+        verify(usersClient, times(0)).specialEntities(any());
+    }
+
+    @Test
+    public void GIVEN_user_is_user_manager_AND_addedEntities_in_user_entities_WHEN_updateUser_THEN_userClient_invoked() throws Exception {
+        User user = new User(1L, "user", "User",
+                Collections.singletonList(new Entity("1", "Entity", "Org1")),
+                "a@b.com",
+                Collections.singletonList("USER_MANAGER"));
+        when(securityContext.getUser()).thenReturn(user);
+        when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(true);
+        when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_OWN_ENTITIES)).thenReturn(true);
+        List<EntityDTO> allowedEntities = Arrays.asList(
+                new EntityDTO("e1", "Entity1", "Org1"),
+                new EntityDTO("e2", "Entity2", "Org1"));
+        when(usersClient.specialEntities("Org1")).thenReturn(allowedEntities);
+
+        UserUpdateDTO dto = new UserUpdateDTO("testUser", null, null, null, null, Set.of("e1"), null);
+        UserDTO response = new UserDTO("testUser", null, null, null, null, null, null, null, null, null, null);
+        when(usersClient.updateSpecialUser(dto)).thenReturn(response);
+
+        mockMvc.perform(patch("/secured/administration/users")
+                        .content(objectMapper.writeValueAsString(dto))
+                        .contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(objectMapper.writeValueAsString(response)));
+        verify(usersClient, times(1)).updateSpecialUser(dto);
+    }
+
+    @Test
+    public void GIVEN_user_is_user_manager_AND_addedEntities_not_in_user_entities_WHEN_updateUser_THEN_forbidden() throws Exception {
+        User user = new User(1L, "user", "User",
+                Collections.singletonList(new Entity("1", "Entity", "Org1")),
+                "a@b.com",
+                Collections.singletonList("USER_MANAGER"));
+        when(securityContext.getUser()).thenReturn(user);
+        when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(true);
+        when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_OWN_ENTITIES)).thenReturn(true);
+        List<EntityDTO> allowedEntities = Collections.singletonList(new EntityDTO("e1", "Entity1", "Org1"));
+        when(usersClient.specialEntities("Org1")).thenReturn(allowedEntities);
+
+        UserUpdateDTO dto = new UserUpdateDTO("testUser", null, null, null, null, Set.of("e99"), null);
+
+        mockMvc.perform(patch("/secured/administration/users")
+                        .content(objectMapper.writeValueAsString(dto))
+                        .contentType("application/json"))
+                .andExpect(status().isForbidden());
+        verify(usersClient, times(0)).updateSpecialUser(any());
+    }
+
+    @Test
+    public void GIVEN_user_is_user_manager_AND_no_addedEntities_WHEN_updateUser_THEN_userClient_invoked() throws Exception {
+        User user = new User(1L, "user", "User",
+                Collections.singletonList(new Entity("1", "Entity", "Org1")),
+                "a@b.com",
+                Collections.singletonList("USER_MANAGER"));
+        when(securityContext.getUser()).thenReturn(user);
+        when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(true);
+        when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_OWN_ENTITIES)).thenReturn(true);
+
+        UserUpdateDTO dto = new UserUpdateDTO("testUser", "Smith", "John", "j.smith@test.com", null, null, Set.of("e1"));
+        UserDTO response = new UserDTO("testUser", null, null, null, null, null, null, null, null, null, null);
+        when(usersClient.updateSpecialUser(dto)).thenReturn(response);
+
+        mockMvc.perform(patch("/secured/administration/users")
+                        .content(objectMapper.writeValueAsString(dto))
+                        .contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(content().string(objectMapper.writeValueAsString(response)));
+        verify(usersClient, times(1)).updateSpecialUser(dto);
+        verify(usersClient, times(0)).specialEntities(any());
+    }
+
+    @Test
+    public void GIVEN_user_with_no_permission_WHEN_updateUser_THEN_forbidden() throws Exception {
+        User user = new User(1L, "user", "User",
+                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                "a@b.com",
+                Collections.singletonList("USER"));
+        when(securityContext.getUser()).thenReturn(user);
+        when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(false);
+
+        UserUpdateDTO dto = new UserUpdateDTO("testUser", null, null, null, null, Set.of("e1"), null);
+
+        mockMvc.perform(patch("/secured/administration/users")
+                        .content(objectMapper.writeValueAsString(dto))
+                        .contentType("application/json"))
+                .andExpect(status().isForbidden());
+        verify(usersClient, times(0)).updateSpecialUser(any());
+    }
+
+
 }

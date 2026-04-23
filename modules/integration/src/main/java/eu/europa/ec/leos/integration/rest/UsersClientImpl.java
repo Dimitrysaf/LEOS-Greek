@@ -23,6 +23,7 @@ import eu.europa.ec.leos.domain.repository.metadata.LeosJobTitle;
 import eu.europa.ec.leos.integration.UsersProvider;
 import eu.europa.ec.leos.integration.dto.EntityDTO;
 import eu.europa.ec.leos.integration.dto.UserDTO;
+import eu.europa.ec.leos.integration.dto.UserUpdateDTO;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -243,7 +244,7 @@ class UsersClientImpl implements UsersProvider {
     }
 
     @Override
-    public UserDTO updateSpecialUser(final UserDTO userDTO) {
+    public UserDTO updateSpecialUser(final UserUpdateDTO userDTO) {
         final String uri = repositoryUrl + createUpdateUserUri;
         try {
             return restTemplate.patchForObject(uri, userDTO, UserDTO.class);

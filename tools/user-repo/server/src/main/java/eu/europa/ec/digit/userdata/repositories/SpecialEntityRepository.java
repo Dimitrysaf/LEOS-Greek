@@ -39,5 +39,7 @@ public interface SpecialEntityRepository extends JpaRepository<SpecialEntity, St
 
     List<SpecialEntity> findByParentId(String parentId);
 
-    Collection<Object> findByNameIgnoreCase(String name);
+    Collection<SpecialEntity> findByNameIgnoreCase(String name);
+
+    List<SpecialEntity> findByIdIn(Collection<String> ids);
 }
