@@ -34,6 +34,7 @@ import eu.europa.ec.leos.repository.repositories.LinkedPackagedRepository;
 import eu.europa.ec.leos.repository.repositories.PackageCollaboratorsRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -246,7 +247,7 @@ public class PackageServiceImpl implements PackageService {
     }
 
     public List<LeosDocument> findDocumentsByPackageId(final BigDecimal packageId, final Set<String> categories,
-                                                       final boolean allVersion, boolean fetchContent) {
+                                                       final boolean allVersion, boolean fetchContent, String versionLabel) {
         StringBuilder docQuery = new StringBuilder("SELECT d FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.packageId = :packageId");
         StringBuilder milestoneQuery = new StringBuilder("SELECT d FROM MilestoneV d WHERE d.packageId = :packageId");
         if (!allVersion && categories != null) {
@@ -255,6 +256,9 @@ public class PackageServiceImpl implements PackageService {
         if (categories != null) {
             docQuery.append(" AND d.categoryCode IN (:categories)");
             milestoneQuery.append(" AND d.categoryCode IN (:categories)");
+        }
+        if (StringUtils.isNotBlank(versionLabel)) {
+            docQuery.append(" AND d.versionLabel = :versionLabel");
         }
 
         Query queryDocs = entityManager.createQuery(docQuery.toString());
@@ -266,9 +270,12 @@ public class PackageServiceImpl implements PackageService {
             queryDocs.setParameter("categories", categories);
             queryMilestone.setParameter("categories", categories);
         }
+        if (StringUtils.isNotBlank(versionLabel)) {
+            queryDocs.setParameter("versionLabel", versionLabel);
+        }
 
         List<DocumentV> docs  = queryDocs.getResultList();
-        List<MilestoneV> milestones = queryMilestone.getResultList();
+        List<MilestoneV> milestones = StringUtils.isNotBlank(versionLabel) ? Collections.emptyList() : queryMilestone.getResultList();
 
         List<LeosDocument> xmlDocs = ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docs.isEmpty() ?
                         Collections.emptyList() : ConversionUtils.fetchCollaborators(collaboratorsService, docs.get(0).getPackageId()),

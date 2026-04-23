@@ -200,7 +200,7 @@ class LegServiceImplTest {
     private XmlContentProcessor xmlContentProcessor = spy(new XmlContentProcessorMandate());
 
     @InjectMocks
-    private AttachmentProcessor attachmentProcessor = spy(new AttachmentProcessorImpl(xmlContentProcessor, xPathCatalog));
+    private AttachmentProcessor attachmentProcessor = spy(new AttachmentProcessorImpl(xmlContentProcessor, messageHelper, xPathCatalog));
 
     @InjectMocks
     private ContentComparatorService contentComparatorService = spy(

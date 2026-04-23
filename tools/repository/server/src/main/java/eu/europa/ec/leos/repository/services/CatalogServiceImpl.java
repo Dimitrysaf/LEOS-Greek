@@ -1209,7 +1209,7 @@ public class CatalogServiceImpl implements CatalogService {
             version.setAuditLastMDate(LocalDateTime.now());
             version = configVersionRepository.save(version);
 
-            String cleanedContent = clearXmlIdAttributes(docContent);
+            String cleanedContent = clearXmlIdsAndAttachments(docContent);
             String modifiedContent = modifyTemplateValues(cleanedContent, extractSuffix(customKey));
 
             ConfigContent content = new ConfigContent();
@@ -1228,8 +1228,9 @@ public class CatalogServiceImpl implements CatalogService {
         }
     }
 
-    private String clearXmlIdAttributes(String xmlString) throws Exception {
+    private String clearXmlIdsAndAttachments(String xmlString) throws Exception {
         org.w3c.dom.Document doc = xmlHelper.createDocument(xmlString.getBytes(StandardCharsets.UTF_8), true);
+        removeAttachments(doc);
         clearXmlIdAttributes(doc.getDocumentElement());
 
         Transformer transformer = xmlHelper.createTransformer();
@@ -1282,6 +1283,13 @@ public class CatalogServiceImpl implements CatalogService {
         transformer.transform(new DOMSource(doc), new StreamResult(writer));
 
         return writer.toString();
+    }
+
+    private void removeAttachments(org.w3c.dom.Document doc) {
+        NodeList attachments = doc.getElementsByTagName("attachments");
+        while (attachments.getLength() > 0) {
+            attachments.item(0).getParentNode().removeChild(attachments.item(0));
+        }
     }
 
     private void clearXmlIdAttributes(Node node) {

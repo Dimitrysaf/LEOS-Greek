@@ -127,16 +127,16 @@ public class PackageController implements PackageApi {
     }
 
     @Override
-    public ResponseEntity<LeosDocumentList> findDocumentsByPackageId(BigDecimal id, Boolean descendants, Boolean fetchContent, FindDocumentsRequest findDocumentsRequest) {
+    public ResponseEntity<LeosDocumentList> findDocumentsByPackageId(BigDecimal id, Boolean descendants, Boolean fetchContent, String versionLabel, FindDocumentsRequest findDocumentsRequest) {
         LeosDocumentList xmlDocs = new LeosDocumentList(packageService.findDocumentsByPackageId(id, findDocumentsRequest.getCategories(),
-                descendants, fetchContent));
+                descendants, fetchContent, versionLabel));
         xmlDocs =  RestPreconditions.checkFound(xmlDocs, HttpStatus.NOT_FOUND ,"No documents found");
         return ResponseEntity.ok(xmlDocs);
     }
 
     @Override
     public ResponseEntity<LeosDocumentList> findDocumentsByPackageId(BigDecimal id, Boolean fetchContent) {
-        LeosDocumentList xmlDocs = new LeosDocumentList(packageService.findDocumentsByPackageId(id, null,  false, fetchContent));
+        LeosDocumentList xmlDocs = new LeosDocumentList(packageService.findDocumentsByPackageId(id, null,  false, fetchContent, null));
         xmlDocs =  RestPreconditions.checkFound(xmlDocs, HttpStatus.NOT_FOUND ,"No documents found");
         return ResponseEntity.ok(xmlDocs);
     }

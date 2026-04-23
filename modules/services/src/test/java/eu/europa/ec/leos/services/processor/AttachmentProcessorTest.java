@@ -13,12 +13,14 @@
  */
 package eu.europa.ec.leos.services.processor;
 
+import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
 import eu.europa.ec.leos.test.support.LeosTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.spy;
@@ -29,8 +31,10 @@ public class AttachmentProcessorTest extends LeosTest {
     private XmlContentProcessor xmlContentProcessor = new XmlContentProcessorProposal();
     @InjectMocks
     private XPathCatalog xPathCatalog = spy(new XPathCatalog());
+    @Mock
+    private MessageHelper messageHelper;
     @InjectMocks
-    private AttachmentProcessor attachmentProcessor = new AttachmentProcessorImpl(xmlContentProcessor, xPathCatalog);
+    private AttachmentProcessor attachmentProcessor = new AttachmentProcessorImpl(xmlContentProcessor, messageHelper, xPathCatalog);
 
     @Test
     public void test_addAttachment_NoAttachmentsTag() {

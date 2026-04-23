@@ -333,8 +333,9 @@
                         {{ 'page.collection.drafts.annex.no-annex' | translate }}
                     </div>
                 </div>
-                <ng-container *ngIf="permissions.includes('CAN_UPDATE') && (proposal.metadata.documentCollectionName !== this.AUTONOMOUS_ACT_DOC_COLLECTION || !leosConfig.annexHybridDocumentsEnabled) && canAddDeleteAnnex">
-                  <button
+              <ng-container
+                *ngIf="permissions.includes('CAN_UPDATE') && (proposal.metadata.documentCollectionName !== this.AUTONOMOUS_ACT_DOC_COLLECTION || !leosConfig.annexHybridDocumentsEnabled || linguisticVersionAlignment) && canAddDeleteAnnex">
+              <button
                     class="eui-u-ml-l"
                     euiButton
                     euiPrimary
@@ -345,8 +346,9 @@
                     {{ 'global.actions.add' | translate }}
                   </button>
                 </ng-container>
-                <ng-container *ngIf="permissions.includes('CAN_UPDATE') && (proposal.metadata.documentCollectionName === this.AUTONOMOUS_ACT_DOC_COLLECTION && leosConfig.annexHybridDocumentsEnabled) && canAddDeleteAnnex">
-                  <eui-dropdown>
+              <ng-container
+                *ngIf="permissions.includes('CAN_UPDATE') && (proposal.metadata.documentCollectionName === this.AUTONOMOUS_ACT_DOC_COLLECTION && leosConfig.annexHybridDocumentsEnabled) && !linguisticVersionAlignment">
+              <eui-dropdown>
                     <button
                             class="eui-u-ml-l"
                             euiButton
