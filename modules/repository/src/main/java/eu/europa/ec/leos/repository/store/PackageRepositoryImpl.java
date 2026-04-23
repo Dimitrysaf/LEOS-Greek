@@ -238,6 +238,12 @@ public class PackageRepositoryImpl implements PackageRepository {
     }
 
     @Override
+    public <D extends LeosDocument> List<D> findDocumentsByPackageIdAndVersion(String id, Class<? extends D> type, String versionLabel) {
+        logger.debug("Finding documents by package id and version label... [pkgId=" + id + ", type=" + type.getSimpleName() + ", versionLabel=" + versionLabel + "]");
+        return leosRepository.findDocumentsByPackageIdAndVersion(id, type, versionLabel);
+    }
+
+    @Override
     public <D extends LeosDocument> List<D> findDocumentsByUserId(String userId, Class<? extends D> type, String leosAuthority) {
         logger.debug("Finding document by user... userId=" + userId);
         return leosRepository.findDocumentsByUserId(userId, type, leosAuthority);

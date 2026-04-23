@@ -96,6 +96,7 @@ import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportPackageVO;
 import eu.europa.ec.leos.services.export.ExportService;
 import eu.europa.ec.leos.services.export.LegPackage;
+import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.milestone.MilestoneService;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -159,6 +160,7 @@ import static eu.europa.ec.leos.services.api.exception.ErrorCode.CA001;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_ADDED;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_DELETED;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.PROCESSED;
+import eu.europa.ec.leos.services.support.VersionsUtil;
 import static eu.europa.ec.leos.services.converter.ProposalConverterServiceImpl.createFileFromXmlSource;
 import static eu.europa.ec.leos.services.support.LeosXmlUtils.getTitleValue;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
@@ -610,7 +612,7 @@ public abstract class ApiServiceImpl implements ApiService {
             List<XmlDocument> originalXmlDocs = getAllDocuments(documentVO.getRef(), true, false);
             for (String linguisticRef : linguisticRefs) {
                 List<XmlDocument> linguisticXmlDocs = getAllDocuments(linguisticRef);
-                this.customTemplateService.alignDocumentsFromBaseVersion(originalXmlDocs, linguisticXmlDocs, documentVO, linguisticRef);
+                this.customTemplateService.alignDocumentsFromBaseVersion(originalXmlDocs, linguisticXmlDocs, documentVO);
             }
         }
     }
@@ -1728,38 +1730,43 @@ public abstract class ApiServiceImpl implements ApiService {
             if (hasNotChanged(proposal)) {
                 throw new LeosExceptionResponse(CM001.name(), "page.milestone.already.exist.for.this.major.version.error");
             }
-            LegDocument previousLegDocument = null;
-            String packageId = getPackageIdForCustomTemplateMainLanguage(proposal);
-            if (packageId != null) {
-                previousLegDocument = packageService.findDocumentsByPackageId(packageId, LegDocument.class, false, true).stream()
-                        .max(Comparator.comparing(LegDocument::getInitialCreationInstant)).orElse(null);
-            }
+            String packageId = getPackageIdForAlignedMainLanguage(proposal);
+            LegDocument previousLegDocument = packageId != null ?
+                    packageService.findDocumentsByPackageId(packageId, LegDocument.class, false, true).stream()
+                            .max(Comparator.comparing(LegDocument::getInitialCreationInstant)).orElse(null) :
+                    null;
             final String versionComment = messageHelper.getMessage("milestone.versionComment");
             createMajorVersions(proposalRef, correctedMilestone, versionComment, collectionContextProvider.get());
             LegDocument legDocument = milestoneService.createMilestone(proposalId, correctedMilestone);
-            alignLinguisticVersionsForCustomTemplateMainLanguage(previousLegDocument, legDocument, packageId);
+            alignLinguisticVersions(previousLegDocument, legDocument, packageId);
             return legDocument;
         }
         return null;
     }
 
-    private String getPackageIdForCustomTemplateMainLanguage(Proposal proposal) {
+    private String getPackageIdForAlignedMainLanguage(Proposal proposal) {
         ProposalMetadata proposalMetadata = proposal.getMetadata().getOrError(() -> "Proposal metadata not found!");
-        if (proposalMetadata.isCustomTemplateAct() && StringUtils.isNotBlank(proposalMetadata.getAvailableLangs()) && !proposal.isClonedProposal()) {
+        if ((proposalMetadata.isCustomTemplateAct() || proposalMetadata.isFromCustomTemplate()) && StringUtils.isNotBlank(proposalMetadata.getAvailableLangs())
+                && !proposal.isClonedProposal()) {
             LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
             return leosPackage.getTranslated() ? null : leosPackage.getId();
         }
         return null;
     }
 
-    private void alignLinguisticVersionsForCustomTemplateMainLanguage(LegDocument previousLegDocument, LegDocument newLegDocument, String packageId)
-            throws Exception {
+    private void alignLinguisticVersions(LegDocument previousLegDocument, LegDocument newLegDocument, String packageId) throws Exception {
         try {
-            if (previousLegDocument != null) {
+            if (previousLegDocument != null || packageId != null) {
                 LeosFile newLegFile = createFileFromXmlSource(newLegDocument.getContent().get().getSource().getBytes(), "newMilestone.leg");
-                LeosFile previousLegFile = createFileFromXmlSource(previousLegDocument.getContent().get().getSource().getBytes(), "lastMilestone.leg");
                 DocumentVO newDocumentVO = proposalConverterService.createProposalFromLegFile(newLegFile, false);
-                DocumentVO previousDocumentVO = proposalConverterService.createProposalFromLegFile(previousLegFile, false);
+                DocumentVO previousDocumentVO;
+                if (previousLegDocument != null) {
+                    LeosFile previousLegFile = createFileFromXmlSource(previousLegDocument.getContent().get().getSource().getBytes(), "lastMilestone.leg");
+                    previousDocumentVO = proposalConverterService.createProposalFromLegFile(previousLegFile, false);
+                } else {
+                    LeosFile baseLegFile = buildFileFromBaseVersionDocuments(packageId);
+                    previousDocumentVO = proposalConverterService.createProposalFromLegFile(baseLegFile, false);
+                }
                 List<LinkedPackage> linkedPackages = packageService.findLinkedPackagesByPackageId(packageId);
                 for (LinkedPackage linkedPackage : linkedPackages) {
                     String linguisticPackageId = linkedPackage.getLinkedPackageId();
@@ -1774,34 +1781,82 @@ public abstract class ApiServiceImpl implements ApiService {
         }
     }
 
+    private LeosFile buildFileFromBaseVersionDocuments(String packageId) throws IOException {
+        List<XmlDocument> baseDocuments = packageService.findDocumentsByPackageIdAndVersion(packageId, XmlDocument.class, VersionsUtil.BASE_VERSION).stream()
+                .filter(doc -> !LeosCategory.ANNEX.equals(doc.getCategory()))
+                .toList();
+        Map<String, Object> contentToZip = new HashMap<>();
+        for (XmlDocument doc : baseDocuments) {
+            if (doc.getContent().exists(c -> c.getSource() != null)) {
+                contentToZip.put(doc.getName(), doc.getContent().get().getSource().getBytes());
+            }
+        }
+        LeosFile legFile = new LeosFile("baseMilestone.leg");
+        legFile.setBytes(ZipPackageUtil.zipByteArray(contentToZip));
+        return legFile;
+    }
+
     private List<XmlDocument> handleAnnexCreationDeletion(DocumentVO baseSourceDoc, DocumentVO finalSourceDoc, List<XmlDocument> linguisticDocuments,
             String linguisticPackageId) throws IOException {
-        boolean linguisticBillAttachmentsUpdated = false;
-        DocumentVO baseSourceAnnex = baseSourceDoc != null ? baseSourceDoc.getChildDocument(LeosCategory.BILL).getChildDocument(LeosCategory.ANNEX) : null;
-        DocumentVO finalSourceAnnex = finalSourceDoc.getChildDocument(LeosCategory.BILL).getChildDocument(LeosCategory.ANNEX);
+        List<DocumentVO> baseAnnexes = baseSourceDoc != null && baseSourceDoc.getChildDocument(LeosCategory.BILL) != null
+                ? baseSourceDoc.getChildDocument(LeosCategory.BILL).getChildDocuments(LeosCategory.ANNEX) : Collections.emptyList();
+        List<DocumentVO> finalAnnexes = finalSourceDoc.getChildDocument(LeosCategory.BILL) != null
+                ? finalSourceDoc.getChildDocument(LeosCategory.BILL).getChildDocuments(LeosCategory.ANNEX) : Collections.emptyList();
+        Set<String> baseRefs = baseAnnexes.stream().map(DocumentVO::getRef).collect(Collectors.toSet());
+        Set<String> finalRefs = finalAnnexes.stream().map(DocumentVO::getRef).collect(Collectors.toSet());
         String linguisticProposalRef = getProposalRef(linguisticDocuments);
-        XmlDocument linguisticAnnex = getLinguisticAnnex(linguisticDocuments);
-        if (hasDeletedAnnex(baseSourceAnnex, finalSourceAnnex)) {
-            deleteAnnex(linguisticProposalRef, linguisticAnnex.getMetadata().get().getRef());
-            linguisticBillAttachmentsUpdated = true;
-        }
-        if (hasAddedAnnex(baseSourceAnnex, finalSourceAnnex)) {
-            String finalSourceAnnexRef = finalSourceAnnex.getRef();
-            createProposalAnnex(linguisticProposalRef, finalSourceAnnexRef);
-            linguisticBillAttachmentsUpdated = true;
-            String language = linguisticDocuments.get(0).getMetadata().get().getLanguage();
-            String newLinguisticAnnexRef = LanguageMapUtils.getTranslatedProposalReference(finalSourceAnnexRef, language);
-            Annex linguisticAnnexDoc = annexService.findAnnexByRef(newLinguisticAnnexRef);
-            checkAndUpdateAnnexTitle(baseSourceAnnex, finalSourceAnnex, true, linguisticProposalRef, linguisticAnnexDoc);
-            List<Annex> sourceAnnexDocs = annexService.findVersions(finalSourceAnnexRef);
-            List<Annex> linguisticAnnexDocs = Collections.singletonList(annexService.findAnnexByRef(newLinguisticAnnexRef));
-            customTemplateService.alignDocumentsFromBaseVersion(sourceAnnexDocs, linguisticAnnexDocs, finalSourceDoc, newLinguisticAnnexRef);
-        } else {
-            checkAndUpdateAnnexTitle(baseSourceAnnex, finalSourceAnnex, false, linguisticProposalRef, linguisticAnnex);
-        }
-        return linguisticBillAttachmentsUpdated ?
+        String language = linguisticDocuments.getFirst().getMetadata().get().getLanguage();
+
+        boolean deleted = deleteRemovedAnnexes(baseAnnexes, finalRefs, linguisticProposalRef, language);
+        boolean added = createAddedAnnexes(finalAnnexes, baseRefs, linguisticProposalRef, language, finalSourceDoc);
+        updateSurvivingAnnexTitles(finalAnnexes, baseAnnexes, baseRefs, linguisticProposalRef, language, getLinguisticAnnexes(linguisticDocuments));
+
+        return (deleted || added) ?
                 packageService.findDocumentsByPackageId(linguisticPackageId, XmlDocument.class, false, true) :
                 linguisticDocuments;
+    }
+
+    private boolean deleteRemovedAnnexes(List<DocumentVO> baseAnnexes, Set<String> finalRefs, String linguisticProposalRef, String language) {
+        boolean updated = false;
+        for (DocumentVO baseAnnex : baseAnnexes) {
+            if (!finalRefs.contains(baseAnnex.getRef())) {
+                String linguisticAnnexRef = LanguageMapUtils.getTranslatedProposalReference(baseAnnex.getRef(), language);
+                deleteAnnex(linguisticProposalRef, linguisticAnnexRef);
+                updated = true;
+            }
+        }
+        return updated;
+    }
+
+    private boolean createAddedAnnexes(List<DocumentVO> finalAnnexes, Set<String> baseRefs, String linguisticProposalRef, String language,
+            DocumentVO finalSourceDoc) throws IOException {
+        boolean updated = false;
+        for (DocumentVO finalAnnex : finalAnnexes) {
+            if (!baseRefs.contains(finalAnnex.getRef())) {
+                createProposalAnnex(linguisticProposalRef, finalAnnex.getRef());
+                String newLinguisticAnnexRef = LanguageMapUtils.getTranslatedProposalReference(finalAnnex.getRef(), language);
+                Annex linguisticAnnexDoc = annexService.findAnnexByRef(newLinguisticAnnexRef);
+                checkAndUpdateAnnexTitle(null, finalAnnex, true, linguisticProposalRef, linguisticAnnexDoc);
+                List<Annex> sourceAnnexDocs = annexService.findVersions(finalAnnex.getRef());
+                List<Annex> linguisticAnnexDocs = Collections.singletonList(annexService.findAnnexByRef(newLinguisticAnnexRef));
+                customTemplateService.alignDocumentsFromBaseVersion(sourceAnnexDocs, linguisticAnnexDocs, finalSourceDoc);
+                updated = true;
+            }
+        }
+        return updated;
+    }
+
+    private void updateSurvivingAnnexTitles(List<DocumentVO> finalAnnexes, List<DocumentVO> baseAnnexes, Set<String> baseRefs, String linguisticProposalRef,
+            String language, List<XmlDocument> linguisticAnnexes) {
+        for (DocumentVO finalAnnex : finalAnnexes) {
+            if (baseRefs.contains(finalAnnex.getRef())) {
+                DocumentVO baseAnnex = baseAnnexes.stream().filter(a -> a.getRef().equals(finalAnnex.getRef())).findFirst().orElse(null);
+                String linguisticAnnexRef = LanguageMapUtils.getTranslatedProposalReference(finalAnnex.getRef(), language);
+                linguisticAnnexes.stream()
+                        .filter(a -> linguisticAnnexRef.equals(a.getMetadata().get().getRef())).findFirst()
+                        .ifPresent(linguisticAnnex -> checkAndUpdateAnnexTitle(baseAnnex, finalAnnex, false, linguisticProposalRef, linguisticAnnex));
+            }
+        }
     }
 
     private static String getProposalRef(List<XmlDocument> linguisticDocuments) {
@@ -1810,16 +1865,8 @@ public abstract class ApiServiceImpl implements ApiService {
                 .orElseThrow(() -> new IllegalStateException(LeosCategory.PROPOSAL + " not found for some of the linguistic version/s."));
     }
 
-    private static XmlDocument getLinguisticAnnex(List<XmlDocument> linguisticDocuments) {
-        return linguisticDocuments.stream().filter(doc -> LeosCategory.ANNEX.equals(doc.getCategory())).findAny().orElse(null);
-    }
-
-    private boolean hasDeletedAnnex(DocumentVO baseAnnex, DocumentVO finalAnnex) {
-        return baseAnnex != null && (finalAnnex == null || !baseAnnex.getRef().equals(finalAnnex.getRef()));
-    }
-
-    private boolean hasAddedAnnex(DocumentVO baseAnnex, DocumentVO finalAnnex) {
-        return finalAnnex != null && (baseAnnex == null || !baseAnnex.getRef().equals(finalAnnex.getRef()));
+    private static List<XmlDocument> getLinguisticAnnexes(List<XmlDocument> linguisticDocuments) {
+        return linguisticDocuments.stream().filter(doc -> LeosCategory.ANNEX.equals(doc.getCategory())).collect(Collectors.toList());
     }
 
     private void checkAndUpdateAnnexTitle(DocumentVO baseAnnex, DocumentVO finalAnnex, boolean isNewAnnex, String linguisticProposalRef,
@@ -1833,7 +1880,7 @@ public abstract class ApiServiceImpl implements ApiService {
         if (finalAnnex != null) {
             String finalAnnexTitle = finalAnnex.getMetadata().getTitle();
             String baseAnnexTitle = baseAnnex != null ? baseAnnex.getMetadata().getTitle() : null;
-            return isNewAnnex && !ANNEX.equals(finalAnnexTitle) || !isNewAnnex && !StringUtils.equals(baseAnnexTitle, finalAnnexTitle);
+            return isNewAnnex ? !ANNEX.equals(finalAnnexTitle) : !Strings.CS.equals(baseAnnexTitle, finalAnnexTitle);
         }
         return false;
     }

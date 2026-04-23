@@ -103,6 +103,7 @@ public interface PackageApi {
     ResponseEntity<LeosDocumentList> findDocumentsByPackageId(@Parameter(description = "Package ID", required = true) @PathVariable("id") BigDecimal id,
                                                               @Parameter(description = "Include descendants") @RequestParam(value = "descendants", required = false, defaultValue = "false") Boolean descendants,
                                                               @Parameter(description = "Fetch content") @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent,
+                                                              @Parameter(description = "Version label filter") @RequestParam(value = "versionLabel", required = false) String versionLabel,
                                                               @Valid @RequestBody FindDocumentsRequest findDocumentsRequest);
 
     @Operation(summary = "Find documents by package ID (simple)", description = "Retrieves all documents within a package by ID")

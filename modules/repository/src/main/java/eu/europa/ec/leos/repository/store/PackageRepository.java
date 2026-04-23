@@ -231,6 +231,16 @@ public interface PackageRepository {
     <D extends LeosDocument> List<D> findDocumentsByPackageId(String id, Class<? extends D> type, boolean allVersion, boolean fetchContent);
 
     /**
+     * Finds documents with a specific version label in a package.
+     *
+     * @param id           the id of the package.
+     * @param type         the type class of the documents.
+     * @param versionLabel the version label to filter by.
+     * @return the list of matching documents or empty.
+     */
+    <D extends LeosDocument> List<D> findDocumentsByPackageIdAndVersion(String id, Class<? extends D> type, String versionLabel);
+
+    /**
      * Finds documents with the specified characteristics.
      *
      * @param userId the userId of the user

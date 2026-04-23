@@ -357,7 +357,8 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
-    LeosDocumentList findDocumentsByPackageId(final String id, final Set<LeosCategory> categories, final boolean descendants, final boolean fetchContent) {
+    LeosDocumentList findDocumentsByPackageId(final String id, final Set<LeosCategory> categories, final boolean descendants, final boolean fetchContent,
+            final String versionLabel) {
         LOGGER.trace("Finding documents by package Id... [pkgId=" + id + ", categories=" + categories + ", allVersion=" + descendants + ']');
 
         Set<String> cats = categories.stream().map(c -> c.name()).collect(Collectors.toSet());
@@ -365,7 +366,7 @@ public class RestRepository extends AbstractRestClient {
         findDocumentsRequest.setCategories(cats);
 
         String url = getUrl(leosRestFindDocumentsbyPackageIdURI);
-        return postEntity(url, findDocumentsRequest, LeosDocumentList.class, id, descendants, fetchContent);
+        return postEntity(url, findDocumentsRequest, LeosDocumentList.class, id, descendants, fetchContent, versionLabel);
     }
 
     Optional<LeosDocument> findDocumentByName(final String name) {

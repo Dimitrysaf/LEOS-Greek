@@ -3312,7 +3312,6 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Node sourceMeta = getFirstElementByXPath(sourceDoc, XPathCatalog.getXPathElement(META));
         Node targetMeta = getFirstElementByXPath(targetDoc, XPathCatalog.getXPathElement(META));
         Node sourceMetaDocPurpose = getFirstElementByXPath(sourceMeta, XPathCatalog.getXPathProprietaryDocPurpose());
-        Node targetMetaDocPurpose = getFirstElementByXPath(targetMeta, XPathCatalog.getXPathProprietaryDocPurpose());
 
         // Take previous target meta node, adding/removing nodes based on source
         removeDeletedNodes(targetMeta, sourceMeta);
@@ -3320,7 +3319,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         importAndReplaceNodeInDocument(sourceDoc, sourceMeta, targetMeta);
 
         // Maintain docPurpose from source to be aligned later with standard alignment depending on content changed
-        importAndReplaceNodeInDocument(sourceDoc, targetMetaDocPurpose, sourceMetaDocPurpose);
+        importAndReplaceNodeInDocument(sourceDoc, sourceMetaDocPurpose, sourceMetaDocPurpose);
     }
 
     private static void removeDeletedNodes(Node targetRootNode, Node sourceRootNode) {

@@ -781,7 +781,7 @@ public class DocumentServiceImpl implements DocumentService {
         categories.add(category);
         List<BigDecimal> pkgIdsList = collaboratorsService.findDocumentsByCollaboratorNameAndRole(userName, leosAuthority);
         for (BigDecimal pkgId : pkgIdsList) {
-            List<LeosDocument> foundDocs = packageService.findDocumentsByPackageId(pkgId, categories, false, false);
+            List<LeosDocument> foundDocs = packageService.findDocumentsByPackageId(pkgId, categories, false, false, null);
             xmlDocs.addAll(foundDocs);
         }
         return xmlDocs;
@@ -797,7 +797,7 @@ public class DocumentServiceImpl implements DocumentService {
         //Step 2: Find the package by collaborator's entity name and add it to the list
         pkgIdsList.addAll(collaboratorsService.findDocumentsByCollaboratorNames(entities));
         for (BigDecimal pkgId : pkgIdsList) {
-            List<LeosDocument> foundDocs = packageService.findDocumentsByPackageId(pkgId, categories, false, false);
+            List<LeosDocument> foundDocs = packageService.findDocumentsByPackageId(pkgId, categories, false, false, null);
             xmlDocs.addAll(foundDocs);
         }
         return xmlDocs;

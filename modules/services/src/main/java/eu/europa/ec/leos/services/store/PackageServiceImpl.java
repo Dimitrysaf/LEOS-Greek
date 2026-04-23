@@ -122,6 +122,11 @@ class PackageServiceImpl implements PackageService {
     }
 
     @Override
+    public <T extends LeosDocument> List<T> findDocumentsByPackageIdAndVersion(String id, Class<T> filterType, String versionLabel) {
+        return packageRepository.findDocumentsByPackageIdAndVersion(id, filterType, versionLabel);
+    }
+
+    @Override
     public <T extends LeosDocument> List<T> findDocumentsByUserId(String userId, Class<T> filterType, String leosAuthority) {
         return packageRepository.findDocumentsByUserId(userId, filterType, leosAuthority);
     }

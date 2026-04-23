@@ -67,9 +67,9 @@ class PackageServiceTests extends H2TestBase {
     @Test
     @Transactional(readOnly = true)
     void test_documentsByPackageId() {
-        List<LeosDocument> docs = packageService.findDocumentsByPackageId(BigDecimal.valueOf(1), Sets.set("PROPOSAL", "BILL"), false, false);
+        List<LeosDocument> docs = packageService.findDocumentsByPackageId(BigDecimal.valueOf(1), Sets.set("PROPOSAL", "BILL"), false, false, null);
         assertEquals(2, docs.size());
-        docs = packageService.findDocumentsByPackageId(BigDecimal.valueOf(1), Sets.set("PROPOSAL", "ANNEX"), false, false);
+        docs = packageService.findDocumentsByPackageId(BigDecimal.valueOf(1), Sets.set("PROPOSAL", "ANNEX"), false, false, null);
         assertEquals(2, docs.size());
     }
 

@@ -79,6 +79,7 @@ export class ProposalDraftsComponent
   activeAnnexId: string;
   AUTONOMOUS_ACT_DOC_COLLECTION: string = AUTONOMOUS_ACT_DOC_COLLECTION;
   canAddDeleteAnnex: boolean = true;
+  linguisticVersionAlignment: boolean = false;
 
   private destroy$: Subject<void> = new Subject();
 
@@ -130,8 +131,8 @@ export class ProposalDraftsComponent
       .subscribe((config) => {
         this.leosConfig = config;
       });
-    this.canAddDeleteAnnex = (!this.proposal.metadata.customTemplateAct && !this.proposal.metadata.fromCustomTemplate)
-      || !this.proposalDetailsService.getTranslated();
+    this.linguisticVersionAlignment = this.proposal.metadata.customTemplateAct || this.proposal.metadata.fromCustomTemplate;
+    this.canAddDeleteAnnex = !this.linguisticVersionAlignment || !this.proposalDetailsService.getTranslated();
   }
 
   handleAnnexAdd() {

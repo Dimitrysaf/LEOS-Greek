@@ -51,6 +51,8 @@ public interface PackageService {
     <T extends LeosDocument> T findDocumentByPackagePathAndName(String path, String name, Class<T> filterType);
 
     <T extends LeosDocument> List<T> findDocumentsByPackageId(String id, Class<T> filterType, Boolean allVersions, Boolean fetchContent);
+
+    <T extends LeosDocument> List<T> findDocumentsByPackageIdAndVersion(String id, Class<T> filterType, String versionLabel);
     
     <T extends LeosDocument> List<T> findDocumentsByUserId(String userId, Class<T> filterType, String leosAuthority);
 

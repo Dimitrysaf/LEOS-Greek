@@ -284,7 +284,7 @@ class PackageIntegrationTests extends H2TestBase {
         String json = mapper.writeValueAsString(findDocumentsRequest);
         List<LeosDocument> listDocs = Arrays.asList(xmlDoc);
 
-        when(packageService.findDocumentsByPackageId(PKG_ID, findDocumentsRequest.getCategories(), false, false))
+        when(packageService.findDocumentsByPackageId(PKG_ID, findDocumentsRequest.getCategories(), false, false, null))
                 .thenReturn(listDocs);
 
         mockMvc.perform(post("/package/find-by-id/{id}/documents", PKG_ID).contentType(MediaType.APPLICATION_JSON)

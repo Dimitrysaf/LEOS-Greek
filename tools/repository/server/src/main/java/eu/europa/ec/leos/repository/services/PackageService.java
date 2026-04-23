@@ -42,7 +42,8 @@ public interface PackageService {
     List<LeosDocument> findDocumentsByPackageName(final String packageName, final Set<String> categories,
                                                   final boolean descendants, boolean fetchContent) throws RepositoryException;
 
-    List<LeosDocument> findDocumentsByPackageId(final BigDecimal packageId, final Set<String> categories, final boolean allVersion, boolean fetchContent);
+    List<LeosDocument> findDocumentsByPackageId(final BigDecimal packageId, final Set<String> categories, final boolean allVersion, boolean fetchContent,
+            String versionLabel);
 
     long getDocumentCountByPackageName(final String packageName, Set<String> categories);
 

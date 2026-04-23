@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.processor;
 
 import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XmlUtils;
@@ -38,18 +39,19 @@ import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.HREF;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_SHOW_AS;
-import static eu.europa.ec.leos.services.support.XmlHelper.ANNEX;
 
 @Service
 public class AttachmentProcessorImpl implements AttachmentProcessor {
     private XmlContentProcessor xmlContentProcessor;
 
     private static final Logger LOG = LoggerFactory.getLogger(AttachmentProcessorImpl.class);
+    private final MessageHelper messageHelper;
     private XPathCatalog xPathCatalog;
 
     @Autowired
-    public AttachmentProcessorImpl(XmlContentProcessor xmlContentProcessor, XPathCatalog xPathCatalog) {
+    public AttachmentProcessorImpl(XmlContentProcessor xmlContentProcessor, MessageHelper messageHelper, XPathCatalog xPathCatalog) {
         this.xmlContentProcessor = xmlContentProcessor;
+        this.messageHelper = messageHelper;
         this.xPathCatalog = xPathCatalog;
     }
 
@@ -182,10 +184,11 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
             for (int i = attachments.getLength()-1; i >= 0 ; --i){
                 Node attachment = attachments.item(i);
                 String showAsAttr = XmlUtils.getAttributeValue(attachment.getFirstChild(), XmlHelper.XML_SHOW_AS);
-                if(ANNEX.equalsIgnoreCase(showAsAttr)) {
+                String annexTitlePrefix = messageHelper.getMessage("document.annex.title.prefix");
+                if (annexTitlePrefix.equalsIgnoreCase(showAsAttr)) {
                     showAsAttr = "I";
                 } else {
-                    showAsAttr = showAsAttr.substring(ANNEX.length() + 1);
+                    showAsAttr = showAsAttr.substring(annexTitlePrefix.length() + 1);
                 }
                 Integer num = RomanNumeral.parse(showAsAttr);
                 list.put(num,attachment);

@@ -811,9 +811,20 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         logger.trace("Finding documents by parent id... [pkgId=" + id + ", type=" + type.getSimpleName() + ']');
         Set<LeosCategory> categories = LeosMapper.leosCategories(type);
 
-        LeosDocumentList docs = repository.findDocumentsByPackageId(id, categories, allVersion, fetchContent);
+        LeosDocumentList docs = repository.findDocumentsByPackageId(id, categories, allVersion, fetchContent, null);
 
         return toLeosDocuments(docs.getLeosDocumentList(), type, fetchContent);
+    }
+
+    @Override
+    @PerformanceLogger
+    public <D extends LeosDocument> List<D> findDocumentsByPackageIdAndVersion(String id, Class<? extends D> type, String versionLabel) {
+        logger.trace("Finding documents by package id and version... [pkgId={}, type={}, versionLabel={}]", id, type.getSimpleName(), versionLabel);
+        Set<LeosCategory> categories = LeosMapper.leosCategories(type);
+
+        LeosDocumentList docs = repository.findDocumentsByPackageId(id, categories, true, true, versionLabel);
+
+        return toLeosDocuments(docs.getLeosDocumentList(), type, true);
     }
 
     @Override
