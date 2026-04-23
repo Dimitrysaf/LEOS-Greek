@@ -162,7 +162,7 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
-  createForeignAnnex(data: File, newName?: string) {
+  createForeignAnnex(data: File, newName?: string, config?) {
     const formData: FormData = new FormData();
     this.loadingService.setLoading(true);
     if (newName) {
@@ -180,6 +180,9 @@ export class ProposalDetailsService implements OnDestroy {
         next: (val) => {
           this.setProposalRef(this.proposalRef);
           this.loadingService.setLoading(false);
+          if (config) {
+            config.closeDialog();
+          }
         },
         error: (res) => {
           this.setProposalRef(this.proposalRef);

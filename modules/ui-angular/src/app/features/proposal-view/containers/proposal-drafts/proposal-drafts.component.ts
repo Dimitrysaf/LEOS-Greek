@@ -161,7 +161,7 @@ export class ProposalDraftsComponent
         this.proposalStateChange.emit('active');
       }
       if (file && !annex) {
-        let annexWithSameName = this.proposal?.childDocuments?.find(e => e.category === 'BILL')?.childDocuments?.find(e => e.category === 'ANNEX' && e.originalFilename.toUpperCase() === file.name.toUpperCase());
+        let annexWithSameName = this.proposal?.childDocuments?.find(e => e.category === 'BILL')?.childDocuments?.find(e => e.category === 'ANNEX' && e.originalFilename.toUpperCase().trim() === file.name.toUpperCase().trim());
         if (annexWithSameName) {
           const dialog = this.dialogService.openDialog(
             new EuiDialogConfig({
@@ -176,14 +176,12 @@ export class ProposalDraftsComponent
                   },
                   annexId: annexWithSameName.id,
                   file: file,
-                  childDocuments: this.proposal?.childDocuments
+                  childDocuments: this.proposal?.childDocuments,
+                  stateChanged: this.proposalStateChange
                 },
               },
               hasCloseButton: false,
               hasFooter: false,
-              typeClass: 'warning',
-              isMessageBox: true,
-              width: '30%',
               escape: () => {
                 this.dialogService.closeDialog(dialog.id);
                 this.proposalDetailsService.setProposalRef(this.proposalRef);
