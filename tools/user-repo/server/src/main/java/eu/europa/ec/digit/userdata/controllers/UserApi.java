@@ -1,8 +1,8 @@
 package eu.europa.ec.digit.userdata.controllers;
 
 import eu.europa.ec.digit.userdata.dto.UserDto;
+import eu.europa.ec.digit.userdata.dto.UserUpdateDto;
 import eu.europa.ec.digit.userdata.dto.validationgroup.Create;
-import eu.europa.ec.digit.userdata.dto.validationgroup.Update;
 import eu.europa.ec.digit.userdata.entities.User;
 import eu.europa.ec.digit.userdata.exception.UserRepoExceptionResponse;
 import eu.europa.ec.digit.userdata.request.SpecialEntityRequest;
@@ -102,7 +102,7 @@ public interface UserApi {
                     content = @Content(schema = @Schema(implementation = UserRepoExceptionResponse.class)))
     })
     @PatchMapping
-    UserDto updateUser(@Parameter(description = "User DTO") @RequestBody @Validated(Update.class) UserDto userDto);
+    UserDto updateUser(@Parameter(description = "User DTO") @RequestBody @Validated UserUpdateDto userDto);
 
     @Operation(summary = "Delete user", description = "Deletes a user by login")
     @ApiResponses({

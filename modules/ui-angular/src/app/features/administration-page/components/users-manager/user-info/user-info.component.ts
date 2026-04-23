@@ -24,7 +24,7 @@ import {EuiEditorModule} from '@eui/components/externals/eui-editor';
 import {EuiChipModule} from '@eui/components/eui-chip';
 import {EuiIconModule} from '@eui/components/eui-icon';
 import {EuiLabelModule} from '@eui/components/eui-label';
-import {APPLICATION_ROLES, User, UserEntity} from "@/shared";
+import {APPLICATION_ROLES, User, UserEntity, UserUpdate} from "@/shared";
 import {EuiAllModule} from "@eui/components";
 import {TranslateModule} from "@ngx-translate/core";
 import {AdministrationService} from "@/shared/services/administration.service";
@@ -92,6 +92,9 @@ export class UserInfoComponent implements OnInit, OnDestroy {
   private searchTerm = '';
   availableEntities = new Map<string, UserEntity>();
   selectedEntities = new Map<string, UserEntity>();
+
+  updateAddedEntities = new Set<string>();
+  updateRemovedEntities = new Set<string>();
 
   get availableEntitiesArray() {
     return Array.from(this.availableEntities.values());
@@ -171,7 +174,8 @@ export class UserInfoComponent implements OnInit, OnDestroy {
   }
 
   protected onSave() {
-    const method: ((user: User) => Observable<User>) = !!this.selectedUser.login
+    const model = !!this.selectedUser.login ? this.toUpdateModel() : this.toModel();
+    const method: ((user: User | UserUpdate) => Observable<User>) = !!this.selectedUser.login
       ? this.adminService.updateUser.bind(this.adminService)
       : this.adminService.createUser.bind(this.adminService);
     const methodName = method.name.substring(6); // 'bound ' prepended to the method name after binding
@@ -180,7 +184,7 @@ export class UserInfoComponent implements OnInit, OnDestroy {
       title: `page.workspace.administration.user-info.${methodName}-error-title`,
       content: 'page.workspace.administration.user-info.form-validation-error'
     })) {
-      method(this.toModel()).subscribe({
+      method(model).subscribe({
         next: (updated) => {
           this.selectedUser = updated;
           this.onToggleEdit();
@@ -209,10 +213,12 @@ export class UserInfoComponent implements OnInit, OnDestroy {
   protected addEntityToUser() {
     const len = this.availableEntitiesSelect["elementRef"].nativeElement.selectedOptions.length;
     for (let i = 0; i < len; i++) {
-      const selectedId = this.availableEntitiesSelect["elementRef"]
-        .nativeElement.selectedOptions.item(i).attributes['ng-reflect-value'].value;
+      const selectedId = this.getEUiSelectOptionValue(this.availableEntitiesSelect, i);
       this.selectedEntities.set(selectedId, this.availableEntities.get(selectedId));
       this.availableEntities.delete(selectedId);
+
+      this.updateAddedEntities.add(selectedId);
+      this.updateRemovedEntities.delete(selectedId);
     }
     this.form.controls['entities'].setValue((this.selectedEntities.values() as any).toArray());
   }
@@ -220,10 +226,12 @@ export class UserInfoComponent implements OnInit, OnDestroy {
   protected removeEntityFromUser() {
     const len = this.userEntitiesSelect["elementRef"].nativeElement.selectedOptions.length;
     for (let i = 0; i < len; i++) {
-      const selectedId = this.userEntitiesSelect["elementRef"]
-        .nativeElement.selectedOptions.item(i).attributes['ng-reflect-value'].value;
+      const selectedId = this.getEUiSelectOptionValue(this.userEntitiesSelect, i);
       this.availableEntities.set(selectedId, this.selectedEntities.get(selectedId));
       this.selectedEntities.delete(selectedId);
+
+      this.updateRemovedEntities.add(selectedId);
+      this.updateAddedEntities.delete(selectedId);
     }
     this.form.controls['entities'].setValue((this.selectedEntities.values() as any).toArray());
   }
@@ -248,8 +256,18 @@ export class UserInfoComponent implements OnInit, OnDestroy {
     } as User;
   }
 
+  private toUpdateModel(): UserUpdate {
+    const user = this.toModel() as any as UserUpdate;
+    user.addedEntities = [...this.updateAddedEntities];
+    user.removedEntities = [...this.updateRemovedEntities];
+    user['entities'] = undefined;
+    return user;
+  }
+
   private loadEntities() {
     this.searchTerm = '';
+    this.updateAddedEntities.clear();
+    this.updateRemovedEntities.clear();
     this.adminService.getUserEntities().subscribe( entities => {
       this.allEntities = entities;
       this.populateAvailableEntities();
@@ -266,6 +284,12 @@ export class UserInfoComponent implements OnInit, OnDestroy {
 
   get canBeEdited() {
     return !this.selectedUser.login || this.selectedUser.special;
+  }
+
+  // Handle a quirk in eUiSelectComponent
+  private getEUiSelectOptionValue(euiSelect: EuiSelectComponent, index: number) {
+    const value = euiSelect["elementRef"].nativeElement.selectedOptions.item(index).value;
+    return value.indexOf(': \'') >= 0 ? value.substring(value.indexOf(': \'') + 3, value.length - 1) : value;
   }
 }
 

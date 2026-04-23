@@ -80,12 +80,13 @@ public class ElementInjectionHelper {
             synchronized (documentBuilderFactory) {
                 builder = documentBuilderFactory.newDocumentBuilder();
             }
+            Node anchor = containerNode.getFirstChild();
             for (LineItem item : items) {
                 String xml = buildItemXml(item);
                 String wrapped = NS_WRAPPER + xml + "</root>";
                 Document fragment = builder.parse(new ByteArrayInputStream(wrapped.getBytes(StandardCharsets.UTF_8)));
                 Node importedNode = doc.importNode(fragment.getDocumentElement().getElementsByTagName(tagResolver.apply(item)).item(0), true);
-                containerNode.appendChild(importedNode);
+                containerNode.insertBefore(importedNode, anchor);
             }
         } catch (IllegalArgumentException e) {
             throw e;
