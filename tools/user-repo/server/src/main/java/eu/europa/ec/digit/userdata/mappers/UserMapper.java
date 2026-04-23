@@ -1,6 +1,7 @@
 package eu.europa.ec.digit.userdata.mappers;
 
 import eu.europa.ec.digit.userdata.dto.UserDto;
+import eu.europa.ec.digit.userdata.dto.UserUpdateDto;
 import eu.europa.ec.digit.userdata.entities.Role;
 import eu.europa.ec.digit.userdata.entities.SpecialUser;
 import eu.europa.ec.digit.userdata.entities.User;
@@ -31,6 +32,11 @@ public interface UserMapper {
     SpecialUser mapToSpecial(UserDto dto, @Context Map<String, Role> contextRoles);
 
     @Mapping(target = "special", constant = "true")
+    @Mapping(target = "jobTitle", ignore = true)
+    @Mapping(target = "roles", ignore = true)
+    User mapToUser(SpecialUser entity);
+
+    @Mapping(target = "special", constant = "true")
     UserDto mapToDto(SpecialUser entity);
 
     UserDto mapToDto(User entity);
@@ -38,7 +44,7 @@ public interface UserMapper {
     @Mapping(target = "perId", constant = "0L")
     @Mapping(target = "roleEntities", source = "roles", qualifiedByName = "mapRoles")
     @Mapping(target = "roles", ignore = true)
-    SpecialUser merge(UserDto dto, @MappingTarget SpecialUser user, @Context Map<String, Role> contextRoles);
+    SpecialUser merge(UserUpdateDto dto, @MappingTarget SpecialUser user, @Context Map<String, Role> contextRoles);
 
     @Named("mapRoles")
     default List<Role> mapRoles(List<String> roles, @Context Map<String, Role> rolesMap) {

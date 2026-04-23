@@ -3,10 +3,13 @@ package eu.europa.ec.digit.userdata.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.digit.userdata.dto.EntityDto;
 import eu.europa.ec.digit.userdata.dto.UserDto;
+import eu.europa.ec.digit.userdata.dto.UserUpdateDto;
 import eu.europa.ec.digit.userdata.entities.Entity;
 import eu.europa.ec.digit.userdata.entities.SpecialEntity;
+import eu.europa.ec.digit.userdata.entities.SpecialUser;
 import eu.europa.ec.digit.userdata.entities.User;
 import eu.europa.ec.digit.userdata.repositories.SpecialEntityRepository;
+import eu.europa.ec.digit.userdata.repositories.SpecialUserRepository;
 import eu.europa.ec.digit.userdata.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -40,6 +44,8 @@ public class UserControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private SpecialUserRepository specialUserRepository;
 
     @Test
     void GIVEN_no_term_AND_no_pagination_WHEN_search_THEN_all_users_returned() throws Exception {
@@ -101,7 +107,7 @@ public class UserControllerTest {
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto))).andExpect(status().isOk());
 
-        User user = userRepo.findByLogin(login);
+        User user = userRepo.findFirstByLogin(login);
         assertEquals("émily-Claire", user.getFirstName());
         assertEquals("O'Brien", user.getLastName());
         assertEquals("email@email", user.getEmail());
@@ -124,7 +130,7 @@ public class UserControllerTest {
                 .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isBadRequest());
 
-        User user = userRepo.findByLogin(login);
+        User user = userRepo.findFirstByLogin(login);
         assertNull(user);
     }
 
@@ -142,7 +148,7 @@ public class UserControllerTest {
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto))).andExpect(status().isOk());
 
-        User user = userRepo.findByLogin(login);
+        User user = userRepo.findFirstByLogin(login);
         assertTrue(user.getDateCreated().getTime() > userDto.getDateCreated().getTime(),
                 "Expected user.DATE_CREATED " + user.getDateCreated() + " to be greater than the dto.dateCreated " + userDto.getDateCreated().getTime());
         assertArrayEquals(new String[]{"USER"}, user.getRoles().toArray());
@@ -198,7 +204,7 @@ public class UserControllerTest {
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto))).andExpect(status().isOk());
 
-        User user = userRepo.findByLogin(login);
+        User user = userRepo.findFirstByLogin(login);
         assertEquals("fi rst", user.getFirstName());
         assertEquals("la st", user.getLastName());
     }
@@ -236,14 +242,14 @@ public class UserControllerTest {
 
     @Test
     void GIVEN_valid_dto_WHEN_update_THEN_user_updated() throws Exception {
-        UserDto userDto = new UserDto("iluser1", "NewLast", "NewFirst", "newemail@email.com", null, List.of("SUPPORT"), null, true);
+        UserUpdateDto userDto = new UserUpdateDto("gjuser17", "NewLast", "NewFirst", "newemail@email.com", List.of("SUPPORT"), null, null);
 
         mockMvc.perform(patch("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isOk());
 
-        User updatedUser = userRepo.findByLogin("iluser1");
+        User updatedUser = userRepo.findFirstByLogin("gjuser17");
         assertEquals("NewFirst", updatedUser.getFirstName());
         assertEquals("NewLast", updatedUser.getLastName());
         assertEquals("newemail@email.com", updatedUser.getEmail());
@@ -252,7 +258,7 @@ public class UserControllerTest {
 
     @Test
     void GIVEN_nonexistent_login_WHEN_update_THEN_not_found() throws Exception {
-        UserDto userDto = new UserDto("nonexistent", "last", "first", "email@email", null, null, null, true);
+        UserUpdateDto userDto = new UserUpdateDto("nonexistent", "last", "first", "email@email", null, null, null);
         mockMvc.perform(patch("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
@@ -261,7 +267,7 @@ public class UserControllerTest {
 
     @Test
     void GIVEN_invalid_names_WHEN_update_THEN_bad_request() throws Exception {
-        UserDto userDto = new UserDto("admin", "last@", "first", "email@email", null, null, null, true);
+        UserUpdateDto userDto = new UserUpdateDto("admin", "last@", "first", "email@email", null, null, null);
         mockMvc.perform(patch("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
@@ -270,46 +276,44 @@ public class UserControllerTest {
 
     @Test
     void GIVEN_entities_update_WHEN_update_THEN_entities_updated() throws Exception {
-        List<SpecialEntity> allEntities = specialEntityRepo.findAll();
-        List<EntityDto> newEntities = allEntities.stream()
-                .map(e -> new EntityDto(e.getId(), e.getName(), e.getOrganizationName()))
-                .limit(3)
-                .toList();
+        Set<String> addedEntities = Set.of("7", "8", "9", "256");
+        Set<String> removedEntities = Set.of("10", "11", "12", "512");
 
-        UserDto userDto = new UserDto("iluser1", "Last", "First", "email@email", newEntities, List.of("USER_MANAGER"), null, true);
+        // User a00012yl is connected to entities 10, 11, 12, 13
+        UserUpdateDto userDto = new UserUpdateDto("a00012yl", "Last", "First", "email@email", List.of("USER_MANAGER"), addedEntities, removedEntities);
+
         mockMvc.perform(patch("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isOk());
 
-        User updatedUser = userRepo.findByLogin("iluser1");
-        assertEquals(newEntities.stream().map(EntityDto::getId).collect(Collectors.toSet()),
-                updatedUser.getEntities().stream().map(Entity::getId).collect(Collectors.toSet()));
+        User updatedUser = userRepo.findFirstByLogin("a00012yl");
+        assertEquals(Set.of("7", "8", "9", "13"), updatedUser.getEntities().stream().map(Entity::getId).collect(Collectors.toSet())) ;
         assertArrayEquals(new String[]{"USER_MANAGER", "USER"}, updatedUser.getRoles().toArray(new String[0]));
     }
 
     @Test
     void GIVEN_no_roles_WHEN_update_THEN_user_has_user_role() throws Exception {
-        UserDto userDto = new UserDto("iluser1", "Last", "First", "email@email", null, Collections.emptyList(), null, true);
+        UserUpdateDto userDto = new UserUpdateDto("gjuser17", "Last", "First", "email@email", Collections.emptyList(), null, null);
         mockMvc.perform(patch("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isOk());
 
-        User updatedUser = userRepo.findByLogin("iluser1");
+        User updatedUser = userRepo.findFirstByLogin("gjuser17");
         assertArrayEquals(new String[]{"USER"}, updatedUser.getRoles().toArray(new String[0]));
     }
 
     @Test
     void GIVEN_null_values_WHEN_update_THEN_old_values_kept() throws Exception {
-        User oldUser = userRepo.findByLogin("admin");
-        UserDto userDto = new UserDto("admin", null, null, null, null, null, null, true);
+        User oldUser = userRepo.findFirstByLogin("admin");
+        UserUpdateDto userDto = new UserUpdateDto("admin", null, null, null, null, null, null);
         mockMvc.perform(patch("/users")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isOk());
 
-        User updatedUser = userRepo.findByLogin("admin");
+        User updatedUser = userRepo.findFirstByLogin("admin");
         assertArrayEquals(oldUser.getRoles().toArray(), updatedUser.getRoles().toArray(new String[0]));
         assertEquals(oldUser.getFirstName(), updatedUser.getFirstName());
         assertEquals(oldUser.getLastName(), updatedUser.getLastName());
@@ -320,18 +324,18 @@ public class UserControllerTest {
 
     @Test
     void GIVEN_existing_user_without_entities_WHEN_delete_THEN_user_deleted() throws Exception {
-        assertNotNull(userRepo.findByLogin("cabinet03"));
+        assertNotNull(userRepo.findFirstByLogin("cabinet03"));
         mockMvc.perform(delete("/users/cabinet03"))
                 .andExpect(status().isNoContent());
-        assertNull(userRepo.findByLogin("cabinet03"));
+        assertNull(userRepo.findFirstByLogin("cabinet03"));
     }
 
     @Test
     void GIVEN_existing_user_with_entities_WHEN_delete_THEN_user_not_deleted() throws Exception {
-        assertNotNull(userRepo.findByLogin("gjuser17"));
+        assertNotNull(userRepo.findFirstByLogin("gjuser17"));
         mockMvc.perform(delete("/users/gjuser17"))
                 .andExpect(status().isBadRequest());
-        assertNotNull(userRepo.findByLogin("gjuser17"));
+        assertNotNull(userRepo.findFirstByLogin("gjuser17"));
     }
 
     @Test
@@ -342,22 +346,38 @@ public class UserControllerTest {
 
     @Test
     void GIVEN_nonexistent_role_WHEN_update_THEN_role_ignored() throws Exception {
-        List<SpecialEntity> allEntities = specialEntityRepo.findAll();
-        List<EntityDto> newEntities = allEntities.stream()
-                .map(e -> new EntityDto(e.getId(), e.getName(), e.getOrganizationName()))
-                .limit(3)
-                .toList();
+        User existingUser = userRepo.findFirstByLogin("gjuser17");
 
-        UserDto userDto = new UserDto("iluser1", "Last", "First", "email@email", newEntities, List.of("USER_MANAGER", "XXX"), null, true);
+        UserUpdateDto userDto = new UserUpdateDto("gjuser17", "Last", "First", "email@email", List.of("USER_MANAGER", "XXX"), null, null);
         mockMvc.perform(patch("/users")
                         .contentType("application/json")
                         .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isOk());
 
-        User updatedUser = userRepo.findByLogin("iluser1");
-        assertEquals(newEntities.stream().map(EntityDto::getId).collect(Collectors.toSet()),
+        User updatedUser = userRepo.findFirstByLogin("gjuser17");
+        assertEquals(existingUser.getEntities().stream().map(Entity::getId).collect(Collectors.toSet()),
                 updatedUser.getEntities().stream().map(Entity::getId).collect(Collectors.toSet()));
         assertArrayEquals(new String[]{"USER_MANAGER", "USER"}, updatedUser.getRoles().toArray(new String[0]));
+    }
+
+    @Test
+    void GIVEN_addedEntities_mix_existing_and_new_WHEN_update_THEN_success_AND_no_duplicates() throws Exception {
+        Random random = new Random();
+        String login = "login" + random.nextInt(10000);
+
+        List<SpecialEntity> entities = specialEntityRepo.findByIdIn(Set.of("10","11", "12", "13"));
+        SpecialUser user = new SpecialUser(login, 1L, "Last", "First", "a@b.c", null, entities, new Date());
+        specialUserRepository.save(user);
+
+        UserUpdateDto userDto = new UserUpdateDto(login, user.getLastName(), user.getLastName(), user.getEmail(), user.getRoles(), Set.of("10", "7"), null);
+        mockMvc.perform(patch("/users")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(userDto)))
+                .andExpect(status().isOk());
+
+        User updatedUser = userRepo.findFirstByLogin(login);
+        assertEquals(Stream.of("7", "10", "11", "12", "13").sorted().toList(),
+                updatedUser.getEntities().stream().map(Entity::getId).sorted().toList());
     }
 
     @Test
@@ -376,7 +396,7 @@ public class UserControllerTest {
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto))).andExpect(status().isOk());
 
-        User user = userRepo.findByLogin(login);
+        User user = userRepo.findFirstByLogin(login);
         assertEquals("émily-Claire", user.getFirstName());
         assertEquals("O'Brien", user.getLastName());
         assertEquals("email@email", user.getEmail());

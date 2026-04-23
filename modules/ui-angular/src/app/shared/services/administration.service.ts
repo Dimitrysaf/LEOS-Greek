@@ -1,6 +1,6 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {User, Entity} from "@/shared";
+import {User, Entity, UserUpdate} from "@/shared";
 import {apiBaseUrl} from "../../../config";
 import {Observable, Subject, takeUntil} from "rxjs";
 import {Page} from "@/shared/models/page.model";
@@ -67,7 +67,7 @@ export class AdministrationService implements OnDestroy {
     );
   }
 
-  updateUser(user: User): Observable<User> {
+  updateUser(user: UserUpdate): Observable<User> {
     return this.httpClient.patch<User>(
       `${apiBaseUrl}/secured/administration/users`,
       user
