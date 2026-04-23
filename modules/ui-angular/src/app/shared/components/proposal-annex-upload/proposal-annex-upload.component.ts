@@ -38,8 +38,8 @@ export class ProposalAnnexUploadComponent {
   }
 
   updateForeignAnnex() {
-    this.proposalDetailsService.createForeignAnnex(this.config.file, this.renameFileForm.get('renameFile').value + this.fileExtension);
-    this.config.closeDialog();
+    this.config.stateChanged.emit('active');
+    this.proposalDetailsService.createForeignAnnex(this.config.file, this.renameFileForm.get('renameFile').value + this.fileExtension, this.config);
   }
 
   isFormValid() {
