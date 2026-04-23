@@ -61,6 +61,12 @@ define(function aknSubParagraphMandatePluginModule(require) {
     };
 
     function _onEnterKey(context) {
+        let selection = context.event.editor.getSelection();
+        let shiftEnterCmd = context.event.editor.getCommand("leosHierarchicalElementShiftEnterHandler")
+            || context.event.editor.getCommand("leosHierarchicalElementShiftEnterHandlerFS");
+        if (selection && shiftEnterCmd && leosPluginUtils.isInsideTable(selection.getStartElement())) {
+            return;
+        }
         context.event.cancel();
     }
 
