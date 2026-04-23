@@ -3,6 +3,7 @@ package eu.europa.ec.leos.services.controllers;
 import eu.europa.ec.leos.integration.UsersProvider;
 import eu.europa.ec.leos.integration.dto.EntityDTO;
 import eu.europa.ec.leos.integration.dto.UserDTO;
+import eu.europa.ec.leos.integration.dto.UserUpdateDTO;
 import eu.europa.ec.leos.integration.rest.PaginationHelper;
 import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
@@ -20,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/secured/administration")
@@ -90,9 +92,23 @@ public class AdministrationController {
 
     @PatchMapping("/users")
     @HasAnyPermission({LeosPermission.CAN_MANAGE_ALL_USERS})
-    public UserDTO updateUser(@RequestBody @Validated final UserDTO dto) {
+    @HasAnyPermission({LeosPermission.CAN_MANAGE_ALL_ENTITIES, LeosPermission.CAN_MANAGE_OWN_ENTITIES})
+    public UserDTO updateUser(@RequestBody @Validated final UserUpdateDTO dto) {
+        final User user = securityContext.getUser();
+        if(!securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_ENTITIES)
+                && dto.getAddedEntities() != null
+                && !dto.getAddedEntities().isEmpty()
+        ) {
+            final Set<String> allowedEntities = usersClient
+                    .specialEntities(user.getDefaultEntity().getOrganizationName()).stream()
+                    .map(EntityDTO::getId)
+                    .collect(Collectors.toSet());
+            if(!allowedEntities.containsAll(dto.getAddedEntities())) {
+                throw new ForbiddenException(
+                        "User " + user.getLogin() + " tried to add a user to an entity he/she cannot manage.");
+            }
+        }
         return usersClient.updateSpecialUser(dto);
-
     }
 
     @DeleteMapping("/users/{userLogin}")

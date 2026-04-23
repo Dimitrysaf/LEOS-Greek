@@ -14,12 +14,12 @@
 package eu.europa.ec.digit.userdata.controllers;
 
 import eu.europa.ec.digit.userdata.dto.UserDto;
+import eu.europa.ec.digit.userdata.dto.UserUpdateDto;
 import eu.europa.ec.digit.userdata.entities.SpecialEntity;
 import eu.europa.ec.digit.userdata.entities.SpecialUser;
 import eu.europa.ec.digit.userdata.entities.User;
 import eu.europa.ec.digit.userdata.exception.BadRequestException;
 import eu.europa.ec.digit.userdata.mappers.UserMapper;
-import eu.europa.ec.digit.userdata.repositories.EntityRepository;
 import eu.europa.ec.digit.userdata.repositories.SpecialEntityRepository;
 import eu.europa.ec.digit.userdata.repositories.SpecialUserRepository;
 import eu.europa.ec.digit.userdata.repositories.UserRepository;
@@ -55,7 +55,7 @@ public class UserController implements UserApi {
 
     @Transactional(readOnly = true)
     @Override
-    public Collection<User> searchUsers(String searchKey, String searchContext, String searchReference) {
+    public Collection<User> searchUsers(final String searchKey, final String searchContext, final String searchReference) {
         return userRepository
                 .findUsersByKey(searchKey.trim().replace(" ", "%").concat("%"))
                 .limit(MAX_RECORDS).toList();
@@ -63,24 +63,24 @@ public class UserController implements UserApi {
 
     @Transactional(readOnly = true)
     @Override
-    public User getUser(String userId) {
-        return userRepository.findByLogin(userId);
+    public User getUser(final String userId) {
+        return userService.getUser(userId);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Collection<User> getUsersForJobTitle(String jobTitle) {
+    public Collection<User> getUsersForJobTitle(final String jobTitle) {
         return userRepository.findByJobTitle(jobTitle).collect(Collectors.toList());
     }
 
     @Transactional
     @Override
-    public Boolean addSpecialEntityForUser(SpecialEntityRequest request) {
+    public Boolean addSpecialEntityForUser(final SpecialEntityRequest request) {
         LOG.debug("Adding special entity to LEOS_SPECIAL_ENTITY table in ud-repo ---Started");
         SpecialUser specialUser = specialUserRepository.getByLogin(request.getUserId());
         if (specialUser == null) {
             LOG.debug("Special user does not exists, adding to the special user table");
-            User user = userRepository.findByLogin(request.getUserId());
+            User user = userRepository.findFirstByLogin(request.getUserId());
             specialUser = new SpecialUser(user.getLogin(), user.getPerId(), user.getLastName(), user.getFirstName(),
                     user.getEmail());
             specialUser = specialUserRepository.save(specialUser);
@@ -107,13 +107,13 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public Page<UserDto> searchUsers(String searchKey, String entityId, Pageable pageable) {
+    public Page<UserDto> searchUsers(final String searchKey, final String entityId, final Pageable pageable) {
         return userService.search(searchKey, entityId, pageable).map(userMapper::mapToDto);
     }
 
     @Transactional
     @Override
-    public UserDto createUser(UserDto userDto) {
+    public UserDto createUser(final UserDto userDto) {
         final SpecialUser specialUser = userMapper.mapToSpecial(userDto, roleService.getRoles());
         final SpecialUser created = this.userService.addSpecialUser(specialUser);
         return userMapper.mapToDto(created);
@@ -121,16 +121,17 @@ public class UserController implements UserApi {
 
     @Transactional
     @Override
-    public UserDto updateUser(UserDto userDto) {
+    public UserDto updateUser(final UserUpdateDto userDto) {
         final SpecialUser specialUser = userService.getSpecialUser(userDto.getLogin())
                 .map(user -> userMapper.merge(userDto, user, roleService.getRoles()))
                 .orElseThrow(BadRequestException::new);
-        return userMapper.mapToDto(userService.updateSpecialUser(specialUser));
+        SpecialUser updated = userService.updateSpecialUser(specialUser, userDto.getAddedEntities(), userDto.getRemovedEntities());
+        return userMapper.mapToDto(updated);
     }
 
     @Transactional
     @Override
-    public ResponseEntity<Void> deleteUser(String userLogin) {
+    public ResponseEntity<Void> deleteUser(final String userLogin) {
         userService.deleteSpecialUser(userLogin);
         return ResponseEntity.noContent().build();
     }
