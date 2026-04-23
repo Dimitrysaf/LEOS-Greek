@@ -1,5 +1,6 @@
 package eu.europa.ec.digit.userdata.services;
 
+import eu.europa.ec.digit.userdata.entities.SpecialEntity;
 import eu.europa.ec.digit.userdata.entities.SpecialUser;
 import eu.europa.ec.digit.userdata.entities.User;
 import eu.europa.ec.digit.userdata.exception.BadRequestException;
@@ -18,8 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,9 +32,13 @@ public class UserService {
     private final SpecialEntityRepository specialEntityRepository;
 
     private final PageMapper pageMapper;
+    private final UserMapper userMapper;
 
     public User getUser(String userId) {
-        return userRepository.findByLogin(userId);
+        return specialUserRepository
+                .findByLogin(userId)
+                .map(userMapper::mapToUser)
+                .orElseGet(() -> userRepository.findFirstByLogin(userId));
     }
 
     public Collection<User> search(@NonNull final String searchKey, @NonNull final String organization, final Long limit) {
@@ -105,13 +109,20 @@ public class UserService {
         return specialUserRepository.save(user);
     }
 
-    public SpecialUser updateSpecialUser(@NonNull final SpecialUser user) {
+    public SpecialUser updateSpecialUser(@NonNull final SpecialUser user, final Set<String> addedEntities, final Set<String> removedEntities) {
         final SpecialUser existing = specialUserRepository.getByLogin(user.getLogin());
         if (existing == null) {
             throw new BadRequestException(
                     "Cannot update SpecialUser(%s): User does not exist.".formatted(user.getLogin()),
                     "page.workspace.administration.user-info.cannot-update");
         }
+        final Set<SpecialEntity> entities = existing.getEntities().stream()
+                .filter(e -> removedEntities == null || !removedEntities.contains(e.getId()))
+                .collect(Collectors.toSet());
+        if (addedEntities != null && !addedEntities.isEmpty()) {
+            entities.addAll(specialEntityRepository.findByIdIn(addedEntities));
+        }
+        user.setEntities(new ArrayList<>(entities));
         return specialUserRepository.save(user);
     }
 

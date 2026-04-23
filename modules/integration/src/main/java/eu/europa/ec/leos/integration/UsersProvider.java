@@ -15,6 +15,7 @@ package eu.europa.ec.leos.integration;
 
 import eu.europa.ec.leos.integration.dto.EntityDTO;
 import eu.europa.ec.leos.integration.dto.UserDTO;
+import eu.europa.ec.leos.integration.dto.UserUpdateDTO;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityUserProvider;
@@ -44,7 +45,7 @@ public interface UsersProvider extends SecurityUserProvider {
 
     UserDTO addSpecialUser(UserDTO userDTO);
 
-    UserDTO updateSpecialUser(UserDTO userDTO);
+    UserDTO updateSpecialUser(UserUpdateDTO userDTO);
 
     List<EntityDTO> specialEntities(String orgName);
 
