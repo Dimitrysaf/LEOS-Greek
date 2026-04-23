@@ -39,9 +39,9 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
     var DATA_AKN_WRAPPED_CONTENT_ID = "data-akn-wrapped-content-id";
     var DATA_AKN_NAME = "data-akn-name";
     var DATA_AKN_ELEMENT = "data-akn-element";
-	var PARAGRAPH = "paragraph";
+    var PARAGRAPH = "paragraph";
     var SUBPARAGRAPH = "subparagraph";
-    
+
     var CMD_NAME = "leosHierarchicalElementShiftEnterHandler";
 
     var pluginDefinition = {
@@ -130,14 +130,11 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             selection = leosPluginUtils.selectLastEditableElement(selection, 'p, li');
         }
         if (leosPluginUtils.isInsideTable(selection.getStartElement())) {
-            context.event.cancel();
+            if (context.editor.getCommand(CMD_NAME) && isShiftEnterAllowedInThisContext(context.editor)) {
+                _onShiftEnterKeyCommand(context.editor.getCommand(CMD_NAME), context.editor);
+            }
         } else if (elementType && (enterAsShiftEnterForPoints || elementType === 'block' || ((elementType === 'level' || elementType === 'paragraph') && _isStartElementOrderedListOrContent(selection)))) {
-            _executeShiftEnter(context.editor);
-            leosPluginUtils.manageEmptyLists(context.editor);
-            leosPluginUtils.managePoints(context.editor);
-            leosPluginUtils.manageEmptySubparagraphs(context.editor);
-            leosPluginUtils.manageCrossheadings(context.editor);
-            leosPluginUtils.manageSiblingLists(context.editor);
+            _onShiftEnterKeyCommand(context.editor.getCommand(CMD_NAME), context.editor);
         }
         if (enterAsShiftEnterForPoints) {
             context.event.cancel();
@@ -173,9 +170,9 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         return startElement
             && (
                 (startElement.getAscendant('ol')
-                && startElement.getAscendant('ol').getAttribute(DATA_AKN_NAME) !== 'aknAnnexOrderedList'
-                && startElement.getAttribute(DATA_AKN_NAME) !== 'aknHeading' )
-            ||  startElement.getAttribute(DATA_AKN_NAME) === 'aknContent');
+                    && startElement.getAscendant('ol').getAttribute(DATA_AKN_NAME) !== 'aknAnnexOrderedList'
+                    && startElement.getAttribute(DATA_AKN_NAME) !== 'aknHeading' )
+                ||  startElement.getAttribute(DATA_AKN_NAME) === 'aknContent');
     }
 
     function _renameIntroToP(editor, element) {
@@ -228,7 +225,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
 
                 if (firstElement) {
                     firstElement.setAttribute('data-akn-split-content', 'parent');
-                     if (contentAfterShiftEnter && contentAfterShiftEnter.getName() === 'p') {
+                    if (contentAfterShiftEnter && contentAfterShiftEnter.getName() === 'p') {
                         contentAfterShiftEnter.setAttribute('data-akn-split-content', 'child');
                     }
                 }
@@ -270,7 +267,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
     var _isElementEmpty = function _isElementEmpty(el) {
         return !el.getChildCount() ||
             ((el.getChildren().getItem(0).type === CKEDITOR.NODE_TEXT) &&
-                    (el.getChildren().getItem(0).getText().trim().replace(/\u200B/g, '') === ""));
+                (el.getChildren().getItem(0).getText().trim().replace(/\u200B/g, '') === ""));
     };
 
     var wrapCurrentInlineContent = function wrapCurrentInlineContent(el, editor) {
@@ -278,7 +275,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         if (inlineWrapper != null) {
             var inlineWrapperName = inlineWrapper.getName && inlineWrapper.getName();
             if ((inlineWrapperName === 'li') || (inlineWrapperName ===
-             'th') || (inlineWrapperName === 'td')) {
+                'th') || (inlineWrapperName === 'td')) {
                 var blockChild = _getBlockElementIfExists(inlineWrapper);
                 var rangeContent = getFirstRange(editor).clone();
 
@@ -304,13 +301,13 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
                     pElement.setAttribute(DATA_AKN_MP_ID, inlineWrapper.getAttribute(DATA_AKN_MP_ID));
                 }
 
-				if(inlineWrapper.getAttribute(DATA_AKN_ELEMENT) != null) {
+                if(inlineWrapper.getAttribute(DATA_AKN_ELEMENT) != null) {
                     if(inlineWrapper.getAttribute(DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH && inlineWrapper.hasAttribute(leosPluginUtils.DATA_AKN_NUM)) {
                         pElement.setAttribute(DATA_AKN_ELEMENT, leosPluginUtils.SUBPARAGRAPH);
                     } else {
-					pElement.setAttribute(DATA_AKN_ELEMENT, inlineWrapper.getAttribute(DATA_AKN_ELEMENT));
-				}
-				}
+                        pElement.setAttribute(DATA_AKN_ELEMENT, inlineWrapper.getAttribute(DATA_AKN_ELEMENT));
+                    }
+                }
 
                 if (leosKeyHandler.isContentEmptyTextNode(content)) {
                     pElement.appendBogus();
@@ -329,7 +326,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
 
                 inlineWrapper = pElement;
             } else if (inlineWrapperName === 'p' && _isElementEmpty(inlineWrapper)
-                    && leosPluginUtils.isInsideTable(inlineWrapper)) {
+                && leosPluginUtils.isInsideTable(inlineWrapper)) {
                 inlineWrapper.appendBogus();
             }
         }
@@ -353,13 +350,13 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             } else if (leosPluginUtils.isInsideTable(startElementParent)) {
                 pElement.setAttribute(DATA_AKN_NAME, 'aknParagraph');
             }
-			if (startElementName === 'p' && startElement.hasAttribute(DATA_AKN_ELEMENT)) {
+            if (startElementName === 'p' && startElement.hasAttribute(DATA_AKN_ELEMENT)) {
                 pElement.setAttribute(DATA_AKN_ELEMENT, startElement.getAttribute(DATA_AKN_ELEMENT));
-            } else if(leosPluginUtils.isAnnexUnnumberedCNParagraph(startElement)) {            
-				pElement.setAttribute(DATA_AKN_ELEMENT, PARAGRAPH);
-			} else {
-				pElement.setAttribute(DATA_AKN_ELEMENT, SUBPARAGRAPH);
-			}
+            } else if(leosPluginUtils.isAnnexUnnumberedCNParagraph(startElement)) {
+                pElement.setAttribute(DATA_AKN_ELEMENT, PARAGRAPH);
+            } else {
+                pElement.setAttribute(DATA_AKN_ELEMENT, SUBPARAGRAPH);
+            }
 
             if (leosKeyHandler.isContentEmptyTextNode(content)) {
                 pElement.appendBogus();
@@ -388,7 +385,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
     var getNestedBlockElement = function getNestedBlockElement(liElement) {
         return liElement.findOne("ol") || liElement.findOne("ul") || liElement.findOne("table");
     };
-    
+
     var getFirstRange = function getFirstRange(editor) {
         var selection = editor.getSelection();
         return selection.getRanges()[0];
@@ -405,17 +402,17 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         var childList = element.getChildren();
         return (childList.length && (childList.getItem(0).type === CKEDITOR.NODE_ELEMENT)) ? childList.getItem(0) : undefined;
     }
-    
+
     function _isLevelElementWithHeadingAndContent(element) {
         var elementName = element.getName && element.getName();
         return elementName === "h2" && leosPluginUtils.isAnnexList(element.getAscendant("ol"), true) &&
             element.getNext() && element.getNext().type === CKEDITOR.NODE_ELEMENT && element.getNext().getName() === "p";
     }
-    
+
     function _isSubparMandateElement(element) {
         return element && 'aknSubParagraphMandate' === element.getAttribute(DATA_AKN_NAME);
     }
-    
+
     function _isSubparMandateElementInsideUnNumberedPar(element) {
         var currentElement = element.getAscendant('ol');
         if (_isSubparMandateElement(currentElement)) { // When you able to edit subparagraph
@@ -455,7 +452,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         }
         return false;
     }
-    
+
     //Shift-enter is allowed when not present in an unnumbered paragraph
     var isShiftEnterAllowedInThisContext = function isShiftEnterAllowedInThisContext(editor) {
         var selection = editor.getSelection();
@@ -517,7 +514,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         if (_isLevelElementWithHeadingAndContent(currentElement)) {
             return false;
         }
-        
+
         // If element is subpar mandate inside unnumbered paragraph shift-enter is disabled
         if (_isSubparMandateElementInsideUnNumberedPar(currentElement)) {
             return false;
@@ -537,11 +534,11 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         if (leosKeyHandler.isContentEmptyTextNode(currentElement)) {
             return false;
         }
-        
+
         if (!getInlineWrapper(currentElement)) {
             return false;
         }
-        
+
         // in order to check if the shift enter is allowed in current selection, take the start element and
         // check ancestors one by one and compare them against allowed_elements
         do {
