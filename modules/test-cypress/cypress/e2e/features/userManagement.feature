@@ -37,7 +37,13 @@ Feature: User Management Entities Regression Features
   Scenario: user creation should fail when a mandatory field is not filled
     When click on manage users and entities link under administration dropdown
     Then add user button should be displayed
-    When verify user creation fails for each missing mandatory field
+    When click on add user button
+    Then user info section should be displayed
+    When verify user creation fails without entities
+      | firstName | lastName | email          | userLogin |
+      | firstuser | lastuser | first@last.com | firstLast |
+    And  search and assign the entities '["AGRI", "test_custom_entity"]' to the user
+    When verify user creation fails if mandatory field is empty
       | firstName | lastName | email          | userLogin |
       | firstuser | lastuser | first@last.com | firstLast |
 
@@ -45,7 +51,10 @@ Feature: User Management Entities Regression Features
   Scenario: user creation should fail when fields have invalid values
     When click on manage users and entities link under administration dropdown
     Then add user button should be displayed
-    When verify user creation fails for each invalid field data
+    When click on add user button
+    Then user info section should be displayed
+    And  search and assign the entities '["AGRI", "test_custom_entity"]' to the user
+    When verify user creation fails if any field contains invalid data
       | fields    | invalidValue  |
       | firstName | first(user    |
       | firstName | first[user]   |
