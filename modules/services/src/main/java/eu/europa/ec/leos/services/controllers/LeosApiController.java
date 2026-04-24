@@ -902,7 +902,10 @@ public class LeosApiController implements LeosApi {
             LOG.info("Starting proposals report generation...");
             String csvData = apiService.getProposalsReport();
             LOG.info("Proposals report generated successfully");
-            return ResponseEntity.ok(csvData);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_TYPE, "text/csv; charset=UTF-8")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"proposals_report.csv\"")
+                    .body(csvData);
         } catch (Exception ex) {
             LOG.error("Error occurred while getting proposals report: " + ex.getMessage(), ex);
             return new ResponseEntity<>("Error occurred while getting proposals report", HttpStatus.INTERNAL_SERVER_ERROR);
