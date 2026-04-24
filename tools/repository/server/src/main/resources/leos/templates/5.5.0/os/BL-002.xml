@@ -58,14 +58,14 @@
             </container>  
             <longTitle>
                 <p>
-                    <docType refersTo="~REG">{{docType.001}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
+                    <docType refersTo="~REG">{{docType.regulation}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
                     <docPurpose>{{docPurpose}}</docPurpose>
                 </p>
             </longTitle>
         </preface>
         <preamble>
             <formula name="actingEntity">
-                <p>{{bl.commission.decision}}</p>
+                <p>{{bl.commission.regulation}}</p>
             </formula>
             <citations leos:editable="false">
                 <citation leos:editable="true">
@@ -87,7 +87,7 @@
                 </recital> 
             </recitals>
             <formula name="enactingFormula">
-                <p>{{bl.enactingFormula.decision}}</p>
+                <p>{{bl.enactingFormula.regulation}}</p>
             </formula>
         </preamble>
         <body>
