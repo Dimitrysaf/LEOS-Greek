@@ -1,4 +1,8 @@
 class userEntityManagementPage {
+    errorMessages = {
+        userCreationError: 'Please fill-in all highlighted fields correctly'
+    }
+
     elements = {
         manageEntitiesTab:() => cy.get('div.eui-tab-item').contains('Manage entities'),
         addEntityBtn: () => cy.get('button[data-e2e=\'eui-button\'] > span').contains('Add an entity'),
@@ -63,21 +67,21 @@ class userEntityManagementPage {
     }
 
     enterLastName(lastname) {
-        this.elements.lastNameTxtBx().type(lastname)
+        this.elements.lastNameTxtBx().clear().type(lastname, { parseSpecialCharSequences: false })
     }
 
     enterFirstName(firstname) {
-        this.elements.firstNameTxtBx().type(firstname)
+        this.elements.firstNameTxtBx().clear().type(firstname, { parseSpecialCharSequences: false })
     }
 
     enterEmail(email)
     {
-        this.elements.emailTxtBx().type(email)
+        this.elements.emailTxtBx().clear().type(email, { parseSpecialCharSequences: false })
     }
 
     enterUserLogin(userLogin)
     {
-        this.elements.userLoginTxtBx().type(userLogin)
+        this.elements.userLoginTxtBx().clear().type(userLogin, { parseSpecialCharSequences: false })
     }
 
     searchEntity(entity)
@@ -98,6 +102,33 @@ class userEntityManagementPage {
     saveUserInfoForm()
     {
         this.elements.saveBtn().click()
+    }
+
+    fillUserInfoSectionExcept(user, missingField)
+    {
+        if (missingField !== 'firstName') this.enterFirstName(user.firstName)
+        if (missingField !== 'lastName') this.enterLastName(user.lastName)
+        if (missingField !== 'email') this.enterEmail(user.email)
+        if (missingField !== 'userLogin') this.enterUserLogin(user.userLogin)
+    }
+
+    clearField(field)
+    {
+        const fieldMap = {
+            firstName: this.elements.firstNameTxtBx,
+            lastName: this.elements.lastNameTxtBx,
+            email: this.elements.emailTxtBx,
+            userLogin: this.elements.userLoginTxtBx
+        }
+        fieldMap[field]().clear()
+    }
+
+    fillUserInfoSectionWithInvalidData(user, field, invalidValue)
+    {
+        this.enterFirstName(field === 'firstName' ? invalidValue : user.firstName)
+        this.enterLastName(field === 'lastName' ? invalidValue : user.lastName)
+        this.enterEmail(field === 'email' ? invalidValue : user.email)
+        this.enterUserLogin(field === 'userLogin' ? invalidValue : user.userLogin)
     }
 
     confirmNewUserCreationDialogBox(){
