@@ -18,15 +18,20 @@ class userEntityManagementPage {
         userLoginTxtBx: () => cy.get('input[placeholder=\'User login\']'),
         searchEntityTxtBx: () => cy.get('input[placeholder=\'Search by entity name\']'),
         selectEntityDropDown: () => cy.get('select.entities-select:not(.ng-star-inserted)'),
+        removeEntityDropDown: () => cy.get('select.ng-star-inserted'),
         angleLeftBtn: () => cy.get('span.eui-icon-angle-left'),
-        //angleRightBtn: () => cy.get('span.eui-icon-angle-right'),
+        angleRightBtn: () => cy.get('span.eui-icon-angle-right'),
         saveBtn: () => cy.get('span').contains('Save'),
         newUserorEntityDialogBxTitle: () => cy.get('#headerTitle'),
         newUserorEntityCreationMessageLocator: () => cy.get('#containerConfigId'),
         newUserorEntityDialogBxOkBtn: () => cy.get('button.eui-dialog__footer-accept-button').contains('OK'),
         searchUsersTxtBx: () => cy.get('input[placeholder=\'Search by user name, login or email\']'),
         searchIconBtn: () => cy.get('eui-icon-svg[icon=\'eui-search\']'),
+        firstNameColumnInTable: () => cy.get('tr td:nth-child(1)'),
+        lastNameColumnInTable: () => cy.get('tr td:nth-child(2)'),
         userLoginColumnInTable: () => cy.get('tr td:nth-child(3)'),
+        editBtn: () => cy.get('span').contains('Edit'),
+        readOnlyEmailTxtBx: () => cy.get('input[formcontrolname=\'email\']')
     }
 
     selectManageEntitiesTab(){
@@ -136,8 +141,30 @@ class userEntityManagementPage {
     }
 
     searchNewUserLogin(userLogin) {
-        this.elements.searchUsersTxtBx().type(userLogin)
+        this.elements.searchUsersTxtBx().clear().type(userLogin)
         this.elements.searchIconBtn().click()
+    }
+
+    clickUserLoginInTable(userLogin) {
+        this.elements.userLoginColumnInTable().contains(userLogin).click()
+    }
+
+    clickEditButton() {
+        this.elements.editBtn().click()
+    }
+
+    updateUserInfoDetails(user) {
+        this.enterFirstName(user.firstName)
+        this.enterLastName(user.lastName)
+        this.enterEmail(user.email)
+    }
+
+    selectEntityToRemove(entity) {
+        this.elements.removeEntityDropDown().select(entity, { force: true })
+    }
+
+    removeEntity() {
+        this.elements.angleRightBtn().click()
     }
 
 }

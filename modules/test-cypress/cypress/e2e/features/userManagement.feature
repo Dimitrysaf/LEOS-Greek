@@ -73,3 +73,21 @@ Feature: User Management Entities Regression Features
       | email     | missingAtSign |
       | email     | user@         |
       | email     | @domain.com   |
+
+  @updatingExistingUserDetails @local @focus
+  Scenario: updating the details of an existing user
+    When click on manage users and entities link under administration dropdown
+    Then add user button should be displayed
+    When search and click on user with login "firstLast"
+    Then user info section should be displayed
+    When click on edit button
+    And  update the user info details
+      | firstName   | lastName   | email             |
+      | firstEdited | lastEdited | updated@email.com |
+    And  select and remove the entities '["AGRI", "test_custom_entity"]' from the user
+    And  click on save button
+    Then show the successful message that user is updated
+    Then verify the updated user details on the table
+    When search and click on user with login "firstLast"
+    Then verify the updated email in user info section
+    And  verify the entities are removed from the user
