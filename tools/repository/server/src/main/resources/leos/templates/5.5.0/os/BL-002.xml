@@ -46,8 +46,8 @@
             <proprietary source="~COM">
                 <leos:templateVersion>1.0.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
-                <leos:template>SJ-001</leos:template>
-                <leos:docTemplate>BL-001</leos:docTemplate>
+                <leos:template>SJ-002</leos:template>
+                <leos:docTemplate>BL-002</leos:docTemplate>
             </proprietary>
         </meta>
         <preface>
@@ -84,11 +84,7 @@
                 <recital leos:editable="true">
                     <num>(2)</num>
                     <p>{{bl.recital}}</p>
-                </recital>
-                <recital leos:editable="true">
-                    <num>(3)</num>
-                    <p>{{bl.recital.regulation}}</p>
-                </recital>
+                </recital> 
             </recitals>
             <formula name="enactingFormula">
                 <p>{{bl.enactingFormula.regulation}}</p>
@@ -112,7 +108,7 @@
                 </paragraph>
             </article>
             <article leos:editable="true" leos:deletable="true" leos:autonumbering="true">
-                <num leos:editable="false">Article 2</num>
+                <num leos:editable="false">{{bl.num2}}</num>
                 <heading>{{bl.heading}}</heading>
                 <paragraph>
                     <content>
@@ -129,7 +125,7 @@
         <conclusions>
             <p>{{bl.conclusionDate}}</p>
             <block name="signatory" leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption2" leos:selectedoption="1">
-                <signature>
+                <signature leos:optionlist="listOption2">
                     <organization refersTo="~COM">{{bl.forCommission}}</organization>
                     <role refersTo="~PRESID">{{bl.role.president}}</role>
                     <person refersTo="">[...]</person>
