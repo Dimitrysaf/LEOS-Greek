@@ -443,11 +443,6 @@ Then(/^no warning symbol should be displayed in the navigation pane$/, function 
         .should('not.exist');
 });
 
-
-
-
-
-
 Then ('contribution card {int} is displayed', function(cardNumber){
     tableOfContent.elements.contributionsPaneAccordion().should('be.visible');
 })

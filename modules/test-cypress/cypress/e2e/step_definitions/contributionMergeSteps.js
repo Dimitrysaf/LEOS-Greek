@@ -61,4 +61,6 @@ When('click on merge actions menu of annex title', () => {
     contributionPage.ClickTitleMergeActionsMenu()
 });
 
-
+When(/^wrapper is present for paragraph (\d+) of article (\d+)$/, function (paragraphNumber, articleNumber) {
+    contributionPage.getWrapperOfParagraphOfArticle(paragraphNumber, articleNumber).should('exist');
+});

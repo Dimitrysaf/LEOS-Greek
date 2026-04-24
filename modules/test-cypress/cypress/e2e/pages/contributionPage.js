@@ -4,7 +4,6 @@ class contributionPage {
         applyChanges: () => cy.get('button#apply-id'),
         contributionViewContainer: () => cy.get('#contributionViewContainer '),
         titleMergeActionsMenu: () => cy.get('div container div.Vaadin-Icons.merge-actions-wrapper')
-
     }
 
     getElementInContribution(eltName, eltNumber) {
@@ -13,10 +12,6 @@ class contributionPage {
 
     getElementInDocument(eltName, eltNumber) {
         return cy.get('.main-container.leos-doc-content ' + eltName).eq(eltNumber-1);
-    }
-
-    getMergeActionsMenu(eltName, eltNumber) {
-        return this.getElementInContribution(eltName, eltNumber).next('.merge-actions-wrapper').find('.merge-actions-icon');
     }
 
     getActionInMergeActions(eltName, eltNumber, action) {
@@ -42,6 +37,28 @@ class contributionPage {
 
     ClickTitleMergeActionsMenu(){
         this.elements.titleMergeActionsMenu().click()
+    }
+
+    getParagraphOfArticle(paragraphNumber, articleNumber){
+        return this.getElementInContribution('article', articleNumber).find('paragraph').eq(paragraphNumber-1);
+    }
+
+    getMergeActionsIcon(baseElement) {
+        return baseElement
+            .next('.merge-actions-wrapper')
+            .find('.merge-actions-icon');
+    }
+
+    getMergeActionsMenu(eltName, eltNumber) {
+        return this.getMergeActionsIcon(
+            this.getElementInContribution(eltName, eltNumber)
+        );
+    }
+
+    getWrapperOfParagraphOfArticle(paragraphNumber, articleNumber) {
+        return this.getMergeActionsIcon(
+            this.getParagraphOfArticle(paragraphNumber, articleNumber)
+        );
     }
 }
 export default new contributionPage();

@@ -1134,3 +1134,126 @@ Feature: fork and merge features
     And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 3 has attribute "leos:action-number" with value "insert"
     And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 3 contains "(2)"
     And content of point 2 of list 1 of paragraph 2 of article 3 contains "point 3"
+
+  #Ticket LEOS##3100 : Wrapper is created for wrong element in legal act
+  @VerifyWrapper @local
+  Scenario: Wrapper Check for a clone proposal
+    Given navigate to leos application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  tick guidance approval checkbox in create document page
+    And  click on next button in create document page
+    And  provide document title "Automation Testing to test Wrapper for a clone proposal" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    When mouseover and click on article 1
+    Then ck editor window is displayed
+    Then  li 1 with data-akn-element "paragraph" of article contains "Text..." in edition mode
+    When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+    And click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on increase indent icon present in ck editor panel
+    And  add "point a" at current cursor position in edition mode
+    When click enter from keyboard in edition mode
+    When click on tab key from keyboard
+    When click on tab key from keyboard
+    When add "point i" at current cursor position in edition mode
+    When click enter from keyboard in edition mode
+    When click on tab key from keyboard
+    When click on tab key from keyboard
+    When add "point 1" at current cursor position in edition mode
+    When click enter from keyboard in edition mode
+    When click on tab key from keyboard
+    When click on tab key from keyboard
+    When add "point ---" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of paragraph 2 of article 1 contains "Text..."
+    When mouseover and click on article 1
+    Then ck editor window is displayed
+    And  click on soft enter icon present in ck editor panel
+    And  add "next" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on increase indent icon present in ck editor panel
+    And  add "point a" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And  add "point b" at current cursor position in edition mode
+    When click enter from keyboard in edition mode
+    When click on tab key from keyboard
+    When click on tab key from keyboard
+    When add "point i" at current cursor position in edition mode
+    When click enter from keyboard in edition mode
+    When click on tab key from keyboard
+    When click on tab key from keyboard
+    When add "point 1" at current cursor position in edition mode
+    When click on tab key from keyboard
+    When click on tab key from keyboard
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    When click on act view link in breadcrumb item
+    When click on milestones tab in act view page
+    When click on add button in milestones tab
+    Then add milestone window is displayed
+    When click on create milestone button
+    Then successful message contains "Milestone created"
+    And  "File ready" is showing under status column of row 1 of milestones table
+    When click on three dots under actions column of row 1 of milestones table
+    When click on option "Send a copy for contribution" under milestone actions
+    Then "Send a copy of the milestone for contribution" dialog box window is displayed
+    When provide input "demo" dialog box window
+    And  click on row 1 from the user list
+    When click on send for contribution button
+    Then successful message contains "Copy sent for contribution"
+    When click on workspace button in breadcrumb item
+    Then user is on repository browser page
+    When click on act 1
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    When mouseover and click on article 1
+    Then ck editor window is displayed
+    When click at offset 7 in li 1 with data-akn-element "subparagraph" of li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+    And click on decrease indent icon present in ck editor panel
+    And click on decrease indent icon present in ck editor panel
+    When click at offset 7 in li 1 with data-akn-element "subparagraph" of li 1 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+    And click on decrease indent icon present in ck editor panel
+    And click on decrease indent icon present in ck editor panel
+    When click at offset 7 in li 1 with data-akn-element "subparagraph" of li 1 with data-akn-element "point" of li 3 with data-akn-element "paragraph" of article in edition mode
+    And click on decrease indent icon present in ck editor panel
+    And click on decrease indent icon present in ck editor panel
+    When click at offset 7 in li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 2 with data-akn-element "point" of li 5 with data-akn-element "paragraph" of article in edition mode
+    And click on decrease indent icon present in ck editor panel
+    And click on decrease indent icon present in ck editor panel
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    When click on act view link in breadcrumb item
+    Then user is on act viewer page
+    When click on milestones tab in act view page
+    When click on add button in milestones tab
+    And  click on create milestone button
+    Then successful message contains "Contribution from Legal Service has been created"
+    And  "File ready" is showing under status column of row 1 of milestones table
+    When click on three dots under actions column of row 1 of milestones table
+    When click on option "Send contribution" under milestone actions
+    And  click on confirm button in dialog confirm box window
+    Then successful message contains "Contribution sent"
+    When click on workspace button in breadcrumb item
+    Then user is on repository browser page
+    When click on act 1
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    When click on contributions pane accordion
+    Then contribution card 1 is displayed
+    And  click on contribution card 1
+    Then contribution view container is displayed
+    And  wrapper is present for paragraph 2 of article 1
+    And  wrapper is present for paragraph 3 of article 1
+    And  wrapper is present for paragraph 4 of article 1
+    And  wrapper is present for paragraph 5 of article 1
