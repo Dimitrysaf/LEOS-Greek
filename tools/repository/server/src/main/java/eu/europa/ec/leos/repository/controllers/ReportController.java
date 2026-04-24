@@ -15,9 +15,10 @@ public class ReportController implements ReportApi {
     private ReportService reportService;
 
     @Override
-    public ResponseEntity<String> getProposalsWithoutMilestonesReport(String applnUrl) {
+    public ResponseEntity<String> getProposalsReport(String applnUrl) {
         String csv = reportService.generateProposalReport(applnUrl);
         return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_TYPE, "text/csv; charset=UTF-8")
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"proposals_report.csv\"")
                 .body(csv);
     }

@@ -15,5 +15,5 @@ public interface ReportApi {
 
     @Operation(summary = "Generate CSV report for proposals without milestones")
     @GetMapping(value = "/proposals", produces = "text/csv")
-    ResponseEntity<String> getProposalsWithoutMilestonesReport(@RequestParam("applnUrl") String applnUrl);
+    ResponseEntity<String> getProposalsReport(@RequestParam("applnUrl") String applnUrl);
 }

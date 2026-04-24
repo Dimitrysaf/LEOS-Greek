@@ -1331,7 +1331,6 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     @Override
     @PerformanceLogger
     public String getProposalsReport(String applnUrl) {
-        logger.trace("Getting proposals report from Report service");
-        return repository.getProposalsReport(applnUrl);
+       return repository.getProposalsReport(applnUrl);
     }
 }
