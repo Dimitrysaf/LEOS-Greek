@@ -162,7 +162,7 @@ export class ProposalDraftsComponent
         this.proposalStateChange.emit('active');
       }
       if (file && !annex) {
-        let annexWithSameName = this.proposal?.childDocuments?.find(e => e.category === 'BILL')?.childDocuments?.find(e => e.category === 'ANNEX' && e.originalFilename.toUpperCase().trim() === file.name.toUpperCase().trim());
+        let annexWithSameName = this.proposal?.childDocuments?.find(e => e.category === 'BILL')?.childDocuments?.find(e => e.category === 'ANNEX' && e.originalFilename?.toUpperCase().trim() === file.name?.toUpperCase().trim());
         if (annexWithSameName) {
           const dialog = this.dialogService.openDialog(
             new EuiDialogConfig({
