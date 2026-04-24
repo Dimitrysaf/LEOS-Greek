@@ -736,11 +736,15 @@ class ckEditorWindow {
         return this.getSecondLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3).invoke('attr', 'id').then(id => this.moveCursor(offset, "[id='" + id + "']"))
     }
 
-
     clickTcRejectThisChangeMenuItem() {
         this.elements.tcRejectThisChangeMenu()
             .should('be.visible')
             .click();
     }
+
+    moveCursorToSpecificOffsetInThirdLayerPointOfParagraphOfArticle(offSet, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4) {
+        return this.getThirdLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4).invoke('attr', 'id').then(id => this.moveCursor(offSet, "[id='" + id + "']"))
+    }
 }
+
 export default new ckEditorWindow();
