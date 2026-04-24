@@ -74,7 +74,7 @@ Feature: User Management Entities Regression Features
       | email     | user@         |
       | email     | @domain.com   |
 
-  @updatingExistingUserDetails @local @focus
+  @updatingExistingUserDetails @local
   Scenario: updating the details of an existing user
     When click on manage users and entities link under administration dropdown
     Then add user button should be displayed
