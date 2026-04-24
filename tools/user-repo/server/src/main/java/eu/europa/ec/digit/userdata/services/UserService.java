@@ -32,13 +32,18 @@ public class UserService {
     private final SpecialEntityRepository specialEntityRepository;
 
     private final PageMapper pageMapper;
-    private final UserMapper userMapper;
 
-    public User getUser(String userId) {
-        return specialUserRepository
-                .findByLogin(userId)
-                .map(userMapper::mapToUser)
-                .orElseGet(() -> userRepository.findFirstByLogin(userId));
+    public User getUser(final String userId) {
+        final List<User> users = userRepository.findByLogin(userId);
+        if (users.isEmpty()) {
+            return null;
+        }
+        for (User u : users) {
+            if (!Boolean.TRUE.equals(u.getSpecial())) {
+                return u;
+            }
+        }
+        return users.getFirst();
     }
 
     public Collection<User> search(@NonNull final String searchKey, @NonNull final String organization, final Long limit) {

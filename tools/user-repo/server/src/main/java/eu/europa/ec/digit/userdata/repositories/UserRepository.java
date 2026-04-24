@@ -22,6 +22,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Stream;
 
 public interface UserRepository extends JpaRepository<User, User.UserId> {
@@ -63,6 +64,8 @@ public interface UserRepository extends JpaRepository<User, User.UserId> {
                 USER_EMAIL != 'entity@mail.com'""";
 
     User findFirstByLogin(String login);
+
+    List<User> findByLogin(String login);
 
     @Query(value = "SELECT * FROM LEOS_USER " + " WHERE "
             + " JOB_TITLE LIKE ?1% "
