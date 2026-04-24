@@ -1,18 +1,20 @@
 package eu.europa.ec.leos.services.config;
 
 import com.hazelcast.config.*;
-import com.hazelcast.core.EntryEvent;
-import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.map.MapEvent;
 import com.hazelcast.spring.cache.HazelcastCacheManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.hazelcast.config.annotation.web.http.EnableHazelcastHttpSession;
+
+import java.util.Properties;
+import java.util.function.Function;
 
 @Configuration
 @EnableCaching
@@ -30,6 +32,10 @@ public class HazelcastCacheConfig {
 
     @Value("${leos.hazelcast.port:5701}")
     private int hazelcastPort;
+
+    @Autowired
+    @Qualifier("applicationProperties")
+    private Properties applicationProperties;
 
     @Bean
     public Config hazelcastConfig() {
@@ -81,7 +87,11 @@ public class HazelcastCacheConfig {
     }
 
     // Helper method to create standard cache configuration
-    private MapConfig createCacheConfig(String name, int maxSize, int ttlSeconds, int maxIdleSeconds) {
+    private MapConfig createCacheConfig(String name, int defaultMaxSize, int defaultTtlSeconds, int defaultMaxIdleSeconds) {
+        int maxSize = getProperty("leos.cache.%s.maxSize".formatted(name), Integer::parseInt, defaultMaxSize);
+        int ttlSeconds = getProperty("leos.cache.%s.ttlSeconds".formatted(name), Integer::parseInt, defaultTtlSeconds);
+        int maxIdleSeconds = getProperty("leos.cache.%s.maxIdleSeconds".formatted(name), Integer::parseInt, defaultMaxIdleSeconds);
+
         MapConfig mapConfig = new MapConfig(name);
         mapConfig.setInMemoryFormat(InMemoryFormat.OBJECT);
 
@@ -266,5 +276,13 @@ public class HazelcastCacheConfig {
         sessionCache.setAsyncBackupCount(1);
         sessionCache.setMaxIdleSeconds(1800); // 30 minutes
         config.addMapConfig(sessionCache);
+    }
+
+    private <T> T getProperty(final String name, final Function<String, T> converter, final T defaultValue) {
+        final String value = applicationProperties.getProperty(name);
+        if (value == null) {
+            return defaultValue;
+        }
+        return converter != null ? converter.apply(value) : (T) value;
     }
 }
