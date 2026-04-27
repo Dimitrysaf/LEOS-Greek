@@ -82,6 +82,15 @@ public class SectionContentValidator {
                 throw new IllegalArgumentException(
                         "Articles cannot appear at the root of ENACTING_TERMS when higher division elements (PART, TITLE, CHAPTER, SECTION) are present");
             }
+            long rootArticleCount = items.stream()
+                    .filter(i -> i.getType() == AknType.NUMBERED_ARTICLE || i.getType() == AknType.UNNUMBERED_ARTICLE)
+                    .count();
+            boolean hasSingleNumberedArticle = rootArticleCount == 1 &&
+                    items.stream().anyMatch(i -> i.getType() == AknType.NUMBERED_ARTICLE);
+            if (hasSingleNumberedArticle) {
+                throw new IllegalArgumentException(
+                        "A single article in ENACTING_TERMS must be UNNUMBERED_ARTICLE, not NUMBERED_ARTICLE");
+            }
         }
         if (sectionType == SectionType.RECITALS) {
             boolean hasGroups = items.stream().anyMatch(i -> i.getType() == AknType.RECITALS);
@@ -104,6 +113,9 @@ public class SectionContentValidator {
         if (item.getType() == null || !allowedTypes.contains(item.getType())) {
             throw new IllegalArgumentException(
                     "Invalid element type '" + item.getType() + "'. Allowed here: " + allowedTypes);
+        }
+        if ((item.getType() == AknType.RECITAL || item.getType() == AknType.CITATION) && item.getContent() == null) {
+            throw new IllegalArgumentException(item.getType() + " content must not be null");
         }
         if (item.getType() == AknType.AUTHORIAL_NOTE) {
             if (item.getPosition() == null || item.getPosition() < 0) {
