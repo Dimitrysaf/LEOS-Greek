@@ -32,6 +32,25 @@ Feature: User Management Entities Regression Features
       | entity@name   |
       | entity name   |
 
+  @updatingExistingEntityName @local
+  Scenario: updating the name of an existing entity
+    When click on manage users and entities link under administration dropdown
+    Then select manage entities tab
+    When search and click on entity "test_custom_entity"
+    Then custom entity info section should be displayed
+    When click on edit button
+    And  update the entity name to "test_custom_entity_updated"
+    And  click on save button
+    Then show the successful message that entity is updated
+    Then verify the updated entity presence on the table
+    When search and click on entity "test_custom_entity_updated"
+    Then custom entity info section should be displayed
+    When click on edit button
+    And  update the entity name to "test_custom_entity"
+    And  click on save button
+    Then show the successful message that entity is updated
+    Then verify the updated entity presence on the table
+
   @addingNewUserToExistingEntity @local
   Scenario: creating new user and assigning existing entities to the user
     When click on manage users and entities link under administration dropdown

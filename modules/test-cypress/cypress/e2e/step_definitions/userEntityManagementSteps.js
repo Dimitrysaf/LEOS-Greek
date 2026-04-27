@@ -147,6 +147,26 @@ When("verify entity update fails if name contains invalid data", function (dataT
     })
 });
 
+When("update the entity name to {string}", function (entityName) {
+    cy.wrap(entityName).as('updatedEntityName')
+    userEntityManagementPage.fillEntityInfoDetails(entityName)
+});
+
+Then("show the successful message that entity is updated", function () {
+    cy.get('@updatedEntityName').then((entityName) => {
+        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().contains('Entity updated')
+        userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', `Entity ${entityName} successfully updated`)
+        userEntityManagementPage.confirmNewEntityCreationDialogBox()
+    })
+});
+
+Then("verify the updated entity presence on the table", function () {
+    cy.get('@updatedEntityName').then((entityName) => {
+        userEntityManagementPage.searchNewEntity(entityName)
+        userEntityManagementPage.elements.entityColumnInTable().should('contain', entityName)
+    })
+});
+
 When("search and click on user with login {string}", function (userLogin) {
     cy.wrap(userLogin).as('userLogin')
     userEntityManagementPage.searchNewUserLogin(userLogin)
