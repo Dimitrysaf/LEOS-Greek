@@ -25,6 +25,7 @@ public class SectionContentValidatorTest {
         LineItem note = item(AknType.AUTHORIAL_NOTE);
         note.setPosition(0);
         LineItem child = item(AknType.RECITAL);
+        child.setContent("Recital text.");
         child.setChildren(List.of(note));
         LineItem g = new LineItem();
         g.setType(AknType.RECITALS);
@@ -83,6 +84,7 @@ public class SectionContentValidatorTest {
         LineItem note = item(AknType.AUTHORIAL_NOTE);
         note.setPosition(0);
         LineItem recital = item(AknType.RECITAL);
+        recital.setContent("Recital text.");
         recital.setChildren(List.of(note));
         assertDoesNotThrow(() ->
                 validator.validate(SectionType.RECITALS, List.of(recital), "OTHER_COLLECTION", LeosCategory.BILL));
@@ -148,6 +150,20 @@ public class SectionContentValidatorTest {
     }
 
     @Test
+    void testRecitalWithNullContentThrows() {
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+                validator.validate(SectionType.RECITALS, List.of(item(AknType.RECITAL)), "ANY", LeosCategory.BILL));
+        assertTrue(ex.getMessage().contains("RECITAL"));
+    }
+
+    @Test
+    void testCitationWithNullContentThrows() {
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+                validator.validate(SectionType.CITATIONS, List.of(item(AknType.CITATION)), "ANY", LeosCategory.BILL));
+        assertTrue(ex.getMessage().contains("CITATION"));
+    }
+
+    @Test
     void testNullItemsReturnsWithoutThrowing() {
         assertDoesNotThrow(() -> validator.validate(SectionType.CITATIONS, null, "ANY", LeosCategory.BILL));
     }
@@ -170,30 +186,57 @@ public class SectionContentValidatorTest {
 
     @Test
     void testArticleWithoutHeadingAllowed() {
-        LineItem article = item(AknType.NUMBERED_ARTICLE);
-        article.setChildren(List.of(item(AknType.NUMBERED_PARAGRAPH)));
+        LineItem article1 = item(AknType.NUMBERED_ARTICLE);
+        article1.setChildren(List.of(item(AknType.NUMBERED_PARAGRAPH)));
+        LineItem article2 = item(AknType.NUMBERED_ARTICLE);
+        article2.setChildren(List.of(item(AknType.NUMBERED_PARAGRAPH)));
         assertDoesNotThrow(() ->
-                validator.validate(SectionType.ENACTING_TERMS, List.of(article), "ANY", LeosCategory.BILL));
+                validator.validate(SectionType.ENACTING_TERMS, List.of(article1, article2), "ANY", LeosCategory.BILL));
     }
 
     @Test
     void testArticleHeadingNotFirstChildThrows() {
-        LineItem article = item(AknType.NUMBERED_ARTICLE);
-        article.setChildren(List.of(item(AknType.NUMBERED_PARAGRAPH), item(AknType.ARTICLE_HEADING)));
+        LineItem article1 = item(AknType.NUMBERED_ARTICLE);
+        article1.setChildren(List.of(item(AknType.NUMBERED_PARAGRAPH), item(AknType.ARTICLE_HEADING)));
+        LineItem article2 = item(AknType.NUMBERED_ARTICLE);
+        article2.setChildren(List.of(item(AknType.NUMBERED_PARAGRAPH)));
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
-                validator.validate(SectionType.ENACTING_TERMS, List.of(article), "ANY", LeosCategory.BILL));
+                validator.validate(SectionType.ENACTING_TERMS, List.of(article1, article2), "ANY", LeosCategory.BILL));
         assertTrue(ex.getMessage().contains("ARTICLE_HEADING"));
     }
 
     @Test
     void testValidEnactingTermsRootTypesAllowed() {
-        for (AknType rootType : List.of(AknType.NUMBERED_ARTICLE, AknType.UNNUMBERED_ARTICLE)) {
-            LineItem article = item(rootType);
-            article.setChildren(List.of(item(AknType.ARTICLE_HEADING), item(AknType.NUMBERED_PARAGRAPH)));
-            assertDoesNotThrow(() ->
-                    validator.validate(SectionType.ENACTING_TERMS, List.of(article), "ANY", LeosCategory.BILL),
-                    rootType + " should be a valid ENACTING_TERMS root");
-        }
+        LineItem numbered1 = item(AknType.NUMBERED_ARTICLE);
+        numbered1.setChildren(List.of(item(AknType.ARTICLE_HEADING), item(AknType.NUMBERED_PARAGRAPH)));
+        LineItem numbered2 = item(AknType.NUMBERED_ARTICLE);
+        numbered2.setChildren(List.of(item(AknType.NUMBERED_PARAGRAPH)));
+        assertDoesNotThrow(() ->
+                validator.validate(SectionType.ENACTING_TERMS, List.of(numbered1, numbered2), "ANY", LeosCategory.BILL),
+                "NUMBERED_ARTICLE should be a valid ENACTING_TERMS root");
+
+        LineItem unnumbered = item(AknType.UNNUMBERED_ARTICLE);
+        unnumbered.setChildren(List.of(item(AknType.ARTICLE_HEADING), item(AknType.NUMBERED_PARAGRAPH)));
+        assertDoesNotThrow(() ->
+                validator.validate(SectionType.ENACTING_TERMS, List.of(unnumbered), "ANY", LeosCategory.BILL),
+                "UNNUMBERED_ARTICLE should be a valid ENACTING_TERMS root");
+    }
+
+    @Test
+    void testSingleNumberedArticleInEnactingTermsThrows() {
+        LineItem article = item(AknType.NUMBERED_ARTICLE);
+        article.setChildren(List.of(item(AknType.NUMBERED_PARAGRAPH)));
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+                validator.validate(SectionType.ENACTING_TERMS, List.of(article), "ANY", LeosCategory.BILL));
+        assertTrue(ex.getMessage().contains("UNNUMBERED_ARTICLE"));
+    }
+
+    @Test
+    void testSingleUnnumberedArticleInEnactingTermsAllowed() {
+        LineItem article = item(AknType.UNNUMBERED_ARTICLE);
+        article.setChildren(List.of(item(AknType.NUMBERED_PARAGRAPH)));
+        assertDoesNotThrow(() ->
+                validator.validate(SectionType.ENACTING_TERMS, List.of(article), "ANY", LeosCategory.BILL));
     }
 
     @Test
