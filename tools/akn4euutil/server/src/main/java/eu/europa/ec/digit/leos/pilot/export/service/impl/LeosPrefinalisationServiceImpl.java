@@ -75,18 +75,26 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
 
     public byte[] applyMetadata(Map<String, Object> zipContent) {
         ApplyMetadataRequest request = null;
-
+        long start = System.currentTimeMillis();
         try {
             LOG.debug("Start applying meta data ...");
             request = readContentXml(zipContent);
+            LOG.info("[PERF-UPDATE-METADATA] readContentXml completed in {} ms", System.currentTimeMillis() - start);
 
             Map<String, Object> documentZipContent = readAndUnzipDocument(zipContent, getFirstTaskDocument(request));
+            LOG.info("[PERF-UPDATE-METADATA] readAndUnzipDocument completed in {} ms", System.currentTimeMillis() - start);
+
             List<XmlFile> documentXmlFiles = readDocumentXmlFiles(documentZipContent);
             Map<String, Object> documentFurtherContent = readFurtherDocumentContent(documentZipContent);
+            LOG.info("[PERF-UPDATE-METADATA] readDocumentXmlFiles completed in {} ms ({} xml files)", System.currentTimeMillis() - start, documentXmlFiles.size());
 
             String prefinalizedLegName = MetadataUtil.buildPrefinalizationLegName(request);
             ApplyMetadataResponse response = processApplyMetadataRequest(request, documentXmlFiles, prefinalizedLegName);
-            return buildResponse(response, documentXmlFiles, documentFurtherContent, prefinalizedLegName);
+            LOG.info("[PERF-UPDATE-METADATA] processApplyMetadataRequest completed in {} ms", System.currentTimeMillis() - start);
+
+            byte[] result = buildResponse(response, documentXmlFiles, documentFurtherContent, prefinalizedLegName);
+            LOG.info("[PERF-UPDATE-METADATA] buildResponse completed in {} ms", System.currentTimeMillis() - start);
+            return result;
         }
         catch(Exception ex){
             LOG.error("Error applying metadata", ex);

@@ -682,12 +682,14 @@ public abstract class ApiServiceImpl implements ApiService {
     public DocumentVO updateProposalMetadata(String proposalRef, UpdateProposalRequest request) throws Exception {
         LOG.trace("Saving proposal metadata...");
         LegPackage legPackage = null;
+        Stopwatch stopwatch = Stopwatch.createStarted();
         try {
             CollectionContextService context = collectionContextProvider.get();
             LeosPackage leosPackage = getLeosPackage(proposalRef);
             Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
             Validate.isTrue(!proposal.getMetadata().get().isCustomTemplateAct(), "This is a custom template. Proposal metadata cannot be updated");
             proposal = proposalService.populateProposalMetadataFromXml(proposal);
+            LOG.info("[PERF-UPDATE-METADATA] initial load completed in {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
             String proposalComment = generateProposalComment(request);
             if (request.getCrossReferences() == null) {
                 request.setCrossReferences(proposal.getMetadata().get().getCrossReferences());
@@ -716,6 +718,8 @@ public abstract class ApiServiceImpl implements ApiService {
                 leosPackage = packageService.findPackageByPackageId(linkedPackage.getLinkedPackageId());
                 proposalsToUpdate.add(proposalService.findProposalByPackagePath(leosPackage.getPath()));
             }
+            LOG.info("[PERF-UPDATE-METADATA] found {} proposals to update (including {} linked) in {} ms",
+                    proposalsToUpdate.size(), linkedPackages.size(), stopwatch.elapsed(TimeUnit.MILLISECONDS));
             for (int i = 0; i < proposalsToUpdate.size(); i++) {
                 Proposal proposalToUpdate = proposalsToUpdate.get(i);
                 if (request.getDocPurpose() != null) {
@@ -734,13 +738,16 @@ public abstract class ApiServiceImpl implements ApiService {
                 } else {
                     context.useIsAuthenticLang(proposalToUpdate.getMetadata().get().getIsAuthenticLang());
                 }
+                long iterStart = stopwatch.elapsed(TimeUnit.MILLISECONDS);
                 if (proposal.isClonedProposal()) {
                     legPackage = legService.createLegPackageForClone(proposalToUpdate.getId(), new ExportLeos());
                 } else {
                     legPackage = legService.createLegPackage(proposalToUpdate.getId(), new ExportLeos());
                 }
+                LOG.info("[PERF-UPDATE-METADATA] [{}] createLegPackage completed in {} ms", i, stopwatch.elapsed(TimeUnit.MILLISECONDS) - iterStart);
 
                 Map<String, byte[]> updatedDocuments = proposalService.applyMetadata(legPackage, proposalToUpdate, request);
+                LOG.info("[PERF-UPDATE-METADATA] [{}] applyMetadata completed in {} ms", i, stopwatch.elapsed(TimeUnit.MILLISECONDS) - iterStart);
                 if (!updatedDocuments.containsKey(LeosCategory.PROPOSAL.name())) {
                     throw new Exception("Unexpected error occurred while updating proposal metadata");
                 } else {
@@ -754,9 +761,11 @@ public abstract class ApiServiceImpl implements ApiService {
                         }
                     }
                     proposalToUpdate = context.executeUpdateMetadataProposal();
+                    LOG.info("[PERF-UPDATE-METADATA] [{}] executeUpdateMetadataProposal completed in {} ms", i, stopwatch.elapsed(TimeUnit.MILLISECONDS) - iterStart);
                     proposalsToUpdate.set(i, proposalService.populateProposalMetadataFromXml(proposalToUpdate));
                 }
             }
+            LOG.info("[PERF-UPDATE-METADATA] completed in {} ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
             return new DocumentVO(proposalsToUpdate.get(0));
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while updating proposal metadata ", e);
