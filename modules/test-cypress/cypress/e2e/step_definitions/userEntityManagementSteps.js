@@ -130,6 +130,23 @@ Then("verify the new entity presence on the table", function () {
     })
 });
 
+When("search and click on entity {string}", function (entityName) {
+    userEntityManagementPage.searchNewEntity(entityName)
+    userEntityManagementPage.clickEntityInTable(entityName)
+});
+
+When("verify entity update fails if name contains invalid data", function (dataTable) {
+    const rows = dataTable.hashes()
+    rows.forEach((row) => {
+        userEntityManagementPage.fillEntityInfoDetails(row.invalidName)
+        userEntityManagementPage.saveEntityForm()
+        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', 'Error updating entity')
+        userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', userEntityManagementPage.errorMessages.entityUpdateError)
+        userEntityManagementPage.confirmNewEntityCreationDialogBox()
+        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('not.exist')
+    })
+});
+
 When("search and click on user with login {string}", function (userLogin) {
     cy.wrap(userLogin).as('userLogin')
     userEntityManagementPage.searchNewUserLogin(userLogin)

@@ -1,6 +1,7 @@
 class userEntityManagementPage {
     errorMessages = {
-        userCreationError: 'Please fill-in all highlighted fields correctly'
+        userCreationError: 'Please fill-in all highlighted fields correctly',
+        entityUpdateError: 'Please correct the validation errors before saving.'
     }
 
     elements = {
@@ -55,8 +56,12 @@ class userEntityManagementPage {
     }
 
     searchNewEntity(entityName){
-        this.elements.searchEntityTxtBx().type(entityName)
+        this.elements.searchEntityTxtBx().clear().type(entityName)
         this.elements.searchIconBtn().click()
+    }
+
+    clickEntityInTable(entityName) {
+        this.elements.entityColumnInTable().contains(entityName).click()
     }
 
     clickAddUserButton(){
