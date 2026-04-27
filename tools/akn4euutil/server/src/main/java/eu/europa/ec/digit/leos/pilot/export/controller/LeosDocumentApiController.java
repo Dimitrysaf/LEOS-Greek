@@ -87,14 +87,10 @@ public class LeosDocumentApiController implements LeosDocumentApi {
     @Override
     public ResponseEntity<Object> applyMetadata(@RequestParam MultipartFile inputFile,
                                                 @RequestParam(name = "email", required = false) String email) {
-        long start = System.currentTimeMillis();
-        LOG.info("[PERF-UPDATE-METADATA] akn4euutil applyMetadata: request received, file size={} bytes", inputFile.getSize());
         try {
             byte[] documentOutput = leosDocumentService.applyMetadata(inputFile);
-            LOG.info("[PERF-UPDATE-METADATA] akn4euutil applyMetadata: processing completed in {} ms", System.currentTimeMillis() - start);
             MultipartFile preFinalizedFile = new MockMultipartFile(Objects.requireNonNull(inputFile.getOriginalFilename()), Objects.requireNonNull(inputFile.getOriginalFilename()), null,  documentOutput);
             leosDocumentService.callLeosValidation(preFinalizedFile, email);
-            LOG.info("[PERF-UPDATE-METADATA] akn4euutil applyMetadata: completed in {} ms", System.currentTimeMillis() - start);
             return buildValidZipResponse(documentOutput);
         } catch (LeosDocumentException e) {
             return buildErrorResponse("Issue processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR);

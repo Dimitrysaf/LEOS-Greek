@@ -63,18 +63,13 @@ public class MetadataServiceImpl implements MetadataService {
         Validate.notNull(metadataOptions);
         Validate.notNull(proposal);
         LeosFile legFile = null;
-        long start = System.currentTimeMillis();
         try {
             legFile = createZipFile(legPackage, "job.zip", metadataOptions);
-            LOG.info("[PERF-UPDATE-METADATA] createZipFile completed in {} ms", System.currentTimeMillis() - start);
             byte[] zipBytes = akn4euService.applyMetadata(legFile, user);
-            LOG.info("[PERF-UPDATE-METADATA] akn4euService.applyMetadata completed in {} ms", System.currentTimeMillis() - start);
             Map<String, Object> zipContent = ZipPackageUtil.unzipByteArray(zipBytes);
             for (String fileName : zipContent.keySet()) {
                 if (fileName.endsWith(".leg")) {
-                    Map<String, Object> result = ZipPackageUtil.unzipByteArray((byte[]) zipContent.get(fileName));
-                    LOG.info("[PERF-UPDATE-METADATA] applyMetadata total completed in {} ms", System.currentTimeMillis() - start);
-                    return result;
+                    return ZipPackageUtil.unzipByteArray((byte[]) zipContent.get(fileName));
                 }
             }
             LOG.error("An exception occurred while updating proposal's metadata");
