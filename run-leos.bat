@@ -18,7 +18,7 @@ TITLE Leos-Pilot
 echo "---------------------LEOS-----------------------------------------------"
 
 echo "---------------------LEOS COMPILING...----------------------------------"
-call mvn clean install
+call mvn clean install -Dmaven.test.skip=false -DskipTests=false
 echo "---------------------LEOS COMPILED.-------------------------------------"
 
 cd ./modules/web

@@ -184,6 +184,7 @@ public class MetadataServiceImpl implements MetadataService {
         }
 
         setDate(dateNode, fieldInfo, xmlFile);
+        removeTemplateClassAttributeFromNode(dateNode);
     }
 
     private void addAdoptionDateToBlock(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -209,6 +210,7 @@ public class MetadataServiceImpl implements MetadataService {
             xmlPlaceAndDate.appendChild(dateNode);
         }
         setDate(dateNode, fieldInfo, xmlFile);
+        removeTemplateClassAttributeFromNode(dateNode);
     }
 
     private void setDate(Node dateNode, ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -236,6 +238,7 @@ public class MetadataServiceImpl implements MetadataService {
         XmlUtil.setNodeAttributeValue(xmlNodeMeta, MetadataUtil.ATTRIBUTE_XMLID, fieldInfo.getId());
         XmlUtil.setNodeAttributeValue(xmlNodeMeta, MetadataUtil.ATTRIBUTE_HREF, fieldInfo.getHref());
         XmlUtil.setNodeAttributeValue(xmlNodeMeta, MetadataUtil.ATTRIBUTE_SHOWAS, fieldInfo.getDisplayValue());
+        removeTemplateClassAttributeFromNode(xmlNodeMeta);
     }
 
     private void addAdoptionLocationToCoverPage(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -260,6 +263,7 @@ public class MetadataServiceImpl implements MetadataService {
         }
         MetadataUtil.addRefersToAttribute(xmlNodeLocation, fieldInfo.getId());
         xmlNodeLocation.setTextContent(fieldInfo.getDisplayValue());
+        removeTemplateClassAttributeFromNode(xmlNodeLocation);
     }
 
     private void addAdoptionLocationToConclusion(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -283,6 +287,7 @@ public class MetadataServiceImpl implements MetadataService {
             }
             MetadataUtil.addRefersToAttribute(xmlNodeLocation, fieldInfo.getId());
             xmlNodeLocation.setTextContent(fieldInfo.getDisplayValue());
+            removeTemplateClassAttributeFromNode(xmlNodeLocation);
         }
     }
 
@@ -318,6 +323,7 @@ public class MetadataServiceImpl implements MetadataService {
         final String displayValue = fieldInfo.getId().isEmpty() ? "" : this.readEmissionDataDisplayValue(fieldInfo, xmlFile);
         MetadataUtil.removeClassAttribute(xmlNodeDate);
         xmlNodeDate.setTextContent(displayValue);
+        removeTemplateClassAttributeFromNode(xmlNodeDate);
     }
 
     private void addEmissionDateToConclusion(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -347,6 +353,7 @@ public class MetadataServiceImpl implements MetadataService {
         MetadataUtil.removeClassAttribute(xmlNodeDate);
         final String displayValue = fieldInfo.getId().isEmpty() ? "" : this.readEmissionDataDisplayValue(fieldInfo, xmlFile);
         xmlNodeDate.setTextContent(displayValue);
+        removeTemplateClassAttributeFromNode(xmlNodeDate);
     }
 
     private String readEmissionDataDisplayValue(ReferenceFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
@@ -995,6 +1002,7 @@ public class MetadataServiceImpl implements MetadataService {
         roleNode.setTextContent(fieldValue);
 
         XmlUtil.setNodeAttributeValue(roleNode, MetadataUtil.ATTRIBUTE_REFERSTO, (roleFieldInfo == null) ? "" : "~" + roleFieldInfo.getId());
+        removeTemplateClassAttributeFromNode(roleNode);
     }
 
     private void processCommissionerRole(SignatureMetadata signature, Node signatureNode, XmlUtil.XmlFile xmlFile) {
@@ -1032,10 +1040,10 @@ public class MetadataServiceImpl implements MetadataService {
 
         Node tlcRoleNode = xmlFile.getElementByName(MetadataUtil.ELEMENT_TLCROLE);
 
-        if (roleFieldInfo == null) {
-            XmlUtil.removeNodeFromParent(tlcRoleNode);
-            return;
-        }
+//        if (roleFieldInfo == null) {
+//            XmlUtil.removeNodeFromParent(tlcRoleNode);
+//            return;
+//        }
 
         if (tlcRoleNode == null) {
             tlcRoleNode = xmlFile.newElement(MetadataUtil.ELEMENT_TLCROLE);
@@ -1090,20 +1098,22 @@ public class MetadataServiceImpl implements MetadataService {
 
     private void processCommissionerPerson(ReferenceFieldInfo fieldInfo, Node signatureNode) {
         String signingCommissioner = fieldInfo.getDisplayValue();
-        final Node personNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_PERSON);
-        if (personNode == null) return;
-        personNode.setTextContent(signingCommissioner);
-        XmlUtil.setNodeAttributeValue(personNode, MetadataUtil.ATTRIBUTE_REFERSTO, "");
+        processCommissionerPerson(signingCommissioner, signatureNode);
     }
 
     private void processCommissionerPerson(SignatureMetadata signature, Node signatureNode) {
         String signingCommissioner = signature.getSigningCommissioner();
+        processCommissionerPerson(signingCommissioner, signatureNode);
+    }
+
+    private void processCommissionerPerson(String signingCommissioner, Node signatureNode) {
         final Node personNode = XmlUtil.getChildNodeWithName(signatureNode, MetadataUtil.ELEMENT_PERSON);
         if (personNode == null) return;
         personNode.setTextContent(signingCommissioner);
         XmlUtil.setNodeAttributeValue(personNode, MetadataUtil.ATTRIBUTE_REFERSTO, "");
+        removeTemplateClassAttributeFromNode(personNode);
     }
-
+    
     @Override
     public void processPackageTitle(SimpleFieldInfo fieldInfo, XmlUtil.XmlFile xmlFile) {
         if (MetadataUtil.isMainDocumentFile(xmlFile)) {
@@ -1257,7 +1267,7 @@ public class MetadataServiceImpl implements MetadataService {
         if (!authenticLang.isEmpty()) {
             final Element authContainerElement = insertElementInCoverPage(xmlFile, MetadataUtil.VALUE_AUTHENTIC_LANGUAGES_NAME);
             final Element authPElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
-            List<String> langArray = new ArrayList();
+            List<String> langArray = new ArrayList<String>();
 
             for (String lang: authenticLang) {
                 langArray.add(ResourcesUtil.getMessage(language, "authentic.language." + lang.toUpperCase()));
@@ -1303,7 +1313,7 @@ public class MetadataServiceImpl implements MetadataService {
                 xmlNodePreface.appendChild(authContainerElement);
             }
             final Element authPElement = xmlFile.newElement(MetadataUtil.ELEMENT_P);
-            List<String> langArray = new ArrayList();
+            List<String> langArray = new ArrayList<String>();
 
             for (String lang: authenticLang) {
                 langArray.add(ResourcesUtil.getMessage(language, "authentic.language." + lang.toUpperCase()));
@@ -1477,6 +1487,18 @@ public class MetadataServiceImpl implements MetadataService {
         for(int i=0; i<nodeList.getLength(); i++) {
             XmlUtil.removeNodeAttributeValue(nodeList.item(i), MetadataUtil.ATTRIBUTE_CLASS);
         }
+    }
+
+    private void removeTemplateClassAttributeFromNode(Node node) {
+        if (!XmlUtil.nodeHasAttribute(node, MetadataUtil.ATTRIBUTE_CLASS)) {
+            return;
+        }
+
+        String attributeValue = XmlUtil.getNodeAttributeValue(node, MetadataUtil.ATTRIBUTE_CLASS);
+        if (!MetadataUtil.VALUE_TEMPLATE.equals(attributeValue)) {
+            return;
+        }
+        XmlUtil.removeNodeAttributeValue(node, MetadataUtil.ATTRIBUTE_CLASS);
     }
 
     public void removeDateIfNeeded(XmlUtil.XmlFile xmlFile) {

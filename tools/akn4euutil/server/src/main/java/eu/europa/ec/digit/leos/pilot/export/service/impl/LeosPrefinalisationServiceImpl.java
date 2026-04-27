@@ -195,8 +195,8 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         for (ApplyMetadataRequest.ActionNode action : task.getActions()){
             actionResponses.add(processApplyMetadataRequestAction(action, documentXmlFiles));
         }
+
         documentXmlFiles.stream().forEach((xmlFile) -> {
-            metadataService.removeTemplateClassAttributes(xmlFile);
             metadataService.removeDateIfNeeded(xmlFile);
         });
 
@@ -222,11 +222,22 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
             // Remove associatedReferences container if no linkedDocuments are set
             processApplyMetadataRequestField(new ApplyMetadataRequest.FieldNode(MetadataFieldType.LINKED_DOCUMENTS.toString(), ""), documentXmlFiles, commissionerPos, coteOrFinalCoteField);
         }
+        if (hasCoteField(action)) {
+            documentXmlFiles.stream().forEach((xmlFile) -> {
+                metadataService.removeTemplateClassAttributes(xmlFile);
+            });
+        }
         return new ApplyMetadataResponse.ActionNode(action.getName(), fieldResponses);
     }
 
     private boolean hasLinkedDocumentsField(ApplyMetadataRequest.ActionNode action) {
         return action.getFields().stream().anyMatch((field) -> field.getKey().equals(MetadataFieldType.LINKED_DOCUMENTS.toString()));
+    }
+
+    private boolean hasCoteField(ApplyMetadataRequest.ActionNode action) {
+        return action.getFields().stream().anyMatch((field) -> {
+            return field.getKey().equals(MetadataFieldType.COTE.toString()) || field.getKey().equals(MetadataFieldType.FINAL_COTE.toString());
+        });
     }
 
     private ApplyMetadataResponse.FieldNode processApplyMetadataRequestField(ApplyMetadataRequest.FieldNode field,
