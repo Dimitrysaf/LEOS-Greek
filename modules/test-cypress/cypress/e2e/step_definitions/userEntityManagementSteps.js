@@ -129,3 +129,56 @@ Then("verify the new entity presence on the table", function () {
         userEntityManagementPage.elements.entityColumnInTable().should('contain', entityName)
     })
 });
+
+When("search and click on user with login {string}", function (userLogin) {
+    cy.wrap(userLogin).as('userLogin')
+    userEntityManagementPage.searchNewUserLogin(userLogin)
+    userEntityManagementPage.clickUserLoginInTable(userLogin)
+});
+
+When("click on edit button", function () {
+    userEntityManagementPage.clickEditButton()
+});
+
+When("update the user info details", function (dataTable) {
+    const user = dataTable.hashes()[0]
+    cy.wrap(user).as('updatedUserData')
+    userEntityManagementPage.updateUserInfoDetails(user)
+});
+
+Then("show the successful message that user is updated", function () {
+    cy.get('@updatedUserData').then((user) => {
+        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().contains('User updated')
+        userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', `User ${user.firstName} ${user.lastName} successfully updated.`)
+        userEntityManagementPage.confirmNewUserCreationDialogBox()
+    })
+});
+
+Then("verify the updated user details on the table", function () {
+    cy.get('@updatedUserData').then((user) => {
+        cy.get('@userLogin').then((userLogin) => {
+            userEntityManagementPage.searchNewUserLogin(userLogin)
+            userEntityManagementPage.elements.firstNameColumnInTable().should('contain', user.firstName)
+            userEntityManagementPage.elements.lastNameColumnInTable().should('contain', user.lastName)
+            userEntityManagementPage.elements.userLoginColumnInTable().should('contain', userLogin)
+        })
+    })
+});
+
+Then("verify the updated email in user info section", function () {
+    cy.get('@updatedUserData').then((user) => {
+        userEntityManagementPage.elements.readOnlyEmailTxtBx().should('have.value', user.email)
+    })
+});
+
+When("select and remove the entities {string} from the user", function (entities) {
+    const entityList = JSON.parse(entities)
+    cy.wrap(entityList).each((entity) => {
+        userEntityManagementPage.selectEntityToRemove(entity)
+        userEntityManagementPage.removeEntity()
+    })
+});
+
+Then("verify the entities are removed from the user", function () {
+    userEntityManagementPage.elements.removeEntityDropDown().should('not.exist')
+});
