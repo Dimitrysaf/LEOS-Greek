@@ -603,6 +603,16 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
 
         if (nodeList != null) {
             String containerName = nodeList.item(0).getTextContent();
+            Node href = XmlUtils.getElementsByXPath(existingNode, "//akn:p/akn:affectedDocument/@href", true).item(0);
+            String hrefValue = getTextOfElement(href);
+            String prefix = "http://data.europa.eu/eli/dl/proc/";
+            if (hrefValue.startsWith(prefix)) {
+                String[] parts = hrefValue.substring(prefix.length()).split("/");
+
+                documentVO.getMetadata().setTargetProposalInterInstitutionalRefYear(parts[0]);
+                documentVO.getMetadata().setTargetProposalInterInstitutionalRefNumber(Integer.parseInt(parts[1]));
+                documentVO.getMetadata().setTargetProposalInterInstitutionalRefType(parts[2]);
+            }
             Node docNumberNode = XmlUtils.getElementsByXPath(existingNode, "//akn:p/akn:affectedDocument/akn:docNumber", true).item(0);
             String docNumberText = getTextOfElement(docNumberNode);
             Node inlineVersionNode = XmlUtils.getElementsByXPath(existingNode, "//akn:p/akn:affectedDocument/akn:docNumber/akn:inline[@name=\"version\"]", true).item(0);
@@ -620,6 +630,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
             documentVO.setTargetProposalDate(convertToDate(dateText));
             documentVO.setCorrectionInformation(correctionInfoText);
             documentVO.setShowCorrigendumAddendum(true);
+
             if (targetLanguageNode != null && psInContainer.getLength() == 5) {
                 NodeList targetLangInlineNodes = XmlUtils.getElementsByName(targetLanguageNode, "inline");
                 if (targetLangInlineNodes != null && targetLangInlineNodes.getLength() > 0) {

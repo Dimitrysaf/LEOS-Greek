@@ -102,6 +102,9 @@ export interface Metadata {
   availableLangs: string;
   isPublished: boolean;
   diffusionVersion: string | null;
+  targetProposalInterInstitutionalRefYear: number | null;
+  targetProposalInterInstitutionalRefNumber: string | null;
+  targetProposalInterInstitutionalRefType: string | null;
 }
 //used in document-config.documentsmetadata
 export interface DocumentsMetadata {

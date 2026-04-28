@@ -32,6 +32,9 @@ public class UpdateProposalRequest {
     private String correctionInformation;
     private String proposalType;
     private Boolean showCorrigendumAddendum;
+    private Integer targetProposalInterInstitutionalRefYear;
+    private String targetProposalInterInstitutionalRefNumber;
+    private String targetProposalInterInstitutionalRefType;
     private Boolean finalVersion;
     private String diffusionVersion;
 

@@ -1404,17 +1404,37 @@ public class MetadataServiceImpl implements MetadataService {
         pElement.setTextContent(ResourcesUtil.getMessage(language, "coverpage.corrigendum.addendum.affected.document.intro") + " ");
         Element affectedDocNode = xmlFile.newElement("affectedDocument");
         XmlUtil.setNodeAttributeValue(affectedDocNode, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
-        // TODO fill href
-        XmlUtil.setNodeAttributeValue(affectedDocNode, MetadataUtil.ATTRIBUTE_HREF, "");
+
+        String hrefValue = "http://data.europa.eu/eli/dl";
+        boolean isFinal = checkIfFinalVersion(corrigendumAddendumMetadata.getFinalVersion());
+        String finalVersionValue = ResourcesUtil.getMessage(language, "coverpage.corrigendum.addendum.affected.document.final");
+        String targetProposalRef = corrigendumAddendumMetadata.getTargetProposalReference();
+        String hrefTargetProposalRef = targetProposalRef.replaceAll("[()]", "_");
+        if (corrigendumAddendumMetadata.getTargetProposalInterInstitutionalRefNumber() != null
+                && corrigendumAddendumMetadata.getTargetProposalInterInstitutionalRefYear() != null
+                && corrigendumAddendumMetadata.getTargetProposalInterInstitutionalRefType() != null) {
+            hrefValue = hrefValue + "/proc/"
+                    + corrigendumAddendumMetadata.getTargetProposalInterInstitutionalRefYear()
+                    + "/" + corrigendumAddendumMetadata.getTargetProposalInterInstitutionalRefNumber()
+                    + "/" + corrigendumAddendumMetadata.getTargetProposalInterInstitutionalRefType()
+                    + "/doc/com/" + hrefTargetProposalRef;
+
+        } else {
+            hrefValue = hrefValue + "/doc/com/" + hrefTargetProposalRef;
+        }
+
         Element docNumber = xmlFile.newElement(MetadataUtil.ELEMENT_DOC_NUMBER);
         XmlUtil.setNodeAttributeValue(docNumber, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
-        docNumber.setTextContent(" " + corrigendumAddendumMetadata.getTargetProposalReference() + " ");
-        if (checkIfFinalVersion(corrigendumAddendumMetadata.getFinalVersion())) {
+        docNumber.setTextContent(" " + targetProposalRef + " ");
+        if (isFinal) {
+            XmlUtil.setNodeAttributeValue(affectedDocNode, MetadataUtil.ATTRIBUTE_HREF, hrefValue+"/FINAL");
             Element inline = xmlFile.newElement(MetadataUtil.ELEMENT_INLINE);
             XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
             XmlUtil.setNodeAttributeValue(inline, MetadataUtil.ATTRIBUTE_NAME, MetadataUtil.VALUE_VERSION);
-            inline.setTextContent(" " + ResourcesUtil.getMessage(language, "coverpage.corrigendum.addendum.affected.document.final"));
+            inline.setTextContent(" " + finalVersionValue);
             docNumber.appendChild(inline);
+        } else {
+            XmlUtil.setNodeAttributeValue(affectedDocNode, MetadataUtil.ATTRIBUTE_HREF, hrefValue);
         }
         Element dateElement = xmlFile.newElement(ELEMENT_DATE);
         XmlUtil.setNodeAttributeValue(dateElement, MetadataUtil.ATTRIBUTE_XMLID, IdGenerator.generateId());
