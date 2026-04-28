@@ -36,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
@@ -96,13 +97,21 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
     }
 
     public void callLeosValidation(MultipartFile inputFile, String email) {
+        final ByteArrayResource fileResource;
         try {
-            String recipient = (StringUtil.isEmpty(email) || !StringUtil.isEmailValid(email)) ? notificationRecipients.getFirst() : email;
-            restClient.callLeosValidation(convertFileToByteArray(inputFile), recipient);
+            fileResource = convertFileToByteArray(inputFile);
         } catch (IOException e) {
-            LOG.error("Error while calling leos validation - {}", e.getMessage());
-            throw new RuntimeException(e);
+            LOG.error("Error while reading file for leos validation - {}", e.getMessage());
+            return;
         }
+        String recipient = (StringUtil.isEmpty(email) || !StringUtil.isEmailValid(email)) ? notificationRecipients.getFirst() : email;
+        CompletableFuture.runAsync(() -> {
+            try {
+                restClient.callLeosValidation(fileResource, recipient);
+            } catch (IOException e) {
+                LOG.error("Error while calling leos validation - {}", e.getMessage());
+            }
+        });
     }
 
     public byte[] applyMetadata(MultipartFile inputFile) throws IOException {
