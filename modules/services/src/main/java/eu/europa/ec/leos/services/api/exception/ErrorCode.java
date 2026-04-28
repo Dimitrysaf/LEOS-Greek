@@ -7,5 +7,8 @@ public enum ErrorCode {
     CM001,
     // Create Annex
     CA001,
-    PT001
+    // Pending Translations
+    PT001,
+    // Original Language Version
+    OLV001
 }

@@ -70,6 +70,7 @@ import {
   STRUCTURE_SECTION_ID,
   VIEW_SYNC_PANELS_ACTION,
   VIEW_VERSION_SECTION_ID,
+  VIEW_ORIGINAL_LANGUAGE_ACTION_ID,
   MERGE_CONTRIBUTION_APPLY_CHANGES_SECTION_ID, MERGE_CONTRIBUTION_CANCEL_CHANGES_ID,
 } from '@/shared/constants/document-actions.constants';
 import { DocumentService } from '@/shared/services/document.service';
@@ -312,7 +313,7 @@ export abstract class DocumentActionsService {
     const compareSection =
       this.pageMode === PageMode.CompareVersions && this.buildCompareSection();
     const viewVersionSection =
-      this.pageMode === PageMode.ViewVersion && this.buildViewVersionSection();
+      (this.pageMode === PageMode.ViewVersion || this.profile?.viewOriginalLanguage) && this.buildViewVersionSection();
     const mergeContributionsSection =
       this.pageMode === PageMode.Contribution &&
       this.buildMergeContributionsSection();
@@ -646,18 +647,19 @@ export abstract class DocumentActionsService {
   }
 
   private buildViewVersionSection(): IRibbonToolbarSection {
+    const isViewingVersion = this.pageMode === PageMode.ViewVersion;
     return {
       type: IRibbonToolbarType.SECTION,
       id: VIEW_VERSION_SECTION_ID,
-      cssClasses: 'eui-u-flex eui-u-flex-row app-u-gap-xs',
-      sectionContainerCssClasses: 'overlay-view-version',
-      label: this.viewVersionService.versionViewLabel$,
+      cssClasses: isViewingVersion ? 'eui-u-flex eui-u-flex-row app-u-gap-xs' : undefined,
+      sectionContainerCssClasses: isViewingVersion ? 'overlay-view-version' : undefined,
+      label: isViewingVersion ? this.viewVersionService.versionViewLabel$ : undefined,
       children: [...this.buildViewVersionSectionItems()],
-      svgType: 'sharp',
-      icon: 'documents',
+      svgType: isViewingVersion ? 'sharp' : undefined,
+      icon: isViewingVersion ? 'documents' : undefined,
       resizeOrder: 2,
       order: 6,
-      closable: true,
+      closable: isViewingVersion,
       closableBtnStyle: 'primary',
       closeFn: () => this.viewVersionService.closeVersionView(),
     };
@@ -745,8 +747,9 @@ export abstract class DocumentActionsService {
   }
 
   private buildViewVersionSectionItems(): IRibbonToolbarItem[] {
-    return [
-      {
+    const items: IRibbonToolbarItem[] = [];
+    if (this.pageMode === PageMode.ViewVersion) {
+      items.push({
         type: IRibbonToolbarType.CHECKBOX,
         id: VIEW_SYNC_PANELS_ACTION,
         label: 'Sync panels',
@@ -755,8 +758,19 @@ export abstract class DocumentActionsService {
         actionFn: () => this.viewVersionService.toggleSyncScroll(),
         cssClasses:
           'eui-u-flex eui-u-flex-align-items-start eui-u-flex-column eui-u-flex-justify-content-center',
-      },
-    ];
+      });
+    }
+    if (this.profile?.viewOriginalLanguage && !this.viewVersionService.isOriginalLanguageView) {
+      items.push({
+        type: IRibbonToolbarType.BUTTON,
+        id: VIEW_ORIGINAL_LANGUAGE_ACTION_ID,
+        label: this.translateService.instant('version.view.see-changes-in-original'),
+        euiSize: 'xs',
+        euiStyle: 'secondary',
+        actionFn: () => this.viewVersionService.viewOriginalLanguageVersion(),
+      });
+    }
+    return items;
   }
 
   private buildMergeContributionsSection(): IRibbonToolbarSection {

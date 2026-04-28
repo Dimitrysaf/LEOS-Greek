@@ -361,6 +361,13 @@ public class CoverPageController implements CoverPageApi {
     }
 
     @Override
+    public ResponseEntity<Object> showOriginalLanguageVersion(String documentRef) {
+        documentRef = encodeParam(documentRef);
+        DocumentViewResponse contentHtml = this.genericDocumentApiService.getOriginalLanguageVersion(documentRef);
+        return ResponseEntity.ok().body(contentHtml);
+    }
+
+    @Override
     public ResponseEntity<Object> compareCoverPageVersions(String newVersionId, String oldVersionId) {
         try {
             newVersionId = encodeParam(newVersionId);

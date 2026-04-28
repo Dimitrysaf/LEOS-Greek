@@ -6,6 +6,8 @@ import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.*;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
@@ -31,6 +33,8 @@ import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
+import eu.europa.ec.leos.services.api.exception.ErrorCode;
+import eu.europa.ec.leos.services.api.exception.LeosExceptionResponse;
 import eu.europa.ec.leos.services.exception.NotFoundException;
 import eu.europa.ec.leos.services.export.ExportDW;
 import eu.europa.ec.leos.services.export.ExportLW;
@@ -298,6 +302,33 @@ public class GenericDocumentApiService {
         VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(document);
         String reference = this.getDocReference(document);
         return new DocumentViewResponse(reference, versionContent, versionInfoVO, null, null);
+    }
+
+    public DocumentViewResponse getOriginalLanguageVersion(@NotNull String documentRef) {
+        LeosPackage currentPackage = this.packageService.findPackageByDocumentRef(documentRef, XmlDocument.class);
+        LinkedPackage linkedPackage = this.packageService.findLinkedPackageByLinkedPkgId(currentPackage.getId());
+        if (linkedPackage == null) {
+            throw new LeosExceptionResponse(ErrorCode.OLV001.name(), "version.view.original-language.error.no-linked-package");
+        }
+        LeosPackage originalPackage = this.packageService.findPackageByPackageId(linkedPackage.getPackageId());
+        String originalRef = LanguageMapUtils.getTranslatedProposalReference(documentRef, originalPackage.getLanguage());
+        XmlDocument originalLanguageVersion = this.findLatestMajorOrBaseVersion(originalRef);
+        List<LeosPermission> userPermissions = this.securityContext.getPermissions(originalLanguageVersion);
+        String versionContent = this.documentContentService.getDocumentAsHtml(originalLanguageVersion, "", userPermissions);
+        VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(originalLanguageVersion);
+        return new DocumentViewResponse(originalRef, versionContent, versionInfoVO, null, null);
+    }
+
+    private XmlDocument findLatestMajorOrBaseVersion(@NotNull String documentRef) {
+        List<XmlDocument> majorVersions = this.leosRepository.findAllMajors(XmlDocument.class, documentRef, 0, 1);
+        if (majorVersions != null && !majorVersions.isEmpty()) {
+            return this.leosRepository.findDocumentById(majorVersions.getFirst().getId(), XmlDocument.class, false);
+        }
+        XmlDocument baseVersion = this.leosRepository.findDocumentByVersion(XmlDocument.class, documentRef, VersionsUtil.BASE_VERSION);
+        if (baseVersion == null) {
+            throw new LeosExceptionResponse(ErrorCode.OLV001.name(), "version.view.original-language.error.no-version-found");
+        }
+        return baseVersion;
     }
 
     public byte[] getXmlContent(@NotNull String versionId) {

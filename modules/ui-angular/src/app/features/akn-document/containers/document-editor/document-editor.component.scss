@@ -190,6 +190,24 @@
   }
 
   @include eui-scrollbars($size: 0);
+
+  .original-language-border {
+    border: 2px solid var(--eui-base-color-danger-50);
+    border-radius: var(--eui-base-border-radius);
+  }
+
+  .original-language-label {
+    background-color: var(--eui-base-color-danger-50);
+    color: #fff;
+    font-size: var(--eui-base-font-size-xs);
+    font-weight: bold;
+    left: 50%;
+    padding: 1px 12px;
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
 }
 
 app-document {

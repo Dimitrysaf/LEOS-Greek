@@ -476,12 +476,16 @@
       <eui-page-column
         #versionForViewPane
         class="eui-u-p-none eui-page-column--no-scrollbars document-pane"
-
+        [ngClass]="{'original-language-border': isOriginalLanguageView}"
         *ngIf="pageMode === PageMode.ViewVersion"
       >
         <eui-page-column-body
           class="eui-u-flex eui-u-flex-column eui-u-flex-align-items-center eui-u-flex-grow"
+          style="position: relative;"
         >
+          <div *ngIf="isOriginalLanguageView" class="original-language-label">
+            {{ 'version.view.original-language-prefix' | translate }}
+          </div>
           <app-document
             containerId="versionContainer"
             [mainContainerId]="versionMainContainerId"

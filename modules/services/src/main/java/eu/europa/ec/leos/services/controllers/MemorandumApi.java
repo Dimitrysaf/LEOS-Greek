@@ -228,6 +228,15 @@ public interface MemorandumApi {
     @ResponseBody
     ResponseEntity<Object> showMemorandumVersion(@Parameter(description = "Version ID") @PathVariable("versionId") String versionId);
 
+    @Operation(summary = "Show original language version", description = "Shows the latest major version of the equivalent document in the original language")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Version retrieved successfully"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping(value = "/{documentRef}/original-language-version", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    ResponseEntity<Object> showOriginalLanguageVersion(@Parameter(description = "Document reference") @PathVariable("documentRef") String documentRef);
+
     @Operation(summary = "Compare memorandum versions", description = "Compares two versions of the memorandum and shows differences")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Comparison retrieved successfully"),

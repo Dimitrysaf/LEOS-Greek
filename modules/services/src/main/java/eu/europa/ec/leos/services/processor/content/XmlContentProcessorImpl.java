@@ -3371,10 +3371,11 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             highlightNodeForTranslation(sourceNode);
             Node targetNode = XmlUtils.getElementById(targetDoc, getId(sourceNode));
             Node sourceBaseNode = XmlUtils.getElementById(sourceBaseDoc, getId(sourceNode));
-            if (targetNode != null && anyHasTextOrImgChildren(sourceNode, targetNode)
-                    && unchangedTextContentInSource(sourceNode, sourceBaseNode)
-                    && unchangedImageContentInSource(sourceNode, sourceBaseNode)) {
+            if (targetNode != null && anyHasTextOrImgChildren(sourceNode, targetNode)) {
                 Node alignedNode = alignChildNodes(sourceNode, targetDoc);
+                if (changedTextContentInSource(sourceNode, sourceBaseNode) || changedImageContentInSource(sourceNode, sourceBaseNode)) {
+                    highlightNodeForTranslation(alignedNode);
+                }
                 importAndReplaceNodeInDocument(sourceDoc, sourceNode, alignedNode);
             }
         }
@@ -3392,24 +3393,32 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return Arrays.stream(nodes).anyMatch(node -> !getChildren(node, childrenTypes, true).isEmpty());
     }
 
-    private static boolean unchangedTextContentInSource(Node sourceNode, Node sourceBaseNode) {
+    private static boolean changedTextContentInSource(Node sourceNode, Node sourceBaseNode) {
         List<Node> sourceTextNodes = getTextChildren(sourceNode);
         if (!sourceTextNodes.isEmpty()) {
-            return sourceBaseNode != null && getTextChildren(sourceBaseNode).stream().map(Node::getTextContent).collect(Collectors.joining())
+            return sourceBaseNode == null || !getTextChildren(sourceBaseNode).stream().map(Node::getTextContent).collect(Collectors.joining())
                     .equals(sourceTextNodes.stream().map(Node::getTextContent).collect(Collectors.joining()));
         }
-        return true;
+        return false;
     }
 
-    private static boolean unchangedImageContentInSource(Node sourceNode, Node sourceBaseNode) {
+    private static boolean changedImageContentInSource(Node sourceNode, Node sourceBaseNode) {
         List<Node> sourceImgChildren = getChildren(sourceNode, IMG);
         if (!sourceImgChildren.isEmpty()) {
-            return sourceBaseNode != null && getChildren(sourceBaseNode, IMG).stream().map((node) -> getAttributeValue(node, "src")).collect(Collectors.joining())
+            return sourceBaseNode == null || !getChildren(sourceBaseNode, IMG).stream().map((node) -> getAttributeValue(node, "src")).collect(Collectors.joining())
                     .equals(sourceImgChildren.stream().map((node) -> getAttributeValue(node, "src")).collect(Collectors.joining()));
         }
-        return true;
+        return false;
     }
 
+    /**
+     * Returns the equivalent target node with its child nodes (with ID) replaced by the source node's child nodes (with ID) if they exist in target.
+     * If the source node has any child (with ID) that doesn't exist in target, it returns the source node.
+     *
+     * @param sourceNode
+     * @param targetDoc
+     * @return
+     */
     private static Node alignChildNodes(Node sourceNode, Document targetDoc) {
         // Clone target document to avoid replacing sourceChildNodes in the original targetDoc, which can be required when aligning children nodes
         Document clonedTargetDoc = (Document) targetDoc.cloneNode(true);

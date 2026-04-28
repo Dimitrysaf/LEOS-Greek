@@ -36,6 +36,7 @@ const OTHER_VALUE = 'other';
 export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
   @Input() isCloneProposal: boolean;
   @Input() isCustomTemplate: boolean;
+  @Input() fromCustomTemplate: boolean;
   @Input() hasLinguisticVersions: boolean;
   @Output() closed = new EventEmitter();
   @ViewChild('dialog') dialog: EuiDialogComponent;
@@ -100,7 +101,7 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
   }
 
   onAccept(): void {
-    if (this.isCustomTemplate && this.hasLinguisticVersions) {
+    if (this.hasLinguisticAlignment()) {
       this.dialogService.openDialog({
         title: this.translateService.instant(
           'page.collection.milestones.create-milestone-dialog.confirm-linguistic-versions.title',
@@ -244,4 +245,7 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
     };
   }
 
+  hasLinguisticAlignment() {
+    return this.hasLinguisticVersions && (this.isCustomTemplate || this.fromCustomTemplate);
+  }
 }
