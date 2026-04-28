@@ -158,7 +158,6 @@
   "page.workspace.administration.add-entities": "Add an entity",
   "page.workspace.administration.add-user": "Add user",
   "page.workspace.administration.entity-info.entity": "Entity",
-  "page.workspace.administration.entity-info.no-entity-selected-label": "Click on an entity in order to see its details",
   "page.workspace.administration.entity-info.entity-selected-label": "CUSTOM ENTITY INFO",
   "page.workspace.administration.entity-info.firstname": "First name",
   "page.workspace.administration.entity-info.lastname": "Last name",
