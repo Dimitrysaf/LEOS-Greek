@@ -28,6 +28,7 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.*;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Page;
@@ -244,6 +245,7 @@ class UsersClientImpl implements UsersProvider {
     }
 
     @Override
+    @CacheEvict(value = "users", key = "#userDTO.login")
     public UserDTO updateSpecialUser(final UserUpdateDTO userDTO) {
         final String uri = repositoryUrl + createUpdateUserUri;
         try {
@@ -267,6 +269,7 @@ class UsersClientImpl implements UsersProvider {
     }
 
     @Override
+    @CacheEvict(value = "users", key = "#userLogin")
     public ResponseEntity<Void> deleteSpecialUser(final String userLogin) {
         final String uri = repositoryUrl + getDeleteUserUri;
         final Map<String, Object> params = Collections.singletonMap(QUERY_PARAM_USER_LOGIN, userLogin);

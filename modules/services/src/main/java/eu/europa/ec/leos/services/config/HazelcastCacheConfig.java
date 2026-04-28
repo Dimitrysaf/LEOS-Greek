@@ -1,12 +1,10 @@
 package eu.europa.ec.leos.services.config;
 
 import com.hazelcast.config.*;
-import com.hazelcast.core.EntryEvent;
-import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.map.MapEvent;
 import com.hazelcast.spring.cache.HazelcastCacheManager;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -17,6 +15,7 @@ import org.springframework.session.hazelcast.config.annotation.web.http.EnableHa
 @Configuration
 @EnableCaching
 @EnableHazelcastHttpSession
+@RequiredArgsConstructor
 public class HazelcastCacheConfig {
 
     @Value("${leos.hazelcast.kubernetes.enabled:true}")
@@ -30,6 +29,8 @@ public class HazelcastCacheConfig {
 
     @Value("${leos.hazelcast.port:5701}")
     private int hazelcastPort;
+
+    private final AppProperties properties;
 
     @Bean
     public Config hazelcastConfig() {
@@ -81,7 +82,11 @@ public class HazelcastCacheConfig {
     }
 
     // Helper method to create standard cache configuration
-    private MapConfig createCacheConfig(String name, int maxSize, int ttlSeconds, int maxIdleSeconds) {
+    private MapConfig createCacheConfig(String name, int defaultMaxSize, int defaultTtlSeconds, int defaultMaxIdleSeconds) {
+        int maxSize = properties.getProperty("leos.cache.%s.maxSize".formatted(name), Integer::parseInt, defaultMaxSize);
+        int ttlSeconds = properties.getProperty("leos.cache.%s.ttlSeconds".formatted(name), Integer::parseInt, defaultTtlSeconds);
+        int maxIdleSeconds = properties.getProperty("leos.cache.%s.maxIdleSeconds".formatted(name), Integer::parseInt, defaultMaxIdleSeconds);
+
         MapConfig mapConfig = new MapConfig(name);
         mapConfig.setInMemoryFormat(InMemoryFormat.OBJECT);
 
