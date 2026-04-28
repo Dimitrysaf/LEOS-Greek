@@ -196,7 +196,7 @@
   "page.workspace.administration.user-info.updateUser-success-content": "L'utilisateur {{firstName}} {{lastName}} a été mis à jour avec succès.",
   "page.workspace.administration.user-info.createUser-error-title": "Erreur lors de la création de l'utilisateur",
   "page.workspace.administration.user-info.updateUser-error-title": "Erreur lors de la mise à jour de l'utilisateur",
-  "page.workspace.administration.user-info.form-validation-error": "Veuillez remplir correctement tous les champs mis en évidence.",
+  "page.workspace.administration.user-info.form-validation-error": "Il y a des erreurs dans le formulaire. Veuillez remplir correctement tous les champs mis en évidence et réessayez.",
   "page.workspace.administration.user-info.user-login-conflict": "Un utilisateur avec le même identifiant existe déjà",
   "page.workspace.administration.user-info.entity-adding-hint": "Les organisations disponibles sont listées ci-dessous dans la colonne de droite. Pour en assigner à cet utilisateur, sélectionnez-les et déplacez-les vers la gauche en utilisant les flèches.",
   "page.workspace.administration.user-info.entity-adding-placeholder": "Choisissez des entités dans la liste à droite",

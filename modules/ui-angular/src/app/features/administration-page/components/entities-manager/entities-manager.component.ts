@@ -89,9 +89,10 @@ export class EntitiesManagerComponent implements OnInit {
       .subscribe((response) => {
         this.loading = false;
         if (response.totalElements > 0) {
-          this.leosDialogService.showError(
-            "page.workspace.administration.entity-info.entity-has-users.title",
-            "page.workspace.administration.entity-info.entity-has-users.content");
+          this.leosDialogService.showDialog({
+            title: "page.workspace.administration.entity-info.entity-has-users.title",
+            message: "page.workspace.administration.entity-info.entity-has-users.content"
+        });
           this.selectedEntity = entity;
         } else {
           this.delete(entity);
@@ -111,9 +112,10 @@ export class EntitiesManagerComponent implements OnInit {
           this.loadEntities(this.searchTerm);
         },
         error: (error) => {
-          this.leosDialogService.showError(
-            "page.workspace.administration.entity-info.entity-delete-error-title",
-            error.error?.message ?? error.message ?? "global.actions.unknown-error", {}, true)
+          this.leosDialogService.showDialog({
+            title: "page.workspace.administration.entity-info.entity-delete-error-title",
+            message: error.error?.message ?? error.message ?? "global.actions.unknown-error",
+            clearGrowl: true})
         }
       })
     })
