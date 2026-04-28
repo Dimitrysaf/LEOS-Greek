@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { EuiGrowlService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject,
@@ -24,6 +25,7 @@ import { ZoombarService } from '@/shared/services/zoombar.service';
 
 import { apiBaseUrl } from '../../../../config';
 import { SyncDocumentScrollService } from './sync-document-scroll.service';
+import { ExceptionResponseVO, ErrorCode } from '@/shared/models/upload-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -39,6 +41,10 @@ export class ViewVersionService {
   private cleanVersionViewBS = new BehaviorSubject<DocumentViewResponse | null>(
     null,
   );
+  get isOriginalLanguageView() {
+    return this._isOriginalLanguageView;
+  }
+  private _isOriginalLanguageView = false;
 
   constructor(
     private documentService: DocumentService,
@@ -47,6 +53,7 @@ export class ViewVersionService {
     private translateService: TranslateService,
     private zoombarService: ZoombarService,
     private http: HttpClient,
+    private growlService: EuiGrowlService,
   ) {
     this.versionId$ = this.versionIdBS.asObservable();
     this.versionView$ = this.versionViewBS.asObservable();
@@ -77,9 +84,12 @@ export class ViewVersionService {
     ]).pipe(
       filter(([vv, cvv]) => !!vv || !!cvv),
       map(([versionView, cleanVersionView]) => {
-        if (versionView)
-          return this.getVersionViewTitle(versionView.versionInfoVO);
-        else return this.getVersionViewTitle(cleanVersionView.versionInfoVO);
+        const versionTitle = versionView
+          ? this.getVersionViewTitle(versionView.versionInfoVO)
+          : this.getVersionViewTitle(cleanVersionView.versionInfoVO);
+        return this._isOriginalLanguageView
+          ? this.translateService.instant('version.view.original-language-prefix') + ' - ' + versionTitle
+          : versionTitle;
       }),
     );
   }
@@ -89,8 +99,9 @@ export class ViewVersionService {
     this.versionViewBS.next(null);
     this.versionIdBS.next(null);
     this.syncScrollService.setSyncScroll(false);
-    this.pageModeService.setPageMode(PageMode.Normal);
     this.cleanVersionViewBS.next(null);
+    this._isOriginalLanguageView = false;
+    this.pageModeService.setPageMode(PageMode.Normal);
   }
 
   toggleSyncScroll() {
@@ -99,7 +110,34 @@ export class ViewVersionService {
   }
 
   setVersionIdToView(versionNumber: string) {
+    this._isOriginalLanguageView = false;
     this.versionIdBS.next(versionNumber);
+  }
+
+  viewOriginalLanguageVersion() {
+    const documentType = this.documentService.documentType;
+    const documentRef = this.documentService.documentRef;
+    this._isOriginalLanguageView = true;
+    this.pageModeService.setPageMode(PageMode.ViewVersion);
+    this.http.get<DocumentViewResponse>(
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/original-language-version`,
+    ).subscribe({
+      next: (versionView) => {
+        this.initViewVersion(versionView);
+      },
+      error: (err) => {
+        this._isOriginalLanguageView = false;
+        this.pageModeService.setPageMode(PageMode.Normal);
+        const exceptionResponse: ExceptionResponseVO = err.error;
+        const messageKey = exceptionResponse?.errorCode === ErrorCode.OLV001
+          ? exceptionResponse.messageKey
+          : 'version.view.original-language.error.generic';
+        this.growlService.growl({
+          severity: 'danger',
+          detail: this.translateService.instant(messageKey),
+        });
+      },
+    });
   }
 
   public toggleViewCleanVersion(): void {

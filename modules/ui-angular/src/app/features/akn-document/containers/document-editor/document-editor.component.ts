@@ -1087,6 +1087,10 @@ export class DocumentEditorComponent
     return !this.profile || this.profile.closeDocument;
   }
 
+  get isOriginalLanguageView() {
+    return this.viewVersionService.isOriginalLanguageView;
+  }
+
   get showMarkAsDoneButton() {
     return this.documentActions.showMarkAsDoneButton;
   }

@@ -226,6 +226,7 @@
   *ngIf="addMilestoneDialogVisible"
   [isCloneProposal]="proposal.cloneProposalMetadataVO?.clonedProposal"
   [isCustomTemplate]="proposal.metadata?.customTemplateAct"
+  [fromCustomTemplate]="proposal.metadata?.fromCustomTemplate"
   [hasLinguisticVersions]="translatedLanguages?.length > 0"
 ></app-add-milestone-dialog>
 

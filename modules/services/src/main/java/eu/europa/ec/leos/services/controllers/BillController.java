@@ -330,6 +330,13 @@ public class BillController implements BillApi {
     }
 
     @Override
+    public ResponseEntity<Object> showOriginalLanguageVersion(String documentRef) {
+        documentRef = encodeParam(documentRef);
+        DocumentViewResponse contentHtml = this.genericDocumentApiService.getOriginalLanguageVersion(documentRef);
+        return ResponseEntity.ok().body(contentHtml);
+    }
+
+    @Override
     public ResponseEntity<Object> compareBillVersions(String newVersionId, String oldVersionId) {
         try {
             newVersionId = encodeParam(newVersionId);

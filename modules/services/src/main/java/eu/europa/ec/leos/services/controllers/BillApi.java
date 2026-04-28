@@ -235,6 +235,15 @@ public interface BillApi {
     ResponseEntity<Object> showBillVersion(
             @Parameter(description = "Version ID", required = true) @PathVariable("versionId") String versionId);
 
+    @Operation(summary = "Show original language version", description = "Shows the latest major version of the equivalent document in the original language")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Version retrieved successfully"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+    })
+    @GetMapping(value = "/{documentRef}/original-language-version", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<Object> showOriginalLanguageVersion(
+            @Parameter(description = "Document reference", required = true) @PathVariable("documentRef") String documentRef);
+
     @Operation(summary = "Compare bill versions", description = "Compares two versions")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Comparison completed successfully"),

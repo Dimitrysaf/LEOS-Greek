@@ -38,6 +38,7 @@ export type Profile = {
   annotations: boolean;
   importOJ: boolean;
   markAsDoneAvailable: boolean;
+  viewOriginalLanguage: boolean;
 };
 
 export type LeosConfig = {

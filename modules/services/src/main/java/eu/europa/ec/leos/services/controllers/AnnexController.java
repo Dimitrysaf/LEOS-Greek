@@ -366,6 +366,13 @@ public class AnnexController implements AnnexApi {
     }
 
     @Override
+    public ResponseEntity<Object> showOriginalLanguageVersion(String documentRef) {
+        documentRef = encodeParam(documentRef);
+        DocumentViewResponse contentHtml = this.genericDocumentApiService.getOriginalLanguageVersion(documentRef);
+        return ResponseEntity.ok().body(contentHtml);
+    }
+
+    @Override
     public ResponseEntity<Object> compareAnnexVersions(String newVersionId, String oldVersionId) {
         try {
             newVersionId = encodeParam(newVersionId);

@@ -349,6 +349,13 @@ public class MemorandumController implements MemorandumApi {
     }
 
     @Override
+    public ResponseEntity<Object> showOriginalLanguageVersion(String documentRef) {
+        documentRef = encodeParam(documentRef);
+        DocumentViewResponse contentHtml = this.genericDocumentApiService.getOriginalLanguageVersion(documentRef);
+        return ResponseEntity.ok().body(contentHtml);
+    }
+
+    @Override
     public ResponseEntity<Object> compareMemorandumVersions(String newVersionId, String oldVersionId) {
         try {
             newVersionId = encodeParam(newVersionId);

@@ -254,6 +254,16 @@ public interface CoverPageApi {
     @ResponseBody
     ResponseEntity<Object> showCoverPageVersion(@Parameter(description = "Version ID") @PathVariable("versionId") String versionId);
 
+    @Operation(summary = "Show original language version", description = "Shows the latest major version of the equivalent document in the original language")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Version retrieved successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @GetMapping(value = "/{documentRef}/original-language-version", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    ResponseEntity<Object> showOriginalLanguageVersion(@Parameter(description = "Document reference") @PathVariable("documentRef") String documentRef);
+
     @Operation(summary = "Compare cover page versions")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Comparison retrieved successfully"),
