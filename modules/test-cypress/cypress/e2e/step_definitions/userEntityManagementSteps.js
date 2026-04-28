@@ -130,6 +130,43 @@ Then("verify the new entity presence on the table", function () {
     })
 });
 
+When("search and click on entity {string}", function (entityName) {
+    userEntityManagementPage.searchNewEntity(entityName)
+    userEntityManagementPage.clickEntityInTable(entityName)
+});
+
+When("verify entity update fails if name contains invalid data", function (dataTable) {
+    const rows = dataTable.hashes()
+    rows.forEach((row) => {
+        userEntityManagementPage.fillEntityInfoDetails(row.invalidName)
+        userEntityManagementPage.saveEntityForm()
+        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', 'Error updating entity')
+        userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', userEntityManagementPage.errorMessages.entityUpdateError)
+        userEntityManagementPage.confirmNewEntityCreationDialogBox()
+        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('not.exist')
+    })
+});
+
+When("update the entity name to {string}", function (entityName) {
+    cy.wrap(entityName).as('updatedEntityName')
+    userEntityManagementPage.fillEntityInfoDetails(entityName)
+});
+
+Then("show the successful message that entity is updated", function () {
+    cy.get('@updatedEntityName').then((entityName) => {
+        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().contains('Entity updated')
+        userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', `Entity ${entityName} successfully updated`)
+        userEntityManagementPage.confirmNewEntityCreationDialogBox()
+    })
+});
+
+Then("verify the updated entity presence on the table", function () {
+    cy.get('@updatedEntityName').then((entityName) => {
+        userEntityManagementPage.searchNewEntity(entityName)
+        userEntityManagementPage.elements.entityColumnInTable().should('contain', entityName)
+    })
+});
+
 When("search and click on user with login {string}", function (userLogin) {
     cy.wrap(userLogin).as('userLogin')
     userEntityManagementPage.searchNewUserLogin(userLogin)
