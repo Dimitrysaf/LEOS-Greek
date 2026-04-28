@@ -71,6 +71,10 @@ public class MetadataVO {
     private String availableLangs;
     private Boolean isPublished;
 
+    private String targetProposalInterInstitutionalRefYear;
+    private Integer targetProposalInterInstitutionalRefNumber;
+    private String targetProposalInterInstitutionalRefType;
+
     private String fileFormatRefersTo;
     private String fileFormatValue;
     private String tlcReferenceNameFormatHref;
@@ -139,5 +143,8 @@ public class MetadataVO {
         this.setDocTranslationFromHref(null);
         this.setAvailableLangs(null);
         this.setIsPublished(null);
+        this.setTargetProposalInterInstitutionalRefYear(null);
+        this.setTargetProposalInterInstitutionalRefNumber(null);
+        this.setTargetProposalInterInstitutionalRefNumber(null);
     }
 }

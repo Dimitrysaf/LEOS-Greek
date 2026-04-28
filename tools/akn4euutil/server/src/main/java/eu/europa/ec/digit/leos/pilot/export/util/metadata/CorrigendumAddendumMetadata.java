@@ -16,4 +16,7 @@ public class CorrigendumAddendumMetadata implements Serializable {
     private String proposalType;
     private Boolean showCorrigendumAddendum;
     private Boolean finalVersion;
+    private Integer targetProposalInterInstitutionalRefYear;
+    private String targetProposalInterInstitutionalRefNumber;
+    private String targetProposalInterInstitutionalRefType;
 }

@@ -76,6 +76,9 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   isTargetLang: boolean;
   proposalTargetLang: string[];
   showCorrigendumAddendum: boolean;
+  targetProposalInterInstitutionalRefYear: number | null;
+  targetProposalInterInstitutionalRefNumber: string | null;
+  targetProposalInterInstitutionalRefType: string | null;
   targetProposalReference: string;
   targetProposalReferenceYear: number | null;
   targetProposalReferenceActingEntity: string | null;
@@ -112,6 +115,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     { length: 20 },
     (_, i) => `/${i + 1}`
   );
+  invalidTargetProposalInterInstitutionalNumberInput: boolean;
 
   constructor(
     private appConfigService: AppConfigService,
@@ -150,7 +154,8 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       && this.isTargetProposalReferenceValid()
       && this.isTargetProposalDateValid()
       && this.isCorrectionInfoValid()
-      && this.isTargetLangValid());
+      && this.isTargetLangValid())
+      && this.isTargetProposalInterInstitutionalRefValid();
   }
 
   isEeaRelevanceChanged() {
@@ -237,7 +242,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     if (this.showCorrigendumAddendum == this.proposal.showCorrigendumAddendum
       && this.proposalType == this.proposal.proposalType
       && this.correctionInformation == this.proposal.correctionInformation
-      && this.getTargetProposalReference() == this.proposal.targetProposalReference
+      && (this.getTargetProposalReference() == this.proposal.targetProposalReference)
       && !this.isTargetLangChanged()) {
       return ((this.targetProposalDate == null && this.proposal.targetProposalDate !== null) || (this.targetProposalDate !== null && this.proposal.targetProposalDate == null))
         || (this.targetProposalDate !== null && this.proposal.targetProposalDate !== null && new Date(this.proposal.targetProposalDate).getTime()/1000 != this.targetProposalDate.unix());
@@ -458,6 +463,19 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     return !this.interInstitutionalRef;
   }
 
+  isTargetProposalInterInstitutionalRefValid(): boolean {
+    if (this.isAutonomousAct) {
+      return true;
+    }
+    if (this.showCorrigendumAddendum && this.targetProposalInterInstitutionalRefYear
+      && this.targetProposalInterInstitutionalRefNumber
+      && this.targetProposalInterInstitutionalRefType) {
+      const targetProposalInterInstitutionalRef = this.targetProposalInterInstitutionalRefYear + '/' + this.targetProposalInterInstitutionalRefNumber + ' (' + this.targetProposalInterInstitutionalRefType + ')';
+      return this.interInstitutionalRefRegEx.test(targetProposalInterInstitutionalRef);
+    }
+    return !this.showCorrigendumAddendum;
+  }
+
   getInterInstitutionalRefNonValidMsg(): string {
     if (this.invalidInterInstitutionalNumberInput) {
       return this.translateService.instant("page.collection.details.invalid.inter.institutional.ref.number.empty");
@@ -470,6 +488,24 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
         return this.translateService.instant("page.collection.details.invalid.inter.institutional.ref.number.empty");
       }
       if (this.interInstitutionalRefType == null || this.interInstitutionalRefType == undefined) {
+        return this.translateService.instant("page.collection.details.invalid.inter.institutional.ref.type");
+      }
+    }
+    return null;
+  }
+
+  getTargetProposalInterInstitutionalRefNonValidMsg(): string {
+    if (this.invalidTargetProposalInterInstitutionalNumberInput) {
+      return this.translateService.instant("page.collection.details.invalid.inter.institutional.ref.number.empty");
+    }
+    if (!this.isTargetProposalInterInstitutionalRefValid()) {
+      if (this.targetProposalInterInstitutionalRefYear == null || this.targetProposalInterInstitutionalRefYear == undefined) {
+        return this.translateService.instant("page.collection.details.invalid.inter.institutional.ref.year");
+      }
+      if (this.targetProposalInterInstitutionalRefNumber == null || this.targetProposalInterInstitutionalRefNumber == undefined) {
+        return this.translateService.instant("page.collection.details.invalid.inter.institutional.ref.number.empty");
+      }
+      if (this.targetProposalInterInstitutionalRefType == null || this.targetProposalInterInstitutionalRefType == undefined) {
         return this.translateService.instant("page.collection.details.invalid.inter.institutional.ref.type");
       }
     }
@@ -547,6 +583,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
         this.invalidInterInstitutionalNumberInput = false;
         this.invalidTargetProposalDateInput = false;
         this.invalidTargetProposalReferenceInput = false;
+        this.invalidTargetProposalInterInstitutionalNumberInput = false;
         this.initializeLists();
         this.initializeGeneral();
         this.initializeCoverPageType();
@@ -618,6 +655,13 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
     } else {
       this.invalidTargetProposalReferenceInput = false;
     }
+
+    if (!this.isAutonomousAct && !this.isTargetProposalInterInstitutionalRefValid()) {
+      this.invalidTargetProposalInterInstitutionalNumberInput = true;
+    } else {
+      this.invalidTargetProposalInterInstitutionalNumberInput = false;
+    }
+
     if (!this.isTargetProposalDateValid()) {
       this.invalidTargetProposalDateInput = true;
     } else {
@@ -793,6 +837,9 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       this.showCorrigendumAddendum,
       this.proposalType,
       this.targetProposalReference,
+      this.targetProposalInterInstitutionalRefYear,
+      this.targetProposalInterInstitutionalRefNumber,
+      this.targetProposalInterInstitutionalRefType,
       this.targetProposalDate != null ? this.targetProposalDate.toDate() : null,
       this.getTargetLanguages(),
       this.correctionInformation,
@@ -923,6 +970,9 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
 
   private initializeCorrigendumAddendumFields(): void {
     this.showCorrigendumAddendum = false;
+    this.targetProposalInterInstitutionalRefYear = null;
+    this.targetProposalInterInstitutionalRefNumber = null;
+    this.targetProposalInterInstitutionalRefType = null;
     this.targetProposalReferenceActingEntity = null;
     this.targetProposalReferenceYear = null;
     this.targetProposalReferenceNumber = null;
@@ -946,6 +996,9 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
         this.targetProposalReferenceYear = parseInt(myArray[2]);
         this.targetProposalReferenceNumber = parseInt(myArray[3]);
       }
+      this.targetProposalInterInstitutionalRefYear = this.proposal.metadata.targetProposalInterInstitutionalRefYear;
+      this.targetProposalInterInstitutionalRefNumber = this.proposal.metadata.targetProposalInterInstitutionalRefNumber;
+      this.targetProposalInterInstitutionalRefType = this.proposal.metadata.targetProposalInterInstitutionalRefType;
 
       this.finalVersion = proposal.finalVersion;
       this.targetProposalDate = this.proposal.targetProposalDate != null ? moment(this.proposal.targetProposalDate) : null;
@@ -1134,6 +1187,17 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       }, 1500)
       event.returnValue = false;
       if(event.preventDefault) event.preventDefault();
+    }
+  }
+
+  checkTargetProposalInterInstitutionalNumberInput(event) {
+    if (!this.isAutonomousAct && !this.validateDigits(event)) {
+      this.invalidTargetProposalInterInstitutionalNumberInput = true;
+      setTimeout(() => {
+        this.invalidTargetProposalInterInstitutionalNumberInput = !this.isTargetProposalInterInstitutionalRefValid();
+      }, 1500)
+      event.returnValue = false;
+      if (event.preventDefault) event.preventDefault();
     }
   }
 

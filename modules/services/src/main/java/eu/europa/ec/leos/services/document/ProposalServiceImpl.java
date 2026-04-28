@@ -902,6 +902,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 corrigendumAddendumMetadata.setTargetProposalReference(request.getTargetProposalReference());
                 corrigendumAddendumMetadata.setProposalTargetLang(request.getProposalTargetLang());
                 corrigendumAddendumMetadata.setFinalVersion(request.getFinalVersion());
+                corrigendumAddendumMetadata.setTargetProposalInterInstitutionalRefYear(request.getTargetProposalInterInstitutionalRefYear());
+                corrigendumAddendumMetadata.setTargetProposalInterInstitutionalRefNumber(request.getTargetProposalInterInstitutionalRefNumber());
+                corrigendumAddendumMetadata.setTargetProposalInterInstitutionalRefType(request.getTargetProposalInterInstitutionalRefType());
             }
             fields.add(new MetadataOptions.FieldNode("corrigendumAddendum", collectionToJson(corrigendumAddendumMetadata)));
         }

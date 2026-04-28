@@ -580,21 +580,46 @@
                 </label>
               </div>
             </div>
-            <div class="row details-gen-rows">
+            <div class="row details-gen-rows" style="flex-wrap: nowrap;">
               <div class="col-sm-2 label-column target-proposal-input-labels">
                 <div class="details-tab-block">
                   <label class="details-tab-block">
                     {{'page.collection.details.target.proposal.label' | translate}}
                   </label>
                 </div>
-                <div style="display: block; padding-top: 15px;">
-                  <label class="details-tab-block">
-                    {{'page.collection.details.target.proposal.date' | translate}}
-                  </label>
+              </div>
+              <div class="col-auto label-column" *ngIf="!isAutonomousAct">
+                <div class="details-tab-flex">
+                  <div euiInputGroup class="eui-u-width-auto grid-adoption-info-inter-institutional-reference2" *ngIf="!isAutonomousAct">
+                    <div class="adoption-info-institutional-reference">
+                      <select euiSelect [(ngModel)]="targetProposalInterInstitutionalRefYear" (ngModelChange)="handleChange()"
+                              name="interInstitutionalRefYear"
+                              id="targetProposalInterInstitutionalRefYear"
+                              class="details-tab-first-select"
+                              [disabled]="!showCorrigendumAddendum">
+                        <option *ngFor="let interInstitutionalRefYear of years">{{ interInstitutionalRefYear }}</option>
+                      </select>/
+                      <input type="text" (keypress)="this.checkTargetProposalInterInstitutionalNumberInput($event)"
+                             [(ngModel)]="targetProposalInterInstitutionalRefNumber"
+                             (ngModelChange)="handleChange()"
+                             [disabled]="!showCorrigendumAddendum"
+                             class="details-tab-text"/>
+                      (<select euiSelect [(ngModel)]="targetProposalInterInstitutionalRefType" (ngModelChange)="handleChange()"
+                               name="interInstitutionalRefType"
+                               id="targetProposalInterInstitutionalRefType"
+                               class="details-tab-select" [disabled]="!showCorrigendumAddendum">
+                      <option
+                        *ngFor="let interInstitutionalRefType of interInstitutionalRefTypes">{{ interInstitutionalRefType }}
+                      </option>
+                    </select>)
+                    </div>
+                  </div>
+                  <label style="margin-top: 15px; padding-left: 5px; padding-right: 5px;" *ngIf="!isAutonomousAct">and</label>
                 </div>
               </div>
-              <div class="col-sm-3 label-column">
-                <div class="details-tab-flex">
+
+              <div class="col-auto label-column">
+                <div class="adoption-info-institutional-reference">
                   <select #targetProposalReferenceActingEntityElt euiSelect [required]="showCorrigendumAddendum"
                           [(ngModel)]="targetProposalReferenceActingEntity"
                           (ngModelChange)="handleChange()"
@@ -616,30 +641,69 @@
                          [required]="showCorrigendumAddendum"
                          class="details-tab-text"
                          #targetProposalReferenceNumberElt/>
-                  <div *ngIf="invalidTargetProposalReferenceInput" class="tooltip">
-                    {{ this.getTargetProposalRefNonValidMsg() }}
-                  </div>
-                </div>
-                <div class="details-tab-block">
-                  <eui-datepicker togglerIconSvg="eui-calendar"
-                                  [(ngModel)]="targetProposalDate"
-                                  (ngModelChange)="handleChange()"></eui-datepicker>
-                </div>
-                <div *ngIf="invalidTargetProposalDateInput" class="tooltip">
-                  {{ this.getTargetProposalDateNonValidMsg() }}
+                  <input
+                    name="checkbox-final-proposal-"
+                    euiInputCheckBox
+                    label="Final"
+                    [(ngModel)]="finalVersion"
+                    [required]="showCorrigendumAddendum"
+                    (ngModelChange)="handleProposalFinalVersion($event)"
+                    style="margin-top: 15px;"
+                  />
+                  <label
+                    class="details-tab-inline" style="margin-top: 15px;">{{ 'page.collection.details.institutional.reference.final' | translate }}</label>
                 </div>
               </div>
             </div>
-            <div class="row details-gen-rows" *ngIf="false">
+
+            <div class="row details-gen-rows">
+              <div class="col-sm-2 label-column">
+              </div>
+              <div class="col-sm-4 label-column">
+                <div *ngIf="!isAutonomousAct && invalidTargetProposalInterInstitutionalNumberInput" class="tooltip">
+                  {{ this.getTargetProposalInterInstitutionalRefNonValidMsg() }}
+                </div>
+              </div>
+
+              <div class="col-sm-6 label-column">
+                <div *ngIf="invalidTargetProposalReferenceInput" class="tooltip">
+                  {{ this.getTargetProposalRefNonValidMsg() }}
+                </div>
+              </div>
+            </div>
+
+            <div class="row details-gen-rows">
+              <div class="col-sm-2 label-column target-proposal-input-labels">
+                <div style="display: block;">
+                  <label class="details-tab-block">
+                    {{'page.collection.details.target.proposal.date' | translate}}
+                  </label>
+                </div>
+              </div>
+              <div class="col-auto label-column">
+              <div class="details-tab-block">
+                <eui-datepicker togglerIconSvg="eui-calendar"
+                                [(ngModel)]="targetProposalDate"
+                                (ngModelChange)="handleChange()"></eui-datepicker>
+              </div>
+              </div>
+              <div class="col-auto label-column">
+              <div *ngIf="invalidTargetProposalDateInput" class="tooltip">
+                {{ this.getTargetProposalDateNonValidMsg() }}
+              </div>
+              </div>
+            </div>
+
+            <div class="row details-gen-rows">
               <div class="col-sm-2">
-                <input
+                <!--input
                   name="checkbox-final-proposal-"
                   euiInputCheckBox
                   label="Final"
                   [(ngModel)]="finalVersion"
                   [required]="showCorrigendumAddendum"
                   (ngModelChange)="handleProposalFinalVersion($event)"
-                />
+                /-->
                 <label
                   class="details-tab-inline">{{'page.collection.details.proposal.final.version.label' | translate}}</label>
               </div>
