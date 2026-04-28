@@ -189,17 +189,17 @@ export class UserInfoComponent implements OnInit, OnDestroy {
           this.selectedUser = updated;
           this.onToggleEdit();
           this.userEditComplete.next(updated);
-          this.dialogService.showSuccess(
-            `page.workspace.administration.user-info.${methodName}-success-title`,
-            `page.workspace.administration.user-info.${methodName}-success-content`,
-            {firstName: this.selectedUser.firstName, lastName: this.selectedUser.lastName});
+          this.dialogService.showDialog({
+            title: `page.workspace.administration.user-info.${methodName}-success-title`,
+            message: `page.workspace.administration.user-info.${methodName}-success-content`,
+            i18nParams: {firstName: this.selectedUser.firstName, lastName: this.selectedUser.lastName}});
         },
         error: (error) => {
-          this.dialogService.showError(
-            `page.workspace.administration.user-info.${methodName}-error-title`,
-            error.error?.message ?? error.message ?? 'global.actions.unknown-error',
-            {},
-            true);
+          this.dialogService.showDialog({
+            title: `page.workspace.administration.user-info.${methodName}-error-title`,
+            message: error.error?.message ?? error.message ?? 'global.actions.unknown-error',
+            clearGrowl: true
+          });
         }
       });
     }

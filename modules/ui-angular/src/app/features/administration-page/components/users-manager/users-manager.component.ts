@@ -122,9 +122,10 @@ export class UsersManagerComponent implements OnInit, OnChanges {
   protected deleteUser(user: User) {
     this.onUserSelect(user);
     if (user.entities?.length > 0) {
-      this.leosDialogService.showError(
-        'page.workspace.administration.user-info.cannot-delete',
-        'page.workspace.administration.user-info.user-has-entities');
+      this.leosDialogService.showDialog({
+        title: 'page.workspace.administration.user-info.cannot-delete',
+        message: 'page.workspace.administration.user-info.user-has-entities'
+      });
     } else {
       this.euiDialogService.openDialog({
         title: "page.workspace.administration.user-info.user-delete-dialog.title",
@@ -137,9 +138,10 @@ export class UsersManagerComponent implements OnInit, OnChanges {
             this.search(this.query)
           },
           error: (error) => {
-            this.leosDialogService.showError(
-              "page.workspace.administration.user-info.user-delete-error-title",
-              error.error?.message ?? error.message ?? "global.actions.unknown-error", {}, true)
+            this.leosDialogService.showDialog({
+              title: "page.workspace.administration.user-info.user-delete-error-title",
+              message: error.error?.message ?? error.message ?? "global.actions.unknown-error",
+              clearGrowl: true})
           }
         })
       });

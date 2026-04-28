@@ -147,28 +147,27 @@ export class EntityInfoComponent implements OnInit {
       : this.adminService.addEntity.bind(this.adminService);
     const methodName = method.name.substring(6); // 'bound ' prepended to the method name after binding
     if (validate(this.entityForm, {
-      service: this.dialogService,
-      title: `page.workspace.administration.entity-info.${methodName}-error-title`,
-      content: 'page.workspace.administration.entity-info.entity-create-error-validation'
-    })) {
-
+        service: this.dialogService,
+        title: `page.workspace.administration.entity-info.${methodName}-error-title`,
+        content: 'page.workspace.administration.user-info.form-validation-error'})) {
       if (this.entityForm.valid) {
         method(this.toModel()).subscribe({
           next: (entity: Entity) => {
             this.editing = false;
             this.selectedEntity = entity;
             this.entityEditComplete.emit(entity);
-            this.dialogService.showSuccess(
-              `page.workspace.administration.entity-info.${methodName}-success-title`,
-              `page.workspace.administration.entity-info.${methodName}-success-content`,
-              {entityName: this.selectedEntity.name});
+            this.dialogService.showDialog({
+              title: `page.workspace.administration.entity-info.${methodName}-success-title`,
+              message: `page.workspace.administration.entity-info.${methodName}-success-content`,
+              i18nParams: {entityName: this.selectedEntity.name},
+            });
           },
           error: (error) => {
-            this.dialogService.showError(
-              `page.workspace.administration.entity-info.${methodName}-error-title`,
-              error.error?.message ?? error.message ?? 'global.actions.unknown-error',
-              {},
-              true);
+            this.dialogService.showDialog({
+              title: `page.workspace.administration.entity-info.${methodName}-error-title`,
+              message: error.error?.message ?? error.message ?? 'global.actions.unknown-error',
+              clearGrowl: true,
+            });
           }
         });
       }

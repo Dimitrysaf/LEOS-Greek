@@ -19,9 +19,10 @@ export class LeosDialogService {
                      clearGrowl: boolean = false) : void {
     const config = new EuiDialogConfig({
       title: this.translateService.instant(title, messageParams),
+      width: '40%',
       content: this.translateService.instant(message, messageParams),
       typeClass: typeClass,
-      isMessageBox: true,
+      isMessageBox: false,
       hasDismissButton: false
     });
     if(clearGrowl) {
@@ -37,4 +38,27 @@ export class LeosDialogService {
   public showError(title: string, message: string, messageParams: any = {}, clearGrowl: boolean = false) : void {
     this.showMessage('danger', title, message, messageParams, clearGrowl);
   }
+
+  public showDialog(params: Partial<LeosDialogParams>) {
+    const config = new EuiDialogConfig({
+      ...new LeosDialogParams({}),
+      ...params,
+      title: this.translateService.instant(params.title, params.i18nParams),
+      content: this.translateService.instant(params.message, params.i18nParams),
+    });
+    if(params.clearGrowl) {
+      this.growlService.clearGrowl();
+    }
+    this.dialogService.openDialog(config);
+  }
+}
+
+export class LeosDialogParams extends EuiDialogConfig<any, any, any, any, any, any> {
+  title: string;
+  message: string;
+  i18nParams = {};
+  isMessageBox = false;
+  hasDismissButton = false;
+  clearGrowl = false;
+  width = '50em';
 }
