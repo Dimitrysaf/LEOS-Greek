@@ -88,12 +88,19 @@
 <ng-template #actionButtons>
   <div class="eui-u-flex" *ngIf="!editing">
     <button
+      euiButton
+      euiSecondary
+      class="eui-u-ml-s"
+      (click)="onClose()">
+      {{ 'global.actions.close' | translate }}
+    </button>
+    <button
       [euiDisabled]="!canBeEdited"
       euiButton
       euiPrimary
       euiOutline
       euiTooltip="{{ 'page.workspace.administration.user-info.edit-user-tooltip' | translate }}"
-      class="eui-u-mr-s"
+      class="eui-u-ml-s"
       (click)="onToggleEdit()">
       <span euiIcon iconClass="eui-icon eui-icon-pencil"></span>
       <span euiLabel>{{ 'global.actions.edit' | translate }}</span>

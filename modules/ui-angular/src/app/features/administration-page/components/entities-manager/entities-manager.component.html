@@ -65,8 +65,5 @@
 <div class="row">
   <div class="col-12">
     <app-entity-info *ngIf="!!selectedEntity" [selectedEntity]="selectedEntity" (entityEditComplete)="onEntityEditComplete($event)"></app-entity-info>
-    <eui-label *ngIf="!selectedEntity" class="eui-u-mt-s eui-u-mb-xs eui-u-font-xl eui-u-font-bold">
-      {{ "page.workspace.administration.entity-info.no-entity-selected-label" | translate }}
-    </eui-label>
   </div>
 </div>

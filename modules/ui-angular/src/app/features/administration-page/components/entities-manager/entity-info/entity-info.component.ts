@@ -205,4 +205,9 @@ export class EntityInfoComponent implements OnInit {
   private get isTheDefaultEntityOrganization() {
     return this.selectedEntity?.name === this.config?.user.defaultEntity.organizationName;
   }
+
+  protected onClose() {
+    this.editing = false;
+    this.entityEditComplete.next(null);
+  }
 }

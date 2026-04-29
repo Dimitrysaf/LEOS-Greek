@@ -291,6 +291,11 @@ export class UserInfoComponent implements OnInit, OnDestroy {
     const value = euiSelect["elementRef"].nativeElement.selectedOptions.item(index).value;
     return value.indexOf(': \'') >= 0 ? value.substring(value.indexOf(': \'') + 3, value.length - 1) : value;
   }
+
+  protected onClose() {
+    this.isEditActive = false;
+    this.userEditComplete.next(null);
+  }
 }
 
 export function entitiesValidator(): ValidatorFn | null {
