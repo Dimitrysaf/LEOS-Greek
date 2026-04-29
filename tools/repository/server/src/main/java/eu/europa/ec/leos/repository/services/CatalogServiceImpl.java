@@ -60,6 +60,8 @@ import java.util.zip.ZipInputStream;
 @RequiredArgsConstructor
 public class CatalogServiceImpl implements CatalogService {
     private static final Logger LOG = LoggerFactory.getLogger(CatalogServiceImpl.class);
+    private static final String CATALOG = "catalog";
+    private static final String CUSTOM_CATALOG_PREFIX = "catalog_";
     private static final String CUSTOM_TEMPLATE_COMMENT = "Custom Template";
     private static final String CUSTOM_TEMPLATE_SEPARATOR = "_";
     private static final String CUSTOM_TEMPLATE_CATEGORY_PATH_SEPARATOR = ";";
@@ -452,7 +454,7 @@ public class CatalogServiceImpl implements CatalogService {
         Set<String> insertedTemplateKeys = new HashSet<>();
 
         for (String entity : entities) {
-            String catalogName = "catalog-" + entity;
+            String catalogName = CUSTOM_CATALOG_PREFIX + entity;
             Optional<Config> config = configRepository.findConfigByName(catalogName);
             if (config.isPresent()) {
                 ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
@@ -501,7 +503,7 @@ public class CatalogServiceImpl implements CatalogService {
         Set<String> allTemplateKeys = new HashSet<>();
         
         for (String entity : entities) {
-            String catalogName = "catalog-" + entity;
+            String catalogName = CUSTOM_CATALOG_PREFIX + entity;
             Optional<Config> config = configRepository.findConfigByName(catalogName);
             if (config.isPresent()) {
                 ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(config.get().getId());
@@ -581,12 +583,12 @@ public class CatalogServiceImpl implements CatalogService {
     protected String getCatalogFromDatabase() throws CatalogException {
 
         try {
-            configService.findConfigByName("catalog");
+            configService.findConfigByName(CATALOG);
         } catch (RepositoryException e) {
             throw new CatalogException(CatalogException.CatalogExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
         }
 
-        Optional<ConfigurationV> configurationV = configurationVRepository.findConfigurationByName("catalog");
+        Optional<ConfigurationV> configurationV = configurationVRepository.findConfigurationByName(CATALOG);
         return configurationV.get().getContent();
     }
 
@@ -849,7 +851,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     private void ensureCatalogExists(String entityName, String userId, Package pkg) throws CatalogException {
-        String catalogName = "catalog-" + entityName;
+        String catalogName = CUSTOM_CATALOG_PREFIX + entityName;
 
         if (!configRepository.findConfigByName(catalogName).isPresent()) {
             createCatalog(catalogName, entityName, userId);
@@ -913,7 +915,7 @@ public class CatalogServiceImpl implements CatalogService {
                         .findConfigCategoriesByCategoryCode("CONFIG")
                         .orElseThrow(() -> new CatalogException(CatalogException.CatalogExceptionCode.DB_NOT_FOUND, "CONFIG category not found"));
 
-                String customKey = "catalog-" + entityName + "-CONF";
+                String customKey = CUSTOM_CATALOG_PREFIX + entityName + "-CONF";
                 saveConfigFile(catalogConfigFile.get(), customKey, configCategory, userId);
             }
 
@@ -1419,7 +1421,7 @@ public class CatalogServiceImpl implements CatalogService {
     // =============================================================================
 
     private String getCustomNameFromCatalog(String entityName, String baseTemplate, String packageId) throws CatalogException {
-        String catalogName = "catalog-" + entityName;
+        String catalogName = CUSTOM_CATALOG_PREFIX + entityName;
         Optional<Config> config = configRepository.findConfigByName(catalogName);
 
         if (config.isPresent()) {
@@ -1445,7 +1447,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
     
     private void removeTemplateFromEntityCatalog(String entityName, String packageId, String userId) throws CatalogException {
-        String catalogName = "catalog-" + entityName;
+        String catalogName = CUSTOM_CATALOG_PREFIX + entityName;
         Optional<Config> config = configRepository.findConfigByName(catalogName);
 
         if (config.isPresent()) {
@@ -1459,7 +1461,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     private void addTemplateToEntityCatalog(String entityName, String templateName, String customTemplateName, String packageId, String userId, String originalDg, boolean isTranslated, String mainLanguagePackageId) throws CatalogException {
-        String catalogName = "catalog-" + entityName;
+        String catalogName = CUSTOM_CATALOG_PREFIX + entityName;
         Optional<Config> config = configRepository.findConfigByName(catalogName);
 
         if (config.isPresent()) {
@@ -1472,7 +1474,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     private void replaceTemplateInEntityCatalog(String entityName, String templateName, String customTemplateName, String packageId, String userId, String originalDg, boolean isTranslated, String mainLanguagePackageId) throws CatalogException {
-        String catalogName = "catalog-" + entityName;
+        String catalogName = CUSTOM_CATALOG_PREFIX + entityName;
         Optional<Config> config = configRepository.findConfigByName(catalogName);
 
         if (config.isPresent()) {

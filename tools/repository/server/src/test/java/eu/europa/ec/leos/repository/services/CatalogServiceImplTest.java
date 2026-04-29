@@ -99,7 +99,7 @@ public class CatalogServiceImplTest extends H2TestBase {
 
         mockCustomTemplateConfig = new Config();
         mockCustomTemplateConfig.setId(BigDecimal.valueOf(200));
-        mockCustomTemplateConfig.setName("catalog-DG1");
+        mockCustomTemplateConfig.setName("catalog_DG1");
 
         mockCustomTemplateConfigVersion = new ConfigVersion();
         mockCustomTemplateConfigVersion.setConfigId(BigDecimal.valueOf(200));
@@ -173,7 +173,7 @@ public class CatalogServiceImplTest extends H2TestBase {
         catalogService.publishCustomTemplate(legFileId, "Template", dgs, userId, originalDg);
 
         // Assert - Verify catalog creation
-        verify(customTemplateConfigRepository).findConfigByName("catalog-DG1");
+        verify(customTemplateConfigRepository).findConfigByName("catalog_DG1");
         verify(customTemplateConfigRepository).save(any(Config.class));
         verify(customTemplateConfigVersionRepository).save(any(ConfigVersion.class));
         verify(customTemplateConfigContentRepository).save(any(ConfigContent.class));
