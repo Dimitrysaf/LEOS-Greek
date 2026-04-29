@@ -170,7 +170,6 @@
   "page.workspace.administration.entity-info.invalid-request": "Invalid entity management request",
   "page.workspace.administration.entity-info.entity-create-success-title": "New entity created",
   "page.workspace.administration.entity-info.entity-create-error-title": "Error creating entity",
-  "page.workspace.administration.entity-info.entity-create-error-validation": "Please correct the validation errors before saving.",
   "page.workspace.administration.entity-info.updateEntity-success-title": "Entity updated",
   "page.workspace.administration.entity-info.updateEntity-success-content": "Entity {{entityName}} successfully updated.",
   "page.workspace.administration.entity-info.updateEntity-error-title": "Error updating entity",

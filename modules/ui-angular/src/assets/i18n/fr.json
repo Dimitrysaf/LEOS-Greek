@@ -170,7 +170,6 @@
   "page.workspace.administration.entity-info.invalid-request": "Requete de gestion d'entités invalide",
   "page.workspace.administration.entity-info.entity-create-success-title": "Nouvelle entité créée",
   "page.workspace.administration.entity-info.entity-create-error-title": "Erreur lors de la création de l'entité",
-  "page.workspace.administration.entity-info.entity-create-error-validation": "Veuillez corriger les erreurs de validation avant d'enregistrer.",
   "page.workspace.administration.entity-info.updateEntity-success-title": "Entité mise à jour",
   "page.workspace.administration.entity-info.updateEntity-success-content": "L'entité {{entityName}} a été mise à jour avec succès.",
   "page.workspace.administration.entity-info.updateEntity-error-title": "Erreur lors de la mise à jour de l'entité",
