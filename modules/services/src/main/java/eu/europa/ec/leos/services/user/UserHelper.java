@@ -33,6 +33,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.CUSTOM_CATALOG_SEPARATOR;
+
 @Component
 public class UserHelper {
     private static final Logger LOG = LoggerFactory.getLogger(UserHelper.class);
@@ -126,11 +128,11 @@ public class UserHelper {
     }
 
     public String getUserDgCustomTemplatesCatalog() {
-        return templatesCatalog + "-" + securityContext.getUser().getDefaultEntity().getOrganizationName();
+        return templatesCatalog + CUSTOM_CATALOG_SEPARATOR + securityContext.getUser().getDefaultEntity().getOrganizationName();
     }
 
     public String getUserDgCustomTemplatesCatalog(String entityName) {
-        return templatesCatalog + "-" + entityName;
+        return templatesCatalog + CUSTOM_CATALOG_SEPARATOR + entityName;
     }
 
     public User validateTemplateManager(String errorMessage) throws IllegalStateException{
