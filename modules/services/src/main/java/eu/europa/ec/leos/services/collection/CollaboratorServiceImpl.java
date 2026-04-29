@@ -307,9 +307,9 @@ public class CollaboratorServiceImpl implements CollaboratorService {
             LOG.trace("Sending email to updated collaborator user {}", collaboratorEmailNotification.getRecipient().getLogin());
             notificationService.sendNotification(collaboratorEmailNotification);
         } catch (Exception e) {
-            LOG.warn("Unexpected error occurred while sending notification to user {}", collaboratorEmailNotification.getRecipient().getLogin(), e);
-            throw new SendNotificationException(
-                    "Unexpected error occurred while sending notification to user " + collaboratorEmailNotification.getRecipient().getLogin(), e);
+            LOG.warn("Unexpected error occurred while sending notification to user {}. Error: {}", collaboratorEmailNotification.getRecipient().getLogin(), e.getMessage(), e);
+//            throw new SendNotificationException(
+//                    "Unexpected error occurred while sending notification to user " + collaboratorEmailNotification.getRecipient().getLogin(), e);
         }
     }
 
