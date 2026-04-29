@@ -1,7 +1,7 @@
 class userEntityManagementPage {
     errorMessages = {
-        userCreationError: 'There are errors in the from. Please fill-in all highlighted fields correctly and try again.',
-        entityUpdateError: 'There are errors in the from. Please fill-in all highlighted fields correctly and try again.'
+        userCreationError: 'There are errors in the form. Please fill-in all highlighted fields correctly and try again.',
+        entityUpdateError: 'There are errors in the form. Please fill-in all highlighted fields correctly and try again.'
     }
 
     elements = {
