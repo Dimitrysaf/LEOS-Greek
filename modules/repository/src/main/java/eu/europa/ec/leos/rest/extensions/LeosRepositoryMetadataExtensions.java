@@ -63,6 +63,7 @@ class LeosRepositoryMetadataExtensions {
             metadata.setProcedureType(props.procedureType);
             metadata.setAvailableLangs(props.availableLangs);
             metadata.setIsPublished(props.isPublished);
+            metadata.setTranslated(props.translated);
             return Option.some(metadata);
         });
     }

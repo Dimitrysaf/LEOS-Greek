@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Stopwatch;
 import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.common.TocMode;
-import eu.europa.ec.leos.domain.repository.Content;
-import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
-import eu.europa.ec.leos.domain.repository.LeosPackage;
-import eu.europa.ec.leos.domain.repository.LinkedPackage;
+import eu.europa.ec.leos.domain.repository.*;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.*;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
@@ -314,7 +311,9 @@ public class GenericDocumentApiService {
         String originalRef = LanguageMapUtils.getTranslatedProposalReference(documentRef, originalPackage.getLanguage());
         XmlDocument originalLanguageVersion = this.findLatestMajorOrBaseVersion(originalRef);
         List<LeosPermission> userPermissions = this.securityContext.getPermissions(originalLanguageVersion);
-        String versionContent = this.documentContentService.getDocumentAsHtml(originalLanguageVersion, "", userPermissions);
+        String versionContent = LeosCategory.PROPOSAL.equals(originalLanguageVersion.getCategory()) ?
+                this.documentContentService.getDocumentAsHtml(originalLanguageVersion, "", userPermissions, true) :
+                this.documentContentService.getDocumentAsHtml(originalLanguageVersion, "", userPermissions);
         VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(originalLanguageVersion);
         return new DocumentViewResponse(originalRef, versionContent, versionInfoVO, null, null);
     }
