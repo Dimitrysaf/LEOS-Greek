@@ -20,40 +20,7 @@ cache:
 java-build:
   stage: build
   script:
-    - cd $CI_PROJECT_DIR/tools/user-repo
-    - mvn clean install
-    - cd $CI_PROJECT_DIR/tools/repository
-    - mvn clean install
-#    - cd $CI_PROJECT_DIR/tools/akn4euutil
-#    - mvn clean install
-    - cd $CI_PROJECT_DIR
-    - mvn clean install -DskipKarmaTests
-  artifacts:
-    expire_in: 1 hour
-    when: always
-    paths:
-      - pom.xml
-      - "**/target"
-      - "**/package-lock.json"
-      - "**/yarn.lock"
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: never
-    - if: $CI_PIPELINE_SOURCE == "web" && $TAGS_TO_RUN == "@fortify"
-    - if: $CI_PIPELINE_SOURCE == "schedule" && $TAGS_TO_RUN == "@fortify"
-      when: always
-  interruptible: true
-
-build-and-test:
-  variables:
-    TAGS_TO_RUN: "@local"
-  stage: test
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_PIPELINE_SOURCE == "web"
-    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
-      when: never
-  script:
+    - echo "=== BUILD MVN START ===$(date) ==="
     - cd $CI_PROJECT_DIR/tools/user-repo
     - mvn clean install
     - cd $CI_PROJECT_DIR/tools/repository
@@ -62,6 +29,43 @@ build-and-test:
 #    - mvn clean install
     - cd $CI_PROJECT_DIR
     - mvn clean install -DskipKarmaTests -Dleos.log.level=ERROR
+    - echo "=== BUILD MVN END ===$(date) ==="
+  artifacts:
+    expire_in: 4 hour
+    when: always
+    paths:
+      - pom.xml
+      - "**/target"
+      - "**/package-lock.json"
+      - "**/yarn.lock"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $TAGS_TO_RUN == "@fortify"
+      when: always
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      when: never
+  interruptible: true
+
+.cypress-base:
+  variables:
+    TAGS_TO_RUN: "@local"
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      when: never
+  needs: [java-build]
+  script:
+    - echo "=== CYPRESS-BASE MVN INSTALL START ===$(date) ==="
+    - cd $CI_PROJECT_DIR/tools/user-repo
+    - mvn install -DskipTests
+    - cd $CI_PROJECT_DIR/tools/repository
+    - mvn install -DskipTests
+    - cd $CI_PROJECT_DIR
+    - mvn install -DskipTests -DskipKarmaTests -Dleos.log.level=ERROR
+    - echo "=== CYPRESS-BASE MVN INSTALL END ===$(date) ==="
     - cd $CI_PROJECT_DIR/tools/user-repo/web
     - mvn spring-boot:run -Dspring-boot.run.profiles=h2 &
     - cd $CI_PROJECT_DIR/tools/repository/web
@@ -73,8 +77,7 @@ build-and-test:
     - sleep 40
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - npm install
-#    - npx cypress run --quiet -e CE_ENV="$TAGS_TO_RUN",TAGS="$TAGS_TO_RUN" --browser chrome --headed
-    - npx cypress run -e CE_ENV="$TAGS_TO_RUN",TAGS="$TAGS_TO_RUN" --browser chrome --headed
+    - npx cypress run --spec "$SPECS" -e CE_ENV="$TAGS_TO_RUN",TAGS="$TAGS_TO_RUN" --browser chrome --headed
   after_script:
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - node ./cucumberReport.js
@@ -86,6 +89,21 @@ build-and-test:
       - $CI_PROJECT_DIR/modules/test-cypress/cypress/screenshots/**/*.png
       - $CI_PROJECT_DIR/modules/test-cypress/cypress/report/**/*.*
   interruptible: true
+
+cypress-group-1:
+  extends: .cypress-base
+  variables:
+    SPECS: "cypress/e2e/features/ckEditor.feature,cypress/e2e/features/annex.feature,cypress/e2e/features/createAct.feature"
+
+cypress-group-2:
+  extends: .cypress-base
+  variables:
+    SPECS: "cypress/e2e/features/actViewer.feature,cypress/e2e/features/milestones.feature,cypress/e2e/features/userManagement.feature,cypress/e2e/features/legalAct.feature,cypress/e2e/features/financialStatement.feature,cypress/e2e/features/coverPage.feature,cypress/e2e/features/collaborators.feature,cypress/e2e/features/expMemo.feature,cypress/e2e/features/comparison.feature,cypress/e2e/features/homePage.feature"
+
+cypress-group-3:
+  extends: .cypress-base
+  variables:
+    SPECS: "cypress/e2e/features/trackChanges.feature,cypress/e2e/features/forkAndMerge.feature"
 
 cypress-test-for-non-local:
   variables:
