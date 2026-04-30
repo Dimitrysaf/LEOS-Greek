@@ -101,6 +101,7 @@ public class XmlHelper {
     public static final String P = "p";
     public static final String AKNP = "aknp";
     public static final String IMG = "img";
+    public static final String DOC_PURPOSE = "docPurpose";
     public static final String COVERPAGE = "coverPage";
     public static final String ATTACHMENTS = "attachments";
     public static final String ATTACHMENT = "attachment";

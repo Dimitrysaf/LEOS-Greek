@@ -3240,6 +3240,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Node attachmentsNode = removeAttachmentsIfExist(targetDoc);
         alignAllIds(sourceDoc, targetDoc, sourceXmlDoc.getCategory().toString());
         reinsertAttachments(targetDoc, attachmentsNode);
+        highlightCoverPageDocPurpose(targetXmlDoc, targetDoc);
         return nodeToByteArray(targetDoc);
     }
 
@@ -3252,6 +3253,13 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         if (attachmentsNode != null) {
             Node billNode = getFirstElementByXPath(document, XPathCatalog.getXPathElement(BILL));
             addChild(attachmentsNode, billNode);
+        }
+    }
+
+    private static void highlightCoverPageDocPurpose(XmlDocument xmlDocument, Document document) {
+        if (LeosCategory.PROPOSAL.equals(xmlDocument.getCategory())) {
+            Node docPurposeNode = getFirstElementByXPath(document, XPathCatalog.getXPathElement(DOC_PURPOSE));
+            highlightNodeForTranslation(docPurposeNode);
         }
     }
 
