@@ -44,8 +44,44 @@ public interface UserRepository extends JpaRepository<User, User.UserId> {
                    USER_EMAIL != 'entity@mail.com'""";
 
     // language=SQL
+    String COUNT_SEARCH_BY_KEY = """
+            SELECT COUNT(*) FROM LEOS_USER
+                WHERE (
+                   deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey)
+                OR
+                   deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey)
+                OR
+                   deAccent(USER_EMAIL) LIKE deAccent(:searchKey)
+                OR
+                   deAccent(USER_LOGIN) LIKE deAccent(:searchKey))
+                AND
+                   USER_PER_ID != -1
+                AND
+                   USER_EMAIL != 'entity@mail.com'""";
+
+    // language=SQL
     String SEARCH_BY_KEY_AND_ENTITY = """
             SELECT DISTINCT u.USER_LOGIN, u.USER_EMAIL, u.USER_PER_ID, u.USER_LASTNAME, u.USER_FIRSTNAME, u.JOB_TITLE, u.DATE_CREATED, u.SPECIAL FROM LEOS_USER u
+              INNER JOIN LEOS_USER_ENTITY ue on u.USER_LOGIN = ue.USER_LOGIN
+              INNER JOIN LEOS_ENTITY e on e.ENTITY_ID = ue.ENTITY_ID
+              WHERE (
+                  deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey)
+                OR
+                  deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey)
+                OR
+                  deAccent(USER_EMAIL) LIKE deAccent(:searchKey)
+                OR
+                  deAccent(u.USER_LOGIN) LIKE deAccent(:searchKey))
+              AND
+                e.ENTITY_ID = :entityId
+              AND
+                USER_PER_ID != -1
+              AND
+                USER_EMAIL != 'entity@mail.com'""";
+
+    // language=SQL
+    String COUNT_SEARCH_BY_KEY_AND_ENTITY = """
+            SELECT COUNT(DISTINCT u.USER_LOGIN) FROM LEOS_USER u
               INNER JOIN LEOS_USER_ENTITY ue on u.USER_LOGIN = ue.USER_LOGIN
               INNER JOIN LEOS_ENTITY e on e.ENTITY_ID = ue.ENTITY_ID
               WHERE (
@@ -104,7 +140,7 @@ public interface UserRepository extends JpaRepository<User, User.UserId> {
      * @param pageable pagination parameters
      * @return Page of {@link SpecialUser} objects
      */
-    @Query(value = SEARCH_BY_KEY, countQuery = SEARCH_BY_KEY, nativeQuery = true)
+    @Query(value = SEARCH_BY_KEY, countQuery = COUNT_SEARCH_BY_KEY, nativeQuery = true)
     Page<User> findNonEntityUsersByKey(@Param("searchKey") String searchKey, Pageable pageable);
 
     /**
@@ -115,7 +151,7 @@ public interface UserRepository extends JpaRepository<User, User.UserId> {
      * @param pageable pagination parameters
      * @return Page of {@link SpecialUser} objects
      */
-    @Query(value = SEARCH_BY_KEY_AND_ENTITY, countQuery = SEARCH_BY_KEY_AND_ENTITY, nativeQuery = true)
+    @Query(value = SEARCH_BY_KEY_AND_ENTITY, countQuery = COUNT_SEARCH_BY_KEY_AND_ENTITY, nativeQuery = true)
     Page<User> findNonEntityUsersByKeyAndEntity(@Param("searchKey") String searchKey, @Param("entityId") String entityId, Pageable pageable);
 
     Collection<User> findByLoginIgnoreCase(String login);
