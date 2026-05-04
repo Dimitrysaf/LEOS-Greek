@@ -217,7 +217,11 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
       }
 
 
-    }else{
+    }
+    else if (this.isStepOneCompleted){
+      this.createForm.get('changeCopyAct').disable();
+    }
+    else{
       this.createForm.get('changeCopyAct').enable();
     }
 
