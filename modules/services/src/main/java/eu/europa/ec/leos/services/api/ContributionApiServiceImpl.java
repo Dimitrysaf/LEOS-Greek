@@ -81,9 +81,9 @@ import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -382,7 +382,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 );
                 CollectionContextService context = proposalContextProvider.get();
                 context.useProposal(proposal);
-                context.usePurpose(StringEscapeUtils.unescapeXml(proposalService.getPurposeFromXml(xmlContent)));
+                context.usePurpose(proposalService.getPurposeFromXml(xmlContent));
                 context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
                 String comment = messageHelper.getMessage("operation.docpurpose.updated");
                 context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
@@ -510,15 +510,13 @@ public class ContributionApiServiceImpl implements ContributionApiService {
 
     private String getProposalTitle(Proposal proposal) {
         ProposalMetadata proposalMetadata = proposal.getMetadata().get();
-        StringBuilder proposalTitle = new StringBuilder(proposalMetadata.getStage()).append(" ");
-        proposalTitle.append(proposalMetadata.getType()).append(" ");
-        proposalTitle.append(proposalMetadata.getPurpose()).append(" ");
-
-        String title = proposalTitle.toString();
+        String title = proposalMetadata.getStage() + " " +
+                proposalMetadata.getType() + " " +
+                proposalMetadata.getPurpose() + " ";
         // replace the del and ins tags as they were being accepted
         title = title.replaceAll("<del[^>]*?>[\\s\\S]*?<\\/del>", "");
         title = title.replaceAll("<\\/?ins[^>]*?>", "");
-        return title;
+        return StringEscapeUtils.unescapeXml(title);
     }
 
     @Override

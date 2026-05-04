@@ -32,8 +32,8 @@ import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.user.UserHelperAPI;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

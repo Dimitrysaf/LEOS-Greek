@@ -5,8 +5,8 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfig.Attribute;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XmlUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -191,7 +191,7 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
     }
 
     private void updateNode(Node node, String value) {
-        node.setTextContent(value);
+        node.setTextContent(StringEscapeUtils.unescapeXml(value));
     }
 
     private void createComponentNode(Document document, String xPath, List<Attribute> configAttributes, String value) {

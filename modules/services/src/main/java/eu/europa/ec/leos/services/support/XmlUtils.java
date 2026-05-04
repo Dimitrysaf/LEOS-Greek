@@ -7,6 +7,7 @@ import eu.europa.ec.leos.xml.LeosDocumentBuilderFactory;
 import eu.europa.ec.leos.xml.LeosTransformerFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
+import org.apache.commons.text.StringEscapeUtils;
 import org.jaxen.dom.DOMXPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,7 +109,7 @@ public class XmlUtils {
 
     public static Node addContentToNode(Node node, String newContent, boolean removeExisting) {
         if (removeExisting) {
-            node.setTextContent("");
+            node.setTextContent(EMPTY_STRING);
         }
         String nodeAsString = nodeToString(node);
         nodeAsString = removeSelfClosingElements(nodeAsString);
@@ -1270,14 +1271,13 @@ public class XmlUtils {
 
     public static Element createElementWithAknNS(Document document, String elementName, String elementContent) {
         Element element = document.createElementNS(NAMESPACE_AKN_URI, elementName);
-//        removeAttribute(element, "xmlns:leos");
-        element.setTextContent(elementContent);
+        element.setTextContent(StringEscapeUtils.unescapeXml(elementContent));
         return element;
     }
 
     public static Element createElement(Document document, String elementName, String elementContent) {
         Element element = document.createElement(elementName);
-        element.setTextContent(elementContent);
+        element.setTextContent(StringEscapeUtils.unescapeXml(elementContent));
         return element;
     }
 
