@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.services.utils.LegUtils;
 import jakarta.inject.Provider;
 
@@ -52,6 +53,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     private SecurityContext securityContext;
 
     private CollectionUrlBuilder urlBuilder;
+    private final LanguageHelper languageHelper;
     private MessageHelper messageHelper;
     private CloneContext cloneContext;
 
@@ -66,6 +68,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             ProposalConverterService proposalConverterService,
             NotificationService notificationService,
             SecurityContext securityContext, CollectionUrlBuilder urlBuilder,
+            LanguageHelper languageHelper,
             MessageHelper messageHelper,
             CloneContext cloneContext) {
         this.proposalContextProvider = proposalContextProvider;
@@ -75,6 +78,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         this.notificationService = notificationService;
         this.securityContext = securityContext;
         this.urlBuilder = urlBuilder;
+        this.languageHelper = languageHelper;
         this.messageHelper = messageHelper;
         this.cloneContext = cloneContext;
     }
@@ -123,6 +127,8 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             context.useEeaRelevance(documentVO.getMetadata().isEeaRelevance());
             context.useConfidentiality(documentVO.getMetadata().getConfidentiality());
             context.useNonSensitivityTitle(documentVO.getMetadata().getNonSensitivityTitle());
+            String language = documentVO.getMetadata().getLanguage();
+            languageHelper.setProposalLanguageTag(language != null ? language.toLowerCase() : null);
             context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
             context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
             context.useLanguage(documentVO.getMetadata().getLanguage());
@@ -168,6 +174,8 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             context.useEeaRelevance(documentVO.getMetadata().isEeaRelevance());
             context.useCustomTemplateAct(documentVO.getMetadata().isCustomTemplateAct());
             context.useFromCustomTemplate(documentVO.getMetadata().isFromCustomTemplate());
+            String language = documentVO.getMetadata().getLanguage();
+            languageHelper.setProposalLanguageTag(language != null ? language.toLowerCase() : null);
             context.useActionMessage(ContextActionService.COPY_CONTENT, messageHelper.getMessage("operation.copy.content"));
             context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
             context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
@@ -197,6 +205,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
 
         CollectionContextService context = proposalContextProvider.get();
+        languageHelper.setProposalLanguageTag(language != null ? language.toLowerCase() : null);
         context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
         context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
         context.useDocument(propDocument);

@@ -1356,12 +1356,13 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.useTemplate(bill);
                 billContext.usePurpose(metadata.getPurpose());
                 billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED));
+                String language = metadata.getLanguage();
+                languageHelper.setProposalLanguageTag(language.toLowerCase());
                 billContext.useActionMessage(ContextActionService.ANNEX_ADDED, messageHelper.getMessage("collection.block.annex.added"));
                 billContext.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
 
                 CatalogItem templateItem = templateService.getTemplateItem(metadata.getDocTemplate());
                 String annexTemplate = templateItem.getItems().get(annexType.ordinal()).getId();
-                String language = metadata.getLanguage();
                 billContext.useAnnexTemplate(annexTemplate + LanguageMapUtils.getLanguageTemplateSuffix(language));
                 billContext.useLanguage(language);
                 billContext.useCustomTemplateAct(metadata.isCustomTemplateAct());
@@ -1735,6 +1736,8 @@ public abstract class ApiServiceImpl implements ApiService {
                     packageService.findDocumentsByPackageId(packageId, LegDocument.class, false, true).stream()
                             .max(Comparator.comparing(LegDocument::getInitialCreationInstant)).orElse(null) :
                     null;
+            String language = proposal.getMetadata().get().getLanguage();
+            languageHelper.setProposalLanguageTag(language.toLowerCase());
             final String versionComment = messageHelper.getMessage("milestone.versionComment");
             createMajorVersions(proposalRef, correctedMilestone, versionComment, collectionContextProvider.get());
             LegDocument legDocument = milestoneService.createMilestone(proposalId, correctedMilestone);
@@ -1888,6 +1891,8 @@ public abstract class ApiServiceImpl implements ApiService {
     private boolean hasNotChanged(Proposal proposal) {
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         List<XmlDocument> proposalDocs = packageService.findDocumentsByPackageId(leosPackage.getId(), XmlDocument.class, false, false);
+        String language = proposal.getMetadata().get().getLanguage();
+        languageHelper.setProposalLanguageTag(language.toLowerCase());
         final String versionComment = messageHelper.getMessage("milestone.versionComment");
         for (XmlDocument doc: proposalDocs) {
             if (!doc.getVersionType().equals(VersionType.MAJOR) || !doc.getVersionComment().equals(versionComment)) {
