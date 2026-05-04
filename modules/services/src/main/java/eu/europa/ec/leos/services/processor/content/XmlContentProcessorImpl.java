@@ -52,10 +52,10 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import io.atlassian.fugue.Pair;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,8 +89,8 @@ import static eu.europa.ec.leos.services.support.LeosXmlUtils.getTitleValue;
 import static eu.europa.ec.leos.services.support.XmlUtils.*;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 import static java.util.Objects.isNull;
-import static org.apache.commons.lang3.StringEscapeUtils.escapeXml10;
 import static org.apache.commons.lang3.StringUtils.normalizeSpace;
+import static org.apache.commons.text.StringEscapeUtils.escapeXml10;
 
 public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 

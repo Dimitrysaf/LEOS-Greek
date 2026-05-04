@@ -11,6 +11,7 @@ import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.user.UserService;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -74,9 +75,8 @@ public class CollaborationEmailNotificationProcessor implements EmailNotificatio
     }
 
     private String clearTrackChangesFromString(String stringWithTrackChanges) {
-        stringWithTrackChanges = "<clear xmlns:leos=\"urn:eu:europa:ec:leos\">" + stringWithTrackChanges + "</clear>";
-        return new String(xmlContentProcessor.cleanTrackChanges(stringWithTrackChanges.getBytes()))
-                .replace("<clear xmlns:leos=\"urn:eu:europa:ec:leos\">", "").replace("</clear>", "");
+        return StringEscapeUtils.unescapeXml(stringWithTrackChanges.replaceAll("<del[^>]*?>[\\s\\S]*?<\\/del>", "")
+                .replaceAll("<\\/?ins[^>]*?>", ""));
     }
 
     private void buildEmailSubject(CollaboratorEmailNotification collaborationEmailNotification) {
@@ -111,9 +111,8 @@ public class CollaborationEmailNotificationProcessor implements EmailNotificatio
 
     private String getProposalTitle(Proposal proposal) {
         ProposalMetadata proposalMetadata = proposal.getMetadata().get();
-        StringBuilder proposalTitle = new StringBuilder(proposalMetadata.getStage()).append(" ");
-        proposalTitle.append(proposalMetadata.getType()).append(" ");
-        proposalTitle.append(proposalMetadata.getPurpose()).append(" ");
-        return proposalTitle.toString();
+        return proposalMetadata.getStage() + " " +
+                proposalMetadata.getType() + " " +
+                proposalMetadata.getPurpose() + " ";
     }
 }
