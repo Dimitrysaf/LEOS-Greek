@@ -149,6 +149,12 @@ public class PackageController implements PackageApi {
     }
 
     @Override
+    public ResponseEntity<LeosDocumentList> findLegDocumentsByDocumentIds(List<String> documentIds) {
+        LeosDocumentList docs = new LeosDocumentList(packageService.findLegDocumentsByDocumentIds(documentIds));
+        return ResponseEntity.ok(docs);
+    }
+
+    @Override
     public ResponseEntity<List<PackagesRecentlyChanged>> findRecentPackagesForUser(String userName, BigDecimal numberOfRecentPackages) throws RepositoryException {
         return new ResponseEntity<>(packageService.findRecentPackagesForUser(userName, numberOfRecentPackages), HttpStatus.OK);
     }
