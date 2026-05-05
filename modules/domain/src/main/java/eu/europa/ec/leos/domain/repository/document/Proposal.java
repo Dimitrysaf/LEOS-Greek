@@ -110,5 +110,4 @@ public final class Proposal extends XmlDocument {
     }
 
 
-
 }
