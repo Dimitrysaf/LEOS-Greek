@@ -351,18 +351,25 @@ public class LegServiceImpl implements LegService {
     }
 
     private void addLegDocumentVoToList(String legStatus, Proposal proposal, List<LegDocumentVO> legDocumentVOs) {
+        long t0 = System.currentTimeMillis();
         LegDocumentVO legDocumentVO = getLegDocumentVO(proposal, legStatus);
-        if(legDocumentVO != null) {
+        LOG.info("{} addLegDocumentVoToList proposalId={} found={} durationMs={}",
+                SEARCH_PERF, proposal.getId(), legDocumentVO != null, System.currentTimeMillis() - t0);
+        if (legDocumentVO != null) {
             legDocumentVOs.add(legDocumentVO);
         }
     }
 
     private void addLegDocumentVoToList(String legStatus, Proposal proposal, List<LegDocument> legs, List<LegDocumentVO> legDocumentVOs) {
+        long t0 = System.currentTimeMillis();
         LegDocumentVO legDocumentVO = getLegDocumentVO(proposal, legStatus, legs);
+        LOG.info("{} addLegDocumentVoToList proposalId={} found={} durationMs={}",
+                SEARCH_PERF, proposal.getId(), legDocumentVO != null, System.currentTimeMillis() - t0);
         if (legDocumentVO != null) {
             legDocumentVOs.add(legDocumentVO);
         }
     }
+
 
     @Override
     public String fetchFeedbackRepliesByID(String documentRef, String proposalRef, String legFileId, String storedAnnots) {
@@ -376,20 +383,20 @@ public class LegServiceImpl implements LegService {
     }
 
     private LegDocumentVO getLegDocumentVO(Proposal proposal, String legStatus) {
-        LegDocumentVO legDocumentVO = null;
+        long tLeg = System.currentTimeMillis();
         List<LegDocument> legDocuments = this.findLegDocumentByAnyDocumentId(proposal.getId());
-        if (!legDocuments.isEmpty()) {
-            legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
-            LegDocument leg = legDocuments.get(0);
-            if(StringUtils.isEmpty(legStatus)) {
-                legDocumentVO = populateLegDocumentVO(proposal, leg);
-            } else {
-                if(leg.getStatus().name().equals(legStatus)) {
-                    legDocumentVO = populateLegDocumentVO(proposal, leg);
-                }
-            }
+        LOG.info("{} findLegDocumentByAnyDocumentId proposalId={} legCount={} durationMs={}",
+                SEARCH_PERF, proposal.getId(), legDocuments.size(), System.currentTimeMillis() - tLeg);
+
+        if (legDocuments.isEmpty()) {
+            return null;
         }
-        return legDocumentVO;
+        legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
+        LegDocument leg = legDocuments.get(0);
+        if (StringUtils.isEmpty(legStatus) || leg.getStatus().name().equals(legStatus)) {
+            return populateLegDocumentVO(proposal, leg);
+        }
+        return null;
     }
 
     private LegDocumentVO getLegDocumentVO(Proposal proposal, String legStatus, List<LegDocument> legDocuments) {
@@ -1487,8 +1494,16 @@ public class LegServiceImpl implements LegService {
 
     @Override
     public List<LegDocument> findLegDocumentByAnyDocumentId(String documentId) {
+        long tPkg = System.currentTimeMillis();
         LeosPackage leosPackage = packageRepository.findPackageByDocumentId(documentId);
-        return packageRepository.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, false);
+        LOG.info("{} findPackageByDocumentId documentId={} packageId={} durationMs={}",
+                SEARCH_PERF, documentId, leosPackage.getId(), System.currentTimeMillis() - tPkg);
+
+        long tDocs = System.currentTimeMillis();
+        List<LegDocument> result = packageRepository.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, false);
+        LOG.info("{} findDocumentsByPackageId packageId={} legCount={} durationMs={}",
+                SEARCH_PERF, leosPackage.getId(), result.size(), System.currentTimeMillis() - tDocs);
+        return result;
     }
 
     @Override
