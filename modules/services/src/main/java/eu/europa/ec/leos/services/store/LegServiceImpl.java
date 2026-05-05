@@ -321,10 +321,10 @@ public class LegServiceImpl implements LegService {
                     SEARCH_PERF, proposalIds.size(), allLegDocuments.size(), System.currentTimeMillis() - tBatch);
 
             Map<String, List<LegDocument>> legsByProposalId = allLegDocuments.stream()
-                    .collect(Collectors.groupingBy(LegDocument::getDocumentId));
+                    .collect(Collectors.groupingBy(LegDocument::getPackageId));
 
             for (Proposal proposal : proposals) {
-                List<LegDocument> legs = legsByProposalId.getOrDefault(proposal.getId(), Collections.emptyList());
+                List<LegDocument> legs = legsByProposalId.getOrDefault(proposal.getPackageId(), Collections.emptyList());
                 addLegDocumentVoToList(legStatus, proposal, legs, legDocumentVOs);
             }
         }

@@ -293,8 +293,8 @@ public class PackageServiceImpl implements PackageService {
         }
         StringBuilder docQuery = new StringBuilder(
                 "SELECT d FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) " +
-                "AND d.isLatestVersion = true " +
-                "AND d.packageId IN :packageIds");
+                        "AND d.isLatestVersion = true " +
+                        "AND d.packageId IN :packageIds");
         if (categories != null) {
             docQuery.append(" AND d.categoryCode IN (:categories)");
         }
@@ -314,7 +314,7 @@ public class PackageServiceImpl implements PackageService {
             return Collections.emptyList();
         }
         String milestoneQuery = "SELECT d FROM MilestoneV d WHERE d.packageId IN " +
-                "(SELECT DISTINCT dv.packageId FROM DocumentV dv WHERE dv.id IN :ids AND dv.isLatestVersion = true) " +
+                "(SELECT DISTINCT dv.packageId FROM DocumentV dv WHERE dv.versionId IN :ids AND dv.isLatestVersion = true) " +
                 "AND d.categoryCode = 'LEG'";
         List<BigDecimal> ids = documentIds.stream().map(BigDecimal::new).collect(Collectors.toList());
         List<MilestoneV> milestones = entityManager.createQuery(milestoneQuery, MilestoneV.class)
@@ -322,6 +322,7 @@ public class PackageServiceImpl implements PackageService {
                 .getResultList();
         return ConversionUtils.buildLegDocuments(milestones, documentMilestoneRepository, documentMilestoneListRepository, false);
     }
+
 
     public long getDocumentCountByPackageName(final String packageName, final Set<String> categories) {
         long documentCount = 0;
