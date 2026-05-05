@@ -370,7 +370,6 @@ public class LegServiceImpl implements LegService {
         }
     }
 
-
     @Override
     public String fetchFeedbackRepliesByID(String documentRef, String proposalRef, String legFileId, String storedAnnots) {
         LegDocument legDoc = findLegDocumentById(legFileId);
