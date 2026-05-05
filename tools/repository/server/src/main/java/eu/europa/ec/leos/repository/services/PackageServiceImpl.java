@@ -323,7 +323,6 @@ public class PackageServiceImpl implements PackageService {
         return ConversionUtils.buildLegDocuments(milestones, documentMilestoneRepository, documentMilestoneListRepository, false);
     }
 
-
     public long getDocumentCountByPackageName(final String packageName, final Set<String> categories) {
         long documentCount = 0;
         for (String categoryCode : categories) {
