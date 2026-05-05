@@ -259,7 +259,6 @@ public interface PackageRepository {
 
     List<LegDocument> findLegDocumentsByDocumentIds(List<String> documentIds);
 
-
     /**
      * Finds leg documents with the specified status.
      *
