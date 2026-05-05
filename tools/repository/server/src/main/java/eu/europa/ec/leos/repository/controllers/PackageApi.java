@@ -123,6 +123,11 @@ public interface PackageApi {
     @GetMapping(path = "/package/find-by-document-ref/{docRef}")
     ResponseEntity<Package> findPackageByDocumentRef(@Parameter(description = "Document reference", required = true) @PathVariable("docRef") String docRef) throws RepositoryException;
 
+    @PostMapping(path = "/package/find-leg-documents-by-document-ids",
+            consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    ResponseEntity<LeosDocumentList> findLegDocumentsByDocumentIds(@RequestBody List<String> documentIds);
+
     @Operation(summary = "Find recent packages for user", description = "Retrieves recently changed packages for a user")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Recent packages retrieved successfully")

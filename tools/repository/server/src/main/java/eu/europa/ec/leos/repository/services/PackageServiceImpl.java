@@ -51,6 +51,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class PackageServiceImpl implements PackageService {
@@ -283,6 +284,43 @@ public class PackageServiceImpl implements PackageService {
                 , fetchContent);
         xmlDocs.addAll(ConversionUtils.buildLegDocuments(milestones, documentMilestoneRepository, documentMilestoneListRepository, fetchContent));
         return xmlDocs;
+    }
+
+    @Override
+    public List<LeosDocument> findDocumentsByPackageIds(List<BigDecimal> packageIds, Set<String> categories) {
+        if (packageIds == null || packageIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        StringBuilder docQuery = new StringBuilder(
+                "SELECT d FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) " +
+                "AND d.isLatestVersion = true " +
+                "AND d.packageId IN :packageIds");
+        if (categories != null) {
+            docQuery.append(" AND d.categoryCode IN (:categories)");
+        }
+        Query query = entityManager.createQuery(docQuery.toString())
+                .setParameter("packageIds", packageIds);
+        if (categories != null) {
+            query.setParameter("categories", categories);
+        }
+        List<DocumentV> docs = query.getResultList();
+        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository,
+                Collections.emptyList(), documentContentRepository, docs, false);
+    }
+
+    @Override
+    public List<LeosDocument> findLegDocumentsByDocumentIds(List<String> documentIds) {
+        if (documentIds == null || documentIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        String milestoneQuery = "SELECT d FROM MilestoneV d WHERE d.packageId IN " +
+                "(SELECT DISTINCT dv.packageId FROM DocumentV dv WHERE dv.id IN :ids AND dv.isLatestVersion = true) " +
+                "AND d.categoryCode = 'LEG'";
+        List<BigDecimal> ids = documentIds.stream().map(BigDecimal::new).collect(Collectors.toList());
+        List<MilestoneV> milestones = entityManager.createQuery(milestoneQuery, MilestoneV.class)
+                .setParameter("ids", ids)
+                .getResultList();
+        return ConversionUtils.buildLegDocuments(milestones, documentMilestoneRepository, documentMilestoneListRepository, false);
     }
 
     public long getDocumentCountByPackageName(final String packageName, final Set<String> categories) {

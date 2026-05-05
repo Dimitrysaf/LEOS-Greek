@@ -96,6 +96,8 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestFindDocumentsbyPackageNameURI;
     @Value("${leos.rest.repository.find.documents.package.id.uri}")
     private String leosRestFindDocumentsbyPackageIdURI;
+    @Value("${leos.rest.repository.find.leg.documents.by.document.ids.uri}")
+    private String leosRestFindLegDocumentsByDocumentIdsURI;
     @Value("${leos.rest.repository.find.document.name}")
     private String leosRestFindDocumentbyNameURI;
     @Value("${leos.rest.repository.find.document.version.id}")
@@ -538,6 +540,12 @@ public class RestRepository extends AbstractRestClient {
         String url = getUrl(leosRestFindDocumentsByUserIdEntityNameURI + "?role={role}&category={category}");
         LeosDocumentList resp = getEntity(url, LeosDocumentList.class, userId, joinedEntities, role, category);
         return resp;
+    }
+
+    LeosDocumentList findLegDocumentsByDocumentIds(List<String> documentIds) {
+        LOGGER.trace("Finding leg documents by document ids, count={}", documentIds.size());
+        String url = getUrl(leosRestFindLegDocumentsByDocumentIdsURI);
+        return postEntity(url, documentIds, LeosDocumentList.class);
     }
 
     Integer getAllMinorsCountForIntermediate(String docRef, String currIntVersion) {

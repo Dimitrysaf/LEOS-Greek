@@ -422,6 +422,8 @@ public interface LeosRepository {
      */
     <D extends LeosDocument> List<D> findDocumentsByUserIdOrEntity(String userId, List<String> entities, Class<? extends D> type, String leosAuthority);
 
+    List<LegDocument> findLegDocumentsByDocumentIds(List<String> documentIds);
+
     <D extends LeosDocument> Stream<D> findPagedDocumentsByParentPath(String path, Class<? extends D> type, boolean descendants, boolean fetchContent,
                                                                       int startIndex, int maxResults, QueryFilter workspaceFilter);
 

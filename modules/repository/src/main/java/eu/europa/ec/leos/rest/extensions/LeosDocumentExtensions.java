@@ -326,6 +326,7 @@ public class LeosDocumentExtensions {
                 getContainedDocuments(d),
                 d.getRef(),
                 d.getPackageId(),
+                d.getDocumentId(),
                 getMetadataCustomTemplateAct(d));
     }
 

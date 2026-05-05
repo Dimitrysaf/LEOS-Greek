@@ -19,6 +19,7 @@ public final class LegDocument extends LeosDocument {
     private final List<String> containedDocuments;
     private final String milestoneRef;
     private final String packageId;
+    private final String documentId;
     private final boolean customTemplateAct;
 
     public LegDocument(String id, String name, String createdBy, Instant creationInstant, String lastModifiedBy,
@@ -26,7 +27,7 @@ public final class LegDocument extends LeosDocument {
                        String versionComment, VersionType versionType, boolean isLatestVersion, List<String> milestoneComments,
                        Option<Content> content, String initialCreatedBy, Instant initialCreationInstant,
                        String jobId, Instant jobDate, LeosLegStatus status, List<String> containedDocuments, String milestoneRef,
-                       String packageId, boolean customTemplateAct) {
+                       String packageId, String documentId, boolean customTemplateAct) {
 
         super(LeosCategory.LEG, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
                 versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, false, content);
@@ -39,6 +40,7 @@ public final class LegDocument extends LeosDocument {
         this.containedDocuments = containedDocuments;
         this.milestoneRef = milestoneRef;
         this.packageId = packageId;
+        this.documentId = documentId;
         this.customTemplateAct = customTemplateAct;
     }
 
@@ -76,6 +78,10 @@ public final class LegDocument extends LeosDocument {
 
     public String getPackageId() {
         return packageId;
+    }
+
+    public String getDocumentId() {
+        return documentId;
     }
 
     public boolean isCustomTemplateAct() {
