@@ -166,6 +166,14 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     @Override
+    public void updateAnnex(Annex annex, AnnexMetadata metadata, VersionType versionType, String comment, byte[] foreignAnnexRenditionContent, String foreignAnnexRenditionOriginalFilename) {
+        LOG.trace("Updating Annex... [id={}, versionType={}, comment={}]", annex.getId(), versionType, comment);
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        annexRepository.updateAnnex(annex.getId(), metadata, versionType, comment, foreignAnnexRenditionContent, foreignAnnexRenditionOriginalFilename);
+        LOG.trace("Updated Annex ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+    }
+
+    @Override
     public Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, AnnexMetadata metadata, VersionType versionType, String comment, boolean updateInternalRefs) {
         LOG.trace("Updating Annex... [id={}, updatedMetadata={}, versionType={}, comment={}]", annex.getId(), metadata, versionType, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();

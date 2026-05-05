@@ -37,6 +37,8 @@ public class LeosDocument {
     private byte[] binarySource;
     private String originalFilename;
     private String binarySourceSize;
+    private byte[] foreignRenditionSource;
+    private String foreignRenditionOriginalFilename;
     private VersionType versionType;
     private Boolean isLatestVersion = false;
     private String versionLabel;
@@ -280,6 +282,22 @@ public class LeosDocument {
 
     public void setPkgLastUpdatedBy(String pkgLastUpdatedBy) {
         this.pkgLastUpdatedBy = pkgLastUpdatedBy;
+    }
+
+    public byte[] getForeignRenditionSource() {
+        return this.foreignRenditionSource;
+    }
+
+    public void setForeignRenditionSource(final byte[] foreignRenditionSource) {
+        this.foreignRenditionSource = foreignRenditionSource;
+    }
+
+    public String getForeignRenditionOriginalFilename() {
+        return this.foreignRenditionOriginalFilename;
+    }
+
+    public void setForeignRenditionOriginalFilename(final String foreignRenditionOriginalFilename) {
+        this.foreignRenditionOriginalFilename = foreignRenditionOriginalFilename;
     }
 
 }

@@ -19,6 +19,7 @@ import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,7 +37,8 @@ public interface DocumentService {
 
     LeosDocument updateDocument(final BigDecimal versionId, Map<String, ?> properties,
                                 VersionType versionType, String category, byte[] contentBytes, String comments, String userId,
-                                byte[] binaryContent, String originalFilename, String binaryContentSize) throws Exception;
+                                byte[] binaryContent, String originalFilename, String binaryContentSize,
+                                byte[] foreignRenditionContent, String foreignRenditionOriginalFilename) throws Exception;
 
     LeosDocument updateDocument(String ref, final BigDecimal versionId, Map<String, ?> metadata, String userId, boolean latest) throws Exception;
 

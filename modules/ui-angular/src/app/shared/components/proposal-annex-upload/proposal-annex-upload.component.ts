@@ -4,6 +4,8 @@ import {ProposalDetailsService} from "@/features/proposal-view/services/proposal
 import {FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
 import {noWhitespaceValidator} from "@/shared/utils/validators";
 import {Document} from "@/shared";
+import {getFileExtension, getFileName} from '@/shared/utils/file.utils';
+
 @Component({
   selector: 'app-proposal-annex-upload',
   templateUrl: './proposal-annex-upload.component.html',
@@ -43,7 +45,7 @@ export class ProposalAnnexUploadComponent {
   }
 
   isFormValid() {
-    let annexWithSameName = this.childDocuments?.find(e => e.category === 'BILL')?.childDocuments?.find(e => e.category === 'ANNEX' && e.originalFilename.toUpperCase() === (this.renameFileForm.get('renameFile').value + this.fileExtension).toUpperCase());
+    let annexWithSameName = this.childDocuments?.find(e => e.category === 'BILL')?.childDocuments?.find(e => e.category === 'ANNEX' && getFileExtension(e.originalFilename) === this.fileExtension.substring(1).toLowerCase().trim() && getFileName(e.originalFilename) === (this.renameFileForm.get('renameFile').value).toLowerCase().trim());
     return this.renameFileForm.valid && !annexWithSameName;
   }
 

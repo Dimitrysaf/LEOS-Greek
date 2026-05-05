@@ -231,6 +231,36 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
+  uploadAnnexRendition(annexId: string, data: File) {
+    const formData: FormData = new FormData();
+    this.loadingService.setLoading(true);
+    formData.append('foreignAnnexRendition', data);
+    this.http
+      .put<any>(
+        `${apiBaseUrl}/secured/proposals/${this.proposalRef}/upload-annex-rendition/${annexId}`,
+        formData
+      )
+      .subscribe({
+        next: (val) => {
+          this.setProposalRef(this.proposalRef);
+          this.loadingService.setLoading(false);
+        },
+        error: (res) => {
+          this.setProposalRef(this.proposalRef);
+          this.loadingService.setLoading(false);
+          this.exceptionResponseVO = res.error;
+          if (this.exceptionResponseVO.errorCode === ErrorCode.CA001) {
+            this.dialogService.openDialog({
+              title: this.translateService.instant(this.exceptionResponseVO.messageKey + '.title'),
+              content: this.translateService.instant(this.exceptionResponseVO.messageKey + '.message'),
+              hasDismissButton: false,
+            });
+            this.growlService.clearGrowl();
+          }
+        }
+      });
+  }
+
   updateAnnexTitle(annexId: string, annexTitle: string) {
     this.loadingService.setLoading(true);
     this.http

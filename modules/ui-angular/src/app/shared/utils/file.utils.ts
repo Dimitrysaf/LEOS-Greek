@@ -20,3 +20,19 @@ export const downloadBlob = (
 
   document.body.removeChild(link);
 };
+
+export const getFileExtension = (
+  filename: string
+) => {
+  if (!filename) return '';
+  if (filename.lastIndexOf('.') === -1) return '';
+  return filename.slice((filename.lastIndexOf('.') + 1)).toLowerCase().trim();
+};
+
+export const getFileName = (
+  filename: string
+) => {
+  if (!filename) return '';
+  if (filename.lastIndexOf('.') === -1) return filename;
+  return filename.substring(0, filename.lastIndexOf('.')).toLowerCase().trim();
+};

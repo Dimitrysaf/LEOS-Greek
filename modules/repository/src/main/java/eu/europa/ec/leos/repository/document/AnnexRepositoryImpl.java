@@ -102,6 +102,12 @@ public abstract class AnnexRepositoryImpl implements AnnexRepository {
     }
 
     @Override
+    public void updateAnnex(String id, AnnexMetadata metadata, VersionType versionType, String comment, byte[] foreignAnnexRenditionContent, String foreignAnnexRenditionOriginalFilename) {
+        logger.debug("Updating Annex metadata and content... [id=" + id + "]");
+        leosRepository.updateDocument(id, metadata, versionType, comment, Annex.class, foreignAnnexRenditionContent, foreignAnnexRenditionOriginalFilename);
+    }
+
+    @Override
     public Annex updateAnnex(String id, AnnexMetadata metadata, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize) {
         logger.debug("Updating Annex metadata and content... [id=" + id + "]");
         return leosRepository.updateDocument(id, metadata, content, versionType, comment, Annex.class, binaryContent, originalFilename, binaryContentSize);

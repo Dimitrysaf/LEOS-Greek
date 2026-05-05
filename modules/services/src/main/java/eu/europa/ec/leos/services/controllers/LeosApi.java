@@ -193,6 +193,18 @@ public interface LeosApi {
     public ResponseEntity<Object> createProposalForeignAnnex(@PathVariable("proposalRef") String proposalRef,
             @RequestParam("foreignAnnexFile") MultipartFile foreignAnnexFile) throws IOException;
 
+    @Operation(summary = "Upload annex rendition", description = "Upload the annex rendition of a specific annex document")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Title updated successfully"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @RequestMapping(value = "/secured/proposals/{proposalRef}/upload-annex-rendition/{annexId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    ResponseEntity<Object> uploadForeignAnnexRendition(
+            @Parameter(description = "Proposal reference") @PathVariable("proposalRef") String proposalRef,
+            @Parameter(description = "Annex ID") @PathVariable("annexId") String annexId,
+            @Parameter(description = "Foreign Annex Rendition") @RequestParam("foreignAnnexRendition") MultipartFile foreignAnnexRendition) throws IOException;
+
     @Operation(summary = "Update annex title", description = "Updates the title of a specific annex document")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Title updated successfully"),

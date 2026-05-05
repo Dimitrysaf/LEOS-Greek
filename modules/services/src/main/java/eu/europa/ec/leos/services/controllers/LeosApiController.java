@@ -36,7 +36,6 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.security.TokenService;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.api.ConfigService;
-import eu.europa.ec.leos.services.api.exception.LeosExceptionResponse;
 import eu.europa.ec.leos.services.coedition.handler.CoEditionInfoHandler;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
@@ -100,18 +99,17 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
 
-import static eu.europa.ec.leos.services.api.exception.ErrorCode.CA001;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
-import static eu.europa.ec.leos.services.support.XmlHelper.isValidFileNameForBinaryFile;
-import static eu.europa.ec.leos.services.support.XmlHelper.isValidSizeFileForBinaryFile;
-import static eu.europa.ec.leos.services.support.XmlHelper.isValidMimeTypeForBinaryFile;
-import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
-import static eu.europa.ec.leos.services.support.XmlHelper.isValidFileNameForZipFile;
-import static eu.europa.ec.leos.services.support.XmlHelper.isValidMimeTypeForLegFile;
+import static eu.europa.ec.leos.services.utils.FileUtils.isValidFileNameForZipFile;
+import static eu.europa.ec.leos.services.utils.FileUtils.isValidMimeTypeForLegFile;
+import static eu.europa.ec.leos.services.utils.FileUtils.isValidSizeFileForBinaryFile;
+import static eu.europa.ec.leos.services.utils.FileUtils.validateHybridDocument;
+import static eu.europa.ec.leos.services.utils.FileUtils.validatePath;
+import static eu.europa.ec.leos.services.utils.FileUtils.validateRenditionHybridDocument;
 
 @RestController
 @RequestMapping
@@ -581,25 +579,32 @@ public class LeosApiController implements LeosApi {
 
     @Override
     public ResponseEntity<Object> createProposalForeignAnnex(String proposalRef, MultipartFile foreignAnnexFile) throws IOException {
-        validatePath(FilenameUtils.normalize(foreignAnnexFile.getOriginalFilename()));
-        if (!isValidFileNameForBinaryFile(foreignAnnexFile.getOriginalFilename()) || !isValidMimeTypeForBinaryFile(foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename())) {
-            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.invalid.file");
-        }
-        if (!isValidSizeFileForBinaryFile(foreignAnnexFile.getSize())) {
-            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.max.size.error");
-        }
+        validateHybridDocument(foreignAnnexFile);
         proposalRef = encodeParam(proposalRef);
         this.apiService.createProposalAnnex(proposalRef, null, AnnexType.FOREIGN, foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename(), String.format("%.2f KB", foreignAnnexFile.getSize() / 1024.0));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @Override
+    public ResponseEntity<Object> uploadForeignAnnexRendition(String proposalRef, String annexId, MultipartFile foreignAnnexRendition) throws IOException {
+        validateRenditionHybridDocument(foreignAnnexRendition);
+        proposalRef = encodeParam(proposalRef);
+        annexId = encodeParam(annexId);
+        apiService.uploadForeignAnnexRendition(proposalRef, annexId, foreignAnnexRendition.getBytes(), foreignAnnexRendition.getOriginalFilename());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @Override
     public ResponseEntity<Object> updateAnnexTitle(String proposalRef, String annexId, String title) {
+        long currentTime = System.currentTimeMillis();
+        LOG.info("updateAnnexTitle");
         try {
             proposalRef = encodeParam(proposalRef);
             annexId = encodeParam(annexId);
             //            title = encodeParam(title);
             this.apiService.updateAnnexTitle(proposalRef, annexId, title);
+            long finalTime = System.currentTimeMillis();
+            LOG.info("updateAnnexTitle: " + (finalTime-currentTime));
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             LOG.error(ERROR_WHILE_CREATING_NEW_BILL_ANNEX + e.getMessage());
@@ -609,13 +614,7 @@ public class LeosApiController implements LeosApi {
 
     @Override
     public ResponseEntity<Object> updateForeignAnnex(String proposalRef,String annexId, MultipartFile foreignAnnexFile) throws IOException {
-        validatePath(FilenameUtils.normalize(foreignAnnexFile.getOriginalFilename()));
-        if (!isValidFileNameForBinaryFile(foreignAnnexFile.getOriginalFilename()) || !isValidMimeTypeForBinaryFile(foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename())) {
-            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.invalid.file");
-        }
-        if (!isValidSizeFileForBinaryFile(foreignAnnexFile.getSize())) {
-            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.max.size.error");
-        }
+        validateHybridDocument(foreignAnnexFile);
         proposalRef = encodeParam(proposalRef);
         annexId = encodeParam(annexId);
         this.apiService.updateForeignAnnex(proposalRef, annexId, foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename(), String.format("%.2f KB", foreignAnnexFile.getSize() / 1024.0));

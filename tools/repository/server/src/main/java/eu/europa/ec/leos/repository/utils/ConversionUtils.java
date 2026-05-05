@@ -175,16 +175,18 @@ public class ConversionUtils {
             Optional<DocumentContent> content = Optional.empty();
             String originalFilename = "";
             String binarySourceSize = "";
+            String foreignRenditionOriginalFilename = "";
             if (fetchContent) {
                 content = documentContentRepository.findDocumentContentByVersionId(doc.getVersionId());
             } else if (fetchBinarySimpleOnly) {
                 Optional<SimpleDocumentContentView> simpleDocumentContentView = documentContentRepository.findSimpleDocumentContentByVersionId(doc.getVersionId());
                 if (simpleDocumentContentView.isPresent()) {
                     originalFilename = simpleDocumentContentView.get().getOriginalFilename();
-                    binarySourceSize = simpleDocumentContentView.get().getBinaryContentSize();
+                    binarySourceSize = simpleDocumentContentView.get().getBinaryContentSize() == null ? null : String.format("%.2f KB", simpleDocumentContentView.get().getBinaryContentSize() / 1024.0).replace('.', ',');
+                    foreignRenditionOriginalFilename = simpleDocumentContentView.get().getForeignRenditionOriginalFilename();
                 }
             }
-            convertedDocs.add(content.isPresent() ? new LeosDocument(doc, content.get(), collaborators, docProps) : new LeosDocument(doc, originalFilename, binarySourceSize, collaborators, docProps));
+            convertedDocs.add(content.isPresent() ? new LeosDocument(doc, content.get(), collaborators, docProps) : new LeosDocument(doc, originalFilename, binarySourceSize, foreignRenditionOriginalFilename, collaborators, docProps));
         }
 
         return convertedDocs;

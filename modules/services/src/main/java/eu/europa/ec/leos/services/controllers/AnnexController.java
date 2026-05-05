@@ -52,7 +52,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
-import static eu.europa.ec.leos.services.support.XmlHelper.getMimeType;
+import static eu.europa.ec.leos.services.utils.FileUtils.getFileExtension;
+import static eu.europa.ec.leos.services.utils.FileUtils.getMimeType;
 
 @RestController
 @RequestMapping("/secured/annex/")
@@ -318,7 +319,7 @@ public class AnnexController implements AnnexApi {
             documentRef = encodeParam(documentRef);
             DocumentViewResponse annex = this.annexApiService.getDocument(documentRef);
             if (annex.getBinaryFile() != null) {
-                String extension = annex.getOriginalFilename().substring(annex.getOriginalFilename().lastIndexOf(".") + 1).toUpperCase();
+                String extension = getFileExtension(annex.getOriginalFilename());
                 String mimeType = getMimeType(extension);
                 return ResponseEntity.ok()
                         .contentType(MediaType.parseMediaType(mimeType))

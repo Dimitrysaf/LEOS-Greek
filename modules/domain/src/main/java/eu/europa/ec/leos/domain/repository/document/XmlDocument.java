@@ -22,6 +22,8 @@ public abstract class XmlDocument extends LeosDocument implements Securable {
     private byte[] binaryContent;
     private String originalFilename;
     private String binaryContentSize;
+    private byte[] foreignRenditionSource;
+    private String foreignRenditionOriginalFilename;
     @Getter
     @Setter
     private String originRef;
@@ -51,7 +53,8 @@ public abstract class XmlDocument extends LeosDocument implements Securable {
             String versionSeriesId, String cmisVersionLabel, String versionLabel, String versionComment,
             VersionType versionType, boolean isLatestVersion, String title,
             List<Collaborator> collaborators, List<String> milestoneComments, Option<Content> content,
-            boolean trackChangesEnabled, boolean isVersionArchived, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+            boolean trackChangesEnabled, boolean isVersionArchived, byte[] binaryContent, String originalFilename, String binaryContentSize,
+            byte[] foreignRenditionSource, String foreignRenditionOriginalFilename) {
         super(category, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant, versionSeriesId,
                 cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, isVersionArchived, content);
         this.securityData = new SecurityData(collaborators);
@@ -61,6 +64,8 @@ public abstract class XmlDocument extends LeosDocument implements Securable {
         this.binaryContent = binaryContent;
         this.originalFilename = originalFilename;
         this.binaryContentSize = binaryContentSize;
+        this.foreignRenditionSource = foreignRenditionSource;
+        this.foreignRenditionOriginalFilename = foreignRenditionOriginalFilename;
     }
 
     protected XmlDocument(LeosCategory category, String id, String name, String createdBy,
@@ -107,6 +112,22 @@ public abstract class XmlDocument extends LeosDocument implements Securable {
 
     public String getBinaryContentSize() {
         return binaryContentSize;
+    }
+
+    public byte[] getForeignRenditionSource() {
+        return this.foreignRenditionSource;
+    }
+
+    public void setForeignRenditionSource(final byte[] foreignRenditionSource) {
+        this.foreignRenditionSource = foreignRenditionSource;
+    }
+
+    public String getForeignRenditionOriginalFilename() {
+        return this.foreignRenditionOriginalFilename;
+    }
+
+    public void setForeignRenditionOriginalFilename(final String foreignRenditionOriginalFilename) {
+        this.foreignRenditionOriginalFilename = foreignRenditionOriginalFilename;
     }
 
 }

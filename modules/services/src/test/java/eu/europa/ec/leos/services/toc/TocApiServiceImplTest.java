@@ -107,7 +107,7 @@ public class TocApiServiceImplTest extends LeosTest {
         Annex annex = new Annex("27", "ANNEX-cm03pntv70000i0886z718qdc-en.xml", "jane", Instant.now(), "jane", Instant.now(),
                 "0.1.0", "", "0.1.0", "", VersionType.MINOR, true,
                 "title", Collections.emptyList(), Arrays.asList(""), "", false, "", "",
-                Option.some(content), Option.some(annexMetadata), false, false, null, null, null);
+                Option.some(content), Option.some(annexMetadata), false, false, null, null, null, null, null);
 
         String docTemplate = "CE-001";
         languageMap.put("greek", Arrays.asList("el"));

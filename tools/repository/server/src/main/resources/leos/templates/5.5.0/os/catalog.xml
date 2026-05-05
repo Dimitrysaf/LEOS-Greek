@@ -1123,6 +1123,16 @@
                                         <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                     </descriptions>
                                 </item>
+                                <item type="DOCUMENT" id="CP-038" enabled="true" mandatory="false" default="false">
+                                    <names>
+                                        <name lang="EN">CP-038 - Annex to an autonomous act / to another autonomous act</name>
+                                        <name lang="FR">CP-038 - Annexe à un acte autonome / à un autre acte autonome</name>
+                                    </names>
+                                    <descriptions>
+                                        <description lang="EN">Annex to an autonomous act / to another autonomous act</description>
+                                        <description lang="FR">Annexe à un acte autonome / à un autre acte autonome</description>
+                                    </descriptions>
+                                </item>
                             </item>
                         </item>
                     </item>
@@ -1163,6 +1173,16 @@
                                         <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
                                     </descriptions>
                                 </item>
+                                <item type="DOCUMENT" id="CP-038" enabled="true" mandatory="false" default="false">
+                                    <names>
+                                        <name lang="EN">CP-038 - Annex to an autonomous act / to another autonomous act</name>
+                                        <name lang="FR">CP-038 - Annexe à un acte autonome / à un autre acte autonome</name>
+                                    </names>
+                                    <descriptions>
+                                        <description lang="EN">Annex to an autonomous act / to another autonomous act</description>
+                                        <description lang="FR">Annexe à un acte autonome / à un autre acte autonome</description>
+                                    </descriptions>
+                                </item>
                             </item>
                         </item>
                     </item>
@@ -1201,6 +1221,16 @@
                                     <descriptions>
                                         <description lang="EN">The use of this template is mandatory for any annex to a delegated act or to any other autonomous act to be transmitted for info to the other institutions.</description>
                                         <description lang="FR">L'usage de ce template est obligatoire pour toute annexe à un acte délégué ou à un autre acte autonome envoyé pour information aux institutions.</description>
+                                    </descriptions>
+                                </item>
+                                <item type="DOCUMENT" id="CP-038" enabled="true" mandatory="false" default="false">
+                                    <names>
+                                        <name lang="EN">CP-038 - Annex to an autonomous act / to another autonomous act</name>
+                                        <name lang="FR">CP-038 - Annexe à un acte autonome / à un autre acte autonome</name>
+                                    </names>
+                                    <descriptions>
+                                        <description lang="EN">Annex to an autonomous act / to another autonomous act</description>
+                                        <description lang="FR">Annexe à un acte autonome / à un autre acte autonome</description>
                                     </descriptions>
                                 </item>
                             </item>

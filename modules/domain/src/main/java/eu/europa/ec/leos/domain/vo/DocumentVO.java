@@ -44,6 +44,8 @@ public class DocumentVO {
     private byte[] binaryFile;
     private String originalFilename;
     private String binaryFileSize;
+    private byte[] foreignRenditionSource;
+    private String foreignRenditionOriginalFilename;
     private boolean uploaded;
     private String versionSeriesId;
     private String ref;
@@ -645,6 +647,22 @@ public class DocumentVO {
 
     public void setBinaryFileSize(String binaryFileSize) {
         this.binaryFileSize = binaryFileSize;
+    }
+
+    public byte[] getForeignRenditionSource() {
+        return this.foreignRenditionSource;
+    }
+
+    public void setForeignRenditionSource(final byte[] foreignRenditionSource) {
+        this.foreignRenditionSource = foreignRenditionSource;
+    }
+
+    public String getForeignRenditionOriginalFilename() {
+        return this.foreignRenditionOriginalFilename;
+    }
+
+    public void setForeignRenditionOriginalFilename(final String foreignRenditionOriginalFilename) {
+        this.foreignRenditionOriginalFilename = foreignRenditionOriginalFilename;
     }
 
 }

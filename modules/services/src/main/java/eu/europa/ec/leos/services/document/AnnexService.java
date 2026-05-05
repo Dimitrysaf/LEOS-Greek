@@ -45,6 +45,8 @@ public interface AnnexService {
 
     Annex updateAnnex(Annex annex, AnnexMetadata metadata, VersionType versionType, String comment, boolean updateInternalRefs, byte[] binaryContent, String originalFilename, String binaryContentSize);
 
+    void updateAnnex(Annex annex, AnnexMetadata metadata, VersionType versionType, String comment, byte[] foreignAnnexRenditionContent, String foreignAnnexRenditionOriginalFilename);
+
     Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, VersionType versionType, String comment);
     
     Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, AnnexMetadata metadata, VersionType versionType, String comment, boolean updateInternalRefs);

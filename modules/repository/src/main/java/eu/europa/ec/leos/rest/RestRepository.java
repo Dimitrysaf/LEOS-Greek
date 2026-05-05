@@ -20,6 +20,7 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.vo.CollaboratorVO;
 import eu.europa.ec.leos.domain.vo.WorkflowCollaboratorConfigVO;
 import eu.europa.ec.leos.model.filter.QueryFilter;
@@ -56,6 +57,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static eu.europa.ec.leos.rest.support.RepositoryUtil.updateDocumentProperties;
 import static org.springframework.web.util.UriUtils.encodeUriVariables;
 
 @Repository
@@ -336,6 +338,21 @@ public class RestRepository extends AbstractRestClient {
         String url = getUrl(leosRestUpdateDocumentContentURI);
         LeosDocument resp = putEntity(url, updateDocumentRequest, LeosDocument.class, versionId);
         return resp;
+    }
+
+    public void updateDocument(String versionId, AnnexMetadata metadata, VersionType versionType, String category, String comment, String userId, byte[] foreignAnnexRenditionContent, String foreignAnnexRenditionOriginalFilename) {
+        LOGGER.trace("Updating document properties and content... [ref={}]", versionId);
+        UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
+        updateDocumentRequest.setMetadata(updateDocumentProperties(metadata));
+        updateDocumentRequest.setVersionType(versionType);
+        updateDocumentRequest.setCategory(category);
+        updateDocumentRequest.setComments(comment);
+        updateDocumentRequest.setUserId(userId);
+        updateDocumentRequest.setForeignRenditionContent(foreignAnnexRenditionContent);
+        updateDocumentRequest.setForeignRenditionOriginalFilename(foreignAnnexRenditionOriginalFilename);
+
+        String url = getUrl(leosRestUpdateDocumentContentURI);
+        putEntity(url, updateDocumentRequest, LeosDocument.class, versionId);
     }
 
     LeosDocumentList findDocumentsByPackagePath(final String packageName, final Set<LeosCategory> categories, final boolean descendants,

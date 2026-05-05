@@ -78,6 +78,7 @@ import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getLeosM
 import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
 import static eu.europa.ec.leos.services.support.XmlUtils.getContentByTagName;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
+import static eu.europa.ec.leos.services.utils.FileUtils.sanitizeFilename;
 
 @Service
 public class LeosLightApiServiceImpl implements LeosLightApiService {

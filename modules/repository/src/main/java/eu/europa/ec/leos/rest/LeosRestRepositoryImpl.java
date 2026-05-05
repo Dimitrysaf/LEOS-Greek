@@ -25,6 +25,7 @@ import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -472,6 +473,20 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ", comment=" + comment + ']'));
+    }
+
+    @Override
+    @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
+    public <D extends LeosDocument, M extends LeosMetadata> void updateDocument(String id, AnnexMetadata metadata, VersionType versionType, String comment, Class<? extends D> type, byte[] foreignAnnexRenditionContent, String foreignAnnexRenditionOriginalFilename) {
+        logger.trace("Updating document metadata and content... [id=" + id + ", comment=" + comment + ']');
+        Set<LeosCategory> categories = LeosMapper.leosCategories(type);
+        LeosCategory category = (LeosCategory) CollectionUtils.get(categories, 0);
+        repository.updateDocument(id, metadata, versionType, String.valueOf(category), comment, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER, foreignAnnexRenditionContent, foreignAnnexRenditionOriginalFilename);
     }
 
     @Override

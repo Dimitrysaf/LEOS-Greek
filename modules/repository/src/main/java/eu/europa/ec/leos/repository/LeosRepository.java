@@ -22,6 +22,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
+import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -254,12 +255,26 @@ public interface LeosRepository {
      *
      * @param id       the ID of the document to update.
      * @param metadata the metadata of the document.
+     * @param versionType  the version type to be created
+     * @param comment  the comment of the update, optional.
+     * @param type     the type class of the document.
+     * @param foreignAnnexRenditionContent     the binary content of the rendition.
+     * @param foreignAnnexRenditionOriginalFilename the file name of the rendition.
+     * @return the updated document.
+     */
+    <D extends LeosDocument, M extends LeosMetadata> void updateDocument(String id, AnnexMetadata metadata, VersionType versionType, String comment, Class<? extends D> type, byte[] foreignAnnexRenditionContent, String foreignAnnexRenditionOriginalFilename);
+
+    /**
+     * Updates a document with the given metadata and content.
+     *
+     * @param id       the ID of the document to update.
+     * @param metadata the metadata of the document.
      * @param content  the content of the document.
      * @param versionType  the version type to be created
      * @param comment  the comment of the update, optional.
      * @param type     the type class of the document.
      * @param binaryContent     the binary content of the document.
-     * @param originalFilename the binary content type of the document.
+     * @param originalFilename the file name of the document.
      * @param binaryContentSize the size of the binary content in KB.
      * @return the updated document.
      */

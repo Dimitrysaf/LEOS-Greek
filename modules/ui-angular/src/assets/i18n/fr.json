@@ -484,6 +484,7 @@
   "page.collection.drafts.annex.table.tr.actions": "Actions",
   "page.collection.drafts.annex.table.tr.actions.dropdown.edit-title": "Modifier le titre",
   "page.collection.drafts.annex.table.tr.actions.dropdown.update": "Mettre à jour",
+  "page.collection.drafts.annex.table.tr.actions.dropdown.upload.rendition": "Télécharger le rendu",
   "page.collection.drafts.annex.table.tr.no-title": "Annexe",
   "page.collection.drafts.annex.delete-dialog.title": "Confirmation de la suppression de l'annexe",
   "page.collection.drafts.annex.delete-dialog.desc": "Êtes-vous sûr de supprimer l'annexe?",

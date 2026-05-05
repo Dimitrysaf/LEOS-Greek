@@ -34,6 +34,7 @@ import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -219,13 +220,13 @@ public class DocumentServiceImpl implements DocumentService {
     @Transactional(rollbackFor = Exception.class)
     public LeosDocument updateDocument(final BigDecimal versionId, Map<String, ?> metadata,
             VersionType versionType, String category, byte[] contentBytes, String comments, String userId) throws Exception {
-        return this.updateDocument(versionId, metadata, versionType, category, contentBytes, comments, userId, null, null, null);
+        return this.updateDocument(versionId, metadata, versionType, category, contentBytes, comments, userId, null, null, null, null, null);
     }
 
     @Transactional(rollbackFor = Exception.class)
     public LeosDocument updateDocument(final BigDecimal versionId, Map<String, ?> metadata,
             VersionType versionType, String category, byte[] contentBytes, String comments, String userId,
-            byte[] binaryContent, String originalFilename, String binaryContentSize) throws Exception {
+            byte[] binaryContent, String originalFilename, String binaryContentSize, byte[] foreignRenditionContent, String foreignRenditionOriginalFilename) throws Exception {
 
         switch (category) {
             case "LEG":
@@ -250,7 +251,7 @@ public class DocumentServiceImpl implements DocumentService {
                     latestMajorVersion = documentVersionRepository.findLastMajorVersionByDocumentId(doc.getId());
                 }
 
-                Map<DocumentContent, DocumentVersion> docs = updateDocument(doc, metadata, labelVersion, versionType.value(), contentBytes, comments, userId, binaryContent, originalFilename, binaryContentSize);
+                Map<DocumentContent, DocumentVersion> docs = updateDocument(doc, metadata, labelVersion, versionType.value(), contentBytes, comments, userId, binaryContent, originalFilename, binaryContentSize, foreignRenditionContent, foreignRenditionOriginalFilename);
                 doc = updateDocumentMetadata(doc, docs.values().stream().findFirst().get(), (Map<String, Object>) metadata, userId);
 
                 boolean toUpdatePackage = false;
@@ -1108,12 +1109,19 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     private Map<DocumentContent, DocumentVersion> updateDocument(final Document doc, Map<String, ?> metadata, final String labelVersion,
-            int versionType, byte[] contentBytes, String comments, String userId, byte[] binaryContent, String originalFilename, String binaryContentSize) throws RepositoryException {
+            int versionType, byte[] contentBytes, String comments, String userId, byte[] binaryContent, String originalFilename, String binaryContentSize,
+            byte[] foreignRenditionContent, String foreignRenditionOriginalFilename) throws RepositoryException {
         Optional<DocumentV> docView = documentVRepository.findLastVersionByDocumentId(doc.getId());
 
         if (docView.isPresent()) {
             DocumentVersion docVersion = updateDocumentVersion(doc, userId, versionType, labelVersion, comments);
-            DocumentContent docContent = updateDocumentContent(docVersion, docView.get(), userId, new String(contentBytes, StandardCharsets.UTF_8), metadata, binaryContent, originalFilename, binaryContentSize);
+            DocumentContent docContent;
+            if (foreignRenditionContent != null) {
+                docContent = updateDocumentContentSimplified(docVersion, docView.get(), userId, metadata, foreignRenditionContent, foreignRenditionOriginalFilename);
+            } else {
+                docContent = updateDocumentContent(docVersion, docView.get(), userId, new String(contentBytes, StandardCharsets.UTF_8),
+                        metadata, binaryContent, originalFilename, binaryContentSize);
+            }
             return Collections.singletonMap(docContent, docVersion);
         } else {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentV.class.getName());
@@ -1269,6 +1277,66 @@ public class DocumentServiceImpl implements DocumentService {
             content.setActType(prevVersion.getActType());
         }
         content.setVersion(docVersion);
+        if (metadata.get(PropertiesMetadata.TITLE.getLeosName()) != null) {
+            content.setTitle((String) metadata.get(PropertiesMetadata.TITLE.getLeosName()));
+        } else if (prevVersion != null) {
+            content.setTitle(prevVersion.getTitle());
+        }
+        if (metadata.get(PropertiesMetadata.CATEGORY.getLeosName()) != null) {
+            content.setCategoryCode((String) metadata.get(PropertiesMetadata.CATEGORY.getLeosName()));
+        } else if (prevVersion != null) {
+            content.setCategoryCode(prevVersion.getCategoryCode());
+        }
+        return documentContentRepository.save(content);
+    }
+
+    private DocumentContent updateDocumentContentSimplified(DocumentVersion docVersion, final DocumentV prevVersion, String userId, Map<String, ?> metadata,
+            byte[] foreignRenditionContent, String foreignRenditionOriginalFilename) {
+        DocumentContent content = new DocumentContent();
+        DocumentContent previousDocumentContent = documentContentRepository.findDocumentContentByVersionId(prevVersion.getVersionId()).get();
+        BeanUtils.copyProperties(previousDocumentContent, content, "id");
+
+        content.setCreatedBy(userId);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        content.setCreationDate(localDateTime);
+        content.setLastModifiedBy(userId);
+        content.setLastModificationDate(localDateTime);
+        content.setVersion(docVersion);
+        if (foreignRenditionContent != null) {
+            content.setForeignRenditionContent(foreignRenditionContent);
+            content.setForeignRenditionOriginalFilename(foreignRenditionOriginalFilename);
+        }
+
+        Boolean eeaRelevance = ConversionUtils.convertBoolean(metadata.get(PropertiesMetadata.EEA_RELEVANCE.getLeosName()));
+        if (eeaRelevance != null) {
+            content.setEeaRelevance(eeaRelevance);
+        } else if (prevVersion != null) {
+            content.setEeaRelevance(prevVersion.getEeaRelevance());
+        } else {
+            content.setEeaRelevance(false);
+        }
+        if (metadata.get(PropertiesMetadata.TEMPLATE.getLeosName()) != null) {
+            content.setTemplate((String) metadata.get(PropertiesMetadata.TEMPLATE.getLeosName()));
+        } else if (prevVersion != null) {
+            content.setTemplate(prevVersion.getTemplate());
+        }
+        if (metadata.get(PropertiesMetadata.DOC_PURPOSE.getLeosName()) != null) {
+            content.setDocPurpose((String) metadata.get(PropertiesMetadata.DOC_PURPOSE.getLeosName()));
+        } else if (prevVersion != null) {
+            content.setDocPurpose(prevVersion.getDocPurpose());
+        }
+        if (metadata.get(PropertiesMetadata.DOC_TYPE.getLeosName()) != null) {
+            content.setDocType((String) metadata.get(PropertiesMetadata.DOC_TYPE.getLeosName()));
+        } else if (prevVersion != null) {
+            content.setDocType(prevVersion.getDocType());
+        } else {
+            content.setDocType("-");
+        }
+        if (metadata.get(PropertiesMetadata.ACT_TYPE.getLeosName()) != null) {
+            content.setActType((String) metadata.get(PropertiesMetadata.ACT_TYPE.getLeosName()));
+        } else if (prevVersion != null) {
+            content.setActType(prevVersion.getActType());
+        }
         if (metadata.get(PropertiesMetadata.TITLE.getLeosName()) != null) {
             content.setTitle((String) metadata.get(PropertiesMetadata.TITLE.getLeosName()));
         } else if (prevVersion != null) {

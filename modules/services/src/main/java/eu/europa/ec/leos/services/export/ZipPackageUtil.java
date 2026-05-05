@@ -30,6 +30,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
+import static eu.europa.ec.leos.services.utils.FileUtils.validateBasePath;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class ZipPackageUtil {

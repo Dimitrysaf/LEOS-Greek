@@ -148,4 +148,6 @@ public interface ApiService {
 
     void updateForeignAnnex(String proposalRef, String annexId, byte[] binaryContent, String originalFilename, String binaryContentSize);
 
+    void uploadForeignAnnexRendition(String proposalRef, String annexId, byte[] binaryContent, String originalFilename);
+
 }

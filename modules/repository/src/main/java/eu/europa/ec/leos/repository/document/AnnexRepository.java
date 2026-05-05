@@ -155,6 +155,8 @@ public interface AnnexRepository {
      */
     Annex updateAnnex(String id, AnnexMetadata metadata, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize);
 
+    void updateAnnex(String id, AnnexMetadata metadata, VersionType versionType, String comment, byte[] foreignAnnexRenditionContent, String foreignAnnexRenditionOriginalFilename);
+
     Annex updateMilestoneComments(String id, List<String> milestoneComments, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize);
 
     Annex updateMilestoneComments(String ref, String id, List<String> milestoneComments, byte[] binaryContent, String originalFilename, String binaryContentSize);

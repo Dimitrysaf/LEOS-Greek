@@ -43,8 +43,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import static eu.europa.ec.leos.services.support.XmlHelper.getMimeType;
 import static eu.europa.ec.leos.services.support.XmlHelper.getShowAsForForeignAnnex;
+import static eu.europa.ec.leos.services.utils.FileUtils.getFileExtension;
+import static eu.europa.ec.leos.services.utils.FileUtils.getMimeType;
 
 @Component
 @Scope("prototype")
@@ -290,7 +291,7 @@ public class AnnexContextService {
                 .build();
 
         if (binaryContent != null) {
-            String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toUpperCase();
+            String extension = getFileExtension(originalFilename);
             String mimeType = getMimeType(extension);
             String showAs = getShowAsForForeignAnnex(extension);
             metadata = metadata.builder()

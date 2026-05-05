@@ -35,6 +35,8 @@ import {apiBaseUrl} from "../../../../../config";
 import {downloadBlob} from "@/shared/utils";
 import { AppConfigService } from '@/core/services/app-config.service';
 import {ProposalAnnexUploadComponent} from "@/shared/components/proposal-annex-upload/proposal-annex-upload.component";
+import {EuiFileUploadComponent} from "@eui/components/eui-file-upload";
+import {getFileExtension} from '@/shared/utils/file.utils';
 
 @Component({
   selector: 'app-proposal-drafts',
@@ -71,6 +73,7 @@ export class ProposalDraftsComponent
   explanatoryTitleActiveId: string;
   @ViewChild('confirmationForDelete')
   confirmDeleteComp: ConfirmDeleteDialogComponent;
+  @ViewChild('uploadFile') uploadEuiFile: EuiFileUploadComponent;
 
   @ViewChild('confirmationForDeleteExpl')
   confirmDeleteCompExpl: ConfirmDeleteDialogComponent;
@@ -82,6 +85,8 @@ export class ProposalDraftsComponent
   linguisticVersionAlignment: boolean = false;
 
   private destroy$: Subject<void> = new Subject();
+
+  getFileExtension = getFileExtension;
 
   constructor(
     private createProposalService: CreateProposalService,
@@ -140,6 +145,30 @@ export class ProposalDraftsComponent
       this.proposalStateChange.emit('active');
       this.proposalDetailsService.createAnnex();
     }
+  }
+
+  handleAnnexUploadRenditionPopup(annex?: Document) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.pdf';
+    input.onchange = (event: any) => {
+      const file = event.target.files[0];
+      if (file.size > (50 * 1024 * 1024)) {
+        this.loadingService.setLoading(false);
+        this.dialogService.openDialog({
+          title: this.translateService.instant('page.collection.drafts.annex.max.size.error.title'),
+          content: this.translateService.instant('page.collection.drafts.annex.max.size.error.message'),
+          hasDismissButton: false,
+        });
+        this.growlService.clearGrowl();
+        return;
+      }
+      if (this.proposalState !== 'loading' && this.proposalState !== 'active') {
+        this.proposalStateChange.emit('active');
+      }
+      this.proposalDetailsService.uploadAnnexRendition(annex.id, file);
+    };
+    input.click();
   }
 
   handleAnnexUploadPopup(annex?: Document) {
@@ -326,11 +355,6 @@ export class ProposalDraftsComponent
         next: (blob) => downloadBlob(blob, `${originalFilename}`),
         complete: () => this.loadingService.setLoading(false),
       });
-  }
-
-  getFileExtension(filename: string): string {
-    if (!filename) return '';
-    return filename.slice((filename.lastIndexOf('.') + 1)).toLowerCase();
   }
 
   onFinancialStatementCreate() {

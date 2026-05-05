@@ -96,29 +96,65 @@
         } ]
       }
     },
-    "/catalog/template/{packageId}" : {
-      "get" : {
+    "/catalog/update-template" : {
+      "post" : {
         "tags" : [ "Catalog" ],
-        "summary" : "Get template information",
-        "description" : "Retrieves detailed information about a specific template",
-        "operationId" : "getTemplateInfo",
+        "summary" : "Update custom template",
+        "description" : "Updates an existing custom template in the catalog",
+        "operationId" : "updateCustomTemplate",
         "parameters" : [ {
           "name" : "packageId",
-          "in" : "path",
+          "in" : "query",
           "description" : "Package ID",
           "required" : true,
           "schema" : {
-            "type" : "BigDecimal",
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "templateName",
+          "in" : "query",
+          "description" : "Template name",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "dgs",
+          "in" : "query",
+          "description" : "List of DG codes",
+          "required" : true,
+          "schema" : {
+            "type" : "List",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "userId",
+          "in" : "query",
+          "description" : "User ID",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "originalDg",
+          "in" : "query",
+          "description" : "Original DG code",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
             "exampleSetFlag" : false
           }
         } ],
         "responses" : {
           "200" : {
-            "description" : "Template information retrieved successfully",
+            "description" : "Template updated successfully",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/CustomTemplateInfo",
+                  "$ref" : "#/components/schemas/Object",
                   "exampleSetFlag" : false
                 },
                 "exampleSetFlag" : false
@@ -207,65 +243,29 @@
         } ]
       }
     },
-    "/catalog/update-template" : {
-      "post" : {
+    "/catalog/template/{packageId}" : {
+      "get" : {
         "tags" : [ "Catalog" ],
-        "summary" : "Update custom template",
-        "description" : "Updates an existing custom template in the catalog",
-        "operationId" : "updateCustomTemplate",
+        "summary" : "Get template information",
+        "description" : "Retrieves detailed information about a specific template",
+        "operationId" : "getTemplateInfo",
         "parameters" : [ {
           "name" : "packageId",
-          "in" : "query",
+          "in" : "path",
           "description" : "Package ID",
           "required" : true,
           "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "templateName",
-          "in" : "query",
-          "description" : "Template name",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "dgs",
-          "in" : "query",
-          "description" : "List of DG codes",
-          "required" : true,
-          "schema" : {
-            "type" : "List",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "userId",
-          "in" : "query",
-          "description" : "User ID",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "originalDg",
-          "in" : "query",
-          "description" : "Original DG code",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
+            "type" : "BigDecimal",
             "exampleSetFlag" : false
           }
         } ],
         "responses" : {
           "200" : {
-            "description" : "Template updated successfully",
+            "description" : "Template information retrieved successfully",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/Object",
+                  "$ref" : "#/components/schemas/CustomTemplateInfo",
                   "exampleSetFlag" : false
                 },
                 "exampleSetFlag" : false
@@ -276,39 +276,6 @@
             "description" : "Template not found",
             "content" : {
               "application/json" : {
-                "exampleSetFlag" : false
-              }
-            }
-          },
-          "500" : {
-            "description" : "Internal server error",
-            "content" : {
-              "application/json" : {
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/config/notifications/fetch" : {
-      "get" : {
-        "tags" : [ "Config" ],
-        "summary" : "Fetch notifications configuration",
-        "description" : "Retrieves the current notifications configuration",
-        "operationId" : "configNotificationsFetch",
-        "responses" : {
-          "200" : {
-            "description" : "Configuration retrieved successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Object",
-                  "exampleSetFlag" : false
-                },
                 "exampleSetFlag" : false
               }
             }
@@ -380,46 +347,27 @@
         } ]
       }
     },
-    "/document/{docRef}/find-by-version/{versionLabel}" : {
+    "/config/notifications/fetch" : {
       "get" : {
-        "tags" : [ "Document" ],
-        "summary" : "Find document by version label",
-        "description" : "Retrieves a document by its version label",
-        "operationId" : "findDocumentByVersion",
-        "parameters" : [ {
-          "name" : "docRef",
-          "in" : "path",
-          "description" : "Document reference",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "versionLabel",
-          "in" : "path",
-          "description" : "Version label",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
+        "tags" : [ "Config" ],
+        "summary" : "Fetch notifications configuration",
+        "description" : "Retrieves the current notifications configuration",
+        "operationId" : "configNotificationsFetch",
         "responses" : {
           "200" : {
-            "description" : "Document found",
+            "description" : "Configuration retrieved successfully",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/LeosDocument",
+                  "$ref" : "#/components/schemas/Object",
                   "exampleSetFlag" : false
                 },
                 "exampleSetFlag" : false
               }
             }
           },
-          "404" : {
-            "description" : "Document not found",
+          "500" : {
+            "description" : "Internal server error",
             "content" : {
               "application/json" : {
                 "exampleSetFlag" : false
@@ -432,70 +380,17 @@
         } ]
       }
     },
-    "/documents/find-by-collaborator/{userName}" : {
+    "/documents/all-majors/{docRef}" : {
       "get" : {
         "tags" : [ "Document" ],
-        "summary" : "Find documents by collaborator",
-        "description" : "Retrieves documents for a specific user",
-        "operationId" : "findDocumentsByUserName",
+        "summary" : "Find all major versions",
+        "description" : "Retrieves all major versions of a document",
+        "operationId" : "findAllMajors",
         "parameters" : [ {
-          "name" : "role",
-          "in" : "query",
-          "description" : "User role",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "category",
-          "in" : "query",
-          "description" : "Document category",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "userName",
+          "name" : "docRef",
           "in" : "path",
-          "description" : "User name",
+          "description" : "Document reference",
           "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Documents retrieved successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/LeosDocumentList",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/documents/find-by-filter" : {
-      "post" : {
-        "tags" : [ "Document" ],
-        "summary" : "Find documents using filter",
-        "description" : "Retrieves documents using filter criteria",
-        "operationId" : "findDocumentsUsingFilter",
-        "parameters" : [ {
-          "name" : "packageName",
-          "in" : "query",
-          "description" : "Package name",
-          "required" : false,
           "schema" : {
             "type" : "string",
             "exampleSetFlag" : false
@@ -518,31 +413,10 @@
             "type" : "integer",
             "exampleSetFlag" : false
           }
-        }, {
-          "name" : "fetchContent",
-          "in" : "query",
-          "description" : "Fetch content",
-          "required" : false,
-          "schema" : {
-            "type" : "boolean",
-            "exampleSetFlag" : false
-          }
         } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/FindDocumentsRequest",
-                "exampleSetFlag" : false
-              },
-              "exampleSetFlag" : false
-            }
-          },
-          "required" : true
-        },
         "responses" : {
           "200" : {
-            "description" : "Documents retrieved successfully",
+            "description" : "Versions retrieved successfully",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -559,56 +433,12 @@
         } ]
       }
     },
-    "/document/next-version-label" : {
+    "/documents/count-all-majors/{docRef}" : {
       "get" : {
         "tags" : [ "Document" ],
-        "summary" : "Get next version label",
-        "description" : "Calculates the next version label",
-        "operationId" : "getNextVersionLabel",
-        "parameters" : [ {
-          "name" : "versionType",
-          "in" : "query",
-          "description" : "Version type",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "oldVersion",
-          "in" : "query",
-          "description" : "Old version",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Next version label calculated",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "string",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/document/delete-by-ref/{docRef}" : {
-      "delete" : {
-        "tags" : [ "Document" ],
-        "summary" : "Delete document by reference",
-        "description" : "Deletes a document by its reference",
-        "operationId" : "deleteDocumentByRef",
+        "summary" : "Count all major versions",
+        "description" : "Counts all major versions of a document",
+        "operationId" : "getAllMajorsCount",
         "parameters" : [ {
           "name" : "docRef",
           "in" : "path",
@@ -621,12 +451,122 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "Document deleted successfully"
-          },
-          "404" : {
-            "description" : "Document not found",
+            "description" : "Count retrieved successfully",
             "content" : {
               "application/json" : {
+                "schema" : {
+                  "type" : "integer",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/documents/last-version/{docRef}" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "summary" : "Find document by reference",
+        "description" : "Retrieves the latest version of a document by reference",
+        "operationId" : "findDocumentsByRef",
+        "parameters" : [ {
+          "name" : "docRef",
+          "in" : "path",
+          "description" : "Document reference",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "category",
+          "in" : "query",
+          "description" : "Document category",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "withContent",
+          "in" : "query",
+          "description" : "Include content",
+          "required" : true,
+          "schema" : {
+            "type" : "boolean",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Document found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LeosDocument",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/document/search-versions/{ref}" : {
+      "post" : {
+        "tags" : [ "Document" ],
+        "summary" : "Search document versions",
+        "description" : "Searches for document versions by reference and user logins",
+        "operationId" : "searchVersions",
+        "parameters" : [ {
+          "name" : "ref",
+          "in" : "path",
+          "description" : "Document reference",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "versionType",
+          "in" : "query",
+          "description" : "Version type",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/List",
+                "exampleSetFlag" : false
+              },
+              "exampleSetFlag" : false
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Versions found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LeosDocumentList",
+                  "exampleSetFlag" : false
+                },
                 "exampleSetFlag" : false
               }
             }
@@ -679,6 +619,50 @@
             "description" : "Version not found",
             "content" : {
               "application/json" : {
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/document/next-version-label" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "summary" : "Get next version label",
+        "description" : "Calculates the next version label",
+        "operationId" : "getNextVersionLabel",
+        "parameters" : [ {
+          "name" : "versionType",
+          "in" : "query",
+          "description" : "Version type",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "oldVersion",
+          "in" : "query",
+          "description" : "Old version",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Next version label calculated",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "string",
+                  "exampleSetFlag" : false
+                },
                 "exampleSetFlag" : false
               }
             }
@@ -796,51 +780,6 @@
         } ]
       }
     },
-    "/document/create-with-content" : {
-      "put" : {
-        "tags" : [ "Document" ],
-        "summary" : "Create document from content",
-        "description" : "Creates a new document with provided content",
-        "operationId" : "createDocumentFromContent",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/CreateDocumentRequest",
-                "exampleSetFlag" : false
-              },
-              "exampleSetFlag" : false
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "Document created successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/LeosDocument",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          },
-          "500" : {
-            "description" : "Internal server error",
-            "content" : {
-              "application/json" : {
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
     "/document/update-metadata/{docRef}/{versionId}" : {
       "put" : {
         "tags" : [ "Document" ],
@@ -904,6 +843,264 @@
             "description" : "Document not found",
             "content" : {
               "application/json" : {
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/document/delete-by-ref/{docRef}" : {
+      "delete" : {
+        "tags" : [ "Document" ],
+        "summary" : "Delete document by reference",
+        "description" : "Deletes a document by its reference",
+        "operationId" : "deleteDocumentByRef",
+        "parameters" : [ {
+          "name" : "docRef",
+          "in" : "path",
+          "description" : "Document reference",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Document deleted successfully"
+          },
+          "404" : {
+            "description" : "Document not found",
+            "content" : {
+              "application/json" : {
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/documents/find-by-collaborator/{userName}" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "summary" : "Find documents by collaborator",
+        "description" : "Retrieves documents for a specific user",
+        "operationId" : "findDocumentsByUserName",
+        "parameters" : [ {
+          "name" : "role",
+          "in" : "query",
+          "description" : "User role",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "category",
+          "in" : "query",
+          "description" : "Document category",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "userName",
+          "in" : "path",
+          "description" : "User name",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Documents retrieved successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LeosDocumentList",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/document/create-with-content" : {
+      "put" : {
+        "tags" : [ "Document" ],
+        "summary" : "Create document from content",
+        "description" : "Creates a new document with provided content",
+        "operationId" : "createDocumentFromContent",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/CreateDocumentRequest",
+                "exampleSetFlag" : false
+              },
+              "exampleSetFlag" : false
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Document created successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LeosDocument",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/document/{docRef}/find-by-version/{versionLabel}" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "summary" : "Find document by version label",
+        "description" : "Retrieves a document by its version label",
+        "operationId" : "findDocumentByVersion",
+        "parameters" : [ {
+          "name" : "docRef",
+          "in" : "path",
+          "description" : "Document reference",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "versionLabel",
+          "in" : "path",
+          "description" : "Version label",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Document found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LeosDocument",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "404" : {
+            "description" : "Document not found",
+            "content" : {
+              "application/json" : {
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/documents/find-by-filter" : {
+      "post" : {
+        "tags" : [ "Document" ],
+        "summary" : "Find documents using filter",
+        "description" : "Retrieves documents using filter criteria",
+        "operationId" : "findDocumentsUsingFilter",
+        "parameters" : [ {
+          "name" : "packageName",
+          "in" : "query",
+          "description" : "Package name",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "startIndex",
+          "in" : "query",
+          "description" : "Start index",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "maxResults",
+          "in" : "query",
+          "description" : "Max results",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "fetchContent",
+          "in" : "query",
+          "description" : "Fetch content",
+          "required" : false,
+          "schema" : {
+            "type" : "boolean",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/FindDocumentsRequest",
+                "exampleSetFlag" : false
+              },
+              "exampleSetFlag" : false
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Documents retrieved successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LeosDocumentList",
+                  "exampleSetFlag" : false
+                },
                 "exampleSetFlag" : false
               }
             }
@@ -980,6 +1177,619 @@
         "responses" : {
           "200" : {
             "description" : "Count retrieved successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Object",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/document/archive/{docRef}" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "summary" : "Archive document",
+        "description" : "Archives a document by its reference",
+        "operationId" : "archiveDocument",
+        "parameters" : [ {
+          "name" : "docRef",
+          "in" : "path",
+          "description" : "Document reference",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "userId",
+          "in" : "query",
+          "description" : "User ID",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Document archived successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LeosDocument",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "404" : {
+            "description" : "Document not found",
+            "content" : {
+              "application/json" : {
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/document/update-content/{versionId}" : {
+      "put" : {
+        "tags" : [ "Document" ],
+        "summary" : "Update document content",
+        "description" : "Updates document content and metadata",
+        "operationId" : "updateDocument",
+        "parameters" : [ {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version ID",
+          "required" : true,
+          "schema" : {
+            "type" : "BigDecimal",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/UpdateDocumentRequest",
+                "exampleSetFlag" : false
+              },
+              "exampleSetFlag" : false
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Document updated successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LeosDocument",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "404" : {
+            "description" : "Document not found",
+            "content" : {
+              "application/json" : {
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/document/find-version/{versionId}" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "summary" : "Find document by version ID",
+        "description" : "Retrieves a document by its version ID",
+        "operationId" : "findDocumentById",
+        "parameters" : [ {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version ID",
+          "required" : true,
+          "schema" : {
+            "type" : "BigDecimal",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "category",
+          "in" : "query",
+          "description" : "Document category",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "latest",
+          "in" : "query",
+          "description" : "Latest version flag",
+          "required" : true,
+          "schema" : {
+            "type" : "boolean",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Document found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LeosDocument",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "404" : {
+            "description" : "Document not found",
+            "content" : {
+              "application/json" : {
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/document/delete-by-id/{versionId}" : {
+      "delete" : {
+        "tags" : [ "Document" ],
+        "summary" : "Delete document by version ID",
+        "description" : "Deletes a document by its version ID",
+        "operationId" : "deleteDocumentById",
+        "parameters" : [ {
+          "name" : "versionId",
+          "in" : "path",
+          "description" : "Version ID",
+          "required" : true,
+          "schema" : {
+            "type" : "BigDecimal",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Document deleted successfully"
+          },
+          "404" : {
+            "description" : "Document not found",
+            "content" : {
+              "application/json" : {
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/documents/first-version/{docRef}" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "summary" : "Find first version",
+        "description" : "Retrieves the first version of a document",
+        "operationId" : "findFirstVersion",
+        "parameters" : [ {
+          "name" : "docRef",
+          "in" : "path",
+          "description" : "Document reference",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Version found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LeosDocument",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "404" : {
+            "description" : "Version not found",
+            "content" : {
+              "application/json" : {
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/documents/find-by-name/{name}" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "summary" : "Find document by name",
+        "description" : "Retrieves a document by its name",
+        "operationId" : "findDocumentByName",
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "path",
+          "description" : "Document name",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Document found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LeosDocument",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "404" : {
+            "description" : "Document not found",
+            "content" : {
+              "application/json" : {
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/document/all-versions/{docRef}" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "summary" : "Find all versions",
+        "description" : "Retrieves all versions of a document",
+        "operationId" : "findAllVersionsByDocumentRef",
+        "parameters" : [ {
+          "name" : "docRef",
+          "in" : "path",
+          "description" : "Document reference",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Versions retrieved successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LeosDocumentList",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/documents/latest-major-version/{docRef}" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "summary" : "Find latest major version",
+        "description" : "Retrieves the latest major version of a document",
+        "operationId" : "findLatestMajorVersionByRef",
+        "parameters" : [ {
+          "name" : "docRef",
+          "in" : "path",
+          "description" : "Document reference",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Version found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LeosDocument",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "404" : {
+            "description" : "Version not found",
+            "content" : {
+              "application/json" : {
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/documents/clones/find-by-original-ref/{proposalRef}" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "summary" : "Search clones of original document",
+        "description" : "Finds all clones of an original document",
+        "operationId" : "searchClonesOfOriginalDocument",
+        "parameters" : [ {
+          "name" : "proposalRef",
+          "in" : "path",
+          "description" : "Proposal reference",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Clones found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LeosDocumentList",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/documents/find-for-validation" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "summary" : "Find documents for validation",
+        "description" : "Retrieves packages that need validation",
+        "operationId" : "findDocumentsPackagesForValidation",
+        "responses" : {
+          "200" : {
+            "description" : "Packages retrieved successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Object",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/documents/all-minors-for-intermediate/{docRef}" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "summary" : "Find all minors for intermediate",
+        "description" : "Retrieves minor versions for an intermediate version",
+        "operationId" : "findAllMinorsForIntermediate",
+        "parameters" : [ {
+          "name" : "docRef",
+          "in" : "path",
+          "description" : "Document reference",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "currIntVersion",
+          "in" : "query",
+          "description" : "Current intermediate version",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "startIndex",
+          "in" : "query",
+          "description" : "Start index",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "maxResults",
+          "in" : "query",
+          "description" : "Max results",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Versions retrieved successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/LeosDocumentList",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/documents/count-all-minors-for-intermediate/{docRef}" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "summary" : "Count all minors for intermediate",
+        "description" : "Counts minor versions for an intermediate version",
+        "operationId" : "getAllMinorsCountForIntermediate",
+        "parameters" : [ {
+          "name" : "docRef",
+          "in" : "path",
+          "description" : "Document reference",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "currIntVersion",
+          "in" : "query",
+          "description" : "Current intermediate version",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Count retrieved successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "integer",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/documents/count-recent-minor-versions/{docRef}" : {
+      "get" : {
+        "tags" : [ "Document" ],
+        "summary" : "Count recent minor versions",
+        "description" : "Counts recent minor versions",
+        "operationId" : "getRecentMinorVersionsCount",
+        "parameters" : [ {
+          "name" : "docRef",
+          "in" : "path",
+          "description" : "Document reference",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "versionLabel",
+          "in" : "query",
+          "description" : "Version label",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Count retrieved successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "type" : "integer",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/documents/set-docs-validation-status" : {
+      "put" : {
+        "tags" : [ "Document" ],
+        "summary" : "Set documents validation status",
+        "description" : "Updates validation status for documents",
+        "operationId" : "setDocumentsValidationStatus",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/List",
+                "exampleSetFlag" : false
+              },
+              "exampleSetFlag" : false
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Status updated successfully",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -1102,816 +1912,6 @@
         } ]
       }
     },
-    "/document/delete-by-id/{versionId}" : {
-      "delete" : {
-        "tags" : [ "Document" ],
-        "summary" : "Delete document by version ID",
-        "description" : "Deletes a document by its version ID",
-        "operationId" : "deleteDocumentById",
-        "parameters" : [ {
-          "name" : "versionId",
-          "in" : "path",
-          "description" : "Version ID",
-          "required" : true,
-          "schema" : {
-            "type" : "BigDecimal",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Document deleted successfully"
-          },
-          "404" : {
-            "description" : "Document not found",
-            "content" : {
-              "application/json" : {
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/document/archive/{docRef}" : {
-      "get" : {
-        "tags" : [ "Document" ],
-        "summary" : "Archive document",
-        "description" : "Archives a document by its reference",
-        "operationId" : "archiveDocument",
-        "parameters" : [ {
-          "name" : "docRef",
-          "in" : "path",
-          "description" : "Document reference",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "userId",
-          "in" : "query",
-          "description" : "User ID",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Document archived successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/LeosDocument",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          },
-          "404" : {
-            "description" : "Document not found",
-            "content" : {
-              "application/json" : {
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/documents/count-all-majors/{docRef}" : {
-      "get" : {
-        "tags" : [ "Document" ],
-        "summary" : "Count all major versions",
-        "description" : "Counts all major versions of a document",
-        "operationId" : "getAllMajorsCount",
-        "parameters" : [ {
-          "name" : "docRef",
-          "in" : "path",
-          "description" : "Document reference",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Count retrieved successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "integer",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/documents/last-version/{docRef}" : {
-      "get" : {
-        "tags" : [ "Document" ],
-        "summary" : "Find document by reference",
-        "description" : "Retrieves the latest version of a document by reference",
-        "operationId" : "findDocumentsByRef",
-        "parameters" : [ {
-          "name" : "docRef",
-          "in" : "path",
-          "description" : "Document reference",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "category",
-          "in" : "query",
-          "description" : "Document category",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "withContent",
-          "in" : "query",
-          "description" : "Include content",
-          "required" : true,
-          "schema" : {
-            "type" : "boolean",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Document found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/LeosDocument",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/document/find-version/{versionId}" : {
-      "get" : {
-        "tags" : [ "Document" ],
-        "summary" : "Find document by version ID",
-        "description" : "Retrieves a document by its version ID",
-        "operationId" : "findDocumentById",
-        "parameters" : [ {
-          "name" : "versionId",
-          "in" : "path",
-          "description" : "Version ID",
-          "required" : true,
-          "schema" : {
-            "type" : "BigDecimal",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "category",
-          "in" : "query",
-          "description" : "Document category",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "latest",
-          "in" : "query",
-          "description" : "Latest version flag",
-          "required" : true,
-          "schema" : {
-            "type" : "boolean",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Document found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/LeosDocument",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          },
-          "404" : {
-            "description" : "Document not found",
-            "content" : {
-              "application/json" : {
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/documents/all-majors/{docRef}" : {
-      "get" : {
-        "tags" : [ "Document" ],
-        "summary" : "Find all major versions",
-        "description" : "Retrieves all major versions of a document",
-        "operationId" : "findAllMajors",
-        "parameters" : [ {
-          "name" : "docRef",
-          "in" : "path",
-          "description" : "Document reference",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "startIndex",
-          "in" : "query",
-          "description" : "Start index",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "maxResults",
-          "in" : "query",
-          "description" : "Max results",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Versions retrieved successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/LeosDocumentList",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/documents/first-version/{docRef}" : {
-      "get" : {
-        "tags" : [ "Document" ],
-        "summary" : "Find first version",
-        "description" : "Retrieves the first version of a document",
-        "operationId" : "findFirstVersion",
-        "parameters" : [ {
-          "name" : "docRef",
-          "in" : "path",
-          "description" : "Document reference",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Version found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/LeosDocument",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          },
-          "404" : {
-            "description" : "Version not found",
-            "content" : {
-              "application/json" : {
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/document/update-content/{versionId}" : {
-      "put" : {
-        "tags" : [ "Document" ],
-        "summary" : "Update document content",
-        "description" : "Updates document content and metadata",
-        "operationId" : "updateDocument",
-        "parameters" : [ {
-          "name" : "versionId",
-          "in" : "path",
-          "description" : "Version ID",
-          "required" : true,
-          "schema" : {
-            "type" : "BigDecimal",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/UpdateDocumentRequest",
-                "exampleSetFlag" : false
-              },
-              "exampleSetFlag" : false
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "Document updated successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/LeosDocument",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          },
-          "404" : {
-            "description" : "Document not found",
-            "content" : {
-              "application/json" : {
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/document/search-versions/{ref}" : {
-      "post" : {
-        "tags" : [ "Document" ],
-        "summary" : "Search document versions",
-        "description" : "Searches for document versions by reference and user logins",
-        "operationId" : "searchVersions",
-        "parameters" : [ {
-          "name" : "ref",
-          "in" : "path",
-          "description" : "Document reference",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "versionType",
-          "in" : "query",
-          "description" : "Version type",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/List",
-                "exampleSetFlag" : false
-              },
-              "exampleSetFlag" : false
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "Versions found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/LeosDocumentList",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/documents/find-by-name/{name}" : {
-      "get" : {
-        "tags" : [ "Document" ],
-        "summary" : "Find document by name",
-        "description" : "Retrieves a document by its name",
-        "operationId" : "findDocumentByName",
-        "parameters" : [ {
-          "name" : "name",
-          "in" : "path",
-          "description" : "Document name",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Document found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/LeosDocument",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          },
-          "404" : {
-            "description" : "Document not found",
-            "content" : {
-              "application/json" : {
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/document/all-versions/{docRef}" : {
-      "get" : {
-        "tags" : [ "Document" ],
-        "summary" : "Find all versions",
-        "description" : "Retrieves all versions of a document",
-        "operationId" : "findAllVersionsByDocumentRef",
-        "parameters" : [ {
-          "name" : "docRef",
-          "in" : "path",
-          "description" : "Document reference",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Versions retrieved successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/LeosDocumentList",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/documents/all-minors-for-intermediate/{docRef}" : {
-      "get" : {
-        "tags" : [ "Document" ],
-        "summary" : "Find all minors for intermediate",
-        "description" : "Retrieves minor versions for an intermediate version",
-        "operationId" : "findAllMinorsForIntermediate",
-        "parameters" : [ {
-          "name" : "docRef",
-          "in" : "path",
-          "description" : "Document reference",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "currIntVersion",
-          "in" : "query",
-          "description" : "Current intermediate version",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "startIndex",
-          "in" : "query",
-          "description" : "Start index",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "maxResults",
-          "in" : "query",
-          "description" : "Max results",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Versions retrieved successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/LeosDocumentList",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/documents/count-recent-minor-versions/{docRef}" : {
-      "get" : {
-        "tags" : [ "Document" ],
-        "summary" : "Count recent minor versions",
-        "description" : "Counts recent minor versions",
-        "operationId" : "getRecentMinorVersionsCount",
-        "parameters" : [ {
-          "name" : "docRef",
-          "in" : "path",
-          "description" : "Document reference",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "versionLabel",
-          "in" : "query",
-          "description" : "Version label",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Count retrieved successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "integer",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/documents/latest-major-version/{docRef}" : {
-      "get" : {
-        "tags" : [ "Document" ],
-        "summary" : "Find latest major version",
-        "description" : "Retrieves the latest major version of a document",
-        "operationId" : "findLatestMajorVersionByRef",
-        "parameters" : [ {
-          "name" : "docRef",
-          "in" : "path",
-          "description" : "Document reference",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Version found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/LeosDocument",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          },
-          "404" : {
-            "description" : "Version not found",
-            "content" : {
-              "application/json" : {
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/documents/set-docs-validation-status" : {
-      "put" : {
-        "tags" : [ "Document" ],
-        "summary" : "Set documents validation status",
-        "description" : "Updates validation status for documents",
-        "operationId" : "setDocumentsValidationStatus",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/List",
-                "exampleSetFlag" : false
-              },
-              "exampleSetFlag" : false
-            }
-          },
-          "required" : true
-        },
-        "responses" : {
-          "200" : {
-            "description" : "Status updated successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Object",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/documents/count-all-minors-for-intermediate/{docRef}" : {
-      "get" : {
-        "tags" : [ "Document" ],
-        "summary" : "Count all minors for intermediate",
-        "description" : "Counts minor versions for an intermediate version",
-        "operationId" : "getAllMinorsCountForIntermediate",
-        "parameters" : [ {
-          "name" : "docRef",
-          "in" : "path",
-          "description" : "Document reference",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "currIntVersion",
-          "in" : "query",
-          "description" : "Current intermediate version",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Count retrieved successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "integer",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/documents/clones/find-by-original-ref/{proposalRef}" : {
-      "get" : {
-        "tags" : [ "Document" ],
-        "summary" : "Search clones of original document",
-        "description" : "Finds all clones of an original document",
-        "operationId" : "searchClonesOfOriginalDocument",
-        "parameters" : [ {
-          "name" : "proposalRef",
-          "in" : "path",
-          "description" : "Proposal reference",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Clones found",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/LeosDocumentList",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/documents/find-for-validation" : {
-      "get" : {
-        "tags" : [ "Document" ],
-        "summary" : "Find documents for validation",
-        "description" : "Retrieves packages that need validation",
-        "operationId" : "findDocumentsPackagesForValidation",
-        "responses" : {
-          "200" : {
-            "description" : "Packages retrieved successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Object",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
     "/leos-client" : {
       "get" : {
         "tags" : [ "LeosClient" ],
@@ -1954,50 +1954,6 @@
             "description" : "Client not found",
             "content" : {
               "application/json" : {
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/package/{ref}/toggle-favourite-package/{userName}" : {
-      "put" : {
-        "tags" : [ "Package" ],
-        "summary" : "Toggle favourite package",
-        "description" : "Adds or removes a package from user's favourites",
-        "operationId" : "toggleFavouritePackage",
-        "parameters" : [ {
-          "name" : "userName",
-          "in" : "path",
-          "description" : "User name",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "ref",
-          "in" : "path",
-          "description" : "Package reference",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Favourite status toggled successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/PackagesFavorites",
-                  "exampleSetFlag" : false
-                },
                 "exampleSetFlag" : false
               }
             }
@@ -2159,6 +2115,94 @@
         } ]
       }
     },
+    "/package/{ref}/get-favourite-package/{userName}" : {
+      "get" : {
+        "tags" : [ "Package" ],
+        "summary" : "Get favourite package",
+        "description" : "Retrieves a specific favourite package for a user",
+        "operationId" : "getFavouritePackage",
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "description" : "User name",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "ref",
+          "in" : "path",
+          "description" : "Package reference",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Favourite package retrieved successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PackagesFavorites",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/package/{ref}/toggle-favourite-package/{userName}" : {
+      "put" : {
+        "tags" : [ "Package" ],
+        "summary" : "Toggle favourite package",
+        "description" : "Adds or removes a package from user's favourites",
+        "operationId" : "toggleFavouritePackage",
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "description" : "User name",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "ref",
+          "in" : "path",
+          "description" : "Package reference",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Favourite status toggled successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PackagesFavorites",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
     "/package/package-collaborators/{packageId}" : {
       "get" : {
         "tags" : [ "Package" ],
@@ -2239,50 +2283,6 @@
         } ]
       }
     },
-    "/package/find-recent-packages-by-user/{userName}/{numberOfRecentPackages}" : {
-      "get" : {
-        "tags" : [ "Package" ],
-        "summary" : "Find recent packages for user",
-        "description" : "Retrieves recently changed packages for a user",
-        "operationId" : "findRecentPackagesForUser",
-        "parameters" : [ {
-          "name" : "userName",
-          "in" : "path",
-          "description" : "User name",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "numberOfRecentPackages",
-          "in" : "path",
-          "description" : "Number of recent packages",
-          "required" : true,
-          "schema" : {
-            "type" : "BigDecimal",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Recent packages retrieved successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/List",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
     "/package/package-collaborators/{packageId}/{userName}" : {
       "post" : {
         "tags" : [ "Package" ],
@@ -2329,6 +2329,49 @@
                   "$ref" : "#/components/schemas/Object",
                   "exampleSetFlag" : false
                 },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/package/find-by-document-ref/{docRef}" : {
+      "get" : {
+        "tags" : [ "Package" ],
+        "summary" : "Find package by document reference",
+        "description" : "Retrieves a package by document reference",
+        "operationId" : "findPackageByDocumentRef",
+        "parameters" : [ {
+          "name" : "docRef",
+          "in" : "path",
+          "description" : "Document reference",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Package found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Package",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "404" : {
+            "description" : "Package not found",
+            "content" : {
+              "application/json" : {
                 "exampleSetFlag" : false
               }
             }
@@ -2462,12 +2505,12 @@
         } ]
       }
     },
-    "/package/{ref}/get-favourite-package/{userName}" : {
+    "/package/find-recent-packages-by-user/{userName}/{numberOfRecentPackages}" : {
       "get" : {
         "tags" : [ "Package" ],
-        "summary" : "Get favourite package",
-        "description" : "Retrieves a specific favourite package for a user",
-        "operationId" : "getFavouritePackage",
+        "summary" : "Find recent packages for user",
+        "description" : "Retrieves recently changed packages for a user",
+        "operationId" : "findRecentPackagesForUser",
         "parameters" : [ {
           "name" : "userName",
           "in" : "path",
@@ -2478,22 +2521,22 @@
             "exampleSetFlag" : false
           }
         }, {
-          "name" : "ref",
+          "name" : "numberOfRecentPackages",
           "in" : "path",
-          "description" : "Package reference",
+          "description" : "Number of recent packages",
           "required" : true,
           "schema" : {
-            "type" : "string",
+            "type" : "BigDecimal",
             "exampleSetFlag" : false
           }
         } ],
         "responses" : {
           "200" : {
-            "description" : "Favourite package retrieved successfully",
+            "description" : "Recent packages retrieved successfully",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/PackagesFavorites",
+                  "$ref" : "#/components/schemas/List",
                   "exampleSetFlag" : false
                 },
                 "exampleSetFlag" : false
@@ -2506,16 +2549,16 @@
         } ]
       }
     },
-    "/package/find-by-document-ref/{docRef}" : {
+    "/package/find-favourite-packages/{userName}" : {
       "get" : {
         "tags" : [ "Package" ],
-        "summary" : "Find package by document reference",
-        "description" : "Retrieves a package by document reference",
-        "operationId" : "findPackageByDocumentRef",
+        "summary" : "Find favourite packages",
+        "description" : "Retrieves favourite packages for a user",
+        "operationId" : "findFavouritePackagesForUser",
         "parameters" : [ {
-          "name" : "docRef",
+          "name" : "userName",
           "in" : "path",
-          "description" : "Document reference",
+          "description" : "User name",
           "required" : true,
           "schema" : {
             "type" : "string",
@@ -2524,21 +2567,13 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "Package found",
+            "description" : "Favourite packages retrieved successfully",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/Package",
+                  "$ref" : "#/components/schemas/List",
                   "exampleSetFlag" : false
                 },
-                "exampleSetFlag" : false
-              }
-            }
-          },
-          "404" : {
-            "description" : "Package not found",
-            "content" : {
-              "application/json" : {
                 "exampleSetFlag" : false
               }
             }
@@ -2714,41 +2749,6 @@
             "description" : "Package not found",
             "content" : {
               "application/json" : {
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
-    "/package/find-favourite-packages/{userName}" : {
-      "get" : {
-        "tags" : [ "Package" ],
-        "summary" : "Find favourite packages",
-        "description" : "Retrieves favourite packages for a user",
-        "operationId" : "findFavouritePackagesForUser",
-        "parameters" : [ {
-          "name" : "userName",
-          "in" : "path",
-          "description" : "User name",
-          "required" : true,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Favourite packages retrieved successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/List",
-                  "exampleSetFlag" : false
-                },
                 "exampleSetFlag" : false
               }
             }
@@ -2980,49 +2980,6 @@
         } ]
       }
     },
-    "/workflow-collaborator-config/{id}" : {
-      "delete" : {
-        "tags" : [ "WorkflowCollaboratorConfig" ],
-        "summary" : "Delete workflow collaborator configuration by ID",
-        "description" : "Deletes a workflow collaborator configuration by its ID",
-        "operationId" : "deleteWorkflowCollaboratorConfig",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "description" : "Configuration ID",
-          "required" : true,
-          "schema" : {
-            "type" : "integer",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Configuration deleted successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Object",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          },
-          "404" : {
-            "description" : "Configuration not found",
-            "content" : {
-              "application/json" : {
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
     "/workflow-collaborator-config/all" : {
       "get" : {
         "tags" : [ "WorkflowCollaboratorConfig" ],
@@ -3054,6 +3011,49 @@
           },
           "404" : {
             "description" : "Package or configurations not found",
+            "content" : {
+              "application/json" : {
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/workflow-collaborator-config/{id}" : {
+      "delete" : {
+        "tags" : [ "WorkflowCollaboratorConfig" ],
+        "summary" : "Delete workflow collaborator configuration by ID",
+        "description" : "Deletes a workflow collaborator configuration by its ID",
+        "operationId" : "deleteWorkflowCollaboratorConfig",
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "Configuration ID",
+          "required" : true,
+          "schema" : {
+            "type" : "integer",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Configuration deleted successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Object",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "404" : {
+            "description" : "Configuration not found",
             "content" : {
               "application/json" : {
                 "exampleSetFlag" : false
