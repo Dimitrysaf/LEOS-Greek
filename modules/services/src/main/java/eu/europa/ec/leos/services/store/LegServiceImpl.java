@@ -129,7 +129,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Service
 public class LegServiceImpl implements LegService {
     private static final Logger LOG = LoggerFactory.getLogger(LegServiceImpl.class);
-    private static final String SEARCH_PERF = "[SEARCH-PERF]";
 
     private final PackageRepository packageRepository;
     private final WorkspaceRepository workspaceRepository;
@@ -286,19 +285,12 @@ public class LegServiceImpl implements LegService {
 
     @Override
     public List<LegDocumentVO> getLegDocumentDetailsByUserId(String userId, String proposalId, String legStatus) {
-        long t0 = System.currentTimeMillis();
-        LOG.info("{} START getLegDocumentDetailsByUserId userId={} proposalId={} legStatus={}", SEARCH_PERF, userId, proposalId, legStatus);
-
         List<LegDocumentVO> legDocumentVOs = new ArrayList<>();
 
-        long tUser = System.currentTimeMillis();
         User user = userService.getUser(userId);
-        LOG.info("{} getUser completed userId={} durationMs={}", SEARCH_PERF, userId, System.currentTimeMillis() - tUser);
 
         if (!StringUtils.isEmpty(proposalId)) {
-            long tProposal = System.currentTimeMillis();
             Proposal proposal = proposalService.getProposalByRef(proposalId);
-            LOG.info("{} getProposalByRef completed proposalId={} durationMs={}", SEARCH_PERF, proposalId, System.currentTimeMillis() - tProposal);
 
             Optional<Collaborator> userAsCollaborator = getCollaborator(user, proposal);
             if (userAsCollaborator.isPresent()) {
@@ -308,17 +300,11 @@ public class LegServiceImpl implements LegService {
             List<String> entities = new ArrayList<>();
             user.getEntities().stream().forEach(entity -> entities.add(entity.getName()));
 
-            long tFind = System.currentTimeMillis();
             List<Proposal> proposals = packageRepository.findDocumentsByUserIdOrEntity(userId,
                     entities, Proposal.class, authorityMapHelper.getRoleForDocCreation());
-            LOG.info("{} findDocumentsByUserIdOrEntity completed userId={} entities={} proposalCount={} durationMs={}",
-                    SEARCH_PERF, userId, entities, proposals.size(), System.currentTimeMillis() - tFind);
 
-            long tBatch = System.currentTimeMillis();
             List<String> proposalIds = proposals.stream().map(Proposal::getId).collect(Collectors.toList());
             List<LegDocument> allLegDocuments = packageRepository.findLegDocumentsByDocumentIds(proposalIds);
-            LOG.info("{} findLegDocumentsByDocumentIds completed proposalCount={} legCount={} durationMs={}",
-                    SEARCH_PERF, proposalIds.size(), allLegDocuments.size(), System.currentTimeMillis() - tBatch);
 
             Map<String, List<LegDocument>> legsByProposalId = allLegDocuments.stream()
                     .collect(Collectors.groupingBy(LegDocument::getPackageId));
@@ -329,8 +315,6 @@ public class LegServiceImpl implements LegService {
             }
         }
 
-        LOG.info("{} END getLegDocumentDetailsByUserId userId={} resultCount={} totalDurationMs={}",
-                SEARCH_PERF, userId, legDocumentVOs.size(), System.currentTimeMillis() - t0);
         return legDocumentVOs;
     }
 
@@ -353,8 +337,6 @@ public class LegServiceImpl implements LegService {
     private void addLegDocumentVoToList(String legStatus, Proposal proposal, List<LegDocumentVO> legDocumentVOs) {
         long t0 = System.currentTimeMillis();
         LegDocumentVO legDocumentVO = getLegDocumentVO(proposal, legStatus);
-        LOG.info("{} addLegDocumentVoToList proposalId={} found={} durationMs={}",
-                SEARCH_PERF, proposal.getId(), legDocumentVO != null, System.currentTimeMillis() - t0);
         if (legDocumentVO != null) {
             legDocumentVOs.add(legDocumentVO);
         }
@@ -363,8 +345,6 @@ public class LegServiceImpl implements LegService {
     private void addLegDocumentVoToList(String legStatus, Proposal proposal, List<LegDocument> legs, List<LegDocumentVO> legDocumentVOs) {
         long t0 = System.currentTimeMillis();
         LegDocumentVO legDocumentVO = getLegDocumentVO(proposal, legStatus, legs);
-        LOG.info("{} addLegDocumentVoToList proposalId={} found={} durationMs={}",
-                SEARCH_PERF, proposal.getId(), legDocumentVO != null, System.currentTimeMillis() - t0);
         if (legDocumentVO != null) {
             legDocumentVOs.add(legDocumentVO);
         }
@@ -384,8 +364,6 @@ public class LegServiceImpl implements LegService {
     private LegDocumentVO getLegDocumentVO(Proposal proposal, String legStatus) {
         long tLeg = System.currentTimeMillis();
         List<LegDocument> legDocuments = this.findLegDocumentByAnyDocumentId(proposal.getId());
-        LOG.info("{} findLegDocumentByAnyDocumentId proposalId={} legCount={} durationMs={}",
-                SEARCH_PERF, proposal.getId(), legDocuments.size(), System.currentTimeMillis() - tLeg);
 
         if (legDocuments.isEmpty()) {
             return null;
@@ -1493,15 +1471,9 @@ public class LegServiceImpl implements LegService {
 
     @Override
     public List<LegDocument> findLegDocumentByAnyDocumentId(String documentId) {
-        long tPkg = System.currentTimeMillis();
         LeosPackage leosPackage = packageRepository.findPackageByDocumentId(documentId);
-        LOG.info("{} findPackageByDocumentId documentId={} packageId={} durationMs={}",
-                SEARCH_PERF, documentId, leosPackage.getId(), System.currentTimeMillis() - tPkg);
 
-        long tDocs = System.currentTimeMillis();
         List<LegDocument> result = packageRepository.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, false);
-        LOG.info("{} findDocumentsByPackageId packageId={} legCount={} durationMs={}",
-                SEARCH_PERF, leosPackage.getId(), result.size(), System.currentTimeMillis() - tDocs);
         return result;
     }
 

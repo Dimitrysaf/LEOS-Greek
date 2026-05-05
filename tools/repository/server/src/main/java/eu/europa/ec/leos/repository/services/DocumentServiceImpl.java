@@ -63,7 +63,6 @@ import java.util.stream.Collectors;
 public class DocumentServiceImpl implements DocumentService {
     private static final Logger LOG = LoggerFactory.getLogger(DocumentServiceImpl.class);
     private static final int MAX_RESULT_DEFAULT = 100;
-    private static final String REPO_PERF = "[REPO-PERF]";
     private static final String XML_DOC_EXT = ".xml";
     private static final String CUSTOM_TEMPLATE_COMMENT = "Custom Template";
     private static final String SENT_FOR_VALIDATION = "SENT_FOR_VALIDATION";
@@ -790,28 +789,15 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public List<LeosDocument> findDocumentsByUserIdOrEntity(String userName, String entities, String role, String category) {
-        long t0 = System.currentTimeMillis();
-        LOG.info("{} START findDocumentsByUserIdOrEntity userName={} category={}", REPO_PERF, userName, category);
-
         List<LeosDocument> xmlDocs = new ArrayList<>();
         Set<String> categories = new HashSet<>();
         categories.add(category);
 
-        long t1 = System.currentTimeMillis();
         List<BigDecimal> pkgIdsByUser = collaboratorsService.findDocumentsByCollaboratorName(userName);
-        LOG.info("{} findDocumentsByCollaboratorName userName={} pkgCount={} durationMs={}", REPO_PERF, userName, pkgIdsByUser.size(), System.currentTimeMillis() - t1);
-
-        long t2 = System.currentTimeMillis();
         List<BigDecimal> pkgIdsByEntity = collaboratorsService.findDocumentsByCollaboratorNames(entities);
-        LOG.info("{} findDocumentsByCollaboratorNames entities={} pkgCount={} durationMs={}", REPO_PERF, entities, pkgIdsByEntity.size(), System.currentTimeMillis() - t2);
-
         pkgIdsByUser.addAll(pkgIdsByEntity);
 
-        long t3 = System.currentTimeMillis();
         xmlDocs.addAll(packageService.findDocumentsByPackageIds(pkgIdsByUser, categories));
-        LOG.info("{} findDocumentsByPackageIds pkgCount={} docCount={} durationMs={}", REPO_PERF, pkgIdsByUser.size(), xmlDocs.size(), System.currentTimeMillis() - t3);
-
-        LOG.info("{} END findDocumentsByUserIdOrEntity userName={} docCount={} totalDurationMs={}", REPO_PERF, userName, xmlDocs.size(), System.currentTimeMillis() - t0);
         return xmlDocs;
     }
 

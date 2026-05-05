@@ -42,7 +42,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CollaboratorsServiceImpl implements CollaboratorsService {
     private static final Logger LOG = LoggerFactory.getLogger(CollaboratorsServiceImpl.class);
-    private static final String REPO_PERF = "[REPO-PERF]";
 
     private final CollaboratorsRepository collaboratorsRepository;
     private final PackageCollaboratorsRepository packageCollaboratorsRepository;
@@ -176,29 +175,18 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
 
     @Override
     public List<BigDecimal> findDocumentsByCollaboratorNames(String collaboratorNames) {
-        long t0 = System.currentTimeMillis();
         List<BigDecimal> packageIdsList = new ArrayList<>();
         List<String> entityList = Arrays.asList(collaboratorNames.split("_"));
-        LOG.info("{} findDocumentsByCollaboratorNames START entityCount={}", REPO_PERF, entityList.size());
 
-        long t1 = System.currentTimeMillis();
         List<Collaborators> allCollaborators = collaboratorsRepository.findAllCollaborators();
-        LOG.info("{} findAllCollaborators totalCount={} durationMs={}", REPO_PERF, allCollaborators.size(), System.currentTimeMillis() - t1);
-
-        long t2 = System.currentTimeMillis();
         List<BigDecimal> matchedCollaboratorIds = allCollaborators.stream()
                 .filter(collab -> entityList.stream().anyMatch(input -> input.startsWith(collab.getCollaboratorName())))
                 .map(Collaborators::getId).collect(Collectors.toList());
-        LOG.info("{} in-memory filter matchedCount={} durationMs={}", REPO_PERF, matchedCollaboratorIds.size(), System.currentTimeMillis() - t2);
 
-        long t3 = System.currentTimeMillis();
         List<BigDecimal> packageIdsListBD = packageCollaboratorsRepository.findPackageIdsByCollaboratorIds(matchedCollaboratorIds);
-        LOG.info("{} findPackageIdsByCollaboratorIds pkgCount={} durationMs={}", REPO_PERF, packageIdsListBD.size(), System.currentTimeMillis() - t3);
-
         for (BigDecimal packageIdBD : packageIdsListBD) {
             packageIdsList.add(packageIdBD);
         }
-        LOG.info("{} findDocumentsByCollaboratorNames END totalDurationMs={}", REPO_PERF, System.currentTimeMillis() - t0);
         return packageIdsList;
     }
 
