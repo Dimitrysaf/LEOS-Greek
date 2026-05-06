@@ -105,7 +105,7 @@ public interface ApiService {
 
     byte[] downloadProposal(String proposalRef) throws Exception;
 
-    void createProposalAnnex(String proposalRef, String originRef, AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) throws IOException;
+    void createProposalAnnex(String proposalRef, String originRef, AnnexType annexType, byte[] binaryContent, String originalFilename) throws IOException;
 
     List<MilestonesVO> getProposalMilestones(String proposalRef) throws Exception;
 
@@ -146,7 +146,7 @@ public interface ApiService {
 
     String getProposalsReport();
 
-    void updateForeignAnnex(String proposalRef, String annexId, byte[] binaryContent, String originalFilename, String binaryContentSize);
+    void updateForeignAnnex(String proposalRef, String annexId, byte[] binaryContent, String originalFilename);
 
     void uploadForeignAnnexRendition(String proposalRef, String annexId, byte[] binaryContent, String originalFilename);
 

@@ -34,7 +34,6 @@ public class UpdateDocumentRequest implements Serializable {
     private String comments;
     private byte[] binaryContent;
     private String originalFilename;
-    private String binaryContentSize;
     private byte[] foreignRenditionContent;
     private String foreignRenditionOriginalFilename;
 
@@ -100,14 +99,6 @@ public class UpdateDocumentRequest implements Serializable {
 
     public void setOriginalFilename(String originalFilename) {
         this.originalFilename = originalFilename;
-    }
-
-    public String getBinaryContentSize() {
-        return binaryContentSize;
-    }
-
-    public void setBinaryContentSize(String binaryContentSize) {
-        this.binaryContentSize = binaryContentSize;
     }
 
     public byte[] getForeignRenditionContent() {

@@ -220,13 +220,13 @@ public class DocumentServiceImpl implements DocumentService {
     @Transactional(rollbackFor = Exception.class)
     public LeosDocument updateDocument(final BigDecimal versionId, Map<String, ?> metadata,
             VersionType versionType, String category, byte[] contentBytes, String comments, String userId) throws Exception {
-        return this.updateDocument(versionId, metadata, versionType, category, contentBytes, comments, userId, null, null, null, null, null);
+        return this.updateDocument(versionId, metadata, versionType, category, contentBytes, comments, userId, null, null, null, null);
     }
 
     @Transactional(rollbackFor = Exception.class)
     public LeosDocument updateDocument(final BigDecimal versionId, Map<String, ?> metadata,
             VersionType versionType, String category, byte[] contentBytes, String comments, String userId,
-            byte[] binaryContent, String originalFilename, String binaryContentSize, byte[] foreignRenditionContent, String foreignRenditionOriginalFilename) throws Exception {
+            byte[] binaryContent, String originalFilename, byte[] foreignRenditionContent, String foreignRenditionOriginalFilename) throws Exception {
 
         switch (category) {
             case "LEG":
@@ -251,7 +251,7 @@ public class DocumentServiceImpl implements DocumentService {
                     latestMajorVersion = documentVersionRepository.findLastMajorVersionByDocumentId(doc.getId());
                 }
 
-                Map<DocumentContent, DocumentVersion> docs = updateDocument(doc, metadata, labelVersion, versionType.value(), contentBytes, comments, userId, binaryContent, originalFilename, binaryContentSize, foreignRenditionContent, foreignRenditionOriginalFilename);
+                Map<DocumentContent, DocumentVersion> docs = updateDocument(doc, metadata, labelVersion, versionType.value(), contentBytes, comments, userId, binaryContent, originalFilename, foreignRenditionContent, foreignRenditionOriginalFilename);
                 doc = updateDocumentMetadata(doc, docs.values().stream().findFirst().get(), (Map<String, Object>) metadata, userId);
 
                 boolean toUpdatePackage = false;
@@ -1109,7 +1109,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     private Map<DocumentContent, DocumentVersion> updateDocument(final Document doc, Map<String, ?> metadata, final String labelVersion,
-            int versionType, byte[] contentBytes, String comments, String userId, byte[] binaryContent, String originalFilename, String binaryContentSize,
+            int versionType, byte[] contentBytes, String comments, String userId, byte[] binaryContent, String originalFilename,
             byte[] foreignRenditionContent, String foreignRenditionOriginalFilename) throws RepositoryException {
         Optional<DocumentV> docView = documentVRepository.findLastVersionByDocumentId(doc.getId());
 
@@ -1120,7 +1120,7 @@ public class DocumentServiceImpl implements DocumentService {
                 docContent = updateDocumentContentSimplified(docVersion, docView.get(), userId, metadata, foreignRenditionContent, foreignRenditionOriginalFilename);
             } else {
                 docContent = updateDocumentContent(docVersion, docView.get(), userId, new String(contentBytes, StandardCharsets.UTF_8),
-                        metadata, binaryContent, originalFilename, binaryContentSize);
+                        metadata, binaryContent, originalFilename);
             }
             return Collections.singletonMap(docContent, docVersion);
         } else {
@@ -1228,11 +1228,11 @@ public class DocumentServiceImpl implements DocumentService {
 
     private DocumentContent updateDocumentContent(DocumentVersion docVersion, final DocumentV prevVersion, String userId,
             String contentString, Map<String, ?> metadata) {
-        return this.updateDocumentContent(docVersion, prevVersion, userId, contentString, metadata, null, null, null);
+        return this.updateDocumentContent(docVersion, prevVersion, userId, contentString, metadata, null, null);
     }
 
     private DocumentContent updateDocumentContent(DocumentVersion docVersion, final DocumentV prevVersion, String userId,
-            String contentString, Map<String, ?> metadata, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+            String contentString, Map<String, ?> metadata, byte[] binaryContent, String originalFilename) {
         DocumentContent content = new DocumentContent();
         content.setContent(contentString);
         content.setCreatedBy(userId);
@@ -1243,7 +1243,6 @@ public class DocumentServiceImpl implements DocumentService {
         if (binaryContent != null) {
             content.setBinaryContent(binaryContent);
             content.setOriginalFilename(originalFilename);
-            content.setBinaryContentSize(binaryContentSize);
         }
 
         Boolean eeaRelevance = ConversionUtils.convertBoolean(metadata.get(PropertiesMetadata.EEA_RELEVANCE.getLeosName()));

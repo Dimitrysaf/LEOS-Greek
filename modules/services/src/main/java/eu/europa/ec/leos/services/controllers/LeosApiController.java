@@ -569,7 +569,7 @@ public class LeosApiController implements LeosApi {
     public ResponseEntity<Object> createProposalAnnex(String proposalRef) {
         try {
             proposalRef = encodeParam(proposalRef);
-            this.apiService.createProposalAnnex(proposalRef, null, AnnexType.NORMAL, null, null, null);
+            this.apiService.createProposalAnnex(proposalRef, null, AnnexType.NORMAL, null, null);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             LOG.error(ERROR_WHILE_CREATING_NEW_BILL_ANNEX + e.getMessage());
@@ -581,7 +581,7 @@ public class LeosApiController implements LeosApi {
     public ResponseEntity<Object> createProposalForeignAnnex(String proposalRef, MultipartFile foreignAnnexFile) throws IOException {
         validateHybridDocument(foreignAnnexFile);
         proposalRef = encodeParam(proposalRef);
-        this.apiService.createProposalAnnex(proposalRef, null, AnnexType.FOREIGN, foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename(), String.format("%.2f KB", foreignAnnexFile.getSize() / 1024.0));
+        this.apiService.createProposalAnnex(proposalRef, null, AnnexType.FOREIGN, foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -617,7 +617,7 @@ public class LeosApiController implements LeosApi {
         validateHybridDocument(foreignAnnexFile);
         proposalRef = encodeParam(proposalRef);
         annexId = encodeParam(annexId);
-        this.apiService.updateForeignAnnex(proposalRef, annexId, foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename(), String.format("%.2f KB", foreignAnnexFile.getSize() / 1024.0));
+        this.apiService.updateForeignAnnex(proposalRef, annexId, foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

@@ -417,7 +417,7 @@ public class BillContextService {
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Annex not found index " + annex.getMetadata().get().getIndex()));
             byte[] updatedAnnexBytes = xmlContentProcessor.doXMLPostProcessing(docChild.getSource());  //updateRefs
-            annexService.updateAnnex(annex, updatedAnnexBytes, annex.getMetadata().get(), VersionType.MINOR, updateRefsComment, false, docChild.getBinaryFile(), docChild.getOriginalFilename(), docChild.getBinaryFileSize());
+            annexService.updateAnnex(annex, updatedAnnexBytes, annex.getMetadata().get(), VersionType.MINOR, updateRefsComment, false, docChild.getBinaryFile(), docChild.getOriginalFilename());
             idsAndUrlsHolder.addDocCloneAndOriginIdMap(annex.getMetadata().get().getRef(), docChild.getRef());
             refsMatching.put(docChild.getRef(), annex);
         }
@@ -623,10 +623,10 @@ public class BillContextService {
     }
 
     public void executeCreateBillAnnex() {
-        executeCreateBillAnnex(null, null, null, null);
+        executeCreateBillAnnex(null, null, null);
     }
 
-    public void executeCreateBillAnnex(AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+    public void executeCreateBillAnnex(AnnexType annexType, byte[] binaryContent, String originalFilename) {
         LOG.trace("Executing 'Create Bill Annex' use case...");
 
         Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
@@ -661,7 +661,7 @@ public class BillContextService {
             annexContext.useExistingTitle(existingAnnexTitle);
             annexContext.useExistingContent(existingAnnexContent, true);
         }
-        Annex annex = annexContext.executeCreateAnnex(annexType, binaryContent, originalFilename, binaryContentSize);
+        Annex annex = annexContext.executeCreateAnnex(annexType, binaryContent, originalFilename);
 
         String href = annex.getName();
         String showAs = annexNumber; //createdAnnex.getMetadata().get().getNumber(); //ShowAs attribute is not used so it is kept as blank as of now.

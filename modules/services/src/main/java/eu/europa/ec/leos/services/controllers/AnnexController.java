@@ -312,28 +312,36 @@ public class AnnexController implements AnnexApi {
 
     }
 
-
     @Override
     public ResponseEntity<Object> getAnnex(String documentRef) {
-        try {
-            documentRef = encodeParam(documentRef);
-            DocumentViewResponse annex = this.annexApiService.getDocument(documentRef);
-            if (annex.getBinaryFile() != null) {
-                String extension = getFileExtension(annex.getOriginalFilename());
-                String mimeType = getMimeType(extension);
-                return ResponseEntity.ok()
-                        .contentType(MediaType.parseMediaType(mimeType))
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + annex.getOriginalFilename() + "\"")
-                        .body(annex.getBinaryFile());
-            } else {
-                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(annex);
-            }
-        } catch (Exception e) {
-            LOG.error("Error occurred while getting annex document - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting annex document",
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+        documentRef = encodeParam(documentRef);
+        DocumentViewResponse annex = this.annexApiService.getDocument(documentRef);
+        if (annex.getBinaryFile() != null) {
+            String extension = getFileExtension(annex.getOriginalFilename());
+            String mimeType = getMimeType(extension);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(mimeType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + annex.getOriginalFilename() + "\"")
+                    .body(annex.getBinaryFile());
+        } else {
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(annex);
         }
+    }
 
+    @Override
+    public ResponseEntity<Object> getAnnexRendition(String documentRef) {
+        documentRef = encodeParam(documentRef);
+        DocumentViewResponse annex = this.annexApiService.getDocument(documentRef);
+        if (annex.getForeignRenditionSource() != null) {
+            String extension = getFileExtension(annex.getForeignRenditionOriginalFilename());
+            String mimeType = getMimeType(extension);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(mimeType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + annex.getForeignRenditionOriginalFilename() + "\"")
+                    .body(annex.getForeignRenditionSource());
+        } else {
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(annex);
+        }
     }
 
     @Override

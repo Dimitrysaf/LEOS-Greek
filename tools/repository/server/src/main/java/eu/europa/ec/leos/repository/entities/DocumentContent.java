@@ -65,8 +65,6 @@ public class DocumentContent implements Serializable {
     private byte[] binaryContent;
     @Column(name = "ORIGINAL_FILE_NAME", length = 255, nullable = true)
     private String originalFilename;
-    @Column(name = "BINARY_CONTENT_SIZE", length = 30, nullable = true)
-    private String binaryContentSize;
     @Lob
     @Column(name = "FOREIGN_RENDITION_CONTENT", nullable = true)
     private byte[] foreignRenditionContent;
@@ -241,14 +239,6 @@ public class DocumentContent implements Serializable {
 
     public void setOriginalFilename(String originalFilename) {
         this.originalFilename = originalFilename;
-    }
-
-    public String getBinaryContentSize() {
-        return binaryContentSize;
-    }
-
-    public void setBinaryContentSize(String binaryContentSize) {
-        this.binaryContentSize = binaryContentSize;
     }
 
     public byte[] getForeignRenditionContent() {

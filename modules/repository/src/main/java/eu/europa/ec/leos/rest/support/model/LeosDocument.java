@@ -39,6 +39,7 @@ public class LeosDocument {
     private String binarySourceSize;
     private byte[] foreignRenditionSource;
     private String foreignRenditionOriginalFilename;
+    private String foreignRenditionOriginalFileSize;
     private VersionType versionType;
     private Boolean isLatestVersion = false;
     private String versionLabel;
@@ -300,4 +301,11 @@ public class LeosDocument {
         this.foreignRenditionOriginalFilename = foreignRenditionOriginalFilename;
     }
 
+    public String getForeignRenditionOriginalFileSize() {
+        return this.foreignRenditionOriginalFileSize;
+    }
+
+    public void setForeignRenditionOriginalFileSize(final String foreignRenditionOriginalFileSize) {
+        this.foreignRenditionOriginalFileSize = foreignRenditionOriginalFileSize;
+    }
 }

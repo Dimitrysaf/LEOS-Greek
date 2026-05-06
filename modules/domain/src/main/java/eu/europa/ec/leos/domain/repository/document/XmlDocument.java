@@ -24,6 +24,7 @@ public abstract class XmlDocument extends LeosDocument implements Securable {
     private String binaryContentSize;
     private byte[] foreignRenditionSource;
     private String foreignRenditionOriginalFilename;
+    private String foreignRenditionOriginalFileSize;
     @Getter
     @Setter
     private String originRef;
@@ -54,7 +55,7 @@ public abstract class XmlDocument extends LeosDocument implements Securable {
             VersionType versionType, boolean isLatestVersion, String title,
             List<Collaborator> collaborators, List<String> milestoneComments, Option<Content> content,
             boolean trackChangesEnabled, boolean isVersionArchived, byte[] binaryContent, String originalFilename, String binaryContentSize,
-            byte[] foreignRenditionSource, String foreignRenditionOriginalFilename) {
+            byte[] foreignRenditionSource, String foreignRenditionOriginalFilename, String foreignRenditionOriginalFileSize) {
         super(category, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant, versionSeriesId,
                 cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, isVersionArchived, content);
         this.securityData = new SecurityData(collaborators);
@@ -66,6 +67,7 @@ public abstract class XmlDocument extends LeosDocument implements Securable {
         this.binaryContentSize = binaryContentSize;
         this.foreignRenditionSource = foreignRenditionSource;
         this.foreignRenditionOriginalFilename = foreignRenditionOriginalFilename;
+        this.foreignRenditionOriginalFileSize = foreignRenditionOriginalFileSize;
     }
 
     protected XmlDocument(LeosCategory category, String id, String name, String createdBy,
@@ -130,4 +132,11 @@ public abstract class XmlDocument extends LeosDocument implements Securable {
         this.foreignRenditionOriginalFilename = foreignRenditionOriginalFilename;
     }
 
+    public String getForeignRenditionOriginalFileSize() {
+        return this.foreignRenditionOriginalFileSize;
+    }
+
+    public void setForeignRenditionOriginalFileSize(final String foreignRenditionOriginalFileSize) {
+        this.foreignRenditionOriginalFileSize = foreignRenditionOriginalFileSize;
+    }
 }

@@ -65,10 +65,10 @@ public abstract class AnnexRepositoryImpl implements AnnexRepository {
     }
 
     @Override
-    public Annex createClonedAnnexFromContent(String path, String name, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, byte[] content, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+    public Annex createClonedAnnexFromContent(String path, String name, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, byte[] content, byte[] binaryContent, String originalFilename) {
         logger.debug("Creating cloned Annex From Content... [tpath=" + path + ", name=" + name + "]");
         return leosRepository.createClonedDocumentFromContent(path, name, metadata, cloneDocumentMetadataVO, Annex.class,
-                LeosCategory.ANNEX.name(), content, binaryContent, originalFilename, binaryContentSize);
+                LeosCategory.ANNEX.name(), content, binaryContent, originalFilename);
     }
 
     @Override
@@ -90,9 +90,9 @@ public abstract class AnnexRepositoryImpl implements AnnexRepository {
     }
 
     @Override
-    public Annex updateAnnex(String id, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+    public Annex updateAnnex(String id, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename) {
         logger.debug("Updating Annex content... [id=" + id + "]");
-        return leosRepository.updateDocument(id, content, versionType, comment, Annex.class, binaryContent, originalFilename, binaryContentSize);
+        return leosRepository.updateDocument(id, content, versionType, comment, Annex.class, binaryContent, originalFilename);
     }
 
     @Override
@@ -108,21 +108,21 @@ public abstract class AnnexRepositoryImpl implements AnnexRepository {
     }
 
     @Override
-    public Annex updateAnnex(String id, AnnexMetadata metadata, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+    public Annex updateAnnex(String id, AnnexMetadata metadata, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename) {
         logger.debug("Updating Annex metadata and content... [id=" + id + "]");
-        return leosRepository.updateDocument(id, metadata, content, versionType, comment, Annex.class, binaryContent, originalFilename, binaryContentSize);
+        return leosRepository.updateDocument(id, metadata, content, versionType, comment, Annex.class, binaryContent, originalFilename);
     }
 
     @Override
-    public Annex updateMilestoneComments(String id, List<String> milestoneComments, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+    public Annex updateMilestoneComments(String id, List<String> milestoneComments, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename) {
         logger.debug("Updating Annex milestoneComments and content... [id=" + id + "]");
-        return leosRepository.updateMilestoneComments(id, content, milestoneComments, versionType, comment, Annex.class, binaryContent, originalFilename, binaryContentSize);
+        return leosRepository.updateMilestoneComments(id, content, milestoneComments, versionType, comment, Annex.class, binaryContent, originalFilename);
     }
 
     @Override
-    public Annex updateMilestoneComments(String ref, String id, List<String> milestoneComments, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+    public Annex updateMilestoneComments(String ref, String id, List<String> milestoneComments, byte[] binaryContent, String originalFilename) {
         logger.debug("Updating Annex milestoneComments... [id=" + id + "]");
-        return leosRepository.updateMilestoneComments(ref, id, milestoneComments, Annex.class, binaryContent, originalFilename, binaryContentSize);
+        return leosRepository.updateMilestoneComments(ref, id, milestoneComments, Annex.class, binaryContent, originalFilename);
     }
 
     @Override

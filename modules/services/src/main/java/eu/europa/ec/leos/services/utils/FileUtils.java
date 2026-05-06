@@ -26,7 +26,6 @@ public class FileUtils {
         if (!isValidSizeFileForBinaryFile(foreignAnnexFile.getSize())) {
             throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.max.size.error");
         }
-        String extension = getFileExtension(foreignAnnexFile.getOriginalFilename());
     }
 
     public static void validateRenditionHybridDocument(MultipartFile foreignAnnexRendition) throws IOException {
@@ -37,7 +36,6 @@ public class FileUtils {
         if (!isValidSizeFileForBinaryFile(foreignAnnexRendition.getSize())) {
             throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.max.size.error");
         }
-        String extension = getFileExtension(foreignAnnexRendition.getOriginalFilename());
     }
 
     public static void validatePath(String path) {
@@ -104,11 +102,16 @@ public class FileUtils {
     public static boolean isValidMimeTypeForForeignAnnex(byte[] binaryContent, String fileName) throws IOException {
         Tika tika = new Tika();
         String mimeType = tika.detect(TikaInputStream.get(binaryContent), fileName);
-        List<String> allowedTypes = Arrays.asList(
-                "application/pdf",
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        return allowedTypes.contains(mimeType);
+        String extension = getFileExtension(fileName);
+        boolean valid = false;
+        if (extension.equals("PDF") && mimeType.equals("application/pdf")) {
+            valid = true;
+        } else if (extension.equals("DOCX") && mimeType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+            valid = true;
+        } else if (extension.equals("XLSX") && mimeType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
+            valid = true;
+        }
+        return valid;
     }
 
     public static boolean isValidMimeTypeForForeignAnnexRendition(byte[] binaryContent, String fileName) throws IOException {
@@ -117,6 +120,10 @@ public class FileUtils {
         List<String> allowedTypes = Arrays.asList(
                 "application/pdf");
         return allowedTypes.contains(mimeType);
+    }
+
+    public static String getFileName(String fileName) {
+        return fileName.substring(0, fileName.lastIndexOf(".")).toUpperCase();
     }
 
     public static String getFileExtension(String fileName) {

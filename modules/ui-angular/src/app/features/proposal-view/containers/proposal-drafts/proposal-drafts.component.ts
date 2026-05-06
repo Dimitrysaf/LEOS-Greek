@@ -357,6 +357,18 @@ export class ProposalDraftsComponent
       });
   }
 
+  downloadForeignAnnexRendition(ref: string, foreignRenditionOriginalFilename: string) {
+    this.loadingService.setLoading(true);
+    this.http
+      .get(`${apiBaseUrl}/secured/annex/${ref}/rendition`, {
+        responseType: 'blob',
+      })
+      .subscribe({
+        next: (blob) => downloadBlob(blob, `${foreignRenditionOriginalFilename}`),
+        complete: () => this.loadingService.setLoading(false),
+      });
+  }
+
   onFinancialStatementCreate() {
     this.proposalDetailsService.createFinancialStatement();
   }

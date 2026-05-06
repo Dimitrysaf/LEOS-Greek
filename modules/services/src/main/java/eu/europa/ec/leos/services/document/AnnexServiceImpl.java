@@ -158,11 +158,11 @@ public abstract class AnnexServiceImpl implements AnnexService {
 
     @Override
     public Annex updateAnnex(Annex annex, AnnexMetadata updatedMetadata, VersionType versionType, String comment, boolean updateInternalRefs,
-            byte[] binaryContent, String originalFilename, String binaryContentSize) {
+            byte[] binaryContent, String originalFilename) {
         LOG.trace("Updating Annex... [id={}, updatedMetadata={}, versionType={}, comment={}]", annex.getId(), updatedMetadata, versionType, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
         byte[] updatedBytes = updateDataInXml(getContent(annex), updatedMetadata, updateInternalRefs);
-        return updateAnnex(annex, updatedMetadata, updatedBytes, versionType, comment, stopwatch, false, binaryContent, originalFilename, binaryContentSize);
+        return updateAnnex(annex, updatedMetadata, updatedBytes, versionType, comment, stopwatch, false, binaryContent, originalFilename);
     }
 
     @Override
@@ -183,11 +183,11 @@ public abstract class AnnexServiceImpl implements AnnexService {
 
     @Override
     public Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, AnnexMetadata metadata, VersionType versionType, String comment, boolean updateInternalRefs,
-            byte[] binaryContent, String originalFilename, String binaryContentSize) {
+            byte[] binaryContent, String originalFilename) {
         LOG.trace("Updating Annex... [id={}, updatedMetadata={}, versionType={}, comment={}]", annex.getId(), metadata, versionType, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
         updatedAnnexContent = updateDataInXml(updatedAnnexContent, metadata, false);
-        return updateAnnex(annex, metadata, updatedAnnexContent, versionType, comment, stopwatch, updateInternalRefs, binaryContent, originalFilename, binaryContentSize);
+        return updateAnnex(annex, metadata, updatedAnnexContent, versionType, comment, stopwatch, updateInternalRefs, binaryContent, originalFilename);
     }
 
     private Annex updateAnnex(Annex annex, AnnexMetadata updatedMetadata, byte[] updatedBytes, VersionType versionType, String comment, Stopwatch stopwatch, boolean updateInternalRefs) {
@@ -203,8 +203,8 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     private Annex updateAnnex(Annex annex, AnnexMetadata updatedMetadata, byte[] updatedBytes, VersionType versionType, String comment, Stopwatch stopwatch, boolean updateInternalRefs,
-            byte[] binaryContent, String originalFilename, String binaryContentSize) {
-        annex = annexRepository.updateAnnex(annex.getId(), updatedMetadata, updatedBytes, versionType, comment, binaryContent, originalFilename, binaryContentSize);
+            byte[] binaryContent, String originalFilename) {
+        annex = annexRepository.updateAnnex(annex.getId(), updatedMetadata, updatedBytes, versionType, comment, binaryContent, originalFilename);
         if (updateInternalRefs) {
             updateInternalReferencesAsync(annex);
         }
@@ -226,14 +226,14 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     @Override
-    public Annex updateAnnex(String id, byte[] updatedAnnexContent, boolean updateInternalRefs, byte[] binaryContent, String originalFilename, String binaryContentSize) {
-        return updateAnnex(id, updatedAnnexContent, updateInternalRefs, VersionType.MINOR, "Content updated.", binaryContent, originalFilename, binaryContentSize);
+    public Annex updateAnnex(String id, byte[] updatedAnnexContent, boolean updateInternalRefs, byte[] binaryContent, String originalFilename) {
+        return updateAnnex(id, updatedAnnexContent, updateInternalRefs, VersionType.MINOR, "Content updated.", binaryContent, originalFilename);
     }
 
     @Override
-    public Annex updateAnnex(String id, byte[] updatedAnnexContent, boolean updateInternalRefs, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+    public Annex updateAnnex(String id, byte[] updatedAnnexContent, boolean updateInternalRefs, VersionType versionType, String comment, byte[] binaryContent, String originalFilename) {
         LOG.trace("Updating Annex content ... [id={}, versionType={}, comment={}]", id, versionType, comment);
-        Annex annex = annexRepository.updateAnnex(id, updatedAnnexContent, versionType, comment, binaryContent, originalFilename, binaryContentSize);
+        Annex annex = annexRepository.updateAnnex(id, updatedAnnexContent, versionType, comment, binaryContent, originalFilename);
         if (updateInternalRefs) {
             updateInternalReferencesAsync(annex);
         }
@@ -249,18 +249,18 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     @Override
-    public Annex updateAnnexWithMilestoneComments(Annex annex, List<String> milestoneComments, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize){
+    public Annex updateAnnexWithMilestoneComments(Annex annex, List<String> milestoneComments, VersionType versionType, String comment, byte[] binaryContent, String originalFilename){
         LOG.trace("Updating Annex... [id={}, milestoneComments={}, versionType={}, comment={}]", annex.getId(), milestoneComments, versionType, comment);
         final byte[] updatedBytes = getContent(annex);
-        annex = annexRepository.updateMilestoneComments(annex.getId(), milestoneComments, updatedBytes, versionType, comment, binaryContent, originalFilename, binaryContentSize);
+        annex = annexRepository.updateMilestoneComments(annex.getId(), milestoneComments, updatedBytes, versionType, comment, binaryContent, originalFilename);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
         return annex;
     }
 
     @Override
-    public Annex updateAnnexWithMilestoneComments(String ref, String annexId, List<String> milestoneComments, byte[] binaryContent, String originalFilename, String binaryContentSize){
+    public Annex updateAnnexWithMilestoneComments(String ref, String annexId, List<String> milestoneComments, byte[] binaryContent, String originalFilename){
         LOG.trace("Updating Annex... [id={}, milestoneComments={}]", annexId, milestoneComments);
-        Annex annex = annexRepository.updateMilestoneComments(ref, annexId, milestoneComments, binaryContent, originalFilename, binaryContentSize);
+        Annex annex = annexRepository.updateMilestoneComments(ref, annexId, milestoneComments, binaryContent, originalFilename);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
         return annex;
     }
@@ -286,13 +286,13 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     @Override
-    public Annex createVersion(String id, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+    public Annex createVersion(String id, VersionType versionType, String comment, byte[] binaryContent, String originalFilename) {
         LOG.trace("Creating Annex version... [id={}, versionType={}, comment={}]", id, versionType, comment);
         Annex annex = findAnnex(id, true);
         final AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata is required!");
         final Content content = annex.getContent().getOrError(() -> "Annex content is required!");
         byte[] contentBytes = content.getSource().getBytes();
-        annex = annexRepository.updateAnnex(id, metadata, contentBytes, versionType, comment, binaryContent, originalFilename, binaryContentSize);
+        annex = annexRepository.updateAnnex(id, metadata, contentBytes, versionType, comment, binaryContent, originalFilename);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
         documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;
@@ -423,7 +423,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     @Override
-    public Annex createAnnex(String templateId, String path, AnnexMetadata metadata, String actionMessage, byte[] content, AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+    public Annex createAnnex(String templateId, String path, AnnexMetadata metadata, String actionMessage, byte[] content, AnnexType annexType, byte[] binaryContent, String originalFilename) {
         LOG.trace("Creating Annex... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
         final String language = metadata.getLanguage();
         String ref = metadata.getRef() != null ?
@@ -436,7 +436,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         Annex annex = annexRepository.createAnnex(templateId, path, ref + XML_DOC_EXT, metadata);
         LOG.info("Created Annex with ref '{}' in path {}", ref, path);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(annex) : content, metadata, false);
-        annex = annexRepository.updateAnnex(annex.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage, binaryContent, originalFilename, binaryContentSize);
+        annex = annexRepository.updateAnnex(annex.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage, binaryContent, originalFilename);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
         documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;
@@ -471,20 +471,20 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     @Override
-    public Annex createAnnexFromContent(String path, AnnexMetadata metadata, String actionMessage, byte[] content, String name, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+    public Annex createAnnexFromContent(String path, AnnexMetadata metadata, String actionMessage, byte[] content, String name, byte[] binaryContent, String originalFilename) {
         LOG.trace("Creating Annex From Content... [path={}, metadata={}]", path, metadata);
         Annex annex = annexRepository.createAnnexFromContent(path, name, metadata, content);
-        annex = annexRepository.updateAnnex(annex.getId(), metadata, content, VersionType.MINOR, actionMessage, binaryContent, originalFilename, binaryContentSize);
+        annex = annexRepository.updateAnnex(annex.getId(), metadata, content, VersionType.MINOR, actionMessage, binaryContent, originalFilename);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
         documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;
     }
 
     @Override
-    public Annex createClonedAnnexFromContent(String path, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage, byte[] content, String name, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+    public Annex createClonedAnnexFromContent(String path, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage, byte[] content, String name, byte[] binaryContent, String originalFilename) {
         LOG.trace("Creating cloned Annex From Content... [path={}, metadata={}]", path, metadata);
-        Annex annex = annexRepository.createClonedAnnexFromContent(path, name, metadata, cloneDocumentMetadataVO, content, binaryContent, originalFilename, binaryContentSize);
-        annex = annexRepository.updateAnnex(annex.getId(), metadata, content, VersionType.MINOR, actionMessage, binaryContent, originalFilename, binaryContentSize);
+        Annex annex = annexRepository.createClonedAnnexFromContent(path, name, metadata, cloneDocumentMetadataVO, content, binaryContent, originalFilename);
+        annex = annexRepository.updateAnnex(annex.getId(), metadata, content, VersionType.MINOR, actionMessage, binaryContent, originalFilename);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
         documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;
@@ -492,11 +492,11 @@ public abstract class AnnexServiceImpl implements AnnexService {
 
     @Override
     @Async("delegatingSecurityContextAsyncTaskExecutor")
-    public void updateReferencesAsync(Annex annex, Map<String, String> refsMatching, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+    public void updateReferencesAsync(Annex annex, Map<String, String> refsMatching, byte[] binaryContent, String originalFilename) {
         try {
             byte[] xmlContent = annex.getContent().get().getSource().getBytes();
             xmlContent = xmlContentProcessor.updateReferencesOnImport(xmlContent, refsMatching);
-            updateAnnex(annex.getId(), xmlContent, false, binaryContent, originalFilename, binaryContentSize);
+            updateAnnex(annex.getId(), xmlContent, false, binaryContent, originalFilename);
         } catch (Exception e) {
             LOG.error("Error while updating references on import: " + e.getMessage(), e);
         }
