@@ -71,7 +71,6 @@ export class CKEditorService {
     this.destroyEditorInstance();
     this.leosEditorConnector?.destroy();
     this.actionManagerConnector?.destroy();
-    this.userGuidanceConnector?.destroy();
     this.softActionsConnector?.destroy();
     this.changeDetailsConnector?.destroy();
     this.refToLinkConnector?.destroy();
@@ -80,6 +79,7 @@ export class CKEditorService {
     this.mergeContributionConnector?.destroy();
     this.datePickerConnector?.destroy();
     this.checkBoxesConnector?.destroy();
+    this.userGuidanceConnector = null;
   }
 
   get openState$() {
@@ -88,10 +88,10 @@ export class CKEditorService {
 
   // called from document-actions-dropdown.component.html
   toggleUserGuidance() {
-    this.documentService.userGuidanceVisible$.subscribe((seeUserGuidance: boolean) => {
+    this.documentService.toggleUserGuidance();
+    this.documentService.userGuidanceVisible$.pipe(take(1)).subscribe((seeUserGuidance: boolean) => {
       this.userGuidanceConnector.toggleUserGuidance(seeUserGuidance);
     });
-    this.documentService.toggleUserGuidance();
   }
 
   // called from document-editor.component
@@ -317,6 +317,9 @@ export class CKEditorService {
     leosState: any,
     rootElement: HTMLElement,
   ) {
+    if (this.userGuidanceConnector) {
+      return;
+    }
     this.userGuidanceConnector = new UserGuidanceConnector(
       //TODO pass only required state
       leosState,
