@@ -624,7 +624,20 @@ define(function leosTrackChangesModule(require) {
             var range = ranges && ranges[0];
             var el = range && range.startContainer;
             if (el && core.isTrackChangeElement(el, core.INSERT_ACTION) && (el.getText() === '') && !el.getChildCount()) {
+                var parent = el.getParent();
+
                 el.remove();
+                if (parent) {
+                    var children = parent.getChildren();
+                    if (children.count() === 1) {
+                        var onlyChild = children.getItem(0);
+                        if (onlyChild.type === CKEDITOR.NODE_ELEMENT && onlyChild.getName() === 'br') {
+                            onlyChild.remove();
+                        }
+                    }
+                }
+                leosPluginUtils.setFocus(parent, editor);
+                editor.focus();
             }
         },
 
