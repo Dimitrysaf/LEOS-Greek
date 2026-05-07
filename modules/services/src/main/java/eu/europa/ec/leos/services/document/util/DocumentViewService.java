@@ -70,7 +70,8 @@ public class DocumentViewService<T extends XmlDocument> {
         String editableXml = getEditableXml(document, proposal);
         VersionInfoVO versionInfoVO = getVersionInfo(document);
         String proposalRef = proposal != null ? proposal.getMetadata().getOrNull().getRef() : null;
-        return new DocumentViewResponse(proposalRef, editableXml, versionInfoVO, null, null, document.getBinaryContent(), document.getOriginalFilename());
+        return new DocumentViewResponse(proposalRef, editableXml, versionInfoVO, null, null, document.getBinaryContent(),
+                document.getOriginalFilename(), document.getForeignRenditionSource(), document.getForeignRenditionOriginalFilename());
     }
 
     public DocumentViewResponse updateDocumentView(T document) {

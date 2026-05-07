@@ -18,6 +18,8 @@ export interface Document {
   source: unknown | null; // FIXME: docs say `byte[]`
   originalFilename: string | null;
   binaryContentSize: string | null;
+  foreignRenditionOriginalFilename: string | null;
+  foreignRenditionOriginalFileSize: string | null;
   uploaded: boolean;
   versionSeriesId: string | null;
   ref: string | null;

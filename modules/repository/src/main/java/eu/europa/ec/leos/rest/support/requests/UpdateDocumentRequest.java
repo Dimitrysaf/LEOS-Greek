@@ -27,7 +27,8 @@ public class UpdateDocumentRequest implements Serializable {
     private String comments;
     private byte[] binaryContent;
     private String originalFilename;
-    private String binaryContentSize;
+    private byte[] foreignRenditionContent;
+    private String foreignRenditionOriginalFilename;
 
     public String getUserId() {
         return userId;
@@ -93,12 +94,20 @@ public class UpdateDocumentRequest implements Serializable {
         this.originalFilename = originalFilename;
     }
 
-    public String getBinaryContentSize() {
-        return binaryContentSize;
+    public byte[] getForeignRenditionContent() {
+        return this.foreignRenditionContent;
     }
 
-    public void setBinaryContentSize(String binaryContentSize) {
-        this.binaryContentSize = binaryContentSize;
+    public String getForeignRenditionOriginalFilename() {
+        return this.foreignRenditionOriginalFilename;
+    }
+
+    public void setForeignRenditionContent(byte[] foreignRenditionContent) {
+        this.foreignRenditionContent = foreignRenditionContent;
+    }
+
+    public void setForeignRenditionOriginalFilename(String foreignRenditionOriginalFilename) {
+        this.foreignRenditionOriginalFilename = foreignRenditionOriginalFilename;
     }
 
 }

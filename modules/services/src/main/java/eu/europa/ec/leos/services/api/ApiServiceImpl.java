@@ -164,6 +164,9 @@ import eu.europa.ec.leos.services.support.VersionsUtil;
 import static eu.europa.ec.leos.services.converter.ProposalConverterServiceImpl.createFileFromXmlSource;
 import static eu.europa.ec.leos.services.support.LeosXmlUtils.getTitleValue;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
+import static eu.europa.ec.leos.services.utils.FileUtils.getFileExtension;
+import static eu.europa.ec.leos.services.utils.FileUtils.getFileName;
+import static eu.europa.ec.leos.services.utils.FileUtils.getMimeType;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml10;
 import static org.apache.commons.lang3.StringUtils.normalizeSpace;
 
@@ -180,6 +183,8 @@ public abstract class ApiServiceImpl implements ApiService {
     public static final String  DOC_VERSION_SEPARATOR = "_";
     private static final Logger LOG = LoggerFactory.getLogger(ApiServiceImpl.class);
     private static final String COLLECTION_BLOCK_ANNEX_METADATA_UPDATED = "collection.block.annex.metadata.updated";
+    private static final String COLLECTION_BLOCK_FOREIGN_ANNEX_RENDITION_UPDATED = "collection.block.foreign.annex.rendition.updated";
+    private static final String COLLECTION_BLOCK_FOREIGN_ANNEX_UPDATED = "collection.block.foreign.annex.updated";
     protected final ProposalService proposalService;
     protected final ExportService exportService;
     private final CustomTemplateService customTemplateService;
@@ -1272,6 +1277,8 @@ public abstract class ApiServiceImpl implements ApiService {
 
         annexVO.setOriginalFilename(annex.getOriginalFilename());
         annexVO.setBinaryFileSize(annex.getBinaryContentSize());
+        annexVO.setForeignRenditionOriginalFilename(annex.getForeignRenditionOriginalFilename());
+        annexVO.setForeignRenditionOriginalFileSize(annex.getForeignRenditionOriginalFileSize());
         if (annex.getMetadata().isDefined()) {
             AnnexMetadata metadata = annex.getMetadata().get();
             annexVO.setDocNumber(metadata.getIndex());
@@ -1325,11 +1332,11 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     public void createProposalAnnex(String proposalRef, String originRef) throws IOException {
-        createProposalAnnex(proposalRef, originRef, AnnexType.NORMAL, null, null, null);
+        createProposalAnnex(proposalRef, originRef, AnnexType.NORMAL, null, null);
     }
 
     @Override
-    public void createProposalAnnex(String proposalRef, String originRef, AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) throws IOException {
+    public void createProposalAnnex(String proposalRef, String originRef, AnnexType annexType, byte[] binaryContent, String originalFilename) throws IOException {
         LOG.trace("Creating annex...");
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
@@ -1369,7 +1376,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.useCloneProposal(isClonedProposal);
                 billContext.useOriginRef(isClonedProposal ? cloneOriginRef : originRef);
                 billContext.usePackageRef(proposalRef);
-                billContext.executeCreateBillAnnex(annexType, binaryContent, originalFilename, binaryContentSize);
+                billContext.executeCreateBillAnnex(annexType, binaryContent, originalFilename);
                 billService.updateExternalReferencesAsync(leosPackage);
             } catch (IOException e) {
                 LOG.error("Unexpected error occurred while creating new annex", e);
@@ -1608,7 +1615,6 @@ public abstract class ApiServiceImpl implements ApiService {
         Annex annex = annexService.findAnnex(annexId, true);
         byte[] binaryContent = annex.getBinaryContent();
         String originalFilename = annex.getOriginalFilename();
-        String binaryContentSize = annex.getBinaryContentSize();
         AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
 
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
@@ -1621,12 +1627,11 @@ public abstract class ApiServiceImpl implements ApiService {
         }
 
         AnnexMetadata updatedMetadata = metadata.builder().withTitle(annexTitle).build();
-        annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED), false, binaryContent, originalFilename, binaryContentSize);
-        documentViewService.updateDocumentView(annex);
+        annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED), false, binaryContent, originalFilename);
     }
 
     @Override
-    public void updateForeignAnnex(String proposalRef, String annexId, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+    public void updateForeignAnnex(String proposalRef, String annexId, byte[] binaryContent, String originalFilename) {
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
         List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
         boolean annexExistWithSameName = documents.stream().filter(xmlDocument -> { return xmlDocument.getCategory().equals(LeosCategory.ANNEX) && !xmlDocument.getId().equals(annexId) && StringUtils.isNotEmpty(xmlDocument.getOriginalFilename()) && xmlDocument.getOriginalFilename().toUpperCase().equals(originalFilename.toUpperCase()); }).findAny().isPresent();
@@ -1636,7 +1641,7 @@ public abstract class ApiServiceImpl implements ApiService {
         Annex annex = annexService.findAnnex(annexId, true);
         AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
         if (binaryContent != null) {
-            String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toUpperCase();
+            String extension = getFileExtension(originalFilename);
             String mimeType = getMimeType(extension);
             String showAs = getShowAsForForeignAnnex(extension);
             metadata = metadata.builder()
@@ -1646,11 +1651,21 @@ public abstract class ApiServiceImpl implements ApiService {
                 .withTlcReferenceNameFormatHref("http://publications.europa.eu/resource/authority/file-type/" + extension)
                 .withTlcReferenceNameFormatShowAs(showAs)
                 .withForeignAnnexSource(originalFilename)
-                .withForeignFileSize(binaryContentSize)
                 .build();
         }
-        annexService.updateAnnex(annex, metadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED), false, binaryContent, originalFilename, binaryContentSize);
-        documentViewService.updateDocumentView(annex);
+        annexService.updateAnnex(annex, metadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_FOREIGN_ANNEX_UPDATED), false, binaryContent, originalFilename);
+    }
+
+    @Override
+    public void uploadForeignAnnexRendition(String proposalRef, String annexId, byte[] foreignAnnexRenditionContent, String foreignAnnexRenditionOriginalFilename) {
+        Annex annex = annexService.findAnnex(annexId, true);
+        AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
+        String annexFileName = getFileName(annex.getOriginalFilename());
+        String annexRenditionFileName = getFileName(foreignAnnexRenditionOriginalFilename);
+        if (!annexFileName.equals(annexRenditionFileName)) {
+            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.alert.upload.rendition.different.name");
+        }
+        annexService.updateAnnex(annex, metadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_FOREIGN_ANNEX_RENDITION_UPDATED), foreignAnnexRenditionContent, foreignAnnexRenditionOriginalFilename);
     }
 
     public String generateTrackChangesText(String origText, String newText) {
@@ -1703,7 +1718,6 @@ public abstract class ApiServiceImpl implements ApiService {
         ExplanatoryMetadata metadata = explanatory.getMetadata().getOrError(() -> "Explanatory metadata not found!");
         ExplanatoryMetadata updatedMetadata = metadata.builder().withTitle(title).build();
         explanatoryService.updateExplanatory(explanatory, updatedMetadata, VersionType.MINOR, messageHelper.getMessage("collection.block.explanatory.metadata.updated"));
-        documentViewService.updateDocumentView(explanatory);
     }
 
     private void createMajorVersions(String proposalRef, String milestoneComment, String versionComment, CollectionContextService context) {

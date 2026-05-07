@@ -22,11 +22,12 @@ public final class Annex extends XmlDocument {
                  VersionType versionType, boolean isLatestVersion, String title, List<Collaborator> collaborators,
                  List<String> milestoneComments, String baseRevisionId, boolean liveDiffingRequired, String contributionStatus, String clonedFrom,
                  Option<Content> content, Option<AnnexMetadata> metadata, boolean trackChangesEnabled, boolean isVersionArchived, byte[] binaryContent,
-                 String originalFilename, String binaryContentSize) {
+                 String originalFilename, String binaryContentSize, byte[] foreignRenditionSource, String foreignRenditionOriginalFilename, String foreignRenditionOriginalFileSize) {
 
         super(LeosCategory.ANNEX, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
                 versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title, collaborators,
-                milestoneComments, content, trackChangesEnabled, isVersionArchived, binaryContent, originalFilename, binaryContentSize);
+                milestoneComments, content, trackChangesEnabled, isVersionArchived, binaryContent, originalFilename, binaryContentSize,
+                foreignRenditionSource, foreignRenditionOriginalFilename, foreignRenditionOriginalFileSize);
         this.metadata = metadata;
         this.baseRevisionId = baseRevisionId;
         this.contributionStatus = contributionStatus;

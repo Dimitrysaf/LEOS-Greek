@@ -43,8 +43,9 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import static eu.europa.ec.leos.services.support.XmlHelper.getMimeType;
 import static eu.europa.ec.leos.services.support.XmlHelper.getShowAsForForeignAnnex;
+import static eu.europa.ec.leos.services.utils.FileUtils.getFileExtension;
+import static eu.europa.ec.leos.services.utils.FileUtils.getMimeType;
 
 @Component
 @Scope("prototype")
@@ -259,10 +260,10 @@ public class AnnexContextService {
         LOG.trace("Executing 'Update References On Annex' use case...");
         Validate.notNull(annex, "Annex is required!");
         Validate.notNull(mapOldAndNewRefs, "mapOldAndNewRefs is required!");
-        annexService.updateReferencesAsync(annex, mapOldAndNewRefs, annex.getBinaryContent(), annex.getOriginalFilename(), annex.getBinaryContentSize());
+        annexService.updateReferencesAsync(annex, mapOldAndNewRefs, annex.getBinaryContent(), annex.getOriginalFilename());
     }
 
-    public Annex executeCreateAnnex(AnnexType annexType, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+    public Annex executeCreateAnnex(AnnexType annexType, byte[] binaryContent, String originalFilename) {
         LOG.trace("Executing 'Create Annex' use case...");
 
         Validate.notNull(leosPackage, ANNEX_PACKAGE_IS_REQUIRED);
@@ -290,7 +291,7 @@ public class AnnexContextService {
                 .build();
 
         if (binaryContent != null) {
-            String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toUpperCase();
+            String extension = getFileExtension(originalFilename);
             String mimeType = getMimeType(extension);
             String showAs = getShowAsForForeignAnnex(extension);
             metadata = metadata.builder()
@@ -301,7 +302,6 @@ public class AnnexContextService {
                     .withTlcReferenceNameFormatShowAs(showAs)
                     .withForeignAnnexNumber(annexNumber)
                     .withForeignAnnexSource(originalFilename)
-                    .withForeignFileSize(binaryContentSize)
                     .build();
         }
 
@@ -311,7 +311,7 @@ public class AnnexContextService {
                     getContent(annex));
         } else {
             annex = annexService.createAnnex(annex.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED),
-                    getContent(annex), annexType, binaryContent, originalFilename, binaryContentSize);
+                    getContent(annex), annexType, binaryContent, originalFilename);
 
             if (existingContent != null) {
                 metadata = metadata.builder().withRef(metadataOption.get().getRef()).withTitle(existingTitle).withIndex(existingOrder).build();
@@ -320,7 +320,7 @@ public class AnnexContextService {
         }
 
         annex = securityService.updateCollaborators(annex.getMetadata().get().getRef(), annex.getId(), collaborators, Annex.class);
-        return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED), binaryContent, originalFilename, binaryContentSize);
+        return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED), binaryContent, originalFilename);
     }
 
     public Annex executeImportAnnex() {
@@ -343,12 +343,12 @@ public class AnnexContextService {
                 .build();
         if (cloneProposal) {
             CloneDocumentMetadataVO cloneDocumentMetadataVO = new CloneDocumentMetadataVO(annexDocument.getRef(), originRef);
-            annex = annexService.createClonedAnnexFromContent(leosPackage.getPath(), metadataDocument, cloneDocumentMetadataVO, actionMessage, annexDocument.getSource(), annexDocument.getName(), annexDocument.getBinaryFile(), annexDocument.getOriginalFilename(), annexDocument.getBinaryFileSize());
+            annex = annexService.createClonedAnnexFromContent(leosPackage.getPath(), metadataDocument, cloneDocumentMetadataVO, actionMessage, annexDocument.getSource(), annexDocument.getName(), annexDocument.getBinaryFile(), annexDocument.getOriginalFilename());
         } else {
-            annex = annexService.createAnnexFromContent(leosPackage.getPath(), metadataDocument, actionMessage, annexDocument.getSource(), annexDocument.getName(), annexDocument.getBinaryFile(), annexDocument.getOriginalFilename(), annexDocument.getBinaryFileSize());
+            annex = annexService.createAnnexFromContent(leosPackage.getPath(), metadataDocument, actionMessage, annexDocument.getSource(), annexDocument.getName(), annexDocument.getBinaryFile(), annexDocument.getOriginalFilename());
         }
         annex = securityService.updateCollaborators(annex.getMetadata().get().getRef(), annex.getId(), collaborators, Annex.class);
-        return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED), annexDocument.getBinaryFile(), annexDocument.getOriginalFilename(), annexDocument.getBinaryFileSize());
+        return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED), annexDocument.getBinaryFile(), annexDocument.getOriginalFilename());
     }
 
     public void executeUpdateAnnexMetadata() {
@@ -387,14 +387,13 @@ public class AnnexContextService {
                 .build();
         byte[] binaryContent = annex.getBinaryContent();
         String originalFilename = annex.getOriginalFilename();
-        String binaryContentSize = annex.getBinaryContentSize();
         if (binaryContent != null) {
             annexMetadata = annexMetadata.builder()
                     .withForeignAnnexNumber(annexNumber)
                     .build();
         }
         annex = annexService.updateAnnex(annex, annexMetadata, VersionType.MINOR, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED), false,
-                binaryContent, originalFilename, binaryContentSize);
+                binaryContent, originalFilename);
     }
 
     public void executeUpdateAnnexStructure() {
@@ -426,14 +425,13 @@ public class AnnexContextService {
         annex = annexService.findAnnex(annexId, true);
         byte[] binaryContent = annex.getBinaryContent();
         String originalFilename = annex.getOriginalFilename();
-        String binaryContentSize = annex.getBinaryContentSize();
         List<String> milestoneComments = annex.getMilestoneComments();
         milestoneComments.add(milestoneComment);
         if (annex.getVersionType().equals(VersionType.MAJOR)) {
-            annex = annexService.updateAnnexWithMilestoneComments(annex.getMetadata().get().getRef(), annex.getId(), milestoneComments, binaryContent, originalFilename, binaryContentSize);
+            annex = annexService.updateAnnexWithMilestoneComments(annex.getMetadata().get().getRef(), annex.getId(), milestoneComments, binaryContent, originalFilename);
             LOG.info("Major version {} already present. Updated only milestoneComment for [annex={}]", annex.getVersionLabel(), annex.getId());
         } else {
-            annex = annexService.updateAnnexWithMilestoneComments(annex, milestoneComments, VersionType.MAJOR, versionComment, binaryContent, originalFilename, binaryContentSize);
+            annex = annexService.updateAnnexWithMilestoneComments(annex, milestoneComments, VersionType.MAJOR, versionComment, binaryContent, originalFilename);
             LOG.info("Created major version {} for [annex={}]", annex.getVersionLabel(), annex.getId());
         }
     }

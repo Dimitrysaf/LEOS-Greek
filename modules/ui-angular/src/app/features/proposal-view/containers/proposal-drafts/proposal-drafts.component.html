@@ -403,6 +403,9 @@
                         <th></th>
                         <th></th>
                         <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
                         <th>
                             {{
                             'page.collection.drafts.annex.table.tr.last-updated-on'
@@ -458,17 +461,30 @@
                         >
                             {{ row.updatedBy }}
                         </td>
-                        <td style="width: 5%">
+                        <td style="width: 3%">
                           <span *ngIf="getFileExtension(row.originalFilename) === 'pdf'" class="eui-icon eui-icon-2x eui-icon-filetype-pdf" euiIconColored></span>
                           <span *ngIf="getFileExtension(row.originalFilename) === 'docx'" class="eui-icon eui-icon-2x eui-icon-filetype-doc" euiIconColored></span>
                           <span *ngIf="getFileExtension(row.originalFilename) === 'xlsx'" class="eui-icon eui-icon-2x eui-icon-filetype-xls" euiIconColored></span>
                         </td>
-                        <td style="width: 25%">
-                          <span title="{{ row.originalFilename }}">{{ row.originalFilename }}</span>
+                        <td style="width: 15%">
+                          <span title="{{ row.originalFilename }}"><a *ngIf="row.originalFilename" (click)="downloadForeignAnnex(row.ref, row.originalFilename)">{{ row.originalFilename }}</a></span>
                         </td>
                         <td>
                           {{ row.binaryFileSize }}
                         </td>
+                        <ng-container *ngIf="row.originalFilename && getFileExtension(row.originalFilename) !== 'pdf' && row.foreignRenditionOriginalFilename">
+                          <td><span class="eui-icon eui-icon-2x eui-icon-filetype-pdf" euiIconColored></span></td>
+                          <td><a (click)="downloadForeignAnnexRendition(row.ref, row.foreignRenditionOriginalFilename)">{{ row.foreignRenditionOriginalFilename }}</a></td>
+                          <td>{{ row.foreignRenditionOriginalFileSize }}</td>
+                        </ng-container>
+                        <ng-container *ngIf="row.originalFilename && getFileExtension(row.originalFilename) !== 'pdf' && !row.foreignRenditionOriginalFilename">
+                          <td colspan="3"><span class="eui-icon eui-icon-exclamation-triangle"></span> {{ 'page.collection.drafts.annex.alert.upload.rendition' | translate }}</td>
+                        </ng-container>
+                        <ng-container *ngIf="!(row.originalFilename && getFileExtension(row.originalFilename) !== 'pdf')">
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </ng-container>
                         <td
                                 [attr.data-col-label]="
                 'page.collection.drafts.annex.table.tr.last-updated-on'
@@ -526,16 +542,26 @@
                                                         (click)="handleAnnexDelete(row)"
                                                 ></button>
                                             </ng-container>
-                                          <ng-container *ngIf="permissions.includes('CAN_UPDATE') && row.originalFilename">
-                                            <button
-                                              class="eui-u-p-s"
-                                              euiListItem
-                                              translate="page.collection.drafts.annex.table.tr.actions.dropdown.update"
-                                              [euiDisabled]="this.proposalState === 'active'"
-                                              [disabled]="this.proposalState === 'active'"
-                                              (click)="handleAnnexUploadPopup(row)"
-                                            ></button>
-                                          </ng-container>
+                                            <ng-container *ngIf="permissions.includes('CAN_UPDATE') && row.originalFilename">
+                                                <button
+                                                  class="eui-u-p-s"
+                                                  euiListItem
+                                                  translate="page.collection.drafts.annex.table.tr.actions.dropdown.update"
+                                                  [euiDisabled]="this.proposalState === 'active'"
+                                                  [disabled]="this.proposalState === 'active'"
+                                                  (click)="handleAnnexUploadPopup(row)"
+                                                ></button>
+                                            </ng-container>
+                                            <ng-container *ngIf="permissions.includes('CAN_UPDATE') && row.originalFilename && getFileExtension(row.originalFilename) !== 'pdf'">
+                                              <button
+                                                class="eui-u-p-s"
+                                                euiListItem
+                                                translate="page.collection.drafts.annex.table.tr.actions.dropdown.upload.rendition"
+                                                [euiDisabled]="this.proposalState === 'active'"
+                                                [disabled]="this.proposalState === 'active'"
+                                                (click)="handleAnnexUploadRenditionPopup(row)"
+                                              ></button>
+                                            </ng-container>
                                         </div>
                                     </eui-dropdown-content>
                                 </eui-dropdown>

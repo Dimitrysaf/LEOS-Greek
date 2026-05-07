@@ -15,6 +15,7 @@
 package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.exception.LeosErrorMessage;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ToggleTrackChangeEnabledRequest;
@@ -200,6 +201,7 @@ public interface AnnexApi {
     ResponseEntity<Object> getTocItems(
             @Parameter(description = "Document reference", required = true) @PathVariable("documentRef") String documentRef);
 
+    @LeosErrorMessage("Unexpected error occurred while getting annex document")
     @Operation(summary = "Get annex document", description = "Retrieves the annex document")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Document retrieved successfully"),
@@ -207,6 +209,16 @@ public interface AnnexApi {
     })
     @GetMapping(value = "/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Object> getAnnex(
+            @Parameter(description = "Document reference", required = true) @PathVariable("documentRef") String documentRef);
+
+    @LeosErrorMessage("Unexpected error occurred while getting annex rendition document")
+    @Operation(summary = "Get annex rendition document", description = "Retrieves the annex rendition document")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Document retrieved successfully"),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+    })
+    @GetMapping(value = "/{documentRef}/rendition", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<Object> getAnnexRendition(
             @Parameter(description = "Document reference", required = true) @PathVariable("documentRef") String documentRef);
 
     @Operation(summary = "Search text in document", description = "Searches for text in the annex document")

@@ -60,6 +60,9 @@ public class LeosDocument {
     private byte[] binarySource;
     private String originalFilename;
     private String binarySourceSize;
+    private byte[] foreignRenditionSource;
+    private String foreignRenditionOriginalFilename;
+    private String foreignRenditionOriginalFileSize;
 
     private VersionType versionType;
     private Boolean isLatestVersion = false;
@@ -162,7 +165,7 @@ public class LeosDocument {
         this.metadata.putAll(xmlDocumentMetadata.generateMetadataMap(otherMetadata));
     }
 
-    public LeosDocument(DocumentV doc, String originalFilename, String binarySourceSize, List<Collaborator> collaborators, List<DocumentPropertyValues> otherMetadata) {
+    public LeosDocument(DocumentV doc, String originalFilename, String binarySourceSize, String foreignRenditionOriginalFilename, String foreignRenditionOriginalFileSize, List<Collaborator> collaborators, List<DocumentPropertyValues> otherMetadata) {
         Validate.notNull(doc, "Document must not be null");
         this.name = doc.getName();
         this.createdBy = doc.getCreatedBy();
@@ -171,6 +174,8 @@ public class LeosDocument {
         this.updatedOn = doc.getUpdatedOn() != null ? Date.from(doc.getUpdatedOn().atZone(ZoneId.systemDefault()).toInstant()) : null;
         this.originalFilename = originalFilename;
         this.binarySourceSize = binarySourceSize;
+        this.foreignRenditionOriginalFilename = foreignRenditionOriginalFilename;
+        this.foreignRenditionOriginalFileSize = foreignRenditionOriginalFileSize;
         this.setRef(doc.getRef());
         this.setVersionId(doc.getVersionId());
         this.isLatestVersion = doc.isLatestVersion();
@@ -200,7 +205,8 @@ public class LeosDocument {
         this.source = content.getContent().getBytes(StandardCharsets.UTF_8);
         this.binarySource = content.getBinaryContent();
         this.originalFilename = content.getOriginalFilename();
-        this.binarySourceSize = content.getBinaryContentSize();
+        this.foreignRenditionSource = content.getForeignRenditionContent();
+        this.foreignRenditionOriginalFilename = content.getForeignRenditionOriginalFilename();
         this.setRef(doc.getRef());
         this.setVersionId(doc.getVersionId());
 
@@ -235,7 +241,8 @@ public class LeosDocument {
         this.source = docContent.getContent().getBytes(StandardCharsets.UTF_8);
         this.binarySource = docContent.getBinaryContent();
         this.originalFilename = docContent.getOriginalFilename();
-        this.binarySourceSize = docContent.getBinaryContentSize();
+        this.foreignRenditionSource = docContent.getForeignRenditionContent();
+        this.foreignRenditionOriginalFilename = docContent.getForeignRenditionOriginalFilename();
         this.setRef(doc.getRef());
         this.setVersionId(docVersion.getId());
 
@@ -649,6 +656,30 @@ public class LeosDocument {
 
     public void setBinarySourceSize(String binarySourceSize) {
         this.binarySourceSize = binarySourceSize;
+    }
+
+    public byte[] getForeignRenditionSource() {
+        return this.foreignRenditionSource;
+    }
+
+    public void setForeignRenditionSource(final byte[] foreignRenditionSource) {
+        this.foreignRenditionSource = foreignRenditionSource;
+    }
+
+    public String getForeignRenditionOriginalFilename() {
+        return this.foreignRenditionOriginalFilename;
+    }
+
+    public void setForeignRenditionOriginalFilename(final String foreignRenditionOriginalFilename) {
+        this.foreignRenditionOriginalFilename = foreignRenditionOriginalFilename;
+    }
+
+    public String getForeignRenditionOriginalFileSize() {
+        return this.foreignRenditionOriginalFileSize;
+    }
+
+    public void setForeignRenditionOriginalFileSize(final String foreignRenditionOriginalFileSize) {
+        this.foreignRenditionOriginalFileSize = foreignRenditionOriginalFileSize;
     }
 
 }

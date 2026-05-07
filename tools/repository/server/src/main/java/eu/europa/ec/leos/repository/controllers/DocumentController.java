@@ -16,22 +16,17 @@ package eu.europa.ec.leos.repository.controllers;
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.controllers.requests.CreateDocumentRequest;
 import eu.europa.ec.leos.repository.controllers.requests.FindDocumentsRequest;
-import eu.europa.ec.leos.repository.controllers.requests.OnCreateFromContent;
-import eu.europa.ec.leos.repository.controllers.requests.OnCreateFromSource;
-import eu.europa.ec.leos.repository.controllers.requests.OnUpdateWithContent;
-import eu.europa.ec.leos.repository.controllers.requests.OnUpdateWithoutContent;
 import eu.europa.ec.leos.repository.controllers.requests.UpdateDocumentRequest;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.model.LeosDocumentList;
 import eu.europa.ec.leos.repository.services.DocumentService;
 import eu.europa.ec.leos.repository.utils.RestPreconditions;
-import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -42,6 +37,8 @@ import java.util.List;
 
 @RestController
 public class DocumentController implements DocumentApi {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DocumentController.class);
 
     @Autowired
     DocumentService documentService;
@@ -83,7 +80,8 @@ public class DocumentController implements DocumentApi {
     public ResponseEntity<Object> updateDocument(BigDecimal versionId, UpdateDocumentRequest updateDocumentRequest) throws Exception {
         LeosDocument xmlDoc = documentService.updateDocument(versionId, updateDocumentRequest.getMetadata(), updateDocumentRequest.getVersionType(),
                 updateDocumentRequest.getCategory(), updateDocumentRequest.getContent(), updateDocumentRequest.getComments(), updateDocumentRequest.getUserId(),
-                updateDocumentRequest.getBinaryContent(), updateDocumentRequest.getOriginalFilename(), updateDocumentRequest.getBinaryContentSize());
+                updateDocumentRequest.getBinaryContent(), updateDocumentRequest.getOriginalFilename(),
+                updateDocumentRequest.getForeignRenditionContent(), updateDocumentRequest.getForeignRenditionOriginalFilename());
         return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.NOT_FOUND, "No documents found"));
     }
 

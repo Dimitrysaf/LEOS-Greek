@@ -59,7 +59,7 @@ import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.APPLICAT
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.APPLICATION_ZIP_VALUE;
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.buildFileAttachment;
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
-import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
+import static eu.europa.ec.leos.services.utils.FileUtils.validatePath;
 
 @RestController
 public class LeosLightApiController implements LeosLightApi {

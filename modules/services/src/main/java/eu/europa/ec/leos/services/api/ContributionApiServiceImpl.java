@@ -115,6 +115,7 @@ import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC
 import static eu.europa.ec.leos.services.api.exception.ErrorCode.CA001;
 import static eu.europa.ec.leos.services.converter.ProposalConverterServiceImpl.createFileFromXmlSource;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
+import static eu.europa.ec.leos.services.utils.FileUtils.sanitizeFilename;
 
 @Service
 public class ContributionApiServiceImpl implements ContributionApiService {

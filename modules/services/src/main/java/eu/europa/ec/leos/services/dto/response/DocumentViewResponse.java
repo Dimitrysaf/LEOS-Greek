@@ -6,6 +6,8 @@ public class DocumentViewResponse {
     private String editableXml;
     private byte[] binaryFile;
     private String originalFilename;
+    private byte[] foreignRenditionSource;
+    private String foreignRenditionOriginalFilename;
     private VersionInfoVO versionInfoVO;
     private String temporaryAnnotationsId;
     private String temporaryDataDocument;
@@ -20,7 +22,8 @@ public class DocumentViewResponse {
     }
 
     public DocumentViewResponse(String proposalRef, String editableXml, VersionInfoVO versionInfoVO,
-            String temporaryAnnotationsId, String temporaryDataDocument, byte[] binaryFile, String originalFilename) {
+            String temporaryAnnotationsId, String temporaryDataDocument, byte[] binaryFile, String originalFilename,
+            byte[] foreignRenditionSource, String foreignRenditionOriginalFilename) {
         this.proposalRef = proposalRef;
         this.editableXml = editableXml;
         this.versionInfoVO = versionInfoVO;
@@ -28,6 +31,8 @@ public class DocumentViewResponse {
         this.temporaryDataDocument = temporaryDataDocument;
         this.binaryFile = binaryFile;
         this.originalFilename = originalFilename;
+        this.foreignRenditionSource = foreignRenditionSource;
+        this.foreignRenditionOriginalFilename = foreignRenditionOriginalFilename;
     }
 
     public DocumentViewResponse(String editableXml, VersionInfoVO versionInfoVO) {
@@ -89,6 +94,22 @@ public class DocumentViewResponse {
 
     public void setOriginalFilename(String originalFilename) {
         this.originalFilename = originalFilename;
+    }
+
+    public byte[] getForeignRenditionSource() {
+        return this.foreignRenditionSource;
+    }
+
+    public void setForeignRenditionSource(final byte[] foreignRenditionSource) {
+        this.foreignRenditionSource = foreignRenditionSource;
+    }
+
+    public String getForeignRenditionOriginalFilename() {
+        return this.foreignRenditionOriginalFilename;
+    }
+
+    public void setForeignRenditionOriginalFilename(final String foreignRenditionOriginalFilename) {
+        this.foreignRenditionOriginalFilename = foreignRenditionOriginalFilename;
     }
 
 }

@@ -25,6 +25,7 @@ import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -282,7 +283,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
                                                                                               Class<? extends D> type,
                                                                                               String leosCategory,
                                                                                               byte[] contentBytes) {
-        return createClonedDocumentFromContent(path, name, metadata, cloneDocumentMetadataVO, type, leosCategory, contentBytes, null, null, null);
+        return createClonedDocumentFromContent(path, name, metadata, cloneDocumentMetadataVO, type, leosCategory, contentBytes, null, null);
     }
 
     @Override
@@ -297,7 +298,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
             CloneDocumentMetadataVO cloneDocumentMetadataVO,
             Class<? extends D> type,
             String leosCategory,
-            byte[] contentBytes, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+            byte[] contentBytes, byte[] binaryContent, String originalFilename) {
         logger.trace("Creating cloned document From Content... [path=" + path + ", name=" + name + ']');
 
         checkSecurityContextEnsureUserIsPresent();
@@ -310,7 +311,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromContent(path, name, properties, leosDocMimeType, contentBytes,
                 securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER,
-                binaryContent, originalFilename, binaryContentSize);
+                binaryContent, originalFilename);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to create document! [path=" + path + ", name=" + name + ']'));
@@ -463,15 +464,29 @@ public class LeosRestRepositoryImpl implements LeosRepository {
             @CacheEvict(value = "documentByNameCache", allEntries = true),
             @CacheEvict(value = "documentByVersionCache", allEntries = true),
             @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
-    public <D extends LeosDocument, M extends LeosMetadata> D updateDocument(String id, M metadata, byte[] content, VersionType versionType, String comment, Class<? extends D> type, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+    public <D extends LeosDocument, M extends LeosMetadata> D updateDocument(String id, M metadata, byte[] content, VersionType versionType, String comment, Class<? extends D> type, byte[] binaryContent, String originalFilename) {
         logger.trace("Updating document metadata and content... [id=" + id + ", comment=" + comment + ']');
         Set<LeosCategory> categories = LeosMapper.leosCategories(type);
         LeosCategory category = (LeosCategory) CollectionUtils.get(categories, 0);
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, updateDocumentProperties(metadata), content, versionType,
-                String.valueOf(category), comment, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER, binaryContent, originalFilename, binaryContentSize);
+                String.valueOf(category), comment, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER, binaryContent, originalFilename);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ", comment=" + comment + ']'));
+    }
+
+    @Override
+    @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
+    public <D extends LeosDocument, M extends LeosMetadata> void updateDocument(String id, AnnexMetadata metadata, VersionType versionType, String comment, Class<? extends D> type, byte[] foreignAnnexRenditionContent, String foreignAnnexRenditionOriginalFilename) {
+        logger.trace("Updating document metadata and content... [id=" + id + ", comment=" + comment + ']');
+        Set<LeosCategory> categories = LeosMapper.leosCategories(type);
+        LeosCategory category = (LeosCategory) CollectionUtils.get(categories, 0);
+        repository.updateDocument(id, metadata, versionType, String.valueOf(category), comment, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER, foreignAnnexRenditionContent, foreignAnnexRenditionOriginalFilename);
     }
 
     @Override
@@ -502,14 +517,14 @@ public class LeosRestRepositoryImpl implements LeosRepository {
             @CacheEvict(value = "documentByVersionCache", allEntries = true),
             @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public <D extends LeosDocument> D updateDocument(String id, byte[] content, VersionType versionType, String comment,
-            Class<? extends D> type, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+            Class<? extends D> type, byte[] binaryContent, String originalFilename) {
         logger.trace("Updating document content... [id=" + id + ", comment=" + comment + ']');
         Set<LeosCategory> categories = LeosMapper.leosCategories(type);
         LeosCategory category = (LeosCategory) CollectionUtils.get(categories, 0);
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id,
                 updateMilestoneCommentsProperties(emptyList()), content, versionType, String.valueOf(category), comment,
                 securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER,
-                binaryContent, originalFilename, binaryContentSize);
+                binaryContent, originalFilename);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ", comment=" + comment + ']'));
@@ -600,7 +615,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
             @CacheEvict(value = "documentByVersionCache", allEntries = true),
             @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public <D extends LeosDocument> D updateMilestoneComments(String id, byte[] content, List<String> milestoneComments, VersionType versionType, String comment, Class<? extends D> type) {
-        return updateMilestoneComments(id, content, milestoneComments, versionType, comment, type, null,  null,  null);
+        return updateMilestoneComments(id, content, milestoneComments, versionType, comment, type, null,  null);
     }
 
     @Override
@@ -610,14 +625,14 @@ public class LeosRestRepositoryImpl implements LeosRepository {
             @CacheEvict(value = "documentByNameCache", allEntries = true),
             @CacheEvict(value = "documentByVersionCache", allEntries = true),
             @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
-    public <D extends LeosDocument> D updateMilestoneComments(String id, byte[] content, List<String> milestoneComments, VersionType versionType, String comment, Class<? extends D> type, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+    public <D extends LeosDocument> D updateMilestoneComments(String id, byte[] content, List<String> milestoneComments, VersionType versionType, String comment, Class<? extends D> type, byte[] binaryContent, String originalFilename) {
         logger.trace("Updating document metadata and content... [id=" + id + ", comment=" + comment + ']');
 
         Map<String, ?> properties = updateMilestoneCommentsProperties(milestoneComments);
         Set<LeosCategory> categories = LeosMapper.leosCategories(type);
         LeosCategory category = (LeosCategory) CollectionUtils.get(categories, 0);
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, properties, content, versionType, String.valueOf(category),
-                comment, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER, binaryContent, originalFilename, binaryContentSize);
+                comment, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER, binaryContent, originalFilename);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + "]"));
@@ -631,7 +646,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
             @CacheEvict(value = "documentByVersionCache", allEntries = true),
             @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public <D extends LeosDocument> D updateMilestoneComments(String ref, String id, List<String> milestoneComments, Class<? extends D> type) {
-        return updateMilestoneComments(ref, id, milestoneComments, type, null, null, null);
+        return updateMilestoneComments(ref, id, milestoneComments, type, null, null);
     }
 
     @Override
@@ -641,13 +656,13 @@ public class LeosRestRepositoryImpl implements LeosRepository {
             @CacheEvict(value = "documentByNameCache", allEntries = true),
             @CacheEvict(value = "documentByVersionCache", allEntries = true),
             @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
-    public <D extends LeosDocument> D updateMilestoneComments(String ref, String id, List<String> milestoneComments, Class<? extends D> type, byte[] binaryContent, String originalFilename, String binaryContentSize) {
+    public <D extends LeosDocument> D updateMilestoneComments(String ref, String id, List<String> milestoneComments, Class<? extends D> type, byte[] binaryContent, String originalFilename) {
         logger.trace("Updating document metadata... [id=" + id + ']');
 
         Map<String, ?> properties = updateMilestoneCommentsProperties(milestoneComments);
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(ref, id, properties, securityContext!=null &&
-                securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER, binaryContent, originalFilename, binaryContentSize);
+                securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER, binaryContent, originalFilename);
 
         return toLeosDocument(doc, type, true)
                 .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ']'));
