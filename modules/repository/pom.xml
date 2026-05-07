@@ -141,6 +141,10 @@
             <artifactId>junit-platform-engine</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

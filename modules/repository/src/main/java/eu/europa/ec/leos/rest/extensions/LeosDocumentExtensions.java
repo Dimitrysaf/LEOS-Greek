@@ -38,6 +38,7 @@ import eu.europa.ec.leos.repository.domain.ContentImpl;
 import eu.europa.ec.leos.repository.domain.SourceImpl;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
+import eu.europa.ec.leos.repository.utils.FormatUtils;
 import eu.europa.ec.leos.rest.mapping.RestProperties;
 import io.atlassian.fugue.Option;
 import org.slf4j.Logger;
@@ -50,6 +51,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import static eu.europa.ec.leos.rest.extensions.LeosRepositoryMetadataExtensions.getMetadataCustomTemplateAct;
 
@@ -388,7 +390,11 @@ public class LeosDocumentExtensions {
 
     // FIXME maybe move title property to metadata or remove it entirely
     private static String getTitle(eu.europa.ec.leos.rest.support.model.LeosDocument document) { // FIXME add check for leos:xml primary type
-        return (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE));
+        String title = (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE));
+        return Optional.ofNullable(title)
+                .map(FormatUtils::cleanHtmlFormattingElements)
+                .map(FormatUtils::cleanTrackChanges)
+                .orElse(title);
     }
 
     private static List<String> getMilestoneComments(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
@@ -397,14 +403,14 @@ public class LeosDocumentExtensions {
             if (milestoneComments instanceof List) {
                 return (List<String>) milestoneComments;
             } else {
-                return new ArrayList<String>() {
+                return new ArrayList<>() {
                     {
                         add(milestoneComments.toString());
                     }
                 };
             }
         } catch (Exception e) {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
     }
 
