@@ -111,7 +111,8 @@
               <button
                 euiDropdownItem
                 (click)="openMilestoneSendCopyForContributionDialog(row)"
-                *ngIf="row.title !== customTemplateText && !proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_UPDATE')"
+                *ngIf="row.title !== customTemplateText && !proposal.cloneProposalMetadataVO?.clonedProposal && !translated && permissions.includes('CAN_UPDATE')
+                   && (row.versionLabel.startsWith(lastMilestoneVersion) || !hasTranslatedLanguages)"
               >
                 {{
                   'page.collection.milestones.actions.send-copy-for-contribution'
@@ -227,7 +228,7 @@
   [isCloneProposal]="proposal.cloneProposalMetadataVO?.clonedProposal"
   [isCustomTemplate]="proposal.metadata?.customTemplateAct"
   [fromCustomTemplate]="proposal.metadata?.fromCustomTemplate"
-  [hasLinguisticVersions]="translatedLanguages?.length > 0"
+  [hasLinguisticVersions]="hasTranslatedLanguages"
 ></app-add-milestone-dialog>
 
 <app-proposal-milestone-view
