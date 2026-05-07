@@ -42,7 +42,7 @@ public class SectionContentValidator {
 
         ALLOWED_CHILDREN.put(AknType.CITATION,           EnumSet.of(AknType.AUTHORIAL_NOTE));
         ALLOWED_CHILDREN.put(AknType.RECITAL,            EnumSet.of(AknType.AUTHORIAL_NOTE));
-        ALLOWED_CHILDREN.put(AknType.RECITALS,         EnumSet.of(AknType.RECITAL));
+        ALLOWED_CHILDREN.put(AknType.RECITALS,           EnumSet.of(AknType.RECITAL));
         ALLOWED_CHILDREN.put(AknType.PART,               EnumSet.of(AknType.TITLE, AknType.CHAPTER, AknType.SECTION, AknType.NUMBERED_ARTICLE, AknType.UNNUMBERED_ARTICLE));
         ALLOWED_CHILDREN.put(AknType.TITLE,              EnumSet.of(AknType.CHAPTER, AknType.SECTION, AknType.NUMBERED_ARTICLE, AknType.UNNUMBERED_ARTICLE));
         ALLOWED_CHILDREN.put(AknType.CHAPTER,            EnumSet.of(AknType.SECTION, AknType.NUMBERED_ARTICLE, AknType.UNNUMBERED_ARTICLE));
@@ -72,7 +72,7 @@ public class SectionContentValidator {
         if (allowedRoots == null) {
             throw new IllegalArgumentException("Unsupported section type: " + sectionType);
         }
-        if (sectionType == SectionType.ENACTING_TERMS && items != null) {
+        if (sectionType == SectionType.ENACTING_TERMS) {
             boolean hasHigherDivisions = items.stream().anyMatch(i ->
                     i.getType() == AknType.PART || i.getType() == AknType.TITLE ||
                     i.getType() == AknType.CHAPTER || i.getType() == AknType.SECTION);
@@ -98,60 +98,63 @@ public class SectionContentValidator {
                 throw new IllegalArgumentException("RECITALS groups are only allowed in autonomous acts");
             }
         }
-        for (LineItem item : items) {
-            validateItem(item, allowedRoots, 0);
+        for (int i = 0; i < items.size(); i++) {
+            validateItem(items.get(i), allowedRoots, sectionType + "[" + i + "]");
         }
     }
 
-    private void validateItem(LineItem item, Set<AknType> allowedTypes, int depth) {
-        if (depth > MAX_DEPTH) {
-            throw new IllegalArgumentException("Item nesting exceeds maximum depth of " + MAX_DEPTH);
+    private void validateItem(LineItem item, Set<AknType> allowedTypes, String path) {
+        if (path.chars().filter(c -> c == '[').count() > MAX_DEPTH) {
+            throw new IllegalArgumentException("Item nesting exceeds maximum depth of " + MAX_DEPTH + " at " + path);
         }
         if (item.getContent() != null && item.getContent().length() > MAX_CONTENT_LENGTH) {
-            throw new IllegalArgumentException("Content exceeds maximum length of " + MAX_CONTENT_LENGTH);
+            throw new IllegalArgumentException("Content exceeds maximum length of " + MAX_CONTENT_LENGTH + " at " + path);
         }
         if (item.getType() == null || !allowedTypes.contains(item.getType())) {
             throw new IllegalArgumentException(
-                    "Invalid element type '" + item.getType() + "'. Allowed here: " + allowedTypes);
+                    "Invalid element type '" + item.getType() + "' at " + path + ". Allowed here: " + allowedTypes);
         }
-        if ((item.getType() == AknType.RECITAL || item.getType() == AknType.CITATION) && item.getContent() == null) {
-            throw new IllegalArgumentException(item.getType() + " content must not be null");
+        String typedPath = path + "(" + item.getType() + ")";
+        if ((item.getType() == AknType.RECITAL || item.getType() == AknType.CITATION)
+                && (item.getContent() == null || item.getContent().isBlank())) {
+            throw new IllegalArgumentException(item.getType() + " at " + typedPath + " must have non-blank content");
         }
         if (item.getType() == AknType.AUTHORIAL_NOTE) {
             if (item.getPosition() == null || item.getPosition() < 0) {
-                throw new IllegalArgumentException("AUTHORIAL_NOTE requires a non-negative position");
+                throw new IllegalArgumentException("AUTHORIAL_NOTE at " + typedPath + " requires a non-negative position");
             }
         }
         if ((item.getType() == AknType.PARAGRAPH || item.getType() == AknType.NUMBERED_PARAGRAPH
                 || item.getType() == AknType.UNNUMBERED_PARAGRAPH) && item.getChildren() != null) {
             int contentLength = item.getContent() != null ? item.getContent().length() : 0;
-            for (LineItem child : item.getChildren()) {
+            for (int i = 0; i < item.getChildren().size(); i++) {
+                LineItem child = item.getChildren().get(i);
                 if (child.getType() == AknType.AUTHORIAL_NOTE && child.getPosition() != null
                         && child.getPosition() > contentLength) {
                     throw new IllegalArgumentException(
-                            "AUTHORIAL_NOTE position " + child.getPosition() + " exceeds paragraph content length " + contentLength);
+                            "AUTHORIAL_NOTE position " + child.getPosition() + " exceeds paragraph content length "
+                            + contentLength + " at " + typedPath + ".children[" + i + "]");
                 }
             }
         }
         if (item.getChildren() != null && !item.getChildren().isEmpty()) {
             Set<AknType> allowedChildren = ALLOWED_CHILDREN.get(item.getType());
             if (allowedChildren == null || allowedChildren.isEmpty()) {
-                throw new IllegalArgumentException(
-                        "Element type '" + item.getType() + "' cannot have children");
+                throw new IllegalArgumentException("Element type '" + item.getType() + "' at " + typedPath + " cannot have children");
             }
             if (item.getType() == AknType.NUMBERED_ARTICLE || item.getType() == AknType.UNNUMBERED_ARTICLE) {
                 boolean headingPresent = item.getChildren().stream().anyMatch(c -> c.getType() == AknType.ARTICLE_HEADING);
                 if (headingPresent && item.getChildren().get(0).getType() != AknType.ARTICLE_HEADING) {
-                    throw new IllegalArgumentException("ARTICLE_HEADING must be the first child of an article");
+                    throw new IllegalArgumentException("ARTICLE_HEADING must be the first child of an article at " + typedPath);
                 }
             }
-            for (LineItem child : item.getChildren()) {
-                validateItem(child, allowedChildren, depth + 1);
+            for (int i = 0; i < item.getChildren().size(); i++) {
+                validateItem(item.getChildren().get(i), allowedChildren, typedPath + ".children[" + i + "]");
             }
         } else if (item.getType() == AknType.RECITALS) {
-            throw new IllegalArgumentException("RECITALS must have at least one RECITAL child");
+            throw new IllegalArgumentException("RECITALS at " + typedPath + " must have at least one RECITAL child");
         } else if (item.getType() == AknType.NUMBERED_ARTICLE || item.getType() == AknType.UNNUMBERED_ARTICLE) {
-            throw new IllegalArgumentException("Article must have at least one paragraph child");
+            throw new IllegalArgumentException(item.getType() + " at " + typedPath + " must have at least one paragraph child");
         }
     }
 }
