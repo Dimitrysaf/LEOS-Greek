@@ -64,6 +64,8 @@ define(function leosTrackChangesPluginModule(require) {
                 }
             });
 
+            var checkIfInsertElement = _checkIfElementIsInserted(editor);
+
             // Add dropdown with Accept All & Reject All buttons
             if(!editor.config.isAlternative && !editor.config.isClause) {
                 editor.ui.addRichCombo('trackChangeActions', {
@@ -96,7 +98,7 @@ define(function leosTrackChangesPluginModule(require) {
                     },
 
                     refresh: function() {
-                        if($(editor.getData()).attr('leos\:action') === 'insert'){
+                        if($(editor.getData()).attr('leos\:action') === 'insert' || checkIfInsertElement){
                             this.disable();
                         }
                     },
@@ -1124,6 +1126,21 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 }
             });
+        }
+    }
+
+    function _checkIfElementIsInserted(editor) {
+        var editorData = $(editor.getData());
+        if (editorData[0] && editorData[0].nodeName.toLowerCase() === 'heading') {
+            var elementId = editorData.attr('xml:id');
+            var domElement = elementId && document.querySelector('[data-akn-heading-id="' + elementId + '"]');
+            var parentElement = domElement && domElement.parentElement.parentElement;
+            if(!parentElement) {
+                parentElement =  document.querySelector('[data-wrapped-id="' + elementId + '"]').parentElement;
+            }
+            if (parentElement && parentElement.getAttribute('leos:action') === 'insert') {
+                return true;
+            }
         }
     }
 
