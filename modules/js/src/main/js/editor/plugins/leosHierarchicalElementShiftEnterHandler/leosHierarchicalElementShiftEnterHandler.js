@@ -130,9 +130,11 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             selection = leosPluginUtils.selectLastEditableElement(selection, 'p, li');
         }
         if (leosPluginUtils.isInsideTable(selection.getStartElement())) {
-            if (context.editor.getCommand(CMD_NAME) && isShiftEnterAllowedInThisContext(context.editor)) {
-                _onShiftEnterKeyCommand(context.editor.getCommand(CMD_NAME), context.editor);
+            let cmd = context.editor.getCommand(CMD_NAME);
+            if (cmd && cmd.state !== CKEDITOR.TRISTATE_DISABLED && isShiftEnterAllowedInThisContext(context.editor)) {
+                _onShiftEnterKeyCommand(cmd, context.editor);
             }
+            context.event.cancel();
         } else if (elementType && (enterAsShiftEnterForPoints || elementType === 'block' || ((elementType === 'level' || elementType === 'paragraph') && _isStartElementOrderedListOrContent(selection)))) {
             _onShiftEnterKeyCommand(context.editor.getCommand(CMD_NAME), context.editor);
         }
