@@ -93,17 +93,17 @@ java-build:
 cypress-group-1:
   extends: .cypress-base
   variables:
-    SPECS: "cypress/e2e/features/ckEditor.feature,cypress/e2e/features/annex.feature,cypress/e2e/features/createAct.feature"
+    SPECS: "cypress/e2e/features/ckEditor.feature,cypress/e2e/features/forkAndMerge.feature"
 
 cypress-group-2:
   extends: .cypress-base
   variables:
-    SPECS: "cypress/e2e/features/actViewer.feature,cypress/e2e/features/milestones.feature,cypress/e2e/features/userManagement.feature,cypress/e2e/features/legalAct.feature,cypress/e2e/features/financialStatement.feature,cypress/e2e/features/coverPage.feature,cypress/e2e/features/collaborators.feature,cypress/e2e/features/expMemo.feature,cypress/e2e/features/comparison.feature,cypress/e2e/features/homePage.feature"
+    SPECS: "cypress/e2e/features/trackChanges.feature,cypress/e2e/features/annex.feature,cypress/e2e/features/financialStatement.feature,cypress/e2e/features/coverPage.feature,cypress/e2e/features/createAct.feature"
 
 cypress-group-3:
   extends: .cypress-base
   variables:
-    SPECS: "cypress/e2e/features/trackChanges.feature,cypress/e2e/features/forkAndMerge.feature"
+    SPECS: "cypress/e2e/features/legalAct.feature,cypress/e2e/features/userManagement.feature,cypress/e2e/features/collaborators.feature,cypress/e2e/features/milestones.feature,cypress/e2e/features/actViewer.feature,cypress/e2e/features/expMemo.feature,cypress/e2e/features/homePage.feature,cypress/e2e/features/comparison.feature"
 
 cypress-test-for-non-local:
   variables:

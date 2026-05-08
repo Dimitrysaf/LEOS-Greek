@@ -39,6 +39,9 @@ module.exports = defineConfig({
           launchOptions.args.push('--disable-web-security');
           launchOptions.args.push('--disable-features=VizDisplayCompositor');
           launchOptions.args.push('--no-sandbox');
+          launchOptions.args.push('--disable-dev-shm-usage');
+          launchOptions.args.push('--disable-gpu');
+          launchOptions.args.push('--js-flags=--max-old-space-size=3072');
         }
         return launchOptions;
       });
@@ -112,7 +115,6 @@ module.exports = defineConfig({
     specPattern: "cypress/e2e/**/*.feature",
     watchForFileChanges: false,
     chromeWebSecurity: false,
-    experimentalSessionAndOrigin: true
   },
   env: {
     "localDraftingUrl": "localhost:8080/leos-pilot/ui",
