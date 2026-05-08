@@ -19,6 +19,7 @@ import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.DocumentPreview;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
@@ -541,4 +542,18 @@ public interface LeosRepository {
     <D extends LeosDocument> List<D> findClonedProposalsForOriginalProposal(String proposalRef, Class<? extends D> type);
 
     String getProposalsReport(String applnUrl);
+
+    DocumentPreview saveDocumentPreview(String documentVersionId, String documentRef, String versionLabel, byte[] content, String status);
+
+    DocumentPreview findDocumentPreviewByDocumentRef(String documentRef);
+
+    DocumentPreview findDocumentPreviewByDocumentRefAndVersionLabel(String documentRef, String versionLabel);
+
+    DocumentPreview createDocumentPreviewInProgress(String documentVersionId, String documentRef, String versionLabel);
+
+    void markDocumentPreviewCompleted(String documentRef, String versionLabel, byte[] content);
+
+    void markDocumentPreviewFailed(String documentRef, String versionLabel);
+
+    void deleteDocumentPreview(String documentRef, String versionLabel);
 }

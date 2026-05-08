@@ -41,6 +41,7 @@ import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
+import eu.europa.ec.leos.services.dto.response.DownloadPreviewResponse;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.exception.ExportException;
 import eu.europa.ec.leos.services.export.ExportDW;
@@ -104,6 +105,11 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
         } catch (Exception e) {
             throw new ExportException(messageHelper.getMessage("export.docuwrite.error.message", e.getMessage()));
         }
+    }
+
+    @Override
+    public DownloadPreviewResponse getDocumentPreview(LeosCategoryClass documentType, String documentRef, boolean forceRegenerate, boolean statusOnly) {
+        return null;
     }
 
     @Override

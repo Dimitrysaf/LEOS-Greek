@@ -239,4 +239,20 @@ public interface DocumentApi {
             @Parameter(description = "Document type") @PathVariable("documentType") String documentType,
             @Parameter(description = "Document reference") @PathVariable("documentRef") String documentRef,
             @Parameter(description = "Version") @PathVariable("version") String version);
+
+    @Operation(summary = "Generate document preview", description = "Generates a new PDF preview for the document and saves it to database")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Preview generated successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+
+    @GetMapping(value = "/preview/{documentType}/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    ResponseEntity<Object> getPreview(
+            @Parameter(description = "Document type") @PathVariable("documentType") String documentType,
+            @Parameter(description = "Document reference") @PathVariable("documentRef") String documentRef,
+            @Parameter(description = "Force regenerate preview") @RequestParam(value = "forceRegenerate", required = false) Boolean forceRegenerate,
+            @Parameter(description = "Status only - no PDF content") @RequestParam(value = "statusOnly", required = false) Boolean statusOnly);
+
 }

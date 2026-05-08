@@ -244,6 +244,7 @@ export class DocumentEditorComponent
           this.documentRef,
           this.documentType,
         );
+        this.documentService.restorePreviewStateOnNavigation();
       });
 
     this.documentService.refreshConnectors$
@@ -458,6 +459,7 @@ export class DocumentEditorComponent
     this.versionCompareService.closeVersionComparisonView();
     this.mergeContributionService.closeContributionMergeView();
     this.closeContributionsView();
+    this.documentService.clearDocumentState();
     this.destroy$.next(null);
     this.destroy$.complete();
     this.unloadStyleSheet?.();

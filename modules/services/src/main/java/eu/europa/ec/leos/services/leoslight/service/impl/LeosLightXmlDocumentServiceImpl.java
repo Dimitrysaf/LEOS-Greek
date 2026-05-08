@@ -188,6 +188,9 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
             file = ZipPackageUtil.zipLeosFiles("document.zip", contentToZip, null);
             map.add("outputDescriptor", outputDescriptor);
             map.add("inputFile", file.getResource());
+            if (exportOptions.isUseNewConverter()) {
+                map.add("useNewConverter", "true");
+            }
 
             ResponseEntity<byte[]> response = getResponseEntity(uri, null, map, byte[].class);
             if (response.getStatusCode().is2xxSuccessful()) {

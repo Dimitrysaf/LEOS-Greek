@@ -57,6 +57,7 @@ import { TableOfContentEditService } from './services/table-of-content-edit.serv
 import { ValidateTocProposalService } from './services/validate-node-drop.proposal.service';
 import { ValidateTocService } from './services/validate-node-drop.service';
 import { DocumentUploadComponent } from './components/document-upload/document-upload.component';
+import { DocumentPreviewComponent } from '@/shared/components/document-preview/document-preview.component';
 
 export const DOCUMENT_ACTIONS_SERVICE =
   new InjectionToken<DocumentActionsService>('DocumentActionsService');
@@ -105,6 +106,7 @@ export const DOCUMENT_ACTIONS_SERVICE =
     MatTreeModule,
     MatTooltipModule,
     MatProgressSpinnerModule,
+    DocumentPreviewComponent,
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: AknRouteReUseStrategy },

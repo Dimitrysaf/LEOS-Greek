@@ -130,6 +130,22 @@ export class CoEditionServiceWS {
     }
   }
 
+  subscribeToTopic(topic: string, callback: (message) => void, id: string): void {
+    if (this.stompClient.connected) {
+      if (!this.stompClient.subscriptions[id]) {
+        this.stompClient.subscribe(topic, callback, { id });
+      }
+    } else {
+      this.subscribeQueue.push({ topic, callback, id });
+    }
+  }
+
+  unsubscribeFromTopic(id: string): void {
+    if (this.stompClient?.subscriptions[id]) {
+      this.stompClient.unsubscribe(id);
+    }
+  }
+
   subscribe(topic: string, callback: (message) => void, id: string): void {
     if (!this.stompClient.subscriptions[id]) {
       this.stompClient.subscribe(topic, callback, { id: `${id}` });

@@ -2,6 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { EuiGrowlService } from '@eui/core';
+import { EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
 import {
@@ -38,6 +39,7 @@ import { VersionSearchParams } from '@/shared/models/versionSearch';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { LoadingService } from '@/shared/services/loading.service';
 import { downloadBlob } from '@/shared/utils';
+import { DownloadPreviewResponse, StalePreviewInfo } from '../models/download-preview-response.model';
 import { cleanDelInsert } from '@/shared/utils/string.utils';
 
 import { apiBaseUrl } from '../../../config';
@@ -154,6 +156,14 @@ export class DocumentService {
   }>;
   public annexDocNumber = 0;
 
+  private openPreviewDialogBS = new BehaviorSubject<boolean>(false);
+  public openPreviewDialog$ = this.openPreviewDialogBS.asObservable();
+
+  private previewReadyBS = new BehaviorSubject<boolean>(false);
+  public previewReady$ = this.previewReadyBS.asObservable();
+
+  private cachedPreviewBlob: Blob = null;
+  private isPreviewGenerating = false;
   private documentPageTitleBS = new BehaviorSubject<string>('');
   private resetZoomBS = new BehaviorSubject<void>(null);
   private searchPaneOpenBS = new BehaviorSubject(false);
@@ -246,6 +256,7 @@ export class DocumentService {
     @Inject(DOCUMENT) private document: Document,
     private appConfig: AppConfigService,
     private growlService: EuiGrowlService,
+    private dialogService: EuiDialogService,
     private translate: TranslateService,
     private coEditionService: CoEditionServiceWS,
     private loadingService: LoadingService,
@@ -402,6 +413,9 @@ export class DocumentService {
     this.getElementContentBS.next(null);
     this.getAnnotations = null;
     this.setAnnotationMode = null;
+    this.cachedPreviewBlob = null;
+    this.previewReadyBS.next(false);
+    this.isPreviewGenerating = false;
   }
 
   updateTrackChangesStatus(status: {
@@ -439,6 +453,19 @@ export class DocumentService {
       )
       .subscribe((resp) => this.handleDownloadResponse(resp));
     this.notifyExportEmailSent();
+  }
+
+  viewDocumentPreview(forceRegenerate: boolean = false, statusOnly: boolean = false) {
+    const documentType = this.documentType.toUpperCase();
+    const documentRef = this.documentRef;
+    const params: any = {};
+    if (forceRegenerate) params.forceRegenerate = 'true';
+    if (statusOnly) params.statusOnly = 'true';
+
+    return this.http.get<DownloadPreviewResponse>(
+      `${apiBaseUrl}/secured/document/preview/${documentType}/${documentRef}`,
+      { params },
+    );
   }
 
   downloadCleanVersion() {
@@ -647,6 +674,7 @@ export class DocumentService {
     this.clearPendingSavingElements();
     this.setDidDocumentLoadAndRender(false);
     this.coEditionService.setShouldReloadAfterUpdate();
+    this.clearPreviewState();
     this.setDocumentRefAndCategory(this.documentRef, this.documentType);
     this.setSearchResultsCounter(0);
   }
@@ -688,7 +716,16 @@ export class DocumentService {
     });
   }
 
+  clearPreviewState() {
+    this.cachedPreviewBlob = null;
+    this.previewReadyBS.next(false);
+    this.isPreviewGenerating = false;
+    // Do not unsubscribe from WS here - user may still want growl notification
+    // for in-progress generation even after document update
+  }
+
   refreshView(data: DocumentViewResponse) {
+    this.clearPreviewState();
     this.refreshViewBS.next(data);
   }
 
@@ -979,7 +1016,35 @@ export class DocumentService {
   }
 
   setDocumentRefAndCategory(ref: string, category: string) {
+    const currentRef = this.documentRefAndCategoryBS.value?.ref;
+    if (currentRef !== ref) {
+      // Navigating to different document - clear preview state only
+      // Keep WS subscription alive so growl fires when PDF completes
+      this.cachedPreviewBlob = null;
+      this.previewReadyBS.next(false);
+      this.isPreviewGenerating = false;
+    }
+
     this.documentRefAndCategoryBS.next({ ref, category });
+  }
+
+  restorePreviewStateOnNavigation() {
+    if (this.envService.getInstanceName() === 'ec') {
+      this.silentPreviewStatusCheck();
+    }
+  }
+
+  private silentPreviewStatusCheck() {
+    this.viewDocumentPreview(false, true).subscribe({
+      next: (response) => {
+        if (response.status === 'READY') {
+          this.previewReadyBS.next(true);
+        } else if (response.status === 'GENERATING' && response.message !== 'NONE') {
+          this.isPreviewGenerating = true;
+        }
+      },
+      error: () => {} // silent
+    });
   }
 
   setSearchParams(values: Partial<DocumentSearchParams>) {
@@ -1772,5 +1837,244 @@ export class DocumentService {
 
   clearPendingSavingElements() {
     this.pendingSavingElements.clear();
+  }
+
+  generateAndViewPreview() {
+    const documentType = this.documentType.toUpperCase();
+    const documentRef = this.documentRef;
+
+    // Eye icon is showing but no cached blob - user returned to document after navigating away
+    // Fetch full blob and open dialog directly without triggering new generation
+    if (this.previewReadyBS.getValue() && !this.cachedPreviewBlob && !this.isPreviewGenerating) {
+      this.viewDocumentPreview().subscribe({
+        next: (response) => {
+          if (response.status === 'READY' && response.previewBlob) {
+            this.cachedPreviewBlob = this.base64ToBlob(response.previewBlob);
+            this.openPreviewDialogBS.next(true);
+            return;
+          }
+          // Not READY anymore (e.g. stale) - fall through to normal flow below
+          this.generateAndViewPreviewInternal(documentType, documentRef);
+        },
+        error: () => this.generateAndViewPreviewInternal(documentType, documentRef)
+      });
+      return;
+    }
+
+    this.generateAndViewPreviewInternal(documentType, documentRef);
+  }
+
+  private generateAndViewPreviewInternal(documentType: string, documentRef: string) {
+    if (this.isPreviewGenerating) {
+      // Verify with backend - WS message might have been missed
+      this.viewDocumentPreview().subscribe({
+        next: (response) => {
+          if (response.status === 'GENERATING') {
+            this.growlService.growl({
+              severity: 'info',
+              detail: this.translate.instant('page.editor.preview.generating.in.progress'),
+              life: 3000,
+            });
+          } else {
+            this.isPreviewGenerating = false;
+            this.coEditionService.unsubscribeFromTopic(`preview-${documentRef}`);
+            if (response.status === 'READY' && response.previewBlob) {
+              this.cachedPreviewBlob = this.base64ToBlob(response.previewBlob);
+              this.openPreviewDialogBS.next(true);
+            } else if (response.status === 'STALE') {
+              this.growlService.growl({
+                severity: 'danger',
+                detail: this.translate.instant('page.editor.preview.failed'),
+                life: 5000,
+              });
+              this.showStalePreviewConfirmation({
+                isStale: true,
+                previewVersion: response.previewVersion,
+                currentVersion: response.currentVersion,
+                messageKey: response.messageKey
+              }, response.previewBlob);
+            }
+          }
+        },
+        error: () => {
+          this.isPreviewGenerating = false;
+        }
+      });
+      return;
+    }
+
+    // Subscribe optimistically before HTTP GET to avoid missing WS message
+    this.subscribeToPreviewTopic(documentRef);
+
+    this.viewDocumentPreview().subscribe({
+      next: (response) => {
+        if (response.status === 'READY' && response.previewBlob) {
+          // Already ready - unsubscribe and open
+          this.coEditionService.unsubscribeFromTopic(`preview-${documentRef}`);
+          const blob = this.base64ToBlob(response.previewBlob);
+          this.cachedPreviewBlob = blob;
+          this.openPreviewDialogBS.next(true);
+        } else if (response.status === 'STALE') {
+          // Stale - unsubscribe, show dialog
+          this.coEditionService.unsubscribeFromTopic(`preview-${documentRef}`);
+          this.showStalePreviewConfirmation({
+            isStale: true,
+            previewVersion: response.previewVersion,
+            currentVersion: response.currentVersion,
+            messageKey: response.messageKey
+          }, response.previewBlob);
+        } else if (response.status === 'GENERATING') {
+          this.isPreviewGenerating = true;
+          if (response.message === 'page.editor.preview.generating.after.failure') {
+            this.growlService.growl({
+              severity: 'danger',
+              detail: this.translate.instant('page.editor.preview.failed'),
+              life: 5000,
+            });
+          }
+          this.growlService.growl({
+            severity: 'info',
+            detail: this.translate.instant(response.message),
+            life: 5000,
+          });
+        }
+      },
+      error: (error) => {
+        this.coEditionService.unsubscribeFromTopic(`preview-${documentRef}`);
+        console.error('Error generating preview:', error);
+        this.growlService.growl({
+          severity: 'danger',
+          detail: this.translate.instant('page.editor.preview.failed'),
+          sticky: true,
+        });
+      },
+    });
+  }
+
+  private subscribeToPreviewTopic(documentRef: string): void {
+    const topicId = `preview-${documentRef}`;
+    // Always unsubscribe first to ensure fresh subscription
+    this.coEditionService.unsubscribeFromTopic(topicId);
+    this.coEditionService.subscribeToTopic(
+      `/topic/preview/${documentRef}`,
+      (message) => {
+        const payload = JSON.parse(message.body);
+        const currentVersionLabel = this.documentViewBS.getValue()?.versionInfoVO?.documentVersion;
+        const latestVersionLabel = this.versionLatestBS.getValue()?.cmisVersionNumber;
+        const isCurrentVersion = payload.versionLabel && (
+          payload.versionLabel === currentVersionLabel ||
+          payload.versionLabel === latestVersionLabel
+        );
+
+        if (payload.status === 'READY') {
+          this.growlService.growl({
+            severity: 'success',
+            detail: this.translate.instant('page.editor.preview.ready'),
+            life: 5000,
+          });
+          this.coEditionService.unsubscribeFromTopic(topicId);
+          if (isCurrentVersion && this.documentRef === documentRef) {
+            this.isPreviewGenerating = false;
+            this.previewReadyBS.next(true);
+          }
+        } else if (payload.status === 'FAILED') {
+          this.growlService.growl({
+            severity: 'danger',
+            detail: this.translate.instant('page.editor.preview.failed'),
+            sticky: true,
+          });
+          this.coEditionService.unsubscribeFromTopic(topicId);
+          if (isCurrentVersion) {
+            this.isPreviewGenerating = false;
+          }
+        }
+      },
+      topicId
+    );
+  }
+
+  resetOpenPreviewDialog() {
+    this.openPreviewDialogBS.next(false);
+  }
+
+  private showStalePreviewConfirmation(staleInfo: StalePreviewInfo, existingPreviewBlob?: string) {
+    const message = this.translate.instant(staleInfo.messageKey, {
+      previewVersion: staleInfo.previewVersion,
+      currentVersion: staleInfo.currentVersion
+    });
+
+    this.dialogService.openDialog({
+      title: this.translate.instant('page.editor.preview.stale.title'),
+      content: message,
+      typeClass: 'warning',
+      hasCloseButton: true,
+      hasDismissButton: true,
+      acceptLabel: this.translate.instant('page.editor.preview.stale.generate.new'),
+      dismissLabel: this.translate.instant('page.editor.preview.stale.view.existing'),
+      accept: () => {
+        // User chose to generate new - force regenerate
+        this.generateNewPreview();
+      },
+      dismiss: () => {
+        // User chose to view existing - use the data we already have!
+        if (existingPreviewBlob) {
+          const blob = this.base64ToBlob(existingPreviewBlob);
+          this.cachedPreviewBlob = blob;
+          this.openPreviewDialogBS.next(true);
+        }
+      }
+    });
+  }
+
+  private generateNewPreview() {
+    this.isPreviewGenerating = true;
+    const documentRef = this.documentRef;
+
+    this.growlService.growl({
+      severity: 'info',
+      detail: this.translate.instant('page.editor.preview.generating.latest'),
+      life: 5000,
+    });
+
+    // Subscribe first before HTTP call to avoid missing WS message
+    this.subscribeToPreviewTopic(documentRef);
+
+    this.viewDocumentPreview(true).subscribe({
+      next: (response) => {
+        if (response.status === 'READY' && response.previewBlob) {
+          // Already completed before WS - unsubscribe and open
+          this.coEditionService.unsubscribeFromTopic(`preview-${documentRef}`);
+          this.isPreviewGenerating = false;
+          const blob = this.base64ToBlob(response.previewBlob);
+          this.cachedPreviewBlob = blob;
+          this.openPreviewDialogBS.next(true);
+        }
+        // GENERATING - already subscribed, just wait for WS
+      },
+      error: (error) => {
+        this.coEditionService.unsubscribeFromTopic(`preview-${documentRef}`);
+        this.isPreviewGenerating = false;
+        console.error('Error generating new preview:', error);
+        this.growlService.growl({
+          severity: 'danger',
+          detail: this.translate.instant('page.editor.preview.failed'),
+          sticky: true,
+        });
+      }
+    });
+  }
+
+  private base64ToBlob(base64Data: string, contentType: string = 'application/pdf'): Blob {
+    const byteCharacters = atob(base64Data);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: contentType });
+  }
+
+  getCachedPreview(): Blob {
+    return this.cachedPreviewBlob;
   }
 }

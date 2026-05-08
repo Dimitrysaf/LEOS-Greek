@@ -26,6 +26,8 @@
             translate="page.editor.actions-dropdown.save-version"
           ></button>
         </li>
+        <!-- Export section -->
+        <ng-container *ngIf="exportVersionVisible || exportVersionWithAnnotationsVisible || exportCleanVersionVisible">
         <!-- Export this version -->
         <li euiListItem (click)="doc.download()" *ngIf="exportVersionVisible">
           <button euiListItem>
@@ -55,6 +57,7 @@
             translate="page.editor.actions-dropdown.export-clean-version"
           ></button>
         </li>
+        </ng-container>
         <!-- Show clean version -->
         <li
           euiListItem

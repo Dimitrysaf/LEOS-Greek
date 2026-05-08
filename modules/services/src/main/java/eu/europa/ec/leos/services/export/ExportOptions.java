@@ -28,6 +28,15 @@ public abstract class ExportOptions {
     protected boolean withTrackChangesAnonymization = false;
     protected boolean withAutoNumbering = true;
     protected boolean withRenditions = true;
+    protected boolean useNewConverter = false;
+
+    public boolean isUseNewConverter() {
+        return useNewConverter;
+    }
+
+    public void setUseNewConverter(boolean useNewConverter) {
+        this.useNewConverter = useNewConverter;
+    }
 
     public boolean isWithCoverPage() {
         return withCoverPage;

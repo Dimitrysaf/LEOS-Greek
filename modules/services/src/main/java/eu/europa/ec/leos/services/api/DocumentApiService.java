@@ -20,6 +20,7 @@ import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.DownloadPreviewResponse;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.dto.response.FetchElementResponse;
 
@@ -27,6 +28,8 @@ import java.io.IOException;
 import java.util.List;
 
 public interface DocumentApiService {
+
+    DownloadPreviewResponse getDocumentPreview(LeosCategoryClass documentType, String documentRef, boolean forceRegenerate, boolean statusOnly);
 
     DownloadVersionResponse downloadVersion(LeosCategoryClass documentType, String documentRef, String filteredAnnotations, boolean isWithAnnotations);
 

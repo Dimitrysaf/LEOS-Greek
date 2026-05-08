@@ -30,6 +30,7 @@ import eu.europa.ec.leos.rest.support.model.LeosDocument;
 import eu.europa.ec.leos.rest.support.model.LeosDocumentList;
 import eu.europa.ec.leos.rest.support.model.LinkedPackageList;
 import eu.europa.ec.leos.rest.support.model.Package;
+import eu.europa.ec.leos.rest.support.model.DocumentPreview;
 import eu.europa.ec.leos.rest.support.requests.CreateDocumentRequest;
 import eu.europa.ec.leos.rest.support.requests.CreatePackageRequest;
 import eu.europa.ec.leos.rest.support.requests.FindDocumentsRequest;
@@ -197,6 +198,27 @@ public class RestRepository extends AbstractRestClient {
 
     @Value("${leos.rest.repository.proposals.report}")
     private String leosRestProposalReportURI;
+
+    @Value("${leos.rest.repository.save.document.preview}")
+    private String leosRestSaveDocumentPreviewURI;
+
+    @Value("${leos.rest.repository.find.document.preview.by.ref}")
+    private String leosRestFindDocumentPreviewURI;
+
+    @Value("${leos.rest.repository.find.document.preview.by.version}")
+    private String leosRestFindDocumentPreviewByVersionURI;
+
+    @Value("${leos.rest.repository.delete.document.preview}")
+    private String leosRestDeleteDocumentPreviewURI;
+
+    @Value("${leos.rest.repository.create.document.preview.in.progress}")
+    private String leosRestCreateDocumentPreviewInProgressURI;
+
+    @Value("${leos.rest.repository.mark.document.preview.completed}")
+    private String leosRestMarkDocumentPreviewCompletedURI;
+
+    @Value("${leos.rest.repository.mark.document.preview.failed}")
+    private String leosRestMarkDocumentPreviewFailedURI;
 
     @Autowired
     private RepositoryPropertiesMapper repositoryPropertiesMapper;
@@ -840,5 +862,89 @@ public class RestRepository extends AbstractRestClient {
             new org.springframework.web.client.RestTemplate(requestFactory);
         
         return longTimeoutRestTemplate.getForObject(urlTemplate, String.class, applnUrl);
+    }
+
+    eu.europa.ec.leos.domain.repository.document.DocumentPreview saveDocumentPreview(String documentVersionId, String documentRef, String versionLabel, byte[] content, String status) {
+        LOGGER.trace("Saving DocumentPreview... [documentRef={}]", documentRef);
+        String url = getUrl(leosRestSaveDocumentPreviewURI);
+        Map<String, Object> request = new HashMap<>();
+        request.put("documentVersionId", documentVersionId);
+        request.put("documentRef", documentRef);
+        request.put("versionLabel", versionLabel);
+        request.put("content", content);
+        request.put("status", status);
+        DocumentPreview model = postEntity(url, request, DocumentPreview.class);
+        return toDomain(model);
+    }
+
+    eu.europa.ec.leos.domain.repository.document.DocumentPreview findDocumentPreviewByDocumentRef(String documentRef) {
+        LOGGER.trace("Finding DocumentPreview by document ref... [documentRef={}]", documentRef);
+        try {
+            String url = getUrl(leosRestFindDocumentPreviewURI);
+            DocumentPreview model = getEntity(url, DocumentPreview.class, documentRef);
+            return model != null ? toDomain(model) : null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    eu.europa.ec.leos.domain.repository.document.DocumentPreview findDocumentPreviewByDocumentRefAndVersionLabel(String documentRef, String versionLabel) {
+        LOGGER.trace("Finding DocumentPreview by document ref and version... [documentRef={}, versionLabel={}]", documentRef, versionLabel);
+        try {
+            String url = getUrl(leosRestFindDocumentPreviewByVersionURI) + "?versionLabel={1}";
+            DocumentPreview model = getEntity(url, DocumentPreview.class, documentRef, versionLabel);
+            return model != null ? toDomain(model) : null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    eu.europa.ec.leos.domain.repository.document.DocumentPreview createDocumentPreviewInProgress(String documentVersionId, String documentRef, String versionLabel) {
+        LOGGER.trace("Creating DocumentPreview IN_PROGRESS... [documentRef={}, versionLabel={}]", documentRef, versionLabel);
+        String url = getUrl(leosRestCreateDocumentPreviewInProgressURI);
+        Map<String, String> request = new HashMap<>();
+        request.put("documentVersionId", documentVersionId);
+        request.put("documentRef", documentRef);
+        request.put("versionLabel", versionLabel);
+        DocumentPreview model = postEntity(url, request, DocumentPreview.class);
+        return toDomain(model);
+    }
+
+    void markDocumentPreviewCompleted(String documentRef, String versionLabel, byte[] content) {
+        LOGGER.trace("Marking DocumentPreview COMPLETED... [documentRef={}, versionLabel={}]", documentRef, versionLabel);
+        String url = getUrl(leosRestMarkDocumentPreviewCompletedURI);
+        Map<String, Object> request = new HashMap<>();
+        request.put("documentRef", documentRef);
+        request.put("versionLabel", versionLabel);
+        request.put("content", java.util.Base64.getEncoder().encodeToString(content));
+        putEntity(url, request, Void.class);
+    }
+
+    void markDocumentPreviewFailed(String documentRef, String versionLabel) {
+        LOGGER.trace("Marking DocumentPreview FAILED... [documentRef={}, versionLabel={}]", documentRef, versionLabel);
+        String url = getUrl(leosRestMarkDocumentPreviewFailedURI);
+        Map<String, String> request = new HashMap<>();
+        request.put("documentRef", documentRef);
+        request.put("versionLabel", versionLabel);
+        putEntity(url, request, Void.class);
+    }
+
+    void deleteDocumentPreview(String documentRef, String versionLabel) {
+        LOGGER.trace("Deleting DocumentPreview... [documentRef={}, versionLabel={}]", documentRef, versionLabel);
+        String url = getUrl(leosRestDeleteDocumentPreviewURI) + "?versionLabel=" + versionLabel;
+        delete(url, documentRef);
+    }
+
+    private eu.europa.ec.leos.domain.repository.document.DocumentPreview toDomain(DocumentPreview model) {
+        return new eu.europa.ec.leos.domain.repository.document.DocumentPreview(
+                model.getId(),
+                model.getDocumentVersionId(),
+                model.getDocumentRef(),
+                model.getVersionLabel(),
+                model.getContent(),
+                eu.europa.ec.leos.domain.repository.document.DocumentPreviewStatus.valueOf(model.getStatus()),
+                model.getAuditCDate().atZone(java.time.ZoneId.systemDefault()).toInstant(),
+                model.getAuditMDate() != null ? model.getAuditMDate().atZone(java.time.ZoneId.systemDefault()).toInstant() : null
+        );
     }
 }
