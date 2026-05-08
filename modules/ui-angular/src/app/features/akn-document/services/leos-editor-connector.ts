@@ -400,6 +400,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     this.loadingService.setTaskOver('saving', taskId);
     this.documentService.setBlockReloadOfToc();
     this.documentService.showRefreshWarning();
+    // Document version changed - clear preview state
+    this.documentService.clearPreviewState();
     this.refreshAnnotate();
   }
 
@@ -490,6 +492,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       ).subscribe((response) => {
         this.documentService.setBlockReloadOfToc();
         this.documentService.showRefreshWarning();
+        this.documentService.clearPreviewState();
         this.documentService.setDocumentRefAndCategory(
           documentRef,
           documentType,
@@ -572,6 +575,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     this.insertGroup(elementData.elementType.toLowerCase(), elementData.elementId, elementData.position)
       .pipe(distinctUntilChanged())
       .subscribe((response) => {
+        this.documentService.clearPreviewState();
         this.documentService.setDocumentRefAndCategory(
           documentRef,
           documentType,
@@ -604,6 +608,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           next: (response) => {
             this.documentService.setBlockReloadOfToc();
             this.documentService.showRefreshWarning();
+            this.documentService.clearPreviewState();
             this.documentService.setDocumentRefAndCategory(documentRef, documentType);
             this.coEditionService.sendUpdateDocumentEvent(documentRef);
             resolve(response);

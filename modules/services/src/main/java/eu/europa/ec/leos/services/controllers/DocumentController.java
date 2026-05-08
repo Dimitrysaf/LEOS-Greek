@@ -26,6 +26,7 @@ import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.DownloadVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.DownloadPreviewResponse;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.dto.response.FetchElementResponse;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
@@ -36,15 +37,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -326,6 +319,48 @@ public class DocumentController implements DocumentApi {
         } catch (Exception e) {
             LOG.error("Error occurred while getting document version: " + version, e);
             return new ResponseEntity<>(e.getCause().getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Object> getPreview(String documentType, String documentRef, Boolean forceRegenerate, Boolean statusOnly) {
+        try {
+            documentType = encodeParam(documentType);
+            documentRef = encodeParam(documentRef);
+            final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
+            boolean forceRegen = forceRegenerate != null && forceRegenerate;
+            boolean statusOnlyFlag = statusOnly != null && statusOnly;
+
+            DownloadPreviewResponse response = documentApiService.getDocumentPreview(documentCategory, documentRef, forceRegen, statusOnlyFlag);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            // GENERATING - return 202
+            if (response.getResponseData() == null && response.getMessage() != null) {
+                String jsonResponse = String.format("{\"status\":\"GENERATING\",\"message\":\"%s\"}", response.getMessage());
+                return new ResponseEntity<>(jsonResponse, headers, HttpStatus.ACCEPTED);
+            }
+
+            // STALE - return 200 with stale info and base64 PDF
+            if (response.isStale()) {
+                String base64Pdf = java.util.Base64.getEncoder().encodeToString(response.getResponseData());
+                String jsonResponse = String.format(
+                    "{\"status\":\"STALE\",\"previewVersion\":\"%s\",\"currentVersion\":\"%s\",\"messageKey\":\"%s\",\"previewBlob\":\"%s\"}",
+                    response.getPreviewVersion(), response.getCurrentVersion(), response.getMessageKey(), base64Pdf);
+                return new ResponseEntity<>(jsonResponse, headers, HttpStatus.OK);
+            }
+
+            // READY - return 200 with base64 PDF (or status only)
+            if (statusOnlyFlag) {
+                return new ResponseEntity<>("{\"status\":\"READY\"}", headers, HttpStatus.OK);
+            }
+            String base64Pdf = java.util.Base64.getEncoder().encodeToString(response.getResponseData());
+            String jsonResponse = String.format("{\"status\":\"READY\",\"previewBlob\":\"%s\"}", base64Pdf);
+            return new ResponseEntity<>(jsonResponse, headers, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error occurred while viewing document preview", e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

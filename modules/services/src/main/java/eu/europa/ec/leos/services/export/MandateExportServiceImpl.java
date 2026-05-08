@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.integration.DocuWriteService;
+import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.document.AnnexService;
@@ -77,6 +78,11 @@ public class MandateExportServiceImpl extends ExportServiceImpl {
             LOG.error("An exception occurred while using the Docuwrite service: ", e);
             throw e;
         }
+    }
+
+    @Override
+    public byte[] createDocumentPackage(ExportOptions exportOptions, User user) throws Exception {
+        return new byte[0];
     }
 
     @Override

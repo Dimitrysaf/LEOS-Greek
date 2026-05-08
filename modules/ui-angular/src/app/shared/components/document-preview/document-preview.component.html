@@ -1,0 +1,22 @@
+<eui-dialog #dialog [title]="'Document Preview'" height="90vh" width="90vw" hasNoBodyPadding [hasFooter]="false" (dialogClose)="onClose()">
+  @if (filepathNeme) {
+    <ngx-extended-pdf-viewer
+      [src]="filepathNeme"
+      [height]="'75vh'"
+      [showPrintButton]="false"
+      [showDownloadButton]="false"
+      [showOpenFileButton]="false"
+      [showPresentationModeButton]="false"
+      [showRotateButton]="false"
+      [showSecondaryToolbarButton]="false"
+      [showTextEditor]="false"
+      [showStampEditor]="false"
+      [showDrawEditor]="false"
+      [showHighlightEditor]="false">
+    </ngx-extended-pdf-viewer>
+  } @else {
+    <div style="padding: 20px; text-align: center;">
+      <p>No PDF file available.</p>
+    </div>
+  }
+</eui-dialog>

@@ -285,6 +285,16 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
         }
     }
 
+    @Override
+    public byte[] createDocumentPackage(ExportOptions exportOptions, User user) throws Exception {
+        LeosDocument document = exportOptions.getExportVersions().getCurrent();
+        String docName = document.getName();
+        byte[] docContent = document.getContent().get().getSource().getBytes();
+        Map<String, Object> contentToZip = new HashMap<>();
+        contentToZip.put("exports.zip", leosLightXmlDocumentService.convert(docContent, docName, exportOptions));
+        return ZipPackageUtil.zipByteArray(contentToZip);
+    }
+
     private LeosFile convertDocument(ExportOptions exportOptions) {
         LeosFile file = null;
         try {

@@ -84,6 +84,7 @@ import {
   IRibbonToolbarItem,
   IRibbonToolbarSection,
   IRibbonToolbarType,
+  SizeClass,
 } from '../models/document-actions.model';
 import { ViewVersionService } from './view-version.service';
 import { DropdownModel } from '@/shared/dropdown.model';
@@ -99,6 +100,7 @@ export abstract class DocumentActionsService {
   protected leosConfig: LeosConfig;
   protected documentConfig: DocumentConfig;
   protected isEditorOpen = false;
+  protected isPreviewReady = false;
 
   private profile: Profile;
   private permissions: Permission[];
@@ -134,6 +136,12 @@ export abstract class DocumentActionsService {
 
     this.documentService.isEditorOpen$.subscribe((isOpen) => {
       this.isEditorOpen = isOpen;
+    });
+
+    this.documentService.previewReady$.subscribe((isReady) => {
+      this.isPreviewReady = isReady;
+      const newActions = this.buildActions();
+      this.actionItemsBS.next(newActions);
     });
 
     this.mergeContributionService.contributionSelected$.subscribe((value) => {
@@ -299,13 +307,13 @@ export abstract class DocumentActionsService {
 
   private buildCommonItems(): IRibbonToolbarSection[] {
     const saveSection = !this.isMandateMemorandum() && this.hasUpdatePermission && this.buildSaveSection();
-    const searchSection = this.buildSearchSection();
     const importOJSection =
       (!this.profile || this.profile.importOJ) &&
       this.isDocumentTypeTheSame(this.documentService.documentType, 'BILL') &&
       this.hasUpdatePermission &&
       this.buildImportOJSection();
     const exportSection = this.buildExportSection();
+    const searchSection = this.buildSearchSection();
     const displaySection = this.buildDisplaySection();
     // TODO : if this is only present for drafting instance should be moved to document-actions-proposal.service.ts
     const trackChangesSection = !this.isCN() && this.buildTrackChangesSection();
@@ -327,8 +335,8 @@ export abstract class DocumentActionsService {
     return [
       saveSection,
       importOJSection,
-      searchSection,
       exportSection,
+      searchSection,
       displaySection,
       trackChangesSection,
       editSection,
@@ -396,6 +404,7 @@ export abstract class DocumentActionsService {
       id: EXPORT_SECTION_ID,
       order: 3,
       resizeOrder: 4,
+      cssClasses: 'eui-u-flex eui-u-flex-column eui-u-flex-align-items-start app-u-gap-xs',
       children: [
         {
           type: IRibbonToolbarType.DROPDOWN,
@@ -408,6 +417,20 @@ export abstract class DocumentActionsService {
           icon: 'eui-ellipsis-vertical',
           items: [...exportOptions],
         },
+        ...(this.environmentService.getInstanceName() === 'ec' ? [{
+          type: IRibbonToolbarType.BUTTON,
+          id: 'PREVIEW_ACTION_ID',
+          label: this.translateService.instant(
+            'page.editor.actions-dropdown.preview',
+          ),
+          euiSize: 's' as SizeClass,
+          euiStyle: 'secondary',
+          icon: 'eye',
+          iconPosition: 'after',
+          cssClasses: this.isPreviewReady ? '' : 'preview-icon-hidden',
+          svgType: 'outline',
+          actionFn: () => this.documentService.generateAndViewPreview(),
+        } as IRibbonToolbarItem] : []),
       ],
     };
   }
@@ -470,7 +493,7 @@ export abstract class DocumentActionsService {
     return {
       type: IRibbonToolbarType.SECTION,
       id: SEARCH_SECTION_ID,
-      order: 4,
+      order: 5,
       resizeOrder: 3,
       children: [
         {

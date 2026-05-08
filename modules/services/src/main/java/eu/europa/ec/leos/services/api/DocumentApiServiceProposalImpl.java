@@ -19,7 +19,6 @@ import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.InstanceType;
-import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.repository.LeosRepository;
@@ -29,11 +28,14 @@ import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
+import eu.europa.ec.leos.domain.repository.document.DocumentPreviewStatus;
+import eu.europa.ec.leos.services.document.PreviewGenerationService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
+import eu.europa.ec.leos.services.dto.response.DownloadPreviewResponse;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.exception.ExportException;
 import eu.europa.ec.leos.services.export.ExportLW;
@@ -58,6 +60,8 @@ import java.io.IOException;
 public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(DocumentApiServiceProposalImpl.class);
 
+    private final PreviewGenerationService previewGenerationService;
+
     protected DocumentApiServiceProposalImpl(DocumentContentService documentContentService, PackageService packageService,
                                              ProposalService proposalService, ExportService exportService, LeosRepository leosRepository,
                                              ExportPackageService exportPackageService, NotificationService notificationService,
@@ -65,10 +69,11 @@ public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
                                              LegService legService, ReferenceLabelService referenceLabelService, WorkspaceService workspaceService,
             ElementProcessor elementProcessor, TransformationService transformationService,
             RepositoryPropertiesMapper repositoryPropertiesMapper, DocumentViewService<XmlDocument> documentViewService,
-            BillService billService, AnnexService annexService) {
+            BillService billService, AnnexService annexService, PreviewGenerationService previewGenerationService) {
         super(documentContentService, packageService, proposalService, exportService, leosRepository, exportPackageService, notificationService,
                 securityContext, messageHelper, comparisonDelegate, legService, referenceLabelService, workspaceService, elementProcessor, transformationService,
                 repositoryPropertiesMapper, documentViewService, billService, annexService);
+        this.previewGenerationService = previewGenerationService;
     }
 
     @Override
@@ -87,6 +92,79 @@ public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
             return new DownloadVersionResponse(jobFileName, byteArray);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while using ExportService", e);
+            throw new ExportException(messageHelper.getMessage("export.package.error.message.contact"));
+        }
+    }
+
+    public DownloadPreviewResponse getDocumentPreview(LeosCategoryClass documentType, String documentRef, boolean forceRegenerate, boolean statusOnly) {
+        try {
+            Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
+            XmlDocument currentDocument = documentContentService.getDocumentByRef(documentRef, documentType);
+            XmlDocument original = documentContentService.getOriginalDocument(currentDocument);
+            ExportOptions exportOptions = getExportOptions(original, currentDocument, clazz, false);
+            exportOptions.setWithCoverPage(false);
+            exportOptions.setUseNewConverter(false);
+            String documentVersionId = currentDocument.getId();
+            String versionLabel = currentDocument.getVersionLabel();
+
+            eu.europa.ec.leos.domain.repository.document.DocumentPreview currentVersionPreview =
+                    leosRepository.findDocumentPreviewByDocumentRefAndVersionLabel(documentRef, versionLabel);
+
+            if (currentVersionPreview != null && !forceRegenerate) {
+                DocumentPreviewStatus status = currentVersionPreview.getStatus();
+
+                if (DocumentPreviewStatus.COMPLETED == status) {
+                    LOG.debug("Returning COMPLETED preview for document: {}, version: {}", documentRef, versionLabel);
+                    return new DownloadPreviewResponse(statusOnly ? null : currentVersionPreview.getContent());
+                }
+
+                if (DocumentPreviewStatus.IN_PROGRESS == status) {
+                    LOG.debug("Preview already IN_PROGRESS for document: {}, version: {}", documentRef, versionLabel);
+                    return new DownloadPreviewResponse("page.editor.preview.generating.in.progress");
+                }
+
+                if (DocumentPreviewStatus.FAILED == status) {
+                    if (statusOnly) {
+                        return new DownloadPreviewResponse("page.editor.preview.generating.after.failure");
+                    }
+                    eu.europa.ec.leos.domain.repository.document.DocumentPreview stalePreview =
+                            leosRepository.findDocumentPreviewByDocumentRef(documentRef);
+                    if (stalePreview != null && !stalePreview.getVersionLabel().equals(versionLabel)) {
+                        LOG.info("FAILED preview with stale existing for document: {}", documentRef);
+                        return new DownloadPreviewResponse(stalePreview.getContent(), true, stalePreview.getVersionLabel(), versionLabel, "page.editor.preview.outdated");
+                    }
+                    // Delete FAILED and auto-retry
+                    LOG.info("FAILED preview, no stale exists, auto-retrying for document: {}, version: {}", documentRef, versionLabel);
+                    leosRepository.deleteDocumentPreview(documentRef, versionLabel);
+                    leosRepository.createDocumentPreviewInProgress(documentVersionId, documentRef, versionLabel);
+                    previewGenerationService.generatePreviewAsync(exportOptions, securityContext.getUser());
+                    return new DownloadPreviewResponse("page.editor.preview.generating.after.failure");
+                }
+            }
+
+            if (!forceRegenerate) {
+                eu.europa.ec.leos.domain.repository.document.DocumentPreview stalePreview =
+                        leosRepository.findDocumentPreviewByDocumentRef(documentRef);
+                if (stalePreview != null && DocumentPreviewStatus.COMPLETED == stalePreview.getStatus() && !stalePreview.getVersionLabel().equals(versionLabel)) {
+                    LOG.info("Stale preview exists for document: {}, stale version: {}, current: {}", documentRef, stalePreview.getVersionLabel(), versionLabel);
+                    if (statusOnly) {
+                        return new DownloadPreviewResponse("NONE");
+                    }
+                    return new DownloadPreviewResponse(stalePreview.getContent(), true, stalePreview.getVersionLabel(), versionLabel, "page.editor.preview.outdated");
+                }
+            }
+
+            if (statusOnly) {
+                return new DownloadPreviewResponse("NONE");
+            }
+
+            String message = forceRegenerate ? "page.editor.preview.generating.latest" : "page.editor.preview.generating";
+            leosRepository.createDocumentPreviewInProgress(documentVersionId, documentRef, versionLabel);
+            previewGenerationService.generatePreviewAsync(exportOptions, securityContext.getUser());
+            return new DownloadPreviewResponse(message);
+
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while viewing document preview", e);
             throw new ExportException(messageHelper.getMessage("export.package.error.message.contact"));
         }
     }

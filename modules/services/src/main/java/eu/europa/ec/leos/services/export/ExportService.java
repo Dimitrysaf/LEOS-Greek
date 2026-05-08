@@ -36,6 +36,8 @@ public interface ExportService {
 
     byte[] createDocumentPackage(String jobFileName, ExportOptions exportOptions, User user) throws Exception;
 
+    byte[] createDocumentPackage(ExportOptions exportOptions, User user) throws Exception;
+
     byte[] createExportPackage(String jobFileName, String documentId, ExportOptions exportOptions) throws Exception;
 
     byte[] updateExportPackageWithComments(String documentId) throws Exception;

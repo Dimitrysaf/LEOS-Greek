@@ -36,6 +36,7 @@ import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.DownloadPreviewResponse;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.dto.response.FetchElementResponse;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -142,6 +143,8 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
 
         return doDownloadVersion(proposalId, exportOptions);
     }
+
+    public abstract DownloadPreviewResponse getDocumentPreview(LeosCategoryClass documentType, String documentRef, boolean forceRegenerate, boolean statusOnly);
 
     protected abstract DownloadVersionResponse doDownloadVersion(String proposalId, ExportOptions exportOptions);
 

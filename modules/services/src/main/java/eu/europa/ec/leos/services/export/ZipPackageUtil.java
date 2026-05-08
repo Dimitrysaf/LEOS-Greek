@@ -243,4 +243,92 @@ public class ZipPackageUtil {
         }
         return singleZipEntryName;
     }
+
+    /**
+     * Extracts PDF from nested ZIP structure:
+     * Document_xxx.zip -> exports.zip -> document_xxx_out.zip -> xxx.pdf
+     */
+    public static byte[] extractPdfFromNestedZip(byte[] zipData) throws IOException {
+        // Level 1: Extract exports.zip from outer ZIP
+        byte[] exportsZip = extractFileFromZip(zipData, "exports.zip");
+        if (exportsZip == null) {
+            throw new IOException("exports.zip not found in outer ZIP");
+        }
+
+        // Level 2: Extract document_*_out.zip from exports.zip
+        byte[] documentOutZip = extractFirstZipFromZip(exportsZip);
+        if (documentOutZip == null) {
+            throw new IOException("document_*_out.zip not found in exports.zip");
+        }
+
+        // Level 3: Extract PDF from document_*_out.zip
+        byte[] pdfBytes = extractFirstPdfFromZip(documentOutZip);
+        if (pdfBytes == null) {
+            throw new IOException("PDF file not found in document_*_out.zip");
+        }
+
+        return pdfBytes;
+    }
+
+    /**
+     * Extracts a specific file from a ZIP by name
+     */
+    static byte[] extractFileFromZip(byte[] zipData, String fileName) throws IOException {
+        try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(zipData))) {
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                if (entry.getName().equals(fileName) || entry.getName().endsWith("/" + fileName)) {
+                    return readZipEntry(zis);
+                }
+                zis.closeEntry();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Extracts the first ZIP file found in a ZIP
+     */
+    static byte[] extractFirstZipFromZip(byte[] zipData) throws IOException {
+        try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(zipData))) {
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                if (entry.getName().toLowerCase().endsWith(".zip")) {
+                    return readZipEntry(zis);
+                }
+                zis.closeEntry();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Extracts the first PDF file found in a ZIP
+     */
+    static byte[] extractFirstPdfFromZip(byte[] zipData) throws IOException {
+        try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(zipData))) {
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                if (entry.getName().toLowerCase().endsWith(".pdf")) {
+                    return readZipEntry(zis);
+                }
+                zis.closeEntry();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Reads the current ZIP entry into a byte array
+     */
+    static byte[] readZipEntry(ZipInputStream zis) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        byte[] buffer = new byte[4096];
+        int len;
+        while ((len = zis.read(buffer)) > 0) {
+            baos.write(buffer, 0, len);
+        }
+        return baos.toByteArray();
+    }
+
 }

@@ -32,6 +32,7 @@ import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
+import eu.europa.ec.leos.services.dto.response.DownloadPreviewResponse;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.exception.ExportException;
 import eu.europa.ec.leos.services.export.ExportDW;
@@ -112,4 +113,10 @@ public class DocumentApiServiceOSImpl extends DocumentApiServiceImpl {
     protected DownloadVersionResponse doDownloadVersion(String proposalId, ExportOptions exportOptions) {
         throw new ExportException(NOT_AVAILABLE_FOR_THIS_INSTANCE);
     }
+
+    @Override
+    public DownloadPreviewResponse getDocumentPreview(LeosCategoryClass documentType, String documentRef, boolean forceRegenerate, boolean statusOnly) {
+        throw new ExportException(NOT_AVAILABLE_FOR_THIS_INSTANCE);
+    }
+
 }

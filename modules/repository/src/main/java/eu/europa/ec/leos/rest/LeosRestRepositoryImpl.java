@@ -21,6 +21,7 @@ import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.ConfigDocument;
+import eu.europa.ec.leos.domain.repository.document.DocumentPreview;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
@@ -1356,4 +1357,54 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public String getProposalsReport(String applnUrl) {
        return repository.getProposalsReport(applnUrl);
     }
+
+    @Override
+    @PerformanceLogger
+    public DocumentPreview saveDocumentPreview(String documentVersionId, String documentRef, String versionLabel, byte[] content, String status) {
+        logger.trace("Saving DocumentPreview... [documentRef=" + documentRef + "]");
+        return repository.saveDocumentPreview(documentVersionId, documentRef, versionLabel, content, status);
+    }
+
+    @Override
+    @PerformanceLogger
+    public DocumentPreview findDocumentPreviewByDocumentRef(String documentRef) {
+        logger.trace("Finding DocumentPreview by document ref... [documentRef=" + documentRef + "]");
+        return repository.findDocumentPreviewByDocumentRef(documentRef);
+    }
+
+    @Override
+    @PerformanceLogger
+    public DocumentPreview findDocumentPreviewByDocumentRefAndVersionLabel(String documentRef, String versionLabel) {
+        logger.trace("Finding DocumentPreview by document ref and version... [documentRef={}, versionLabel={}]", documentRef, versionLabel);
+        return repository.findDocumentPreviewByDocumentRefAndVersionLabel(documentRef, versionLabel);
+    }
+
+    @Override
+    @PerformanceLogger
+    public DocumentPreview createDocumentPreviewInProgress(String documentVersionId, String documentRef, String versionLabel) {
+        logger.trace("Creating DocumentPreview IN_PROGRESS... [documentRef={}, versionLabel={}]", documentRef, versionLabel);
+        return repository.createDocumentPreviewInProgress(documentVersionId, documentRef, versionLabel);
+    }
+
+    @Override
+    @PerformanceLogger
+    public void markDocumentPreviewCompleted(String documentRef, String versionLabel, byte[] content) {
+        logger.trace("Marking DocumentPreview COMPLETED... [documentRef={}, versionLabel={}]", documentRef, versionLabel);
+        repository.markDocumentPreviewCompleted(documentRef, versionLabel, content);
+    }
+
+    @Override
+    @PerformanceLogger
+    public void markDocumentPreviewFailed(String documentRef, String versionLabel) {
+        logger.trace("Marking DocumentPreview FAILED... [documentRef={}, versionLabel={}]", documentRef, versionLabel);
+        repository.markDocumentPreviewFailed(documentRef, versionLabel);
+    }
+
+    @Override
+    @PerformanceLogger
+    public void deleteDocumentPreview(String documentRef, String versionLabel) {
+        logger.trace("Deleting DocumentPreview... [documentRef={}, versionLabel={}]", documentRef, versionLabel);
+        repository.deleteDocumentPreview(documentRef, versionLabel);
+    }
+
 }
