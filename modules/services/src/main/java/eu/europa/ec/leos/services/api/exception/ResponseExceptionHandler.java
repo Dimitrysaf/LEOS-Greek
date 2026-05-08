@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.HandlerMethod;
@@ -17,6 +18,14 @@ import java.util.Arrays;
 public class ResponseExceptionHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResponseExceptionHandler.class);
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<?> handleMessageNotReadable(HttpMessageNotReadableException ex) {
+        Throwable cause = ex.getCause();
+        String message = (cause != null && cause.getMessage() != null) ? cause.getMessage() : ex.getMessage();
+        LOG.debug("Request body not readable: {}", message);
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception ex, HandlerMethod handlerMethod) {

@@ -131,6 +131,17 @@ public class SectionContentValidatorTest {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
                 validator.validate(SectionType.CITATIONS, List.of(item(AknType.RECITAL)), "ANY", LeosCategory.BILL));
         assertTrue(ex.getMessage().contains("RECITAL"));
+        assertTrue(ex.getMessage().contains("CITATIONS[0]"));
+    }
+
+    @Test
+    void testInvalidChildTypeIncludesPathInMessage() {
+        LineItem title = item(AknType.TITLE);
+        LineItem invalidChild = item(AknType.CITATION); // CITATION not allowed under TITLE
+        title.setChildren(List.of(invalidChild));
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+                validator.validate(SectionType.ENACTING_TERMS, List.of(title), "ANY", LeosCategory.BILL));
+        assertTrue(ex.getMessage().contains("ENACTING_TERMS[0](TITLE).children[0]"));
     }
 
     @Test
@@ -154,6 +165,17 @@ public class SectionContentValidatorTest {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
                 validator.validate(SectionType.RECITALS, List.of(item(AknType.RECITAL)), "ANY", LeosCategory.BILL));
         assertTrue(ex.getMessage().contains("RECITAL"));
+        assertTrue(ex.getMessage().contains("non-blank content"));
+    }
+
+    @Test
+    void testRecitalWithBlankContentThrows() {
+        LineItem recital = item(AknType.RECITAL);
+        recital.setContent("   ");
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+                validator.validate(SectionType.RECITALS, List.of(recital), "ANY", LeosCategory.BILL));
+        assertTrue(ex.getMessage().contains("RECITAL"));
+        assertTrue(ex.getMessage().contains("non-blank content"));
     }
 
     @Test
@@ -161,6 +183,17 @@ public class SectionContentValidatorTest {
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
                 validator.validate(SectionType.CITATIONS, List.of(item(AknType.CITATION)), "ANY", LeosCategory.BILL));
         assertTrue(ex.getMessage().contains("CITATION"));
+        assertTrue(ex.getMessage().contains("non-blank content"));
+    }
+
+    @Test
+    void testCitationWithBlankContentThrows() {
+        LineItem citation = item(AknType.CITATION);
+        citation.setContent("");
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () ->
+                validator.validate(SectionType.CITATIONS, List.of(citation), "ANY", LeosCategory.BILL));
+        assertTrue(ex.getMessage().contains("CITATION"));
+        assertTrue(ex.getMessage().contains("non-blank content"));
     }
 
     @Test

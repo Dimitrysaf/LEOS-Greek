@@ -1,5 +1,7 @@
 package eu.europa.ec.leos.services.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public enum AknType {
     CITATION,
     RECITAL,
@@ -16,5 +18,15 @@ public enum AknType {
     UNNUMBERED_PARAGRAPH,
     LIST,
     POINT,
-    AUTHORIAL_NOTE
+    AUTHORIAL_NOTE;
+
+    @JsonCreator
+    public static AknType fromString(String value) {
+        if (value == null) return null;
+        try {
+            return AknType.valueOf(value.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid AknType: '" + value + "'. Accepted values: " + java.util.Arrays.toString(AknType.values()));
+        }
+    }
 }
