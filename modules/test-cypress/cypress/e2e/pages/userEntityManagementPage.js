@@ -1,7 +1,8 @@
 class userEntityManagementPage {
     errorMessages = {
         userCreationError: 'There are errors in the form. Please fill-in all highlighted fields correctly and try again.',
-        entityUpdateError: 'There are errors in the form. Please fill-in all highlighted fields correctly and try again.'
+        entityUpdateError: 'There are errors in the form. Please fill-in all highlighted fields correctly and try again.',
+        userDeletionWithEntitiesError: 'The user cannot be deleted, because there are entities associated with her/him. Edit the user to remove the association(s) and then try again.'
     }
 
     elements = {
@@ -25,12 +26,12 @@ class userEntityManagementPage {
         saveBtn: () => cy.get('span').contains('Save'),
         newUserorEntityDialogBxTitle: () => cy.get('#headerTitle'),
         newUserorEntityCreationMessageLocator: () => cy.get('#containerConfigId'),
-        newUserorEntityDialogBxOkBtn: () => cy.get('button.eui-dialog__footer-accept-button').contains('OK'),
         searchUsersTxtBx: () => cy.get('input[placeholder=\'Search by user name, login or email\']'),
         searchIconBtn: () => cy.get('eui-icon-svg[icon=\'eui-search\']'),
         firstNameColumnInTable: () => cy.get('tr td:nth-child(1)'),
         lastNameColumnInTable: () => cy.get('tr td:nth-child(2)'),
         userLoginColumnInTable: () => cy.get('tr td:nth-child(3)'),
+        userDeleteBtnInTable: () => cy.get('tr td:nth-of-type(5) > a > eui-icon-svg'),
         editBtn: () => cy.get('span').contains('Edit'),
         readOnlyEmailTxtBx: () => cy.get('input[formcontrolname=\'email\']')
     }
@@ -49,10 +50,6 @@ class userEntityManagementPage {
 
     saveEntityForm(){
         this.elements.saveBtn().click()
-    }
-
-    confirmNewEntityCreationDialogBox(){
-        this.elements.newUserorEntityDialogBxOkBtn().click()
     }
 
     searchNewEntity(entityName){
@@ -141,10 +138,6 @@ class userEntityManagementPage {
         this.enterUserLogin(field === 'userLogin' ? invalidValue : user.userLogin)
     }
 
-    confirmNewUserCreationDialogBox(){
-        this.elements.newUserorEntityDialogBxOkBtn().click()
-    }
-
     searchNewUserLogin(userLogin) {
         this.elements.searchUsersTxtBx().clear().type(userLogin)
         this.elements.searchIconBtn().click()
@@ -162,6 +155,10 @@ class userEntityManagementPage {
         this.enterFirstName(user.firstName)
         this.enterLastName(user.lastName)
         this.enterEmail(user.email)
+    }
+
+    clickDeleteButtonForUser() {
+        this.elements.userDeleteBtnInTable().first().click({force:true})
     }
 
     selectEntityToRemove(entity) {

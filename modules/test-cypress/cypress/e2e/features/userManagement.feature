@@ -51,8 +51,8 @@ Feature: User Management Entities Regression Features
     Then show the successful message that entity is updated
     Then verify the updated entity presence on the table
 
-  @addingNewUserToExistingEntity @local
-  Scenario: creating new user and assigning existing entities to the user
+  @addingNewUserToExistingEntity @verifyingRestrictionOnUserDeletion @local
+  Scenario: creating new user and assigning existing entities to the user and verifying user deletion is blocked
     When click on manage users and entities link under administration dropdown
     Then add user button should be displayed
     When click on add user button
@@ -64,6 +64,9 @@ Feature: User Management Entities Regression Features
     And  click on save button
     Then show the successful message that a new user is created
     Then verify the new user details on the table
+    Then click on delete button for user "firstLast"
+    Then error popup should be displayed as entity is associated with the user
+    Then verify the user "firstLast" is still present on the table
 
   @userCreationWithMissingMandatoryField @local
   Scenario: user creation should fail when a mandatory field is not filled
@@ -123,3 +126,12 @@ Feature: User Management Entities Regression Features
     When search and click on user with login "firstLast"
     Then verify the updated email in user info section
     And  verify the entities are removed from the user
+
+  @deletingUserSuccessfully @local
+  Scenario: deleting a user successfully after removing associated entities
+    When click on manage users and entities link under administration dropdown
+    Then add user button should be displayed
+    When search user with login "firstLast"
+    And  click on delete button for user "firstLast"
+    Then confirm the user deletion for "lastEdited" "firstEdited" "firstLast"
+    Then verify the user "firstLast" is no longer present on the table
