@@ -10,10 +10,6 @@ const esbuildPkg = require("@badeball/cypress-cucumber-preprocessor/esbuild");
 const createEsbuildPlugin =
     esbuildPkg.createEsbuildPlugin || esbuildPkg.default || esbuildPkg;
 
-module.exports = {
-  unzip,
-}
-
 module.exports = defineConfig({
   defaultCommandTimeout: 15000,
   viewportHeight: 720,
@@ -27,12 +23,7 @@ module.exports = defineConfig({
         openMode: 0    // local
     },
     async setupNodeEvents(on, config) {
-      await addCucumberPreprocessorPlugin(on, config, {
-        experimentalSingleBuild: true,
-        // // Enable Cucumber Messages and JSON reports
-        // messages: { enabled: true, output: 'cucumber-messages.ndjson' }, // For low-level messages
-        // json: { enabled: true, output: 'cucumber-report.json' }, // For Cucumber JSON output
-      });
+      await addCucumberPreprocessorPlugin(on, config);
       on('before:browser:launch', (browser = {}, launchOptions) => {
         if (browser.name === 'chrome') {
           launchOptions.args.push('--disable-popup-blocking');
@@ -60,11 +51,7 @@ module.exports = defineConfig({
             })
           })
         },
-      });
-      on('task', {
-        'unzipping': unzip
-      });
-      on('task', {
+        'unzipping': unzip,
         getFiles: ({ downloadsPath, extension }) => {
           const files = fs.readdirSync(downloadsPath);
           const result = [];
@@ -82,9 +69,7 @@ module.exports = defineConfig({
               }
           )
           return result;
-        }
-      });
-      on('task', {
+        },
         getLatestFileName(folderPath) {
           const files = fs.readdirSync(folderPath);
           const sortedFiles = files
@@ -98,9 +83,7 @@ module.exports = defineConfig({
               .sort((a, b) => b.time - a.time);
 
           return sortedFiles.length ? sortedFiles[0].name : null;
-        }
-      });
-      on('task', {
+        },
         log(message) {
           console.log(message)
           return null;
