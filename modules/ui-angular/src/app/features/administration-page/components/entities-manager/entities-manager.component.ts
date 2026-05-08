@@ -104,8 +104,7 @@ export class EntitiesManagerComponent implements OnInit {
     this.euiDialogService.openDialog({
       title: "page.workspace.administration.entity-info.entity-delete-dialog.title",
       content: this.translateService.instant("page.workspace.administration.entity-info.entity-delete-dialog.content", {entity: entity}),
-      typeClass: "warning",
-      isMessageBox: true,
+      width: '50em',
       accept: () => this.adminService.deleteEntity(entity.id).subscribe({
         next: () => {
           this.selectedEntity = null;
