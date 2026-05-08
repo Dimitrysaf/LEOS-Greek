@@ -537,6 +537,8 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
     this.tocEditService.setTreeHistory(currentTree);
     this.tocEditService.deleteItem(newTree, item);
     this.tocEditService.setTree(newTree);
+    const { ref, category } = this.tocService.documentRefAndCategoryBS.value;
+    this.tocService.refreshToc(newTree, ref, category);
   }
 
   private handlePlaceAt(nodeTarget: TableOfContentItemVO, position: string) {

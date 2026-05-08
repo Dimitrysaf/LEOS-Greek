@@ -648,6 +648,7 @@ export class DocumentEditorComponent
       this.documentTocComponent.isToCDraft = false;
     } else {
       this.closeInlineToCEdit();
+      this.tocService.reloadToc();
     }
   }
 
@@ -690,6 +691,7 @@ export class DocumentEditorComponent
         this.handleSave(true);
       }
       this.closeInlineToCEdit();
+      this.tocService.reloadToc();
     }
     this.unSavedDialog.closeDialog();
   }
