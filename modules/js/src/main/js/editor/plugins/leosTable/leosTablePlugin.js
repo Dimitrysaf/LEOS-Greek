@@ -432,19 +432,13 @@ define(function leosTablePluginModule(require) {
                     && context.selection.getRanges()[0].checkStartOfBlock()    //  and the ENTER was typed at the start of the paragraph
                 ) {
                     context.event.cancel();
-                    if (shiftEnterCmd && shiftEnterCmd.state !== CKEDITOR.TRISTATE_DISABLED) {
-                        var p = new CKEDITOR.dom.element('p');
-                        p.setAttribute("data-akn-element", "subparagraph");
-                        p.insertAfter(table);
-                        var range = context.event.editor.createRange();
-                        range.moveToPosition(p, CKEDITOR.POSITION_AFTER_START);
-                        range.select();
-                    }
+                    var p = new CKEDITOR.dom.element('p');
+                    p.setAttribute("data-akn-element", "subparagraph");
+                    p.insertAfter(table);
+                    var range = context.event.editor.createRange();
+                    range.moveToPosition(p, CKEDITOR.POSITION_AFTER_START);
+                    range.select();
                 } else if (leosPluginUtils.isInsideTable(target)) {
-                    if (!shiftEnterCmd || shiftEnterCmd.state === CKEDITOR.TRISTATE_DISABLED) {
-                        context.event.cancel();
-                    }
-                } else if (target.findOne && target.findOne('table') !== null) {
                     if (!shiftEnterCmd || shiftEnterCmd.state === CKEDITOR.TRISTATE_DISABLED) {
                         context.event.cancel();
                     }
