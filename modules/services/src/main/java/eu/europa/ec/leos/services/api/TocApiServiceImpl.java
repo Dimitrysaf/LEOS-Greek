@@ -417,16 +417,18 @@ public abstract class TocApiServiceImpl implements TocApiService {
                 }
                 break;
             case NOT_EMPTY_HIGHER_DIVISION:
-                if (checkHigherDivisionIsEmpty(tableOfContentItemVO)) {
+                if (checkHigherDivisionIsEmpty(tableOfContentItemVO, sourceItem, targetItem, position)) {
                     setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
                 }
                 break;
             case HIERARCHY:
                 List<HigherDivisionType> types = rule.getHigherDivisions().getTypes();
-                if ((sourceIsHigherElement && targetIsHigherElement && !positionAsChildren && parentIsNotHigherElement) ||
+                TableOfContentItemVO newParentOfSource = positionAsChildren ? targetItem : parentTocItemVO;
+                if ((sourceIsHigherElement && targetIsHigherElement && !positionAsChildren && parentIsNotHigherElement &&
+                        !sourceItem.getTagName().value().equalsIgnoreCase(targetItem.getTagName().value())) ||
                         (sourceIsHigherElement && !targetIsHigherElement &&
                                 !isInHierarchy(sourceItem, tableOfContentItemVO, types, tocItem, position)) ||
-                        !isHierarchyValid(tableOfContentItemVO, tocItem, types)) {
+                        !isHierarchyValid(tableOfContentItemVO, tocItem, types, sourceItem, newParentOfSource)) {
                     setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
                 }
                 break;
@@ -519,6 +521,13 @@ public abstract class TocApiServiceImpl implements TocApiService {
 
     private boolean isHierarchyValid(TableOfContentItemVO tableOfContentItemVO, AknTag tocItem,
                                      List<HigherDivisionType> higherDivisionTypes) {
+        return isHierarchyValid(tableOfContentItemVO, tocItem, higherDivisionTypes, null, null);
+    }
+
+    private boolean isHierarchyValid(TableOfContentItemVO tableOfContentItemVO, AknTag tocItem,
+                                     List<HigherDivisionType> higherDivisionTypes, TableOfContentItemVO sourceItem,
+                                     TableOfContentItemVO newParentOfSource) {
+
         List<TableOfContentItemVO> higherDivisions = getAllHigherDivisionsFromTree(tableOfContentItemVO);
         boolean isHierarchyValid = true;
         List<String> matchedHigherDivisionsWithRule = new ArrayList<>();
@@ -535,26 +544,28 @@ public abstract class TocApiServiceImpl implements TocApiService {
                     return aknTagValue.equals(tocItem);
                 }).collect(Collectors.toList());
 
-                if (matchedHigherDivisions != null && !matchedHigherDivisions.isEmpty()) {
-                    isHierarchyValid = checkValidHierarchy(matchedHigherDivisions);
-                } else {
-                    isHierarchyValid = true;
+                if (!matchedHigherDivisions.isEmpty()) {
+                    isHierarchyValid = checkValidHierarchy(matchedHigherDivisions, sourceItem, newParentOfSource);
                 }
             }
         }
         return isHierarchyValid;
     }
 
-    private boolean checkValidHierarchy(List<TableOfContentItemVO> matchedHigherDivisions) {
-        boolean matches = true;
+    private boolean checkValidHierarchy(List<TableOfContentItemVO> matchedHigherDivisions,
+                                         TableOfContentItemVO sourceItem, TableOfContentItemVO newParentOfSource) {
         for (TableOfContentItemVO higherDivision : matchedHigherDivisions) {
-            TocItem tocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider, higherDivision.getParentItem().getTagName());
-            if (!tocItem.isHigherElement() && isNotTrackDeleted(higherDivision)) {
-                matches = false;
-                break;
+            if (!isNotTrackDeleted(higherDivision)) {
+                continue;
+            }
+            boolean isSourceBeingMoved = sourceItem != null && higherDivision.getId().equals(sourceItem.getId());
+            TableOfContentItemVO parent = isSourceBeingMoved ? newParentOfSource : higherDivision.getParentItem();
+            TocItem parentTocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider, parent.getTagName());
+            if (!parentTocItem.isHigherElement()) {
+                return false;
             }
         }
-        return matches;
+        return true;
     }
 
     private List<TableOfContentItemVO> getAllHigherDivisionsFromTree(TableOfContentItemVO tableOfContentItemVO) {
@@ -569,15 +580,43 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     private boolean checkHigherDivisionIsEmpty(TableOfContentItemVO tableOfContentItemVO) {
+        return checkHigherDivisionIsEmpty(tableOfContentItemVO, null);
+    }
+
+    private boolean checkHigherDivisionIsEmpty(TableOfContentItemVO tableOfContentItemVO, TableOfContentItemVO sourceItem) {
+        return checkHigherDivisionIsEmpty(tableOfContentItemVO, sourceItem, null, null);
+    }
+
+    private boolean checkHigherDivisionIsEmpty(TableOfContentItemVO tableOfContentItemVO, TableOfContentItemVO sourceItem,
+                                               TableOfContentItemVO targetItem, TocItemPosition position) {
         TocItem tocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider, tableOfContentItemVO.getTagName());
-        if (tocItem.isHigherElement()) {
-            if (tableOfContentItemVO.getChildItems() != null && tableOfContentItemVO.getChildItems().isEmpty() &&
-                    tableOfContentItemVO.getSoftActionAttr() == null && isNotTrackDeleted(tableOfContentItemVO)) {
+        if (tocItem.isHigherElement() && tableOfContentItemVO.getSoftActionAttr() == null && isNotTrackDeleted(tableOfContentItemVO)) {
+            List<TableOfContentItemVO> remainingChildren = tableOfContentItemVO.getChildItems().stream()
+                    .filter(child -> sourceItem == null || !child.getId().equals(sourceItem.getId()))
+                    .toList();
+            
+            // If source is being added as child to this higher division, it won't be empty
+            if (targetItem != null && sourceItem != null && position != null && 
+                    position.equals(TocItemPosition.AS_CHILDREN) && tableOfContentItemVO.getId().equals(targetItem.getId())) {
+                return false;
+            }
+            
+            if (remainingChildren.isEmpty()) {
                 return true;
             }
         }
+        
+        // Check if source itself is an empty higher division being added
+        if (sourceItem != null) {
+            TocItem sourceTocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider, sourceItem.getTagName());
+            if (sourceTocItem.isHigherElement() && sourceItem.getSoftActionAttr() == null && 
+                    isNotTrackDeleted(sourceItem) && (sourceItem.getChildItems() == null || sourceItem.getChildItems().isEmpty())) {
+                return true;
+            }
+        }
+        
         for (TableOfContentItemVO childTableOfContentItemVO : tableOfContentItemVO.getChildItems()) {
-            if (checkHigherDivisionIsEmpty(childTableOfContentItemVO)) {
+            if (checkHigherDivisionIsEmpty(childTableOfContentItemVO, sourceItem, targetItem, position)) {
                 return true;
             }
         }

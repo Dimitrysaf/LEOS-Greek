@@ -1231,8 +1231,10 @@ Feature: Legal Act Page Regression Features
     When click on toc edit button
     Then cancel button is displayed and enabled in navigation pane
     When drag element "Chapter" from element tree list and drop before node label "Article 1 - Definitions Text..." in navigation pane
-    Then success message "Chapter has been added successfully!" is displayed in navigation pane
-    And  success message disappears from table of content
+    Then warning symbol is displayed in navigation pane
+    And  below warning message is displayed in navigation pane
+      | warning                                                 |
+      | A higher division must contain at least one sub-element |
     And  ngContent "Chapter # Chapter heading..." is showing as bold in toc
     When drag element "Section" from element tree list and drop before node label "Article 1 - Definitions Text..." in navigation pane
     Then ngContent "Section # Section heading..." is showing as bold in toc
