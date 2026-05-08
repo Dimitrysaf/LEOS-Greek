@@ -36,13 +36,9 @@ define(function leosAlternativesSignatoryPluginModule(require) {
             //_displayLabelsAltButtons();
 
             editor.once("receiveData",_populateAlternativesToolbar);
-            editor.once('instanceReady', function() {
-                editor.setReadOnly(true);
-            });
             
             pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
             let cmd = new CKEDITOR.dialogCommand(dialogDefinition.dialogName);
-            cmd.readOnly = true;
             dialogCommand = editor.addCommand(dialogDefinition.dialogName, cmd);
         }
     };
