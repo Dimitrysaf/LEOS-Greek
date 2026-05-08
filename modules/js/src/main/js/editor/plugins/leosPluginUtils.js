@@ -1951,7 +1951,7 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _isContentEditable(editor) {
-        return !editor.config.isAlternative;
+        return !editor.config.isAlternative || !editor.config.isClause;
     }
 
     /**

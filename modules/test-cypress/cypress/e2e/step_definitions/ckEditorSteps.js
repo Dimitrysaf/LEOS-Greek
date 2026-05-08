@@ -872,13 +872,13 @@ Then ('the clause inside ck editor is not editable and contains attribute {strin
 
 });
 
-Then ('the article inside ck editor is not editable and contains attribute {string} with value {string}', function (attributeName, attributeValue) {
+Then ('the article inside ck editor is editable and contains attribute {string} with value {string}', function (attributeName, attributeValue) {
     ckEditorWindow.elements.ckEditableInline()
         .should('have.attr', attributeName, attributeValue);
 
 });
 
-Then ('the block inside ck editor is not editable and contains attribute {string} with value {string}', function (attributeName, attributeValue) {
+Then ('the block inside ck editor is editable and contains attribute {string} with value {string}', function (attributeName, attributeValue) {
     ckEditorWindow.elements.ckEditableInline()
         .should('have.attr', attributeName, attributeValue);
 });

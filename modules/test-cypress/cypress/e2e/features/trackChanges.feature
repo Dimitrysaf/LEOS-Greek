@@ -2083,7 +2083,7 @@ Feature: Track Changes Feature
     And signature of the person 1 of block 1 contains text "[...]"
     When mouseover and click on block 1
     Then ck editor window is displayed
-    And the block inside ck editor is not editable and contains attribute "contenteditable" with value "false"
+    And the block inside ck editor is editable and contains attribute "contenteditable" with value "true"
     When click on alternative icon present in ck editor panel
     Then Alternative dropdown displays the following options:
       | The President              |

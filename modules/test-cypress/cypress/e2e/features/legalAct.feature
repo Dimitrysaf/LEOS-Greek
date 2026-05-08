@@ -1008,7 +1008,7 @@ Feature: Legal Act Page Regression Features
     Then ck editor window is displayed
     When click on alternative2 icon present in ck editor panel
     And  click dialog ok button
-    Then check content inside ckeditor is of size 2925
+    Then check content inside ckeditor is of size 3202
     When mouseover and click on article 3
     Then ck editor window is displayed
     When append "Text" at offset 7 in numbered paragraph 1 of article in edition mode
@@ -1289,7 +1289,7 @@ Feature: Legal Act Page Regression Features
     And  node label "Section 1 - Section heading..." contains node label "Article 2 -"
 
   @switchingAlternativeClause @local
-  Scenario: user is able to switch alternative article
+  Scenario: user is able to switch alternative clause
     Given navigate to leos application with "User1"
     Then user is on home page
     When click on Create act button
@@ -1355,7 +1355,7 @@ Feature: Legal Act Page Regression Features
     And  content of paragraph 2 of article 2 contains "Member States shall communicate to the Commission the text of the main provisions of national law which they adopt in the field covered by this Directive."
     When mouseover and click on article 2
     Then ck editor window is displayed
-    And the article inside ck editor is not editable and contains attribute "contenteditable" with value "false"
+    And the article inside ck editor is editable and contains attribute "contenteditable" with value "true"
     And alternative1 is selected in ck editor panel
     When click on alternative2 icon present in ck editor panel
     Then cke dialog window is displayed with title "Confirm alternative change"
@@ -1369,7 +1369,7 @@ Feature: Legal Act Page Regression Features
     And  content of paragraph 2 of article 2 contains "Member States shall communicate to the Commission the text of the main provisions of national law which they adopt in the field covered by this Directive."
     When mouseover and click on article 2
     Then ck editor window is displayed
-    And the article inside ck editor is not editable and contains attribute "contenteditable" with value "false"
+    And the article inside ck editor is editable and contains attribute "contenteditable" with value "true"
     When click close button of ck editor
     Then ck editor window is not displayed
   # Alternative Signature
@@ -1378,7 +1378,7 @@ Feature: Legal Act Page Regression Features
     And signature of the person 1 of block 1 contains text "[...]"
     When mouseover and click on block 1
     Then ck editor window is displayed
-    And the block inside ck editor is not editable and contains attribute "contenteditable" with value "false"
+    And the block inside ck editor is editable and contains attribute "contenteditable" with value "true"
     When click on alternative icon present in ck editor panel
     Then Alternative dropdown displays the following options:
       | The President              |
@@ -1394,7 +1394,7 @@ Feature: Legal Act Page Regression Features
     And signature of the person 1 of block 1 contains text "[...]"
     When mouseover and click on block 1
     Then ck editor window is displayed
-    And the block inside ck editor is not editable and contains attribute "contenteditable" with value "false"
+    And the block inside ck editor is editable and contains attribute "contenteditable" with value "true"
     When click close button of ck editor
     Then ck editor window is not displayed
 
