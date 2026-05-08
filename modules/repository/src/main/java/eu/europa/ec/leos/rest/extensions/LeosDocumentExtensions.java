@@ -183,7 +183,8 @@ public class LeosDocumentExtensions {
                 getValidationStatus(d),
                 getPackageLastUpdatedOn(d),
                 getPackageLastUpdatedBy(d),
-                getDocumentRef(d));
+                getDocumentRef(d),
+                d.getPackageId());
     }
 
     private static Explanatory toCouncilExplanatory(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
@@ -329,6 +330,7 @@ public class LeosDocumentExtensions {
                 getContainedDocuments(d),
                 d.getRef(),
                 d.getPackageId(),
+                d.getDocumentId(),
                 getMetadataCustomTemplateAct(d));
     }
 

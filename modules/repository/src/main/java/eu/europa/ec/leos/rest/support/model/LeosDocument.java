@@ -50,6 +50,8 @@ public class LeosDocument {
 
     private String packageId;
 
+    private String documentId;
+
     private Date pkgLastUpdatedOn;
     private String pkgLastUpdatedBy;
 
@@ -183,6 +185,14 @@ public class LeosDocument {
 
     public void setPackageId(String packageId) {
         this.packageId = packageId;
+    }
+
+    public String getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
     }
 
     public String getCategory() {

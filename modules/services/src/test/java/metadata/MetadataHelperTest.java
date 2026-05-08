@@ -121,7 +121,7 @@ public class MetadataHelperTest extends LeosTest {
             Proposal leosProposal = new Proposal(proposalId, "Proposal", "login", Instant.now(), "login", Instant.now(), "", "", "", "", VersionType.MAJOR, true,
                     "REGULATION for EC", collaborators,
                     Arrays.asList(""), "login", Instant.now(), Option.some(proposalContent), Option.some(proposalMetadata), true, "", "", "", null,
-                    ContributionVO.ContributionStatus.CONTRIBUTION_DONE.name(), false, null, null, null, null);
+                    ContributionVO.ContributionStatus.CONTRIBUTION_DONE.name(), false, null, null, null, null, null);
 
             MetadataOptions metadataOptions = new MetadataOptions();
             List<MetadataOptions.FieldNode> fields = new ArrayList();

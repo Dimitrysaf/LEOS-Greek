@@ -707,6 +707,14 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    public List<LegDocument> findLegDocumentsByDocumentIds(List<String> documentIds) {
+        logger.trace("Finding leg documents by document ids, count={}", documentIds.size());
+        LeosDocumentList docs = repository.findLegDocumentsByDocumentIds(documentIds);
+        return toLeosDocuments(docs.getLeosDocumentList(), LegDocument.class, false);
+    }
+
+    @Override
+    @PerformanceLogger
     public <D extends LeosDocument> D findDocumentByParentPath(String path, String name, Class<? extends D> type) {
         logger.trace("Finding document by parent path... [path=" + path + ", name=" + name + ']');
 

@@ -286,22 +286,35 @@ public class LegServiceImpl implements LegService {
     @Override
     public List<LegDocumentVO> getLegDocumentDetailsByUserId(String userId, String proposalId, String legStatus) {
         List<LegDocumentVO> legDocumentVOs = new ArrayList<>();
+
         User user = userService.getUser(userId);
-        if(!StringUtils.isEmpty(proposalId)) {
+
+        if (!StringUtils.isEmpty(proposalId)) {
             Proposal proposal = proposalService.getProposalByRef(proposalId);
+
             Optional<Collaborator> userAsCollaborator = getCollaborator(user, proposal);
-            if(userAsCollaborator.isPresent()) {
+            if (userAsCollaborator.isPresent()) {
                 addLegDocumentVoToList(legStatus, proposal, legDocumentVOs);
             }
         } else {
             List<String> entities = new ArrayList<>();
             user.getEntities().stream().forEach(entity -> entities.add(entity.getName()));
+
             List<Proposal> proposals = packageRepository.findDocumentsByUserIdOrEntity(userId,
                     entities, Proposal.class, authorityMapHelper.getRoleForDocCreation());
+
+            List<String> proposalIds = proposals.stream().map(Proposal::getId).collect(Collectors.toList());
+            List<LegDocument> allLegDocuments = packageRepository.findLegDocumentsByDocumentIds(proposalIds);
+
+            Map<String, List<LegDocument>> legsByProposalId = allLegDocuments.stream()
+                    .collect(Collectors.groupingBy(LegDocument::getPackageId));
+
             for (Proposal proposal : proposals) {
-                addLegDocumentVoToList(legStatus, proposal, legDocumentVOs);
+                List<LegDocument> legs = legsByProposalId.getOrDefault(proposal.getPackageId(), Collections.emptyList());
+                addLegDocumentVoToList(legStatus, proposal, legs, legDocumentVOs);
             }
         }
+
         return legDocumentVOs;
     }
 
@@ -322,8 +335,17 @@ public class LegServiceImpl implements LegService {
     }
 
     private void addLegDocumentVoToList(String legStatus, Proposal proposal, List<LegDocumentVO> legDocumentVOs) {
+        long t0 = System.currentTimeMillis();
         LegDocumentVO legDocumentVO = getLegDocumentVO(proposal, legStatus);
-        if(legDocumentVO != null) {
+        if (legDocumentVO != null) {
+            legDocumentVOs.add(legDocumentVO);
+        }
+    }
+
+    private void addLegDocumentVoToList(String legStatus, Proposal proposal, List<LegDocument> legs, List<LegDocumentVO> legDocumentVOs) {
+        long t0 = System.currentTimeMillis();
+        LegDocumentVO legDocumentVO = getLegDocumentVO(proposal, legStatus, legs);
+        if (legDocumentVO != null) {
             legDocumentVOs.add(legDocumentVO);
         }
     }
@@ -340,20 +362,31 @@ public class LegServiceImpl implements LegService {
     }
 
     private LegDocumentVO getLegDocumentVO(Proposal proposal, String legStatus) {
-        LegDocumentVO legDocumentVO = null;
+        long tLeg = System.currentTimeMillis();
         List<LegDocument> legDocuments = this.findLegDocumentByAnyDocumentId(proposal.getId());
-        if (!legDocuments.isEmpty()) {
-            legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
-            LegDocument leg = legDocuments.get(0);
-            if(StringUtils.isEmpty(legStatus)) {
-                legDocumentVO = populateLegDocumentVO(proposal, leg);
-            } else {
-                if(leg.getStatus().name().equals(legStatus)) {
-                    legDocumentVO = populateLegDocumentVO(proposal, leg);
-                }
-            }
+
+        if (legDocuments.isEmpty()) {
+            return null;
         }
-        return legDocumentVO;
+        legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
+        LegDocument leg = legDocuments.get(0);
+        if (StringUtils.isEmpty(legStatus) || leg.getStatus().name().equals(legStatus)) {
+            return populateLegDocumentVO(proposal, leg);
+        }
+        return null;
+    }
+
+    private LegDocumentVO getLegDocumentVO(Proposal proposal, String legStatus, List<LegDocument> legDocuments) {
+        if (legDocuments.isEmpty()) {
+            return null;
+        }
+        LegDocument leg = legDocuments.stream()
+                .max(Comparator.comparing(LegDocument::getLastModificationInstant))
+                .get();
+        if (StringUtils.isEmpty(legStatus) || leg.getStatus().name().equals(legStatus)) {
+            return populateLegDocumentVO(proposal, leg);
+        }
+        return null;
     }
 
     private LegDocumentVO populateLegDocumentVO(Proposal proposal, LegDocument leg) {
@@ -1439,7 +1472,9 @@ public class LegServiceImpl implements LegService {
     @Override
     public List<LegDocument> findLegDocumentByAnyDocumentId(String documentId) {
         LeosPackage leosPackage = packageRepository.findPackageByDocumentId(documentId);
-        return packageRepository.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, false);
+
+        List<LegDocument> result = packageRepository.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, false);
+        return result;
     }
 
     @Override

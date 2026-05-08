@@ -41,6 +41,8 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class CollaboratorsServiceImpl implements CollaboratorsService {
+    private static final Logger LOG = LoggerFactory.getLogger(CollaboratorsServiceImpl.class);
+
     private final CollaboratorsRepository collaboratorsRepository;
     private final PackageCollaboratorsRepository packageCollaboratorsRepository;
     private final PackageRepository packageRepository;
@@ -176,7 +178,8 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         List<BigDecimal> packageIdsList = new ArrayList<>();
         List<String> entityList = Arrays.asList(collaboratorNames.split("_"));
 
-        List<BigDecimal> matchedCollaboratorIds = collaboratorsRepository.findAllCollaborators().stream()
+        List<Collaborators> allCollaborators = collaboratorsRepository.findAllCollaborators();
+        List<BigDecimal> matchedCollaboratorIds = allCollaborators.stream()
                 .filter(collab -> entityList.stream().anyMatch(input -> input.startsWith(collab.getCollaboratorName())))
                 .map(Collaborators::getId).collect(Collectors.toList());
 

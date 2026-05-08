@@ -256,6 +256,12 @@ public class PackageRepositoryImpl implements PackageRepository {
     }
 
     @Override
+    public List<LegDocument> findLegDocumentsByDocumentIds(List<String> documentIds) {
+        logger.debug("Finding leg documents by document ids, count=" + documentIds.size());
+        return leosRepository.findLegDocumentsByDocumentIds(documentIds);
+    }
+
+    @Override
     public <D extends LeosDocument> List<D> findDocumentsByStatus(LeosLegStatus status, Class<? extends D> type) {
         logger.debug("Finding documents by status... status=" + status);
         return leosRepository.findDocumentsByStatus(status, type);

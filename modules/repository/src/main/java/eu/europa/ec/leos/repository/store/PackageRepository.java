@@ -257,6 +257,7 @@ public interface PackageRepository {
      */
     <D extends LeosDocument> List<D> findDocumentsByUserIdOrEntity(String userId, List<String> entities, Class<? extends D> type, String leosAuthority);
 
+    List<LegDocument> findLegDocumentsByDocumentIds(List<String> documentIds);
 
     /**
      * Finds leg documents with the specified status.

@@ -33,13 +33,15 @@ public final class Proposal extends XmlDocument {
     @Getter
     private final String documentRef;
 
+    private final String packageId;
+
     public Proposal(String id, String name, String createdBy, Instant creationInstant, String lastModifiedBy, Instant lastModificationInstant,
                     String versionSeriesId, String cmisVersionLabel, String versionLabel, String versionComment, VersionType versionType,
                     boolean isLatestVersion, String title, List<Collaborator> collaborators, List<String> milestoneComments,
                     String initialCreatedBy, Instant initialCreationInstant, Option<Content> content, Option<ProposalMetadata> metadata,
                     boolean clonedProposal, String originRef, String clonedFrom, String revisionStatus,
                     List<String> clonedMilestoneIds, String contributionStatus, boolean trackChangesEnabled, String validationStatus,
-                    Instant pkgLastUpdatedOn, String pkgLastUpdatedBy,  String documentRef) {
+                    Instant pkgLastUpdatedOn, String pkgLastUpdatedBy,  String documentRef, String packageId) {
         super(LeosCategory.PROPOSAL, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
                 versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, title,
                 collaborators, milestoneComments, content, trackChangesEnabled, false);
@@ -56,6 +58,7 @@ public final class Proposal extends XmlDocument {
         this.pkgLastUpdatedBy = pkgLastUpdatedBy;
         this.validationStatus = validationStatus;
         this.documentRef = documentRef;
+        this.packageId = packageId;
     }
 
     public final String getInitialCreatedBy() {
@@ -100,6 +103,10 @@ public final class Proposal extends XmlDocument {
 
     public String getPkgLastUpdatedBy() {
         return pkgLastUpdatedBy;
+    }
+
+    public String getPackageId() {
+        return packageId;
     }
 
 
