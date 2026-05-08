@@ -1329,16 +1329,16 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private void moveSubparagraphsInList(Node node) {
-        NodeList nodeList = XmlUtils.getElementsByName(node, SUBPARAGRAPH);
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node subpara = nodeList.item(i);
+        // Snapshot into a static list to avoid live NodeList re-evaluation on every DOM mutation
+        List<Node> subparas = toList(XmlUtils.getElementsByName(node, SUBPARAGRAPH));
+        for (Node subpara : subparas) {
             Node subparaParent = subpara.getParentNode();
             Node subparaParentSibbling = subparaParent.getNextSibling();
             Node pOfSubparagraph = getPOfSubparagraph(subpara);
+            String trimmedText = pOfSubparagraph != null ? pOfSubparagraph.getTextContent().trim() : "";
             if (subpara.getAttributes().getNamedItem(REFERS_TO_ATTR) != null
                     && subpara.getAttributes().getNamedItem(REFERS_TO_ATTR).getNodeValue().equals(ENDING_PART)
-                    && pOfSubparagraph != null && !pOfSubparagraph.getTextContent().trim().isEmpty()
-                    && !Character.isLowerCase(pOfSubparagraph.getTextContent().trim().charAt(0))) {
+                    && !trimmedText.isEmpty() && !Character.isLowerCase(trimmedText.charAt(0))) {
                 if (subparaParentSibbling != null) {
                     subparaParent.getParentNode().insertBefore(subpara, subparaParentSibbling);
                 } else {
@@ -1346,9 +1346,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 }
             }
         }
-        nodeList = XmlUtils.getElementsByName(node, SUBPARAGRAPH);
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node subpara = nodeList.item(i);
+        // Re-snapshot after first pass mutations so second pass sees the updated DOM structure
+        subparas = toList(XmlUtils.getElementsByName(node, SUBPARAGRAPH));
+        for (Node subpara : subparas) {
             Node nextSiblingList = getNextSibling(subpara);
             boolean moved = false;
             if (((!isSoftDeletedOrMovedTo(subpara) && !isSoftDeletedOrMovedTo(nextSiblingList)) || (isSoftDeletedOrMovedTo(subpara) && isSoftDeletedOrMovedTo(nextSiblingList)))
@@ -1363,10 +1363,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 }
             }
             Node pOfSubparagraph = getPOfSubparagraph(subpara);
-            if (!moved && pOfSubparagraph != null
+            String pText = pOfSubparagraph != null ? pOfSubparagraph.getTextContent().trim() : "";
+            if (!moved && !pText.isEmpty()
                     && (subpara.getTextContent().isEmpty()
-                    || (!pOfSubparagraph.getTextContent().trim().isEmpty()
-                    && Character.isLowerCase(pOfSubparagraph.getTextContent().trim().charAt(0))))) {
+                    || Character.isLowerCase(pText.charAt(0)))) {
                 Node previousSiblingList = XmlUtils.getPrevSibling(subpara);
                 if (previousSiblingList != null && is(previousSiblingList, LIST)
                         && ((!isSoftDeletedOrMovedTo(subpara) && !isSoftDeletedOrMovedTo(previousSiblingList))
@@ -1402,9 +1402,17 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
     }
 
+    private static List<Node> toList(NodeList nodeList) {
+        List<Node> list = new ArrayList<>(nodeList.getLength());
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            list.add(nodeList.item(i));
+        }
+        return list;
+    }
+
     private static Node getPOfSubparagraph(Node subpara) {
-        Node pText = XmlUtils.getFirstElementByXPath(subpara, "akn:content/akn:p");
-        return pText != null ? pText : null;
+        Node content = getFirstChild(subpara, CONTENT);
+        return content != null ? getFirstChild(content, P) : null;
     }
 
     private void injectTagIdsInNode(Node node) {
