@@ -110,7 +110,6 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         }
 
         List<LinkedPackage> languagePackages = getLanguagePackages(legFileId);
-        validateNoPendingTranslations(languagePackages);
         List<String> languageMilestoneLegIds = createMilestonesForLanguagePackages(languagePackages);
 
         // Publish template with validated DG codes
@@ -201,7 +200,9 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         return new CustomTemplateInfoResponse(templateName, templateVisibility);
     }
 
-    private List<String> createMilestonesForLanguagePackages(List<LinkedPackage> languagePackages) throws Exception {
+    @Override
+    public List<String> createMilestonesForLanguagePackages(List<LinkedPackage> languagePackages) throws Exception {
+        validateNoPendingTranslations(languagePackages);
         List<String> milestoneLegIds = new ArrayList<>();
         for (LinkedPackage lp : languagePackages) {
             String proposalRef = apiServiceProvider.get().findDocumentRefByPackageIdAndCategory(lp.getLinkedPackageId(), LeosCategory.PROPOSAL.name());
