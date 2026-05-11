@@ -36,15 +36,15 @@ When("search and assign the entities {string} to the user", function (entities) 
 });
 
 When ("click on save button", function () {
-    userEntityManagementPage.saveUserInfoForm()
+    userEntityManagementPage.clickSaveButton()
 });
 
 When("verify user creation fails without entities", function (dataTable) {
     const user = dataTable.hashes()[0]
     userEntityManagementPage.fillUserInfoSection(user)
-    userEntityManagementPage.saveUserInfoForm()
-    userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', userEntityManagementPage.errorMessages.errorCreatingUser)
-    userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', userEntityManagementPage.errorMessages.userCreationError)
+    userEntityManagementPage.clickSaveButton()
+    userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', 'Error creating user')
+    userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', userEntityManagementPage.errorMessages.formValidationError)
     euiDialogBoxPage.clickAcceptBtn()
     userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('not.exist')
 });
@@ -55,9 +55,9 @@ When("verify user creation fails if mandatory field is empty", function (dataTab
     mandatoryFields.forEach((field) => {
         userEntityManagementPage.fillUserInfoSectionExcept(user, field)
         userEntityManagementPage.clearField(field)
-        userEntityManagementPage.saveUserInfoForm()
-        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', userEntityManagementPage.errorMessages.errorCreatingUser)
-        userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', userEntityManagementPage.errorMessages.userCreationError)
+        userEntityManagementPage.clickSaveButton()
+        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', 'Error creating user')
+        userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', userEntityManagementPage.errorMessages.formValidationError)
         euiDialogBoxPage.clickAcceptBtn()
         userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('not.exist')
     })
@@ -70,9 +70,9 @@ When("verify user creation fails if any field contains invalid data", function (
             { firstName: 'firstuser', lastName: 'lastuser', email: 'first@last.com', userLogin: 'firstLast' },
             row.fields, row.invalidValue
         )
-        userEntityManagementPage.saveUserInfoForm()
-        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', userEntityManagementPage.errorMessages.errorCreatingUser)
-        userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', userEntityManagementPage.errorMessages.userCreationError)
+        userEntityManagementPage.clickSaveButton()
+        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', 'Error creating user')
+        userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', userEntityManagementPage.errorMessages.formValidationError)
         euiDialogBoxPage.clickAcceptBtn()
         userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('not.exist')
     })
@@ -112,7 +112,7 @@ Then("custom entity info section should be displayed", function () {
 Then("create an entity by giving a name {string}", function (entityName) {
     cy.wrap(entityName).as('entityName')
     userEntityManagementPage.fillEntityInfoDetails(entityName)
-    userEntityManagementPage.saveEntityForm()
+    userEntityManagementPage.clickSaveButton()
 });
 
 Then("show the successful message that a new entity is created", function () {
@@ -139,9 +139,9 @@ When("verify entity update fails if name contains invalid data", function (dataT
     const rows = dataTable.hashes()
     rows.forEach((row) => {
         userEntityManagementPage.fillEntityInfoDetails(row.invalidName)
-        userEntityManagementPage.saveEntityForm()
+        userEntityManagementPage.clickSaveButton()
         userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', 'Error updating entity')
-        userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', userEntityManagementPage.errorMessages.entityUpdateError)
+        userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', userEntityManagementPage.errorMessages.formValidationError)
         euiDialogBoxPage.clickAcceptBtn()
         userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('not.exist')
     })
@@ -227,7 +227,7 @@ When("search user with login {string}", function (userLogin) {
     userEntityManagementPage.searchNewUserLogin(userLogin)
 });
 
-When("click on delete button for user {string}", function (userLogin) {
+When("click on delete button for user {string}", function () {
     userEntityManagementPage.clickDeleteButtonForUser()
 });
 
@@ -255,4 +255,32 @@ Then("verify the user {string} is still present on the table", function (userLog
 Then("verify the user {string} is no longer present on the table", function (userLogin) {
     userEntityManagementPage.searchNewUserLogin(userLogin)
     userEntityManagementPage.elements.userLoginColumnInTable().should('not.exist')
+});
+
+When("click on delete entity button", function () {
+    userEntityManagementPage.clickDeleteEntityButton()
+});
+
+Then("error popup should be displayed as user is associated with the entity", function () {
+    userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', 'Cannot delete entity with users.')
+    userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', userEntityManagementPage.errorMessages.entityDeletionWithUsersError)
+    euiDialogBoxPage.clickAcceptBtn()
+    userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('not.exist')
+});
+
+Then("verify the entity {string} is still present on the table", function (entityName) {
+    userEntityManagementPage.searchNewEntity(entityName)
+    userEntityManagementPage.elements.entityColumnInTable().should('contain', entityName)
+});
+
+Then("confirm the entity deletion for {string}", function (entityName) {
+    userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', 'Delete entity')
+    userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', `Are you sure you want to delete entity`)
+    userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().find('b').should('contain', entityName)
+    euiDialogBoxPage.clickAcceptBtn()
+});
+
+Then("verify the entity {string} is no longer present on the table", function (entityName) {
+    userEntityManagementPage.searchNewEntity(entityName)
+    userEntityManagementPage.elements.entityColumnInTable().should('not.exist')
 });

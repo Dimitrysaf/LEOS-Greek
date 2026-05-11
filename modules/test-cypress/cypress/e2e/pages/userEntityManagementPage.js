@@ -1,10 +1,8 @@
 class userEntityManagementPage {
     errorMessages = {
-        userCreationError: 'There are errors in the form. Please fill-in all highlighted fields correctly and try again.',
-        noEntitiesOnUserCreation: 'User should have at least one associated entity.',
-        errorCreatingUser: 'Error creating user',
-        entityUpdateError: 'There are errors in the form. Please fill-in all highlighted fields correctly and try again.',
-        userDeletionWithEntitiesError: 'The user cannot be deleted, because there are entities associated with her/him. Edit the user to remove the association(s) and then try again.'
+        formValidationError: 'There are errors in the form. Please fill-in all highlighted fields correctly and try again.',
+        userDeletionWithEntitiesError: 'The user cannot be deleted, because there are entities associated with her/him. Edit the user to remove the association(s) and then try again.',
+        entityDeletionWithUsersError: 'This entity has users associated with it. Edit each of them to remove the association and then try again.'
     }
 
     elements = {
@@ -36,6 +34,7 @@ class userEntityManagementPage {
         userLoginColumnInTable: () => cy.get('tr td:nth-child(3)'),
         userDeleteBtnInTable: () => cy.get('tr td:nth-of-type(5) > a > eui-icon-svg'),
         editBtn: () => cy.get('span').contains('Edit'),
+        deleteEntityBtn: () => cy.get('.eui-icon.eui-icon-delete'),
         readOnlyEmailTxtBx: () => cy.get('input[formcontrolname=\'email\']')
     }
 
@@ -49,10 +48,6 @@ class userEntityManagementPage {
 
     fillEntityInfoDetails(entityName){
         this.elements.entityNameTxtBx().clear().type(entityName)
-    }
-
-    saveEntityForm(){
-        this.elements.saveBtn().click()
     }
 
     searchNewEntity(entityName){
@@ -109,7 +104,7 @@ class userEntityManagementPage {
         this.elements.angleLeftBtn().click()
     }
 
-    saveUserInfoForm()
+    clickSaveButton()
     {
         this.elements.saveBtn().click()
     }
@@ -152,6 +147,10 @@ class userEntityManagementPage {
 
     clickEditButton() {
         this.elements.editBtn().click()
+    }
+
+    clickDeleteEntityButton() {
+        this.elements.deleteEntityBtn().click()
     }
 
     updateUserInfoDetails(user) {
