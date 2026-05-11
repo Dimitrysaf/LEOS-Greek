@@ -44,3 +44,7 @@ Then("user can see the following templates in create new legislative document wi
         )
         .should('deep.equal', actualOptionList.map(name => name.replace(/\s+/g, ' ').trim()));
 });
+
+When('document title is {string} in create document page', function(title) {
+    createActPage.elements.documentTitle().invoke('val').should('include', title);
+})
