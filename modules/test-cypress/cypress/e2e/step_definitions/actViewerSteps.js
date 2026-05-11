@@ -207,3 +207,7 @@ When(`below options are displayed in add annex dropdown`, (datatable) => {
 When ('click on {string} option from add annex dropdown', (optionText) => {
     actViewerPage.clickOptionFromAddAnnexDropdown(optionText);
 });
+
+When(`click on copy change button from action menu`, () => {
+    actViewerPage.clickOnCopyChangeActBtn();
+});

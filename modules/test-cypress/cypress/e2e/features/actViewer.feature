@@ -64,3 +64,18 @@ Feature: act viewer page Regression Features
       | EXPL_MEMORANDUM         |
       | main                    |
       | REG                     |
+#https://code.europa.eu/leos/core/-/work_items/3697
+  @copyAndChangeAct @local
+  Scenario: Verify after adding annex able to copy the act.
+    When click on add button in annexes section
+    Then total number of annexes present in act viewer page is 1
+    When click on actions button
+    And click on copy change button from action menu
+    Then user is on create new legislative document window
+    When click on next button in create document page
+    When tick guidance approval checkbox in create document page
+    When click on next button in create document page
+    Then document title is "Automation Testing-copy" in create document page
+    When click on create button
+    Then  title of the act contains "Automation Testing-copy" keyword
+    And total number of annexes present in act viewer page is 1

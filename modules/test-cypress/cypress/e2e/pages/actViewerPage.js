@@ -36,6 +36,7 @@ class actViewerPage {
         eeARelevanceCheckBoxValue: () => this.elements.rowLabel().contains('EEA Relevance').prev('input'),
         favouriteIcon: () => this.elements.appProposalHeader().find("eui-icon-svg svg[class*='eui-bookmark']"),
         annexDropdownBtn :()=>cy.get('eui-dropdown-content button'),
+        copyChangeBtn:() => this.elements.euiDropDownItemContentText().contains(' Copy/Change act '),
         }
 
     clickCloseBtn(){
@@ -135,9 +136,13 @@ class actViewerPage {
         this.elements.favouriteIcon().click({force:true});
     }
 
-        clickOptionFromAddAnnexDropdown(optionText) {
-            this.elements.annexDropdownBtn().contains(optionText).click();
-        }
+    clickOptionFromAddAnnexDropdown(optionText) {
+        this.elements.annexDropdownBtn().contains(optionText).click();
+    }
+
+    clickOnCopyChangeActBtn() {
+        this.elements.copyChangeBtn().click();
+    }
 
 }
 export default new actViewerPage();
