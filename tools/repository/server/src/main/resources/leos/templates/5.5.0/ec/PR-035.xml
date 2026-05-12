@@ -21,8 +21,7 @@
                     <FRBRuri value=""/>
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
-                    <FRBRlanguage language="en"
-                     xml:id="FRBRlanguage"/>
+                    <FRBRlanguage language="{{language}}" xml:id="FRBRlanguage"/>
                 </FRBRExpression>
                 <FRBRManifestation>
                     <FRBRthis value=""/>
@@ -40,7 +39,7 @@
                 <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
                 <TLCReference xml:id="ACT_AUTO_COM" href="http://publications.europa.eu/resource/authority/resource-type/ACT_AUTO_COM" name="docType" showAs="Commission autonomous act"/>
                 <TLCReference xml:id="DEC_IMPL" href="http://publications.europa.eu/resource/authority/resource-type/DEC_IMPL" name="docType" showAs="Implementing decision"/>
-                <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en"/>
+                <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/{{language3}}" name="language" showAs="{{language}}"/>
             </references>
             <proprietary source="~COM">
                 <leos:templateVersion>1.0.0</leos:templateVersion>
@@ -57,11 +56,11 @@
                 </p>
             </container>
             <container name="actingEntity">
-                <p><organization refersTo="~COM">EUROPEAN COMMISSION</organization></p>
+                <p><organization refersTo="~COM">{{pr.org}}</organization></p>
             </container>
             <container name="mainDoc">
                 <block name="placeAndDate">
-                    <location refersTo="~BEL_BRU">Brussels</location>, <date class="template" date="2999-01-01"/>
+                    <location refersTo="~BEL_BRU">{{location}}</location>, <date class="template" date="2999-01-01"/>
                 </block>
                 <block name="reference" class="template">
                     <docNumber class="template"/>
@@ -69,15 +68,15 @@
             </container>
             <longTitle>
                 <p>
-                    <docType refersTo="~DEC_IMPL">COMMISSION DECISION</docType> of <date date="2999-01-01">XXX</date>
-                    <docPurpose  leos:editable="true" leos:deletable="false">on ...</docPurpose>
+                    <docType refersTo="~DEC_IMPL">{{docType.decision}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
+                    <docPurpose  leos:editable="true" leos:deletable="false">{{docPurpose}}</docPurpose>
                 </p>
             </longTitle>
             <container class="template" name="associatedReferences">
 				<p/>
 			</container>
             <container name="mainDocLanguage">
-                <p><inline name="language" refersTo="~FRBRlanguage">EN</inline></p>
+                <p><inline name="language" refersTo="~FRBRlanguage">{{languageUpper}}</inline></p>
             </container>
         </coverPage>
         <collectionBody/>
