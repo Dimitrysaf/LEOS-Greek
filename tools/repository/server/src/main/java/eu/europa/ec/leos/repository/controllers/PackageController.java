@@ -13,8 +13,6 @@
  */
 package eu.europa.ec.leos.repository.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import eu.europa.ec.leos.repository.controllers.requests.CreatePackageRequest;
 import eu.europa.ec.leos.repository.controllers.requests.FindDocumentsRequest;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
@@ -29,12 +27,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
@@ -65,7 +61,8 @@ public class PackageController implements PackageApi {
         }
         boolean translated = originPkg != null ? createPackageRequest.getTranslated() : false;
         Package p = packageService.createPackage(name, createPackageRequest.getIsCloned(),
-                createPackageRequest.getClonedPackageName(), createPackageRequest.getLanguage(), translated, createPackageRequest.getUserId());
+                createPackageRequest.getClonedPackageName(), createPackageRequest.getLanguage(), translated,
+                createPackageRequest.getUserId(), createPackageRequest.getCreatorOrganization());
         p =  RestPreconditions.checkFound(p, HttpStatus.NOT_FOUND ,"Error while creating package");
         if(p != null && originPkg != null) {
             packageService.createLinkedPackage(new BigDecimal(originPkg.getId()), new BigDecimal(p.getId()));

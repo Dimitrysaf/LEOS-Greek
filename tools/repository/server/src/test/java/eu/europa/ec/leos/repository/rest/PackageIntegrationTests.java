@@ -15,7 +15,6 @@ import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +39,8 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -221,9 +222,9 @@ class PackageIntegrationTests extends H2TestBase {
         CreatePackageRequest createPackageRequest = new CreatePackageRequest();
         createPackageRequest.setUserId(USER);
         String json = mapper.writeValueAsString(createPackageRequest);
-        when(packageService.createPackage(ArgumentMatchers.eq(PKG_NAME),
-                ArgumentMatchers.eq(createPackageRequest.getIsCloned()),
-                ArgumentMatchers.eq(createPackageRequest.getClonedPackageName()), ArgumentMatchers.eq(createPackageRequest.getLanguage()), ArgumentMatchers.eq(createPackageRequest.getTranslated()), ArgumentMatchers.eq(createPackageRequest.getUserId()))).thenReturn(pkg);
+        when(packageService.createPackage(eq(PKG_NAME),
+                eq(createPackageRequest.getIsCloned()),
+                eq(createPackageRequest.getClonedPackageName()), eq(createPackageRequest.getLanguage()), eq(createPackageRequest.getTranslated()), eq(createPackageRequest.getUserId()), any())).thenReturn(pkg);
 
         mockMvc.perform(post("/package/create/{name}", encodeUriVariables(PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
                 .content(json)

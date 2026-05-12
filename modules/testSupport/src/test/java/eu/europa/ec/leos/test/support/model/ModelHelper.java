@@ -42,7 +42,7 @@ public class ModelHelper {
         return new User(id, login, name, null, null, null);
     }
 
-    public static User buildUser(Long id, String login, String name, List<Entity> entities){
+    public static User buildUser(Long id, String login, String name, List<? extends Entity> entities){
         return new User(id, login, name, entities, null, null);
     }
 

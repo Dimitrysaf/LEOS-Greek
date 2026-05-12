@@ -1,5 +1,10 @@
 package eu.europa.ec.leos.rest.support.requests;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class CreatePackageRequest {
     private Boolean isCloned;
     private String clonedPackageName;
@@ -7,30 +12,7 @@ public class CreatePackageRequest {
     private Boolean isTranslated;
     private String userId;
     private String originRef;
-
-    public Boolean getIsCloned() {
-        return isCloned;
-    }
-
-    public void setIsCloned(Boolean isCloned) {
-        this.isCloned = isCloned;
-    }
-
-    public String getClonedPackageName() {
-        return clonedPackageName;
-    }
-
-    public void setClonedPackageName(String clonedPackageName) {
-        this.clonedPackageName = clonedPackageName;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
+    private String creatorOrganization;
 
     public Boolean getTranslated() {
         return isTranslated;
@@ -38,21 +20,5 @@ public class CreatePackageRequest {
 
     public void setTranslated(Boolean translated) {
         isTranslated = translated;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getOriginRef() {
-        return originRef;
-    }
-
-    public void setOriginRef(String originRef) {
-        this.originRef = originRef;
     }
 }

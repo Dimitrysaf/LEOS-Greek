@@ -27,7 +27,7 @@ public class User implements Serializable {
 
     private String name;
 
-    private List<Entity> entities;
+    private List<? extends Entity> entities;
 
     private String email;
 
@@ -37,7 +37,7 @@ public class User implements Serializable {
 
     private boolean isGreffeUser;
 
-    public User(Long id, String login, String name, List<Entity> entities, String email, List<String> roles) {
+    public User(Long id, String login, String name, List<? extends Entity> entities, String email, List<String> roles) {
         this.id = id;
         this.login = login;
         this.name = name;
@@ -62,8 +62,8 @@ public class User implements Serializable {
         return name;
     }
 
-    public List<Entity> getEntities() {
-        return entities;
+    public <T extends Entity> List<T> getEntities() {
+        return (List<T>) entities;
     }
 
     public Entity getDefaultEntity() {
@@ -89,7 +89,7 @@ public class User implements Serializable {
         this.name = name;
     }
 
-    protected void setEntities(List<Entity> entities) {
+    protected void setEntities(List<UserEntity> entities) {
         this.entities = entities;
     }
 

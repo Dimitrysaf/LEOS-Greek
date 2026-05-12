@@ -25,7 +25,6 @@ import eu.europa.ec.leos.domain.repository.document.DocumentPreview;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
-import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
@@ -70,9 +69,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -774,8 +771,12 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public LeosPackage createPackage(String path, String name, String originRef, String language, Boolean isTranslated) {
         logger.trace("Creating package... [path=" + path + ", name=" + name + ']');
 
-        Package pkg = repository.createPackage(name, securityContext!=null && securityContext.hasAuthenticationInContext() ?
-                        securityContext.getUserName() : ADMIN_USER, originRef, language, isTranslated);
+        String userName = ADMIN_USER, creatorOrganization = null;
+        if (securityContext!=null && securityContext.hasAuthenticationInContext()) {
+            userName = securityContext.getUserName();
+            creatorOrganization = securityContext.getUser().getDefaultEntity().getOrganizationName();
+        }
+        Package pkg = repository.createPackage(name, userName, originRef, language, isTranslated, creatorOrganization);
         if (pkg != null) {
             return LeosPackageExtensions.toLeosPackage(pkg);
         }
@@ -1133,8 +1134,12 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     @PerformanceLogger
     @CacheEvict(value = "restRepositoryFolderCache", key = "#name")
     public Object createFolder(String path, String name) {
-        return repository.createPackage(name, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER,
-                null, "EN", false);
+        String userName = ADMIN_USER, creatorOrganization = null;
+        if (securityContext!=null && securityContext.hasAuthenticationInContext()) {
+            userName = securityContext.getUserName();
+            creatorOrganization = securityContext.getUser().getDefaultEntity().getOrganizationName();
+        }
+        return repository.createPackage(name, userName,null, "EN", false, creatorOrganization);
     }
 
     @Override

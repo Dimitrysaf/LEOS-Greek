@@ -1,16 +1,17 @@
 package eu.europa.ec.digit.userdata.mappers;
 
+import eu.europa.ec.digit.userdata.dto.UserAuthDto;
 import eu.europa.ec.digit.userdata.dto.UserDto;
+import eu.europa.ec.digit.userdata.dto.UserEntityDto;
 import eu.europa.ec.digit.userdata.dto.UserUpdateDto;
-import eu.europa.ec.digit.userdata.entities.Role;
-import eu.europa.ec.digit.userdata.entities.SpecialUser;
-import eu.europa.ec.digit.userdata.entities.User;
+import eu.europa.ec.digit.userdata.entities.*;
 import org.mapstruct.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring",
-        uses = {EntityMapper.class, StringTrimMapper.class},
+        uses = {EntityMapper.class, StringTrimMapper.class, RoleMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserMapper {
     Map<String, String> SORT_COLUMN_MAPPING = new HashMap<>(){{
@@ -27,29 +28,45 @@ public interface UserMapper {
     }};
 
     @Mapping(target = "perId", constant = "0L")
-    @Mapping(target = "roleEntities", source = "roles", qualifiedByName = "mapRoles")
+    @Mapping(target = "roleEntities", source = "roles")
     @Mapping(target = "roles", ignore = true)
     SpecialUser mapToSpecial(UserDto dto, @Context Map<String, Role> contextRoles);
 
     @Mapping(target = "special", constant = "true")
-    @Mapping(target = "jobTitle", ignore = true)
-    @Mapping(target = "roles", ignore = true)
-    User mapToUser(SpecialUser entity);
+    UserDto mapToDto(SpecialUser entity, @Context Map<String, Role> contextRoles);
 
-    @Mapping(target = "special", constant = "true")
-    UserDto mapToDto(SpecialUser entity);
-
-    UserDto mapToDto(User entity);
+    UserDto mapToDto(User entity, @Context Map<String, Role> contextRoles);
 
     @Mapping(target = "perId", constant = "0L")
-    @Mapping(target = "roleEntities", source = "roles", qualifiedByName = "mapRoles")
+    @Mapping(target = "roleEntities", source = "roles")
     @Mapping(target = "roles", ignore = true)
+    @Mapping(target = "entities", ignore = true) // To be handled separately
+    @Mapping(target = "dateCreated", ignore = true) // Automatically set on insert
     SpecialUser merge(UserUpdateDto dto, @MappingTarget SpecialUser user, @Context Map<String, Role> contextRoles);
 
-    @Named("mapRoles")
-    default List<Role> mapRoles(List<String> roles, @Context Map<String, Role> rolesMap) {
-        return roles != null
-                ? roles.stream().filter(rolesMap::containsKey).map(rolesMap::get).toList()
-                : null;
+    @Mapping(target = "entities", source = "user")
+    UserAuthDto mapToAuthDto(User user);
+
+    @AfterMapping
+    default void fixSpecialUserEntities(final UserDto dto, @MappingTarget  final SpecialUser user) {
+        if (user.getEntities() == null) return;
+        user.getEntities().forEach(e -> {
+            e.setId(new SpecialUserEntity.UserEntityId(dto.getLogin(), e.getEntity().getId()));
+            e.setUser(user);
+        });
+    }
+
+    @AfterMapping
+    default void fixUserEntities(final User user, @MappingTarget final UserDto dto) {
+        final Map<String, Role> userEntityRoleMap = user.getUserEntities().stream()
+                .filter(ue -> ue.getRole() != null)
+                .collect(Collectors.toMap(UserEntity::getEntityId, UserEntity::getRole));
+        for (UserEntityDto entity : dto.getEntities()) {
+            final Role role = userEntityRoleMap.get(entity.getId());
+            if (role != null) {
+                entity.setRole(role.getRole());
+            }
+        }
+
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.integration.UsersProvider;
 import eu.europa.ec.leos.integration.dto.EntityDTO;
 import eu.europa.ec.leos.integration.dto.UserDTO;
+import eu.europa.ec.leos.integration.dto.UserEntityDTO;
 import eu.europa.ec.leos.integration.dto.UserUpdateDTO;
 import eu.europa.ec.leos.integration.rest.RestPageImpl;
 import eu.europa.ec.leos.model.user.Entity;
@@ -160,8 +161,8 @@ public class AdministrationControllerTest {
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(true);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_ENTITIES)).thenReturn(true);
 
-        List<EntityDTO> entitiesForDto = Arrays.asList(
-                new EntityDTO("1", "Entity", "Entity"));
+        List<UserEntityDTO> entitiesForDto = Arrays.asList(
+                new UserEntityDTO("1", "Entity", "Entity"));
 
         UserDTO dto = new UserDTO("login",null, null, null, null, null, null, null, entitiesForDto, null, null);
 
@@ -190,8 +191,8 @@ public class AdministrationControllerTest {
                 new EntityDTO("2", "Entity2", "Org1"));
         when(usersClient.specialEntities(eq("Org1"))).thenReturn(entitiesForLoggedInUser);
 
-        List<EntityDTO> entitiesForDto = Arrays.asList(
-                new EntityDTO("1", "Entity1", "Org1"));
+        List<UserEntityDTO> entitiesForDto = Arrays.asList(
+                new UserEntityDTO("1", "Entity1", "Org1"));
 
         UserDTO dto = new UserDTO("login",null, null, null, null, null, null, null, entitiesForDto, null, null);
 
@@ -216,8 +217,8 @@ public class AdministrationControllerTest {
                 new EntityDTO("2", "Entity", "Org1"));
         when(usersClient.specialEntities(eq("Org1"))).thenReturn(entitiesForLoggedInUser);
 
-        List<EntityDTO> entitiesForDto = Arrays.asList(
-                new EntityDTO("1", "Entity", "Entity"));
+        List<UserEntityDTO> entitiesForDto = Arrays.asList(
+                new UserEntityDTO("1", "Entity", "Entity"));
 
         UserDTO dto = new UserDTO("login",null, null, null, null, null, null, null, entitiesForDto, null, null);
 
@@ -425,9 +426,9 @@ public class AdministrationControllerTest {
         // CAN_MANAGE_ALL_USERS: TRUE
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(true);
 
-        List<EntityDTO> entities = Arrays.asList(
-                new EntityDTO("1", "Entity1", "Org1"),
-                new EntityDTO("2", "Entity2", "Org1"));
+        List<UserEntityDTO> entities = Arrays.asList(
+                new UserEntityDTO("1", "Entity1", "Org1"),
+                new UserEntityDTO("2", "Entity2", "Org1"));
         UserDTO dto = new UserDTO("test",null, "Last", "First", "a@b.c", "Boss", Collections.singletonList("USER"), "1", entities, null, null);
         when(usersClient.getUserDetails("test")).thenReturn(dto);
 
@@ -463,8 +464,8 @@ public class AdministrationControllerTest {
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(true);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_ENTITIES)).thenReturn(true);
 
-        UserUpdateDTO dto = new UserUpdateDTO("testUser", null, null, null, null, Set.of("e1"), null);
-        List<EntityDTO> entities = Collections.singletonList(new EntityDTO("e1", "Entity1", "Org1"));
+        Set<UserEntityDTO> entities = Collections.singleton(new UserEntityDTO("e1", "Entity1", "Org1"));
+        UserUpdateDTO dto = new UserUpdateDTO("testUser", null, null, null, null, entities, null);
         UserDTO response = new UserDTO("testUser", null, null, null, null, null, null, null, entities, null, null);
         when(usersClient.updateSpecialUser(dto)).thenReturn(response);
 
@@ -491,7 +492,7 @@ public class AdministrationControllerTest {
                 new EntityDTO("e2", "Entity2", "Org1"));
         when(usersClient.specialEntities("Org1")).thenReturn(allowedEntities);
 
-        UserUpdateDTO dto = new UserUpdateDTO("testUser", null, null, null, null, Set.of("e1"), null);
+        UserUpdateDTO dto = new UserUpdateDTO("testUser", null, null, null, null, Set.of(new UserEntityDTO(allowedEntities.getFirst())), null);
         UserDTO response = new UserDTO("testUser", null, null, null, null, null, null, null, null, null, null);
         when(usersClient.updateSpecialUser(dto)).thenReturn(response);
 
@@ -515,7 +516,9 @@ public class AdministrationControllerTest {
         List<EntityDTO> allowedEntities = Collections.singletonList(new EntityDTO("e1", "Entity1", "Org1"));
         when(usersClient.specialEntities("Org1")).thenReturn(allowedEntities);
 
-        UserUpdateDTO dto = new UserUpdateDTO("testUser", null, null, null, null, Set.of("e99"), null);
+        UserEntityDTO userEntityDTO = new UserEntityDTO("e99", "Entity1", "Org1");
+
+        UserUpdateDTO dto = new UserUpdateDTO("testUser", null, null, null, null, Set.of(userEntityDTO), null);
 
         mockMvc.perform(patch("/secured/administration/users")
                         .content(objectMapper.writeValueAsString(dto))
@@ -556,7 +559,8 @@ public class AdministrationControllerTest {
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(false);
 
-        UserUpdateDTO dto = new UserUpdateDTO("testUser", null, null, null, null, Set.of("e1"), null);
+        UserEntityDTO userEntityDTO = new UserEntityDTO("e1", "Entity1", "Org1");
+        UserUpdateDTO dto = new UserUpdateDTO("testUser", null, null, null, null, Set.of(userEntityDTO), null);
 
         mockMvc.perform(patch("/secured/administration/users")
                         .content(objectMapper.writeValueAsString(dto))

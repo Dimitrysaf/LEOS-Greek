@@ -125,7 +125,7 @@ Feature: User Management Entities Regression Features
     Then verify the updated user details on the table
     When search and click on user with login "firstLast"
     Then verify the updated email in user info section
-    And  verify the entities are removed from the user
+    And  verify the entities '["AGRI", "test_custom_entity"]' are removed from the user
 
   @deletingUserSuccessfully @local
   Scenario: deleting a user successfully after removing associated entities

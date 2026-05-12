@@ -67,7 +67,9 @@ public class QueryFilter {
         containedDocuments("containedDocuments", true),
 
         creationDate("createdOn", Date.class),
-        lastModificationDate("updatedOn", Date.class);
+        lastModificationDate("updatedOn", Date.class),
+
+        creatorOrganization("leos:creatorOrganization");
 
         private String columnName;
         private Boolean complex = false;

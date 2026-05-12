@@ -216,8 +216,11 @@ When("select and remove the entities {string} from the user", function (entities
     })
 });
 
-Then("verify the entities are removed from the user", function () {
-    userEntityManagementPage.elements.removeEntityDropDown().should('not.exist')
+Then("verify the entities {string} are removed from the user", function (entities) {
+    const entityList = JSON.parse(entities);
+    cy.wrap(entityList).each((entity) => {
+        userEntityManagementPage.elements.userEntityCell(entity).should('not.exist');
+    });
 });
 
 When("search user with login {string}", function (userLogin) {

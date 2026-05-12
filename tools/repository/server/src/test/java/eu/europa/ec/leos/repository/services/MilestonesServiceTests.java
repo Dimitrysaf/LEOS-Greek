@@ -61,7 +61,7 @@ class MilestonesServiceTests extends H2TestBase {
 
     @BeforeEach
     void setup() throws RepositoryException {
-        pkg = packageService.createPackage(PKG_NAME, null,null, "EN", false, "demo");
+        pkg = packageService.createPackage(PKG_NAME, null,null, "EN", false, "demo", null);
         Map<String, ?> properties = new HashMap() {{
             put("status", "IN_PREPARATION");
             put("containedDocuments", Arrays.asList("ANNEX-clfwd4ig3000h9256za2lfv6x-en.xml", "DIR-clfwc8tt900099256foj1l39z-en.xml",

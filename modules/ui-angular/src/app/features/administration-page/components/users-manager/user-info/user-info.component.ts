@@ -17,6 +17,7 @@ import {
   Validators
 } from '@angular/forms';
 import {Observable, Subject} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 import {CommonModule} from '@angular/common';
 import {EuiCardModule} from '@eui/components/eui-card';
 import {EuiButtonModule} from '@eui/components/eui-button';
@@ -24,7 +25,7 @@ import {EuiEditorModule} from '@eui/components/externals/eui-editor';
 import {EuiChipModule} from '@eui/components/eui-chip';
 import {EuiIconModule} from '@eui/components/eui-icon';
 import {EuiLabelModule} from '@eui/components/eui-label';
-import {APPLICATION_ROLES, User, UserEntity, UserUpdate} from "@/shared";
+import {APPLICATION_ROLES, Entity, Permission, User, UserEntity, UserUpdate} from "@/shared";
 import {EuiAllModule} from "@eui/components";
 import {TranslateModule} from "@ngx-translate/core";
 import {AdministrationService} from "@/shared/services/administration.service";
@@ -32,6 +33,8 @@ import {SharedModule} from "@/shared/shared.module";
 import {LeosDialogService} from "@/shared/services/leos-dialog.service";
 import {validate} from "@/shared/utils/form.utils";
 import {EuiSelectComponent} from "@eui/components/eui-select";
+import {EuiTableComponent} from "@eui/components/eui-table";
+import {AppConfigService} from "@/core/services/app-config.service";
 
 @Component({
   selector: 'app-user-info',
@@ -63,11 +66,11 @@ export class UserInfoComponent implements OnInit, OnDestroy {
 
   protected readonly APPLICATION_ROLES = APPLICATION_ROLES.filter(role => role !== 'USER');
 
-  @ViewChild('userEntitiesSelect') userEntitiesSelect: EuiSelectComponent;
+  @ViewChild('selectedEntitiesTable') selectedEntitiesTable: EuiTableComponent;
   @ViewChild('availableEntitiesSelect') availableEntitiesSelect: EuiSelectComponent;
 
   private _selectedUser: User;
-  rolesGroup: any;
+  private permissionsForUser: Permission[];
   get selectedUser(): User {
     return this._selectedUser;
   }
@@ -85,16 +88,21 @@ export class UserInfoComponent implements OnInit, OnDestroy {
   }
   public set isEditActive(value: boolean) {
     this._isEditActive = value;
+    this.onIsActiveChanged(value);
   }
-  public form: FormGroup;
+  form: FormGroup;
+  rolesGroup: FormGroup;
   private destroy$: Subject<boolean> = new Subject<boolean>();
-  private allEntities: UserEntity[] = [];
+  private allEntities: Entity[] = [];
   private searchTerm = '';
   availableEntities = new Map<string, UserEntity>();
   selectedEntities = new Map<string, UserEntity>();
 
-  updateAddedEntities = new Set<string>();
+  updateAddedEntities = new Map<string, UserEntity>();
   updateRemovedEntities = new Set<string>();
+  selectedUserEntityRows = new Set<string>();
+
+  private _showExtendedViewerColumn: boolean;
 
   get availableEntitiesArray() {
     return Array.from(this.availableEntities.values());
@@ -104,11 +112,19 @@ export class UserInfoComponent implements OnInit, OnDestroy {
     return Array.from(this.selectedEntities.values());
   }
 
+  get entityRolesGroup(): FormGroup {
+    return this.form.get('entityRoles') as FormGroup;
+  }
+
   constructor(protected adminService: AdministrationService,
               private fb: FormBuilder,
-              private dialogService: LeosDialogService) {}
+              private dialogService: LeosDialogService,
+              private configService: AppConfigService) {}
 
   ngOnInit(): void {
+    this.configService.config.subscribe((config) => {
+      this.permissionsForUser = config.userAppPermissions;
+    });
     this.buildForm()
   }
 
@@ -132,6 +148,16 @@ export class UserInfoComponent implements OnInit, OnDestroy {
         disabled: false
       }));
     }
+    this._showExtendedViewerColumn = this.selectedUser?.roles?.includes('EXTENDED_VIEWER');
+    this.rolesGroup.get('EXTENDED_VIEWER')?.valueChanges.subscribe((selected) => this._showExtendedViewerColumn = selected);
+
+    this.selectedEntities.clear();
+    this.selectedUser?.entities?.forEach(e => this.selectedEntities.set(e.id, e));
+    const entityRolesGroup = this.fb.group(
+      Object.fromEntries(
+        Array.from(this.selectedEntities.values()).map(e => [e.id, new FormControl(e.role === 'EXTENDED_VIEWER')])
+      )
+    );
     this.form = this.fb.group({
       // Will add validators dynamically, so no validators at init time
       firstName: ['', []],
@@ -139,11 +165,10 @@ export class UserInfoComponent implements OnInit, OnDestroy {
       email: ['', []],
       login: ['', []],
       rolesGroup: this.rolesGroup,
-      entities: [[], []]
+      entities: [[], []],
+      entityRoles: entityRolesGroup
     });
-    this.selectedEntities.clear();
-    this.selectedUser?.entities?.forEach(e => this.selectedEntities.set(e.id, e));
-    this.form?.patchValue(this.selectedUser?.login ? this.selectedUser : {
+    this.form.patchValue(this.selectedUser?.login ? this.selectedUser : {
       firstName: '',
       lastName: '',
       email: '',
@@ -151,6 +176,20 @@ export class UserInfoComponent implements OnInit, OnDestroy {
       roles: [],
       entities: []
     });
+
+    entityRolesGroup.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((values: Record<string, boolean>) => {
+        for (const [entityId, checked] of Object.entries(values)) {
+          const originalRole = this.selectedUser?.entities?.find(e => e.id === entityId)?.role ?? null;
+          const newRole = checked ? 'EXTENDED_VIEWER' : null;
+          if (newRole !== originalRole) {
+            this.updateAddedEntities.set(entityId, this.selectedEntities.get(entityId));
+          } else if (this.selectedUser?.entities?.some(e => e.id === entityId)) {
+            this.updateAddedEntities.delete(entityId);
+          }
+        }
+      });
 
     UserInfoComponent.VALIDATORS_MAP.forEach((validators, fieldName) => {
       const control = this.form.get(fieldName)!;
@@ -207,6 +246,7 @@ export class UserInfoComponent implements OnInit, OnDestroy {
 
   protected onCancel() {
     this.isEditActive = false;
+    this.buildForm();
     this.userEditComplete.next(this.selectedUser);
   }
 
@@ -216,29 +256,37 @@ export class UserInfoComponent implements OnInit, OnDestroy {
       const selectedId = this.getEUiSelectOptionValue(this.availableEntitiesSelect, i);
       this.selectedEntities.set(selectedId, this.availableEntities.get(selectedId));
       this.availableEntities.delete(selectedId);
+      this.entityRolesGroup.addControl(selectedId, new FormControl(false));
 
-      this.updateAddedEntities.add(selectedId);
+      this.updateAddedEntities.set(selectedId, this.selectedEntities.get(selectedId));
       this.updateRemovedEntities.delete(selectedId);
     }
     this.form.controls['entities'].setValue((this.selectedEntities.values() as any).toArray());
   }
 
   protected removeEntityFromUser() {
-    const len = this.userEntitiesSelect["elementRef"].nativeElement.selectedOptions.length;
-    for (let i = 0; i < len; i++) {
-      const selectedId = this.getEUiSelectOptionValue(this.userEntitiesSelect, i);
+    for (let selectedId of this.selectedUserEntityRows.values()) {
       this.availableEntities.set(selectedId, this.selectedEntities.get(selectedId));
       this.selectedEntities.delete(selectedId);
+      this.entityRolesGroup.removeControl(selectedId);
 
       this.updateRemovedEntities.add(selectedId);
       this.updateAddedEntities.delete(selectedId);
     }
+    this.selectedUserEntityRows.clear();
     this.form.controls['entities'].setValue((this.selectedEntities.values() as any).toArray());
   }
 
   protected searchEntities(searchTerm: string) {
     this.searchTerm = searchTerm;
     this.populateAvailableEntities();
+  }
+
+  private entitiesWithRoles(): UserEntity[] {
+    return Array.from(this.updateAddedEntities.values()).map(e => ({
+      ...e,
+      role: this.entityRolesGroup.get(e.id)?.value ? 'EXTENDED_VIEWER' : null
+    }));
   }
 
   private toModel(): User {
@@ -252,13 +300,15 @@ export class UserInfoComponent implements OnInit, OnDestroy {
       lastName: this.form.get("lastName")?.dirty ? this.form.value.lastName : null,
       email: this.form.get("email")?.dirty ? this.form.value.email : null,
       roles: roles,
-      rolesGroup: undefined
+      entities: this.entitiesWithRoles(),
+      rolesGroup: undefined,
+      entityRoles: undefined
     } as User;
   }
 
   private toUpdateModel(): UserUpdate {
     const user = this.toModel() as any as UserUpdate;
-    user.addedEntities = [...this.updateAddedEntities];
+    user.addedEntities = this.entitiesWithRoles();
     user.removedEntities = [...this.updateRemovedEntities];
     user['entities'] = undefined;
     return user;
@@ -279,7 +329,7 @@ export class UserInfoComponent implements OnInit, OnDestroy {
     this.allEntities
       .filter(e => !this.selectedEntities.has(e.id))
       .filter(e => !this.searchTerm || e.name.toLowerCase().includes(this.searchTerm.toLowerCase()))
-      .forEach(e => this.availableEntities.set(e.id, e));
+      .forEach(e => this.availableEntities.set(e.id, e as any));
   }
 
   get canBeEdited() {
@@ -295,6 +345,22 @@ export class UserInfoComponent implements OnInit, OnDestroy {
   protected onClose() {
     this.isEditActive = false;
     this.userEditComplete.next(null);
+  }
+
+  toggleUserEntitySelect(row: UserEntity) {
+    if (this.selectedUserEntityRows.has(row.id)) {
+      this.selectedUserEntityRows.delete(row.id);
+    } else if (!!this.isEditActive) {
+      this.selectedUserEntityRows.add(row.id);
+    }
+  }
+
+  showExtendedViewer(): boolean {
+    return this._showExtendedViewerColumn && this.permissionsForUser.includes('CAN_MANAGE_USERS_ROLES');
+  }
+
+  private onIsActiveChanged(value: boolean) {
+    this.selectedUserEntityRows.clear();
   }
 }
 

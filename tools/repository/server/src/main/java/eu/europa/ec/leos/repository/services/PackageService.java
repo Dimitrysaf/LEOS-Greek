@@ -24,8 +24,10 @@ import eu.europa.ec.leos.repository.interfaces.PackagesFavorites;
 import eu.europa.ec.leos.repository.model.LinkedPackage;
 
 public interface PackageService {
-    eu.europa.ec.leos.repository.model.Package createPackage(final String name, final Boolean isCloned, final String clonedPackageName
-            , String language, Boolean isTranslated, final String userId);
+    eu.europa.ec.leos.repository.model.Package createPackage(final String name, final Boolean isCloned,
+                                                             final String clonedPackageName, final String language,
+                                                             final Boolean isTranslated, final String userId,
+                                                             final String creatorOrganization);
 
     void createLinkedPackage(BigDecimal originPkgId, BigDecimal linkedPkgId);
 

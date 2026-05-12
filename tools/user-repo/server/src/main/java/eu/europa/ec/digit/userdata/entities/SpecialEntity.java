@@ -51,4 +51,8 @@ public class SpecialEntity implements Serializable {
 
     @Column(name = "ENTITY_ORG_NAME", nullable = false)
     private String organizationName;
+
+    public SpecialEntity(String id) {
+        this.id = id;
+    }
 }

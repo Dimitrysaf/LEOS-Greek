@@ -19,11 +19,11 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
+import eu.europa.ec.leos.model.user.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.test.support.LeosTest;
 
@@ -69,8 +69,8 @@ public class UsersClientTest extends LeosTest{
         String user2Login = "surryp";
         String user2Mail = "surryp@test.com";
 
-        List<Entity> entities = new ArrayList<>();
-        entities.add(new Entity("1", "EXT.A1", "Ext"));
+        List<UserEntity> entities = new ArrayList<>();
+        entities.add(new UserEntity("1", "EXT.A1", "Ext"));
 
         String searchKey = "smith";
         
@@ -115,8 +115,8 @@ public class UsersClientTest extends LeosTest{
         String user1Login = "smithj";
         String user1Mail = "smithj@test.com";
 
-        List<Entity> entities = new ArrayList<>();
-        entities.add(new Entity("1", "EXT.A1", "Ext"));
+        List<UserEntity> entities = new ArrayList<>();
+        entities.add(new UserEntity("1", "EXT.A1", "Ext"));
 
         String userId = "smithj";
 

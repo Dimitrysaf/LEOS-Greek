@@ -206,6 +206,7 @@
   "page.workspace.administration.users-info.approle.SUPPORT": "Support",
   "page.workspace.administration.users-info.approle.TEMPLATE_MANAGER": "Template Manager",
   "page.workspace.administration.users-info.approle.USER_MANAGER": "User Manager",
+  "page.workspace.administration.users-info.approle.EXTENDED_VIEWER": "Extended Viewer",
   "page.workspace.administration.user-info.user-not-found": "User not found",
   "page.workspace.administration.user-info.cannot-delete": "This user cannot be deleted.",
   "page.workspace.administration.user-info.cannot-update": "This user cannot be updated.",

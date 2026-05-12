@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.repository.entities;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -44,6 +45,8 @@ import java.util.List;
     @NamedQuery(name = "Package.findByAuditCDate", query = "SELECT p FROM Package p WHERE p.auditCDate = :auditCDate"),
     @NamedQuery(name = "Package.findByAuditLastMBy", query = "SELECT p FROM Package p WHERE p.auditLastMBy = :auditLastMBy"),
     @NamedQuery(name = "Package.findByAuditLastMDate", query = "SELECT p FROM Package p WHERE p.auditLastMDate = :auditLastMDate")})
+@Getter @Setter
+@EqualsAndHashCode(of = {"id"})
 public class Package implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -71,6 +74,8 @@ public class Package implements Serializable {
     private String language;
     @Column(name = "IS_TRANSLATED")
     private Boolean isTranslated;
+    @Column(name = "CREATOR_ORGANIZATION")
+    private String creatorOrganization;
 
     @Getter
     @Setter
@@ -92,69 +97,9 @@ public class Package implements Serializable {
         this.auditCDate = auditCDate;
     }
 
-    public BigDecimal getId() {
-        return id;
-    }
-
-    public void setId(BigDecimal id) {
-        this.id = id;
-    }
-
-    public BigDecimal getObjectId() {
-        return objectId;
-    }
-
-    public void setObjectId(BigDecimal objectId) {
-        this.objectId = objectId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getAuditCBy() {
-        return auditCBy;
-    }
-
-    public void setAuditCBy(String auditCBy) {
-        this.auditCBy = auditCBy;
-    }
-
-    public LocalDateTime getAuditCDate() {
-        return auditCDate;
-    }
-
-    public void setAuditCDate(LocalDateTime  auditCDate) {
-        this.auditCDate = auditCDate;
-    }
-
-    public String getAuditLastMBy() {
-        return auditLastMBy;
-    }
-
-    public void setAuditLastMBy(String auditLastMBy) {
-        this.auditLastMBy = auditLastMBy;
-    }
-
-    public LocalDateTime getAuditLastMDate() {
-        return auditLastMDate;
-    }
-
-    public void setAuditLastMDate(LocalDateTime auditLastMDate) {
-        this.auditLastMDate = auditLastMDate;
-    }
-
     @XmlTransient
     public Collection<PackageCollaborators> getPackageCollaboratorsCollection() {
         return packageCollaboratorsCollection;
-    }
-
-    public void setPackageCollaboratorsCollection(Collection<PackageCollaborators> packageCollaboratorsCollection) {
-        this.packageCollaboratorsCollection = packageCollaboratorsCollection;
     }
 
     @XmlTransient
@@ -162,48 +107,8 @@ public class Package implements Serializable {
         return documentCollection;
     }
 
-    public void setDocumentCollection(Collection<Document> documentCollection) {
-        this.documentCollection = documentCollection;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Package)) {
-            return false;
-        }
-        Package other = (Package) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public String toString() {
         return "eu.europa.ec.leos.repository.entities.Package[ id=" + id + " ]";
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public Boolean getIsTranslated() {
-        return isTranslated;
-    }
-
-    public void setIsTranslated(Boolean isTranslated) {
-        this.isTranslated = isTranslated;
     }
 }

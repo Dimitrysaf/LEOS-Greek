@@ -97,8 +97,10 @@ public class PackageServiceImpl implements PackageService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public eu.europa.ec.leos.repository.model.Package createPackage(final String name, final Boolean isCloned, final String clonedPackageName,
-            String language, Boolean isTranslated, final String userId) {
+    public eu.europa.ec.leos.repository.model.Package createPackage(final String name, final Boolean isCloned,
+                                                                    final String clonedPackageName,
+                                                                    final String language, final Boolean isTranslated,
+                                                                    final String userId, final String creatorOrganization) {
         Package pkg = new Package();
         pkg.setObjectId(new BigDecimal(0));
         pkg.setName(name);
@@ -108,6 +110,7 @@ public class PackageServiceImpl implements PackageService {
         pkg.setAuditCDate(LocalDateTime.now());
         pkg.setAuditLastMBy(userId);
         pkg.setAuditLastMDate(LocalDateTime.now());
+        pkg.setCreatorOrganization(creatorOrganization);
         return new eu.europa.ec.leos.repository.model.Package(packageRepository.save(pkg));
     }
 
