@@ -40,7 +40,7 @@ public class WeeklyUserActivityReportService {
      * Runs every Monday at 06:00 UTC.
      * Calculates distinct users from the previous week (Monday 00:00 to Sunday 23:59 UTC).
      */
-    @Scheduled(cron = "0 0 6 * * MON")
+    @Scheduled(cron = "0 0 6 * * *")
     public void generateAndSendWeeklyReport() {
         LOG.info("Starting weekly user activity report generation...");
         try {
