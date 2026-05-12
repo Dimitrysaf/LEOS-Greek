@@ -42,7 +42,7 @@ public class UserDto {
     private String email;
 
     @NotEmpty(groups = Create.class)
-    private List<EntityDto> entities;
+    private List<UserEntityDto> entities;
 
     private List<String> roles;
 

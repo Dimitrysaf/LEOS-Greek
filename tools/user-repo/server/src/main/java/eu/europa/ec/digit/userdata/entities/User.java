@@ -28,8 +28,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -74,26 +72,28 @@ public class User implements Serializable {
     private Date dateCreated;
 
     @JsonIgnore
-    @ManyToMany
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "LEOS_USER_ROLE", joinColumns = @JoinColumn(name = "USER_LOGIN", referencedColumnName = "USER_LOGIN"), inverseJoinColumns = @JoinColumn(name = "ROLE_NAME"))
     private List<Role> roleEntities;
 
-    @ManyToMany
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "LEOS_USER_ENTITY", joinColumns = @JoinColumn(name = "USER_LOGIN", referencedColumnName = "USER_LOGIN"), inverseJoinColumns = @JoinColumn(name = "ENTITY_ID"))
     @OrderBy("ENTITY_ORG_NAME, ENTITY_NAME")
     private List<Entity> entities;
 
-    public User(String login, Long perId, String lastName, String firstName, String email, String jobTitle, List<Role> roleEntities, List<Entity> entities) {
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "USER_LOGIN", referencedColumnName = "USER_LOGIN")
+    private List<UserEntity> userEntities;
+
+    public User(String login, Long perId, String lastName, String firstName, String email, String jobTitle, List<Role> roles, List<UserEntity> userEntities) {
         this.login = login;
         this.perId = perId;
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
         this.jobTitle = jobTitle;
-        this.roleEntities = roleEntities;
-        this.entities = entities;
+        this.roleEntities = roles;
+        this.userEntities = userEntities;
     }
 
     /**
@@ -107,7 +107,7 @@ public class User implements Serializable {
         return Stream
                 .concat(
                         roleEntities.stream().map(Role::getRole),
-                        Stream.of("USER"))
+                        Stream.of(Role.ROLE_USER))
                 .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 

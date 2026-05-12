@@ -23,7 +23,7 @@ export interface UserUpdate {
   lastName: string;
   email: string;
   roles: ApplicationRole[];
-  addedEntities: String[];
+  addedEntities: UserEntity[];
   removedEntities: String[]
 }
 
@@ -31,4 +31,5 @@ export interface UserEntity {
   id: string;
   name: string;
   organizationName: string;
+  role: string;
 }

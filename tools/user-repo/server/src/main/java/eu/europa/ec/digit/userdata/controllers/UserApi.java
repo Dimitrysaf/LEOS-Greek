@@ -1,9 +1,9 @@
 package eu.europa.ec.digit.userdata.controllers;
 
+import eu.europa.ec.digit.userdata.dto.UserAuthDto;
 import eu.europa.ec.digit.userdata.dto.UserDto;
 import eu.europa.ec.digit.userdata.dto.UserUpdateDto;
 import eu.europa.ec.digit.userdata.dto.validationgroup.Create;
-import eu.europa.ec.digit.userdata.entities.User;
 import eu.europa.ec.digit.userdata.exception.UserRepoExceptionResponse;
 import eu.europa.ec.digit.userdata.request.SpecialEntityRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +32,7 @@ public interface UserApi {
                     content = @Content(schema = @Schema(implementation = UserRepoExceptionResponse.class)))
     })
     @GetMapping
-    Collection<User> searchUsers(
+    Collection<UserAuthDto> searchUsers(
             @Parameter(description = "Search key") @RequestParam(value = "searchKey") String searchKey,
             @Parameter(description = "Search context") @RequestParam(value = "searchContext", required = false) String searchContext,
             @Parameter(description = "Search reference") @RequestParam(value = "searchReference", required = false) String searchReference);
@@ -44,7 +44,7 @@ public interface UserApi {
                     content = @Content(schema = @Schema(implementation = UserRepoExceptionResponse.class)))
     })
     @GetMapping(path = "/{userId}")
-    User getUser(@Parameter(description = "User ID") @PathVariable String userId);
+    UserAuthDto getUser(@Parameter(description = "User ID") @PathVariable String userId);
 
     @Operation(summary = "Get users by job title", description = "Retrieves users with specified job title")
     @ApiResponses({
@@ -53,7 +53,7 @@ public interface UserApi {
                     content = @Content(schema = @Schema(implementation = UserRepoExceptionResponse.class)))
     })
     @RequestMapping(method = RequestMethod.GET, path = "/jobTitle/{jobTitle}")
-    Collection<User> getUsersForJobTitle(@Parameter(description = "Job Title") @PathVariable String jobTitle);
+    Collection<UserAuthDto> getUsersForJobTitle(@Parameter(description = "Job Title") @PathVariable String jobTitle);
 
     @Operation(summary = "Add special entity for user", description = "Adds a special entity connection for a user")
     @ApiResponses({

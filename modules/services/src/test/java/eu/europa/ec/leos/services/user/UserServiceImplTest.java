@@ -17,6 +17,7 @@ import eu.europa.ec.leos.integration.UsersProvider;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.model.user.UserEntity;
 import eu.europa.ec.leos.test.support.LeosTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -80,8 +81,8 @@ public class UserServiceImplTest extends LeosTest {
         List<String> user2Roles= new ArrayList<String>();
         user1Roles.add("ADMIN");
 
-        List<Entity> entities = new ArrayList<Entity>();
-        entities.add(new Entity("1", "EXT.A1", "Ext"));
+        List<UserEntity> entities = new ArrayList<>();
+        entities.add(new UserEntity("1", "EXT.A1", "Ext"));
 
         String searchKey = "smith";
 

@@ -19,7 +19,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.vo.CollaboratorVO;
 import eu.europa.ec.leos.domain.vo.WorkflowCollaboratorConfigVO;
@@ -50,11 +49,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -227,7 +223,8 @@ public class RestRepository extends AbstractRestClient {
         return leosRestRepositoryURL + resourceUrl;
     }
 
-    Package createPackage(final String name, final String userId, String originRef, String language, Boolean isTranslated) {
+    Package createPackage(final String name, final String userId, final String originRef, final String language,
+                          final Boolean isTranslated, final String creatorOrganization) {
         LOGGER.trace("Creating package... [name={}, userId={}]", name, userId);
         String url = getUrl(leosRestCreatePackageURI);
         CreatePackageRequest createPackageRequest = new CreatePackageRequest();
@@ -235,6 +232,7 @@ public class RestRepository extends AbstractRestClient {
         createPackageRequest.setLanguage(language);
         createPackageRequest.setTranslated(isTranslated);
         createPackageRequest.setOriginRef(originRef);
+        createPackageRequest.setCreatorOrganization(creatorOrganization);
         Package resp = postEntity(url, createPackageRequest, Package.class, encodeUriVariables(name)[0]);
         return resp;
     }

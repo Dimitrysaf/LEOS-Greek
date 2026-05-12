@@ -20,15 +20,10 @@ import lombok.NoArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -60,15 +55,12 @@ public class SpecialUser implements Serializable {
     private String email;
 
     @JsonIgnore
-    @OneToMany
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "LEOS_SPECIAL_USER_ROLE", joinColumns = @JoinColumn(name = "USER_LOGIN"), inverseJoinColumns = @JoinColumn(name = "ROLE_NAME"))
     private List<Role> roleEntities;
 
-    @OneToMany
-    @LazyCollection(LazyCollectionOption.FALSE)
-    @JoinTable(name = "LEOS_SPECIAL_USER_ENTITY", joinColumns = @JoinColumn(name = "USER_LOGIN"), inverseJoinColumns = @JoinColumn(name = "ENTITY_ID"))
-    private List<SpecialEntity> entities;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
+    private List<SpecialUserEntity> entities;
 
     @Column(name = "DATE_CREATED")
     @CreationTimestamp
@@ -90,10 +82,11 @@ public class SpecialUser implements Serializable {
      * @return a list of role names, combining existing roles and a default "USER" role.
      */
     public List<String> getRoles() {
-        return Stream
-                .concat(
-                        (roleEntities != null ? roleEntities : new ArrayList<Role>()).stream().map(Role::getRole),
-                        Stream.of("USER"))
+        return roleEntities == null || roleEntities.isEmpty()
+                ? Collections.singletonList(Role.ROLE_USER)
+                : Stream.concat(
+                        roleEntities.stream().filter(Objects::nonNull).map(Role::getRole),
+                        Stream.of(Role.ROLE_USER))
                 .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
     }
 }

@@ -1,13 +1,16 @@
 package eu.europa.ec.leos.services.store;
 
 import eu.europa.ec.leos.model.filter.QueryFilter;
+import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.model.user.UserEntity;
 import eu.europa.ec.leos.permissions.Role;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,6 +145,18 @@ public class WorkspaceOptions {
                     .collect(Collectors.toList());
             roles.forEach(role -> roleCondition.add(user.getLogin() + "::" + role.getName()));
             workspaceFilter.addFilter(new QueryFilter.Filter(FilterType.role.name(), "IN", false, roleCondition.toArray(new String[]{})));
+
+            // Filter the entities for which the user has a role with CAN_SEE_ORGANIZATION_DOCUMENTS permission
+            if (securityContext.hasPermission(null, LeosPermission.CAN_SEE_ORGANIZATION_DOCUMENTS)) {
+                final String[] orgsWithRole = user.<UserEntity>getEntities().stream()
+                        .filter(ue ->
+                                !StringUtils.isBlank(ue.getRole())
+                                        && authorityMap.getPermissions(ue.getRole()).contains(LeosPermission.CAN_SEE_ORGANIZATION_DOCUMENTS))
+                        .map(Entity::getName).toArray(String[]::new);
+                if (orgsWithRole.length > 0) {
+                    workspaceFilter.addFilter(new QueryFilter.Filter(FilterType.creatorOrganization.name(), "IN", false, orgsWithRole));
+                }
+            }
         }
     }
 

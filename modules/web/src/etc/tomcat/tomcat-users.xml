@@ -10,4 +10,6 @@
     <user username="n00015ok" password="demo" roles=""/>
     <user username="n000181g" password="demo" roles=""/>
     <user username="n000181h" password="demo" roles=""/>
+    <user username="iluser1" password="demo" roles=""/>
+    <user username="gjuser17" password="demo" roles=""/>
 </tomcat-users>

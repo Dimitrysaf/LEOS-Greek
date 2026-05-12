@@ -882,6 +882,7 @@ public class DocumentServiceImpl implements DocumentService {
         enrichQueryWithPackage(queryBuild);
         enrichQueryWithProcedureTypeAndTemplate(queryBuild, filters, objectClass);
         Optional<QueryFilter.Filter> roleFilter = enrichQueryWithCollaborators(queryBuild, filters);
+        Optional<QueryFilter.Filter> orgRoleFilter = enrichQueryWithCreatorOrganization(queryBuild, filters);
         if (orderBy) {
             enrichOrderBy(queryFilter, objectClass, queryBuild);
         }
@@ -896,6 +897,7 @@ public class DocumentServiceImpl implements DocumentService {
         }
         setParametersForProcedureTypeAndTemplate(query, filters, objectClass);
         setParametersForRoles(query, roleFilter);
+        setParametersForCreatorOrganization(query, orgRoleFilter);
         return query;
     }
 
@@ -988,7 +990,7 @@ public class DocumentServiceImpl implements DocumentService {
         Optional<QueryFilter.Filter> roleFilter = queryFilter.stream().filter(f -> f.key.equals("role")).findFirst();
         if (roleFilter.isPresent()) {
             String[] values = roleFilter.get().value;
-            queryBuild.append(" AND d.packageId IN (SELECT p.pkg.id FROM PackageCollaborators p WHERE ");
+            queryBuild.append(" AND (d.packageId IN (SELECT p.pkg.id FROM PackageCollaborators p WHERE ");
             for (int i = 0; i < values.length; i++) {
                 String value = values[i];
                 String[] valueAttrs = value.split("::");
@@ -1029,6 +1031,33 @@ public class DocumentServiceImpl implements DocumentService {
                     query.setParameter("collaboratorRole_" + i, valueAttrs[1]);
                     query.setParameter("collaboratorOrganization_" + i, valueAttrs[2]);
                 }
+            }
+        }
+    }
+
+    private Optional<QueryFilter.Filter> enrichQueryWithCreatorOrganization(StringBuilder queryBuild, List<QueryFilter.Filter> queryFilter) {
+        boolean roleFilterPresent = queryFilter.stream().anyMatch(f -> f.key.equals("role"));
+        Optional<QueryFilter.Filter> orgRoleFilter = queryFilter.stream().filter(f -> f.key.equals("creatorOrganization")).findFirst();
+        if (orgRoleFilter.isPresent()) {
+            String[] values = orgRoleFilter.get().value;
+            queryBuild.append(roleFilterPresent ? " OR " : " AND ");
+            for (int i = 0; i < values.length; i++) {
+                queryBuild.append(" CONCAT(:creatorOrganization_").append(i).append(",'.') LIKE CONCAT(p.creatorOrganization,'.%') ESCAPE '\\'");
+                if (i < values.length - 1) {
+                    queryBuild.append(" OR ");
+                }
+            }
+        }
+        queryBuild.append(roleFilterPresent ? ") " : " ");
+        return orgRoleFilter;
+    }
+
+    private void setParametersForCreatorOrganization(Query query, Optional<QueryFilter.Filter> roleFilter) {
+        if (roleFilter.isPresent()) {
+            String[] values = roleFilter.get().value;
+            for (int i = 0; i < values.length; i++) {
+                String value = values[i];
+                query.setParameter("creatorOrganization_" + i, value);
             }
         }
     }

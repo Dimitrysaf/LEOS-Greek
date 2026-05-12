@@ -17,6 +17,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.europa.ec.leos.repository.utils.DateDesSerializer;
 import eu.europa.ec.leos.repository.utils.DateSerializer;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +26,8 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
+@Getter
+@Setter
 public class Package {
     private static final Logger LOG = LoggerFactory.getLogger(Package.class);
 
@@ -38,6 +42,7 @@ public class Package {
     private List<Collaborator> collaboratorList;
     private String language;
     private Boolean isTranslated;
+    private String creatorOrganization;
 
     public Package(eu.europa.ec.leos.repository.entities.Package pkg) {
         this.id = pkg.getId().toString();
@@ -50,56 +55,16 @@ public class Package {
         this.isTranslated = pkg.getIsTranslated();
     }
 
-    public String getId() {
-        return this.id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCreatedBy() {
-        return this.createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
     @JsonSerialize(using = DateSerializer.class)
     @JsonDeserialize(using = DateDesSerializer.class)
     public Date getCreatedOn() {
         return this.createdOn;
     }
 
-    public void setCreatedOn(Date createdOn) {
-        this.createdOn = createdOn;
-    }
-
-    public String getUpdatedBy() {
-        return this.updatedBy;
-    }
-
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
-
     @JsonSerialize(using = DateSerializer.class)
     @JsonDeserialize(using = DateDesSerializer.class)
     public Date getUpdatedOn() {
         return this.updatedOn;
-    }
-
-    public void setUpdatedOn(Date updatedOn) {
-        this.updatedOn = updatedOn;
     }
 
     public Boolean isCloned() {
@@ -110,28 +75,12 @@ public class Package {
         this.isCloned = isCloned;
     }
 
-    public String getClonedPackageName() {
-        return this.clonedPackageName;
-    }
-
-    public void setClonedPackageName(String clonedPackageName) {
-        this.clonedPackageName = clonedPackageName;
-    }
-
     public List<Collaborator> getCollaborators() {
         return this.collaboratorList;
     }
 
     public void setCollaborators(List<Collaborator> collaboratorList) {
         this.collaboratorList = collaboratorList;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
     }
 
     public Boolean getTranslated() {

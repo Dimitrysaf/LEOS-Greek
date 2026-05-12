@@ -205,6 +205,7 @@
   "page.workspace.administration.users-info.approle.SUPPORT": "Support",
   "page.workspace.administration.users-info.approle.TEMPLATE_MANAGER": "Gestionnaire de modèles",
   "page.workspace.administration.users-info.approle.USER_MANAGER": "Gestionnaire de utilisateur",
+  "page.workspace.administration.users-info.approle.EXTENDED_VIEWER": "Extended Viewer",
   "page.workspace.administration.user-info.user-not-found": "Utilisateur introuvable",
   "page.workspace.administration.user-info.cannot-delete": "Cet utilisateur ne peut pas être supprimé.",
   "page.workspace.administration.user-info.cannot-update": "Cet utilisateur ne peut pas être mis à jour",

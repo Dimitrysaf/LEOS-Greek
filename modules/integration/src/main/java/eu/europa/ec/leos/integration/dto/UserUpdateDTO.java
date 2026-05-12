@@ -23,7 +23,7 @@ public class UserUpdateDTO {
 
     private Collection<String> roles;
 
-    private Set<String> addedEntities;
+    private Set<UserEntityDTO> addedEntities;
 
     private Set<String> removedEntities;
 }

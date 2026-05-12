@@ -3,11 +3,9 @@ package eu.europa.ec.digit.userdata.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.digit.userdata.dto.EntityDto;
 import eu.europa.ec.digit.userdata.dto.UserDto;
+import eu.europa.ec.digit.userdata.dto.UserEntityDto;
 import eu.europa.ec.digit.userdata.dto.UserUpdateDto;
-import eu.europa.ec.digit.userdata.entities.Entity;
-import eu.europa.ec.digit.userdata.entities.SpecialEntity;
-import eu.europa.ec.digit.userdata.entities.SpecialUser;
-import eu.europa.ec.digit.userdata.entities.User;
+import eu.europa.ec.digit.userdata.entities.*;
 import eu.europa.ec.digit.userdata.repositories.SpecialEntityRepository;
 import eu.europa.ec.digit.userdata.repositories.SpecialUserRepository;
 import eu.europa.ec.digit.userdata.repositories.UserRepository;
@@ -43,9 +41,10 @@ public class UserControllerTest {
     private SpecialEntityRepository specialEntityRepo;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private SpecialUserRepository specialUserRepo;
+
     @Autowired
-    private SpecialUserRepository specialUserRepository;
+    private ObjectMapper objectMapper;
 
     @Test
     void GIVEN_no_term_AND_no_pagination_WHEN_search_THEN_all_users_returned() throws Exception {
@@ -97,8 +96,8 @@ public class UserControllerTest {
         String login = "login" + random.nextInt(10000);
 
         List<SpecialEntity> allEntities = specialEntityRepo.findAll();
-        List<EntityDto> addedEntities = allEntities.stream()
-                .map(e -> new EntityDto(e.getId(), e.getName(), e.getOrganizationName()))
+        List<UserEntityDto> addedEntities = allEntities.stream()
+                .map(e -> new UserEntityDto(e.getId(), e.getName(), e.getOrganizationName(), null))
                 .limit(5)
                 .toList();
 
@@ -121,7 +120,8 @@ public class UserControllerTest {
         Random random = new Random();
         String login = "login" + random.nextInt(10000);
 
-        List<EntityDto> addedEntities = List.of(new EntityDto("nonexistent", "name", "org"));
+        UserEntityDto nonexistentEntity = new UserEntityDto("nonexistent", "name", "org", null);
+        List<UserEntityDto> addedEntities = List.of(nonexistentEntity);
 
 
         UserDto userDto = new UserDto(login, "last", "first", "email@email", addedEntities, Arrays.asList("ADMIN", "SUPPORT"), null, true);
@@ -139,8 +139,8 @@ public class UserControllerTest {
         Random random = new Random();
         String login = "login" + random.nextInt(10000);
         List<SpecialEntity> allEntities = specialEntityRepo.findAll();
-        List<EntityDto> entities = allEntities.stream()
-                .map(e -> new EntityDto(e.getId(), e.getName(), e.getOrganizationName()))
+        List<UserEntityDto> entities = allEntities.stream()
+                .map(e -> new UserEntityDto(e.getId(), e.getName(), e.getOrganizationName(), null))
                 .limit(3)
                 .toList();
         UserDto userDto = new UserDto(login, "last", "first", "email@email", entities, null, new Date(0), true);
@@ -194,8 +194,8 @@ public class UserControllerTest {
         Random random = new Random();
         String login = "login" + random.nextInt(10000);
         List<SpecialEntity> allEntities = specialEntityRepo.findAll();
-        List<EntityDto> newEntities = allEntities.stream()
-                .map(e -> new EntityDto(e.getId(), e.getName(), e.getOrganizationName()))
+        List<UserEntityDto> newEntities = allEntities.stream()
+                .map(e -> new UserEntityDto(e.getId(), e.getName(), e.getOrganizationName(), null))
                 .limit(3)
                 .toList();
 
@@ -276,11 +276,15 @@ public class UserControllerTest {
 
     @Test
     void GIVEN_entities_update_WHEN_update_THEN_entities_updated() throws Exception {
-        Set<String> addedEntities = Set.of("7", "8", "9", "256");
+        Set<UserEntityDto> addedEntities = Stream.of("7", "8", "9", "256")
+                .map(id -> new UserEntityDto(id, null, null, null))
+                .collect(Collectors.toSet());
         Set<String> removedEntities = Set.of("10", "11", "12", "512");
 
         // User a00012yl is connected to entities 10, 11, 12, 13
-        UserUpdateDto userDto = new UserUpdateDto("a00012yl", "Last", "First", "email@email", List.of("USER_MANAGER"), addedEntities, removedEntities);
+        UserUpdateDto userDto = new UserUpdateDto(
+                "a00012yl", "Last", "First", "email@email",
+                List.of("USER_MANAGER"), addedEntities, removedEntities);
 
         mockMvc.perform(patch("/users")
                 .contentType("application/json")
@@ -361,23 +365,81 @@ public class UserControllerTest {
     }
 
     @Test
-    void GIVEN_addedEntities_mix_existing_and_new_WHEN_update_THEN_success_AND_no_duplicates() throws Exception {
-        Random random = new Random();
-        String login = "login" + random.nextInt(10000);
+    void GIVEN_entities_with_EXTENDED_VIEWER_role_WHEN_create_THEN_role_persisted() throws Exception {
+        String login = "newroleuser";
+        SpecialEntity entity = specialEntityRepo.findAll().get(0);
+        List<UserEntityDto> addedEntities = List.of(
+                new UserEntityDto(entity.getId(), entity.getName(), entity.getOrganizationName(), "EXTENDED_VIEWER"));
 
-        List<SpecialEntity> entities = specialEntityRepo.findByIdIn(Set.of("10","11", "12", "13"));
-        SpecialUser user = new SpecialUser(login, 1L, "Last", "First", "a@b.c", null, entities, new Date());
-        specialUserRepository.save(user);
-
-        UserUpdateDto userDto = new UserUpdateDto(login, user.getLastName(), user.getLastName(), user.getEmail(), user.getRoles(), Set.of("10", "7"), null);
-        mockMvc.perform(patch("/users")
-                        .contentType("application/json")
-                        .content(objectMapper.writeValueAsString(userDto)))
+        UserDto userDto = new UserDto(login, "Last", "First", "test@email.com", addedEntities, null, null, true);
+        mockMvc.perform(post("/users")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isOk());
 
-        User updatedUser = userRepo.findFirstByLogin(login);
-        assertEquals(Stream.of("7", "10", "11", "12", "13").sorted().toList(),
-                updatedUser.getEntities().stream().map(Entity::getId).sorted().toList());
+        SpecialUser created = specialUserRepo.getByLogin(login);
+        assertNotNull(created);
+        assertEquals(1, created.getEntities().size());
+        assertNotNull(created.getEntities().get(0).getRole());
+        assertEquals("EXTENDED_VIEWER", created.getEntities().get(0).getRole().getRole());
+    }
+
+    @Test
+    void GIVEN_entity_without_role_WHEN_update_adding_EXTENDED_VIEWER_role_THEN_role_persisted() throws Exception {
+        // vader has entity 3 with no role in seed data
+        Set<UserEntityDto> addedEntities = Set.of(new UserEntityDto("3", null, null, "EXTENDED_VIEWER"));
+        UserUpdateDto userDto = new UserUpdateDto("vader", null, null, null, null, addedEntities, null);
+
+        mockMvc.perform(patch("/users")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(userDto)))
+                .andExpect(status().isOk());
+
+        SpecialUser updated = specialUserRepo.getByLogin("vader");
+        SpecialUserEntity entity3 = updated.getEntities().stream()
+                .filter(e -> "3".equals(e.getEntity().getId()))
+                .findFirst().orElseThrow();
+        assertNotNull(entity3.getRole());
+        assertEquals("EXTENDED_VIEWER", entity3.getRole().getRole());
+    }
+
+    @Test
+    void GIVEN_entity_with_EXTENDED_VIEWER_role_WHEN_update_clearing_role_THEN_role_is_null() throws Exception {
+        // iluser1 has entity 9 with EXTENDED_VIEWER in seed data
+        Set<UserEntityDto> addedEntities = Set.of(new UserEntityDto("9", null, null, null));
+        UserUpdateDto userDto = new UserUpdateDto("iluser1", null, null, null, null, addedEntities, null);
+
+        mockMvc.perform(patch("/users")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(userDto)))
+                .andExpect(status().isOk());
+
+        SpecialUser updated = specialUserRepo.getByLogin("iluser1");
+        SpecialUserEntity entity9 = updated.getEntities().stream()
+                .filter(e -> "9".equals(e.getEntity().getId()))
+                .findFirst().orElseThrow();
+        assertNull(entity9.getRole());
+    }
+
+    @Test
+    void GIVEN_new_entity_with_EXTENDED_VIEWER_role_WHEN_update_THEN_entity_added_with_role() throws Exception {
+        // luke has entity 8 with no role; add entity 3 with EXTENDED_VIEWER
+        Set<UserEntityDto> addedEntities = Set.of(new UserEntityDto("3", null, null, "EXTENDED_VIEWER"));
+        UserUpdateDto userDto = new UserUpdateDto("luke", null, null, null, null, addedEntities, null);
+
+        mockMvc.perform(patch("/users")
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(userDto)))
+                .andExpect(status().isOk());
+
+        SpecialUser updated = specialUserRepo.getByLogin("luke");
+        SpecialUserEntity entity3 = updated.getEntities().stream()
+                .filter(e -> "3".equals(e.getEntity().getId()))
+                .findFirst().orElseThrow();
+        assertNotNull(entity3.getRole());
+        assertEquals("EXTENDED_VIEWER", entity3.getRole().getRole());
+        assertTrue(updated.getEntities().stream().anyMatch(e -> "8".equals(e.getEntity().getId())),
+                "Original entity 8 should still be present");
     }
 
     @Test
@@ -386,8 +448,8 @@ public class UserControllerTest {
         String login = "login" + random.nextInt(10000);
 
         List<SpecialEntity> allEntities = specialEntityRepo.findAll();
-        List<EntityDto> addedEntities = allEntities.stream()
-                .map(e -> new EntityDto(e.getId(), e.getName(), e.getOrganizationName()))
+        List<UserEntityDto> addedEntities = allEntities.stream()
+                .map(e -> new UserEntityDto(e.getId(), e.getName(), e.getOrganizationName(), null))
                 .limit(5)
                 .toList();
 

@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.digit.userdata.controllers;
 
+import eu.europa.ec.digit.userdata.dto.UserAuthDto;
 import eu.europa.ec.digit.userdata.dto.UserDto;
 import eu.europa.ec.digit.userdata.dto.UserUpdateDto;
 import eu.europa.ec.digit.userdata.entities.SpecialEntity;
@@ -37,7 +38,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -55,22 +55,23 @@ public class UserController implements UserApi {
 
     @Transactional(readOnly = true)
     @Override
-    public Collection<User> searchUsers(final String searchKey, final String searchContext, final String searchReference) {
+    public Collection<UserAuthDto> searchUsers(final String searchKey, final String searchContext, final String searchReference) {
         return userRepository
                 .findUsersByKey(searchKey.trim().replace(" ", "%").concat("%"))
-                .limit(MAX_RECORDS).toList();
+                .limit(MAX_RECORDS).map(userMapper::mapToAuthDto).toList();
     }
 
     @Transactional(readOnly = true)
     @Override
-    public User getUser(final String userId) {
-        return userService.getUser(userId);
+    public UserAuthDto getUser(final String userId) {
+        final User user = userService.getUser(userId);
+        return userMapper.mapToAuthDto(user);
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Collection<User> getUsersForJobTitle(final String jobTitle) {
-        return userRepository.findByJobTitle(jobTitle).collect(Collectors.toList());
+    public Collection<UserAuthDto> getUsersForJobTitle(final String jobTitle) {
+        return userRepository.findByJobTitle(jobTitle).map(userMapper::mapToAuthDto).toList();
     }
 
     @Transactional
@@ -108,7 +109,7 @@ public class UserController implements UserApi {
 
     @Override
     public Page<UserDto> searchUsers(final String searchKey, final String entityId, final Pageable pageable) {
-        return userService.search(searchKey, entityId, pageable).map(userMapper::mapToDto);
+        return userService.search(searchKey, entityId, pageable).map(u -> userMapper.mapToDto(u, roleService.getRoles()));
     }
 
     @Transactional
@@ -116,7 +117,7 @@ public class UserController implements UserApi {
     public UserDto createUser(final UserDto userDto) {
         final SpecialUser specialUser = userMapper.mapToSpecial(userDto, roleService.getRoles());
         final SpecialUser created = this.userService.addSpecialUser(specialUser);
-        return userMapper.mapToDto(created);
+        return userMapper.mapToDto(created, roleService.getRoles());
     }
 
     @Transactional
@@ -125,8 +126,10 @@ public class UserController implements UserApi {
         final SpecialUser specialUser = userService.getSpecialUser(userDto.getLogin())
                 .map(user -> userMapper.merge(userDto, user, roleService.getRoles()))
                 .orElseThrow(BadRequestException::new);
-        SpecialUser updated = userService.updateSpecialUser(specialUser, userDto.getAddedEntities(), userDto.getRemovedEntities());
-        return userMapper.mapToDto(updated);
+
+
+        final SpecialUser updated = userService.updateSpecialUser(specialUser, userDto.getAddedEntities(), userDto.getRemovedEntities());
+        return userMapper.mapToDto(updated, roleService.getRoles());
     }
 
     @Transactional

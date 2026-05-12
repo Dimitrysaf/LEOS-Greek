@@ -14,7 +14,11 @@
 package eu.europa.ec.leos.repository.controllers.requests;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class CreatePackageRequest {
     private Boolean isCloned;
     private String clonedPackageName;
@@ -23,30 +27,7 @@ public class CreatePackageRequest {
     @NotBlank(message = "User Id cannot be blank")
     private String userId;
     private String originRef;
-
-    public Boolean getIsCloned() {
-        return isCloned;
-    }
-
-    public void setIsCloned(Boolean isCloned) {
-        this.isCloned = isCloned;
-    }
-
-    public String getClonedPackageName() {
-        return clonedPackageName;
-    }
-
-    public void setClonedPackageName(String clonedPackageName) {
-        this.clonedPackageName = clonedPackageName;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
-
-    public void setLanguage(String language) {
-        this.language = language;
-    }
+    private String creatorOrganization;
 
     public Boolean getTranslated() {
         return isTranslated;
@@ -56,19 +37,4 @@ public class CreatePackageRequest {
         this.isTranslated = isTranslated;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getOriginRef() {
-        return originRef;
-    }
-
-    public void setOriginRef(String originRef) {
-        this.originRef = originRef;
-    }
 }

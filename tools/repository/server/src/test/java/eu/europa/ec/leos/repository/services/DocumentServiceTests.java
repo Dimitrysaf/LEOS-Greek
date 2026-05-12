@@ -93,7 +93,7 @@ class DocumentServiceTests extends H2TestBase {
 
     @BeforeEach
     void setup() {
-        pkg = packageService.createPackage("test", false, null, "EN", false, "demo");
+        pkg = packageService.createPackage("test", false, null, "EN", false, "demo", null);
     }
 
     @AfterEach
@@ -980,5 +980,154 @@ class DocumentServiceTests extends H2TestBase {
         Assertions.assertTrue(pkg.isPresent());
         docs = documentVRepository.findAllVersionsByPackageIdAndCategoryCode(pkg.get().getId(), "MEMORANDUM");
         assertEquals(docs.size(), 1);
+    }
+
+    // -----------------------------------------------------------------------
+    // creatorOrganization filter tests
+    //
+    // The filter semantics:
+    //   CONCAT(filterValue, '.') LIKE CONCAT(p.creatorOrganization, '.%')
+    // i.e. a package matches when its creatorOrganization is a prefix of
+    // (or equal to) the filter value.
+    // Examples: filter "EC.DG1" matches packages with org "EC" or "EC.DG1".
+    //           filter "EC" only matches packages with org "EC".
+    // -----------------------------------------------------------------------
+
+    private eu.europa.ec.leos.repository.model.Package createOrgPackage(String name, String org)
+            throws RepositoryException {
+        return packageService.createPackage(name, false, null, "EN", false, USER_ID, org);
+    }
+
+    private LeosDocument createDocInPackage(String packageName) throws RepositoryException {
+        Map<String, Object> props = new HashMap<>();
+        props.put("ref", packageName + "-ref");
+        props.put("collaborators", ConversionUtils.getLeosCollaboratorsAsLinkedHashMap(
+                Arrays.asList(new Collaborator(USER_ID, "OWNER", "DGT.R.3"))));
+        props.put("eeaRelevance", "false");
+        props.put("docPurpose", "Test org filter");
+        props.put("procedureType", "ORDINARY_LEGISLATIVE_PROC");
+        props.put("title", "Test org filter title");
+        props.put("docType", "REGULATION");
+        props.put("language", "EN");
+        props.put("initialCreatedBy", USER_ID);
+        props.put("category", "BILL");
+        props.put("docTemplate", "BL-023");
+        props.put("initialCreationDate", ConversionUtils.getLeosDateAsString(new Date(), ConversionUtils.LEOS_REPO_DATE_FORMAT));
+        props.put("template", "SJ-023");
+        props.put("docStage", "Proposal for a");
+        return documentService.createDocumentFromSource("BL-023", packageName,
+                packageName + ".xml", props, "0.1.0", 1, "First version", USER_ID);
+    }
+
+    @Test
+    void test_filterByCreatorOrganization_exactMatch() throws RepositoryException {
+        eu.europa.ec.leos.repository.model.Package orgPkg = createOrgPackage("test-org-exact", "EC.DG1");
+        try {
+            createDocInPackage(orgPkg.getName());
+            QueryFilter filter = new QueryFilter();
+            filter.addFilter(new QueryFilter.Filter("creatorOrganization", "IN", false, "EC.DG1"));
+
+            List<LeosDocument> docs = documentService.findDocumentsUsingFilter(
+                    "%", Sets.set("BILL"), filter, 0, 10, false);
+
+            assertEquals(1, docs.size());
+        } finally {
+            packageService.deletePackage(orgPkg.getName());
+        }
+    }
+
+    @Test
+    void test_filterByCreatorOrganization_matchesParentOrg() throws RepositoryException {
+        // Package org "EC" is a parent of filter value "EC.DG1", so it matches.
+        eu.europa.ec.leos.repository.model.Package orgPkg = createOrgPackage("test-org-parent", "EC");
+        try {
+            createDocInPackage(orgPkg.getName());
+            QueryFilter filter = new QueryFilter();
+            filter.addFilter(new QueryFilter.Filter("creatorOrganization", "IN", false, "EC.DG1"));
+
+            List<LeosDocument> docs = documentService.findDocumentsUsingFilter(
+                    "%", Sets.set("BILL"), filter, 0, 10, false);
+
+            assertEquals(1, docs.size());
+        } finally {
+            packageService.deletePackage(orgPkg.getName());
+        }
+    }
+
+    @Test
+    void test_filterByCreatorOrganization_childOrgDoesNotMatch() throws RepositoryException {
+        // Package org "EC.DG1" is a child of filter value "EC" — should not match.
+        eu.europa.ec.leos.repository.model.Package orgPkg = createOrgPackage("test-org-child", "EC.DG1");
+        try {
+            createDocInPackage(orgPkg.getName());
+            QueryFilter filter = new QueryFilter();
+            filter.addFilter(new QueryFilter.Filter("creatorOrganization", "IN", false, "EC"));
+
+            List<LeosDocument> docs = documentService.findDocumentsUsingFilter(
+                    "%", Sets.set("BILL"), filter, 0, 10, false);
+
+            assertEquals(0, docs.size());
+        } finally {
+            packageService.deletePackage(orgPkg.getName());
+        }
+    }
+
+    @Test
+    void test_filterByCreatorOrganization_matchesExactAndParentOrgs() throws RepositoryException {
+        // Both "EC" (parent) and "EC.DG1" (exact) packages should be returned when filtering by "EC.DG1".
+        eu.europa.ec.leos.repository.model.Package pkgParent = createOrgPackage("test-org-multi-parent", "EC");
+        eu.europa.ec.leos.repository.model.Package pkgExact = createOrgPackage("test-org-multi-exact", "EC.DG1");
+        try {
+            createDocInPackage(pkgParent.getName());
+            createDocInPackage(pkgExact.getName());
+            QueryFilter filter = new QueryFilter();
+            filter.addFilter(new QueryFilter.Filter("creatorOrganization", "IN", false, "EC.DG1"));
+
+            List<LeosDocument> docs = documentService.findDocumentsUsingFilter(
+                    "%", Sets.set("BILL"), filter, 0, 10, false);
+
+            assertEquals(2, docs.size());
+        } finally {
+            packageService.deletePackage(pkgParent.getName());
+            packageService.deletePackage(pkgExact.getName());
+        }
+    }
+
+    @Test
+    void test_filterByCreatorOrganization_noMatchForUnrelatedOrg() throws RepositoryException {
+        eu.europa.ec.leos.repository.model.Package orgPkg = createOrgPackage("test-org-unrelated", "EC.DG1");
+        try {
+            createDocInPackage(orgPkg.getName());
+            QueryFilter filter = new QueryFilter();
+            filter.addFilter(new QueryFilter.Filter("creatorOrganization", "IN", false, "OTHER"));
+
+            List<LeosDocument> docs = documentService.findDocumentsUsingFilter(
+                    "%", Sets.set("BILL"), filter, 0, 10, false);
+
+            assertEquals(0, docs.size());
+        } finally {
+            packageService.deletePackage(orgPkg.getName());
+        }
+    }
+
+    @Test
+    void test_filterByCreatorOrganization_multipleValues() throws RepositoryException {
+        // Filter by two unrelated org values — each should match its own package.
+        eu.europa.ec.leos.repository.model.Package pkgA = createOrgPackage("test-org-mv-a", "EC.DG1");
+        eu.europa.ec.leos.repository.model.Package pkgB = createOrgPackage("test-org-mv-b", "OTHER");
+        try {
+            createDocInPackage(pkgA.getName());
+            createDocInPackage(pkgB.getName());
+            QueryFilter filter = new QueryFilter();
+            filter.addFilter(new QueryFilter.Filter("creatorOrganization", "IN", false, "EC.DG1", "OTHER"));
+
+            List<LeosDocument> docs = documentService.findDocumentsUsingFilter(
+                    "%", Sets.set("BILL"), filter, 0, 10, false);
+
+            assertEquals(2, docs.size());
+        } finally {
+            packageService.deletePackage(pkgA.getName());
+            packageService.deletePackage(pkgB.getName());
+        }
     }
 }

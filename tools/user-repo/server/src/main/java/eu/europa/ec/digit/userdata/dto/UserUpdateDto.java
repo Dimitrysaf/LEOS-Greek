@@ -41,7 +41,7 @@ public class UserUpdateDto {
 
     private List<String> roles;
 
-    private Set<String> addedEntities;
+    private Set<UserEntityDto> addedEntities;
 
     private Set<String> removedEntities;
 }

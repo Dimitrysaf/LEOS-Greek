@@ -1,12 +1,12 @@
 package eu.europa.ec.digit.userdata.services;
 
-import eu.europa.ec.digit.userdata.entities.SpecialEntity;
-import eu.europa.ec.digit.userdata.entities.SpecialUser;
-import eu.europa.ec.digit.userdata.entities.User;
+import eu.europa.ec.digit.userdata.dto.UserEntityDto;
+import eu.europa.ec.digit.userdata.entities.*;
 import eu.europa.ec.digit.userdata.exception.BadRequestException;
 import eu.europa.ec.digit.userdata.mappers.PageMapper;
 import eu.europa.ec.digit.userdata.mappers.UserMapper;
 import eu.europa.ec.digit.userdata.repositories.SpecialEntityRepository;
+import eu.europa.ec.digit.userdata.repositories.SpecialUserEntityRepository;
 import eu.europa.ec.digit.userdata.repositories.SpecialUserRepository;
 import eu.europa.ec.digit.userdata.repositories.UserRepository;
 import lombok.NonNull;
@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -30,8 +31,10 @@ public class UserService {
 
     private final SpecialUserRepository specialUserRepository;
     private final SpecialEntityRepository specialEntityRepository;
+    private final SpecialUserEntityRepository specialUserEntityRepository;
 
     private final PageMapper pageMapper;
+    private final RoleService roleService;
 
     public User getUser(final String userId) {
         final List<User> users = userRepository.findByLogin(userId);
@@ -96,17 +99,20 @@ public class UserService {
      * @throws BadRequestException if a user with the same login (case-insensitive) already exists,
      *                              or if the user cannot be associated to any entity.
      */
+    @Transactional
     public SpecialUser addSpecialUser(@NonNull final SpecialUser user) {
         if (!userRepository.findByLoginIgnoreCase(user.getLogin()).isEmpty()) {
             throw new BadRequestException(
-                    "Cannot create SpecialUser(%s): User with the same login (case-insensitive) already exists".formatted(user.getLogin()),
+                    "Cannot create SpecialUser(%s): User with the same login (case-insensitive) already exists"
+                            .formatted(user.getLogin()),
                     "page.workspace.administration.user-info.user-login-conflict");
         }
         if (user.getEntities() != null) {
-            user.getEntities().forEach(e -> {
-                if (!specialEntityRepository.existsById(e.getId())) {
+            user.getEntities().forEach(sue -> {
+                if (!specialEntityRepository.existsById(sue.getEntity().getId())) {
                     throw new BadRequestException(
-                            "Cannot create SpecialUser(%s): Cannot associate to Entity(%s): Entity does not exist.".formatted(user.getLogin(), e.getId()),
+                            "Cannot create SpecialUser(%s): Cannot associate to Entity(%s): Entity does not exist."
+                                    .formatted(user.getLogin(), sue.getEntity().getId()),
                             "page.workspace.administration.user-info.entity-not-found");
                 }
             });
@@ -114,23 +120,42 @@ public class UserService {
         return specialUserRepository.save(user);
     }
 
-    public SpecialUser updateSpecialUser(@NonNull final SpecialUser user, final Set<String> addedEntities, final Set<String> removedEntities) {
+    @Transactional
+    public SpecialUser updateSpecialUser(@NonNull final SpecialUser user, final Set<UserEntityDto> addedEntities, final Set<String> removedEntities) {
         final SpecialUser existing = specialUserRepository.getByLogin(user.getLogin());
         if (existing == null) {
             throw new BadRequestException(
                     "Cannot update SpecialUser(%s): User does not exist.".formatted(user.getLogin()),
                     "page.workspace.administration.user-info.cannot-update");
         }
-        final Set<SpecialEntity> entities = existing.getEntities().stream()
-                .filter(e -> removedEntities == null || !removedEntities.contains(e.getId()))
+        final Set<SpecialUserEntity> userEntities = existing.getEntities().stream()
+                .filter(e -> removedEntities == null || !removedEntities.contains(e.getEntity().getId()))
                 .collect(Collectors.toSet());
         if (addedEntities != null && !addedEntities.isEmpty()) {
-            entities.addAll(specialEntityRepository.findByIdIn(addedEntities));
+            final Map<String, Role> roles = roleService.getRoles();
+            final Map<String, Role> userEntityRoleMap = addedEntities.stream()
+                    .filter(e -> e.getRole() != null && roles.containsKey(e.getRole()))
+                    .collect(Collectors.toMap(UserEntityDto::getId, ue -> roles.get(ue.getRole())));
+            final List<SpecialEntity> entities = specialEntityRepository
+                    .findByIdIn(addedEntities.stream()
+                    .map(UserEntityDto::getId)
+                    .toList());
+            final Map<SpecialEntity, SpecialUserEntity> userEntityMap = specialUserEntityRepository
+                    .findByIdIn(addedEntities.stream().map(sue
+                            -> new SpecialUserEntity.UserEntityId(user.getLogin(), sue.getId())).toList()).stream()
+                    .collect(Collectors.toMap(SpecialUserEntity::getEntity, e -> e));
+            for (SpecialEntity entity : entities) {
+                final SpecialUserEntity sue = userEntityMap.getOrDefault(entity, new SpecialUserEntity(user, entity));
+                sue.setRole(userEntityRoleMap.get(entity.getId()));
+                userEntities.add(sue);
+            }
         }
-        user.setEntities(new ArrayList<>(entities));
-        return specialUserRepository.save(user);
+        existing.getEntities().clear();
+        existing.getEntities().addAll(userEntities);
+        return specialUserRepository.save(existing);
     }
 
+    @Transactional
     public void deleteSpecialUser(@NonNull final String login) {
         final SpecialUser existing = specialUserRepository.getByLogin(login);
         if (existing == null) {

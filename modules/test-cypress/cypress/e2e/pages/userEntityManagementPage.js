@@ -21,6 +21,7 @@ class userEntityManagementPage {
         searchEntityTxtBx: () => cy.get('input[placeholder=\'Search by entity name\']'),
         selectEntityDropDown: () => cy.get('select.entities-select:not(.ng-star-inserted)'),
         removeEntityDropDown: () => cy.get('select.ng-star-inserted'),
+        userEntityCell: (entityName) => cy.get(`td.entity-name-cell:contains("${entityName}")`),
         angleLeftBtn: () => cy.get('span.eui-icon-angle-left'),
         angleRightBtn: () => cy.get('span.eui-icon-angle-right'),
         saveBtn: () => cy.get('span').contains('Save'),
@@ -162,7 +163,7 @@ class userEntityManagementPage {
     }
 
     selectEntityToRemove(entity) {
-        this.elements.removeEntityDropDown().select(entity, { force: true })
+        this.elements.userEntityCell(entity).click();
     }
 
     removeEntity() {

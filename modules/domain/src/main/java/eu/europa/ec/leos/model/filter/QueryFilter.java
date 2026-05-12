@@ -61,7 +61,9 @@ public class QueryFilter {
         
         cmisVersionLabel("cmis:versionLabel"),
         creationDate("cmis:creationDate"),
-        lastModificationDate("cmis:lastModificationDate");
+        lastModificationDate("cmis:lastModificationDate"),
+
+        creatorOrganization("leos:creatorOrganization");
 
         private String cmisColumnName;
         private String multiColumnType;

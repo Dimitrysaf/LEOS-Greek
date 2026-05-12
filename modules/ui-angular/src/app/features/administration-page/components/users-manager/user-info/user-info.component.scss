@@ -9,7 +9,7 @@
 
 .entities-select {
   width: 100%;
-  height: 150px;
+  height: 185px;
 }
 
 :host ::ng-deep .search-container {
@@ -35,5 +35,27 @@ eui-card-header.readonly {
 
 eui-card-content.readonly {
   background-color: lightgrey;
-  height: 22rem
+  height: 24rem
 }
+
+.entity-role-header {
+  text-align: center;
+}
+
+.entity-role-cell {
+  text-align: center;
+}
+
+.entity-name-cell {
+  cursor: pointer;
+}
+
+:host ::ng-deep tr.entity.selected td {
+  background-color: #cce0f5 !important;
+}
+
+.table-container {
+  height: 190px;
+  overflow-y: auto;
+}
+

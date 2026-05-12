@@ -1,4 +1,4 @@
-<eui-card [euiHighlighted]="isEditActive" (keyup.escape)="onCancel()">
+<eui-card [euiHighlighted]="isEditActive" (keyup.escape)="onCancel()" [euiSize2XL]>
   <eui-card-header [class]="isEditActive ? '' : 'readonly'">
     <eui-card-header-title>
       <eui-icon-svg icon="eui-person-thin" set="eui" size="xs" fillColor="grey-100"></eui-icon-svg>
@@ -86,35 +86,32 @@
           </div>
           <div class="row">
             <div class="col-5">
-              <select *ngIf="isEditActive" #userEntitiesSelect
-                      multiple
-                      class="entities-select"
-                      formControlName="entities"
-                      euiSelect
-              >
-                <option *ngIf="isEditActive && selectedEntities.size === 0" disabled>
-                  {{ 'page.workspace.administration.user-info.entity-adding-placeholder' | translate }}
-                </option>
-                <option *ngFor="let entity of selectedEntitiesArray" [value]="entity.id">
-                  {{ entity.name }}
-                </option>
-              </select>
-              <table *ngIf="!isEditActive" class="eui-u-mt-m"
-                     euiTable
-                     euiTableResponsive
-                     [rows]="selectedUser?.entities"
-              >
-                <ng-template euiTemplate="header">
-                  <tr class="ng-star-inserted entity">
-                    <th>{{ 'page.collection.collaborators.table.td-entity' | translate }}</th>
-                  </tr>
-                </ng-template>
-                <ng-template let-row euiTemplate="body">
-                  <tr class="entity" >
-                    <td>{{ row.name }}</td>
-                  </tr>
-                </ng-template>
-              </table>
+              <div class="table-container">
+                <table #selectedEntitiesTable
+                       [euiDisabled]="!isEditActive" class="eui-u-mt-m"
+                       euiTable
+                       euiTableResponsive
+                       [rows]="selectedEntitiesArray"
+                >
+                  <ng-template euiTemplate="header">
+                    <tr class="ng-star-inserted entity">
+                      <th>{{ 'page.collection.collaborators.table.td-entity' | translate }}</th>
+                      <th *ngIf="showExtendedViewer()"
+                          class="entity-role-header">{{ 'page.workspace.administration.users-info.approle.EXTENDED_VIEWER' | translate }}
+                      </th>
+                    </tr>
+                  </ng-template>
+                  <ng-template let-row euiTemplate="body">
+                    <tr class="entity" [class.selected]="selectedUserEntityRows.has(row.id)">
+                      <td class="entity-name-cell" (click)="toggleUserEntitySelect(row)">{{ row.name }}</td>
+                      <td *ngIf="showExtendedViewer()"
+                          class="entity-role-cell">
+                        <input euiInputCheckBox [readonly]="!isEditActive" type="checkbox" [formControl]="$any(entityRolesGroup.get(row.id))"/>
+                      </td>
+                    </tr>
+                  </ng-template>
+                </table>
+              </div>
             </div>
             <ng-container *ngIf="isEditActive">
               <div class="col-1">

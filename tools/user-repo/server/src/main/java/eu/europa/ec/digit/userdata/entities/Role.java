@@ -29,7 +29,8 @@ import lombok.EqualsAndHashCode;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
-    
+    public static final String ROLE_USER = "USER";
+
     @Id
     @Column(name = "ROLE_NAME", nullable = false, insertable = false, updatable = false)
     private String role;

@@ -4,6 +4,7 @@ export const APPLICATION_ROLES = [
   'ADMIN',
   'TEMPLATE_MANAGER',
   'USER_MANAGER',
+  'EXTENDED_VIEWER'
 ] as const;
 
 export type ApplicationRole = typeof APPLICATION_ROLES[number];
@@ -48,4 +49,5 @@ export type Permission =
   | 'CAN_MANAGE_OWN_ENTITIES'
   | 'CAN_MANAGE_ALL_ENTITIES'
   | 'CAN_MANAGE_ALL_USERS'
-  | 'CAN_MANAGE_USERS_ROLES';
+  | 'CAN_MANAGE_USERS_ROLES'
+  | 'CAN_SEE_ORGANIZATION_DOCUMENTS';
