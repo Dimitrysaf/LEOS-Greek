@@ -42,6 +42,53 @@
         } ]
       }
     },
+    "/entities/special" : {
+      "get" : {
+        "tags" : [ "Entity Management" ],
+        "summary" : "Get special entities",
+        "description" : "Retrieves all special entities for a given organization or all special entities if no organization name is passed.\nIf organization name is provided, then the organization is included in the result.",
+        "operationId" : "special",
+        "parameters" : [ {
+          "name" : "orgName",
+          "in" : "query",
+          "description" : "- If orgName is null or empty, then all SpecialEntity records are returned;\n- Matching special entities + the organization itself are returned otherwise;",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Special entities retrieved successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Collection",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
     "/entities/{org}/users" : {
       "get" : {
         "tags" : [ "Entity Management" ],
@@ -251,53 +298,6 @@
         } ]
       }
     },
-    "/entities/special" : {
-      "get" : {
-        "tags" : [ "Entity Management" ],
-        "summary" : "Get special entities",
-        "description" : "Retrieves all special entities for a given organization or all special entities if no organization name is passed.\nIf organization name is provided, then the organization is included in the result.",
-        "operationId" : "special",
-        "parameters" : [ {
-          "name" : "orgName",
-          "in" : "query",
-          "description" : "- If orgName is null or empty, then all SpecialEntity records are returned;\n- Matching special entities + the organization itself are returned otherwise;",
-          "required" : false,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Special entities retrieved successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Collection",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          },
-          "500" : {
-            "description" : "Internal server error",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
     "/entities/{id}" : {
       "delete" : {
         "tags" : [ "Entity Management" ],
@@ -369,6 +369,63 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Collection",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/entities/special/{entityId}" : {
+      "get" : {
+        "tags" : [ "Entity Management" ],
+        "summary" : "Gets Special Entity details by entity ID",
+        "operationId" : "getEntity",
+        "parameters" : [ {
+          "name" : "entityId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/EntityDto",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "400" : {
+            "description" : "Special entity with that ID was not found",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
                   "exampleSetFlag" : false
                 },
                 "exampleSetFlag" : false
@@ -581,7 +638,7 @@
           "content" : {
             "application/json" : {
               "schema" : {
-                "$ref" : "#/components/schemas/UserDto",
+                "$ref" : "#/components/schemas/UserUpdateDto",
                 "exampleSetFlag" : false
               },
               "exampleSetFlag" : false

@@ -53,7 +53,9 @@ public interface UsersProvider extends SecurityUserProvider {
 
     EntityDTO updateEntity(EntityDTO entity);
 
-    ResponseEntity<Void> deleteEntity(String entityId);
+    ResponseEntity<Void> deleteEntity(EntityDTO entity);
 
     UserDTO getUserDetails(String userLogin);
+
+    EntityDTO getEntityDetails(String entityId);
 }
