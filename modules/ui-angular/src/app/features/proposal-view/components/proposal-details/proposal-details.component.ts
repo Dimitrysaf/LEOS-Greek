@@ -110,6 +110,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   invalidTargetProposalDateInput: boolean;
   invalidCorrectionInfoInput: boolean;
   greffeUser: boolean;
+  isSupportRole: boolean;
   diffusionVersion: string = '';
   diffusionBarOptions: string[] = Array.from(
     { length: 20 },
@@ -567,6 +568,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
       });
     this.languages = this.leosConfig.languages.map(language => language.toUpperCase());
     this.greffeUser = this.leosConfig.user.greffeUser;
+    this.isSupportRole = this.leosConfig.user.roles?.includes('SUPPORT');
     this.isAutonomousAct = this.proposal.metadata.documentCollectionName == 'ACT_AUTO_COM';
     this.detailsService.proposalDetailsRefreshedBS.subscribe((proposal) => {
       if (proposal) {
