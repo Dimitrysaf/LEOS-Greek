@@ -1,6 +1,5 @@
 package eu.europa.ec.leos.services.template;
 
-import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.services.api.exception.PendingTranslationException;
@@ -21,8 +20,6 @@ public interface CustomTemplateService {
     void updateTemplate(String packageId,String templateName, List<String> dgCodes);
 
     Boolean unPublishTemplate(String catalogKey);
-
-    List<String> createMilestonesForLanguagePackages(List<LinkedPackage> languagePackages) throws Exception;
 
     void alignDocumentsFromBaseVersion(List<? extends XmlDocument> sourceXmlDocs, List<? extends XmlDocument> targetXmlDocs, DocumentVO documentVO);
 

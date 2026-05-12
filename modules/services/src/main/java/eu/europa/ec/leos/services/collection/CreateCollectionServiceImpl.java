@@ -1,6 +1,5 @@
 package eu.europa.ec.leos.services.collection;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -9,12 +8,8 @@ import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.services.utils.LegUtils;
 import jakarta.inject.Provider;
 
-import eu.europa.ec.leos.domain.repository.LeosPackage;
-import eu.europa.ec.leos.domain.repository.LinkedPackage;
-import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.common.LeosFile;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
@@ -33,7 +29,6 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.notification.cloneProposal.ClonedProposalNotification;
 import eu.europa.ec.leos.model.notification.cloneProposal.RevisionDoneNotification;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.api.exception.PendingTranslationException;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.converter.ProposalConverterService;
@@ -43,11 +38,8 @@ import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.exception.CollaboratorException;
 import eu.europa.ec.leos.services.exception.XmlValidationException;
 import eu.europa.ec.leos.services.notification.NotificationService;
-import eu.europa.ec.leos.services.store.LegService;
-import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
-import eu.europa.ec.leos.services.template.CustomTemplateService;
 import io.atlassian.fugue.Pair;
 
 @Service
@@ -61,9 +53,6 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     private final NotificationService notificationService;
     private SecurityContext securityContext;
     private ProposalService proposalService;
-    private PackageService packageService;
-    private LegService legService;
-    private CustomTemplateService customTemplateService;
 
     private CollectionUrlBuilder urlBuilder;
     private final LanguageHelper languageHelper;
@@ -84,10 +73,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             LanguageHelper languageHelper,
             MessageHelper messageHelper,
             CloneContext cloneContext,
-            ProposalService proposalService,
-            PackageService packageService,
-            LegService legService,
-            CustomTemplateService customTemplateService) {
+            ProposalService proposalService) {
         this.proposalContextProvider = proposalContextProvider;
         this.proposalConverterService = proposalConverterService;
         this.postProcessingDocumentService = postProcessingDocumentService;
@@ -99,9 +85,6 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         this.messageHelper = messageHelper;
         this.cloneContext = cloneContext;
         this.proposalService = proposalService;
-        this.packageService = packageService;
-        this.legService = legService;
-        this.customTemplateService = customTemplateService;
     }
 
     @Override
@@ -314,46 +297,17 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         cloneProposalMetadataVO.setCreationDate(Date.from(proposal.getInitialCreationInstant()));
 
         if (result.isError()) {
-            deleteClonedProposal(proposal);
+            //In case of error delete the cloned proposal.
+            context.useProposal(proposal);
+            try {
+                LOG.debug("Deleting cloned proposal as metadata update operation failed");
+                context.executeDeleteProposal();
+            } catch (Exception e) {
+                LOG.error("Error deleting the cloned proposal", e);
+            }
             CreateCollectionError error = new CreateCollectionError(result.getErrorCode().orElse(ErrorCode.EXCEPTION).ordinal(),
                     messageHelper.getMessage("clone.proposal.metadata.preserve.error"));
             return new CreateCollectionResult(idsAndUrlsHolder, true, error);
-        }
-
-        // Clone linguistic versions if available
-        String availableLangs = originProposal.getMetadata().get().getAvailableLangs();
-        if (StringUtils.isNotEmpty(availableLangs)) {
-            List<Proposal> clonedLanguageProposals = new ArrayList<>();
-            try {
-                LeosPackage originPackage = packageService.findPackageByDocumentId(originProposal.getId());
-                List<LinkedPackage> linkedPackages = packageService.findLinkedPackagesByPackageId(originPackage.getId());
-                List<String> milestoneLegIds = customTemplateService.createMilestonesForLanguagePackages(linkedPackages);
-                for (String legId : milestoneLegIds) {
-                    LegDocument linkedLeg = legService.findLegDocumentById(legId);
-                    if (linkedLeg != null && linkedLeg.getContent().isDefined()) {
-                        LeosFile linkedLegFile = new LeosFile(linkedLeg.getName());
-                        linkedLegFile.setBytes(linkedLeg.getContent().get().getSource().getBytes());
-                        CreateCollectionResult langResult = cloneCollection(linkedLegFile, originRef, targetUser, connectedEntity);
-                        if (!langResult.isCollectionCreated()) {
-                            throw new CreateCollectionException("Failed to clone linguistic version from leg: " + linkedLeg.getName());
-                        }
-                        String langProposalRef = langResult.getProposalId();
-                        clonedLanguageProposals.add(proposalService.findProposalByRef(langProposalRef));
-                    }
-                }
-            } catch (PendingTranslationException e) {
-                LOG.error("Pending translations detected for proposal {}, rolling back", originRef, e);
-                deleteClonedProposal(proposal);
-                clonedLanguageProposals.forEach(this::deleteClonedProposal);
-                CreateCollectionError error = new CreateCollectionError(ErrorCode.EXCEPTION.ordinal(), e.getPendingLanguages(), "PT001");
-                return new CreateCollectionResult(idsAndUrlsHolder, false, error);
-            } catch (Exception e) {
-                LOG.error("Error cloning linguistic versions for proposal {}, rolling back", originRef, e);
-                deleteClonedProposal(proposal);
-                clonedLanguageProposals.forEach(this::deleteClonedProposal);
-                CreateCollectionError error = new CreateCollectionError(ErrorCode.EXCEPTION.ordinal(), e.getMessage());
-                return new CreateCollectionResult(idsAndUrlsHolder, false, error);
-            }
         }
 
         try {
@@ -365,17 +319,6 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             LOG.error("CNS notification exception. Service is not available at the moment.", e);
         }
         return new CreateCollectionResult(idsAndUrlsHolder, true, null);
-    }
-
-    private void deleteClonedProposal(Proposal proposal) {
-        CollectionContextService context = proposalContextProvider.get();
-        context.useProposal(proposal);
-        try {
-            LOG.debug("Deleting cloned proposal {}", proposal.getMetadata().get().getRef());
-            context.executeDeleteProposal();
-        } catch (Exception e) {
-            LOG.error("Error deleting the cloned proposal", e);
-        }
     }
 
     @Override

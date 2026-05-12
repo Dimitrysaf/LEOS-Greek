@@ -574,47 +574,25 @@ export class ProposalDetailsService implements OnDestroy {
       userLogin: login,
     };
     return this.http
-      .post<any>(
+      .post(
         `${apiBaseUrl}/secured/contribution/create-clone-proposal/${milestone.legFileId}`,
         body,
       )
       .subscribe({
         next: (res) => {
-          this.loadingService.setLoading(false);
-          if (!res?.collectionCreated && res?.error?.errorCode === 'PT001') {
-            this.handlePendingTranslationError({
-              error: {
-                errorCode: ErrorCode.PT001,
-                messageKey: 'page.collection.milestones.publish-to-catalog.pending-translation.error',
-                pendingLanguages: res.error.message
-              }
-            });
-          } else if (!res?.collectionCreated && res?.error) {
-            this.growlService.growl({
-              severity: 'danger',
-              summary: this.translateService.instant(
-                'page.collection.milestones.send-copy-for-contribution-dialog.contribution-error',
-              ),
-              detail: res.error.message,
-              life: 3000,
-              isGrowlSticky: false,
-              position: 'bottom-right',
-            });
-          } else {
-            this.growlService.growl({
-              severity: 'success',
-              summary: this.translateService.instant(
-                'global.notifications.title.success',
-              ),
-              detail: this.translateService.instant(
-                'page.collection.milestones.send-copy-for-contribution-dialog.contribution-success',
-              ),
-              life: 3000,
-              isGrowlSticky: false,
-              position: 'bottom-right',
-            });
-            this.loadProposalMilestones();
-          }
+          this.growlService.growl({
+            severity: 'success',
+            summary: this.translateService.instant(
+              'global.notifications.title.success',
+            ),
+            detail: this.translateService.instant(
+              'page.collection.milestones.send-copy-for-contribution-dialog.contribution-success',
+            ),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+          this.loadProposalMilestones();
         },
         error: (res) => {
           this.loadingService.setLoading(false);
@@ -669,7 +647,19 @@ export class ProposalDetailsService implements OnDestroy {
           this.loadProposalMilestones();
         },
         error: (err) => {
-          if (!this.handlePendingTranslationError(err)) {
+          console.log('PUBLISH ERROR')
+          this.pendingTranslationException = err.error;
+          if (this.pendingTranslationException.errorCode === ErrorCode.PT001) {
+            this.dialogService.openDialog({
+              title: this.translateService.instant(this.pendingTranslationException.messageKey + '.title'),
+              content: this.translateService.instant(
+                this.pendingTranslationException.messageKey + '.message',
+                { pendingLanguages: this.pendingTranslationException.pendingLanguages }
+              ),
+              hasDismissButton: false
+            });
+            this.growlService.clearGrowl();
+          } else {
             this.growlService.growl({
               severity: 'danger',
               summary: this.translateService.instant('global.notifications.title.error'),
@@ -1100,23 +1090,6 @@ export class ProposalDetailsService implements OnDestroy {
         }
       })
     );
-  }
-
-  private handlePendingTranslationError(err: any): boolean {
-    this.pendingTranslationException = err?.error;
-    if (this.pendingTranslationException?.errorCode === ErrorCode.PT001) {
-      this.dialogService.openDialog({
-        title: this.translateService.instant(this.pendingTranslationException.messageKey + '.title'),
-        content: this.translateService.instant(
-          this.pendingTranslationException.messageKey + '.message',
-          { pendingLanguages: this.pendingTranslationException.pendingLanguages }
-        ),
-        hasDismissButton: false
-      });
-      this.growlService.clearGrowl();
-      return true;
-    }
-    return false;
   }
 
   unPublishTemplate(packageId: string) {
