@@ -130,8 +130,7 @@ export class UsersManagerComponent implements OnInit, OnChanges {
       this.euiDialogService.openDialog({
         title: "page.workspace.administration.user-info.user-delete-dialog.title",
         content: this.translateService.instant("page.workspace.administration.user-info.user-delete-dialog.content", {user: user}),
-        typeClass: "warning",
-        isMessageBox: true,
+        width: '50em',
         accept: () => this.adminService.deleteUser(user.login).subscribe({
           next: () => {
             this.selectedUser = null;
