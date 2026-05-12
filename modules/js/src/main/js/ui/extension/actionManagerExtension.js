@@ -155,7 +155,7 @@ define(function actionManagerExtensionModule(require) {
     }
 
     function _isElementBeingEdited(connector, element) {
-        return connector.editedElementsIdList.includes(_getElementId($(element)));
+        return (CKEDITOR.currentInstance?.container?.$.contains(element)) || connector.editedElementsIdList.includes(_getElementId($(element)));
     }
 
     function _attachActions(connector, event) {
