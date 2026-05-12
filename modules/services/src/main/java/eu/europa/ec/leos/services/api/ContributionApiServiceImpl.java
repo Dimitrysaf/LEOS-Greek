@@ -115,6 +115,7 @@ import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_DIGIT_FINANC
 import static eu.europa.ec.leos.services.api.exception.ErrorCode.CA001;
 import static eu.europa.ec.leos.services.converter.ProposalConverterServiceImpl.createFileFromXmlSource;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
+import static eu.europa.ec.leos.services.utils.FileUtils.getFormattedByteAsKB;
 import static eu.europa.ec.leos.services.utils.FileUtils.sanitizeFilename;
 
 @Service
@@ -724,8 +725,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                     }
                     annexVO.setBinaryFile((byte[]) legContent.get(originalFilename));
                     annexVO.setOriginalFilename(originalFilename);
-                    Node binaryFileSize = XmlUtils.getFirstElementByXPath(XmlUtils.createDocument(docFile.getBytes()), "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:foreignFileSize");
-                    annexVO.setBinaryFileSize(binaryFileSize.getTextContent());
+                    annexVO.setBinaryFileSize(getFormattedByteAsKB((long)annexVO.getBinaryFile().length));
                 }
                 removeTrackChangesFromDoc(annexVO);
                 annexVO.getMetadata().setIndex(null);
