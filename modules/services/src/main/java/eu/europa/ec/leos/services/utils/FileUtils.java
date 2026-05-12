@@ -170,4 +170,8 @@ public class FileUtils {
         return allowedTypes.contains(mimeType);
     }
 
+    public static String getFormattedByteAsKB(Long bytes) {
+        return String.format("%.2f KB", bytes / 1024.0).replace('.', ',');
+    }
+
 }

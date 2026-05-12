@@ -67,6 +67,7 @@ import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.T
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.TLC_REFERENCE_NAME_FORMAT_SHOW_AS;
 import static eu.europa.ec.leos.services.support.XmlHelper.PROPOSAL_FILE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
+import static eu.europa.ec.leos.services.utils.FileUtils.getFormattedByteAsKB;
 
 public abstract class ProposalConverterServiceImpl implements ProposalConverterService {
 
@@ -136,8 +137,7 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                         LeosFile binaryFile = (LeosFile) unzippedFiles.get(originalFileName);
                         doc.setBinaryFile(binaryFile.getBytes());
                         doc.setOriginalFilename(originalFileName);
-                        Node binaryFileSize = XmlUtils.getFirstElementByXPath(XmlUtils.createDocument(docFile.getBytes()), "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:foreignFileSize");
-                        doc.setBinaryFileSize(binaryFileSize.getTextContent());
+                        doc.setBinaryFileSize(getFormattedByteAsKB((long)doc.getBinaryFile().length));
                     }
                     if (doc != null) {
                         if (doc.getCategory() == LeosCategory.ANNEX) {
