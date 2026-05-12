@@ -21,7 +21,7 @@
                     <FRBRuri value=""/>
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
-                    <FRBRlanguage language="{language}"/>
+                    <FRBRlanguage language="{{language}}"/>
                 </FRBRExpression>
                 <FRBRManifestation>
                     <FRBRthis value=""/>
@@ -37,7 +37,7 @@
             <references source="~COM">
                 <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
                 <TLCReference xml:id="EXPL_MEMORANDUM" href="http://publications.europa.eu/resource/authority/resource-type/EXPL_MEMORANDUM" name="docType" showAs="Explanatory memorandum"/>
-                <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/{language3}" name="language" showAs="{language}"/>
+                <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/{{language3}}" name="language" showAs="{{language}}"/>
             </references>
             <proprietary source="~COM">
                 <leos:templateVersion>4.1.0</leos:templateVersion>
