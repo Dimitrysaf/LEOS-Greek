@@ -77,7 +77,7 @@ java-build:
     - sleep 40
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - npm install
-    - npx cypress run --spec "$SPECS" -e CE_ENV="$TAGS_TO_RUN",TAGS="$TAGS_TO_RUN" --browser chrome --headed
+    - npx cypress run --spec "$SPECS" -e CE_ENV="$TAGS_TO_RUN",TAGS="$TAGS_TO_RUN" --browser chrome
   after_script:
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - node ./cucumberReport.js
