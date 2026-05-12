@@ -4,6 +4,8 @@ import eu.europa.ec.leos.i18n.LanguageHelper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
+import java.util.Locale;
+
 @Component
 @RequestScope
 public class DocumentLanguageContext {
@@ -21,6 +23,6 @@ public class DocumentLanguageContext {
 
     public void setDocumentLanguage(String documentLanguage) {
         this.documentLanguage = documentLanguage;
-        this.languageHelper.setProposalLanguageTag(documentLanguage.toLowerCase());
+        this.languageHelper.setProposalLanguageTag(Locale.ENGLISH.getLanguage());
     }
 }
