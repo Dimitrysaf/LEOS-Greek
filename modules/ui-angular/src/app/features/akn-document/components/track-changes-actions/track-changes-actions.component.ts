@@ -86,6 +86,9 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
         if (this.seeTrackChanges() && e.target instanceof Element && e.target.closest(this.ALLOWED_TRACK_CHANGE_ELEMENT_SELECTOR) === e.currentTarget) {
           e.preventDefault();
           e.stopPropagation();
+          if ((e as any).hostEventType === 'ckEvent') {
+          return;
+          }
           this.showMenu(e);
         }
       });
