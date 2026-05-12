@@ -11,14 +11,13 @@ beforeEach(() => {
     });
 })
 
-afterEach(() => {
+After(function ({ result, pickle }) {
     cy.window().then(win => {
         win.gc?.();
     });
-    if (this.currentTest?.state === "failed") {
-        const screenshotFileName = `${Cypress.spec.name}/${this.currentTest.title} (failed).png`;
+    if (result?.status === 'FAILED') {
+        const screenshotFileName = `${Cypress.spec.name}/${pickle.name} (failed)`;
         cy.screenshot(screenshotFileName, { capture: "runner" });
-        this.attach(`screenshots/${screenshotFileName}`, "image/png");
     }
 });
 
