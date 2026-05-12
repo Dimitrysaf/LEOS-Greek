@@ -115,4 +115,15 @@ public interface EntityApi {
     })
     @DeleteMapping("/{id}")
     void deleteEntity(@PathVariable String id);
+
+    @Operation(summary = "Gets Special Entity details by entity ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "400", description = "Special entity with that ID was not found",
+                    content = @Content(schema = @Schema(implementation = UserRepoExceptionResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = UserRepoExceptionResponse.class)))
+    })
+    @GetMapping("/special/{entityId}")
+    EntityDto getEntity(@PathVariable String entityId);
 }

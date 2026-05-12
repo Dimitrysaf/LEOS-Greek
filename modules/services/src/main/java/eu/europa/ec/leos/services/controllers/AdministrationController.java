@@ -131,8 +131,9 @@ public class AdministrationController {
     @HasAnyPermission({LeosPermission.CAN_MANAGE_ALL_ENTITIES, LeosPermission.CAN_MANAGE_OWN_ENTITIES})
     public ResponseEntity<Void> deleteEntity(@PathVariable final String entityId) throws ForbiddenException {
         final User user = securityContext.getUser();
-        checkAccessToEntity(user, new EntityDTO(entityId));
-        usersClient.deleteEntity(entityId);
+        final EntityDTO entity = usersClient.getEntityDetails(entityId);
+        checkAccessToEntity(user, entity);
+        usersClient.deleteEntity(entity);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

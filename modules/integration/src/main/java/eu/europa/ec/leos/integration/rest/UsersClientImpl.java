@@ -76,11 +76,14 @@ class UsersClientImpl implements UsersProvider {
     @Value("#{integrationProperties['leos.user.repository.users.get_delete.uri']}")
     private String getDeleteUserUri;
 
-    @Value("#{integrationProperties['leos.user.repository.entities.special.uri']}")
-    private String specialEntitiesUri;
+    @Value("#{integrationProperties['leos.user.repository.entities.special.list.uri']}")
+    private String listSpecialEntitiesUri;
 
-    @Value("#{integrationProperties['leos.user.repository.entities.get_delete.uri']}")
-    private String getDeleteEntityUri;
+    @Value("#{integrationProperties['leos.user.repository.entities.special.getDetails.uri']}")
+    private String specialEntityDetailsUri;
+
+    @Value("#{integrationProperties['leos.user.repository.entities.delete.uri']}")
+    private String deleteEntityUri;
 
     @Autowired
     private RestOperations restTemplate;
@@ -257,7 +260,7 @@ class UsersClientImpl implements UsersProvider {
 
     @Override
     public List<EntityDTO> specialEntities(String orgName) {
-        final String uri = repositoryUrl + specialEntitiesUri;
+        final String uri = repositoryUrl + listSpecialEntitiesUri;
         final Map<String, Object> params = Collections.singletonMap(QUERY_PARAM_ORG_NAME, orgName);
         final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(uri).uriVariables(params);
         try {
@@ -282,6 +285,7 @@ class UsersClientImpl implements UsersProvider {
     }
 
     @Override
+    @CacheEvict(value = "users", key = "#entityDto.name")
     public EntityDTO updateEntity(final EntityDTO entityDto) {
         final String uri = repositoryUrl + createEntityUri;
         try {
@@ -292,14 +296,15 @@ class UsersClientImpl implements UsersProvider {
     }
 
     @Override
-    public ResponseEntity<Void> deleteEntity(String entityId) {
-        final String uri = repositoryUrl + getDeleteEntityUri;
-        final Map<String, Object> params = Collections.singletonMap(QUERY_PARAM_ENTITY_ID, entityId);
+    @CacheEvict(value = "users", key = "#entityDto.name")
+    public ResponseEntity<Void> deleteEntity(EntityDTO entityDto) {
+        final String uri = repositoryUrl + deleteEntityUri;
+        final Map<String, Object> params = Collections.singletonMap(QUERY_PARAM_ENTITY_ID, entityDto.getId());
         final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(uri).uriVariables(params);
         try {
             return restTemplate.exchange(builder.toUriString(), HttpMethod.DELETE, null, Void.class);
         } catch (RestClientException e) {
-            throw new RuntimeException("Unable to delete entity " + entityId + ". Failed calling: " + uri, e);
+            throw new RuntimeException("Unable to delete entity " + entityDto + ". Failed calling: " + uri, e);
         }
     }
 
@@ -312,6 +317,18 @@ class UsersClientImpl implements UsersProvider {
             return restTemplate.getForObject(builder.toUriString(), UserDTO.class);
         } catch (RestClientException e) {
             throw new RuntimeException("Unable to fetch user details for login " + userLogin + ". Failed calling: " + uri, e);
+        }
+    }
+
+    @Override
+    public EntityDTO getEntityDetails(String entityId) {
+        final String uri = repositoryUrl + specialEntityDetailsUri;
+        final Map<String, Object> params = Collections.singletonMap(QUERY_PARAM_ENTITY_ID, entityId);
+        final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(uri).uriVariables(params);
+        try {
+            return restTemplate.getForObject(builder.toUriString(), EntityDTO.class);
+        } catch (RestClientException e) {
+            throw new RuntimeException("Unable to fetch entity details for ID " + entityId + ". Failed calling: " + uri, e);
         }
     }
 }

@@ -78,4 +78,10 @@ public class EntityController implements EntityApi {
     public void deleteEntity(final String id) {
         entityService.deleteEntity(id);
     }
+
+    @Override
+    public EntityDto getEntity(final String entityId) {
+        final SpecialEntity entity = entityService.getSpecial(entityId);
+        return entityMapper.toDto(entity);
+    }
 }

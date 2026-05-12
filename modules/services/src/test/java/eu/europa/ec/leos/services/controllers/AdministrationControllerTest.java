@@ -333,7 +333,7 @@ public class AdministrationControllerTest {
                         .content("{\"id\":\"1\",\"name\":\"updatedName\"}")
                         .contentType("application/json"))
                 .andExpect(status().isForbidden());
-        verify(usersClient, times(0)).deleteEntity(anyString());
+        verify(usersClient, times(0)).deleteEntity(any());
     }
 
     @Test
@@ -344,11 +344,13 @@ public class AdministrationControllerTest {
                 Collections.singletonList("ADMIN"));
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_ENTITIES)).thenReturn(true);
-        when(usersClient.deleteEntity("1")).thenReturn(ResponseEntity.ok().build());
+        EntityDTO entityDTO = new EntityDTO("1", "Entity", "Entity");
+        when(usersClient.getEntityDetails("1")).thenReturn(entityDTO);
+        when(usersClient.deleteEntity(entityDTO)).thenReturn(ResponseEntity.ok().build());
 
         mockMvc.perform(delete("/secured/administration/entities/1"))
                 .andExpect(status().isNoContent());
-        verify(usersClient, times(1)).deleteEntity("1");
+        verify(usersClient, times(1)).deleteEntity(entityDTO);
     }
 
     @Test
@@ -359,12 +361,13 @@ public class AdministrationControllerTest {
                 Collections.singletonList("USER_MANAGER"));
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_OWN_ENTITIES)).thenReturn(true);
-        when(usersClient.deleteEntity("1")).thenReturn(ResponseEntity.ok().build());
+        EntityDTO entityDTO = new EntityDTO("1", "Entity", "Entity");
+        when(usersClient.getEntityDetails("1")).thenReturn(entityDTO);
         when(usersClient.specialEntities(eq("Entity"))).thenReturn(Collections.singletonList(new EntityDTO("1", "Entity.updatedName", "Entity")));
 
         mockMvc.perform(delete("/secured/administration/entities/1"))
                 .andExpect(status().isNoContent());
-        verify(usersClient, times(1)).deleteEntity("1");
+        verify(usersClient, times(1)).deleteEntity(entityDTO);
     }
 
     @Test
@@ -375,12 +378,11 @@ public class AdministrationControllerTest {
                 Collections.singletonList("USER_MANAGER"));
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_OWN_ENTITIES)).thenReturn(true);
-        when(usersClient.deleteEntity("1")).thenReturn(ResponseEntity.ok().build());
         when(usersClient.specialEntities(eq("Entity"))).thenReturn(Collections.singletonList(new EntityDTO("2", "Entity.updatedName", "Entity")));
 
         mockMvc.perform(delete("/secured/administration/entities/1"))
                 .andExpect(status().isForbidden());
-        verify(usersClient, times(0)).deleteEntity(anyString());
+        verify(usersClient, times(0)).deleteEntity(any());
     }
 
     @Test

@@ -117,10 +117,7 @@ public class EntityService {
      */
     @Transactional
     public void deleteEntity(final String id) {
-        final SpecialEntity entity = specialEntityRepository.findById(id).orElseThrow(() ->
-                new BadRequestException(
-                        "SpecialEntity with the given ID does not exist.",
-                        "page.workspace.administration.entity-info.special-entity-not-found"));
+        final SpecialEntity entity = getSpecial(id);
         if (hasUsers(id)) {
             throw new BadRequestException(
                     "Cannot delete SpecialEntity(%s): Entity has users associated with it.",
@@ -137,5 +134,12 @@ public class EntityService {
      */
     public boolean hasUsers(final String entityId) {
         return userRepository.countByEntitiesIdAndPerIdNotAndEmailNot(entityId, -1L, "entity@mail.com") > 0;
+    }
+
+    public SpecialEntity getSpecial(String id) {
+        return specialEntityRepository.findById(id).orElseThrow(() ->
+                new BadRequestException(
+                        "SpecialEntity with the given ID does not exist.",
+                        "page.workspace.administration.entity-info.special-entity-not-found"));
     }
 }
