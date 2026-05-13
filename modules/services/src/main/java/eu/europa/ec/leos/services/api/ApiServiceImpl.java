@@ -1733,7 +1733,7 @@ public abstract class ApiServiceImpl implements ApiService {
         LOG.trace(("Creating new milestone..."));
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
-            if (proposal.getMetadata().get().isCustomTemplateAct()) {
+            if (proposal.getMetadata().get().isCustomTemplateAct() && !proposal.isClonedProposal()) {
                 userHelper.validateTemplateManager("This user is not allowed to create milestones in custom templates.");
             }
             String correctedMilestone = new String(milestoneComment.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
