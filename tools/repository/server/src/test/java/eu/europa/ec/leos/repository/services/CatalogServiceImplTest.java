@@ -18,8 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.xml.sax.InputSource;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.TransformerFactory;
+import eu.europa.ec.leos.repository.config.RepositoryXmlFactoryConfig;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -165,9 +164,9 @@ public class CatalogServiceImplTest extends H2TestBase {
         setupCatalogCreationMocks();
 
         when (xmlHelper.createDocument(MOCK_CATALOG_CONFIG_XML.getBytes(StandardCharsets.UTF_8), false)).thenReturn(
-                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(MOCK_CATALOG_CONFIG_XML))));
-        when(xmlHelper.createNewDocument(false)).thenReturn(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument());
-        when(xmlHelper.createTransformer()).thenReturn(TransformerFactory.newInstance().newTransformer());
+                new RepositoryXmlFactoryConfig().documentBuilderFactory().newDocumentBuilder().parse(new InputSource(new StringReader(MOCK_CATALOG_CONFIG_XML))));
+        when(xmlHelper.createNewDocument(false)).thenReturn(new RepositoryXmlFactoryConfig().documentBuilderFactory().newDocumentBuilder().newDocument());
+        when(xmlHelper.createTransformer()).thenReturn(new RepositoryXmlFactoryConfig().transformerFactory().newTransformer());
 
         // Act
         catalogService.publishCustomTemplate(legFileId, "Template", dgs, userId, originalDg);
@@ -414,8 +413,8 @@ public class CatalogServiceImplTest extends H2TestBase {
                 .thenReturn(Arrays.asList(documentV));
 
         when (xmlHelper.createDocument(VALID_XML.getBytes(StandardCharsets.UTF_8), false)).thenReturn(
-                DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(VALID_XML))));
-        when(xmlHelper.createTransformer()).thenReturn(TransformerFactory.newInstance().newTransformer());
+                new RepositoryXmlFactoryConfig().documentBuilderFactory().newDocumentBuilder().parse(new InputSource(new StringReader(VALID_XML))));
+        when(xmlHelper.createTransformer()).thenReturn(new RepositoryXmlFactoryConfig().transformerFactory().newTransformer());
 
         // Act
         Boolean result = catalogService.unpublishCustomTemplate(packageId, userId);
