@@ -483,7 +483,7 @@
   "page.collection.drafts.annex.table.tr.actions.dropdown.edit-title": "Change title",
   "page.collection.drafts.annex.table.tr.actions.dropdown.update": "Update",
   "page.collection.drafts.annex.table.tr.actions.dropdown.upload.rendition": "Upload Rendition",
-  "page.collection.drafts.annex.table.tr.orifinal.file": "Original file",
+  "page.collection.drafts.annex.table.tr.original.file": "Original file",
   "page.collection.drafts.annex.table.tr.pdf.rendition": "Pdf rendition",
   "page.collection.drafts.annex.alert.upload.rendition": "Please upload the pdf rendition",
   "page.collection.drafts.annex.alert.upload.rendition.different.name.title": "Annex",
