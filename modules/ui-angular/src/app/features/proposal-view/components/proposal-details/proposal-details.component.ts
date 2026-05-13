@@ -82,7 +82,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   targetProposalReference: string;
   targetProposalReferenceYear: number | null;
   targetProposalReferenceActingEntity: string | null;
-  targetProposalReferenceNumber: number | null;
+  targetProposalReferenceNumber: string | null;
   targetProposalDate: any;
   correctionInformation: string;
   finalVersion: boolean;
@@ -370,7 +370,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
   getTargetProposalReference(): string {
     if (this.showCorrigendumAddendum
       && this.targetProposalReferenceActingEntity != null
-      && this.targetProposalReferenceActingEntity != undefined && !isNaN(this.targetProposalReferenceNumber) && !isNaN(this.targetProposalReferenceYear)) {
+      && this.targetProposalReferenceActingEntity != undefined && this.targetProposalReferenceNumber && !isNaN(this.targetProposalReferenceYear)) {
       const targetProposalReference = this.targetProposalReferenceActingEntity + '(' + this.targetProposalReferenceYear + ')' + this.targetProposalReferenceNumber;
       if (this.institutionalRefRegEx.test(targetProposalReference) && !isNaN(Number(this.targetProposalReferenceNumber))) {
         return targetProposalReference;
@@ -994,7 +994,7 @@ export class ProposalDetailsComponent implements OnInit, OnDestroy {
         let myArray = this.targetProposalReference.match(this.institutionalRefRegEx);
         this.targetProposalReferenceActingEntity = myArray[1];
         this.targetProposalReferenceYear = parseInt(myArray[2]);
-        this.targetProposalReferenceNumber = parseInt(myArray[3]);
+        this.targetProposalReferenceNumber = myArray[3];
       }
       this.targetProposalInterInstitutionalRefYear = this.proposal.metadata.targetProposalInterInstitutionalRefYear;
       this.targetProposalInterInstitutionalRefNumber = this.proposal.metadata.targetProposalInterInstitutionalRefNumber;
