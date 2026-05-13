@@ -12,6 +12,14 @@ const port = 3000;
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 
+const MUTATING_METHODS = new Set(['POST', 'PUT', 'DELETE', 'PATCH']);
+app.use((req, res, next) => {
+  if (MUTATING_METHODS.has(req.method) && !req.headers.authorization) {
+    return res.status(403).json({ error: 'Forbidden: missing Authorization header' });
+  }
+  next();
+});
+
 require('./app/routes')(app, db);
 
 const options = {
