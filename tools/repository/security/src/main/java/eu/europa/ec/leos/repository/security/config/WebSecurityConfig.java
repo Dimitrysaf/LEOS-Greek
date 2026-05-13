@@ -107,9 +107,7 @@ public class WebSecurityConfig {
 	// New way: Use SecurityFilterChain bean
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf
-				.ignoringRequestMatchers("/token")
-		);
+		http.csrf(csrf -> csrf.disable());
 		http.headers(headers -> headers
 				.frameOptions(frame -> frame.deny())
 				.xssProtection(xss -> xss.disable())
