@@ -233,3 +233,6 @@ styles.css
 /tools/akn4euutil/web/logs
 
 node_modules
+
+# Kiro AI agent configuration
+.kiro/

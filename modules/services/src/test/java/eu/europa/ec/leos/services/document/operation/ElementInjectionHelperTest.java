@@ -8,10 +8,10 @@ import org.springframework.context.ApplicationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import javax.xml.XMLConstants;
+import eu.europa.ec.leos.xml.LeosTransformerFactory;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
@@ -104,11 +104,7 @@ public class ElementInjectionHelperTest {
 
     private String serialize(Document d) throws Exception {
         StringWriter sw = new StringWriter();
-        TransformerFactory tf = TransformerFactory.newInstance();
-        tf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        try { tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, ""); } catch (IllegalArgumentException ignored) {}
-        try { tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, ""); } catch (IllegalArgumentException ignored) {}
-        Transformer t = tf.newTransformer();
+        Transformer t = LeosTransformerFactory.newInstance().newTransformer();
         t.transform(new DOMSource(d), new StreamResult(sw));
         return sw.toString();
     }

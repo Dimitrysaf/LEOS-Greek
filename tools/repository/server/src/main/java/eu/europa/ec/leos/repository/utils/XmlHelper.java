@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 
+import org.xml.sax.InputSource;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -24,6 +26,7 @@ public class XmlHelper {
     public Document createDocument(byte[] xmlContent, boolean namespaceEnabled) {
         try {
             DocumentBuilder builder = getDocumentBuilderFactory(namespaceEnabled).newDocumentBuilder();
+            builder.setEntityResolver((publicId, systemId) -> new InputSource(new ByteArrayInputStream(new byte[0])));
             Document doc = builder.parse(new ByteArrayInputStream(fixUtf8Bytes(xmlContent)));
             doc.getDocumentElement().normalize();
             return doc;
@@ -35,6 +38,7 @@ public class XmlHelper {
     public Document createNewDocument(boolean namespaceEnabled) {
         try {
             DocumentBuilder builder = getDocumentBuilderFactory(namespaceEnabled).newDocumentBuilder();
+            builder.setEntityResolver((publicId, systemId) -> new InputSource(new ByteArrayInputStream(new byte[0])));
             return builder.newDocument();
         } catch (Exception e) {
             throw new IllegalStateException("Wrong XML Structure!", e);
