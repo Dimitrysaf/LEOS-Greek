@@ -50,6 +50,12 @@ java-build:
 .cypress-base:
   variables:
     TAGS_TO_RUN: "@local"
+  cache:
+    key: cypress-deps
+    paths:
+      - modules/test-cypress/node_modules/
+      - cache/Cypress/
+    policy: pull-push
   stage: test
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
