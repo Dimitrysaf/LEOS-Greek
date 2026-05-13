@@ -1260,7 +1260,13 @@ public class DocumentServiceImpl implements DocumentService {
 
     private DocumentContent updateDocumentContent(DocumentVersion docVersion, final DocumentV prevVersion, String userId,
             String contentString, Map<String, ?> metadata, byte[] binaryContent, String originalFilename) {
+
         DocumentContent content = new DocumentContent();
+        if (prevVersion != null) {
+            DocumentContent previousDocumentContent = documentContentRepository.findDocumentContentByVersionId(prevVersion.getVersionId()).get();
+            BeanUtils.copyProperties(previousDocumentContent, content, "id");
+        }
+
         content.setContent(contentString);
         content.setCreatedBy(userId);
         LocalDateTime localDateTime = LocalDateTime.now();

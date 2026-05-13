@@ -20,7 +20,10 @@ public class FileUtils {
 
     public static void validateHybridDocument(MultipartFile foreignAnnexFile) throws IOException {
         validatePath(FilenameUtils.normalize(foreignAnnexFile.getOriginalFilename()));
-        if (!isValidFileNameForForeignAnnex(foreignAnnexFile.getOriginalFilename()) || !isValidMimeTypeForForeignAnnex(foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename())) {
+        if (!isValidFileNameForForeignAnnex(foreignAnnexFile.getOriginalFilename())) {
+            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.invalid.file.name");
+        }
+        if (!isValidMimeTypeForForeignAnnex(foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename())) {
             throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.invalid.file");
         }
         if (!isValidSizeFileForBinaryFile(foreignAnnexFile.getSize())) {
@@ -30,8 +33,11 @@ public class FileUtils {
 
     public static void validateRenditionHybridDocument(MultipartFile foreignAnnexRendition) throws IOException {
         validatePath(FilenameUtils.normalize(foreignAnnexRendition.getOriginalFilename()));
-        if (!isValidFileNameForForeignAnnexRendition(foreignAnnexRendition.getOriginalFilename()) || !isValidMimeTypeForForeignAnnexRendition(foreignAnnexRendition.getBytes(), foreignAnnexRendition.getOriginalFilename())) {
-            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.invalid.file");
+        if (!isValidFileNameForForeignAnnexRendition(foreignAnnexRendition.getOriginalFilename())) {
+            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.invalid.rendition.file.name");
+        }
+        if (!isValidMimeTypeForForeignAnnexRendition(foreignAnnexRendition.getBytes(), foreignAnnexRendition.getOriginalFilename())) {
+            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.invalid.rendition.file");
         }
         if (!isValidSizeFileForBinaryFile(foreignAnnexRendition.getSize())) {
             throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.max.size.error");
