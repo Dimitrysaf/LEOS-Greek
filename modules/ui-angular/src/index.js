@@ -1,4 +1,4 @@
 const locationHref = window.location.href.split('/');
-document.write(
-  "<base href='/" + locationHref[3] + '/' + locationHref[4] + "/'/>",
-);
+const base = document.createElement('base');
+base.href = '/' + encodeURIComponent(locationHref[3]) + '/' + encodeURIComponent(locationHref[4]) + '/';
+document.head.appendChild(base);
