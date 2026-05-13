@@ -34,6 +34,7 @@ import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.converter.ProposalConverterService;
 import eu.europa.ec.leos.services.document.ContributionService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
+import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.exception.CollaboratorException;
 import eu.europa.ec.leos.services.exception.XmlValidationException;
 import eu.europa.ec.leos.services.notification.NotificationService;
@@ -51,6 +52,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     private PostProcessingDocumentService postProcessingDocumentService;
     private final NotificationService notificationService;
     private SecurityContext securityContext;
+    private ProposalService proposalService;
 
     private CollectionUrlBuilder urlBuilder;
     private final LanguageHelper languageHelper;
@@ -70,7 +72,8 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             SecurityContext securityContext, CollectionUrlBuilder urlBuilder,
             LanguageHelper languageHelper,
             MessageHelper messageHelper,
-            CloneContext cloneContext) {
+            CloneContext cloneContext,
+            ProposalService proposalService) {
         this.proposalContextProvider = proposalContextProvider;
         this.proposalConverterService = proposalConverterService;
         this.postProcessingDocumentService = postProcessingDocumentService;
@@ -81,6 +84,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         this.languageHelper = languageHelper;
         this.messageHelper = messageHelper;
         this.cloneContext = cloneContext;
+        this.proposalService = proposalService;
     }
 
     @Override
@@ -250,11 +254,17 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         cloneProposalMetadataVO.setTargetUser(targetUser);
         cloneProposalMetadataVO.setRevisionStatus(messageHelper.getMessage("clone.proposal.status.sent"));
 
+        Proposal originProposal = proposalService.findProposalByRef(propDocument.getRef());
+        boolean customTemplateAct = originProposal.getMetadata().get().isCustomTemplateAct();
+        boolean fromCustomTemplate = originProposal.getMetadata().get().isFromCustomTemplate();
+
         CollectionContextService context = proposalContextProvider.get();
         context.useDocument(propDocument);
         context.useIdsAndUrlsHolder(idsAndUrlsHolder);
         context.useOriginRef(originRef);
         context.useCloneProposal(true);
+        context.useCustomTemplateAct(customTemplateAct);
+        context.useFromCustomTemplate(fromCustomTemplate);
         context.useLanguage(propDocument.getMetadata().getLanguage().toUpperCase());
         context.useTranslated(false);
         context.useConnectedEntity(connectedEntity);

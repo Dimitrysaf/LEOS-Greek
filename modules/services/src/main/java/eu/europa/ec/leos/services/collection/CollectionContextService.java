@@ -117,8 +117,8 @@ public abstract class CollectionContextService {
     protected Boolean eeaRelevance;
     protected String confidentiality;
     protected String nonSensitivityTitle;
-    protected Boolean customTemplateAct;
-    protected Boolean fromCustomTemplate;
+    protected boolean customTemplateAct = false;
+    protected boolean fromCustomTemplate = false;
     protected String packageTitle;
     protected List<String> authenticLang;
     protected LeosAuthenticLanguage isAuthenticLang;
@@ -398,6 +398,8 @@ public abstract class CollectionContextService {
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
                 .withLanguage(language)
+                .withCustomTemplateAct(customTemplateAct)
+                .withFromCustomTemplate(fromCustomTemplate)
                 .build();
 
         List<CatalogItem> catalogItems;

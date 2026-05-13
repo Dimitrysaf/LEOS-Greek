@@ -361,5 +361,9 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     return this.translateService.instant('page.collection.milestones.type.custom-template');
   }
 
+  get hasTranslatedLanguages(): boolean {
+    return this.translatedLanguages?.length > 0;
+  }
+
   protected readonly MilestoneStatus = MilestoneStatus;
 }
