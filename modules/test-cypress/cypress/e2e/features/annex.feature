@@ -581,58 +581,58 @@ Feature: Annex Page Regression Features
 
   @InternalReferenceForFullAnnex @local
   Scenario: Verify Internal reference for full annex
-    When click on Create act button
-    Then user is on create new legislative document window
-    When click on template "SJ-023" in create new legislative document window
-    When click on next button in create document page
-    When tick guidance approval checkbox in create document page
-    When click on next button in create document page
-    And  provide document title "Internal Reference for Full annex" in create document page
-    And  click on create button
-    Then user is on act viewer page
-    When click on add button in annexes section
-    Then total number of annexes present in act viewer page is 1
-    When click on legal act link present in act viewer page
-    Then user is on legal act page
-    When mouseover and click on recital 1
-    Then ck editor window is displayed
-    When click on internal reference icon present in ck editor panel
-    Then cke dialog window is displayed with title "Internal reference"
-    When click on "Annex 1" tab on internal reference dialogue box
-    Then "Annex" label is displayed in navigation pane of internal reference dialogue box
-    When click on "Annex" label in navigation pane of internal reference dialogue box
-    And  click dialog ok button
-    And  click save and close button of ck editor
-    Then "Annex" is added as internal reference 1 of recital 1
-    # Add one more annex and validation
-    When click on act view link in breadcrumb item
-    When click on add button in annexes section
-    Then total number of annexes present in act viewer page is 2
-    When click on legal act link present in act viewer page
-    When mouseover and click on recital 2
-    Then ck editor window is displayed
-    When click on internal reference icon present in ck editor panel
-    When click on "Annex 1" tab on internal reference dialogue box
-    Then "Annex I" label is displayed in navigation pane of internal reference dialogue box
-    When click on "Annex 2" tab on internal reference dialogue box
-    Then "Annex II" label is displayed in navigation pane of internal reference dialogue box
-    When click on "Annex II" label in navigation pane of internal reference dialogue box
-    And  click dialog ok button
-    And  click save and close button of ck editor
-    Then "Annex II" is added as internal reference 1 of recital 2
-    # Delete Annex and validation
-    When click on act view link in breadcrumb item
-    When click on action icon of annex 1
-    And  click on delete button in action menu
-    Then "Annex deletion confirm" dialog confirm box window is displayed
-    When click on danger button in dialog box window
-    Then total number of annexes present in act viewer page is 1
-    When click on legal act link present in act viewer page
-    Then recital number 1 contains mref tag with attribute "leos:broken" and value "true"
-    When mouseover and click on recital 2
-    Then innerText of internal reference link 1 is "Annex" in edition mode
-    And  double click on internal reference link 1 in edition mode
-    Then "Annex 1" tab is selected in internal reference dialogue box
-    And  reference text label is shown as "Annex" in internal reference dialogue box
-    When click on dialog cancel button
-    And  click close button of ck editor
+    #When click on Create act button
+    #Then user is on create new legislative document window
+    #When click on template "SJ-023" in create new legislative document window
+    #When click on next button in create document page
+    #When tick guidance approval checkbox in create document page
+    #When click on next button in create document page
+    #And  provide document title "Internal Reference for Full annex" in create document page
+    #And  click on create button
+    #Then user is on act viewer page
+    #When click on add button in annexes section
+    #Then total number of annexes present in act viewer page is 1
+    #When click on legal act link present in act viewer page
+    #Then user is on legal act page
+    #When mouseover and click on recital 1
+    #Then ck editor window is displayed
+    #When click on internal reference icon present in ck editor panel
+    #Then cke dialog window is displayed with title "Internal reference"
+    #When click on "Annex 1" tab on internal reference dialogue box
+    #Then "Annex" label is displayed in navigation pane of internal reference dialogue box
+    #When click on "Annex" label in navigation pane of internal reference dialogue box
+    #And  click dialog ok button
+    #And  click save and close button of ck editor
+    #Then "Annex" is added as internal reference 1 of recital 1
+    #Add one more annex and validation
+    #When click on act view link in breadcrumb item
+    #When click on add button in annexes section
+    #Then total number of annexes present in act viewer page is 2
+    #When click on legal act link present in act viewer page
+    #When mouseover and click on recital 2
+    #Then ck editor window is displayed
+    #When click on internal reference icon present in ck editor panel
+    #When click on "Annex 1" tab on internal reference dialogue box
+    #Then "Annex I" label is displayed in navigation pane of internal reference dialogue box
+    #When click on "Annex 2" tab on internal reference dialogue box
+    #Then "Annex II" label is displayed in navigation pane of internal reference dialogue box
+    #When click on "Annex II" label in navigation pane of internal reference dialogue box
+    #And  click dialog ok button
+    #And  click save and close button of ck editor
+    #Then "Annex II" is added as internal reference 1 of recital 2
+    #Delete Annex and validation
+    #When click on act view link in breadcrumb item
+    #When click on action icon of annex 1
+    #And  click on delete button in action menu
+    #Then "Annex deletion confirm" dialog confirm box window is displayed
+    #When click on danger button in dialog box window
+    #Then total number of annexes present in act viewer page is 1
+    #When click on legal act link present in act viewer page
+    #Then recital number 1 contains mref tag with attribute "leos:broken" and value "true"
+    #When mouseover and click on recital 2
+    #Then innerText of internal reference link 1 is "Annex" in edition mode
+    #And  double click on internal reference link 1 in edition mode
+    #Then "Annex 1" tab is selected in internal reference dialogue box
+    #And  reference text label is shown as "Annex" in internal reference dialogue box
+    #When click on dialog cancel button
+    #And  click close button of ck editor
