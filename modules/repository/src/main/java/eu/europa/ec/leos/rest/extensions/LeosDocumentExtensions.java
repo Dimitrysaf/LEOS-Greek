@@ -396,6 +396,7 @@ public class LeosDocumentExtensions {
         return Optional.ofNullable(title)
                 .map(FormatUtils::cleanHtmlFormattingElements)
                 .map(FormatUtils::cleanTrackChanges)
+                .map(FormatUtils::cleanNonBreakingSpace)
                 .orElse(title);
     }
 
