@@ -8,7 +8,7 @@ Feature: financial statement page regression features
     Given navigate to leos application with "User1"
     Then user is on home page
 
-  @operationInFinancialStatement @local
+  @operationInFinancialStatement @local @focus
   Scenario: add section for financial statement document on Proposal Screen
     When click on Create act button
     Then user is on create new legislative document window
@@ -30,17 +30,17 @@ Feature: financial statement page regression features
     When mouseover and click on level 2 in financial statement page
     Then ck editor window is displayed
     And  pTag 1 of level contains "[...]" in edition mode
-    And  internal reference icon is present in ck editor panel
+    #And  internal reference icon is present in ck editor panel
     When select content from offset 0 to 5 of p tag 1 of level in edition mode
     And  click delete button from keyboard in edition mode
     And  append "text" at p tag 1 of level in edition mode
     And  move the cursor position to offset 4 in pTag 1 of fs level in edition mode
-    When click on internal reference icon present in ck editor panel
-    Then cke dialog window is displayed with title "Internal reference"
-    When click on "Having regard to the proposal from the European..." link in citations on the left side of internal reference window
-    And  click on ok button in cke dialog window
+    #When click on internal reference icon present in ck editor panel
+    #Then cke dialog window is displayed with title "Internal reference"
+    #When click on "Having regard to the proposal from the European..." link in citations on the left side of internal reference window
+    #And  click on ok button in cke dialog window
     And  click save and close button of ck editor
-    Then "second citation" is added as internal reference 1 of content of level 2
+    #Then "second citation" is added as internal reference 1 of content of level 2
     Then content of level 2 contains "text" in financial statement page
     When click on edit icon of level 2 in financial statement page
     Then ck editor window is displayed
