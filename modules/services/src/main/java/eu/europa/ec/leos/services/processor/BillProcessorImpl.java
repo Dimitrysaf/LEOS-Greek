@@ -46,7 +46,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
 import static eu.europa.ec.leos.services.support.XmlUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.BILL;
@@ -57,6 +56,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.ID_PLACEHOLDER_ESCAPE
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_HTML_OL_ID_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
@@ -115,6 +115,7 @@ public class BillProcessorImpl implements BillProcessor {
             case ARTICLE:
                 template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, ARTICLE), StructureConfigUtils.HASH_NUM_VALUE, messageHelper.getMessage("toc.item.type.article.heading"), messageHelper);
                 String updatedTemplate = insertListIdAttr(template, items);
+                updatedTemplate = insertEditableAttr(updatedTemplate);
                 updatedContent = insertNewElement(document, elementId, before, tagName, updatedTemplate);
                 updatedContent = numberService.renumberArticles(updatedContent);
                 break;
@@ -164,6 +165,11 @@ public class BillProcessorImpl implements BillProcessor {
         StringBuilder builder = XmlHelper.insertOrUpdateAttributeValue(new StringBuilder(template), LEOS_HTML_OL_ID_ATTR, ID_PLACEHOLDER);
         template = replaceAll(builder.toString(), ID_PLACEHOLDER_ESCAPED, IdGenerator.generateId());
         return template;
+    }
+
+    private static String insertEditableAttr(String template) {
+        StringBuilder builder = XmlHelper.insertOrUpdateAttributeValue(new StringBuilder(template), LEOS_EDITABLE_ATTR, Boolean.TRUE.toString());
+        return builder.toString();
     }
 
     public byte[] renumberDocument(Bill document, String language) {

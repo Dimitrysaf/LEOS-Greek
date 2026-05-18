@@ -852,6 +852,7 @@ public class XmlContentProcessorHelper {
         if (tagName.equals(ARTICLE)) {
             XmlUtils.insertAttributeIfNotPresent(node, LEOS_HTML_OL_ID_ATTR,
                     IdGenerator.generateId());
+            XmlUtils.insertAttributeIfNotPresent(node, LEOS_EDITABLE_ATTR , Boolean.TRUE.toString());
         }
     }
 }
