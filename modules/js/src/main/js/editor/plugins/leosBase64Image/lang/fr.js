@@ -16,5 +16,6 @@ CKEDITOR.plugins.setLang("leosBase64Image","fr",{
 	"lockRatio":"Conserver les proportions",
 	"vSpace":"Espacement vertical",
 	"hSpace":"Espacement horizontal",
-	"border":"Bordure"
+	"border":"Bordure",
+    "pasteWarning":"Il n'est pas possible de coller une image ici."
 });
