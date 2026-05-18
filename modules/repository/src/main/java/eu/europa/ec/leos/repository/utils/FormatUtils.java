@@ -34,4 +34,10 @@ public class FormatUtils {
                 .orElse(s);
     }
 
+    public static String cleanNonBreakingSpace(String s) {
+        return Optional.ofNullable(StringEscapeUtils.unescapeXml(s))
+                .map(str -> str.replaceAll("&nbsp;|\u00a0", " "))
+                .orElse(null);
+    }
+
 }
