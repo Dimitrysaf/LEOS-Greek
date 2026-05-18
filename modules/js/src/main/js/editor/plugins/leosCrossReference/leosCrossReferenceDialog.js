@@ -75,7 +75,7 @@ define(function leosCrossReferenceDialog(require) {
             addTabs: function addTabs(dialogDefinitionCKE) {
                 editor.LEOS.documentsMetadata.forEach(function (documentMetadata) {
                     if (documentMetadata.category !== "MEMORANDUM" && documentMetadata.category !== "COUNCIL_EXPLANATORY"
-                                && documentMetadata.category !== "STAT_DIGIT_FINANC_LEGIS") {
+                                && documentMetadata.category !== "STAT_DIGIT_FINANC_LEGIS" && documentMetadata.ref === editor.LEOS.documentRef) {
                         tabHandlers.addHandler(documentMetadata.ref);
                         var htmlTocTemplate = '<div id="treeContainer' + documentMetadata.ref + '" class="crTableOfContent"></div>';
                         var htmlContentTemplate = '<div><div id="contentContainer' + documentMetadata.ref + '""></div>'
