@@ -21,27 +21,209 @@ define(function leosPastePluginModule(require) {
 
     // load module dependencies
     let pluginTools = require('plugins/pluginTools');
+    let leosPluginUtils = require('plugins/leosPluginUtils');
+    let leosKeyHandler = require('plugins/leosKeyHandler/leosKeyHandler');
     let pluginName = 'leosPaste';
     let REF = "ref";
     let MREF = "mref";
 
+    const IMAGE_PASTE_WARNING_DIALOG = 'leosPasteImageWarningDialog';
+    const IMAGE_PASTE_SIZE_WARNING_DIALOG = 'leosPasteImageSizeWarningDialog';
+
     let pluginDefinition = {
         init: function init(editor) {
+
+            pluginTools.addDialog(IMAGE_PASTE_WARNING_DIALOG, function() {
+                return {
+                    title: 'Warning',
+                    minWidth: 400,
+                    minHeight: 50,
+                    contents: [{
+                        id: 'tab1',
+                        elements: [{
+                            id: 'imagePasteWarning',
+                            type: 'hbox',
+                            className: 'crDialogbox',
+                            widths: ['100%'],
+                            height: 50,
+                            children: [{
+                                type: 'html',
+                                html: '<span>' + (editor.lang.base64image && editor.lang.base64image.pasteWarning || "It's not possible to paste an image here.") + '</span>'
+                            }]
+                        }]
+                    }],
+                    buttons: [CKEDITOR.dialog.okButton],
+                    onOk: function(event) {
+                        event.sender.hide();
+                        event.sender._.editor.fire('focus');
+                    }
+                };
+            });
+            var imagePasteWarningCommand = editor.addCommand(IMAGE_PASTE_WARNING_DIALOG, new CKEDITOR.dialogCommand(IMAGE_PASTE_WARNING_DIALOG));
+
+            pluginTools.addDialog(IMAGE_PASTE_SIZE_WARNING_DIALOG, function() {
+                return {
+                    title: 'Warning',
+                    minWidth: 400,
+                    minHeight: 50,
+                    contents: [{
+                        id: 'tab1',
+                        elements: [{
+                            id: 'imagePasteSizeWarning',
+                            type: 'hbox',
+                            className: 'crDialogbox',
+                            widths: ['100%'],
+                            height: 50,
+                            children: [{
+                                type: 'html',
+                                html: '<span>' + (editor.lang.base64image && editor.lang.base64image.sizeNotValid || 'Image not valid, size bigger than ') + leosPluginUtils.MAX_IMAGE_SIZE_IN_KB + 'kb</span>'
+                            }]
+                        }]
+                    }],
+                    buttons: [CKEDITOR.dialog.okButton],
+                    onOk: function(event) {
+                        event.sender.hide();
+                        event.sender._.editor.fire('focus');
+                    }
+                };
+            });
+            var imagePasteSizeWarningCommand = editor.addCommand(IMAGE_PASTE_SIZE_WARNING_DIALOG, new CKEDITOR.dialogCommand(IMAGE_PASTE_SIZE_WARNING_DIALOG));
+
+            // intercept native paste to catch image/png binary (Word puts no text/html for images)
+            editor.on('contentDom', function() {
+                // debug: track all focus/blur events
+                editor.editable().attachListener(editor.editable(), 'paste', function(evt) {
+                    var nativeEvent = evt.data.$;
+                    var clipboardData = nativeEvent.clipboardData;
+                    if (!clipboardData) return;
+
+                    var items = clipboardData.items;
+                    var imageItem = null;
+                    for (var i = 0; i < items.length; i++) {
+                        if (items[i].kind === 'file' && items[i].type.startsWith('image/')) {
+                            imageItem = items[i];
+                            break;
+                        }
+                    }
+
+                    var htmlContent = clipboardData.getData('text/html');
+
+                    if (imageItem && !htmlContent) {
+                        nativeEvent.preventDefault();
+                        nativeEvent.stopPropagation();
+
+                        if (!_isImagePluginEnabled(editor)) {
+                            imagePasteWarningCommand.exec();
+                            return;
+                        }
+
+                        var blob = imageItem.getAsFile();
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            var dataUrl = e.target.result;
+                            if (dataUrl.length >= leosPluginUtils.MAX_IMAGE_SRC_LENGTH) {
+                                imagePasteSizeWarningCommand.exec();
+                                return;
+                            }
+                            var newImg = editor.document.createElement('img');
+                            newImg.setAttribute('src', dataUrl);
+                            _insertImage(editor, newImg);
+                        };
+                        reader.readAsDataURL(blob);
+                    }
+                }, null, null, 1);
+            });
 
             editor.on('paste', function (evt) {
                 let dataValue = evt.data.dataValue.trim();
                 let hasTable = dataValue.includes('<table');
+                let hasImage = dataValue.includes('<img');
                 let isWordContent = isContentFromWordOrXls(dataValue);
+                let isImageContent = hasImage && (isWordContent || dataValue.includes('data:image'));
 
                 // In tableOnlyMode, treat table paste as regular content (only extract text, don't create new tables)
                 if (hasTable && (isWordContent || dataValue.startsWith('<table')) && !editor.config.tableOnlyMode) {
                     evt.data.dataValue = cleanWordTable(dataValue);
+                } else if (isImageContent && _isImagePluginEnabled(editor)) {
+                    evt.cancel();
+                    let imgs = _extractImages(dataValue);
+                    imgs.forEach(function(imgData) {
+                        if (imgData.src.length >= leosPluginUtils.MAX_IMAGE_SRC_LENGTH) {
+                            imagePasteSizeWarningCommand.exec();
+                            return;
+                        }
+                        let newImg = editor.document.createElement('img');
+                        newImg.setAttribute('src', imgData.src);
+                        if (imgData.alt) newImg.setAttribute('alt', imgData.alt);
+                        if (imgData.width) newImg.setAttribute('width', imgData.width);
+                        if (imgData.height) newImg.setAttribute('height', imgData.height);
+                        _insertImage(editor, newImg);
+                    });
+                } else if (isImageContent) {
+                    evt.data.dataValue = '';
+                    evt.cancel();
+                    imagePasteWarningCommand.exec();
                 } else {
                     evt.data.dataValue = processRegularContent(editor, dataValue, evt.data.type);
                 }
             }, 7);
         }
     };
+
+    function _insertImage(editor, newImg) {
+        let selection = editor.getSelection();
+        let selectedElement = leosKeyHandler.getSelectedElement(selection);
+        editor.fire('beforeImagePaste');
+        if (leosPluginUtils.isRecitalAA(selectedElement)) {
+            _insertImgInSubflow(editor, selection, selectedElement, newImg);
+        } else {
+            editor.insertElement(newImg);
+        }
+        if (editor.plugins.imageresize) editor.plugins.imageresize.resize(editor, newImg, leosPluginUtils.MAX_IMAGE_DISPLAY_SIZE, leosPluginUtils.MAX_IMAGE_DISPLAY_SIZE);
+    }
+
+    function _insertImgInSubflow(editor, selection, selectedElement, img) {
+        let range = selection.getRanges()[0];
+        if (leosPluginUtils.getElementName(selectedElement) === leosPluginUtils.ORDER_LIST_ELEMENT) {
+            selectedElement = selectedElement.getLast().getLast();
+        }
+        selectedElement = selectedElement.getAscendant(leosPluginUtils.DIV, true);
+        img.insertAfter(selectedElement);
+        range.setStartAfter(selectedElement);
+        range.fixBlock(true, leosPluginUtils.DIV);
+        range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.SUBFLOW_NAME);
+        range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_HCONTAINER, leosPluginUtils.HCONTAINER_IMAGE);
+        if (selectedElement.getAscendant('ol') && selectedElement.getAscendant('ol').getAttribute('data-akn-name')
+                && selectedElement.getAscendant('ol').getAttribute('data-akn-name') === 'recital') {
+            range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_MEDIA_CONTAINER, 'mediacontainer');
+        } else {
+            range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_SUB_HCONTAINER, leosPluginUtils.SUB_HCONTAINER_IMAGE);
+        }
+        leosPluginUtils.setFocus(img, editor);
+    }
+
+    function _isImagePluginEnabled(editor) {
+        let cmd = editor.getCommand('leosBase64ImageDialog');
+        return cmd && cmd.state !== CKEDITOR.TRISTATE_DISABLED;
+    }
+
+    function _extractImages(htmlString) {
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(htmlString, 'text/html');
+        let imgs = doc.querySelectorAll('img');
+        let result = [];
+        imgs.forEach(function(img) {
+            const src = img.getAttribute('src') || '';
+            if (!src) return;
+            result.push({
+                src: src,
+                alt: img.getAttribute('alt') || '',
+                width: img.getAttribute('width') || parseInt(img.style.width, 10) || '',
+                height: img.getAttribute('height') || parseInt(img.style.height, 10) || ''
+            });
+        });
+        return result;
+    }
 
     // Process regular (non-table, non-image) content
     function processRegularContent(editor, dataValue, type) {
@@ -75,7 +257,7 @@ define(function leosPastePluginModule(require) {
 
     function isContentFromWordOrXls(htmlString) {
         return htmlString.includes('MsoTable') || htmlString.includes('data-tablestyle') ||
-        htmlString.includes('mso-') || htmlString.includes('class=Mso') || htmlString.includes('xmlns:w=') ;
+            htmlString.includes('mso-') || htmlString.includes('class=Mso') || htmlString.includes('xmlns:w=') ;
     }
 
     function cleanWordTable(htmlString, isWordContent) {

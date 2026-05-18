@@ -26,8 +26,8 @@ define(function leosBase64ImageDialog(require) {
         var t = null,
             selectedImg = null, hiddenForm = null,
             orgWidth = null, orgHeight = null,
-            imgPreview = null, imgScal = 1, lock = true, MAX_IMAGE_SRC_LENGTH = 1048575, MAX_IMAGE_SIZE_IN_KB = 700;
-        // More or less a base64 is calculated Math.round(MAX_IMAGE_SRC_LENGTH*3/4) giving 767kb of image size, we'll allow 700kb.
+            imgPreview = null, imgScal = 1, lock = true;
+        const MAX_IMAGE_SRC_LENGTH = leosPluginUtils.MAX_IMAGE_SRC_LENGTH, MAX_IMAGE_SIZE_IN_KB = leosPluginUtils.MAX_IMAGE_SIZE_IN_KB;
         
         function validateImageSize(src) {
             return src.length < MAX_IMAGE_SRC_LENGTH;
@@ -343,7 +343,7 @@ define(function leosBase64ImageDialog(require) {
                     }
 
                     /* Resize image */
-                    if (editor.plugins.imageresize) editor.plugins.imageresize.resize(editor, newImg, 800, 800);
+                    if (editor.plugins.imageresize) editor.plugins.imageresize.resize(editor, newImg, leosPluginUtils.MAX_IMAGE_DISPLAY_SIZE, leosPluginUtils.MAX_IMAGE_DISPLAY_SIZE);
                 }
             },
             

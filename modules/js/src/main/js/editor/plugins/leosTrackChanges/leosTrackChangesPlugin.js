@@ -835,6 +835,12 @@ define(function leosTrackChangesPluginModule(require) {
                 }
             }, null, null, 15);
 
+            editor.on('beforeImagePaste', function() {
+                if (isTrackChangesEnabled) {
+                    handleMutations = true;
+                }
+            });
+
             // Implementation for tracking special characters
             // Handle element added by authorial note, references, mathjax and table
             CKEDITOR.on("dialogDefinition", function(event) {
