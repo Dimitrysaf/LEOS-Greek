@@ -18,5 +18,6 @@ CKEDITOR.plugins.setLang("leosBase64Image","en",{
 	"hSpace":"HSpace",
 	"border":"Border",
     "sizeNotValid":"Image not valid, size bigger than ",
-    "loading":"Loading..."
+    "loading":"Loading...",
+    "pasteWarning":"It's not possible to paste an image here."
 });

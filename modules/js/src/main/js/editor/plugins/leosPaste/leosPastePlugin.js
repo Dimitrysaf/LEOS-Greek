@@ -33,80 +33,30 @@ define(function leosPastePluginModule(require) {
     let pluginDefinition = {
         init: function init(editor) {
 
-            pluginTools.addDialog(IMAGE_PASTE_WARNING_DIALOG, function() {
-                return {
-                    title: 'Warning',
-                    minWidth: 400,
-                    minHeight: 50,
-                    contents: [{
-                        id: 'tab1',
-                        elements: [{
-                            id: 'imagePasteWarning',
-                            type: 'hbox',
-                            className: 'crDialogbox',
-                            widths: ['100%'],
-                            height: 50,
-                            children: [{
-                                type: 'html',
-                                html: '<span>' + (editor.lang.base64image && editor.lang.base64image.pasteWarning || "It's not possible to paste an image here.") + '</span>'
-                            }]
-                        }]
-                    }],
-                    buttons: [CKEDITOR.dialog.okButton],
-                    onOk: function(event) {
-                        event.sender.hide();
-                        event.sender._.editor.fire('focus');
-                    }
-                };
-            });
-            var imagePasteWarningCommand = editor.addCommand(IMAGE_PASTE_WARNING_DIALOG, new CKEDITOR.dialogCommand(IMAGE_PASTE_WARNING_DIALOG));
+            pluginTools.addDialog(IMAGE_PASTE_WARNING_DIALOG, _createWarningDialog('imagePasteWarning', function() { return editor.lang.base64image && editor.lang.base64image.pasteWarning || "It's not possible to paste an image here."; }));
+            const imagePasteWarningCommand = editor.addCommand(IMAGE_PASTE_WARNING_DIALOG, new CKEDITOR.dialogCommand(IMAGE_PASTE_WARNING_DIALOG));
 
-            pluginTools.addDialog(IMAGE_PASTE_SIZE_WARNING_DIALOG, function() {
-                return {
-                    title: 'Warning',
-                    minWidth: 400,
-                    minHeight: 50,
-                    contents: [{
-                        id: 'tab1',
-                        elements: [{
-                            id: 'imagePasteSizeWarning',
-                            type: 'hbox',
-                            className: 'crDialogbox',
-                            widths: ['100%'],
-                            height: 50,
-                            children: [{
-                                type: 'html',
-                                html: '<span>' + (editor.lang.base64image && editor.lang.base64image.sizeNotValid || 'Image not valid, size bigger than ') + leosPluginUtils.MAX_IMAGE_SIZE_IN_KB + 'kb</span>'
-                            }]
-                        }]
-                    }],
-                    buttons: [CKEDITOR.dialog.okButton],
-                    onOk: function(event) {
-                        event.sender.hide();
-                        event.sender._.editor.fire('focus');
-                    }
-                };
-            });
-            var imagePasteSizeWarningCommand = editor.addCommand(IMAGE_PASTE_SIZE_WARNING_DIALOG, new CKEDITOR.dialogCommand(IMAGE_PASTE_SIZE_WARNING_DIALOG));
+            pluginTools.addDialog(IMAGE_PASTE_SIZE_WARNING_DIALOG, _createWarningDialog('imagePasteSizeWarning', function() { return (editor.lang.base64image && editor.lang.base64image.sizeNotValid || 'Image not valid, size bigger than ') + leosPluginUtils.MAX_IMAGE_SIZE_IN_KB + 'kb'; }));
+            const imagePasteSizeWarningCommand = editor.addCommand(IMAGE_PASTE_SIZE_WARNING_DIALOG, new CKEDITOR.dialogCommand(IMAGE_PASTE_SIZE_WARNING_DIALOG));
 
             // intercept native paste to catch image/png binary (Word puts no text/html for images)
             editor.on('contentDom', function() {
                 // debug: track all focus/blur events
                 editor.editable().attachListener(editor.editable(), 'paste', function(evt) {
-                    var nativeEvent = evt.data.$;
-                    var clipboardData = nativeEvent.clipboardData;
+                    let nativeEvent = evt.data.$;
+                    let clipboardData = nativeEvent.clipboardData;
                     if (!clipboardData) return;
 
-                    var items = clipboardData.items;
-                    var imageItem = null;
-                    for (var i = 0; i < items.length; i++) {
+                    let items = clipboardData.items;
+                    let imageItem = null;
+                    for (let i = 0; i < items.length; i++) {
                         if (items[i].kind === 'file' && items[i].type.startsWith('image/')) {
                             imageItem = items[i];
                             break;
                         }
                     }
 
-                    var htmlContent = clipboardData.getData('text/html');
+                    let htmlContent = clipboardData.getData('text/html');
 
                     if (imageItem && !htmlContent) {
                         nativeEvent.preventDefault();
@@ -117,15 +67,15 @@ define(function leosPastePluginModule(require) {
                             return;
                         }
 
-                        var blob = imageItem.getAsFile();
-                        var reader = new FileReader();
+                        let blob = imageItem.getAsFile();
+                        let reader = new FileReader();
                         reader.onload = function(e) {
-                            var dataUrl = e.target.result;
+                            let dataUrl = e.target.result;
                             if (dataUrl.length >= leosPluginUtils.MAX_IMAGE_SRC_LENGTH) {
                                 imagePasteSizeWarningCommand.exec();
                                 return;
                             }
-                            var newImg = editor.document.createElement('img');
+                            let newImg = editor.document.createElement('img');
                             newImg.setAttribute('src', dataUrl);
                             _insertImage(editor, newImg);
                         };
@@ -169,6 +119,32 @@ define(function leosPastePluginModule(require) {
             }, 7);
         }
     };
+
+    function _createWarningDialog(id, getMessage) {
+        return function() {
+            return {
+                title: 'Warning',
+                minWidth: 400,
+                minHeight: 50,
+                contents: [{
+                    id: 'tab1',
+                    elements: [{
+                        id: id,
+                        type: 'hbox',
+                        className: 'crDialogbox',
+                        widths: ['100%'],
+                        height: 50,
+                        children: [{ type: 'html', html: '<span>' + getMessage() + '</span>' }]
+                    }]
+                }],
+                buttons: [CKEDITOR.dialog.okButton],
+                onOk: function(event) {
+                    event.sender.hide();
+                    event.sender._.editor.fire('focus');
+                }
+            };
+        };
+    }
 
     function _insertImage(editor, newImg) {
         let selection = editor.getSelection();
