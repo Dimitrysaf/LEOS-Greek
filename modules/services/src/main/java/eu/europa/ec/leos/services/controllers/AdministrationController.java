@@ -73,9 +73,7 @@ public class AdministrationController {
                 ? new HashSet<>(dto.getEntities())
                 : null;
         if (!securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_USERS_ROLES)) {
-            if (dto.getRoles() != null && !dto.getRoles().isEmpty()) {
-                throw new ForbiddenException("User " + user.getLogin() + " is not allowed to assign roles");
-            }
+            dto.setRoles(null);
         }
         if(!securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_ENTITIES)
             && entitiesInDto != null
@@ -156,7 +154,7 @@ public class AdministrationController {
             }
             name = userEntity.getOrganizationName() + '.' + requestEntity.getName();
         }
-        return new EntityDTO(requestEntity.getId(), name, userEntity.getOrganizationName());
+        return new EntityDTO(requestEntity.getId(), name, userEntity.getOrganizationName(), requestEntity.getSpecial());
     }
 
     private void checkAccessToEntity(User user, EntityDTO requestEntity) throws ForbiddenException {

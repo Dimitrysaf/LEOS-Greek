@@ -37,7 +37,7 @@ public class SaveTocAnnexAddProposalTest_IT extends SaveTocAnnexProposalTest_IT 
     public void onSetup() throws Exception {
         super.onSetUp();
         List<Entity> entities = new ArrayList<Entity>();
-        entities.add(new Entity("1", "DIGIT.B2", "DIGIT"));
+        entities.add(new Entity("1", "DIGIT.B2", "DIGIT", true));
         User user = ModelHelper.buildUser(45L, "jane", "jane", entities);
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.getUserName()).thenReturn("jane");

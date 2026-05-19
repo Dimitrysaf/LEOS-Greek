@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -46,9 +47,12 @@ public class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @Test
     void GIVEN_no_term_AND_no_pagination_WHEN_search_THEN_all_users_returned() throws Exception {
-        long count = userRepo.findAll().stream().filter(u -> u.getPerId() != -1).count();
+        long count = jdbcTemplate.queryForObject("select count(distinct user_login ) from leos_user where user_per_id != -1", Long.class);
         mockMvc.perform(get("/users/search"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
@@ -68,7 +72,7 @@ public class UserControllerTest {
 
     @Test
     void GIVEN_no_term_AND_sorted_by_valid_field_WHEN_search_THEN_sorted_users_returned() throws Exception {
-        long count = userRepo.findAll().stream().filter(u -> u.getPerId() != -1).count();
+        long count = jdbcTemplate.queryForObject("select count(distinct user_login ) from leos_user where user_per_id != -1", Long.class);
         mockMvc.perform(get("/users/search")
                         .param("sort", "firstName")
                         .param("size", String.valueOf(count)))
@@ -97,11 +101,11 @@ public class UserControllerTest {
 
         List<SpecialEntity> allEntities = specialEntityRepo.findAll();
         List<UserEntityDto> addedEntities = allEntities.stream()
-                .map(e -> new UserEntityDto(e.getId(), e.getName(), e.getOrganizationName(), null))
+                .map(e -> new UserEntityDto(e.getId(), e.getName(), e.getOrganizationName(), null, null))
                 .limit(5)
                 .toList();
 
-        UserDto userDto = new UserDto(login, "O'Brien", "émily-Claire", "email@email", addedEntities, Arrays.asList("ADMIN", "SUPPORT"), null, true);
+        UserDto userDto = new UserDto(login, "O'Brien", "émily-Claire", "email@email", addedEntities, Arrays.asList("ADMIN", "SUPPORT"), null, true, null);
         mockMvc.perform(post("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto))).andExpect(status().isOk());
@@ -120,11 +124,11 @@ public class UserControllerTest {
         Random random = new Random();
         String login = "login" + random.nextInt(10000);
 
-        UserEntityDto nonexistentEntity = new UserEntityDto("nonexistent", "name", "org", null);
+        UserEntityDto nonexistentEntity = new UserEntityDto("nonexistent", "name", "org", null, null);
         List<UserEntityDto> addedEntities = List.of(nonexistentEntity);
 
 
-        UserDto userDto = new UserDto(login, "last", "first", "email@email", addedEntities, Arrays.asList("ADMIN", "SUPPORT"), null, true);
+        UserDto userDto = new UserDto(login, "last", "first", "email@email", addedEntities, Arrays.asList("ADMIN", "SUPPORT"), null, true, null);
         mockMvc.perform(post("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
@@ -140,10 +144,10 @@ public class UserControllerTest {
         String login = "login" + random.nextInt(10000);
         List<SpecialEntity> allEntities = specialEntityRepo.findAll();
         List<UserEntityDto> entities = allEntities.stream()
-                .map(e -> new UserEntityDto(e.getId(), e.getName(), e.getOrganizationName(), null))
+                .map(e -> new UserEntityDto(e.getId(), e.getName(), e.getOrganizationName(), null, null))
                 .limit(3)
                 .toList();
-        UserDto userDto = new UserDto(login, "last", "first", "email@email", entities, null, new Date(0), true);
+        UserDto userDto = new UserDto(login, "last", "first", "email@email", entities, null, new Date(0), true, null);
         mockMvc.perform(post("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto))).andExpect(status().isOk());
@@ -163,7 +167,7 @@ public class UserControllerTest {
         Random random = new Random();
         String login = "login" + random.nextInt(10000);
 
-        UserDto userDto = new UserDto(login, "last", "first", "email@email", null, null, null, true);
+        UserDto userDto = new UserDto(login, "last", "first", "email@email", null, null, null, true, null);
         mockMvc.perform(post("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
@@ -172,7 +176,7 @@ public class UserControllerTest {
 
     @Test
     void GIVEN_an_existing_login_WHEN_create_THEN_conflict() throws Exception {
-        UserDto userDto = new UserDto("admin", "last", "first", "email@email", null, null, null, true);
+        UserDto userDto = new UserDto("admin", "last", "first", "email@email", null, null, null, true, null);
         mockMvc.perform(post("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
@@ -182,7 +186,7 @@ public class UserControllerTest {
 
     @Test
     void GIVEN_login_with_spaces_WHEN_create_THEN_bad_request() throws Exception {
-        UserDto userDto = new UserDto("admin 123", "last", "first", "email@email", null, null, null, true);
+        UserDto userDto = new UserDto("admin 123", "last", "first", "email@email", null, null, null, true, null);
         mockMvc.perform(post("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
@@ -195,11 +199,11 @@ public class UserControllerTest {
         String login = "login" + random.nextInt(10000);
         List<SpecialEntity> allEntities = specialEntityRepo.findAll();
         List<UserEntityDto> newEntities = allEntities.stream()
-                .map(e -> new UserEntityDto(e.getId(), e.getName(), e.getOrganizationName(), null))
+                .map(e -> new UserEntityDto(e.getId(), e.getName(), e.getOrganizationName(), null, null))
                 .limit(3)
                 .toList();
 
-        UserDto userDto = new UserDto(login, "  la st", " fi rst ", "email@email", newEntities, null, null, true);
+        UserDto userDto = new UserDto(login, "  la st", " fi rst ", "email@email", newEntities, null, null, true, null);
         mockMvc.perform(post("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto))).andExpect(status().isOk());
@@ -211,7 +215,7 @@ public class UserControllerTest {
 
     @Test
     void GIVEN_login_exists_with_different_letter_case_WHEN_create_THEN_conflict() throws Exception {
-        UserDto userDto = new UserDto("Admin", "last", "first", "email@email", null, null, null, true);
+        UserDto userDto = new UserDto("Admin", "last", "first", "email@email", null, null, null, true, null);
         mockMvc.perform(post("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
@@ -225,13 +229,13 @@ public class UserControllerTest {
         for (char c : charsToAvoid) {
             Random random = new Random();
             String login = "login" + random.nextInt(10000);
-            UserDto userDto = new UserDto(login, "last" + c, "first", "email@email", null, null, null, true);
+            UserDto userDto = new UserDto(login, "last" + c, "first", "email@email", null, null, null, true, null);
             mockMvc.perform(post("/users")
                             .contentType("application/json")
                             .content(objectMapper.writeValueAsString(userDto)))
                     .andExpect(result -> assertEquals(400, result.getResponse().getStatus(),
                         "Expected 400 for lastName with character: '" + c + "'"));
-            userDto = new UserDto(login, "last", "first" + c, "email@email", null, null, null, true);
+            userDto = new UserDto(login, "last", "first" + c, "email@email", null, null, null, true, null);
             mockMvc.perform(post("/users")
                             .contentType("application/json")
                             .content(objectMapper.writeValueAsString(userDto)))
@@ -277,7 +281,7 @@ public class UserControllerTest {
     @Test
     void GIVEN_entities_update_WHEN_update_THEN_entities_updated() throws Exception {
         Set<UserEntityDto> addedEntities = Stream.of("7", "8", "9", "256")
-                .map(id -> new UserEntityDto(id, null, null, null))
+                .map(id -> new UserEntityDto(id, null, null, null, null))
                 .collect(Collectors.toSet());
         Set<String> removedEntities = Set.of("10", "11", "12", "512");
 
@@ -369,9 +373,9 @@ public class UserControllerTest {
         String login = "newroleuser";
         SpecialEntity entity = specialEntityRepo.findAll().get(0);
         List<UserEntityDto> addedEntities = List.of(
-                new UserEntityDto(entity.getId(), entity.getName(), entity.getOrganizationName(), "EXTENDED_VIEWER"));
+                new UserEntityDto(entity.getId(), entity.getName(), entity.getOrganizationName(), null, "EXTENDED_VIEWER"));
 
-        UserDto userDto = new UserDto(login, "Last", "First", "test@email.com", addedEntities, null, null, true);
+        UserDto userDto = new UserDto(login, "Last", "First", "test@email.com", addedEntities, null, null, true, null);
         mockMvc.perform(post("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto)))
@@ -387,7 +391,7 @@ public class UserControllerTest {
     @Test
     void GIVEN_entity_without_role_WHEN_update_adding_EXTENDED_VIEWER_role_THEN_role_persisted() throws Exception {
         // vader has entity 3 with no role in seed data
-        Set<UserEntityDto> addedEntities = Set.of(new UserEntityDto("3", null, null, "EXTENDED_VIEWER"));
+        Set<UserEntityDto> addedEntities = Set.of(new UserEntityDto("3", null, null, null, "EXTENDED_VIEWER"));
         UserUpdateDto userDto = new UserUpdateDto("vader", null, null, null, null, addedEntities, null);
 
         mockMvc.perform(patch("/users")
@@ -406,7 +410,7 @@ public class UserControllerTest {
     @Test
     void GIVEN_entity_with_EXTENDED_VIEWER_role_WHEN_update_clearing_role_THEN_role_is_null() throws Exception {
         // iluser1 has entity 9 with EXTENDED_VIEWER in seed data
-        Set<UserEntityDto> addedEntities = Set.of(new UserEntityDto("9", null, null, null));
+        Set<UserEntityDto> addedEntities = Set.of(new UserEntityDto("9", null, null, null, null));
         UserUpdateDto userDto = new UserUpdateDto("iluser1", null, null, null, null, addedEntities, null);
 
         mockMvc.perform(patch("/users")
@@ -424,7 +428,7 @@ public class UserControllerTest {
     @Test
     void GIVEN_new_entity_with_EXTENDED_VIEWER_role_WHEN_update_THEN_entity_added_with_role() throws Exception {
         // luke has entity 8 with no role; add entity 3 with EXTENDED_VIEWER
-        Set<UserEntityDto> addedEntities = Set.of(new UserEntityDto("3", null, null, "EXTENDED_VIEWER"));
+        Set<UserEntityDto> addedEntities = Set.of(new UserEntityDto("3", null, null, null, "EXTENDED_VIEWER"));
         UserUpdateDto userDto = new UserUpdateDto("luke", null, null, null, null, addedEntities, null);
 
         mockMvc.perform(patch("/users")
@@ -449,11 +453,11 @@ public class UserControllerTest {
 
         List<SpecialEntity> allEntities = specialEntityRepo.findAll();
         List<UserEntityDto> addedEntities = allEntities.stream()
-                .map(e -> new UserEntityDto(e.getId(), e.getName(), e.getOrganizationName(), null))
+                .map(e -> new UserEntityDto(e.getId(), e.getName(), e.getOrganizationName(), null, null))
                 .limit(5)
                 .toList();
 
-        UserDto userDto = new UserDto(login, "O'Brien", "émily-Claire", "email@email", addedEntities, Arrays.asList("ADMIN", "SUPPORT", "XXX"), null, true);
+        UserDto userDto = new UserDto(login, "O'Brien", "émily-Claire", "email@email", addedEntities, Arrays.asList("ADMIN", "SUPPORT", "XXX"), null, true, null);
         mockMvc.perform(post("/users")
                 .contentType("application/json")
                 .content(objectMapper.writeValueAsString(userDto))).andExpect(status().isOk());

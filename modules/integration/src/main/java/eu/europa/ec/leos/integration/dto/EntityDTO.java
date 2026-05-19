@@ -18,8 +18,6 @@ public class EntityDTO implements Serializable {
     private String id;
     private String name;
     private String organizationName;
+    private Boolean special;
 
-    public EntityDTO(String id) {
-        this.id = id;
-    }
 }

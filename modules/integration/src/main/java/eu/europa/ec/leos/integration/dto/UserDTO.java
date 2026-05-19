@@ -27,6 +27,8 @@ public class UserDTO {
 
     private Collection<String> roles;
 
+    private Collection<UserRoleDTO> userRoles;
+
     private String defaultEntity;
 
     private Collection<UserEntityDTO> entities;

@@ -130,7 +130,7 @@ public class TableOfContentHelperTest extends LeosTest {
         when(structureContext.getNumberingConfigs()).thenReturn(numberingConfigs);
         when(structureContext.getTocRules()).thenReturn(tocRules);
 
-        User user = new User(3L, "demo", "demo", List.of(new Entity("7", "DGT.R.3", "DGT")), "demo@mail.com", Arrays.asList("SUPPORT", "USER"));
+        User user = new User(3L, "demo", "demo", List.of(new Entity("7", "DGT.R.3", "DGT", true)), "demo@mail.com", Arrays.asList("SUPPORT", "USER"));
         AuthenticatedUser authenticatedUser = new AuthenticatedUser(user);
         when(userDetails.getUsername()).thenReturn("demo");
         when(authentication.getPrincipal()).thenReturn(authenticatedUser);

@@ -41,7 +41,6 @@ public class UserDto {
     @Email(groups = {Create.class, Update.class})
     private String email;
 
-    @NotEmpty(groups = Create.class)
     private List<UserEntityDto> entities;
 
     private List<String> roles;
@@ -49,4 +48,6 @@ public class UserDto {
     private Date dateCreated;
 
     private Boolean special;
+
+    private List<UserRoleDto> userRoles;
 }

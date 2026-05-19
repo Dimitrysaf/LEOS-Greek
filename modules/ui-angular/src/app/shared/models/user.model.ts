@@ -7,6 +7,7 @@ export interface User {
   entities: UserEntity[];
   email: string;
   roles: ApplicationRole[];
+  userRoles: {role: ApplicationRole, special: boolean}[];
   id: number;
   name: string;
   connectedEntity: UserEntity | null;

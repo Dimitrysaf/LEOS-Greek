@@ -70,7 +70,7 @@ public class UsersClientTest extends LeosTest{
         String user2Mail = "surryp@test.com";
 
         List<UserEntity> entities = new ArrayList<>();
-        entities.add(new UserEntity("1", "EXT.A1", "Ext"));
+        entities.add(new UserEntity("1", "EXT.A1", true, "Ext"));
 
         String searchKey = "smith";
         
@@ -116,7 +116,7 @@ public class UsersClientTest extends LeosTest{
         String user1Mail = "smithj@test.com";
 
         List<UserEntity> entities = new ArrayList<>();
-        entities.add(new UserEntity("1", "EXT.A1", "Ext"));
+        entities.add(new UserEntity("1", "EXT.A1", true, "Ext"));
 
         String userId = "smithj";
 

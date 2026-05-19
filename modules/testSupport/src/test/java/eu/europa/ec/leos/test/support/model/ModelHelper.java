@@ -34,7 +34,7 @@ public class ModelHelper {
 
     public static User buildJaneUser(){
         List<Entity> entities = new ArrayList<>();
-        entities.add(new Entity("1", "DIGIT.B2", "DIGIT"));
+        entities.add(new Entity("1", "DIGIT.B2", "DIGIT", true));
         return buildUser(1L, "jane","jane", entities);
     }
 

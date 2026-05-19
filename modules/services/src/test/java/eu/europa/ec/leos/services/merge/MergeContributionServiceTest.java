@@ -48,7 +48,6 @@ import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.model.ModelHelper;
 import io.atlassian.fugue.Option;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -348,7 +347,7 @@ public class MergeContributionServiceTest extends NumberServiceTest {
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessorsDepthBased", numberProcessorsDepthBased);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", numberProcessors);
         List<Entity> entities = new ArrayList<Entity>();
-        entities.add(new Entity("1", "DIGIT.B2", "DIGIT"));
+        entities.add(new Entity("1", "DIGIT.B2", "DIGIT", true));
         User user = ModelHelper.buildUser(45L, "demo", "demo", entities);
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.getUserName()).thenReturn("demo");

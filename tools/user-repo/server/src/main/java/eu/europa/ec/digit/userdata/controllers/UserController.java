@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.digit.userdata.controllers;
 
+import eu.europa.ec.digit.userdata.dto.EntityDto;
 import eu.europa.ec.digit.userdata.dto.UserAuthDto;
 import eu.europa.ec.digit.userdata.dto.UserDto;
 import eu.europa.ec.digit.userdata.dto.UserUpdateDto;
@@ -116,8 +117,11 @@ public class UserController implements UserApi {
     @Override
     public UserDto createUser(final UserDto userDto) {
         final SpecialUser specialUser = userMapper.mapToSpecial(userDto, roleService.getRoles());
-        final SpecialUser created = this.userService.addSpecialUser(specialUser);
-        return userMapper.mapToDto(created, roleService.getRoles());
+        final User created = this.userService.addSpecialUser(specialUser);
+        final UserDto createdDto = userMapper.mapToDto(created, roleService.getRoles());
+        createdDto.setEntities(
+                createdDto.getEntities().stream().filter(EntityDto::getSpecial).toList());
+        return createdDto;
     }
 
     @Transactional
@@ -128,8 +132,11 @@ public class UserController implements UserApi {
                 .orElseThrow(BadRequestException::new);
 
 
-        final SpecialUser updated = userService.updateSpecialUser(specialUser, userDto.getAddedEntities(), userDto.getRemovedEntities());
-        return userMapper.mapToDto(updated, roleService.getRoles());
+        final User updated = userService.updateSpecialUser(specialUser, userDto.getAddedEntities(), userDto.getRemovedEntities());
+        final UserDto updatedDto = userMapper.mapToDto(updated, roleService.getRoles());
+        updatedDto.setEntities(
+                updatedDto.getEntities().stream().filter(EntityDto::getSpecial).toList());
+        return updatedDto;
     }
 
     @Transactional

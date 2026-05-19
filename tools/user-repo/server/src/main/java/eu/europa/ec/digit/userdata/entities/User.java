@@ -23,10 +23,7 @@ import java.util.stream.Stream;
 
 import jakarta.persistence.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -38,6 +35,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = {"login", "perId", "special"})
 public class User implements Serializable {
 
     @Serial
@@ -84,6 +82,10 @@ public class User implements Serializable {
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "USER_LOGIN", referencedColumnName = "USER_LOGIN")
     private List<UserEntity> userEntities;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "USER_LOGIN", referencedColumnName = "USER_LOGIN")
+    private List<UserRole> userRoles;
 
     public User(String login, Long perId, String lastName, String firstName, String email, String jobTitle, List<Role> roles, List<UserEntity> userEntities) {
         this.login = login;

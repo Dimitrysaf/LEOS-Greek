@@ -47,7 +47,7 @@ public class WorkflowCollaboratorServiceImpl implements WorkflowCollaboratorServ
     }
 
     private List<CollaboratorDTO> fillCollaboratorList() {
-        CollaboratorDTO collaborator = new CollaboratorDTO("test", "test", "OWNER", new Entity("1","test","test"));
+        CollaboratorDTO collaborator = new CollaboratorDTO("test", "test", "OWNER", new Entity("1","test", "test", true));
         return Arrays.asList(collaborator);
     }
 

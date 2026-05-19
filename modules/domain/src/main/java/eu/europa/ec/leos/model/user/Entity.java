@@ -30,5 +30,6 @@ public class Entity implements Serializable {
     private String id;
     private String name;
     private String organizationName;
+    private Boolean special;
 
 }

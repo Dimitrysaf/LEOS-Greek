@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 public class UserEntity extends Entity {
     private String role;
 
-    public UserEntity(String id, String name, String organizationName, String role) {
-        super(id, name, organizationName);
+    public UserEntity(String id, String name, String organizationName, Boolean special, String role) {
+        super(id, name, organizationName, special);
         this.role = role;
     }
 
-    public UserEntity(String id, String name, String organizationName) {
-        super(id, name, organizationName);
+    public UserEntity(String id, String name, Boolean special, String organizationName) {
+        super(id, name, organizationName, special);
     }
 }
