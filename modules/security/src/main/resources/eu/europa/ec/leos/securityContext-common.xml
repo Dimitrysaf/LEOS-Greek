@@ -35,7 +35,7 @@
                                 <value>OPTIONS</value>
                             </list>
                         </property>
-                        <property name="allowedOriginPatterns" value="${leos.allowed.origin.patterns}"/>
+                        <property name="allowedOriginPatterns" value="*"/>
                         <property name="maxAge" value="1800"/>
                     </bean>
                 </entry>
