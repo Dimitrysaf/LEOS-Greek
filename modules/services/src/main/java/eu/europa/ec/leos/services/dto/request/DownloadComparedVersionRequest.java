@@ -13,9 +13,12 @@
  */
 package eu.europa.ec.leos.services.dto.request;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class DownloadComparedVersionRequest implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private String originalVersion;
     private String currentVersion;

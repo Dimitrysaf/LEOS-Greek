@@ -4,11 +4,14 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItemPosition;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
 @Data
 public class NodeDropValidationRequest implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private List<String> draggedNodeId;
     private String draggedNodeTagName;
     private String targetNodeId;
