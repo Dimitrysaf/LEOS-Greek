@@ -27,7 +27,7 @@
             <sec:frame-options disabled="true"/>
             <sec:xss-protection disabled="true"/><!-- Info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection -->
             <sec:content-security-policy policy-directives="default-src 'self' https://cdn.mathjax.org ${leos.content.script.security.policy};
-                script-src 'self' https://cdn.mathjax.org ${leos.content.script.security.policy} blob:;
+                script-src 'self' https://cdn.mathjax.org ${leos.content.script.security.policy} 'unsafe-inline' blob:;
                 style-src 'self' https://cdn.mathjax.org ${leos.content.script.security.policy} 'unsafe-inline';
                 img-src 'self' https://cdn.mathjax.org ${leos.content.script.security.policy} data:;
                 frame-ancestors ${leos.content.script.security.policy};"/>
