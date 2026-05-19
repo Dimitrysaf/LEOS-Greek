@@ -37,7 +37,7 @@ public class UserActivityReportService {
      * Runs every day at 06:00.
      * Calculates distinct users from the previous day (00:00 to 23:59 local time).
      */
-    @Scheduled(cron = "0 9 11 * * *")
+    @Scheduled(cron = "0 0 6 * * *")
     public void generateAndSendUserReport() {
         LOG.info("Starting daily user activity report generation...");
         try {
@@ -52,7 +52,6 @@ public class UserActivityReportService {
             String csvReport = buildCsvReport(reportDate, distinctUserList, generatedAt);
 
             LOG.info("Daily user report generated: {} distinct users on {}", distinctUserList.size(), reportDate);
-            LOG.info("CSV Report:\n{}", csvReport);
 
             sendReportByEmail(csvReport, reportDate, distinctUserList.size(), generatedAt);
         } catch (Exception e) {
@@ -124,11 +123,11 @@ public class UserActivityReportService {
             this.subject = String.format("EdiT Daily User Activity Report (%s)",
                     reportDate.format(DATE_FORMAT));
             this.body = """
-                    User Activity Report for EdiT
+                    User Activity Report for EdiT,
                     
-                    Reporting Date: %s
-                    Distinct Users: %d
-                    Report Generated: %s
+                    Reporting Date: %s,
+                    Distinct Users: %d,
+                    Report Generated: %s,
                     
                     The detailed report is attached as a CSV file."""
                     .formatted(reportDate.format(DATE_FORMAT),
