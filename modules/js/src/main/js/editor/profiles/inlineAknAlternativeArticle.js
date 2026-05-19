@@ -26,6 +26,7 @@ define(function aknInlineAlternativeArticleProfileModule(require) {
     plugins.push(require("plugins/leosInlineCancel/leosInlineCancelPlugin"));
     plugins.push(require("plugins/leosInlineEditor/leosInlineEditorPlugin"));
     plugins.push(require("plugins/leosTable/leosTablePlugin"));
+    plugins.push(require("plugins/leosTableRowReSize/leosTableRowReSizePlugin"));
     plugins.push(require("plugins/aknHtmlAnchor/aknHtmlAnchorPlugin"));
     plugins.push(require("plugins/aknParagraph/aknParagraphPlugin"));
     plugins.push(require("plugins/aknHtmlBold/aknHtmlBoldPlugin"));

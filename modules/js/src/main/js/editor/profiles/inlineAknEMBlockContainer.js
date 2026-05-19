@@ -33,6 +33,7 @@ define(function aknInlineEMBlockContainerProfileModule(require) {
     plugins.push(require("plugins/aknUnNumberedBlockList/aknUnNumberedBlockListPlugin"));
     plugins.push(require("plugins/aknNumberedBlockList/aknNumberedBlockListPlugin"));
     plugins.push(require("plugins/leosTable/leosTablePlugin"));
+    plugins.push(require("plugins/leosTableRowReSize/leosTableRowReSizePlugin"));
     plugins.push(require("plugins/aknAuthorialNote/aknAuthorialNotePlugin"));
     plugins.push(require("plugins/leosShowblocks/leosShowblocksPlugin"));
     plugins.push(require("plugins/leosTransformer/leosTransformerPlugin"));     //required for editor transformation

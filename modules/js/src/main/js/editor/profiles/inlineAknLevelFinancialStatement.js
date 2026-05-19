@@ -26,6 +26,7 @@ define(function inlineAknLevelFinancialStatementProfileModule(require) {
     plugins.push(require("plugins/leosInlineCancel/leosInlineCancelPlugin"));
     plugins.push(require("plugins/leosInlineEditor/leosInlineEditorPlugin"));
     plugins.push(require("plugins/leosTable/leosTablePlugin"));
+    plugins.push(require("plugins/leosTableRowReSize/leosTableRowReSizePlugin"));
     plugins.push(require("plugins/aknHtmlAnchor/aknHtmlAnchorPlugin"));
     plugins.push(require("plugins/aknHtmlBold/aknHtmlBoldPlugin"));
     plugins.push(require("plugins/aknHtmlItalic/aknHtmlItalicPlugin"));

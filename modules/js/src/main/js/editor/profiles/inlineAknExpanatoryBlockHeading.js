@@ -33,6 +33,7 @@ define(function aknInlineAknExpanatoryBlockHeadingProfileModule(require) {
     plugins.push(require("plugins/leosUnumberedList/leosUnumberedListPlugin"));
     plugins.push(require("plugins/leosAnnexIndentList/leosAnnexIndentListPlugin"));
     plugins.push(require("plugins/leosTable/leosTablePlugin"));
+    plugins.push(require("plugins/leosTableRowReSize/leosTableRowReSizePlugin"));
     plugins.push(require("plugins/aknAuthorialNote/aknAuthorialNotePlugin"));
     plugins.push(require("plugins/leosShowblocks/leosShowblocksPlugin"));
     plugins.push(require("plugins/leosTransformer/leosTransformerPlugin"));     //required for editor transformation

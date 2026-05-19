@@ -36,6 +36,7 @@ define(function aknInlineAnnexDivisionProfileModule(require) {
     plugins.push(require("plugins/leosTransformer/leosTransformerPlugin"));     //required for editor transformation
     plugins.push(require("plugins/leosFixNestedPs/leosFixNestedPsPlugin"));
     plugins.push(require("plugins/leosTable/leosTablePlugin"));
+    plugins.push(require("plugins/leosTableRowReSize/leosTableRowReSizePlugin"));
     plugins.push(require("plugins/aknHtmlBold/aknHtmlBoldPlugin"));
     plugins.push(require("plugins/aknHtmlItalic/aknHtmlItalicPlugin"));
     plugins.push(require("plugins/aknHtmlImage/aknHtmlImagePlugin"));
