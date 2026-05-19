@@ -57,6 +57,7 @@ define(function aknRecitalAAProfileModule(require) {
     plugins.push(require("plugins/leosBase64Image/leosBase64ImagePlugin"));
     plugins.push(require("plugins/leosImageResize/leosImageResizePlugin"));
     plugins.push(require("plugins/leosTable/leosTablePlugin"));
+    plugins.push(require("plugins/leosTableRowReSize/leosTableRowReSizePlugin"));
     plugins.push(require("plugins/aknParagraph/aknParagraphPlugin"));
     plugins.push(require("plugins/leosHierarchicalElementShiftEnterHandler/leosHierarchicalElementShiftEnterHandler"));
     plugins.push(require("plugins/aknUnorderedList/aknUnorderedListPlugin"));
