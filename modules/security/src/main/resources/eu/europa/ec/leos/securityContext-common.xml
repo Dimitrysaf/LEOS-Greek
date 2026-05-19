@@ -15,8 +15,26 @@
                     <!-- Default configuration -->
                     <bean class="org.springframework.web.cors.CorsConfiguration">
                         <property name="allowCredentials" value="true"/>
-                        <property name="allowedHeaders" value="*"/>
-                        <property name="allowedMethods" value="*"/>
+                        <property name="allowedHeaders">
+                            <list>
+                                <value>Authorization</value>
+                                <value>Client-Context</value>
+                                <value>assertion</value>
+                                <value>grant-type</value>
+                                <value>Content-Type</value>
+                                <value>Accept</value>
+                            </list>
+                        </property>
+                        <property name="allowedMethods">
+                            <list>
+                                <value>GET</value>
+                                <value>POST</value>
+                                <value>PUT</value>
+                                <value>DELETE</value>
+                                <value>PATCH</value>
+                                <value>OPTIONS</value>
+                            </list>
+                        </property>
                         <property name="allowedOriginPatterns" value="*"/>
                         <property name="maxAge" value="1800"/>
                     </bean>

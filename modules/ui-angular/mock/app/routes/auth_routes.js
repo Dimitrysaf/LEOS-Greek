@@ -6,6 +6,9 @@ module.exports = function (app, db) {
   db.then((db) => {
     app.get('/api/token', (req, res) => {
       const user = getUserFromAssertionHeader(req);
+      if (!/^[\w.@-]{1,255}$/.test(user)) {
+        return res.status(400).send('Invalid user identity');
+      }
       const iat = Math.round(Date.now() / 1000);
       const exp = iat + TOKEN_LIFETIME;
       const accessToken = [
@@ -17,7 +20,7 @@ module.exports = function (app, db) {
         .map((p) => Buffer.from(p).toString('base64'))
         .join('.');
 
-      res.send({
+      res.json({
         accessToken,
         tokenType: 'jwt',
         expiresIn: Date.now() + TOKEN_LIFETIME * 1000,

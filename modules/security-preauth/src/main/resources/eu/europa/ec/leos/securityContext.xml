@@ -17,7 +17,12 @@
         <sec:custom-filter before="PRE_AUTH_FILTER" ref="leosApiAuthenticationFilter"/>
         <sec:custom-filter after="PRE_AUTH_FILTER" ref="jeePreAuthenticatedFilter"/>
         <sec:session-management session-fixation-protection="none"/>
-        <sec:csrf disabled="true"/> <!--Already handled by vaadin -->
+        <!-- CSRF protection is disabled because all state-mutating endpoints require a JWT Bearer
+             token in the Authorization header. Browsers cannot set the Authorization header in
+             cross-origin requests without a preflight, and an attacker-controlled page cannot
+             obtain the victim's JWT token from localStorage, making CSRF attacks non-viable.
+             Note: this assumption holds only as long as authentication never relies on cookies. -->
+        <sec:csrf disabled="true"/>
         <sec:cors configuration-source-ref="corsSource"/>
         <!-- Done to allow download (FileDownloader Vaadin Component is using iframes -->
         <sec:headers>

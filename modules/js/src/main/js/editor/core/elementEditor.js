@@ -501,7 +501,9 @@ define(function elementEditorModule(require) {
         // destroy editor instance, without updating DOM
         if (connector.getState().isAngularUI) {
             if (placeholder) {
-                placeholder.outerHTML = newContent;
+                var tempDiv = document.createElement('div');
+                tempDiv.innerHTML = newContent;
+                placeholder.replaceWith(...tempDiv.childNodes);
             }
             editor.destroy(false);
         } else {
