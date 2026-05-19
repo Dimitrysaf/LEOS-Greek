@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 public class UserEntityDto extends EntityDto {
     private String role;
 
-    public UserEntityDto(String id, String name, String organizationName, String role) {
-        super(id, name, organizationName);
+    public UserEntityDto(String id, String name, String organizationName, Boolean special, String role) {
+        super(id, name, organizationName, special);
         this.role = role;
     }
 }

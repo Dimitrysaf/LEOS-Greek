@@ -14,12 +14,9 @@
 package eu.europa.ec.digit.userdata.repositories;
 
 import eu.europa.ec.digit.userdata.entities.SpecialUser;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.Optional;
 
 public interface SpecialUserRepository extends JpaRepository<SpecialUser, Long> {
@@ -34,29 +31,5 @@ public interface SpecialUserRepository extends JpaRepository<SpecialUser, Long> 
 
     Optional<SpecialUser> findByLogin(String login);
 
-    /**
-     * Search for users in the LEOS_SPECIAL_USER table, matching the given searchKey on the
-     * USER_LASTNAME, USER_FIRSTNAME, USER_EMAIL, USER_LOGIN columns.
-     * @param searchKey the search term
-     * @param pageable pagination parameters
-     * @return Page of {@link SpecialUser} objects
-     */
-    @Query(value = "SELECT * FROM LEOS_SPECIAL_USER " + " WHERE "
-                    + " deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey) "
-                    + " OR "
-                    + " deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey) "
-                    + " OR "
-                    + " deAccent(USER_EMAIL) LIKE deAccent(:searchKey) "
-                    + " OR "
-                    + " deAccent(USER_LOGIN) LIKE deAccent(:searchKey) ",
-            countQuery =  "SELECT count(*) FROM LEOS_SPECIAL_USER " + " WHERE "
-                    + " deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey) "
-                    + " OR "
-                    + " deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey) "
-                    + " OR "
-                    + " deAccent(USER_EMAIL) LIKE deAccent(:searchKey) "
-                    + " OR "
-                    + " deAccent(USER_LOGIN) LIKE deAccent(:searchKey) ",
-            nativeQuery = true)
-    Page<SpecialUser> findByKey(@Param("searchKey") String searchKey, Pageable pageable);
+    Collection<SpecialUser> findByLoginIgnoreCase(String login);
 }

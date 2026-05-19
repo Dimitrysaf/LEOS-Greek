@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -66,13 +67,13 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_is_ADMIN_WHEN_createEntity_THEN_entity_created_with_no_prefix() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")), // user's default entity
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)), // user's default entity
                 "a@b.com",
                 Collections.singletonList("ADMIN"));
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_ENTITIES)).thenReturn(true);
         ArgumentCaptor<EntityDTO> captor = ArgumentCaptor.forClass(EntityDTO.class);
-        EntityDTO response = new EntityDTO("2", "test", "Entity");
+        EntityDTO response = new EntityDTO("2", "test", "Entity", true);
         when(usersClient.createEntity(captor.capture())).thenReturn(response);
 
         mockMvc.perform(post("/secured/administration/entities")
@@ -87,12 +88,12 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_is_USER_MANAGER_WHEN_createEntity_THEN_entity_created_with_prefix() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")), // user's default entity
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)), // user's default entity
                 "a@b.com",
                 Collections.singletonList("USER_MANAGER"));
         when(securityContext.getUser()).thenReturn(user);
         ArgumentCaptor<EntityDTO> captor = ArgumentCaptor.forClass(EntityDTO.class);
-        EntityDTO response = new EntityDTO("2", "test", "Entity");
+        EntityDTO response = new EntityDTO("2", "test", "Entity", true);
         when(usersClient.createEntity(captor.capture())).thenReturn(response);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_OWN_ENTITIES)).thenReturn(true);
 
@@ -113,7 +114,7 @@ public class AdministrationControllerTest {
                 Collections.singletonList("USER_MANAGER"));
         when(securityContext.getUser()).thenReturn(user);
         ArgumentCaptor<EntityDTO> captor = ArgumentCaptor.forClass(EntityDTO.class);
-        EntityDTO response = new EntityDTO("2", "test", "Entity");
+        EntityDTO response = new EntityDTO("2", "test", "Entity", true);
         when(usersClient.createEntity(captor.capture())).thenReturn(response);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_OWN_ENTITIES)).thenReturn(true);
 
@@ -126,14 +127,14 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_is_support_AND_search_term_empty_AND_page_size_10_WHEN_getUsers_THEN_userClient_invoked() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")), // user's default entity
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)), // user's default entity
                 "a@b.com",
                 Collections.singletonList("SUPPORT"));
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(true);
         ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
 
-        UserDTO returnedUser = new UserDTO("login", null, null, null, null, null, null, null, null, null, null);
+        UserDTO returnedUser = new UserDTO("login", null, null, null, null, null, null, null, null, null, null, null);
 
         Page<UserDTO> response = new RestPageImpl<>(Collections.singletonList(returnedUser), PageRequest.of(0, 10), 1);
 
@@ -154,7 +155,7 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_is_support_WHEN_addUser_THEN_userClient_invoked() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")), // user's default entity
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)), // user's default entity
                 "a@b.com",
                 Collections.singletonList("SUPPORT"));
         when(securityContext.getUser()).thenReturn(user);
@@ -162,9 +163,9 @@ public class AdministrationControllerTest {
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_ENTITIES)).thenReturn(true);
 
         List<UserEntityDTO> entitiesForDto = Arrays.asList(
-                new UserEntityDTO("1", "Entity", "Entity"));
+                new UserEntityDTO("1", "Entity", "Entity", true));
 
-        UserDTO dto = new UserDTO("login",null, null, null, null, null, null, null, entitiesForDto, null, null);
+        UserDTO dto = new UserDTO("login",null, null, null, null, null, null, null, null, entitiesForDto, null, null);
 
         when(usersClient.addSpecialUser(dto)).thenReturn(dto);
 
@@ -180,21 +181,21 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_is_user_manager_AND_entity_in_user_entities_WHEN_addUser_THEN_userClient_invoked() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Org1")), // user's default entity
+                Collections.singletonList(new Entity("1", "Entity", "Org1", true)), // user's default entity
                 "a@b.com",
                 Collections.singletonList("USER_MANAGER"));
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(true);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_OWN_ENTITIES)).thenReturn(true);
         List<EntityDTO> entitiesForLoggedInUser = Arrays.asList(
-                new EntityDTO("1", "Entity1", "Org1"),
-                new EntityDTO("2", "Entity2", "Org1"));
+                new EntityDTO("1", "Entity1", "Org1", true),
+                new EntityDTO("2", "Entity2", "Org1", true));
         when(usersClient.specialEntities(eq("Org1"))).thenReturn(entitiesForLoggedInUser);
 
         List<UserEntityDTO> entitiesForDto = Arrays.asList(
-                new UserEntityDTO("1", "Entity1", "Org1"));
+                new UserEntityDTO("1", "Entity1", "Org1", true));
 
-        UserDTO dto = new UserDTO("login",null, null, null, null, null, null, null, entitiesForDto, null, null);
+        UserDTO dto = new UserDTO("login",null, null, null, null, null, null, null, null, entitiesForDto, null, null);
 
         when(usersClient.addSpecialUser(dto)).thenReturn(dto);
 
@@ -208,19 +209,19 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_is_user_manager_AND_entity_not_in_user_entities_WHEN_addUser_THEN_forbidden() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")), // user's default entity
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)), // user's default entity
                 "a@b.com",
                 Collections.singletonList("USER_MANAGER"));
         when(securityContext.getUser()).thenReturn(user);
 
         List<EntityDTO> entitiesForLoggedInUser = Arrays.asList(
-                new EntityDTO("2", "Entity", "Org1"));
+                new EntityDTO("2", "Entity", "Org1", true));
         when(usersClient.specialEntities(eq("Org1"))).thenReturn(entitiesForLoggedInUser);
 
         List<UserEntityDTO> entitiesForDto = Arrays.asList(
-                new UserEntityDTO("1", "Entity", "Entity"));
+                new UserEntityDTO("1", "Entity", "Entity", true));
 
-        UserDTO dto = new UserDTO("login",null, null, null, null, null, null, null, entitiesForDto, null, null);
+        UserDTO dto = new UserDTO("login",null, null, null, null, null, null, null, null, entitiesForDto, null, null);
 
         mockMvc.perform(post("/secured/administration/users")
                         .content(objectMapper.writeValueAsString(dto))
@@ -233,7 +234,7 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_dto_contains_roles_AND_user_is_support_WHEN_addUser_THEN_userClient_invoked() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")), // user's default entity
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)), // user's default entity
                 "a@b.com",
                 Collections.singletonList("SUPPORT"));
         when(securityContext.getUser()).thenReturn(user);
@@ -243,7 +244,7 @@ public class AdministrationControllerTest {
 
         List<String> roles = Arrays.asList("ADMIN", "USER_MANAGER", "SUPPORT", "TEMPLATE_MANAGER");
 
-        UserDTO dto = new UserDTO("login",null, null, null, null, null, roles, null, null, null, null);
+        UserDTO dto = new UserDTO("login",null, null, null, null, null, roles, null, null, null, null, null);
 
         when(usersClient.addSpecialUser(dto)).thenReturn(dto);
 
@@ -257,9 +258,9 @@ public class AdministrationControllerTest {
     }
 
     @Test
-    public void GIVEN_dto_contains_roles_AND_user_is_user_manager_WHEN_addUser_THEN_forbidden() throws Exception {
+    public void GIVEN_dto_contains_roles_AND_user_is_user_manager_WHEN_addUser_THEN_roles_ignored() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")), // user's default entity
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)), // user's default entity
                 "a@b.com",
                 Collections.singletonList("USER_MANAGER"));
         when(securityContext.getUser()).thenReturn(user);
@@ -268,25 +269,31 @@ public class AdministrationControllerTest {
 
         List<String> roles = Arrays.asList("ADMIN", "USER_MANAGER", "SUPPORT", "TEMPLATE_MANAGER");
 
-        UserDTO dto = new UserDTO("login",null, null, null, null, null, roles, null, null, null, null);
+        UserDTO dto = new UserDTO("login",null, null, null, null, null, roles, null, null, null, null, null);
+
+
+        ArgumentCaptor<UserDTO> captor = ArgumentCaptor.forClass(UserDTO.class);
+        when(usersClient.addSpecialUser(captor.capture())).thenReturn(dto);
 
         mockMvc.perform(post("/secured/administration/users")
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType("application/json"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isOk())
+                .andExpect(content().string(objectMapper.writeValueAsString(dto)));
 
-        verify(usersClient, times(0)).addSpecialUser(any());
+        assertNull(captor.getValue().getRoles());
+        assertEquals(dto.getLogin(), captor.getValue().getLogin());
     }
 
     @Test
     public void GIVEN_user_is_ADMIN_WHEN_updateEntity_THEN_entity_updated() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)),
                 "a@b.com",
                 Collections.singletonList("ADMIN"));
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_ENTITIES)).thenReturn(true);
-        EntityDTO dto = new EntityDTO("1", "updatedName", "Entity");
+        EntityDTO dto = new EntityDTO("1", "updatedName", "Entity", true);
         when(usersClient.updateEntity(dto)).thenReturn(dto);
 
         mockMvc.perform(patch("/secured/administration/entities")
@@ -300,15 +307,15 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_is_USER_MANAGER_WHEN_updateEntity_THEN_entity_updated_with_prefix() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)),
                 "a@b.com",
                 Collections.singletonList("USER_MANAGER"));
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_OWN_ENTITIES)).thenReturn(true);
         ArgumentCaptor<EntityDTO> captor = ArgumentCaptor.forClass(EntityDTO.class);
-        EntityDTO response = new EntityDTO("1", "Entity.updatedName", "Entity");
+        EntityDTO response = new EntityDTO("1", "Entity.updatedName", "Entity", true);
         when(usersClient.updateEntity(captor.capture())).thenReturn(response);
-        when(usersClient.specialEntities(eq("Entity"))).thenReturn(Collections.singletonList(new EntityDTO("1", "Entity.updatedName", "Entity")));
+        when(usersClient.specialEntities(eq("Entity"))).thenReturn(Collections.singletonList(new EntityDTO("1", "Entity.updatedName", "Entity", true)));
 
         mockMvc.perform(patch("/secured/administration/entities")
                         .content("{\"id\":\"1\",\"name\":\"updatedName\"}")
@@ -320,15 +327,15 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_is_USER_MANAGER_AND_cannot_access_entity_WHEN_updateEntity_THEN_entity_updated_with_prefix() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)),
                 "a@b.com",
                 Collections.singletonList("USER_MANAGER"));
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_OWN_ENTITIES)).thenReturn(true);
         ArgumentCaptor<EntityDTO> captor = ArgumentCaptor.forClass(EntityDTO.class);
-        EntityDTO response = new EntityDTO("1", "Entity.updatedName", "Entity");
+        EntityDTO response = new EntityDTO("1", "Entity.updatedName", "Entity", true);
         when(usersClient.updateEntity(captor.capture())).thenReturn(response);
-        when(usersClient.specialEntities(eq("Entity"))).thenReturn(Collections.singletonList(new EntityDTO("2", "Entity.updatedName", "Entity")));
+        when(usersClient.specialEntities(eq("Entity"))).thenReturn(Collections.singletonList(new EntityDTO("2", "Entity.updatedName", "Entity", true)));
 
         mockMvc.perform(patch("/secured/administration/entities")
                         .content("{\"id\":\"1\",\"name\":\"updatedName\"}")
@@ -340,12 +347,12 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_is_ADMIN_WHEN_deleteEntity_THEN_entity_deleted() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)),
                 "a@b.com",
                 Collections.singletonList("ADMIN"));
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_ENTITIES)).thenReturn(true);
-        EntityDTO entityDTO = new EntityDTO("1", "Entity", "Entity");
+        EntityDTO entityDTO = new EntityDTO("1", "Entity", "Entity", true);
         when(usersClient.getEntityDetails("1")).thenReturn(entityDTO);
         when(usersClient.deleteEntity(entityDTO)).thenReturn(ResponseEntity.ok().build());
 
@@ -357,14 +364,14 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_is_USER_MANAGER_WHEN_deleteEntity_THEN_entity_deleted() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)),
                 "a@b.com",
                 Collections.singletonList("USER_MANAGER"));
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_OWN_ENTITIES)).thenReturn(true);
-        EntityDTO entityDTO = new EntityDTO("1", "Entity", "Entity");
+        EntityDTO entityDTO = new EntityDTO("1", "Entity", "Entity", true);
         when(usersClient.getEntityDetails("1")).thenReturn(entityDTO);
-        when(usersClient.specialEntities(eq("Entity"))).thenReturn(Collections.singletonList(new EntityDTO("1", "Entity.updatedName", "Entity")));
+        when(usersClient.specialEntities(eq("Entity"))).thenReturn(Collections.singletonList(new EntityDTO("1", "Entity.updatedName", "Entity", true)));
 
         mockMvc.perform(delete("/secured/administration/entities/1"))
                 .andExpect(status().isNoContent());
@@ -374,12 +381,12 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_is_USER_MANAGER_AND_cannot_access_entity_WHEN_deleteEntity_THEN_forbidden() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)),
                 "a@b.com",
                 Collections.singletonList("USER_MANAGER"));
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_OWN_ENTITIES)).thenReturn(true);
-        when(usersClient.specialEntities(eq("Entity"))).thenReturn(Collections.singletonList(new EntityDTO("2", "Entity.updatedName", "Entity")));
+        when(usersClient.specialEntities(eq("Entity"))).thenReturn(Collections.singletonList(new EntityDTO("2", "Entity.updatedName", "Entity", true)));
 
         mockMvc.perform(delete("/secured/administration/entities/1"))
                 .andExpect(status().isForbidden());
@@ -389,7 +396,7 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_CAN_MANAGE_ALL_USERS_WHEN_deleteUser_THEN_user_deleted() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)),
                 "a@b.com",
                 Collections.singletonList("ADMIN"));
         when(securityContext.getUser()).thenReturn(user);
@@ -405,7 +412,7 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_with_no_permission_WHEN_deleteUser_THEN_forbidden() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)),
                 "a@b.com",
                 Collections.singletonList("USER"));
         when(securityContext.getUser()).thenReturn(user);
@@ -421,7 +428,7 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_CAN_MANAGE_ALL_USERS_WHEN_getUserDetails_THEN_user_details_returned() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)),
                 "a@b.com",
                 Collections.singletonList("ADMIN"));
         when(securityContext.getUser()).thenReturn(user);
@@ -429,9 +436,9 @@ public class AdministrationControllerTest {
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(true);
 
         List<UserEntityDTO> entities = Arrays.asList(
-                new UserEntityDTO("1", "Entity1", "Org1"),
-                new UserEntityDTO("2", "Entity2", "Org1"));
-        UserDTO dto = new UserDTO("test",null, "Last", "First", "a@b.c", "Boss", Collections.singletonList("USER"), "1", entities, null, null);
+                new UserEntityDTO("1", "Entity1", "Org1", true),
+                new UserEntityDTO("2", "Entity2", "Org1", true));
+        UserDTO dto = new UserDTO("test",null, "Last", "First", "a@b.c", "Boss", Collections.singletonList("USER"), null, "1", entities, null, null);
         when(usersClient.getUserDetails("test")).thenReturn(dto);
 
         mockMvc.perform(get("/secured/administration/users/test"))
@@ -443,7 +450,7 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_with_no_permission_WHEN_getUserDetails_THEN_forbidden() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)),
                 "a@b.com",
                 Collections.singletonList("USER"));
         when(securityContext.getUser()).thenReturn(user);
@@ -459,16 +466,16 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_is_support_WHEN_updateUser_THEN_userClient_invoked() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)),
                 "a@b.com",
                 Collections.singletonList("SUPPORT"));
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(true);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_ENTITIES)).thenReturn(true);
 
-        Set<UserEntityDTO> entities = Collections.singleton(new UserEntityDTO("e1", "Entity1", "Org1"));
+        Set<UserEntityDTO> entities = Collections.singleton(new UserEntityDTO("e1", "Entity1", "Org1", true));
         UserUpdateDTO dto = new UserUpdateDTO("testUser", null, null, null, null, entities, null);
-        UserDTO response = new UserDTO("testUser", null, null, null, null, null, null, null, entities, null, null);
+        UserDTO response = new UserDTO("testUser", null, null, null, null, null, null, null, null, entities, null, null);
         when(usersClient.updateSpecialUser(dto)).thenReturn(response);
 
         mockMvc.perform(patch("/secured/administration/users")
@@ -483,19 +490,19 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_is_user_manager_AND_addedEntities_in_user_entities_WHEN_updateUser_THEN_userClient_invoked() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Org1")),
+                Collections.singletonList(new Entity("1", "Entity", "Org1", true)),
                 "a@b.com",
                 Collections.singletonList("USER_MANAGER"));
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(true);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_OWN_ENTITIES)).thenReturn(true);
         List<EntityDTO> allowedEntities = Arrays.asList(
-                new EntityDTO("e1", "Entity1", "Org1"),
-                new EntityDTO("e2", "Entity2", "Org1"));
+                new EntityDTO("e1", "Entity1", "Org1", true),
+                new EntityDTO("e2", "Entity2", "Org1", true));
         when(usersClient.specialEntities("Org1")).thenReturn(allowedEntities);
 
         UserUpdateDTO dto = new UserUpdateDTO("testUser", null, null, null, null, Set.of(new UserEntityDTO(allowedEntities.getFirst())), null);
-        UserDTO response = new UserDTO("testUser", null, null, null, null, null, null, null, null, null, null);
+        UserDTO response = new UserDTO("testUser", null, null, null, null, null, null, null, null, null, null, null);
         when(usersClient.updateSpecialUser(dto)).thenReturn(response);
 
         mockMvc.perform(patch("/secured/administration/users")
@@ -509,16 +516,16 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_is_user_manager_AND_addedEntities_not_in_user_entities_WHEN_updateUser_THEN_forbidden() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Org1")),
+                Collections.singletonList(new Entity("1", "Entity", "Org1", true)),
                 "a@b.com",
                 Collections.singletonList("USER_MANAGER"));
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(true);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_OWN_ENTITIES)).thenReturn(true);
-        List<EntityDTO> allowedEntities = Collections.singletonList(new EntityDTO("e1", "Entity1", "Org1"));
+        List<EntityDTO> allowedEntities = Collections.singletonList(new EntityDTO("e1", "Entity1", "Org1", true));
         when(usersClient.specialEntities("Org1")).thenReturn(allowedEntities);
 
-        UserEntityDTO userEntityDTO = new UserEntityDTO("e99", "Entity1", "Org1");
+        UserEntityDTO userEntityDTO = new UserEntityDTO("e99", "Entity1", "Org1", true);
 
         UserUpdateDTO dto = new UserUpdateDTO("testUser", null, null, null, null, Set.of(userEntityDTO), null);
 
@@ -532,7 +539,7 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_is_user_manager_AND_no_addedEntities_WHEN_updateUser_THEN_userClient_invoked() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Org1")),
+                Collections.singletonList(new Entity("1", "Entity", "Org1", true)),
                 "a@b.com",
                 Collections.singletonList("USER_MANAGER"));
         when(securityContext.getUser()).thenReturn(user);
@@ -540,7 +547,7 @@ public class AdministrationControllerTest {
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_OWN_ENTITIES)).thenReturn(true);
 
         UserUpdateDTO dto = new UserUpdateDTO("testUser", "Smith", "John", "j.smith@test.com", null, null, Set.of("e1"));
-        UserDTO response = new UserDTO("testUser", null, null, null, null, null, null, null, null, null, null);
+        UserDTO response = new UserDTO("testUser", null, null, null, null, null, null, null, null, null, null, null);
         when(usersClient.updateSpecialUser(dto)).thenReturn(response);
 
         mockMvc.perform(patch("/secured/administration/users")
@@ -555,13 +562,13 @@ public class AdministrationControllerTest {
     @Test
     public void GIVEN_user_with_no_permission_WHEN_updateUser_THEN_forbidden() throws Exception {
         User user = new User(1L, "user", "User",
-                Collections.singletonList(new Entity("1", "Entity", "Entity")),
+                Collections.singletonList(new Entity("1", "Entity", "Entity" , true)),
                 "a@b.com",
                 Collections.singletonList("USER"));
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.hasPermission(null, LeosPermission.CAN_MANAGE_ALL_USERS)).thenReturn(false);
 
-        UserEntityDTO userEntityDTO = new UserEntityDTO("e1", "Entity1", "Org1");
+        UserEntityDTO userEntityDTO = new UserEntityDTO("e1", "Entity1", "Org1", true);
         UserUpdateDTO dto = new UserUpdateDTO("testUser", null, null, null, null, Set.of(userEntityDTO), null);
 
         mockMvc.perform(patch("/secured/administration/users")

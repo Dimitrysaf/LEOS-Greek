@@ -38,7 +38,7 @@ public class WorkspaceOptionsTest {
         when(securityContext.hasPermission(null, LeosPermission.CAN_SEE_ALL_DOCUMENTS)).thenReturn(false);
         when(securityContext.hasPermission(null, LeosPermission.CAN_SEE_ORGANIZATION_DOCUMENTS)).thenReturn(true);
 
-        UserEntity entity = new UserEntity("1", "DG_UNIT", "DG_UNIT", "EXTENDED_VIEWER");
+        UserEntity entity = new UserEntity("1", "DG_UNIT", "DG_UNIT", true, "EXTENDED_VIEWER");
         User user = new User(1L, "testuser", "Test User", List.of(entity), "test@mail.com", List.of("EXTENDED_VIEWER"));
         when(securityContext.getUser()).thenReturn(user);
         when(authorityMap.getPermissions("EXTENDED_VIEWER"))
@@ -78,7 +78,7 @@ public class WorkspaceOptionsTest {
         when(securityContext.hasPermission(null, LeosPermission.CAN_SEE_ALL_DOCUMENTS)).thenReturn(false);
         when(securityContext.hasPermission(null, LeosPermission.CAN_SEE_ORGANIZATION_DOCUMENTS)).thenReturn(true);
 
-        UserEntity entity = new UserEntity("1", "DG_UNIT", "DG_UNIT");
+        UserEntity entity = new UserEntity("1", "DG_UNIT", true, "DG_UNIT");
         User user = new User(1L, "testuser", "Test User", List.of(entity), "test@mail.com", List.of("EXTENDED_VIEWER"));
         when(securityContext.getUser()).thenReturn(user);
 
@@ -95,7 +95,7 @@ public class WorkspaceOptionsTest {
         when(securityContext.hasPermission(null, LeosPermission.CAN_SEE_ALL_DOCUMENTS)).thenReturn(false);
         when(securityContext.hasPermission(null, LeosPermission.CAN_SEE_ORGANIZATION_DOCUMENTS)).thenReturn(false);
 
-        UserEntity entity = new UserEntity("1", "DG_UNIT", "DG_UNIT");
+        UserEntity entity = new UserEntity("1", "DG_UNIT", true, "DG_UNIT");
         User user = new User(1L, "testuser", "Test User", List.of(entity), "test@mail.com", List.of("USER"));
         when(securityContext.getUser()).thenReturn(user);
 

@@ -21,83 +21,90 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
 
 public interface UserRepository extends JpaRepository<User, User.UserId> {
 
     // language=SQL
-    String SEARCH_BY_KEY = """
-            SELECT * FROM LEOS_USER
-                WHERE (
-                   deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey)
-                OR
-                   deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey)
-                OR
-                   deAccent(USER_EMAIL) LIKE deAccent(:searchKey)
-                OR
-                   deAccent(USER_LOGIN) LIKE deAccent(:searchKey))
-                AND
-                   USER_PER_ID != -1
-                AND
-                   USER_EMAIL != 'entity@mail.com'""";
-
-    // language=SQL
-    String COUNT_SEARCH_BY_KEY = """
-            SELECT COUNT(*) FROM LEOS_USER
-                WHERE (
-                   deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey)
-                OR
-                   deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey)
-                OR
-                   deAccent(USER_EMAIL) LIKE deAccent(:searchKey)
-                OR
-                   deAccent(USER_LOGIN) LIKE deAccent(:searchKey))
-                AND
-                   USER_PER_ID != -1
-                AND
-                   USER_EMAIL != 'entity@mail.com'""";
-
-    // language=SQL
     String SEARCH_BY_KEY_AND_ENTITY = """
-            SELECT DISTINCT u.USER_LOGIN, u.USER_EMAIL, u.USER_PER_ID, u.USER_LASTNAME, u.USER_FIRSTNAME, u.JOB_TITLE, u.DATE_CREATED, u.SPECIAL FROM LEOS_USER u
-              INNER JOIN LEOS_USER_ENTITY ue on u.USER_LOGIN = ue.USER_LOGIN
-              INNER JOIN LEOS_ENTITY e on e.ENTITY_ID = ue.ENTITY_ID
-              WHERE (
-                  deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey)
-                OR
-                  deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey)
-                OR
-                  deAccent(USER_EMAIL) LIKE deAccent(:searchKey)
-                OR
-                  deAccent(u.USER_LOGIN) LIKE deAccent(:searchKey))
-              AND
-                e.ENTITY_ID = :entityId
-              AND
-                USER_PER_ID != -1
-              AND
-                USER_EMAIL != 'entity@mail.com'""";
+            SELECT u.USER_LOGIN, u.USER_EMAIL, u.USER_PER_ID, u.USER_LASTNAME, u.USER_FIRSTNAME, u.JOB_TITLE, u.DATE_CREATED, u.SPECIAL
+            FROM (
+                SELECT u.*,
+                       ROW_NUMBER() OVER (PARTITION BY u.USER_LOGIN ORDER BY u.SPECIAL DESC) AS rn
+                FROM LEOS_USER u
+                INNER JOIN LEOS_USER_ENTITY ue ON u.USER_LOGIN = ue.USER_LOGIN
+                INNER JOIN LEOS_ENTITY e ON e.ENTITY_ID = ue.ENTITY_ID
+                WHERE (
+                    deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey)
+                 OR
+                    deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey)
+                 OR
+                    deAccent(USER_EMAIL) LIKE deAccent(:searchKey)
+                 OR
+                    deAccent(u.USER_LOGIN) LIKE deAccent(:searchKey))
+                AND e.ENTITY_ID = :entityId
+                AND USER_PER_ID != -1
+                AND USER_EMAIL != 'entity@mail.com'
+            ) u
+            WHERE rn = 1""";
 
     // language=SQL
     String COUNT_SEARCH_BY_KEY_AND_ENTITY = """
-            SELECT COUNT(DISTINCT u.USER_LOGIN) FROM LEOS_USER u
-              INNER JOIN LEOS_USER_ENTITY ue on u.USER_LOGIN = ue.USER_LOGIN
-              INNER JOIN LEOS_ENTITY e on e.ENTITY_ID = ue.ENTITY_ID
-              WHERE (
-                  deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey)
-                OR
-                  deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey)
-                OR
-                  deAccent(USER_EMAIL) LIKE deAccent(:searchKey)
-                OR
-                  deAccent(u.USER_LOGIN) LIKE deAccent(:searchKey))
-              AND
-                e.ENTITY_ID = :entityId
-              AND
-                USER_PER_ID != -1
-              AND
-                USER_EMAIL != 'entity@mail.com'""";
+            SELECT COUNT(*) FROM (
+                SELECT ROW_NUMBER() OVER (PARTITION BY u.USER_LOGIN ORDER BY u.SPECIAL DESC) AS rn
+                FROM LEOS_USER u
+                INNER JOIN LEOS_USER_ENTITY ue ON u.USER_LOGIN = ue.USER_LOGIN
+                INNER JOIN LEOS_ENTITY e ON e.ENTITY_ID = ue.ENTITY_ID
+                WHERE (
+                    deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey)
+                 OR
+                    deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey)
+                 OR
+                    deAccent(USER_EMAIL) LIKE deAccent(:searchKey)
+                 OR
+                    deAccent(u.USER_LOGIN) LIKE deAccent(:searchKey))
+                AND e.ENTITY_ID = :entityId
+                AND USER_PER_ID != -1
+                AND USER_EMAIL != 'entity@mail.com'
+            ) WHERE rn = 1""";
+
+    // language=SQL
+    String SEARCH_BY_KEY_DEDUPED = """
+            SELECT u.USER_LOGIN, u.USER_EMAIL, u.USER_PER_ID, u.USER_LASTNAME, u.USER_FIRSTNAME, u.JOB_TITLE, u.DATE_CREATED, u.SPECIAL
+            FROM (
+                SELECT u.*,
+                       ROW_NUMBER() OVER (PARTITION BY USER_LOGIN ORDER BY SPECIAL DESC) AS rn
+                FROM LEOS_USER u
+                WHERE (
+                    deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey)
+                 OR
+                    deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey)
+                 OR
+                    deAccent(USER_EMAIL) LIKE deAccent(:searchKey)
+                 OR
+                    deAccent(USER_LOGIN) LIKE deAccent(:searchKey))
+                AND USER_PER_ID != -1
+                AND USER_EMAIL != 'entity@mail.com'
+            ) u
+            WHERE rn = 1""";
+
+    // language=SQL
+    String COUNT_SEARCH_BY_KEY_DEDUPED = """
+            SELECT COUNT(*) FROM (
+                SELECT ROW_NUMBER() OVER (PARTITION BY USER_LOGIN ORDER BY SPECIAL DESC) AS rn
+                FROM LEOS_USER u
+                WHERE (
+                    deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey)
+                 OR
+                    deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey)
+                 OR
+                    deAccent(USER_EMAIL) LIKE deAccent(:searchKey)
+                 OR
+                    deAccent(USER_LOGIN) LIKE deAccent(:searchKey))
+                AND USER_PER_ID != -1
+                AND USER_EMAIL != 'entity@mail.com'
+            ) WHERE rn = 1""";
 
     User findFirstByLogin(String login);
 
@@ -134,14 +141,14 @@ public interface UserRepository extends JpaRepository<User, User.UserId> {
     Long countByEntitiesIdAndPerIdNotAndEmailNot(String entityId, Long perId, String email);
 
     /**
-     * Search for users in the LEOS_USER view, matching the given searchKey on the
-     * USER_LASTNAME, USER_FIRSTNAME, USER_EMAIL, USER_LOGIN columns.
+     * Search for users in the LEOS_USER view, matching the given searchKey, deduplicating by USER_LOGIN
+     * and preferring the SPECIAL=TRUE record when both a special and a non-special user share the same login.
      * @param searchKey the search term
      * @param pageable pagination parameters
-     * @return Page of {@link SpecialUser} objects
+     * @return Page of {@link User} objects
      */
-    @Query(value = SEARCH_BY_KEY, countQuery = COUNT_SEARCH_BY_KEY, nativeQuery = true)
-    Page<User> findNonEntityUsersByKey(@Param("searchKey") String searchKey, Pageable pageable);
+    @Query(value = SEARCH_BY_KEY_DEDUPED, countQuery = COUNT_SEARCH_BY_KEY_DEDUPED, nativeQuery = true)
+    Page<User> findByKey(@Param("searchKey") String searchKey, Pageable pageable);
 
     /**
      * Search for users in the LEOS_USER view, matching the given searchKey on the
@@ -152,7 +159,10 @@ public interface UserRepository extends JpaRepository<User, User.UserId> {
      * @return Page of {@link SpecialUser} objects
      */
     @Query(value = SEARCH_BY_KEY_AND_ENTITY, countQuery = COUNT_SEARCH_BY_KEY_AND_ENTITY, nativeQuery = true)
-    Page<User> findNonEntityUsersByKeyAndEntity(@Param("searchKey") String searchKey, @Param("entityId") String entityId, Pageable pageable);
+    Page<User> findByKeyAndEntity(@Param("searchKey") String searchKey, @Param("entityId") String entityId, Pageable pageable);
 
-    Collection<User> findByLoginIgnoreCase(String login);
+    User findFirstByLoginAndSpecialIsTrue(String login);
+
+    @Query("SELECT COUNT(u) FROM User u JOIN u.entities e WHERE u.login = :login")
+    long countByLoginWithEntities(@Param("login") String login);
 }

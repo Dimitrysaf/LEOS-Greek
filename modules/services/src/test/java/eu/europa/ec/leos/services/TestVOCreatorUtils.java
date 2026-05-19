@@ -23,7 +23,7 @@ public class TestVOCreatorUtils {
 
     public static User getTestUser(String firstName, String lastName, String userLogin, String organizationName) {
         List<Entity> entities = new ArrayList<Entity>();
-        entities.add(new Entity("1", "A1", organizationName));
+        entities.add(new Entity("1", "A1", organizationName, true));
         List<String> roles = new ArrayList<String>();
         roles.add("ADMIN");
         User user1 = new User(1l, userLogin, lastName + " " + firstName, entities, firstName +"@gmail.com", roles);

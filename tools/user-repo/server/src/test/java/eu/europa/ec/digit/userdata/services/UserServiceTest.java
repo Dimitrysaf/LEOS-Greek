@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -39,8 +40,9 @@ public class UserServiceTest {
 
     @Autowired
     private SpecialUserRepository specialUserRepository;
+
     @Autowired
-    private UserRepository userRepository;
+    private JdbcOperations jdbcTemplate;
 
     @BeforeAll
     public static void initH2() {
@@ -50,7 +52,7 @@ public class UserServiceTest {
     @Test
     public void GIVEN_empty_search_term_AND_unpaged_WHEN_search_THEN_all_users_returned() {
         Page<User> pageOfUsers = userService.search("", Pageable.unpaged());
-        long count = userRepository.findAll().stream().filter(u -> u.getPerId() != -1).count();
+        long count = jdbcTemplate.queryForObject("select count(distinct user_login ) from leos_user where user_per_id != -1", Long.class);
         assertEquals(count, pageOfUsers.getNumberOfElements());
     }
 
@@ -62,19 +64,16 @@ public class UserServiceTest {
 
     @Test
     @Rollback
-    public void GIVEN_new_user_WHEN_addSpecialUser_THEN_user_created() {
+    public void GIVEN_new_user_without_entities_WHEN_addSpecialUser_THEN_exception_thrown() {
         long now = System.currentTimeMillis();
         SpecialUser specialUser = new SpecialUser("obiwan", 0L, "Kenobi", "Obi-Wan", "obiwan@deathstar.com");
-        SpecialUser created = userService.addSpecialUser(specialUser);
-
-        assertTrue(created.getDateCreated().getTime() >= now);
-        SpecialUser repoUser = specialUserRepository.getByLogin("obiwan");
-        assertEquals("Kenobi", repoUser.getLastName());
+        BadRequestException e = assertThrows(BadRequestException.class, () -> userService.addSpecialUser(specialUser));
+        assertEquals("page.workspace.administration.user-info.user-has-no-entities", e.getMessageKey());
     }
 
     @Test
     @Rollback
-    public void GIVEN_new_user_with_existing_entities_WHEN_addSpecialUser_THEN_user_created() {
+    public void GIVEN_new_user_with_existing_entities_WHEN_addSpecialUser_THEN_user_created() throws InterruptedException {
         long now = System.currentTimeMillis();
 
         SpecialUser specialUser = new SpecialUser("chewbacca", 0L, "Kenobi", "Obi-Wan", "obiwan@deathstar.com",
@@ -86,7 +85,8 @@ public class UserServiceTest {
         );
         List<SpecialUserEntity> userEntities = entities.stream().map(e -> new SpecialUserEntity(specialUser, e)).toList();
         specialUser.setEntities(userEntities);
-        SpecialUser created = userService.addSpecialUser(specialUser);
+        Thread.sleep(1000L);
+        User created = userService.addSpecialUser(specialUser);
 
         assertTrue(created.getDateCreated().getTime() >= now);
         SpecialUser repoUser = specialUserRepository.getByLogin("chewbacca");
@@ -151,7 +151,7 @@ public class UserServiceTest {
     public void GIVEN_user_with_entity_WITHOUT_role_WHEN_updateSpecialUser_adding_EXTENDED_VIEWER_THEN_role_persisted() {
         // vader has entity 3 with no role in seed data
         SpecialUser vader = specialUserRepository.getByLogin("vader");
-        Set<UserEntityDto> addedEntities = Set.of(new UserEntityDto("3", null, null, "EXTENDED_VIEWER"));
+        Set<UserEntityDto> addedEntities = Set.of(new UserEntityDto("3", null, null, null, "EXTENDED_VIEWER"));
 
         userService.updateSpecialUser(vader, addedEntities, null);
 
@@ -168,7 +168,7 @@ public class UserServiceTest {
     public void GIVEN_user_with_entity_WITH_EXTENDED_VIEWER_role_WHEN_updateSpecialUser_clearing_role_THEN_role_is_null() {
         // iluser1 has entity 9 with EXTENDED_VIEWER in seed data
         SpecialUser iluser1 = specialUserRepository.getByLogin("iluser1");
-        Set<UserEntityDto> addedEntities = Set.of(new UserEntityDto("9", null, null, null));
+        Set<UserEntityDto> addedEntities = Set.of(new UserEntityDto("9", null, null, null, null));
 
         userService.updateSpecialUser(iluser1, addedEntities, null);
 
@@ -184,7 +184,7 @@ public class UserServiceTest {
     public void GIVEN_user_without_entity_WHEN_updateSpecialUser_adding_entity_with_role_THEN_entity_added_with_role() {
         // luke has entity 8; add entity 3 with EXTENDED_VIEWER
         SpecialUser luke = specialUserRepository.getByLogin("luke");
-        Set<UserEntityDto> addedEntities = Set.of(new UserEntityDto("3", null, null, "EXTENDED_VIEWER"));
+        Set<UserEntityDto> addedEntities = Set.of(new UserEntityDto("3", null, null, null, "EXTENDED_VIEWER"));
 
         userService.updateSpecialUser(luke, addedEntities, null);
 

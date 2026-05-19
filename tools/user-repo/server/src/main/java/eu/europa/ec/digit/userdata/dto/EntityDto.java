@@ -27,4 +27,6 @@ public class EntityDto {
     private String name;
 
     private String organizationName;
+
+    private Boolean special;
 }

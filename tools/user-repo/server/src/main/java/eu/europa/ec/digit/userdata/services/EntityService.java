@@ -35,11 +35,6 @@ public class EntityService {
                     "An entity with the same name already exists",
                     "page.workspace.administration.entity-info.entity-name-conflict");
         }
-        if (!entityRepository.findByNameIgnoreCase(name).isEmpty()) {
-            throw new BadRequestException(
-                    "This entity name cannot be used as already present in COMREF",
-                    "page.workspace.administration.entity-info.comref-name-conflict");
-        }
         return specialEntityRepository.save(entity);
     }
 

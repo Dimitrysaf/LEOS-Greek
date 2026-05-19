@@ -48,7 +48,7 @@ public class UserServiceImplTest extends LeosTest {
         String user1Mail = "smithj@test.com";
 
         List<Entity> entities = new ArrayList<Entity>();
-        entities.add(new Entity("1", "EXT.A1", "Ext"));
+        entities.add(new Entity("1", "EXT.A1", "Ext", true));
 
         String userId = "smithj";
         List<String> roles= new ArrayList<String>();
@@ -82,7 +82,7 @@ public class UserServiceImplTest extends LeosTest {
         user1Roles.add("ADMIN");
 
         List<UserEntity> entities = new ArrayList<>();
-        entities.add(new UserEntity("1", "EXT.A1", "Ext"));
+        entities.add(new UserEntity("1", "EXT.A1", true, "Ext"));
 
         String searchKey = "smith";
 

@@ -86,9 +86,13 @@ public class UserService {
         final String term = StringUtils.isBlank(decodedKey)
                 ? "%"
                 : "%" + decodedKey.replaceAll("\\s+", "% %") + "%";
-        return StringUtils.isBlank(entityId)
-                ? userRepository.findNonEntityUsersByKey(term, mappedPageable)
-                : userRepository.findNonEntityUsersByKeyAndEntity(term, entityId, mappedPageable);
+        final Page<User> page = StringUtils.isBlank(entityId)
+                ? userRepository.findByKey(term, mappedPageable)
+                : userRepository.findByKeyAndEntity(term, entityId, mappedPageable);
+        page.forEach(u -> u.setEntities(
+                u.getEntities().stream().filter(Entity::getSpecial).toList()
+        ));
+        return page;
     }
 
     /**
@@ -100,14 +104,14 @@ public class UserService {
      *                              or if the user cannot be associated to any entity.
      */
     @Transactional
-    public SpecialUser addSpecialUser(@NonNull final SpecialUser user) {
-        if (!userRepository.findByLoginIgnoreCase(user.getLogin()).isEmpty()) {
+    public User addSpecialUser(@NonNull final SpecialUser user) {
+        if (!specialUserRepository.findByLoginIgnoreCase(user.getLogin()).isEmpty()) {
             throw new BadRequestException(
                     "Cannot create SpecialUser(%s): User with the same login (case-insensitive) already exists"
                             .formatted(user.getLogin()),
                     "page.workspace.administration.user-info.user-login-conflict");
         }
-        if (user.getEntities() != null) {
+        if (user.getEntities() != null && !user.getEntities().isEmpty()) {
             user.getEntities().forEach(sue -> {
                 if (!specialEntityRepository.existsById(sue.getEntity().getId())) {
                     throw new BadRequestException(
@@ -116,12 +120,19 @@ public class UserService {
                             "page.workspace.administration.user-info.entity-not-found");
                 }
             });
+        } else {
+            if (userRepository.countByLoginWithEntities(user.getLogin()) == 0) {
+                throw new BadRequestException(
+                        "User should have at least one associated entity.",
+                        "page.workspace.administration.user-info.user-has-no-entities");
+            }
         }
-        return specialUserRepository.save(user);
+        specialUserRepository.saveAndFlush(user);
+        return userRepository.findFirstByLoginAndSpecialIsTrue(user.getLogin());
     }
 
     @Transactional
-    public SpecialUser updateSpecialUser(@NonNull final SpecialUser user, final Set<UserEntityDto> addedEntities, final Set<String> removedEntities) {
+    public User updateSpecialUser(@NonNull final SpecialUser user, final Set<UserEntityDto> addedEntities, final Set<String> removedEntities) {
         final SpecialUser existing = specialUserRepository.getByLogin(user.getLogin());
         if (existing == null) {
             throw new BadRequestException(
@@ -152,7 +163,8 @@ public class UserService {
         }
         existing.getEntities().clear();
         existing.getEntities().addAll(userEntities);
-        return specialUserRepository.save(existing);
+        specialUserRepository.saveAndFlush(existing);
+        return userRepository.findFirstByLoginAndSpecialIsTrue(user.getLogin());
     }
 
     @Transactional

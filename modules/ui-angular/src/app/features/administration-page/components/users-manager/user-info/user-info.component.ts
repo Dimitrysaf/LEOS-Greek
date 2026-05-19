@@ -143,9 +143,10 @@ export class UserInfoComponent implements OnInit, OnDestroy {
     this.rolesGroup = new FormGroup({});
 
     for (const role of APPLICATION_ROLES) {
+      const userRole = this.selectedUser?.userRoles?.find(ur => ur.role == role);
       this.rolesGroup.addControl(role, new FormControl({
         value: this.selectedUser?.roles?.includes(role) || false,
-        disabled: false
+        disabled: !!userRole && !userRole.special
       }));
     }
     this._showExtendedViewerColumn = this.selectedUser?.roles?.includes('EXTENDED_VIEWER');
@@ -213,11 +214,11 @@ export class UserInfoComponent implements OnInit, OnDestroy {
   }
 
   protected onSave() {
-    const model = !!this.selectedUser.login ? this.toUpdateModel() : this.toModel();
-    const method: ((user: User | UserUpdate) => Observable<User>) = !!this.selectedUser.login
+    const model = this.userIsEnrolled ? this.toUpdateModel() : this.toModel(this.selectedUser.special);
+    const method: ((user: User | UserUpdate) => Observable<User>) = this.userIsEnrolled
       ? this.adminService.updateUser.bind(this.adminService)
       : this.adminService.createUser.bind(this.adminService);
-    const methodName = method.name.substring(6); // 'bound ' prepended to the method name after binding
+    const methodName = this.selectedUser.login ? 'updateUser' : 'createUser';
     if (validate(this.form, {
       service: this.dialogService,
       title: `page.workspace.administration.user-info.${methodName}-error-title`,
@@ -242,6 +243,10 @@ export class UserInfoComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  private get userIsEnrolled() {
+    return this.selectedUser.login && this.selectedUser.special;
   }
 
   protected onCancel() {
@@ -289,16 +294,16 @@ export class UserInfoComponent implements OnInit, OnDestroy {
     }));
   }
 
-  private toModel(): User {
+  private toModel(ignoreCleanFields: boolean): User {
     const roles = Object.keys(this.rolesGroup.controls)
-      .filter(role => this.rolesGroup.get(role)?.value)
+      .filter(role => this.APPLICATION_ROLES.includes(role as any) && this.rolesGroup.get(role)?.value)
       .map(role => role);
 
     return {
       ...this.form.value,
-      firstName: this.form.get("firstName")?.dirty ? this.form.value.firstName : null,
-      lastName: this.form.get("lastName")?.dirty ? this.form.value.lastName : null,
-      email: this.form.get("email")?.dirty ? this.form.value.email : null,
+      firstName: !ignoreCleanFields || this.form.get("firstName")?.dirty ? this.form.value.firstName : null,
+      lastName: !ignoreCleanFields || this.form.get("lastName")?.dirty ? this.form.value.lastName : null,
+      email: !ignoreCleanFields || this.form.get("email")?.dirty ? this.form.value.email : null,
       roles: roles,
       entities: this.entitiesWithRoles(),
       rolesGroup: undefined,
@@ -307,7 +312,7 @@ export class UserInfoComponent implements OnInit, OnDestroy {
   }
 
   private toUpdateModel(): UserUpdate {
-    const user = this.toModel() as any as UserUpdate;
+    const user = this.toModel(true) as any as UserUpdate;
     user.addedEntities = this.entitiesWithRoles();
     user.removedEntities = [...this.updateRemovedEntities];
     user['entities'] = undefined;
@@ -330,10 +335,6 @@ export class UserInfoComponent implements OnInit, OnDestroy {
       .filter(e => !this.selectedEntities.has(e.id))
       .filter(e => !this.searchTerm || e.name.toLowerCase().includes(this.searchTerm.toLowerCase()))
       .forEach(e => this.availableEntities.set(e.id, e as any));
-  }
-
-  get canBeEdited() {
-    return !this.selectedUser.login || this.selectedUser.special;
   }
 
   // Handle a quirk in eUiSelectComponent

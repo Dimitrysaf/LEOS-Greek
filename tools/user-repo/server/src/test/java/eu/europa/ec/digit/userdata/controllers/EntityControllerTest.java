@@ -72,7 +72,7 @@ public class EntityControllerTest {
 
     @Test
     void GIVEN_valid_dto_WHEN_create_THEN_entity_persisted_and_returned() throws Exception {
-        EntityDto entityDto = new EntityDto(null, "TEST.123", "CNECT");
+        EntityDto entityDto = new EntityDto(null, "TEST.123", "CNECT", true);
         String entityAsJson = objectMapper.writeValueAsString(entityDto);
         mockMvc.perform(post("/entities")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -89,7 +89,7 @@ public class EntityControllerTest {
 
     @Test
     void GIVEN_name_with_spaces_WHEN_create_THEN_bad_request() throws Exception {
-        EntityDto entityDto = new EntityDto(null, "TEST 123", "CNECT");
+        EntityDto entityDto = new EntityDto(null, "TEST 123", "CNECT", true);
         String entityAsJson = objectMapper.writeValueAsString(entityDto);
         mockMvc.perform(post("/entities")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -99,7 +99,7 @@ public class EntityControllerTest {
 
     @Test
     void GIVEN_id_not_null_WHEN_create_THEN_bad_request() throws Exception {
-        EntityDto entityDto = new EntityDto("1234567", "TEST.234", "CNECT");
+        EntityDto entityDto = new EntityDto("1234567", "TEST.234", "CNECT", true);
         String entityAsJson = objectMapper.writeValueAsString(entityDto);
         mockMvc.perform(post("/entities")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -109,7 +109,7 @@ public class EntityControllerTest {
 
     @Test
     void GIVEN_name_exists_with_different_letter_case_WHEN_create_THEN_conflict() throws Exception {
-        EntityDto entityDto = new EntityDto(null, "cnect", "CNECT");
+        EntityDto entityDto = new EntityDto(null, "cnect", "CNECT", true);
         String entityAsJson = objectMapper.writeValueAsString(entityDto);
         mockMvc.perform(post("/entities")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -123,7 +123,7 @@ public class EntityControllerTest {
     void GIVEN_valid_dto_WHEN_update_THEN_entity_updated_and_returned() throws Exception {
         SpecialEntity entity = specialEntityRepo.findByName("CNECT.DDG2");
         assertNotNull(entity);
-        EntityDto entityDto = new EntityDto(entity.getId(), "CNECT.DDG2.Updated", "DGT");
+        EntityDto entityDto = new EntityDto(entity.getId(), "CNECT.DDG2.Updated", "DGT", true);
         String entityAsJson = objectMapper.writeValueAsString(entityDto);
         mockMvc.perform(patch("/entities")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -145,7 +145,7 @@ public class EntityControllerTest {
 
     @Test
     void GIVEN_non_existent_id_WHEN_update_THEN_not_found() throws Exception {
-        EntityDto entityDto = new EntityDto("non-existent-id", "TEST.999", "CNECT");
+        EntityDto entityDto = new EntityDto("non-existent-id", "TEST.999", "CNECT", true);
         String entityAsJson = objectMapper.writeValueAsString(entityDto);
         mockMvc.perform(patch("/entities")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -155,7 +155,7 @@ public class EntityControllerTest {
 
     @Test
     void GIVEN_invalid_name_WHEN_update_THEN_not_bad_request() throws Exception {
-        EntityDto entityDto = new EntityDto("CNECT.DDG2", "CNECT.DDG2 1", "CNECT");
+        EntityDto entityDto = new EntityDto("CNECT.DDG2", "CNECT.DDG2 1", "CNECT", true);
         String entityAsJson = objectMapper.writeValueAsString(entityDto);
         mockMvc.perform(patch("/entities")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -188,14 +188,19 @@ public class EntityControllerTest {
     }
 
     @Test
-    void GIVEN_name_exists_in_comref_WHEN_creating_entity_THEN_error() throws Exception {
-        EntityDto entityDto = new EntityDto(null, "HR.F.1", "HR");
+    void GIVEN_name_exists_in_comref_WHEN_creating_entity_THEN_OK() throws Exception {
+        EntityDto entityDto = new EntityDto(null, "HR.F.1", "HR", true);
         String entityAsJson = objectMapper.writeValueAsString(entityDto);
         mockMvc.perform(post("/entities")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(entityAsJson))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message")
-                        .value("page.workspace.administration.entity-info.comref-name-conflict"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.name").value(entityDto.getName()))
+                .andExpect(jsonPath("$.organizationName").value(entityDto.getOrganizationName()));
+        SpecialEntity createdEntity = specialEntityRepo.findByName(entityDto.getName());
+        assertNotNull(createdEntity);
+        assertEquals(entityDto.getName(), createdEntity.getName());
+        assertEquals(entityDto.getOrganizationName(), createdEntity.getOrganizationName());
     }
 }

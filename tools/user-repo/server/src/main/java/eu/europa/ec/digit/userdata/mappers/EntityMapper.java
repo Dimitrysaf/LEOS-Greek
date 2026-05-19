@@ -8,13 +8,14 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring",
         uses = {StringTrimMapper.class, RoleMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface EntityMapper {
 
+    @Mapping(target = "special", constant = "true")
     EntityDto toDto(SpecialEntity entity);
 
     EntityDto toDto(Entity entity);
@@ -31,6 +32,7 @@ public interface EntityMapper {
     SpecialUserEntity map(UserEntityDto dto, @Context Map<String, Role> contextRoles);
 
     @Mapping(target = ".", source = "entity")
+    @Mapping(target = "special", constant = "true")
     UserEntityDto map(SpecialUserEntity e);
 
     @Named("organizationName")
@@ -40,14 +42,17 @@ public interface EntityMapper {
     }
 
     default List<UserEntityDto> mapUserEntity(final User user) {
+        final Map<String, UserEntity> ueMap = user.getUserEntities().stream()
+                .collect(Collectors.toMap(UserEntity::getEntityId, ue -> ue));
+        final Map<String, Entity> eMap = user.getEntities().stream()
+                .collect(Collectors.toMap(Entity::getId, ue -> ue));
         return user.getEntities().stream()
                 .map(this::map)
-                .peek(e -> e.setRole(user.getUserEntities().stream()
-                        .filter(ue -> ue.getEntityId().equals(e.getId()))
-                        .map(UserEntity::getRole)
-                        .filter(Objects::nonNull)
-                        .map(Role::getRole)
-                        .findFirst().orElse(null)))
+                .peek(e -> {
+                    UserEntity ue = ueMap.get(e.getId());
+                    e.setRole(ue.getRole() != null ? ue.getRole().getRole() : null);
+                    e.setSpecial(eMap.get(e.getId()).getSpecial());
+                })
                 .toList();
     }
 

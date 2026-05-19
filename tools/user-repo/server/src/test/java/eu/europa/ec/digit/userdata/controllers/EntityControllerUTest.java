@@ -159,7 +159,7 @@ class EntityControllerUTest {
 
         when(entityService.getAllSpecial()).thenReturn(Arrays.asList(entities));
         for(SpecialEntity e : entities) {
-            when(entityMapper.toDto(e)).thenReturn(new EntityDto(e.getId(), e.getName(), e.getOrganizationName()));
+            when(entityMapper.toDto(e)).thenReturn(new EntityDto(e.getId(), e.getName(), e.getOrganizationName(), true));
         }
         mockMvc.perform(get("/entities/special"))
                 .andExpect(status().isOk())
@@ -180,7 +180,7 @@ class EntityControllerUTest {
 
         when(entityService.getAllSpecial()).thenReturn(Arrays.asList(entities));
         for(SpecialEntity e : entities) {
-            when(entityMapper.toDto(e)).thenReturn(new EntityDto(e.getId(), e.getName(), e.getOrganizationName()));
+            when(entityMapper.toDto(e)).thenReturn(new EntityDto(e.getId(), e.getName(), e.getOrganizationName(), true));
         }
         mockMvc.perform(get("/entities/special").param("orgName", "  "))
                 .andExpect(status().isOk())
@@ -199,14 +199,14 @@ class EntityControllerUTest {
                 new SpecialEntity("2", "TWO", null, null),
                 new SpecialEntity("3", "THREE", null, null)
         };
-        Entity org = new Entity("ORG_ID", "ORG", null, "ORG");
+        Entity org = new Entity("ORG_ID", "ORG", null, "ORG", true);
 
         when(entityService.getSpecialForOrganization("ORG")).thenReturn(Arrays.asList(entities));
         for(SpecialEntity e : entities) {
-            when(entityMapper.toDto(e)).thenReturn(new EntityDto(e.getId(), e.getName(), e.getOrganizationName()));
+            when(entityMapper.toDto(e)).thenReturn(new EntityDto(e.getId(), e.getName(), e.getOrganizationName(), true));
         }
         when(entityService.getOrganization("ORG")).thenReturn(Optional.of(org));
-        when(entityMapper.toDto(org)).thenReturn(new EntityDto(org.getId(), org.getName(), org.getOrganizationName()));
+        when(entityMapper.toDto(org)).thenReturn(new EntityDto(org.getId(), org.getName(), org.getOrganizationName(), true));
         mockMvc.perform(get("/entities/special").param("orgName", "ORG"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())

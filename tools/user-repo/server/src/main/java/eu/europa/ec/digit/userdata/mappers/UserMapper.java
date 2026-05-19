@@ -2,13 +2,11 @@ package eu.europa.ec.digit.userdata.mappers;
 
 import eu.europa.ec.digit.userdata.dto.UserAuthDto;
 import eu.europa.ec.digit.userdata.dto.UserDto;
-import eu.europa.ec.digit.userdata.dto.UserEntityDto;
 import eu.europa.ec.digit.userdata.dto.UserUpdateDto;
 import eu.europa.ec.digit.userdata.entities.*;
 import org.mapstruct.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring",
         uses = {EntityMapper.class, StringTrimMapper.class, RoleMapper.class},
@@ -35,7 +33,8 @@ public interface UserMapper {
     @Mapping(target = "special", constant = "true")
     UserDto mapToDto(SpecialUser entity, @Context Map<String, Role> contextRoles);
 
-    UserDto mapToDto(User entity, @Context Map<String, Role> contextRoles);
+    @Mapping(target = "entities", source = "user")
+    UserDto mapToDto(User user, @Context Map<String, Role> contextRoles);
 
     @Mapping(target = "perId", constant = "0L")
     @Mapping(target = "roleEntities", source = "roles")
@@ -56,17 +55,4 @@ public interface UserMapper {
         });
     }
 
-    @AfterMapping
-    default void fixUserEntities(final User user, @MappingTarget final UserDto dto) {
-        final Map<String, Role> userEntityRoleMap = user.getUserEntities().stream()
-                .filter(ue -> ue.getRole() != null)
-                .collect(Collectors.toMap(UserEntity::getEntityId, UserEntity::getRole));
-        for (UserEntityDto entity : dto.getEntities()) {
-            final Role role = userEntityRoleMap.get(entity.getId());
-            if (role != null) {
-                entity.setRole(role.getRole());
-            }
-        }
-
-    }
 }

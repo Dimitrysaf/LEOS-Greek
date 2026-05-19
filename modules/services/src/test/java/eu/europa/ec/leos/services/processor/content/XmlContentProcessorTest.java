@@ -143,7 +143,7 @@ public abstract class XmlContentProcessorTest extends LeosTest {
         when(structureService.getRefConfigs(argThat(any(String.class)))).thenReturn(Arrays.asList(refConfig));
 
         List<Entity> entities = new ArrayList<Entity>();
-        entities.add(new Entity("1", "DIGIT.B2", "DIGIT"));
+        entities.add(new Entity("1", "DIGIT.B2", "DIGIT", true));
         User user = ModelHelper.buildUser(45L, "demo", "demo", entities);
         when(securityContext.getUser()).thenReturn(user);
         when(securityContext.getUserName()).thenReturn("demo");

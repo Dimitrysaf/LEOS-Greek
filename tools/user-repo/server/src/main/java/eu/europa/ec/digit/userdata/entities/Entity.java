@@ -43,4 +43,7 @@ public class Entity {
 
     @Column(name = "ENTITY_ORG_NAME", nullable = false, insertable = false, updatable = false)
     private String organizationName;
+
+    @Column(name = "SPECIAL", nullable = false, insertable = false, updatable = false)
+    private Boolean special;
 }
