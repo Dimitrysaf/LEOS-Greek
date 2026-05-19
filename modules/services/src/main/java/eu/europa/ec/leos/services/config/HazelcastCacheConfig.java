@@ -38,7 +38,7 @@ public class HazelcastCacheConfig {
         config.setInstanceName(instanceName);
 
         // Prevent deserialization errors from crashing the node during rolling deployments
-        config.getSerializationConfig().setAllowUnsafeSerialization(true);
+        config.getSerializationConfig().setAllowUnsafe(true);
 
         // Network configuration for clustering (replaces JGroups)
         NetworkConfig networkConfig = config.getNetworkConfig();
