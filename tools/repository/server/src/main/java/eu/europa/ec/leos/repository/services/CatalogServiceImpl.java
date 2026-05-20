@@ -111,15 +111,18 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     @Transactional
     public synchronized void publishCustomTemplate(String legFileId, String templateName, List<String> dgs, String userId, String originalDg) throws CatalogException {
+        templateName = templateName.trim();
         LOG.info("[Publishing Template] Publishing custom template: name={}, description={}, categories={}, originalDg={}", templateName, legFileId, dgs, originalDg);
 
         try {
             Package pkg = validateAndExtractPackage(legFileId);
             LOG.info("[Publishing Template] Validated and extracted Package");
+            validateNoDuplicateCustomTemplate(pkg, templateName, dgs);
+            LOG.info("[Publishing Template] Validated no duplicate custom template name");
             List<String> existingEntities = getCustomTemplateEntitiesByPackage(pkg);
             LOG.info("[Publishing Template] Getting Custom Template Entities");
 
-            updateCustomTemplateEntities(pkg, dgs, userId);
+            updateCustomTemplateEntities(pkg, dgs, userId, templateName);
             LOG.info("[Publishing Template] Updating Custom Template Entities");
             DocumentMilestone docMilestone = updateCustomTemplateMilestones(pkg, getDocumentId(legFileId), userId);
             LOG.info("[Publishing Template] Updating Milestones");
@@ -165,7 +168,7 @@ public class CatalogServiceImpl implements CatalogService {
             return false;
         }
         List<String> dgs = customTemplateInfo.getTemplateVisibility();
-        updateCustomTemplateEntities(pkg, Collections.emptyList(), userId);
+        updateCustomTemplateEntities(pkg, Collections.emptyList(), userId, null);
         updateUnpublishstatusMilestones(pkg, userId);
         dgs.forEach(entity -> removeTemplateFromEntityCatalog(entity, packageId, userId));
         return true;
@@ -217,6 +220,11 @@ public class CatalogServiceImpl implements CatalogService {
     public synchronized void updateCustomTemplate(String packageId, String templateName, List<String> dgs, String userId, String originalDg)
             throws CatalogException {
         try {
+            Package pkg = packageRepository.findById(new BigDecimal(packageId))
+                    .orElseThrow(() -> new CatalogException(CatalogException.CatalogExceptionCode.DB_NOT_FOUND, "Package not found"));
+            templateName = templateName.trim();
+            validateNoDuplicateCustomTemplate(pkg, templateName, dgs);
+
             updateSinglePublishedLanguage(packageId, templateName, dgs, userId, originalDg);
 
             List<LinkedPackage> linkedPackages = linkedPackagedRepository.findByPkgId(new BigDecimal(packageId));
@@ -237,7 +245,7 @@ public class CatalogServiceImpl implements CatalogService {
                 .orElseThrow(() -> new CatalogException(CatalogException.CatalogExceptionCode.DB_NOT_FOUND, "Package not found"));
         List<String> existingEntities = getCustomTemplateEntitiesByPackage(pkg);
         if (!existingEntities.isEmpty()) {
-            updateCustomTemplateEntities(pkg, dgs, userId);
+            updateCustomTemplateEntities(pkg, dgs, userId, templateName);
             updateExistingPublication(existingEntities, dgs, templateName, userId, pkg, originalDg);
         }
     }
@@ -276,7 +284,35 @@ public class CatalogServiceImpl implements CatalogService {
     // =============================================================================
     // VALIDATION METHODS
     // =============================================================================
-    
+
+    /**
+     * Validates that no other custom template with the same template and name is already published to any of the given DGs catalogue.
+     * Translated packages are exempt from this constraint.
+     */
+    private void validateNoDuplicateCustomTemplate(Package pkg, String templateName, List<String> dgs) throws CatalogException {
+        String baseTemplateName = getBaseTemplateNameFromProposal(pkg);
+        if (!Boolean.TRUE.equals(pkg.getIsTranslated()) && baseTemplateName != null) {
+            List<CustomTemplateEntities> sameNameCustomTemplateEntities = customTemplateEntitiesRepository.findByCustomName(templateName);
+            List<String> duplicatedDgs = new ArrayList<>();
+            for (CustomTemplateEntities sameNameCustomTemplateEntity : sameNameCustomTemplateEntities) {
+                if (!sameNameCustomTemplateEntity.getPackageId().getId().equals(pkg.getId())
+                        && !Boolean.TRUE.equals(sameNameCustomTemplateEntity.getPackageId().getIsTranslated())
+                        && baseTemplateName.equals(getBaseTemplateNameFromProposal(sameNameCustomTemplateEntity.getPackageId()))) {
+                    List<String> sameTemplateNameEntities = Arrays.asList(sameNameCustomTemplateEntity.getEntities().split(","));
+                    dgs.stream().filter(sameTemplateNameEntities::contains).forEach(duplicatedDgs::add);
+                }
+            }
+
+            if (!duplicatedDgs.isEmpty()) {
+                LOG.error("[Publishing Template] Duplicate template name found for DGs: {}", duplicatedDgs);
+                throw new CatalogException(CatalogException.CatalogExceptionCode.ERROR_WHILE_CREATING, duplicatedDgs.size() == 1 ?
+                        String.format("DG [%s] has a published custom template with the same name for this template type.", duplicatedDgs.getFirst()) :
+                        String.format("DGs [%s] have a published custom template with the same name for this template type.",
+                                String.join(", ", duplicatedDgs)));
+            }
+        }
+    }
+
     private Package validateAndExtractPackage(String legFileId) throws CatalogException {
         Optional<LeosDocument> legFile = milestoneDocumentService.findMilestoneById(new BigDecimal(legFileId));
         if (!legFile.isPresent()) {
@@ -320,8 +356,9 @@ public class CatalogServiceImpl implements CatalogService {
      * @param pkg the package to update
      * @param newEntities list of new entity names
      * @param userId the user performing the update
+     * @param templateName the custom template name to store
      */
-    private void updateCustomTemplateEntities(Package pkg, List<String> newEntities, String userId) {
+    private void updateCustomTemplateEntities(Package pkg, List<String> newEntities, String userId, String templateName) {
         Optional<CustomTemplateEntities> existing = customTemplateEntitiesRepository.findByPackageId(pkg);
         CustomTemplateEntities entities;
 
@@ -337,6 +374,7 @@ public class CatalogServiceImpl implements CatalogService {
         }
 
         entities.setEntities(String.join(",", newEntities));
+        entities.setCustomName(templateName);
         customTemplateEntitiesRepository.save(entities);
     }
 
@@ -965,7 +1003,7 @@ public class CatalogServiceImpl implements CatalogService {
             return documentToString(catalogDoc);
         } catch (Exception e) {
             LOG.error("Error removing template from catalog", e);
-            throw new CatalogException(CatalogException.CatalogExceptionCode.ERROR_WHILE_CREATING, e.getMessage());
+            throw new CatalogException(CatalogException.CatalogExceptionCode.ERROR_WHILE_DELETING, e.getMessage());
         }
     }
 

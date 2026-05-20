@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import eu.europa.ec.leos.repository.controllers.response.ExceptionResponse;
+import eu.europa.ec.leos.repository.exceptions.CatalogException;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 
 @ControllerAdvice
@@ -21,6 +22,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> repositoryExceptionHandling(RepositoryException exception) {
         return new ResponseEntity<>(new ExceptionResponse(exception.getName() + " " + exception.getCode().getDetail(),
                 ExceptionResponse.ExceptionType.ERROR),HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(CatalogException.class)
+    public ResponseEntity<?> catalogExceptionHandling(CatalogException exception) {
+        return new ResponseEntity<>(new ExceptionResponse(exception.getName(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(Exception.class)

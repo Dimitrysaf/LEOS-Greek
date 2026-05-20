@@ -19,6 +19,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -27,4 +28,6 @@ public interface CustomTemplateEntitiesRepository extends JpaRepository<CustomTe
     Optional<CustomTemplateEntities> findByPackageId(Package packageId);
 
     void deleteByPackageId(Package packageId);
+
+    List<CustomTemplateEntities> findByCustomName(String customName);
 }

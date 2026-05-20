@@ -219,7 +219,7 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         return milestoneLegIds;
     }
 
-    private List<LinkedPackage> getLanguagePackages(String legFileId) throws PendingTranslationException {
+    private List<LinkedPackage> getLanguagePackages(String legFileId) {
         LeosPackage mainPackage = packageService.findPackageByLegFileId(legFileId);
         if (mainPackage == null) {
             throw new IllegalArgumentException("Package not found for leg file: " + legFileId);
@@ -227,7 +227,7 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         return packageService.findLinkedPackagesByPackageId(mainPackage.getId());
     }
 
-    private void validateNoPendingTranslations(List<LinkedPackage> languagePackages) throws PendingTranslationException {
+    private void validateNoPendingTranslations(List<LinkedPackage> languagePackages) {
         List<String> pendingLanguages = languagePackages.stream()
                 .map(lp -> findPendingTranslationsInPackage(lp.getLinkedPackageId()))
                 .flatMap(Optional::stream).toList();
