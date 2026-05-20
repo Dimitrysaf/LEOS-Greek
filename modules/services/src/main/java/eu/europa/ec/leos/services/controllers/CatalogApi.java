@@ -39,7 +39,7 @@ public interface CatalogApi {
     ResponseEntity<Object> publishTemplateToCatalog(
             @Parameter(description = "LEG file ID", required = true) @PathVariable("legFileId") String legFileId,
             @Parameter(description = "Publish template request", required = true) @RequestBody PublishTemplateRequest request)
-            throws PendingTranslationException;
+            throws Exception;
 
     @Operation(summary = "Update template", description = "Updates an existing template in the catalog")
     @ApiResponses({

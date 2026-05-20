@@ -13,9 +13,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.Arrays;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class CatalogControllerTest {
@@ -74,19 +72,13 @@ public class CatalogControllerTest {
                 request.getDgCodes()
         );
 
-        ResponseEntity<Object> response = catalogController.publishTemplateToCatalog(LEG_FILE_ID, request);
+        assertThrows(RuntimeException.class, () -> catalogController.publishTemplateToCatalog(LEG_FILE_ID, request));
 
         verify(customTemplateService, times(1)).publishTemplate(
                 LEG_FILE_ID,
                 request.getTemplateName(),
                 request.getDgCodes()
         );
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertTrue(response.getBody() instanceof Map);
-        Map<String, String> responseBody = (Map<String, String>) response.getBody();
-        assertEquals("Unexpected error occurred while publishing template", responseBody.get("error"));
     }
 
     @Test

@@ -318,6 +318,7 @@ CREATE TABLE CUSTOM_TEMPLATE_ENTITIES
     ID INT NOT NULL AUTO_INCREMENT,
     PACKAGE_ID INT NOT NULL COMMENT "The package id that this custom template entities belongs to",
     ENTITIES VARCHAR(4000) COMMENT "Comma-separated list of entities",
+    CUSTOM_NAME VARCHAR(500) COMMENT "The custom template name",
     AUDIT_C_BY VARCHAR(30) NOT NULL COMMENT "Audit column holding the user that created this record",
     AUDIT_C_DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT "Audit column holding the date at which this record was created",
     AUDIT_LAST_M_BY VARCHAR(30) COMMENT "Audit column holding the user of the last update on this record",

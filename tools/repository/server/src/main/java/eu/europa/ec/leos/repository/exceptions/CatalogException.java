@@ -19,7 +19,7 @@ public class CatalogException extends RuntimeException {
         DB_NOT_FOUND("Object not found in db"),
         PARA_NOT_FOUND("Parameter not found"),
         ERROR_WHILE_CREATING("Error while creating"),
-        ERROR_WHILE_DELETING("Error while deleting");;
+        ERROR_WHILE_DELETING("Error while deleting");
 
         private String detail;
 

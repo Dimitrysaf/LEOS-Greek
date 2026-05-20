@@ -18,7 +18,7 @@ import lombok.Getter;
 import java.io.Serial;
 
 @Getter
-public class PendingTranslationException extends Exception {
+public class PendingTranslationException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = 1644366742521353921L;

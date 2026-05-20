@@ -40,73 +40,38 @@ public class CatalogController implements CatalogApi {
     private CustomTemplateService customTemplateService;
 
     @Override
-    public ResponseEntity<Object> publishTemplateToCatalog(String legFileId, PublishTemplateRequest request)
-            throws PendingTranslationException {
-        try {
-            legFileId = encodeParam(legFileId);
-            customTemplateService.publishTemplate(
-                    legFileId,
-                    request.getTemplateName(),
-                    request.getDgCodes()
-            );
-            return new ResponseEntity<>(Collections.singletonMap("message", "Template published successfully"), HttpStatus.OK);
-        } catch (PendingTranslationException e) {
-            throw e;
-        } catch (Exception e) {
-            LOG.error("Unexpected error occurred while publishing template - " + e.getMessage(), e);
-            return new ResponseEntity<>(
-                    Collections.singletonMap("error", "Unexpected error occurred while publishing template"),
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
+    public ResponseEntity<Object> publishTemplateToCatalog(String legFileId, PublishTemplateRequest request) throws Exception {
+        legFileId = encodeParam(legFileId);
+        customTemplateService.publishTemplate(
+                legFileId,
+                request.getTemplateName(),
+                request.getDgCodes()
+        );
+        return new ResponseEntity<>(Collections.singletonMap("message", "Template published successfully"), HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Object> updateTemplate(String packageId, PublishTemplateRequest request) {
-        try {
-            packageId = encodeParam(packageId);
-            customTemplateService.updateTemplate(
-                    packageId,
-                    request.getTemplateName(),
-                    request.getDgCodes()
-            );
-            return new ResponseEntity<>(Collections.singletonMap("message", "Template updated successfully"), HttpStatus.OK);
-        } catch (Exception e) {
-            LOG.error("Unexpected error occurred while updating template - " + e.getMessage(), e);
-            return new ResponseEntity<>(
-                    Collections.singletonMap("error", "Unexpected error occurred while updating template"),
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
+        packageId = encodeParam(packageId);
+        customTemplateService.updateTemplate(
+                packageId,
+                request.getTemplateName(),
+                request.getDgCodes()
+        );
+        return new ResponseEntity<>(Collections.singletonMap("message", "Template updated successfully"), HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Object> unPublishTemplate(String catalogKey) {
-        try {
-            catalogKey = encodeParam(catalogKey);
-            Boolean isUpdated = customTemplateService.unPublishTemplate(catalogKey);
-            return new ResponseEntity<>(isUpdated, HttpStatus.OK);
-        } catch (Exception e) {
-            LOG.error("Unexpected error occurred while un published template - " + e.getMessage(), e);
-            return new ResponseEntity<>(
-                    Collections.singletonMap("error", "Unexpected error occurred while un published template"),
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
+        catalogKey = encodeParam(catalogKey);
+        Boolean isUpdated = customTemplateService.unPublishTemplate(catalogKey);
+        return new ResponseEntity<>(isUpdated, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Object> getTemplateInfo(String proposalRef) {
-        try {
-            proposalRef = encodeParam(proposalRef);
-            CustomTemplateInfoResponse response = customTemplateService.getTemplateInfo(proposalRef);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            LOG.error("Unexpected error occurred while getting template info - " + e.getMessage(), e);
-            return new ResponseEntity<>(
-                    Collections.singletonMap("error", "Unexpected error occurred while getting template info"),
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
+        proposalRef = encodeParam(proposalRef);
+        CustomTemplateInfoResponse response = customTemplateService.getTemplateInfo(proposalRef);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

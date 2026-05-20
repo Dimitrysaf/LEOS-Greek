@@ -33,7 +33,8 @@ import java.time.LocalDateTime;
     @NamedQuery(name = "CustomTemplateEntities.findAll", query = "SELECT c FROM CustomTemplateEntities c"),
     @NamedQuery(name = "CustomTemplateEntities.findById", query = "SELECT c FROM CustomTemplateEntities c WHERE c.id = :id"),
     @NamedQuery(name = "CustomTemplateEntities.findByPackageId", query = "SELECT c FROM CustomTemplateEntities c WHERE c.packageId = :packageId"),
-    @NamedQuery(name = "CustomTemplateEntities.findByEntities", query = "SELECT c FROM CustomTemplateEntities c WHERE c.entities = :entities")
+    @NamedQuery(name = "CustomTemplateEntities.findByEntities", query = "SELECT c FROM CustomTemplateEntities c WHERE c.entities = :entities"),
+    @NamedQuery(name = "CustomTemplateEntities.findByCustomName", query = "SELECT c FROM CustomTemplateEntities c WHERE c.customName = :customName")
 })
 public class CustomTemplateEntities implements Serializable {
 
@@ -50,6 +51,9 @@ public class CustomTemplateEntities implements Serializable {
 
     @Column(name = "ENTITIES", length = 4000)
     private String entities;
+
+    @Column(name = "CUSTOM_NAME", length = 500)
+    private String customName;
 
     @Column(name = "AUDIT_C_BY", nullable = false, length = 30)
     private String auditCBy;
@@ -99,6 +103,14 @@ public class CustomTemplateEntities implements Serializable {
 
     public void setEntities(String entities) {
         this.entities = entities;
+    }
+
+    public String getCustomName() {
+        return customName;
+    }
+
+    public void setCustomName(String customName) {
+        this.customName = customName;
     }
 
     public String getAuditCBy() {
