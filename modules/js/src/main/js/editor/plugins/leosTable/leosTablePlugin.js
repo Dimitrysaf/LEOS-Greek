@@ -411,33 +411,30 @@ define(function leosTablePluginModule(require) {
     }
 
     function _onEnterKey(context) {
-        var selection = context.event.editor.getSelection();
+        let selection = context.event.editor.getSelection();
         if (!selection) return;
         if (selection.getType() !== CKEDITOR.SELECTION_NONE) {
-            var startElement = leosKeyHandler.getSelectedElement(selection);
-            var currentElement = startElement.$;
-            var elementName = currentElement.nodeName.toLowerCase();
+            let startElement = leosKeyHandler.getSelectedElement(selection);
+            let currentElement = startElement.$;
+            let elementName = currentElement.nodeName.toLowerCase();
+            let target = context.selection.getStartElement();
+            let shiftEnterCmd = context.event.editor.getCommand('leosHierarchicalElementShiftEnterHandler')
+                || context.event.editor.getCommand('leosHierarchicalElementShiftEnterHandlerFS');
             if (elementName === HTML_CAPTION) {
                 context.event.cancel();
             } else {
-                var target = context.selection.getStartElement();
-                let shiftEnterCmd = context.event.editor.getCommand('leosHierarchicalElementShiftEnterHandler')
-                    || context.event.editor.getCommand('leosHierarchicalElementShiftEnterHandlerFS');
-                var table;
-                if ( // #3141: Create a paragraph on ENTER after a table inside a list
+                let table;
+                if ( // corner case: cursor is outside table (li/p containing table, or element containing table)
                     target.is?.('li')                                          // The ENTER was typed inside a list item
                     && (table = target.getLast(e => e.is?.('table'))) //  and the list item has a table inside it
                  || target.is?.('p')                                           // OR the ENTER was typed inside a paragraph
                     && (table = target.getPrevious())?.is?.('table')           //  and the paragraph has a table right before it
                     && context.selection.getRanges()[0].checkStartOfBlock()    //  and the ENTER was typed at the start of the paragraph
                 ) {
-                    context.event.cancel();
-                    var p = new CKEDITOR.dom.element('p');
-                    p.setAttribute("data-akn-element", "subparagraph");
-                    p.insertAfter(table);
-                    var range = context.event.editor.createRange();
-                    range.moveToPosition(p, CKEDITOR.POSITION_AFTER_START);
-                    range.select();
+                    if (context.event.editor.config.tableOnlyMode) {
+                        context.event.cancel();
+                    }
+                    // else: do NOT cancel - let other handlers handle it correctly
                 } else if (leosPluginUtils.isInsideTable(target)) {
                     if (!shiftEnterCmd || shiftEnterCmd.state === CKEDITOR.TRISTATE_DISABLED) {
                         context.event.cancel();

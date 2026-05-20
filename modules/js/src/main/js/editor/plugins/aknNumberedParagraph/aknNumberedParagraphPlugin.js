@@ -152,7 +152,9 @@ define(function aknNumberedParagraphPluginModule(require) {
 
         // If we are in the first level paragraph and content is empty, it should be stopped
         // If content is not empty but the cursor is at the first character, it should NOT be stopped. LEOS-2831.
-        if (leosKeyHandler.isContentEmptyTextNode(startElement) && isFirstLevelLiSelected(context)) {
+        // Do not block enter inside table cells (empty cell is valid).
+        if (leosKeyHandler.isContentEmptyTextNode(startElement) && isFirstLevelLiSelected(context)
+                && !leosPluginUtils.isInsideTable(startElement)) {
             context.event.cancel();
         }
     }
