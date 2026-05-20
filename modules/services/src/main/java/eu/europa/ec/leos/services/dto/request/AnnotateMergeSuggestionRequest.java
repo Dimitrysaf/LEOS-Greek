@@ -16,9 +16,12 @@ package eu.europa.ec.leos.services.dto.request;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class AnnotateMergeSuggestionRequest implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private String origText;
     private String newText;
     private String elementId;

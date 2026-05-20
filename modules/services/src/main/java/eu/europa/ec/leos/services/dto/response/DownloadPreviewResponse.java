@@ -13,9 +13,12 @@
  */
 package eu.europa.ec.leos.services.dto.response;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class DownloadPreviewResponse implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final byte[] responseData;
     private final String message;

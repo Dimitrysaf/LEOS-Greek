@@ -13,9 +13,12 @@
  */
 package eu.europa.ec.leos.services.dto.response;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class DownloadVersionResponse implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private final String jobFileName;
     private final byte[] responseData;

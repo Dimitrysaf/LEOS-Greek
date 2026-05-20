@@ -16,9 +16,12 @@ package eu.europa.ec.leos.services.dto.request;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class DownloadVersionRequest implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     private boolean withAnnotations;
     private String annotations;
