@@ -256,19 +256,27 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                         }
                         collaboratorService.syncCollaborators((Proposal) originalProposal);
                     } catch (Exception e) {
-                        LOG.error("Error Occurred while adding the Leg file: " + e.getMessage(), e);
-                        return new Pair<>("An error occurred adding the Leg file. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                        LOG.error("Error occurred while creating proposal from the Leg file: " + e.getMessage(), e);
+                        return new Pair<>(new CreateCollectionError(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                "Error occurred while creating proposal from the Leg file."), HttpStatus.INTERNAL_SERVER_ERROR);
                     }
                 } else {
+                    DocumentVO proposalFromLeg;
+                    try {
+                        proposalFromLeg = proposalConverterService.createProposalFromLegFile(content, false);
+                    } catch (XmlValidationException e) {
+                        LOG.error("Error occurred while updating existing proposal from the Leg file: " + e.getMessage(), e);
+                        return new Pair<>(new CreateCollectionError(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                                "Error occurred while updating existing proposal from the Leg file."), HttpStatus.INTERNAL_SERVER_ERROR);
+                    }
                     CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
-                    if (ByteChecksumComparator.checksumMatched(savedDocument.getContent().get().getSource().getBytes(), propDocument.getSource())) {
-                        addDocumentIdAndUrl(idsAndUrlsHolder, translatedDocRef, LeosCategory.PROPOSAL);
+                    addDocumentIdAndUrl(idsAndUrlsHolder, translatedDocRef, LeosCategory.PROPOSAL);
+                    if (ByteChecksumComparator.checksumMatched(savedDocument.getContent().get().getSource().getBytes(), proposalFromLeg.getSource())) {
                         createCollectionResult = new CreateCollectionResult(idsAndUrlsHolder, false,
                                 new CreateCollectionError(0, messageHelper.getMessage("leoslight.document.duplicate")));
                     } else {
-                        updateLeosDocument(savedDocument.getId(), Proposal.class, propDocument, propDocument.getMetadataDocument());
-                        addDocumentIdAndUrl(idsAndUrlsHolder, translatedDocRef, LeosCategory.PROPOSAL);
-                        propDocument.getChildDocuments().forEach(docVo -> {
+                        updateLeosDocument(savedDocument.getId(), Proposal.class, proposalFromLeg, proposalFromLeg.getMetadataDocument());
+                        proposalFromLeg.getChildDocuments().forEach(docVo -> {
                             String translatedChildDocRef = LanguageMapUtils.getTranslatedProposalReference(docVo.getRef(), languageCode);
                             addDocumentIdAndUrl(idsAndUrlsHolder, translatedChildDocRef, docVo.getCategory());
                             LeosDocument childDocument = findLeosDocument(translatedChildDocRef, LeosCategoryClass.getClass(docVo.getCategory()));
@@ -281,7 +289,8 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                     }
                 }
             } else {
-                return new Pair<>(messageHelper.getMessage("leoslight.original.document.not.found"), HttpStatus.NOT_FOUND);
+                return new Pair<>(new CreateCollectionError(HttpStatus.NOT_FOUND.value(),
+                        messageHelper.getMessage("leoslight.original.document.not.found")), HttpStatus.NOT_FOUND);
             }
         } else {
             CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
@@ -295,13 +304,15 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                 try {
                     String versionLabel = getNextVersionLabel(VersionType.MAJOR, proposals.get(0).getVersionLabel());
                     boolean isCustomTemplate = proposals.get(0).getMetadata().get().isCustomTemplateAct();
-                    addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode,
+                    DocumentVO proposalFromLeg = proposalConverterService.createProposalFromLegFile(content, false);
+                    addLegDocument(file, fileContent, proposalFromLeg, translatedDocRef, languageCode,
                             leosPackage.getName(), true, versionLabel, isCustomTemplate, idsAndUrlsHolder);
                     createCollectionResult = new CreateCollectionResult(idsAndUrlsHolder, false,
                             new CreateCollectionError(0, messageHelper.getMessage("leoslight.document.updated.major.version")));
-                } catch (Exception e) {
-                    LOG.error("Error Occurred while adding the Leg file: " + e.getMessage(), e);
-                    return new Pair<>("An error occurred adding the Leg file. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                } catch (Exception | XmlValidationException e) {
+                    LOG.error("Error occurred while adding the Leg file: " + e.getMessage(), e);
+                    return new Pair<>(new CreateCollectionError(HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                            "An error occurred adding the Leg file."), HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             }
         }
@@ -316,13 +327,13 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
     }
 
     private void addLegDocument(MultipartFile file, byte[] fileContent, DocumentVO propDocument, String proposalRef, String languageCode, String pkgName,
-            boolean isCustomTemplate) throws Exception {
-        this.addLegDocument(file, fileContent, propDocument, proposalRef, languageCode, pkgName, false, "1.0.0", isCustomTemplate,
+                                boolean isCustomTemplate) throws Exception {
+        this.addLegDocument(file, fileContent, propDocument, proposalRef, languageCode, pkgName, false, "1.0.0.0", isCustomTemplate,
                 new CollectionIdsAndUrlsHolder());
     }
 
     private void addLegDocument(MultipartFile file, byte[] fileContent, DocumentVO propDocument, String proposalRef, String languageCode, String pkgName,
-            boolean updateDocs, String currentVersionLabel, boolean isCustomTemplate, CollectionIdsAndUrlsHolder idsAndUrlsHolder) {
+                                boolean updateDocs, String currentVersionLabel, boolean isCustomTemplate, CollectionIdsAndUrlsHolder idsAndUrlsHolder) {
         List<String> containedDocs = new ArrayList<>();
         containedDocs.add(proposalRef + "_" + currentVersionLabel);
         if (updateDocs) {
@@ -332,7 +343,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         addDocumentIdAndUrl(idsAndUrlsHolder, proposalRef, LeosCategory.PROPOSAL);
         propDocument.getChildDocuments().forEach(docVo -> {
             String translatedChildDocRef = LanguageMapUtils.getTranslatedProposalReference(docVo.getRef(), languageCode);
-            String versionLabel = "1.0.0";
+            String versionLabel = "1.0.0.0";
             if(updateDocs) {
                 LeosDocument document = leosRepository.findDocumentByRef(translatedChildDocRef,
                         LeosCategoryClass.getClass(docVo.getCategory()));
@@ -355,11 +366,11 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
     private String getNextVersionLabel(VersionType versionType, String oldVersion) {
         if (StringUtils.isEmpty(oldVersion)) {
             if (versionType.equals(VersionType.MAJOR)) {
-                return "1.0.0";
+                return "1.0.0.0";
             } else if (versionType.equals(VersionType.INTERMEDIATE)) {
-                return "0.1.0";
+                return "0.1.0.0";
             } else {
-                return "0.0.1";
+                return "0.0.1.0";
             }
         }
 
@@ -368,17 +379,20 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
             newVersion[0] = Integer.parseInt(newVersion[0]) + 1 + "";
             newVersion[1] = "0";
             newVersion[2] = "0";
+            newVersion[3] = "0";
         } else if (versionType.equals(VersionType.INTERMEDIATE)) {
             newVersion[1] = Integer.parseInt(newVersion[1]) + 1 + "";
             newVersion[2] = "0";
+            newVersion[3] = "0";
         } else {
             newVersion[2] = Integer.parseInt(newVersion[2]) + 1 + "";
+            newVersion[3] = "0";
         }
-        return newVersion[0] + "." + newVersion[1] + "." + newVersion[2];
+        return newVersion[0] + "." + newVersion[1] + "." + newVersion[2] + "." + newVersion[3];
     }
 
     private LeosFile convertDocument(String docRef, LeosDocument document, ExportDocumentOptions options) {
-        LeosFile file = null;
+        LeosFile file;
         try {
             if (options == null || ExportDocumentOptions.OutputType.XML.equals(options.getOutputType())) {
                 byte[] docContent = document.getContent().get().getSource().getBytes();
@@ -394,8 +408,8 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
     }
 
     private DocumentVO getDocumentVO(String docRef, byte[] docContent) throws XmlValidationException {
-        LeosFile docFileTemp = null;
-        DocumentVO documentVO = null;
+        LeosFile docFileTemp;
+        DocumentVO documentVO;
 
         try {
             docFileTemp = getXmlFile(docRef, docContent);
@@ -545,4 +559,5 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         //4.final packaging
         return ZipPackageUtil.zipLeosFiles("result.zip", contentToZip, null);
     }
+
 }
