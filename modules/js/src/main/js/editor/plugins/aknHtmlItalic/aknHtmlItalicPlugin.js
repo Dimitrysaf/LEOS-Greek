@@ -28,6 +28,9 @@ define(function aknHtmlItalicPluginModule(require) {
         },
         recital: {
             elementName: 'recital'
+        },
+        signature: {
+            elementName: 'signature'
         }
     };
 

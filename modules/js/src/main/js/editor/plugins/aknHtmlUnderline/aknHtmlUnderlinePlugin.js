@@ -35,6 +35,9 @@ define(function aknHtmlUnderlinePluginModule(require) {
         },
         level: {
             elementName: 'level'
+        },
+        signature: {
+            elementName: 'signature'
         }
     };
 
