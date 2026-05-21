@@ -3,8 +3,8 @@
            xmlns="http://eu.europa.ec.digit.leos.pilot/schema/"
            xsi:schemaLocation="http://eu.europa.ec.digit.leos.pilot/schema/ structure_1.xsd">
 
-    <name>structure_08.xml</name>
-    <description>Structure used for Autonomous Acts</description>
+    <name>structure_01.xml</name>
+    <description>Structure used for Bill</description>
     <version>1</version>
 
     <tocItems>
@@ -154,6 +154,11 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
+            <profiles>
+                <profile>
+                    <profileName>inlineAknCitation</profileName>
+                </profile>
+            </profiles>
             <editable>true</editable>
             <template>
                 <![CDATA[<citation leos:editable="true"><p>${default.content.text}</p></citation>]]></template>
@@ -169,37 +174,19 @@
             <aknTag>recitals</aknTag>
             <root>false</root>
             <higherElement>false</higherElement>
-            <draggable>true</draggable>
+            <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
-            <itemNumber>mandatory</itemNumber>
-            <autoNumbering>
-                <!-- Default Configuration for all languages -->
-                <langNumConfig langGroup="latin" auto="true">
-                    <numberingType>ARABIC_POSTFIXDOT_NODOT_END</numberingType>
-                </langNumConfig>
-                <!-- Configuration for specific languages -->
-                <langNumConfig langGroup="cyrillic" auto="true">
-                    <numberingType>ARABIC_POSTFIXDOT_NODOT_END</numberingType>
-                </langNumConfig>
-                <langNumConfig langGroup="greek" auto="true">
-                    <numberingType>ARABIC_POSTFIXDOT_NODOT_END</numberingType>
-                </langNumConfig>
-            </autoNumbering>
-            <itemHeading>mandatory</itemHeading>
+            <itemNumber>none</itemNumber>
+            <itemHeading>none</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>false</numberEditable>
             <contentDisplayed>false</contentDisplayed>
-            <deletable>true</deletable>
-            <rootItemDeletable>false</rootItemDeletable>
+            <deletable>false</deletable>
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
-            <sameParentAsChild>true</sameParentAsChild>
-            <onlySameParentAsChild>true</onlySameParentAsChild>
+            <sameParentAsChild>false</sameParentAsChild>
             <editable>false</editable>
-            <template>
-                <![CDATA[<recitals leos:editable="false"><num>${num}</num><heading>${heading}</heading><recital leos:editable="true"><num>${num}</num><p>Recital...</p></recital></recitals>]]>
-            </template>
         </tocItem>
 
         <tocItem>
@@ -243,6 +230,11 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
+            <profiles>
+                <profile>
+                    <profileName>inlineAknRecital</profileName>
+                </profile>
+            </profiles>
             <editable>true</editable>
             <template>
                 <![CDATA[<recital leos:editable="true"><num leos:editable="false">${num}</num><p>${default.content.text}</p></recital>]]></template>
@@ -252,56 +244,6 @@
                     <dapInfoURL>https://webgate.ec.europa.eu/fpfis/wikis/pages/viewpage.action?pageId=343284579</dapInfoURL>
                 </dapInfo>
             </dapInfos>
-        </tocItem>
-
-        <tocItem>
-            <aknTag>aknp</aknTag>
-            <root>false</root>
-            <higherElement>false</higherElement>
-            <draggable>false</draggable>
-            <childrenAllowed>false</childrenAllowed>
-            <display>false</display>
-            <itemNumber>none</itemNumber>
-            <itemHeading>none</itemHeading>
-            <itemDescription>false</itemDescription>
-            <numberEditable>false</numberEditable>
-            <contentDisplayed>true</contentDisplayed>
-            <deletable>false</deletable>
-            <numWithType>false</numWithType>
-            <expandedByDefault>true</expandedByDefault>
-            <sameParentAsChild>false</sameParentAsChild>
-            <profiles>
-                <profile>
-                    <elementSelector>citation aknp, article aknp:not(table aknp):not([leos\:alternative=true] aknp), recital aknp:not(table aknp):not(:has(subflow))</elementSelector>
-                    <profileName>inlineAknContent</profileName>
-                </profile>
-            </profiles>
-            <editable>true</editable>
-        </tocItem>
-
-        <tocItem>
-            <aknTag>table</aknTag>
-            <root>false</root>
-            <higherElement>false</higherElement>
-            <draggable>false</draggable>
-            <childrenAllowed>false</childrenAllowed>
-            <display>false</display>
-            <itemNumber>none</itemNumber>
-            <itemHeading>none</itemHeading>
-            <itemDescription>false</itemDescription>
-            <numberEditable>false</numberEditable>
-            <contentDisplayed>true</contentDisplayed>
-            <deletable>false</deletable>
-            <numWithType>false</numWithType>
-            <expandedByDefault>true</expandedByDefault>
-            <sameParentAsChild>false</sameParentAsChild>
-            <profiles>
-                <profile>
-                    <elementSelector>table</elementSelector>
-                    <profileName>inlineAknContent</profileName>
-                </profile>
-            </profiles>
-            <editable>true</editable>
         </tocItem>
 
         <tocItem>
@@ -468,7 +410,7 @@
                     <numberingType>SOLE_ARTICLE_GREEK</numberingType>
                 </langNumConfig>
             </soleNumbering>
-            <itemHeading>mandatory</itemHeading>
+            <itemHeading>optional</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>false</numberEditable>
             <contentDisplayed>true</contentDisplayed>
@@ -542,6 +484,11 @@
                     </subElementNumberingConfigs>
                 </tocItemType>
             </tocItemTypes>
+            <profiles>
+                <profile>
+                    <profileName>inlineAknArticle</profileName>
+                </profile>
+            </profiles>
             <editable>true</editable>
             <template>
                 <![CDATA[<article leos:editable="true"><num leos:editable="false">${num}</num><heading>${heading}</heading><paragraph><num>1.</num><content><p>${default.content.text}</p></content></paragraph><paragraph><num>2.</num><content><p>${default.content.text}</p></content></paragraph></article>]]></template>
@@ -567,7 +514,7 @@
             <higherElement>false</higherElement>
             <draggable>false</draggable>
             <childrenAllowed>true</childrenAllowed>
-            <display>true</display>
+            <display>false</display>
             <itemNumber>optional</itemNumber>
             <autoNumbering>
                 <langNumConfig langGroup="latin" auto="true">
@@ -589,7 +536,7 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <editable>true</editable>
+            <editable>false</editable>
         </tocItem>
 
         <tocItem>
@@ -608,7 +555,7 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <editable>true</editable>
+            <editable>false</editable>
         </tocItem>
 
         <tocItem>
@@ -659,7 +606,7 @@
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
             <parentNameNumberingTypeDependency>article</parentNameNumberingTypeDependency>
-            <editable>true</editable>
+            <editable>false</editable>
         </tocItem>
 
         <tocItem>
@@ -691,7 +638,7 @@
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
             <parentNameNumberingTypeDependency>article</parentNameNumberingTypeDependency>
-            <editable>true</editable>
+            <editable>false</editable>
         </tocItem>
 
         <tocItem>
@@ -793,6 +740,11 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
+            <profiles>
+                <profile>
+                    <profileName>inlineAknClause</profileName>
+                </profile>
+            </profiles>
             <editable>true</editable>
         </tocItem>
 
@@ -814,7 +766,7 @@
             <sameParentAsChild>false</sameParentAsChild>
             <profiles>
                 <profile>
-                    <elementSelector>heading:not([id^='deleted']):not([leos\:alternative=true] heading)</elementSelector>
+                    <elementSelector>heading:not(article heading):not([id^='deleted'])</elementSelector>
                     <profileName>inlineAknHeading</profileName>
                 </profile>
             </profiles>
@@ -934,6 +886,12 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
+            <profiles>
+                <profile>
+                    <elementSelector>block[name='signatory']</elementSelector>
+                    <profileName>inlineAknSignatory</profileName>
+                </profile>
+            </profiles>
             <editable>true</editable>
         </tocItem>
     </tocItems>
@@ -967,18 +925,6 @@
             <numbered>true</numbered>
             <prefix></prefix>
             <suffix>.</suffix>
-            <sequence>1</sequence>
-            <description>1., 2., etc</description>
-            <regex>\d+$|#</regex>
-            <regexJS>^\d+$</regexJS>
-            <msgValidationError>arabic.num.config.validation.error.message</msgValidationError>
-        </numberingConfig>
-        <numberingConfig>
-            <type>ARABIC_POSTFIXDOT_NODOT_END</type>
-            <numbered>true</numbered>
-            <prefix></prefix>
-            <suffix>.</suffix>
-            <suffixInEnd>false</suffixInEnd>
             <sequence>1</sequence>
             <description>1., 2., etc</description>
             <regex>\d+$|#</regex>
@@ -1265,10 +1211,6 @@
             <type>clause</type>
             <profile>inlineAknClause</profile>
         </alternateConfig>
-        <alternateConfig>
-            <type>block</type>
-            <profile>inlineAknSignatoryAutonomousAct</profile>
-        </alternateConfig>
     </alternateConfigs>
 
     <tocRules>
@@ -1300,7 +1242,6 @@
             <tocItem>recitals</tocItem>
             <list>
                 <tocItem>recital</tocItem>
-                <tocItem>recitals</tocItem>
             </list>
         </entry>
         <entry>
@@ -1479,13 +1420,6 @@
             </higherDivisions>
             <scope>drop</scope>
             <errorMessage>toc.higher.division.hierarchy.validation.warning.message</errorMessage>
-        </rule>
-        <rule>
-            <description>No empty recitals</description>
-            <type>notEmptyElement</type>
-            <tocItem>recitals</tocItem>
-            <scope>save</scope>
-            <errorMessage>toc.recitals.empty.validation.warning.message</errorMessage>
         </rule>
     </documentRules>
 

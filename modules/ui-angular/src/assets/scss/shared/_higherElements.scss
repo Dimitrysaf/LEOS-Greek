@@ -16,8 +16,8 @@
 @mixin heading($type) {
     display: block;
     text-align: center;
-    padding-top: 6pt;
-    padding-bottom: 18pt;
+    padding-top: 6pt !important;
+    padding-bottom: 18pt !important;
 
     @if $type=="part" {
        font-size: 18pt;
@@ -45,36 +45,36 @@
     part {
         display: block;
     }
-    
+
     part > num, part > heading {
         @include heading("part");
     }
-    
+
     aknTitle {
         display: block;
     }
-    
+
     aknTitle > num, aknTitle > heading {
         @include heading("aknTitle");
     }
-    
+
     chapter {
         display: block;
     }
-    
+
     chapter > num, chapter > heading {
         @include heading("chapter");
     }
-    
+
     section {
         display: block;
     }
-    
+
     section > num, section > heading {
         @include heading("section");
-        
+
     }
-    
+
     //    AKN signature styles
     signature {
         display: inline-block;
@@ -93,12 +93,12 @@
         font-weight: bold;
         color: blue;
     }
-    
+
     omissis {
         display: inline;
         font-weight: bold;
     }
-    
+
     date {
         display: inline;
         font-weight: bold;
