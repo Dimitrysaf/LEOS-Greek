@@ -774,7 +774,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         String userName = ADMIN_USER, creatorOrganization = null;
         if (securityContext!=null && securityContext.hasAuthenticationInContext()) {
             userName = securityContext.getUserName();
-            creatorOrganization = securityContext.getUser().getDefaultEntity().getOrganizationName();
+            creatorOrganization = securityContext.getUser().getDefaultEntity().getName();
         }
         Package pkg = repository.createPackage(name, userName, originRef, language, isTranslated, creatorOrganization);
         if (pkg != null) {
@@ -1137,7 +1137,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         String userName = ADMIN_USER, creatorOrganization = null;
         if (securityContext!=null && securityContext.hasAuthenticationInContext()) {
             userName = securityContext.getUserName();
-            creatorOrganization = securityContext.getUser().getDefaultEntity().getOrganizationName();
+            creatorOrganization = securityContext.getUser().getDefaultEntity().getName();
         }
         return repository.createPackage(name, userName,null, "EN", false, creatorOrganization);
     }
