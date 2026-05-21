@@ -65,6 +65,7 @@ public class CatalogServiceImpl implements CatalogService {
     private static final String CUSTOM_TEMPLATE_COMMENT = "Custom Template";
     private static final String CUSTOM_TEMPLATE_SEPARATOR = "_";
     private static final String CUSTOM_TEMPLATE_CATEGORY_PATH_SEPARATOR = ";";
+    private static final String META_NODE = "meta";
 
     // Repository Dependencies
     private final DocumentRepository documentRepository;
@@ -1250,7 +1251,7 @@ public class CatalogServiceImpl implements CatalogService {
             version = configVersionRepository.save(version);
 
             String cleanedContent = clearXmlIdsAndAttachments(docContent);
-            String modifiedContent = modifyTemplateValues(cleanedContent, extractSuffix(customKey));
+            String modifiedContent = addCustomTemplateId(cleanedContent, extractSuffix(customKey));
 
             ConfigContent content = new ConfigContent();
             content.setContentString(modifiedContent);
@@ -1296,22 +1297,15 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
 
-    private String modifyTemplateValues(String xmlContent, String suffix) throws Exception {
+    private String addCustomTemplateId(String xmlContent, String suffix) throws Exception {
         org.w3c.dom.Document doc = xmlHelper.createDocument(xmlContent.getBytes(StandardCharsets.UTF_8), true);
-        // Modify leos:template
-        NodeList templateNodes = doc.getElementsByTagNameNS("urn:eu:europa:ec:leos", "template");
-        for (int i = 0; i < templateNodes.getLength(); i++) {
-            Element element = (Element) templateNodes.item(i);
-            String currentValue = element.getTextContent();
-            element.setTextContent(currentValue + CUSTOM_TEMPLATE_SEPARATOR + suffix);
-        }
 
-        // Modify leos:docTemplate
         NodeList docTemplateNodes = doc.getElementsByTagNameNS("urn:eu:europa:ec:leos", "docTemplate");
         for (int i = 0; i < docTemplateNodes.getLength(); i++) {
-            Element element = (Element) docTemplateNodes.item(i);
-            String currentValue = element.getTextContent();
-            element.setTextContent(currentValue + CUSTOM_TEMPLATE_SEPARATOR + suffix);
+            Element docTemplateElement = (Element) docTemplateNodes.item(i);
+            Element customTemplateId = doc.createElementNS("urn:eu:europa:ec:leos", "leos:customTemplateId");
+            customTemplateId.setTextContent(suffix);
+            docTemplateElement.getParentNode().insertBefore(customTemplateId, docTemplateElement.getNextSibling());
         }
 
         // Convert back to string
@@ -1335,6 +1329,9 @@ public class CatalogServiceImpl implements CatalogService {
     private void clearXmlIdAttributes(Node node) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             Element element = (Element) node;
+            if (META_NODE.equals(element.getLocalName())) {
+                return;
+            }
             element.removeAttribute("xml:id");
         }
 

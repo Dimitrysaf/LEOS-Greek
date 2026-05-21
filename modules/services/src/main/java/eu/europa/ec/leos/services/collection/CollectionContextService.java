@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.collection;
 
+import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
@@ -1004,6 +1005,11 @@ public abstract class CollectionContextService {
     @SuppressWarnings("unchecked")
     protected static <T> T cast(Object obj) {
         return (T) obj;
+    }
+
+    protected byte[] getContent(Proposal proposal) {
+        final Content content = proposal.getContent().getOrError(() -> "Proposal content is required!");
+        return content.getSource().getBytes();
     }
 
     protected abstract void executeUpdateExplanatory(LeosPackage leosPackage, String purpose, Map<ContextActionService, String> actionMsgMap);
