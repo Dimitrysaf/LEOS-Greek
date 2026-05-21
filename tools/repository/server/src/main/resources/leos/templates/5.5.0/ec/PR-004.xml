@@ -21,7 +21,8 @@
                     <FRBRuri value=""/>
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
-                    <FRBRlanguage language="{{language}}"/>
+                    <FRBRlanguage language="{{language}}"
+                                  xml:id="FRBRlanguage"/>
                 </FRBRExpression>
                 <FRBRManifestation>
                     <FRBRthis value=""/>

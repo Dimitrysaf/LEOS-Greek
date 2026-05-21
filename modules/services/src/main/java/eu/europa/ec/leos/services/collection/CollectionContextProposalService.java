@@ -128,7 +128,7 @@ public class CollectionContextProposalService extends CollectionContextService {
         String creationOptions = createJsonCreationOptions(templatePropertiesMap);
         metadata.setCreationOptions(creationOptions);
 
-        Proposal proposal = proposalService.createProposal(proposalTemplate.getId(), leosPackage.getPath(), metadata, this.proposalContent);
+        Proposal proposal = proposalService.createProposal(proposalTemplate.getId(), leosPackage.getPath(), metadata, getContent(proposalTemplate));
 
         Memorandum memorandum = cast(categoryTemplateMap.get(MEMORANDUM));
         if (memorandum != null && isToCreateDocument(categoryTemplateMap.get(MEMORANDUM).getName(), templatePropertiesMap)) {
