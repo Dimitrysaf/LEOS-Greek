@@ -1042,7 +1042,7 @@ public class DocumentServiceImpl implements DocumentService {
             String[] values = orgRoleFilter.get().value;
             queryBuild.append(roleFilterPresent ? " OR " : " AND ");
             for (int i = 0; i < values.length; i++) {
-                queryBuild.append(" CONCAT(:creatorOrganization_").append(i).append(",'.') LIKE CONCAT(p.creatorOrganization,'.%') ESCAPE '\\'");
+                queryBuild.append(" CONCAT(p.creatorOrganization,'.') LIKE CONCAT(:creatorOrganization_").append(i).append(",'.%') ESCAPE '\\'");
                 if (i < values.length - 1) {
                     queryBuild.append(" OR ");
                 }

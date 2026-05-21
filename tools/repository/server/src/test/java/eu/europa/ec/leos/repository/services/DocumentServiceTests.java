@@ -1037,31 +1037,13 @@ class DocumentServiceTests extends H2TestBase {
     }
 
     @Test
-    void test_filterByCreatorOrganization_matchesParentOrg() throws RepositoryException {
+    void test_filterByCreatorOrganization_doesNotMatchParentOrg() throws RepositoryException {
         // Package org "EC" is a parent of filter value "EC.DG1", so it matches.
         eu.europa.ec.leos.repository.model.Package orgPkg = createOrgPackage("test-org-parent", "EC");
         try {
             createDocInPackage(orgPkg.getName());
             QueryFilter filter = new QueryFilter();
             filter.addFilter(new QueryFilter.Filter("creatorOrganization", "IN", false, "EC.DG1"));
-
-            List<LeosDocument> docs = documentService.findDocumentsUsingFilter(
-                    "%", Sets.set("BILL"), filter, 0, 10, false);
-
-            assertEquals(1, docs.size());
-        } finally {
-            packageService.deletePackage(orgPkg.getName());
-        }
-    }
-
-    @Test
-    void test_filterByCreatorOrganization_childOrgDoesNotMatch() throws RepositoryException {
-        // Package org "EC.DG1" is a child of filter value "EC" — should not match.
-        eu.europa.ec.leos.repository.model.Package orgPkg = createOrgPackage("test-org-child", "EC.DG1");
-        try {
-            createDocInPackage(orgPkg.getName());
-            QueryFilter filter = new QueryFilter();
-            filter.addFilter(new QueryFilter.Filter("creatorOrganization", "IN", false, "EC"));
 
             List<LeosDocument> docs = documentService.findDocumentsUsingFilter(
                     "%", Sets.set("BILL"), filter, 0, 10, false);
@@ -1073,7 +1055,26 @@ class DocumentServiceTests extends H2TestBase {
     }
 
     @Test
-    void test_filterByCreatorOrganization_matchesExactAndParentOrgs() throws RepositoryException {
+    void test_filterByCreatorOrganization_childOrgMatches() throws RepositoryException {
+        // Package org "EC.DG1" is a child of filter value "EC" — should not match.
+        eu.europa.ec.leos.repository.model.Package orgPkg = createOrgPackage("test-org-child", "EC.DG1");
+        try {
+            createDocInPackage(orgPkg.getName());
+            QueryFilter filter = new QueryFilter();
+            filter.addFilter(new QueryFilter.Filter("creatorOrganization", "IN", false, "EC"));
+
+            List<LeosDocument> docs = documentService.findDocumentsUsingFilter(
+                    "%", Sets.set("BILL"), filter, 0, 10, false);
+
+            assertEquals(1, docs.size());
+            assertEquals("test-org-child.xml", docs.getFirst().getName());
+        } finally {
+            packageService.deletePackage(orgPkg.getName());
+        }
+    }
+
+    @Test
+    void test_filterByCreatorOrganization_matchesExactOrg() throws RepositoryException {
         // Both "EC" (parent) and "EC.DG1" (exact) packages should be returned when filtering by "EC.DG1".
         eu.europa.ec.leos.repository.model.Package pkgParent = createOrgPackage("test-org-multi-parent", "EC");
         eu.europa.ec.leos.repository.model.Package pkgExact = createOrgPackage("test-org-multi-exact", "EC.DG1");
@@ -1086,7 +1087,8 @@ class DocumentServiceTests extends H2TestBase {
             List<LeosDocument> docs = documentService.findDocumentsUsingFilter(
                     "%", Sets.set("BILL"), filter, 0, 10, false);
 
-            assertEquals(2, docs.size());
+            assertEquals(1, docs.size());
+            assertEquals("test-org-multi-exact.xml", docs.getFirst().getName());
         } finally {
             packageService.deletePackage(pkgParent.getName());
             packageService.deletePackage(pkgExact.getName());
