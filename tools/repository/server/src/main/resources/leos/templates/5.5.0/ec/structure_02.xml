@@ -4,10 +4,11 @@
            xsi:schemaLocation="http://eu.europa.ec.digit.leos.pilot/schema/ structure_1.xsd">
 
     <name>structure_02.xml</name>
-    <description>Structure used for Foreign Annex</description>
+    <description>Structure used for Annex with level</description>
     <version>1</version>
 
     <tocItems>
+
         <tocItem>
             <aknTag>doc</aknTag>
             <root>true</root>
@@ -66,7 +67,7 @@
             <aknTag>part</aknTag>
             <root>false</root>
             <higherElement>true</higherElement>
-            <draggable>false</draggable>
+            <draggable>true</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
@@ -98,7 +99,7 @@
             <aknTag>title</aknTag>
             <root>false</root>
             <higherElement>true</higherElement>
-            <draggable>false</draggable>
+            <draggable>true</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
@@ -131,7 +132,7 @@
             <aknTag>chapter</aknTag>
             <root>false</root>
             <higherElement>true</higherElement>
-            <draggable>false</draggable>
+            <draggable>true</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
@@ -165,7 +166,7 @@
             <aknTag>section</aknTag>
             <root>false</root>
             <higherElement>true</higherElement>
-            <draggable>false</draggable>
+            <draggable>true</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
@@ -221,7 +222,7 @@
         <tocItem>
             <aknTag>level</aknTag>
             <root>false</root>
-            <draggable>false</draggable>
+            <draggable>true</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
@@ -264,7 +265,7 @@
         <tocItem>
             <aknTag>paragraph</aknTag>
             <root>false</root>
-            <draggable>false</draggable>
+            <draggable>true</draggable>
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>none</itemNumber>
