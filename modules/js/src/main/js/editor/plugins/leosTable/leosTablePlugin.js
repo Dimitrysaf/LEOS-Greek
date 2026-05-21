@@ -57,6 +57,19 @@ define(function leosTablePluginModule(require) {
 
     var pluginDefinition = {
         init : function init(editor) {
+
+            CKEDITOR.on('dialogDefinition', function(event) {
+                if (event.data.name === 'cellProperties') {
+                    var container = event.data.definition.contents[0].elements[0];
+                    container.children.splice(2, 1);
+
+                    var children = container.children[0].children;
+                    container.children[0].children = children.filter(function(item) {
+                        return item.id !== 'wordWrap';
+                    });
+                }
+            });
+
             //To hide table 'Alignment', 'Width', 'Height', 'Border Size', 'Cell Spacing' , 'Cell Padding' and 'Summary' combo/edit boxes in the dialog box
             editor.on('dialogShow', function(event) {
                 var dialog = event.data;
@@ -75,7 +88,7 @@ define(function leosTablePluginModule(require) {
                 ck.editor.removeMenuItem('tablecell_insertBefore'); 
                 ck.editor.removeMenuItem('tablecell_insertAfter'); 
                 ck.editor.removeMenuItem('tablecell_delete'); 
-                ck.editor.removeMenuItem('tablecell_properties');
+                //ck.editor.removeMenuItem('tablecell_properties');
                 var tableDeleteCmd = ck.editor.getCommand('tableDelete');
                 if (tableDeleteCmd) {
                     tableDeleteCmd.exec = _tableDelete.bind(undefined, ck.editor);
