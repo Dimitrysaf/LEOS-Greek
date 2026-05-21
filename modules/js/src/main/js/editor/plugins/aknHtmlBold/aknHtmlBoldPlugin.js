@@ -28,6 +28,9 @@ define(function aknHtmlBoldPluginModule(require) {
         },
         recital: {
             elementName: 'recital'
+        },
+        signature: {
+            elementName: 'signature'
         }
     };
 
