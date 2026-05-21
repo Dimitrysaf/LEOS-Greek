@@ -139,6 +139,9 @@ define(function aknRecitalAAPluginModule(require) {
             startElement = startElement.getLast().getLast();
         }
         var div = startElement?.getAscendant("div", true);
+        if (leosPluginUtils.isInsideTable(startElement)) {
+            return;
+        }
         if (div?.getAttribute(leosPluginUtils.DATA_AKN_NAME) !== leosPluginUtils.SUBFLOW_NAME || div.getAttribute(leosPluginUtils.DATA_AKN_HCONTAINER)) {
             context.event.cancel();
         }

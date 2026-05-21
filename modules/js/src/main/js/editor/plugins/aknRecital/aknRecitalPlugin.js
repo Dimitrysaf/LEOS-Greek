@@ -19,6 +19,7 @@ define(function aknRecitalPluginModule(require) {
     var pluginTools = require("plugins/pluginTools");
     var numberModule = require("plugins/leosNumber/recitalNumberModule");
     var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
+    var leosPluginUtils = require("plugins/leosPluginUtils");
 
     var pluginName = "aknRecital";
     var ENTER_KEY = 13;
@@ -95,6 +96,11 @@ define(function aknRecitalPluginModule(require) {
     };
 
     function _onEnterKey(context) {
+        let selection = context.event.editor.getSelection();
+        let startElement = leosKeyHandler.getSelectedElement(selection);
+        if (leosPluginUtils.isInsideTable(startElement)) {
+            return;
+        }
         context.event.cancel();
     }
 
