@@ -31,6 +31,7 @@ define(function aknHigherElementProfileModule(require) {
     plugins.push(require("plugins/leosPaste/leosPastePlugin"));
     plugins.push(require("plugins/leosFloatingSpace/leosFloatingSpacePlugin"));
     plugins.push(require("plugins/leosWidget/leosWidgetPlugin"));
+    plugins.push(require("plugins/leosCrossReferenceText/leosCrossReferenceTextPlugin"));
     plugins.push(require("plugins/leosMessageBus/leosMessageBusPlugin"));
     plugins.push(require("plugins/leosXmlEntities/leosXmlEntitiesPlugin"));
     plugins.push(require("plugins/leosPreventElementDeletion/leosPreventElementDeletionPlugin"));
