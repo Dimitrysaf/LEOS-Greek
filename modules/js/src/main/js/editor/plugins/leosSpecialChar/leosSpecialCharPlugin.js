@@ -31,6 +31,13 @@ define(function leosSpecialCharPluginModule(require) {
     var pluginDefinition = {
         requires: "specialchar",
         init: function init(editor) {
+            var gtIndex = editor.config.specialChars.indexOf('&gt;');
+            if (gtIndex !== -1) {
+                editor.config.specialChars.splice(gtIndex + 1, 0,
+                    ['&le;', 'Less than or equal to'],
+                    ['&ge;', 'Greater than or equal to']
+                );
+            }
             editor.on('selectionChange', _onSelectionChange);
         }
     };
