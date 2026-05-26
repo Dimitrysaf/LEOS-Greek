@@ -477,7 +477,7 @@ public class LeosApiController implements LeosApi {
 
     @Override
     public ResponseEntity<Object> cloneProposalFromLeg(MultipartFile legFile, String targetUser,
-                                                       String connectedEntity, String iscRef) {
+                                                       String connectedEntity, String iscRef, String proposalCallbackURL) {
         CreateCollectionResult createCollectionResult;
         User user = userService.getUser(targetUser);
         String loggedInUser = securityContext.getUser().getLogin();
@@ -486,6 +486,8 @@ public class LeosApiController implements LeosApi {
             targetUser = encodeParam(targetUser);
             connectedEntity = encodeParam(connectedEntity);
             iscRef = encodeParam(iscRef);
+            proposalCallbackURL = encodeParam(proposalCallbackURL);
+            iscRef = StringUtils.isNoneEmpty(proposalCallbackURL) ? iscRef+";"+proposalCallbackURL : iscRef;
             validatePath(legFile.getOriginalFilename());
             LeosFile content = new LeosFile(FilenameUtils.normalize(legFile.getOriginalFilename()));
             userService.switchUser(user.getLogin());
