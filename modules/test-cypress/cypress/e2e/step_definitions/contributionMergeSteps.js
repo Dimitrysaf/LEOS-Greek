@@ -64,3 +64,7 @@ When('click on merge actions menu of annex title', () => {
 When(/^wrapper is present for paragraph (\d+) of article (\d+)$/, function (paragraphNumber, articleNumber) {
     contributionPage.getWrapperOfParagraphOfArticle(paragraphNumber, articleNumber).should('exist');
 });
+
+Then(/^wrapper is present for level (\d+)$/, function (levelNumber) {
+    contributionPage.getWrapperOfLevel(levelNumber).should('exist');
+});

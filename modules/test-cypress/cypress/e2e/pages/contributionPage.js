@@ -60,5 +60,15 @@ class contributionPage {
             this.getParagraphOfArticle(paragraphNumber, articleNumber)
         );
     }
+
+    getLevel(levelNumber){
+        return this.getElementInContribution('level', levelNumber)
+    }
+
+    getWrapperOfLevel(levelNumber) {
+        return this.getMergeActionsIcon(
+            this.getLevel(levelNumber)
+        );
+    }
 }
 export default new contributionPage();
