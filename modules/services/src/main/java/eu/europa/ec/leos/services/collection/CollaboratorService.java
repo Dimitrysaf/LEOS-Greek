@@ -24,10 +24,10 @@ import java.util.List;
 public interface CollaboratorService {
 
     @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
-    void addCollaborator(Proposal proposal, String userId, String collaboratorId, String roleName, String connectedEntity, String proposalUrl, String clientSystemId);
+    void addCollaborator(Proposal proposal, String userId, String collaboratorId, String roleName, String connectedEntity, String proposalUrl, String clientSystemId, String displayName);
 
     @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
-    void addCollaborator(Proposal proposal, String userId, String collaboratorId, String roleName, String connectedEntity, String proposalUrl, ClientSystem clientSystem);
+    void addCollaborator(Proposal proposal, String userId, String collaboratorId, String roleName, String connectedEntity, String proposalUrl, ClientSystem clientSystem, String displayName);
 
     @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
     void removeCollaborator(Proposal proposal, String userId, String roleName, String connectedEntity, String proposalUrl, String clientSystemId);

@@ -33,7 +33,6 @@ import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.services.document.SecurityService;
 import eu.europa.ec.leos.services.dto.collaborator.CollaboratorDTO;
 import eu.europa.ec.leos.services.exception.CollaboratorException;
-import eu.europa.ec.leos.services.exception.SendNotificationException;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.user.UserService;
@@ -51,7 +50,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -72,19 +70,22 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     @Override
     public List<CollaboratorDTO> getCollaborators(Proposal proposal) {
         LOG.trace("Getting collaborators for proposal {}", proposal);
-        return Collections.unmodifiableList(proposal.getCollaborators().stream()
-                .map(collaborator -> createCollaboratorDTO(collaborator.getLogin(), collaborator.getRole(), this::getUser, collaborator.getEntity(), collaborator.getLeosClientId()))
+        return proposal.getCollaborators().stream()
+                .map(collaborator -> createCollaboratorDTO(collaborator, this::getUser))
                 .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList()));
+                .map(Optional::get).toList();
     }
 
-    private Optional<CollaboratorDTO> createCollaboratorDTO(String login, String roleName, Function<String, User> converter, String entityName, String clientId) {
+    private Optional<CollaboratorDTO> createCollaboratorDTO(Collaborator collaborator, Function<String, User> converter) {
+        String login = collaborator.getLogin();
+        String roleName = collaborator.getRole();
+        String entityName = collaborator.getEntity();
+        String clientId = collaborator.getLeosClientId();
         try {
             User user = converter.apply(login);
             return Optional.of(new CollaboratorDTO(login, user.getName(), roleName, pickFromUserEntitiesByName(user, entityName), getLeosClientSystem(clientId)));
         } catch (Exception e) {
-            return Optional.empty();
+            return Optional.of(new CollaboratorDTO(login, collaborator.getDisplayName(), roleName, new Entity(null, entityName, entityName, false), getLeosClientSystem(clientId)));
         }
     }
 
@@ -105,14 +106,14 @@ public class CollaboratorServiceImpl implements CollaboratorService {
 
     @Override
     public void addCollaborator(Proposal proposal, String userId, String collaboratorId, String roleName, String connectedEntity,
-                                String proposalUrl, String clientSystemId) {
+                                String proposalUrl, String clientSystemId, String displayName) {
         final ClientSystem leosClient = this.getLeosClientSystem(clientSystemId);
-        this.addCollaborator(proposal, userId, collaboratorId, roleName, connectedEntity, proposalUrl, leosClient);
+        this.addCollaborator(proposal, userId, collaboratorId, roleName, connectedEntity, proposalUrl, leosClient, displayName);
     }
 
     @Override
     public void addCollaborator(Proposal proposal, String userId, String collaboratorId, String roleName, String connectedEntity,
-                                String proposalUrl, ClientSystem clientSystem) {
+                                String proposalUrl, ClientSystem clientSystem, String displayName) {
         final User user = getUser(userId);
         final User collaborator = getUser(collaboratorId);
         final Role role = getRole(roleName);
@@ -124,9 +125,9 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         }
 
         List<LeosPackage> packages = getLinkedPackagesForProposal(proposal);
-        packages.forEach(p -> addCollaborator(user, collaboratorId, role, entity, leosClientId, p));
+        packages.forEach(p -> addCollaborator(user, collaborator, role, entity, leosClientId, p));
 
-        proposal.getCollaborators().add(new Collaborator(collaboratorId, role.getName(), entity, leosClientId));
+        proposal.getCollaborators().add(new Collaborator(collaboratorId, role.getName(), entity, leosClientId, displayName));
         if (StringUtils.isEmpty(leosClientId)) {
             sendNotification(new AddCollaborator(collaborator, entity, role.getName(), proposal.getId(), proposalUrl));
         }
@@ -142,7 +143,13 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     @Override
     public void removeCollaborator(Proposal proposal, String userId, String roleName, String connectedEntity, String proposalUrl, ClientSystem clientSystem) {
         LOG.trace("Removing collaborator...{}, with authority {}", userId, roleName);
-        final User user = getUser(userId);
+        User u;
+        try {
+            u = getUser(userId);
+        } catch (CollaboratorException ex) {
+            u = new User(null, userId, null, new ArrayList<>(), null, new ArrayList<>());
+        }
+        final User user = u;
         final Role role = getRole(roleName);
         String e;
         try {
@@ -370,11 +377,11 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         }
     }
 
-    private void addCollaborator(User user, String collaboratorName, Role role, String entity, String systemClientId, LeosPackage leosPackage) {
+    private void addCollaborator(User user, User collaborator, Role role, String entity, String systemClientId, LeosPackage leosPackage) {
         Validate.notNull(leosPackage, "The package must not be null!");
         Validate.notNull(user, "The user must not be null!");
 
-        List<Collaborator> collaborators = Collections.singletonList(new Collaborator(collaboratorName, role.getName(), entity, systemClientId));
+        List<Collaborator> collaborators = Collections.singletonList(new Collaborator(collaborator.getLogin(), role.getName(), entity, systemClientId, collaborator.getName()));
         securityService.addCollaborators(leosPackage.getId(), user.getLogin(), collaborators);
     }
 

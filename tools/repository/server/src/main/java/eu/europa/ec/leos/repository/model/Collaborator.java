@@ -13,8 +13,12 @@
  */
 package eu.europa.ec.leos.repository.model;
 
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter @Setter
+@EqualsAndHashCode(of = {"login", "entity"})
 public class Collaborator {
     private String login;
 
@@ -24,66 +28,24 @@ public class Collaborator {
 
     private String leosClientId;
 
+    private String displayName;
+
     public Collaborator() {
     }
 
     public Collaborator(String login, String role, String entity) {
-        this.login = login;
-        this.role = role;
-        this.entity = entity;
+        this(login, role, entity, null);
     }
 
     public Collaborator(String login, String role, String entity, String leosClientId) {
+        this(login, role, entity, leosClientId, null);
+    }
+
+    public Collaborator(String login, String role, String entity, String leosClientId, String displayName) {
         this.login = login;
         this.role = role;
         this.entity = entity;
         this.leosClientId = leosClientId;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public String getEntity() {
-        return entity;
-    }
-
-    public void setEntity(String entity) {
-        this.entity = entity;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getLeosClientId() {
-        return leosClientId;
-    }
-
-    public void setLeosClientId(String leosClientId) {
-        this.leosClientId = leosClientId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Collaborator that = (Collaborator) o;
-        return Objects.equals(login, that.login) &&
-                Objects.equals(entity, that.entity) &&
-                Objects.equals(leosClientId, that.leosClientId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(login, entity);
+        this.displayName = displayName;
     }
 }

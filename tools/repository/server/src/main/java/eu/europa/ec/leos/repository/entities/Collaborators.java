@@ -28,6 +28,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -46,6 +50,8 @@ import java.util.Collection;
         @NamedQuery(name = "Collaborators.findByAuditCDate", query = "SELECT c FROM Collaborators c WHERE c.auditCDate = :auditCDate"),
         @NamedQuery(name = "Collaborators.findByAuditLastMBy", query = "SELECT c FROM Collaborators c WHERE c.auditLastMBy = :auditLastMBy"),
         @NamedQuery(name = "Collaborators.findByAuditLastMDate", query = "SELECT c FROM Collaborators c WHERE c.auditLastMDate = :auditLastMDate")})
+@Getter @Setter
+@EqualsAndHashCode(of = {"id"})
 public class Collaborators implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -65,6 +71,8 @@ public class Collaborators implements Serializable {
     @JoinColumn(name = "LEOS_CLIENTS_ID", referencedColumnName = "ID")
     @ManyToOne(fetch = FetchType.LAZY)
     private LeosClients leosClients;
+    @Column(name = "DISPLAY_NAME", length = 100)
+    private String displayName;
     @Column(name = "AUDIT_C_BY", nullable = false, length = 30)
     private String auditCBy;
     @Column(name = "AUDIT_C_DATE", nullable = false)
@@ -73,6 +81,7 @@ public class Collaborators implements Serializable {
     private String auditLastMBy;
     @Column(name = "AUDIT_LAST_M_DATE")
     private LocalDateTime auditLastMDate;
+    @XmlTransient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "collaborator")
     private Collection<PackageCollaborators> packageCollaboratorsCollection;
 
@@ -90,105 +99,13 @@ public class Collaborators implements Serializable {
         this.organization = organization;
     }
 
-    public BigDecimal getId() {
-        return id;
-    }
-
-    public void setId(BigDecimal id) {
+    public Collaborators(BigDecimal id, String collaboratorName, String role, String organization, LeosClients leosClients, String displayName) {
         this.id = id;
-    }
-
-    public String getCollaboratorName() {
-        return collaboratorName;
-    }
-
-    public void setCollaboratorName(String collaboratorName) {
         this.collaboratorName = collaboratorName;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
         this.role = role;
-    }
-
-    public String getOrganization() {
-        return organization;
-    }
-
-    public void setOrganization(String organization) {
         this.organization = organization;
-    }
-
-    public String getAuditCBy() {
-        return auditCBy;
-    }
-
-    public void setAuditCBy(String auditCBy) {
-        this.auditCBy = auditCBy;
-    }
-
-    public LocalDateTime getAuditCDate() {
-        return auditCDate;
-    }
-
-    public void setAuditCDate(LocalDateTime auditCDate) {
-        this.auditCDate = auditCDate;
-    }
-
-    public String getAuditLastMBy() {
-        return auditLastMBy;
-    }
-
-    public void setAuditLastMBy(String auditLastMBy) {
-        this.auditLastMBy = auditLastMBy;
-    }
-
-    public LocalDateTime getAuditLastMDate() {
-        return auditLastMDate;
-    }
-
-    public void setAuditLastMDate(LocalDateTime auditLastMDate) {
-        this.auditLastMDate = auditLastMDate;
-    }
-
-    public LeosClients getLeosClients() {
-        return leosClients;
-    }
-
-    public void setLeosClients(LeosClients leosClients) {
         this.leosClients = leosClients;
-    }
-
-    @XmlTransient
-    public Collection<PackageCollaborators> getPackageCollaboratorsCollection() {
-        return packageCollaboratorsCollection;
-    }
-
-    public void setPackageCollaboratorsCollection(Collection<PackageCollaborators> packageCollaboratorsCollection) {
-        this.packageCollaboratorsCollection = packageCollaboratorsCollection;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Collaborators)) {
-            return false;
-        }
-        Collaborators other = (Collaborators) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        this.displayName = displayName;
     }
 
     @Override
