@@ -171,6 +171,7 @@
       {{ 'global.actions.close' | translate }}
     </button>
     <button
+      *ngIf="!!selectedUser.special"
       euiButton
       euiPrimary
       euiOutline

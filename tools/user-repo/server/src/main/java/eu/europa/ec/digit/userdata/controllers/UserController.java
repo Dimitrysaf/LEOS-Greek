@@ -144,4 +144,11 @@ public class UserController implements UserApi {
         userService.deleteSpecialUser(userLogin);
         return ResponseEntity.noContent().build();
     }
+
+    @Override
+    public UserDto getSpecialUserDetails(final String userLogin) {
+        return userService.getSpecialUserDetails(userLogin)
+                .map(u -> userMapper.mapToDto(u, roleService.getRoles()))
+                .orElseThrow(() -> new BadRequestException("User not found"));
+    }
 }

@@ -42,53 +42,6 @@
         } ]
       }
     },
-    "/entities/special" : {
-      "get" : {
-        "tags" : [ "Entity Management" ],
-        "summary" : "Get special entities",
-        "description" : "Retrieves all special entities for a given organization or all special entities if no organization name is passed.\nIf organization name is provided, then the organization is included in the result.",
-        "operationId" : "special",
-        "parameters" : [ {
-          "name" : "orgName",
-          "in" : "query",
-          "description" : "- If orgName is null or empty, then all SpecialEntity records are returned;\n- Matching special entities + the organization itself are returned otherwise;",
-          "required" : false,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "Special entities retrieved successfully",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Collection",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          },
-          "500" : {
-            "description" : "Internal server error",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
-                  "exampleSetFlag" : false
-                },
-                "exampleSetFlag" : false
-              }
-            }
-          }
-        },
-        "security" : [ {
-          "bearerAuth" : [ ]
-        } ]
-      }
-    },
     "/entities/{org}/users" : {
       "get" : {
         "tags" : [ "Entity Management" ],
@@ -298,6 +251,53 @@
         } ]
       }
     },
+    "/entities/special" : {
+      "get" : {
+        "tags" : [ "Entity Management" ],
+        "summary" : "Get special entities",
+        "description" : "Retrieves all special entities for a given organization or all special entities if no organization name is passed.\nIf organization name is provided, then the organization is included in the result.",
+        "operationId" : "special",
+        "parameters" : [ {
+          "name" : "orgName",
+          "in" : "query",
+          "description" : "- If orgName is null or empty, then all SpecialEntity records are returned;\n- Matching special entities + the organization itself are returned otherwise;",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Special entities retrieved successfully",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Collection",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
     "/entities/{id}" : {
       "delete" : {
         "tags" : [ "Entity Management" ],
@@ -450,26 +450,16 @@
         } ]
       }
     },
-    "/users/search" : {
+    "/users/special/{userLogin}" : {
       "get" : {
         "tags" : [ "User Management" ],
-        "summary" : "Search for users by term and/or entity",
-        "description" : "Retrieves special user by login",
-        "operationId" : "searchUsers",
+        "summary" : "Get special user details by ID",
+        "description" : "Retrieves user details for special user",
+        "operationId" : "getSpecialUserDetails",
         "parameters" : [ {
-          "name" : "searchKey",
-          "in" : "query",
-          "description" : "Search key matching First Name, Last Name, Username, Email",
-          "required" : false,
-          "schema" : {
-            "type" : "string",
-            "exampleSetFlag" : false
-          }
-        }, {
-          "name" : "entityId",
-          "in" : "query",
-          "description" : "If passed, will look for users only belonging to the given entity",
-          "required" : false,
+          "name" : "userLogin",
+          "in" : "path",
+          "required" : true,
           "schema" : {
             "type" : "string",
             "exampleSetFlag" : false
@@ -477,11 +467,11 @@
         } ],
         "responses" : {
           "200" : {
-            "description" : "Users search OK",
+            "description" : "User found successfully",
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/Page",
+                  "$ref" : "#/components/schemas/UserDto",
                   "exampleSetFlag" : false
                 },
                 "exampleSetFlag" : false
@@ -490,6 +480,18 @@
           },
           "500" : {
             "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "400" : {
+            "description" : "User not found",
             "content" : {
               "application/json" : {
                 "schema" : {
@@ -689,6 +691,62 @@
         } ]
       }
     },
+    "/users/search" : {
+      "get" : {
+        "tags" : [ "User Management" ],
+        "summary" : "Search for users by term and/or entity",
+        "description" : "Retrieves special user by login",
+        "operationId" : "searchUsers",
+        "parameters" : [ {
+          "name" : "searchKey",
+          "in" : "query",
+          "description" : "Search key matching First Name, Last Name, Username, Email",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        }, {
+          "name" : "entityId",
+          "in" : "query",
+          "description" : "If passed, will look for users only belonging to the given entity",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "exampleSetFlag" : false
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Users search OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Page",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal server error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/UserRepoExceptionResponse",
+                  "exampleSetFlag" : false
+                },
+                "exampleSetFlag" : false
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ]
+      }
+    },
     "/users/jobTitle/{jobTitle}" : {
       "get" : {
         "tags" : [ "User Management" ],
@@ -857,7 +915,7 @@
             "content" : {
               "application/json" : {
                 "schema" : {
-                  "$ref" : "#/components/schemas/User",
+                  "$ref" : "#/components/schemas/UserAuthDto",
                   "exampleSetFlag" : false
                 },
                 "exampleSetFlag" : false

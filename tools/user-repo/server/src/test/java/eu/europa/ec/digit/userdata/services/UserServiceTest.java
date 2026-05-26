@@ -52,7 +52,7 @@ public class UserServiceTest {
     @Test
     public void GIVEN_empty_search_term_AND_unpaged_WHEN_search_THEN_all_users_returned() {
         Page<User> pageOfUsers = userService.search("", Pageable.unpaged());
-        long count = jdbcTemplate.queryForObject("select count(distinct user_login ) from leos_user where user_per_id != -1", Long.class);
+        long count = jdbcTemplate.queryForObject("select count(user_login ) from leos_user where user_per_id != -1", Long.class);
         assertEquals(count, pageOfUsers.getNumberOfElements());
     }
 

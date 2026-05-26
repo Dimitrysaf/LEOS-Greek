@@ -52,7 +52,7 @@ public class UserControllerTest {
 
     @Test
     void GIVEN_no_term_AND_no_pagination_WHEN_search_THEN_all_users_returned() throws Exception {
-        long count = jdbcTemplate.queryForObject("select count(distinct user_login ) from leos_user where user_per_id != -1", Long.class);
+        long count = jdbcTemplate.queryForObject("select count(user_login ) from leos_user where user_per_id != -1", Long.class);
         mockMvc.perform(get("/users/search"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
@@ -72,7 +72,7 @@ public class UserControllerTest {
 
     @Test
     void GIVEN_no_term_AND_sorted_by_valid_field_WHEN_search_THEN_sorted_users_returned() throws Exception {
-        long count = jdbcTemplate.queryForObject("select count(distinct user_login ) from leos_user where user_per_id != -1", Long.class);
+        long count = jdbcTemplate.queryForObject("select count(user_login ) from leos_user where user_per_id != -1", Long.class);
         mockMvc.perform(get("/users/search")
                         .param("sort", "firstName")
                         .param("size", String.valueOf(count)))
