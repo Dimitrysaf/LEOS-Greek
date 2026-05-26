@@ -57,7 +57,8 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
                             pkgCollaborator.getCollaborator().getCollaboratorName(),
                             pkgCollaborator.getCollaborator().getRole(),
                             pkgCollaborator.getCollaborator().getOrganization(),
-                            pkgCollaborator.getCollaborator().getLeosClients()!=null?pkgCollaborator.getCollaborator().getLeosClients().getName():null
+                            pkgCollaborator.getCollaborator().getLeosClients()!=null?pkgCollaborator.getCollaborator().getLeosClients().getName():null,
+                            pkgCollaborator.getCollaborator().getDisplayName()
                     )
             );
         }
@@ -232,6 +233,7 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
             collaborators.setCollaboratorName(c.getLogin());
             collaborators.setOrganization(c.getEntity());
             collaborators.setRole(c.getRole());
+            collaborators.setDisplayName(c.getDisplayName());
             if (leosClient.isPresent()) {
                 collaborators.setLeosClients(leosClient.get());
             }

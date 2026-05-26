@@ -40,7 +40,7 @@
       </tr>
     </ng-template>
     <ng-template let-row euiTemplate="body">
-        <tr *ngFor="let collaboratorClass of [!row.entity?.organizationName ? 'eui-u-color-danger-25 eui-u-bg-color-danger-25' : '']">
+        <tr *ngFor="let collaboratorClass of [!row.entity?.organizationName || !row.entity.id ? 'eui-u-color-danger-25 eui-u-bg-color-danger-25' : '']">
           <td [ngClass]="collaboratorClass">{{ row.fullName }}</td>
           <td [ngClass]="collaboratorClass"
               [euiTooltip]="!row.entity?.organizationName ? ('page.collection.collaborators.table.user.entity.error.tooltip' | translate) : ''">

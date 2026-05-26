@@ -105,7 +105,7 @@ public class WorkflowCollaboratorController implements WorkflowCollaboratorApi {
                 collaboratorService.removeCollaborator(proposal, userId, c.getRole(), connectedDG, proposalUrl, clientSystem);
                 proposal.getCollaborators().remove(c);
             });
-            collaboratorService.addCollaborator(proposal, userId, userId, roleName, connectedDG, proposalUrl, clientSystem);
+            collaboratorService.addCollaborator(proposal, userId, userId, roleName, connectedDG, proposalUrl, clientSystem, accessDTO.getUserLastName() + " " + accessDTO.getUserFirstName());
         } catch (CollaboratorException e) {
             log.warn("Error adding workflow collaborator with userId '{}' and role '{}', skip addition!!!. Error: {}", userId, roleName, e.getMessage());
         }

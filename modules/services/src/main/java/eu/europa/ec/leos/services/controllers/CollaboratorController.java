@@ -28,14 +28,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -86,8 +81,9 @@ public class CollaboratorController implements CollaboratorApi {
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
             String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
             String userId = securityContext.getUser().getLogin();
+            String displayName = securityContext.getUser().getName();
             collaboratorService.addCollaborator(proposal, userId, collaboratorRequest.getUserId(), collaboratorRequest.getRoleName(),
-                    collaboratorRequest.getConnectedDG(), proposalUrl, collaboratorRequest.getLeosClientId());
+                    collaboratorRequest.getConnectedDG(), proposalUrl, collaboratorRequest.getLeosClientId(), displayName);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
             LOG.error("Error occurred while adding collaborator '" + collaboratorRequest + TO_PROPOSAL + proposalRef + "'");
@@ -105,9 +101,10 @@ public class CollaboratorController implements CollaboratorApi {
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
             String proposalUrl = urlBuilder.buildProposalViewUrl(proposalRef);
             String userId = securityContext.getUser().getLogin();
+            String displayName = securityContext.getUser().getName();
             for (CollaboratorRequest collaborator : collaboratorsRequest.getCollaborators()) {
                 collaboratorService.addCollaborator(proposal, userId, collaborator.getUserId(), collaborator.getRoleName(),
-                        collaborator.getConnectedDG(), proposalUrl, collaborator.getLeosClientId());
+                        collaborator.getConnectedDG(), proposalUrl, collaborator.getLeosClientId(), displayName);
             }
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
