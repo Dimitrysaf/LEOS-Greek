@@ -144,7 +144,13 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         LOG.trace("Removing collaborator...{}, with authority {}", userId, roleName);
         final User user = getUser(userId);
         final Role role = getRole(roleName);
-        final String entity = getEntity(connectedEntity, user);
+        String e;
+        try {
+            e = getEntity(connectedEntity, user);
+        } catch (CollaboratorException ex) {
+            e = null;
+        }
+        final String entity = e;
         final String leosClientId = (clientSystem != null) ? clientSystem.getClientId() : null;
 
         if (!isCollaboratorPresent(proposal, user, leosClientId)) {
@@ -160,7 +166,11 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         List<LeosPackage> packages = getLinkedPackagesForProposal(proposal);
         packages.forEach(p -> deleteCollaborator(user, role, entity, leosClientId, p));
 
-        proposal.getCollaborators().remove(new Collaborator(user.getLogin(), role.getName(), entity, leosClientId));
+        if (entity != null) {
+            proposal.getCollaborators().remove(new Collaborator(user.getLogin(), role.getName(), entity, leosClientId));
+        } else {
+            proposal.getCollaborators().removeIf(c -> c.getLogin().equals(user.getLogin()));
+        }
         if (StringUtils.isEmpty(leosClientId)) {
             sendNotification(new RemoveCollaborator(user, entity, role.getName(), proposal.getId(), proposalUrl));
         }
