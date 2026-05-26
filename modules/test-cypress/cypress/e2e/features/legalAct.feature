@@ -1233,8 +1233,9 @@ Feature: Legal Act Page Regression Features
     When drag element "Chapter" from element tree list and drop before node label "Article 1 - Definitions Text..." in navigation pane
     Then warning symbol is displayed in navigation pane
     And  below warning message is displayed in navigation pane
-      | warning                                                 |
-      | A higher division must contain at least one sub-element |
+      | warning                                                         |
+      | A higher division must contain at least one sub-element         |
+      | A lower division cannot exist outside a higher division element |
     And  ngContent "Chapter # Chapter heading..." is showing as bold in toc
     When drag element "Section" from element tree list and drop before node label "Article 1 - Definitions Text..." in navigation pane
     Then ngContent "Section # Section heading..." is showing as bold in toc
@@ -1278,6 +1279,7 @@ Feature: Legal Act Page Regression Features
       | warning                                                                                                |
       | Higher divisions have a hierarchy, cannot place two hierarchically different element at the same level |
       | A higher division must contain at least one sub-element                                                |
+      | A lower division cannot exist outside a higher division element                                                                                                       |
     And  node label "Section 1 Section heading..." contains node label "Article 1 -"
     And  node label "Section 1 Section heading..." contains node label "Article 2 -"
     When click on save and close button in navigation pane
