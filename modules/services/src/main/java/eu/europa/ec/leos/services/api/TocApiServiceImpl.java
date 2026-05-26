@@ -231,11 +231,6 @@ public abstract class TocApiServiceImpl implements TocApiService {
         return result;
     }
 
-    private String getDocumentName(byte[] xmlContent) {
-        String docNameXPath = this.xPathCatalog.getXPathDocumentName();
-        return this.xmlContentProcessor.getElementValue(xmlContent, docNameXPath, true);
-    }
-
     private void validateDocumentRules(final TocDropResult result, final Map<String, DocumentRules.Rule> tableOfContentDocumentRules,
                                        TableOfContentItemVO sourceItem, final TableOfContentItemVO targetTocItemVO,
                                        TableOfContentItemVO parentTocItemVO, final TocItemPosition position,
@@ -266,7 +261,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
                         validateHigherDivisionStructure(rule, tableOfContentItemVO, checkDocumentRulesVO, sourceItem,
                                 targetTocItemVO, parentTocItemVO, position);
                     }
-                    validateOnlyOneOccurenceElementStructure(result, rule, tableOfContentItemVOs, checkDocumentRulesVO, sourceItem,
+                    validateOnlyOneOccurrenceElementStructure(result, rule, tableOfContentItemVOs, checkDocumentRulesVO, sourceItem,
                             targetTocItemVO, parentTocItemVO, position);
                 }
             }
@@ -336,7 +331,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
         }
     }
 
-    private void validateOnlyOneOccurenceElementStructure(final TocDropResult result, DocumentRules.Rule rule,
+    private void validateOnlyOneOccurrenceElementStructure(final TocDropResult result, DocumentRules.Rule rule,
                                                           List<TableOfContentItemVO> tableOfContentItemVOs,
                                                           CheckDocumentRulesVO checkDocumentRulesVO,
                                                           TableOfContentItemVO sourceItem,
@@ -402,17 +397,15 @@ public abstract class TocApiServiceImpl implements TocApiService {
         switch (ruleType) {
             case STRUCTURE_VALIDATION:
                 if (sourceItemTag.equals(tocItem)) {
-                    if (targetIsHigherElement && positionAsChildren) {
-                        return;
-                    } else {
+                    if (!(targetIsHigherElement && positionAsChildren)) {
                         if ((!sourceIsHigherElement && targetIsHigherElement && (position.equals(TocItemPosition.AFTER)
                                 || position.equals(TocItemPosition.BEFORE)) && parentIsNotHigherElement) ||
-                                (targetAndSourceAreNotHigherElements && checkHigherDivisionExists(tableOfContentItemVO) && parentIsNotHigherElement)) {
+                                (targetAndSourceAreNotHigherElements && checkHigherDivisionExists(tableOfContentItemVO, sourceItem, targetItem, position) && parentIsNotHigherElement)) {
                             setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
                         }
                     }
                 }
-                if (checkHigherDivisionExists(tableOfContentItemVO) && isTocItemOutsideHigherDivision(tocItem, tableOfContentItemVO)) {
+                if (checkHigherDivisionExists(tableOfContentItemVO, sourceItem, targetItem, position) && isTocItemOutsideHigherDivision(tocItem, tableOfContentItemVO, sourceItem, targetItem, position)) {
                     setInvalidStructureWarning(checkDocumentRulesVO, rule.getErrorMessage());
                 }
                 break;
@@ -437,15 +430,44 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     private boolean isTocItemOutsideHigherDivision(AknTag tocItem, TableOfContentItemVO tableOfContentItemVO) {
+        return isTocItemOutsideHigherDivision(tocItem, tableOfContentItemVO, null, null, null);
+    }
+
+    private boolean isTocItemOutsideHigherDivision(AknTag tocItem, TableOfContentItemVO tableOfContentItemVO,
+                                                   TableOfContentItemVO sourceItem, TableOfContentItemVO targetItem,
+                                                   TocItemPosition position) {
         TocItem currentItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider,
                 tableOfContentItemVO.getTagName());
         if (!currentItem.isHigherElement() && currentItem.getAknTag().equals(tocItem) && isNotTrackDeleted(tableOfContentItemVO)) {
+            // Skip the source item being moved - it will have a new parent after the move
+            if (sourceItem != null && tableOfContentItemVO.getId().equals(sourceItem.getId())) {
+                // Check if source will be moved inside a higher division
+                if (targetItem != null && position != null) {
+                    TocItem targetTocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider, targetItem.getTagName());
+                    if (targetTocItem.isHigherElement() && position.equals(TocItemPosition.AS_CHILDREN)) {
+                        // Source is moving inside a higher division, so it's not outside
+                        return false;
+                    }
+                    // Check if target's parent is a higher element (for BEFORE/AFTER positions)
+                    if ((position.equals(TocItemPosition.BEFORE) || position.equals(TocItemPosition.AFTER)) && 
+                            targetItem.getParentItem() != null) {
+                        TocItem targetParentTocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider,
+                                targetItem.getParentItem().getTagName());
+                        if (targetParentTocItem.isHigherElement()) {
+                            // Source is moving inside a higher division, so it's not outside
+                            return false;
+                        }
+                    }
+                }
+                // If we reach here, source is not moving inside a higher division
+                return false;
+            }
             TocItem parentTocItem = StructureConfigUtils.getTocItemByName(this.structureContextProvider,
                     tableOfContentItemVO.getParentItem().getTagName());
             return !parentTocItem.isHigherElement();
         }
         return tableOfContentItemVO.getChildItems().stream()
-                .anyMatch(child -> isTocItemOutsideHigherDivision(tocItem, child));
+                .anyMatch(child -> isTocItemOutsideHigherDivision(tocItem, child, sourceItem, targetItem, position));
     }
 
     private boolean checkSeveralOccurences(TableOfContentItemVO tableOfContentItemVO, DocumentRules.Rule rule) {
@@ -473,12 +495,34 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     private boolean checkHigherDivisionExists(TableOfContentItemVO tableOfContentItemVO) {
+        return checkHigherDivisionExists(tableOfContentItemVO, null, null, null);
+    }
+
+    private boolean checkHigherDivisionExists(TableOfContentItemVO tableOfContentItemVO, TableOfContentItemVO sourceItem,
+                                             TableOfContentItemVO targetItem, TocItemPosition position) {
         TocItem tocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, tableOfContentItemVO.getTagName());
         if (tocItem.isHigherElement() && isNotTrackDeleted(tableOfContentItemVO)) {
             return true;
         }
+        
+        // Check if source item being added is a higher element
+        if (sourceItem != null && targetItem != null && position != null) {
+            TocItem sourceTocItem = StructureConfigUtils.getTocItemByName(structureContextProvider, sourceItem.getTagName());
+            if (sourceTocItem.isHigherElement() && isNotTrackDeleted(sourceItem)) {
+                // Check if source will be added to this level
+                if (position.equals(TocItemPosition.AS_CHILDREN) && tableOfContentItemVO.getId().equals(targetItem.getId())) {
+                    return true;
+                } else if ((position.equals(TocItemPosition.BEFORE) || position.equals(TocItemPosition.AFTER))) {
+                    // Check if target is a direct child of this item
+                    if (isDirectChildOf(targetItem, tableOfContentItemVO)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
         for (TableOfContentItemVO childTableOfContentItemVO : tableOfContentItemVO.getChildItems()) {
-            if (checkHigherDivisionExists(childTableOfContentItemVO)) {
+            if (checkHigherDivisionExists(childTableOfContentItemVO, sourceItem, targetItem, position)) {
                 return true;
             }
         }
@@ -595,9 +639,17 @@ public abstract class TocApiServiceImpl implements TocApiService {
                     .filter(child -> sourceItem == null || !child.getId().equals(sourceItem.getId()))
                     .toList();
             
-            // If source is being added as child to this higher division, it won't be empty
-            if (targetItem != null && sourceItem != null && position != null && 
-                    position.equals(TocItemPosition.AS_CHILDREN) && tableOfContentItemVO.getId().equals(targetItem.getId())) {
+            // Check if source will be added to this higher division after the move
+            boolean sourceWillBeAddedHere = false;
+            if (targetItem != null && sourceItem != null && position != null) {
+                if (position.equals(TocItemPosition.AS_CHILDREN) && tableOfContentItemVO.getId().equals(targetItem.getId())) {
+                    sourceWillBeAddedHere = true;
+                } else if (position.equals(TocItemPosition.BEFORE) || position.equals(TocItemPosition.AFTER)) {
+                    sourceWillBeAddedHere = isDirectChildOf(targetItem, tableOfContentItemVO);
+                }
+            }
+            
+            if (sourceWillBeAddedHere) {
                 return false;
             }
             
@@ -621,6 +673,14 @@ public abstract class TocApiServiceImpl implements TocApiService {
             }
         }
         return false;
+    }
+
+    private boolean isDirectChildOf(TableOfContentItemVO child, TableOfContentItemVO parent) {
+        if (child == null || parent == null) {
+            return false;
+        }
+        return parent.getChildItems().stream()
+                .anyMatch(item -> item.getId().equals(child.getId()));
     }
 
     private boolean checkElementIsEmpty(TableOfContentItemVO tableOfContentItemVO, DocumentRules.Rule rule) {
