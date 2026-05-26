@@ -77,6 +77,9 @@ define(function aknOrganizationPluginModule(require) {
             html : "refersto"
         }, {
             html: ["data-akn-name", ORGANIZATION_NAME].join("=")
+        }, {
+            akn: "leos:update-translation",
+            html: "data-akn-update-translation"
         }],
         sub: {
             akn: "text",

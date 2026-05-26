@@ -72,6 +72,9 @@ define(function aknPersonPluginModule(require) {
         html: "p[data-akn-name=" + PERSON_NAME + "]",
         attr: [...pluginUtils.commonAttributes, {
             html: ["data-akn-name", PERSON_NAME].join("=")
+        }, {
+            akn: "leos:update-translation",
+            html: "data-akn-update-translation"
         }],
         sub: {
             akn: "text",

@@ -81,7 +81,7 @@ public class DocumentVersion implements Serializable {
     private LocalDateTime auditLastMDate;
     @Column(name = "IS_IMMUTABLE")
     private Boolean isImmutable;
-    @Column(name = "COMMENTS")
+    @Column(name = "COMMENTS", length = 4000)
     private String comments;
     @Column(name = "DOCUMENT_ID", precision = 22, scale = 0)
     private BigDecimal documentId;
