@@ -1135,8 +1135,9 @@ Feature: fork and merge features
     And "ins" tag 1 of num tag of point 2 of list 1 of paragraph 2 of article 3 contains "(2)"
     And content of point 2 of list 1 of paragraph 2 of article 3 contains "point 3"
 
+  # Ticket:https://code.europa.eu/leos/core/-/work_items/3024
   #Ticket LEOS##3100 : Wrapper is created for wrong element in legal act
-  @VerifyWrapper @local
+  @VerifyWrapper @local 
   Scenario: Wrapper Check for a clone proposal
     Given navigate to leos application with "User1"
     Then user is on home page
@@ -1197,6 +1198,23 @@ Feature: fork and merge features
     When click save and close button of ck editor
     Then ck editor window is not displayed
     When click on act view link in breadcrumb item
+   #StratTicket LEOS##3024 : Wrapper is not creating
+    Then user is on act viewer page
+    When click on add button in annexes section
+    Then total number of annexes present in act viewer page is 1
+    When click on annex 1 link
+    Then user is on annex page
+    When click on insert after icon of level 3
+    Then total number of level is 4
+    When click on insert after icon of level 4
+    Then total number of level is 5
+    And num value of level 1 contains "1."
+    And num value of level 2 contains "1.1."
+    And num value of level 3 contains "2."
+    And num value of level 4 contains "3."
+    And num value of level 5 contains "4."
+    When click on act view link in breadcrumb item
+    #End Ticket LEOS##3024 : Wrapper is not creating
     When click on milestones tab in act view page
     When click on add button in milestones tab
     Then add milestone window is displayed
@@ -1233,6 +1251,23 @@ Feature: fork and merge features
     When click save and close button of ck editor
     Then ck editor window is not displayed
     When click on act view link in breadcrumb item
+   #Start Ticket LEOS##3024 : Wrapper is not creating
+    When click on annex 1 link
+    Then user is on annex page
+    When mouseover and click on level 4
+    Then ck editor window is displayed
+    And click on increase indent icon present in ck editor panel
+    And click save and close button of ck editor
+    Then ck editor window is not displayed
+    And num value of level 1 contains "1."
+    And num value of level 2 contains "1.1."
+    And num value of level 3 contains "2."
+    And del tag with attribute "leos\:action-number" and value "delete" of num tag of level 4 contains value "3."
+    And ins tag with attribute "leos\:action-number" and value "insert" of num tag of level 4 contains value "2.1."
+    And del tag with attribute "leos\:action-number" and value "delete" of num tag of level 5 contains value "4."
+    And ins tag with attribute "leos\:action-number" and value "insert" of num tag of level 5 contains value "3."
+    When click on act view link in breadcrumb item
+    #End Ticket LEOS##3024 : Wrapper is not creating
     Then user is on act viewer page
     When click on milestones tab in act view page
     When click on add button in milestones tab
@@ -1257,3 +1292,13 @@ Feature: fork and merge features
     And  wrapper is present for paragraph 3 of article 1
     And  wrapper is present for paragraph 4 of article 1
     And  wrapper is present for paragraph 5 of article 1
+   #StartTicket LEOS##3024 : Wrapper is not creating
+    When click on close button present in legal act page
+    Then user is on act viewer page
+    When click on annex 1 link
+    Then user is on annex page
+    When click on contributions pane accordion
+    Then contribution card 1 is displayed
+    And  click on contribution card 1
+    Then contribution view container is displayed
+    And  wrapper is present for level 4
