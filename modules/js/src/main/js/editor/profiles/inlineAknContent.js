@@ -49,6 +49,9 @@ define(function aknInlineContentModule(require) {
     plugins.push(require("plugins/aknHtmlImage/aknHtmlImagePlugin"));
     plugins.push(require("plugins/leosBase64Image/leosBase64ImagePlugin"));
     plugins.push(require("plugins/leosProcessTranslation/leosProcessTranslationPlugin"));
+    plugins.push(require("plugins/aknOrganization/aknOrganizationPlugin"));
+    plugins.push(require("plugins/aknRole/aknRolePlugin"));
+    plugins.push(require("plugins/aknPerson/aknPersonPlugin"));
 
     var pluginNames=[];
     var specificConfig={

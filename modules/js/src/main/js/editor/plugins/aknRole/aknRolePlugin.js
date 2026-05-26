@@ -72,6 +72,9 @@ define(function aknRolePluginModule(require) {
         html: "p[data-akn-name=" + ROLE_NAME +  "]",
         attr: [...pluginUtils.commonAttributes, {
             html: ["data-akn-name", ROLE_NAME].join("=")
+        }, {
+            akn: "leos:update-translation",
+            html: "data-akn-update-translation"
         }],
         sub: {
             akn: "text",

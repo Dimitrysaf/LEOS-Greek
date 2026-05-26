@@ -638,7 +638,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         newXmlContent = billProcessor.renumbering(newXmlContent, true);
         final String title = messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(elementName));
         final String description = messageHelper.getMessage(OPERATION_CHECKIN_MINOR);
-        final String elementLabel = generateLabel(elementId, bill);
+        final String elementLabel = generateLabel(elementId, bill).replaceAll("<ref[^>]*>", "").replace("</ref>", "");
         final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description,
                 new CheckinElement(ActionType.UPDATED, elementId, elementName, elementLabel));
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
