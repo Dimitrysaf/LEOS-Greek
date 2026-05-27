@@ -18,20 +18,20 @@ import java.util.Set;
 @NoArgsConstructor
 @UserValidOnUpdate
 public class UserUpdateDto {
-    @NotNull(message = "User login is required.")
+    @NotNull(message = "page.workspace.administration.user-info.error.login_required")
     @Pattern(regexp = "^\\w{1,50}$",
-            message = "User login cannot contain whitespaces")
+            message = "page.workspace.administration.user-info.error.invalid_login")
     private String login;
 
     @Pattern(regexp = "^(?!\\s*$)[\\p{L}\\s'-]{1,50}$",
-            message = "Invalid last name")
+            message = "page.workspace.administration.user-info.error.invalid_lastname")
     private String lastName;
 
     @Pattern(regexp = "^(?!\\s*$)[\\p{L}\\s'-]{1,50}$",
-            message = "Invalid first name")
+            message = "page.workspace.administration.user-info.error.invalid_firstname")
     private String firstName;
 
-    @Email(message = "User email is not valid.")
+    @Email(message = "page.workspace.administration.user-info.error.invalid_email")
     private String email;
 
     private List<String> roles;

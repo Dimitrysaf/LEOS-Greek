@@ -18,25 +18,25 @@ import java.util.List;
 @NoArgsConstructor
 @UserValidOnCreation(groups = Create.class)
 public class UserDto {
-    @NotNull(groups = {Create.class, Update.class}, message = "User login is required.")
+    @NotNull(groups = {Create.class, Update.class}, message = "page.workspace.administration.user-info.error.login_required")
     @Pattern(regexp = "^\\w{1,50}$", groups = {Create.class, Update.class},
-            message = "Invalid login")
+            message = "page.workspace.administration.user-info.error.invalid_login")
     private String login;
 
-    @NotNull(groups = Create.class, message = "User last name is required.")
+    @NotNull(groups = Create.class, message = "page.workspace.administration.user-info.error.lastname_required")
     @Pattern(regexp = "^(?!\\s*$)[\\p{L}\\s'-]{1,50}$",
-            message = "Invalid last name",
+            message = "page.workspace.administration.user-info.error.invalid_lastname",
             groups = {Create.class, Update.class})
     private String lastName;
 
-    @NotNull(groups = Create.class, message = "User first name is required.")
+    @NotNull(groups = Create.class, message = "page.workspace.administration.user-info.error.firstname_required")
     @Pattern(regexp = "^(?!\\s*$)[\\p{L}\\s'-]{1,50}$",
-            message = "Invalid first name",
+            message = "page.workspace.administration.user-info.error.invalid_firstname",
             groups = {Create.class, Update.class})
     private String firstName;
 
-    @NotBlank(groups = Create.class, message = "User email is required.")
-    @Email(groups = {Create.class, Update.class}, message = "User email is not valid.")
+    @NotBlank(groups = Create.class, message = "page.workspace.administration.user-info.error.email_required")
+    @Email(groups = {Create.class, Update.class}, message = "page.workspace.administration.user-info.error.invalid_email")
     private String email;
 
     private List<UserEntityDto> entities;
