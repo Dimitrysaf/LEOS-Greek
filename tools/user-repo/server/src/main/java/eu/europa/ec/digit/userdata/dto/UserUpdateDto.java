@@ -1,9 +1,9 @@
 package eu.europa.ec.digit.userdata.dto;
 
+import eu.europa.ec.digit.userdata.dto.validationgroup.UserValidOnUpdate;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,27 +16,22 @@ import java.util.Set;
 @EqualsAndHashCode(of = "login")
 @AllArgsConstructor
 @NoArgsConstructor
+@UserValidOnUpdate
 public class UserUpdateDto {
     @NotNull(message = "User login is required.")
-    @Size(min = 1, max = 50,
-            message = "User login must be between 1 and 50 characters long.")
-    @Pattern(regexp = "^\\w+$",
+    @Pattern(regexp = "^\\w{1,50}$",
             message = "User login cannot contain whitespaces")
     private String login;
 
-    @Size(min = 1, max = 50,
-            message = "User last name must be between 1 and 50 characters long.")
-    @Pattern(regexp = "^[\\p{L}\\s'-]+$",
-            message = "User last name contains invalid characters")
+    @Pattern(regexp = "^(?!\\s*$)[\\p{L}\\s'-]{1,50}$",
+            message = "Invalid last name")
     private String lastName;
 
-    @Size(min = 1, max = 50,
-            message = "User first name must be between 1 and 50 characters long.")
-    @Pattern(regexp = "^[\\p{L}\\s'-]+$",
-            message = "User first name contains invalid characters")
+    @Pattern(regexp = "^(?!\\s*$)[\\p{L}\\s'-]{1,50}$",
+            message = "Invalid first name")
     private String firstName;
 
-    @Email
+    @Email(message = "User email is not valid.")
     private String email;
 
     private List<String> roles;

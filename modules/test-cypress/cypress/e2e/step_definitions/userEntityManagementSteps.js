@@ -43,7 +43,7 @@ When("verify user creation fails without entities", function (dataTable) {
     const user = dataTable.hashes()[0]
     userEntityManagementPage.fillUserInfoSection(user)
     userEntityManagementPage.saveUserInfoForm()
-    userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', 'Error creating user')
+    userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', userEntityManagementPage.errorMessages.errorCreatingUser)
     userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', userEntityManagementPage.errorMessages.userCreationError)
     euiDialogBoxPage.clickAcceptBtn()
     userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('not.exist')
@@ -56,7 +56,7 @@ When("verify user creation fails if mandatory field is empty", function (dataTab
         userEntityManagementPage.fillUserInfoSectionExcept(user, field)
         userEntityManagementPage.clearField(field)
         userEntityManagementPage.saveUserInfoForm()
-        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', 'Error creating user')
+        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', userEntityManagementPage.errorMessages.errorCreatingUser)
         userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', userEntityManagementPage.errorMessages.userCreationError)
         euiDialogBoxPage.clickAcceptBtn()
         userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('not.exist')
@@ -71,7 +71,7 @@ When("verify user creation fails if any field contains invalid data", function (
             row.fields, row.invalidValue
         )
         userEntityManagementPage.saveUserInfoForm()
-        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', 'Error creating user')
+        userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', userEntityManagementPage.errorMessages.errorCreatingUser)
         userEntityManagementPage.elements.newUserorEntityCreationMessageLocator().should('contain', userEntityManagementPage.errorMessages.userCreationError)
         euiDialogBoxPage.clickAcceptBtn()
         userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('not.exist')

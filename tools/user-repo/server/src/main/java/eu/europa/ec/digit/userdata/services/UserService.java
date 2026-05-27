@@ -131,6 +131,40 @@ public class UserService {
         return userRepository.findFirstByLoginAndSpecialIsTrue(user.getLogin());
     }
 
+    public Map<String, String> validateUserBeforeCreation(final SpecialUser user) {
+        final Map<String, String> errors = new HashMap<>();
+        if (!specialUserRepository.findByLoginIgnoreCase(user.getLogin()).isEmpty()) {
+            errors.put("login", "page.workspace.administration.user-info.user-login-conflict");
+        }
+        if (user.getEntities() != null && !user.getEntities().isEmpty()) {
+            user.getEntities().forEach(sue -> {
+                if (!specialEntityRepository.existsById(sue.getEntity().getId())) {
+                    errors.put("entities", "page.workspace.administration.user-info.entity-not-found");
+                }
+            });
+        } else {
+            if (userRepository.countByLoginWithEntities(user.getLogin()) == 0) {
+                errors.put("entities", "page.workspace.administration.user-info.user-has-no-entities");
+            }
+        }
+        return errors;
+    }
+
+    public Map<String, String> validateUserBeforeUpdate(final SpecialUser user) {
+        final Map<String, String> errors = new HashMap<>();
+        if (specialUserRepository.getByLogin(user.getLogin()) == null) {
+            errors.put("login", "page.workspace.administration.user-info.user-not-found");
+        }
+        if (user.getEntities() != null && !user.getEntities().isEmpty()) {
+            user.getEntities().forEach(sue -> {
+                if (!specialEntityRepository.existsById(sue.getEntity().getId())) {
+                    errors.put("entities", "page.workspace.administration.user-info.entity-not-found");
+                }
+            });
+        }
+        return errors;
+    }
+
     @Transactional
     public User updateSpecialUser(@NonNull final SpecialUser user, final Set<UserEntityDto> addedEntities, final Set<String> removedEntities) {
         final SpecialUser existing = specialUserRepository.getByLogin(user.getLogin());

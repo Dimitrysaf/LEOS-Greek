@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Map;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -12,4 +14,10 @@ import lombok.Setter;
 public class UserRepoExceptionResponse {
 
     private String message;
+
+    private Map<String, String> errors;
+
+    public UserRepoExceptionResponse(String message) {
+        this.message = message;
+    }
 }

@@ -131,7 +131,6 @@ public class UserController implements UserApi {
                 .map(user -> userMapper.merge(userDto, user, roleService.getRoles()))
                 .orElseThrow(BadRequestException::new);
 
-
         final User updated = userService.updateSpecialUser(specialUser, userDto.getAddedEntities(), userDto.getRemovedEntities());
         final UserDto updatedDto = userMapper.mapToDto(updated, roleService.getRoles());
         updatedDto.setEntities(

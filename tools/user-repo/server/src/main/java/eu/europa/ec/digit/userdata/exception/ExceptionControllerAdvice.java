@@ -3,10 +3,11 @@ package eu.europa.ec.digit.userdata.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
-import org.springframework.validation.ObjectError;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -24,10 +25,13 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(BindException.class)
     public ResponseEntity<UserRepoExceptionResponse> onValidationError(BindException e) {
         log.error(e.getMessage(), e);
-        final String message = e.getAllErrors().stream()
-                .map(ObjectError::getDefaultMessage)
-                .collect(Collectors.joining("; "));
-        return ResponseEntity.badRequest().body(new UserRepoExceptionResponse(message));
+        final Map<String, String> errors = e.getFieldErrors().stream()
+                .collect(Collectors.toMap(
+                        FieldError::getField,
+                        fe -> fe.getDefaultMessage() != null ? fe.getDefaultMessage() : "",
+                        (msg1, msg2) -> msg1 + "; " + msg2));
+        final String message = String.join("; ", errors.values());
+        return ResponseEntity.badRequest().body(new UserRepoExceptionResponse(message, errors));
     }
 
     @ExceptionHandler(BadRequestException.class)

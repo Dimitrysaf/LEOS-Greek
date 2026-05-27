@@ -8,12 +8,10 @@ import {
   ViewChild,
 } from '@angular/core';
 import {
-  AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
-  ReactiveFormsModule, ValidationErrors,
-  ValidatorFn,
+  ReactiveFormsModule,
   Validators
 } from '@angular/forms';
 import {Observable, Subject} from 'rxjs';
@@ -27,11 +25,10 @@ import {EuiIconModule} from '@eui/components/eui-icon';
 import {EuiLabelModule} from '@eui/components/eui-label';
 import {APPLICATION_ROLES, Entity, Permission, User, UserEntity, UserUpdate} from "@/shared";
 import {EuiAllModule} from "@eui/components";
-import {TranslateModule} from "@ngx-translate/core";
+import {TranslateModule, TranslateService} from "@ngx-translate/core";
 import {AdministrationService} from "@/shared/services/administration.service";
 import {SharedModule} from "@/shared/shared.module";
 import {LeosDialogService} from "@/shared/services/leos-dialog.service";
-import {validate} from "@/shared/utils/form.utils";
 import {EuiSelectComponent} from "@eui/components/eui-select";
 import {EuiTableComponent} from "@eui/components/eui-table";
 import {AppConfigService} from "@/core/services/app-config.service";
@@ -58,8 +55,8 @@ import {AppConfigService} from "@/core/services/app-config.service";
 export class UserInfoComponent implements OnInit, OnDestroy {
 
   private static readonly VALIDATORS_MAP = new Map<string, any[]>([
-    ['firstName', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[\p{L}\s'-]+$/u)]],
-    ['lastName', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[\p{L}\s'-]+$/u)]],
+    ['firstName', [Validators.required, Validators.maxLength(50), Validators.pattern(/^(?=.*\p{L})[\p{L}\s'-]+$/u)]],
+    ['lastName', [Validators.required, Validators.maxLength(50), Validators.pattern(/^(?=.*\p{L})[\p{L}\s'-]+$/u)]],
     ['email', [Validators.required, Validators.email]],
     ['login', [Validators.required, Validators.maxLength(50), Validators.pattern(/^\w+$/)]],
   ]);
@@ -101,8 +98,10 @@ export class UserInfoComponent implements OnInit, OnDestroy {
   updateAddedEntities = new Map<string, UserEntity>();
   updateRemovedEntities = new Set<string>();
   selectedUserEntityRows = new Set<string>();
+  errorInEntities: boolean;
 
   private _showExtendedViewerColumn: boolean;
+
 
   get availableEntitiesArray() {
     return Array.from(this.availableEntities.values());
@@ -119,7 +118,8 @@ export class UserInfoComponent implements OnInit, OnDestroy {
   constructor(protected adminService: AdministrationService,
               private fb: FormBuilder,
               private dialogService: LeosDialogService,
-              private configService: AppConfigService) {}
+              private configService: AppConfigService,
+              private translateService: TranslateService) {}
 
   ngOnInit(): void {
     this.configService.config.subscribe((config) => {
@@ -207,10 +207,6 @@ export class UserInfoComponent implements OnInit, OnDestroy {
         control.setValidators(validators);
       }
     });
-    if (this.selectedUser && !this.selectedUser.login) {
-      // Entities are mandatory on user CREATION only.
-      this.form.controls['entities'].setValidators(entitiesValidator());
-    }
   }
 
   protected onSave() {
@@ -219,11 +215,6 @@ export class UserInfoComponent implements OnInit, OnDestroy {
       ? this.adminService.updateUser.bind(this.adminService)
       : this.adminService.createUser.bind(this.adminService);
     const methodName = this.selectedUser.login ? 'updateUser' : 'createUser';
-    if (validate(this.form, {
-      service: this.dialogService,
-      title: `page.workspace.administration.user-info.${methodName}-error-title`,
-      content: 'page.workspace.administration.user-info.form-validation-error'
-    })) {
       method(model).subscribe({
         next: (updated) => {
           this.selectedUser = updated;
@@ -235,14 +226,31 @@ export class UserInfoComponent implements OnInit, OnDestroy {
             i18nParams: {firstName: this.selectedUser.firstName, lastName: this.selectedUser.lastName}});
         },
         error: (error) => {
+          const errorMap = error.error?.errors;
+          let combinedMessage = this.translateService.instant('page.workspace.administration.user-info.form-validation-error');
+          if (!!errorMap && Object.keys(errorMap).length > 0) {
+            combinedMessage += '<ul>'
+            Object.entries(errorMap).forEach((e) => {
+              const control = this.form.get(e[0]);
+              if (!!control) {
+                control.markAsTouched();
+                if (!control.errors) {
+                  control.setErrors({});
+                }
+              }
+              combinedMessage += '<li>' + this.translateService.instant(e[1] as string) + '</li>';
+              this.errorInEntities = Object.keys(errorMap).includes('entities');
+            });
+            combinedMessage += '</ul>'
+          }
           this.dialogService.showDialog({
             title: `page.workspace.administration.user-info.${methodName}-error-title`,
-            message: error.error?.message ?? error.message ?? 'global.actions.unknown-error',
+            message: combinedMessage ?? error.error?.message ?? error.message ?? 'global.actions.unknown-error',
             clearGrowl: true
           });
         }
       });
-    }
+    // }
   }
 
   private get userIsEnrolled() {
@@ -267,6 +275,7 @@ export class UserInfoComponent implements OnInit, OnDestroy {
       this.updateRemovedEntities.delete(selectedId);
     }
     this.form.controls['entities'].setValue((this.selectedEntities.values() as any).toArray());
+    this.errorInEntities = false;
   }
 
   protected removeEntityFromUser() {
@@ -327,6 +336,7 @@ export class UserInfoComponent implements OnInit, OnDestroy {
       this.allEntities = entities;
       this.populateAvailableEntities();
     });
+    this.errorInEntities = false;
   }
 
   private populateAvailableEntities() {
@@ -362,12 +372,5 @@ export class UserInfoComponent implements OnInit, OnDestroy {
 
   private onIsActiveChanged(value: boolean) {
     this.selectedUserEntityRows.clear();
-  }
-}
-
-export function entitiesValidator(): ValidatorFn | null {
-  return (control:AbstractControl) : ValidationErrors | null => {
-    const value = control.value as [];
-    return !value || value.length === 0 ? {empty: true}: null;
   }
 }
