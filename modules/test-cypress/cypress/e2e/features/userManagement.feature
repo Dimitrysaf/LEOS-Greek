@@ -51,8 +51,8 @@ Feature: User Management Entities Regression Features
     Then show the successful message that entity is updated
     Then verify the updated entity presence on the table
 
-  @addingNewUserToExistingEntity @verifyingRestrictionOnUserDeletion @local
-  Scenario: creating new user and assigning existing entities to the user and verifying user deletion is blocked
+  @addingNewUserToExistingEntity @verifyingRestrictionOnUserDeletion @verifyingRestrictionOnEntityDeletion @local
+  Scenario: creating new user and verifying user and entity deletion is blocked when associated
     When click on manage users and entities link under administration dropdown
     Then add user button should be displayed
     When click on add user button
@@ -67,6 +67,12 @@ Feature: User Management Entities Regression Features
     Then click on delete button for user "firstLast"
     Then error popup should be displayed as entity is associated with the user
     Then verify the user "firstLast" is still present on the table
+    Then select manage entities tab
+    When search and click on entity "test_custom_entity"
+    Then custom entity info section should be displayed
+    When click on delete entity button
+    Then error popup should be displayed as user is associated with the entity
+    Then verify the entity "test_custom_entity" is still present on the table
 
   @userCreationWithMissingMandatoryField @local
   Scenario: user creation should fail when a mandatory field is not filled
@@ -135,3 +141,13 @@ Feature: User Management Entities Regression Features
     And  click on delete button for user "firstLast"
     Then confirm the user deletion for "lastEdited" "firstEdited" "firstLast"
     Then verify the user "firstLast" is no longer present on the table
+
+  @entityDeletionAllowedWhenNoUserAssociated @local
+  Scenario: entity deletion should be allowed when there is no user associated
+    When click on manage users and entities link under administration dropdown
+    Then select manage entities tab
+    When search and click on entity "test_custom_entity"
+    Then custom entity info section should be displayed
+    When click on delete entity button
+    Then confirm the entity deletion for "test_custom_entity"
+    Then verify the entity "test_custom_entity" is no longer present on the table
