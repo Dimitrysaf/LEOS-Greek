@@ -217,7 +217,9 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         context.useCloneProposal(false);
         context.useLanguage(language);
         context.useTranslated(isTranslated);
-        context.useOriginRef(propDocument.getRef());
+        if (isTranslated) {
+            context.useOriginRef(propDocument.getRef());
+        }
         addTemplateInContext(context, propDocument);
         postProcessingDocumentService.processDocument(propDocument);
         context.useTemplateKey(propDocument.getMetadata().getTemplate());
