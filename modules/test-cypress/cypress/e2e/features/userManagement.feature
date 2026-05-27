@@ -76,11 +76,11 @@ Feature: User Management Entities Regression Features
     Then user info section should be displayed
     When verify user creation fails without entities
       | firstName | lastName | email          | userLogin |
-      | firstuser | lastuser | first@last.com | firstLast |
+      | firstuser | lastuser | first@last.com | noentities |
     And  search and assign the entities '["AGRI", "test_custom_entity"]' to the user
     When verify user creation fails if mandatory field is empty
-      | firstName | lastName | email          | userLogin |
-      | firstuser | lastuser | first@last.com | firstLast |
+      | firstName  | lastName | email          | userLogin |
+      | firstuser  | lastuser | first@last.com | badvalues |
 
   @userCreationWithInvalidFieldData @local
   Scenario: user creation should fail when fields have invalid values

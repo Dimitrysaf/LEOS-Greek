@@ -22,7 +22,7 @@ public class EntityDto {
     @Pattern(regexp = "^([a-zA-Z0-9_])+(\\.?[a-zA-Z0-9_])*$",
             groups = {Create.class, Update.class},
             message="Invalid entity name. The name can contain alphanumeric [a-zA-Z0-9_] characters and dot only.")
-    @NotNull(groups = {Create.class, Update.class}, message = "Entity name is required.")
+    @NotBlank(groups = {Create.class, Update.class}, message = "Entity name is required.")
     @Size(min = 1, max = 50, groups = {Create.class, Update.class}, message = "Entity name must be between 1 and 50 characters long.")
     private String name;
 

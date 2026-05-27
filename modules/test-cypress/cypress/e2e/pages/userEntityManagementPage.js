@@ -1,6 +1,8 @@
 class userEntityManagementPage {
     errorMessages = {
         userCreationError: 'There are errors in the form. Please fill-in all highlighted fields correctly and try again.',
+        noEntitiesOnUserCreation: 'User should have at least one associated entity.',
+        errorCreatingUser: 'Error creating user',
         entityUpdateError: 'There are errors in the form. Please fill-in all highlighted fields correctly and try again.',
         userDeletionWithEntitiesError: 'The user cannot be deleted, because there are entities associated with her/him. Edit the user to remove the association(s) and then try again.'
     }

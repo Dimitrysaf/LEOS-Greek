@@ -2,6 +2,7 @@ package eu.europa.ec.digit.userdata.dto;
 
 import eu.europa.ec.digit.userdata.dto.validationgroup.Create;
 import eu.europa.ec.digit.userdata.dto.validationgroup.Update;
+import eu.europa.ec.digit.userdata.dto.validationgroup.UserValidOnCreation;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,30 +16,27 @@ import java.util.List;
 @EqualsAndHashCode(of = "login")
 @AllArgsConstructor
 @NoArgsConstructor
+@UserValidOnCreation(groups = Create.class)
 public class UserDto {
     @NotNull(groups = {Create.class, Update.class}, message = "User login is required.")
-    @Size(min = 1, max = 50, groups = {Create.class, Update.class},
-            message = "User login must be between 1 and 50 characters long.")
-    @Pattern(regexp = "^\\w+$", groups = {Create.class, Update.class},
-            message = "User login cannot contain whitespaces")
+    @Pattern(regexp = "^\\w{1,50}$", groups = {Create.class, Update.class},
+            message = "Invalid login")
     private String login;
 
-    @NotNull(groups = Create.class)
-    @Size(min = 1, max = 50, groups = {Create.class, Update.class},
-            message = "User last name must be between 1 and 50 characters long.")
-    @Pattern(regexp = "^[\\p{L}\\s'-]+$", groups = {Create.class, Update.class},
-            message = "User last name contains invalid characters")
+    @NotNull(groups = Create.class, message = "User last name is required.")
+    @Pattern(regexp = "^(?!\\s*$)[\\p{L}\\s'-]{1,50}$",
+            message = "Invalid last name",
+            groups = {Create.class, Update.class})
     private String lastName;
 
-    @NotNull(groups = Create.class)
-    @Size(min = 1, max = 50, groups = {Create.class, Update.class},
-            message = "User first name must be between 1 and 50 characters long.")
-    @Pattern(regexp = "^[\\p{L}\\s'-]+$", groups = {Create.class, Update.class},
-            message = "User first name contains invalid characters")
+    @NotNull(groups = Create.class, message = "User first name is required.")
+    @Pattern(regexp = "^(?!\\s*$)[\\p{L}\\s'-]{1,50}$",
+            message = "Invalid first name",
+            groups = {Create.class, Update.class})
     private String firstName;
 
-    @NotNull(groups = Create.class)
-    @Email(groups = {Create.class, Update.class})
+    @NotBlank(groups = Create.class, message = "User email is required.")
+    @Email(groups = {Create.class, Update.class}, message = "User email is not valid.")
     private String email;
 
     private List<UserEntityDto> entities;
