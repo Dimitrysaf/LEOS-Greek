@@ -31,6 +31,7 @@ define(function leosSpecialCharPluginModule(require) {
     var pluginDefinition = {
         requires: "specialchar",
         init: function init(editor) {
+            editor.config.specialChars = editor.config.specialChars.slice();
             var gtIndex = editor.config.specialChars.indexOf('&gt;');
             if (gtIndex !== -1) {
                 editor.config.specialChars.splice(gtIndex + 1, 0,
