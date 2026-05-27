@@ -306,10 +306,9 @@ public class CatalogServiceImpl implements CatalogService {
 
             if (!duplicatedDgs.isEmpty()) {
                 LOG.error("[Publishing Template] Duplicate template name found for DGs: {}", duplicatedDgs);
-                throw new CatalogException(CatalogException.CatalogExceptionCode.ERROR_WHILE_CREATING, duplicatedDgs.size() == 1 ?
-                        String.format("DG [%s] has a published custom template with the same name for this template type.", duplicatedDgs.getFirst()) :
-                        String.format("DGs [%s] have a published custom template with the same name for this template type.",
-                                String.join(", ", duplicatedDgs)));
+                throw new CatalogException(CatalogException.CatalogExceptionCode.ERROR_WHILE_CREATING,
+                        "page.collection.milestones.publish-to-catalog.duplicate-template.error",
+                        String.join(", ", duplicatedDgs));
             }
         }
     }

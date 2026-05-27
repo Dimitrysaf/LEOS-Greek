@@ -34,9 +34,14 @@ export interface PendingTranslationException extends ExceptionResponseVO {
   pendingLanguages: string;
 }
 
+export interface DuplicateTemplateException extends ExceptionResponseVO {
+  duplicatedDgs: string;
+}
+
 export enum ErrorCode {
   CM001 = "CM001",
   CA001 = "CA001",
   PT001 = "PT001",
-  OLV001 = "OLV001"
+  OLV001 = "OLV001",
+  CT001 = "CT001"
 }

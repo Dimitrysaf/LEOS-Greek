@@ -61,6 +61,12 @@ public class ResponseExceptionHandler {
         return new ResponseEntity<>(ex, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(DuplicateTemplateException.class)
+    public ResponseEntity<Object> handleException(DuplicateTemplateException ex) {
+        logError(ex, "Not possible to publish the custom template. Duplicate template name found");
+        return new ResponseEntity<>(ex, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     private static void logError(Throwable ex, String message) {
         if (Arrays.stream(ex.getStackTrace()).findFirst().isPresent()) {
             LOG.error("{}: {}", message, Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);

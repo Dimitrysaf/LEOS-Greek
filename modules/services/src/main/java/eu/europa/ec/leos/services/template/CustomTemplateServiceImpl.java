@@ -51,6 +51,8 @@ import java.io.IOException;
 import java.util.*;
 
 import eu.europa.ec.leos.services.api.ApiService;
+import eu.europa.ec.leos.rest.handlers.RestTemplateResponseException;
+import eu.europa.ec.leos.services.api.exception.DuplicateTemplateException;
 import eu.europa.ec.leos.services.api.exception.PendingTranslationException;
 
 import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
@@ -114,7 +116,12 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         List<String> languageMilestoneLegIds = createMilestonesForLanguagePackages(languagePackages);
 
         // Publish template with validated DG codes
-        leosRepository.publishCustomTemplate(legFileId, templateName, finalDgCodes, user.getLogin(), originalDg);
+        try {
+            leosRepository.publishCustomTemplate(legFileId, templateName, finalDgCodes, user.getLogin(), originalDg);
+        } catch (RestTemplateResponseException e) {
+            rethrowIfDuplicateTemplate(e);
+            throw e;
+        }
         for (String languageMilestoneLegId : languageMilestoneLegIds) {
             leosRepository.publishCustomTemplate(languageMilestoneLegId, templateName, finalDgCodes, user.getLogin(), originalDg);
         }
@@ -153,7 +160,12 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
         }
 
         // Publish template with validated DG codes
-        leosRepository.updateCustomTemplate(packageId, templateName, finalDgCodes, user.getLogin(), originalDg);
+        try {
+            leosRepository.updateCustomTemplate(packageId, templateName, finalDgCodes, user.getLogin(), originalDg);
+        } catch (RestTemplateResponseException e) {
+            rethrowIfDuplicateTemplate(e);
+            throw e;
+        }
     }
 
     @Override
@@ -234,6 +246,12 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
 
         if (!pendingLanguages.isEmpty()) {
             throw new PendingTranslationException(String.join(", ", pendingLanguages));
+        }
+    }
+
+    private void rethrowIfDuplicateTemplate(RestTemplateResponseException e) {
+        if (e.getResponse() != null && e.getResponse().getDetails() != null) {
+            throw new DuplicateTemplateException(e.getResponse().getMessage(), e.getResponse().getDetails());
         }
     }
 

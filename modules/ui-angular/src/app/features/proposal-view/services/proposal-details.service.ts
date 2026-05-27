@@ -11,7 +11,7 @@ import {
   ErrorCode,
   LeosAppConfig,
   Permission,
-  User, AuthenticLanguage, CoverPageType, ProposalDetails, Document, SignatureMetadata, PendingTranslationException
+  User, AuthenticLanguage, CoverPageType, ProposalDetails, Document, SignatureMetadata, PendingTranslationException, DuplicateTemplateException
 } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
@@ -55,6 +55,7 @@ export class ProposalDetailsService implements OnDestroy {
   clonedProposalCount: number;
   exceptionResponseVO: ExceptionResponseVO = null;
   pendingTranslationException: PendingTranslationException = null;
+  duplicateTemplateException: DuplicateTemplateException = null;
   private repetitiveActsEnabled: boolean;
   private linguisticVersionsEnabled: boolean;
 
@@ -659,6 +660,17 @@ export class ProposalDetailsService implements OnDestroy {
               hasDismissButton: false
             });
             this.growlService.clearGrowl();
+          } else if (err.error?.errorCode === ErrorCode.CT001) {
+            this.duplicateTemplateException = err.error;
+            this.dialogService.openDialog({
+              title: this.translateService.instant(this.duplicateTemplateException.messageKey + '.title'),
+              content: this.translateService.instant(
+                this.duplicateTemplateException.messageKey + '.message',
+                { duplicatedDgs: this.duplicateTemplateException.duplicatedDgs }
+              ),
+              hasDismissButton: false
+            });
+            this.growlService.clearGrowl();
           } else {
             this.growlService.growl({
               severity: 'danger',
@@ -1078,15 +1090,28 @@ export class ProposalDetailsService implements OnDestroy {
           });
         },
         error: (err) => {
-          this.growlService.growl({
-            severity: 'danger',
-            summary: this.translateService.instant('global.notifications.title.error'),
-            detail:
-              err?.error?.message ?? this.translateService.instant('page.collection.milestones.update-template.error'),
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right'
-          });
+          if (err.error?.errorCode === ErrorCode.CT001) {
+            this.duplicateTemplateException = err.error;
+            this.dialogService.openDialog({
+              title: this.translateService.instant(this.duplicateTemplateException.messageKey + '.title'),
+              content: this.translateService.instant(
+                this.duplicateTemplateException.messageKey + '.message',
+                { duplicatedDgs: this.duplicateTemplateException.duplicatedDgs }
+              ),
+              hasDismissButton: false
+            });
+            this.growlService.clearGrowl();
+          } else {
+            this.growlService.growl({
+              severity: 'danger',
+              summary: this.translateService.instant('global.notifications.title.error'),
+              detail:
+                err?.error?.message ?? this.translateService.instant('page.collection.milestones.update-template.error'),
+              life: 3000,
+              isGrowlSticky: false,
+              position: 'bottom-right'
+            });
+          }
         }
       })
     );

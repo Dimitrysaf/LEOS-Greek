@@ -26,7 +26,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(CatalogException.class)
     public ResponseEntity<?> catalogExceptionHandling(CatalogException exception) {
-        return new ResponseEntity<>(new ExceptionResponse(exception.getName(), ExceptionResponse.ExceptionType.ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ExceptionResponse(exception.getName(), ExceptionResponse.ExceptionType.ERROR, exception.getDetails()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(Exception.class)

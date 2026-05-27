@@ -335,6 +335,8 @@
   "page.collection.milestones.publish-to-catalog.linguistic-versions": "Êtes-vous sûr? Cette action publiera toutes les versions linguistiques de ce modèle.",
   "page.collection.milestones.publish-to-catalog.pending-translation.error.title": "Modèle non publié - Traductions en attente",
   "page.collection.milestones.publish-to-catalog.pending-translation.error.message": "La publication n'est pas possible. Les langues suivantes sont en attente de traduction: {{ pendingLanguages }}",
+  "page.collection.milestones.publish-to-catalog.duplicate-template.error.title": "Modèle non publié - Nom en double",
+  "page.collection.milestones.publish-to-catalog.duplicate-template.error.message": "La publication n'est pas possible. Les DG suivantes ont déjà un modèle personnalisé publié avec le même nom pour ce type de modèle: {{ duplicatedDgs }}",
   "page.collection.milestones.un-publish-to-catalog.success": "Modèle non publié avec succès",
   "page.collection.milestones.un-publish-to-catalog.failed": "Aucun modèle publié trouvé",
   "page.collection.milestones.un-publish-to-catalog.error": "Échec de la non-publication du modèle",
