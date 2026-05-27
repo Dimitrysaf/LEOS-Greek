@@ -10,5 +10,7 @@ public enum ErrorCode {
     // Pending Translations
     PT001,
     // Original Language Version
-    OLV001
+    OLV001,
+    // Custom Template Duplicate
+    CT001
 }

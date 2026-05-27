@@ -9,10 +9,17 @@ public class ExceptionResponse {
 
     private String message;
     private ExceptionType type;
+    private String details;
 
     public ExceptionResponse(String message, ExceptionType type) {
         this.message = message;
         this.type = type;
+    }
+
+    public ExceptionResponse(String message, ExceptionType type, String details) {
+        this.message = message;
+        this.type = type;
+        this.details = details;
     }
 
     public String getMessage() {
@@ -29,5 +36,13 @@ public class ExceptionResponse {
 
     public void setType(ExceptionType type) {
         this.type = type;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
     }
 }

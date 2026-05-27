@@ -11,7 +11,7 @@ import {
   ErrorCode,
   LeosAppConfig,
   Permission,
-  User, AuthenticLanguage, CoverPageType, ProposalDetails, Document, SignatureMetadata, PendingTranslationException
+  User, AuthenticLanguage, CoverPageType, ProposalDetails, Document, SignatureMetadata
 } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
@@ -54,7 +54,6 @@ export class ProposalDetailsService implements OnDestroy {
   permissions$: Observable<Permission[]>;
   clonedProposalCount: number;
   exceptionResponseVO: ExceptionResponseVO = null;
-  pendingTranslationException: PendingTranslationException = null;
   private repetitiveActsEnabled: boolean;
   private linguisticVersionsEnabled: boolean;
 
@@ -648,13 +647,13 @@ export class ProposalDetailsService implements OnDestroy {
         },
         error: (err) => {
           console.log('PUBLISH ERROR')
-          this.pendingTranslationException = err.error;
-          if (this.pendingTranslationException.errorCode === ErrorCode.PT001) {
+          this.exceptionResponseVO = err.error;
+          if (this.exceptionResponseVO?.messageKey) {
             this.dialogService.openDialog({
-              title: this.translateService.instant(this.pendingTranslationException.messageKey + '.title'),
+              title: this.translateService.instant(this.exceptionResponseVO.messageKey + '.title'),
               content: this.translateService.instant(
-                this.pendingTranslationException.messageKey + '.message',
-                { pendingLanguages: this.pendingTranslationException.pendingLanguages }
+                this.exceptionResponseVO.messageKey + '.message',
+                { details: this.exceptionResponseVO.details }
               ),
               hasDismissButton: false
             });
@@ -1078,15 +1077,28 @@ export class ProposalDetailsService implements OnDestroy {
           });
         },
         error: (err) => {
-          this.growlService.growl({
-            severity: 'danger',
-            summary: this.translateService.instant('global.notifications.title.error'),
-            detail:
-              err?.error?.message ?? this.translateService.instant('page.collection.milestones.update-template.error'),
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right'
-          });
+          if (err.error?.messageKey) {
+            this.exceptionResponseVO = err.error;
+            this.dialogService.openDialog({
+              title: this.translateService.instant(this.exceptionResponseVO.messageKey + '.title'),
+              content: this.translateService.instant(
+                this.exceptionResponseVO.messageKey + '.message',
+                { details: this.exceptionResponseVO.details }
+              ),
+              hasDismissButton: false
+            });
+            this.growlService.clearGrowl();
+          } else {
+            this.growlService.growl({
+              severity: 'danger',
+              summary: this.translateService.instant('global.notifications.title.error'),
+              detail:
+                err?.error?.message ?? this.translateService.instant('page.collection.milestones.update-template.error'),
+              life: 3000,
+              isGrowlSticky: false,
+              position: 'bottom-right'
+            });
+          }
         }
       })
     );

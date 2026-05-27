@@ -14,7 +14,6 @@
 
 package eu.europa.ec.leos.services.controllers;
 
-import eu.europa.ec.leos.services.api.exception.PendingTranslationException;
 import eu.europa.ec.leos.services.dto.request.PublishTemplateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

@@ -51,21 +51,9 @@ public class ResponseExceptionHandler {
         } else {
             LOG.error("Unexpected error occurred :" + errorMessage, ex);
         }
-        return new ResponseEntity<>(new LeosExceptionResponse(ex.getErrorCode().toString(), ex.getMessageKey()),
-                HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @ExceptionHandler(PendingTranslationException.class)
-    public ResponseEntity<Object> handleException(PendingTranslationException ex) {
-        logError(ex, "Not possible to publish the custom template. There are languages with pending translations");
         return new ResponseEntity<>(ex, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private static void logError(Throwable ex, String message) {
-        if (Arrays.stream(ex.getStackTrace()).findFirst().isPresent()) {
-            LOG.error("{}: {}", message, Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);
-        }
-    }
 
     @ExceptionHandler(LeosApiException.class)
     public ResponseEntity<eu.europa.ec.leos.rest.handlers.ExceptionResponse> handleException(LeosApiException ex) {

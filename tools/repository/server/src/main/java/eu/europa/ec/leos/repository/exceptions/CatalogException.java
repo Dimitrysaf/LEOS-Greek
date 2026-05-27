@@ -34,10 +34,17 @@ public class CatalogException extends RuntimeException {
 
     private CatalogExceptionCode code;
     private String name;
+    private String details;
 
     public CatalogException(CatalogExceptionCode code, String name) {
         this.code = code;
         this.name = name;
+    }
+
+    public CatalogException(CatalogExceptionCode code, String name, String details) {
+        this.code = code;
+        this.name = name;
+        this.details = details;
     }
 
     public CatalogExceptionCode getCode() {
@@ -46,5 +53,9 @@ public class CatalogException extends RuntimeException {
 
     public String getName() {
         return this.name;
+    }
+
+    public String getDetails() {
+        return this.details;
     }
 }
