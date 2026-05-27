@@ -573,6 +573,7 @@
   "page.editor.preview.stale.title": "Do you want to preview the latest version?",
   "page.editor.preview.stale.view.existing": "View existing",
   "page.editor.preview.stale.generate.new": "Generate new",
+  "page.editor.preview.stale.generate.in.progress": "Generation in progress",
   "page.editor.preview.outdated": "The available preview version is outdated (version {{previewVersion}}, current version: {{currentVersion}}). Do you want to generate a new preview?",
   "page.editor.actions-dropdown.annex.apply-continuous-numbering.confirmation.message": "This will renumber all the elements in order to have a continuous numbering throughout the Annex. This operation cannot be undone. <br/> Please note that manually numbered elements, including high level subdivisions (Part, Title, Chapter, Section) are not part of the renumbering process.",
   "page.editor.actions-dropdown.bill.apply-continuous-numbering.confirmation.message": "This will renumber all the elements in order to have a continuous numbering throughout the Legal Act. This operation cannot be undone. <br/> Please note that manually numbered elements, including high level subdivisions (Part, Title, Chapter, Section) are not part of the renumbering process.",

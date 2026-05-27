@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 European Union
+ * Copyright 2026 European Union
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -27,6 +27,7 @@ import eu.europa.ec.leos.services.dto.request.DownloadVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.DownloadPreviewResponse;
+import eu.europa.ec.leos.services.dto.response.PreviewResponse;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.dto.response.FetchElementResponse;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
@@ -338,29 +339,43 @@ public class DocumentController implements DocumentApi {
 
             // GENERATING - return 202
             if (response.getResponseData() == null && response.getMessage() != null) {
-                String jsonResponse = String.format("{\"status\":\"GENERATING\",\"message\":\"%s\"}", response.getMessage());
-                return new ResponseEntity<>(jsonResponse, headers, HttpStatus.ACCEPTED);
+                PreviewResponse body = new PreviewResponse("GENERATING").withMessage(response.getMessage());
+                if (response.getStaleContent() != null) {
+                    body.withPreviewBlob(toBase64(response.getStaleContent()))
+                        .withPreviewVersion(response.getPreviewVersion())
+                        .withCurrentVersion(response.getCurrentVersion());
+                } else if (response.getPreviewVersion() != null) {
+                    body.withPreviewVersion(response.getPreviewVersion())
+                        .withCurrentVersion(response.getCurrentVersion());
+                }
+                return new ResponseEntity<>(body, headers, HttpStatus.ACCEPTED);
             }
 
-            // STALE - return 200 with stale info and base64 PDF
+            // STALE - return 200 with stale info and base64 PDF (blob omitted for statusOnly)
             if (response.isStale()) {
-                String base64Pdf = java.util.Base64.getEncoder().encodeToString(response.getResponseData());
-                String jsonResponse = String.format(
-                    "{\"status\":\"STALE\",\"previewVersion\":\"%s\",\"currentVersion\":\"%s\",\"messageKey\":\"%s\",\"previewBlob\":\"%s\"}",
-                    response.getPreviewVersion(), response.getCurrentVersion(), response.getMessageKey(), base64Pdf);
-                return new ResponseEntity<>(jsonResponse, headers, HttpStatus.OK);
+                PreviewResponse body = new PreviewResponse("STALE")
+                        .withPreviewVersion(response.getPreviewVersion())
+                        .withCurrentVersion(response.getCurrentVersion())
+                        .withMessageKey(response.getMessageKey());
+                if (response.getResponseData() != null) {
+                    body.withPreviewBlob(toBase64(response.getResponseData()));
+                }
+                return new ResponseEntity<>(body, headers, HttpStatus.OK);
             }
 
             // READY - return 200 with base64 PDF (or status only)
-            if (statusOnlyFlag) {
-                return new ResponseEntity<>("{\"status\":\"READY\"}", headers, HttpStatus.OK);
+            PreviewResponse body = new PreviewResponse("READY");
+            if (!statusOnlyFlag) {
+                body.withPreviewBlob(toBase64(response.getResponseData()));
             }
-            String base64Pdf = java.util.Base64.getEncoder().encodeToString(response.getResponseData());
-            String jsonResponse = String.format("{\"status\":\"READY\",\"previewBlob\":\"%s\"}", base64Pdf);
-            return new ResponseEntity<>(jsonResponse, headers, HttpStatus.OK);
+            return new ResponseEntity<>(body, headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while viewing document preview", e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private String toBase64(byte[] data) {
+        return java.util.Base64.getEncoder().encodeToString(data);
     }
 }

@@ -73,7 +73,7 @@ import {
   VIEW_ORIGINAL_LANGUAGE_ACTION_ID,
   MERGE_CONTRIBUTION_APPLY_CHANGES_SECTION_ID, MERGE_CONTRIBUTION_CANCEL_CHANGES_ID,
 } from '@/shared/constants/document-actions.constants';
-import { DocumentService } from '@/shared/services/document.service';
+import { DocumentService, PreviewState } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { LeosLightService } from '@/shared/services/leos-light.service';
 import { noWhitespaceValidator } from '@/shared/utils/validators';
@@ -100,7 +100,7 @@ export abstract class DocumentActionsService {
   protected leosConfig: LeosConfig;
   protected documentConfig: DocumentConfig;
   protected isEditorOpen = false;
-  protected isPreviewReady = false;
+  protected previewState: PreviewState = PreviewState.NONE;
 
   private profile: Profile;
   private permissions: Permission[];
@@ -138,8 +138,8 @@ export abstract class DocumentActionsService {
       this.isEditorOpen = isOpen;
     });
 
-    this.documentService.previewReady$.subscribe((isReady) => {
-      this.isPreviewReady = isReady;
+    this.documentService.previewState$.subscribe((state) => {
+      this.previewState = state;
       const newActions = this.buildActions();
       this.actionItemsBS.next(newActions);
     });
@@ -425,10 +425,9 @@ export abstract class DocumentActionsService {
           ),
           euiSize: 's' as SizeClass,
           euiStyle: 'secondary',
-          icon: 'eye',
-          iconPosition: 'after',
-          cssClasses: this.isPreviewReady ? '' : 'preview-icon-hidden',
-          svgType: 'outline',
+          icon: this.previewState === PreviewState.NONE ? 'eye-off' : 'eye',
+          svgType: this.previewState === PreviewState.READY ? 'sharp' : 'outline',
+          iconFillColor: this.previewState === PreviewState.STALE ? 'warning-100' : undefined,
           actionFn: () => this.documentService.generateAndViewPreview(),
         } as IRibbonToolbarItem] : []),
       ],

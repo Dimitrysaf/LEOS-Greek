@@ -59,6 +59,8 @@ import java.io.IOException;
 @Service
 public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(DocumentApiServiceProposalImpl.class);
+    private static final String KEY_PREVIEW_IN_PROGRESS = "page.editor.preview.generating.in.progress";
+    private static final String KEY_PREVIEW_FAILURE = "page.editor.preview.generating.after.failure";
 
     private final PreviewGenerationService previewGenerationService;
 
@@ -120,12 +122,23 @@ public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
 
                 if (DocumentPreviewStatus.IN_PROGRESS == status) {
                     LOG.debug("Preview already IN_PROGRESS for document: {}, version: {}", documentRef, versionLabel);
-                    return new DownloadPreviewResponse("page.editor.preview.generating.in.progress");
+                    eu.europa.ec.leos.domain.repository.document.DocumentPreview stalePreview =
+                            leosRepository.findDocumentPreviewByDocumentRef(documentRef);
+                    if (stalePreview != null && DocumentPreviewStatus.COMPLETED == stalePreview.getStatus()
+                            && !stalePreview.getVersionLabel().equals(versionLabel)) {
+                        if (statusOnly) {
+                            return new DownloadPreviewResponse(KEY_PREVIEW_IN_PROGRESS,
+                                    null, stalePreview.getVersionLabel(), versionLabel);
+                        }
+                        return new DownloadPreviewResponse(KEY_PREVIEW_IN_PROGRESS,
+                                stalePreview.getContent(), stalePreview.getVersionLabel(), versionLabel);
+                    }
+                    return new DownloadPreviewResponse(KEY_PREVIEW_IN_PROGRESS);
                 }
 
                 if (DocumentPreviewStatus.FAILED == status) {
                     if (statusOnly) {
-                        return new DownloadPreviewResponse("page.editor.preview.generating.after.failure");
+                        return new DownloadPreviewResponse(KEY_PREVIEW_FAILURE);
                     }
                     eu.europa.ec.leos.domain.repository.document.DocumentPreview stalePreview =
                             leosRepository.findDocumentPreviewByDocumentRef(documentRef);
@@ -138,7 +151,7 @@ public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
                     leosRepository.deleteDocumentPreview(documentRef, versionLabel);
                     leosRepository.createDocumentPreviewInProgress(documentVersionId, documentRef, versionLabel);
                     previewGenerationService.generatePreviewAsync(exportOptions, securityContext.getUser());
-                    return new DownloadPreviewResponse("page.editor.preview.generating.after.failure");
+                    return new DownloadPreviewResponse(KEY_PREVIEW_FAILURE);
                 }
             }
 
@@ -148,7 +161,7 @@ public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
                 if (stalePreview != null && DocumentPreviewStatus.COMPLETED == stalePreview.getStatus() && !stalePreview.getVersionLabel().equals(versionLabel)) {
                     LOG.info("Stale preview exists for document: {}, stale version: {}, current: {}", documentRef, stalePreview.getVersionLabel(), versionLabel);
                     if (statusOnly) {
-                        return new DownloadPreviewResponse("NONE");
+                        return new DownloadPreviewResponse(null, true, stalePreview.getVersionLabel(), versionLabel, "page.editor.preview.outdated");
                     }
                     return new DownloadPreviewResponse(stalePreview.getContent(), true, stalePreview.getVersionLabel(), versionLabel, "page.editor.preview.outdated");
                 }

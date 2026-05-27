@@ -1,7 +1,23 @@
-<eui-dialog #dialog [title]="'Document Preview'" height="90vh" width="90vw" hasNoBodyPadding [hasFooter]="false" (dialogClose)="onClose()">
-  @if (filepathNeme) {
+<eui-dialog #dialog height="90vh" width="90vw" hasNoBodyPadding [hasFooter]="false" [hasCloseButton]="false">
+  <eui-dialog-header>
+    <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-justify-content-between eui-u-flex-align-items-center eui-u-width-100">
+      <h5 class="eui-dialog__header-title eui-u-mb-none">
+        {{ 'Document Preview' + (previewVersionLabel ? ' - v' + previewVersionLabel : '') }}
+      </h5>
+      <button
+        type="button"
+        euiButton
+        euiSecondary
+        euiSizeS
+        (click)="onClose()"
+      >
+        {{ 'global.actions.close' | translate }}
+      </button>
+    </div>
+  </eui-dialog-header>
+  @if (filepathName) {
     <ngx-extended-pdf-viewer
-      [src]="filepathNeme"
+      [src]="filepathName"
       [height]="'75vh'"
       [showPrintButton]="false"
       [showDownloadButton]="false"

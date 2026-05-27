@@ -554,6 +554,7 @@
   "page.editor.preview.stale.title": "Voulez-vous prévisualiser la dernière version ?",
   "page.editor.preview.stale.view.existing": "Voir l'existant",
   "page.editor.preview.stale.generate.new": "Générer un nouveau",
+  "page.editor.preview.stale.generate.in.progress": "Génération en cours",
   "page.editor.preview.outdated": "La version d'aperçu disponible est obsolète (version {{previewVersion}}, version actuelle : {{currentVersion}}). Voulez-vous générer un nouvel aperçu ?",
   "page.editor.actions-dropdown.import": "Importer du Journal Officiel",
   "page.editor.actions-dropdown.see-user-guidance": "Voir les conseils de rédaction",

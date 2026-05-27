@@ -16,11 +16,9 @@ package eu.europa.ec.leos.repository;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.WebApplicationInitializer;
 
 @SpringBootApplication
-@EnableScheduling
 public class Application extends SpringBootServletInitializer implements WebApplicationInitializer {
 
     @Override

@@ -36,7 +36,7 @@ export type SvgType = 'outline' | 'sharp' | 'default';
 export interface IBaseRibbonToolbarItem {
   id: string;
   icon?: string; // used for eui icons
-  iconPosition?: 'before' | 'after'; // default is 'before'
+  iconFillColor?: string; // used for eui icon fill color
   svgIconClas?: string;
   svgType?: SvgType;
   disabled?: boolean | Observable<boolean> ;
