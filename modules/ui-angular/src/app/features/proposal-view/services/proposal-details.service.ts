@@ -11,7 +11,7 @@ import {
   ErrorCode,
   LeosAppConfig,
   Permission,
-  User, AuthenticLanguage, CoverPageType, ProposalDetails, Document, SignatureMetadata, PendingTranslationException, DuplicateTemplateException
+  User, AuthenticLanguage, CoverPageType, ProposalDetails, Document, SignatureMetadata
 } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
@@ -54,8 +54,6 @@ export class ProposalDetailsService implements OnDestroy {
   permissions$: Observable<Permission[]>;
   clonedProposalCount: number;
   exceptionResponseVO: ExceptionResponseVO = null;
-  pendingTranslationException: PendingTranslationException = null;
-  duplicateTemplateException: DuplicateTemplateException = null;
   private repetitiveActsEnabled: boolean;
   private linguisticVersionsEnabled: boolean;
 
@@ -649,24 +647,13 @@ export class ProposalDetailsService implements OnDestroy {
         },
         error: (err) => {
           console.log('PUBLISH ERROR')
-          this.pendingTranslationException = err.error;
-          if (this.pendingTranslationException.errorCode === ErrorCode.PT001) {
+          this.exceptionResponseVO = err.error;
+          if (this.exceptionResponseVO?.messageKey) {
             this.dialogService.openDialog({
-              title: this.translateService.instant(this.pendingTranslationException.messageKey + '.title'),
+              title: this.translateService.instant(this.exceptionResponseVO.messageKey + '.title'),
               content: this.translateService.instant(
-                this.pendingTranslationException.messageKey + '.message',
-                { pendingLanguages: this.pendingTranslationException.pendingLanguages }
-              ),
-              hasDismissButton: false
-            });
-            this.growlService.clearGrowl();
-          } else if (err.error?.errorCode === ErrorCode.CT001) {
-            this.duplicateTemplateException = err.error;
-            this.dialogService.openDialog({
-              title: this.translateService.instant(this.duplicateTemplateException.messageKey + '.title'),
-              content: this.translateService.instant(
-                this.duplicateTemplateException.messageKey + '.message',
-                { duplicatedDgs: this.duplicateTemplateException.duplicatedDgs }
+                this.exceptionResponseVO.messageKey + '.message',
+                { details: this.exceptionResponseVO.details }
               ),
               hasDismissButton: false
             });
@@ -1090,13 +1077,13 @@ export class ProposalDetailsService implements OnDestroy {
           });
         },
         error: (err) => {
-          if (err.error?.errorCode === ErrorCode.CT001) {
-            this.duplicateTemplateException = err.error;
+          if (err.error?.messageKey) {
+            this.exceptionResponseVO = err.error;
             this.dialogService.openDialog({
-              title: this.translateService.instant(this.duplicateTemplateException.messageKey + '.title'),
+              title: this.translateService.instant(this.exceptionResponseVO.messageKey + '.title'),
               content: this.translateService.instant(
-                this.duplicateTemplateException.messageKey + '.message',
-                { duplicatedDgs: this.duplicateTemplateException.duplicatedDgs }
+                this.exceptionResponseVO.messageKey + '.message',
+                { details: this.exceptionResponseVO.details }
               ),
               hasDismissButton: false
             });

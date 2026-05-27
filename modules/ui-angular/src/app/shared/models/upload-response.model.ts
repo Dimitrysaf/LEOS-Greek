@@ -28,14 +28,7 @@ export interface ErrorVO {
 export interface ExceptionResponseVO {
   errorCode: string;
   messageKey: string;
-}
-
-export interface PendingTranslationException extends ExceptionResponseVO {
-  pendingLanguages: string;
-}
-
-export interface DuplicateTemplateException extends ExceptionResponseVO {
-  duplicatedDgs: string;
+  details?: string;
 }
 
 export enum ErrorCode {

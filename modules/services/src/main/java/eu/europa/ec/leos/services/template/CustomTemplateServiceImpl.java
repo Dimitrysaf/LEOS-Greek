@@ -52,8 +52,9 @@ import java.util.*;
 
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.rest.handlers.RestTemplateResponseException;
-import eu.europa.ec.leos.services.api.exception.DuplicateTemplateException;
-import eu.europa.ec.leos.services.api.exception.PendingTranslationException;
+
+import static eu.europa.ec.leos.services.api.exception.ErrorCode.CT001;
+import static eu.europa.ec.leos.services.api.exception.ErrorCode.PT001;
 
 import static eu.europa.ec.leos.services.support.XmlUtils.createDocument;
 import static eu.europa.ec.leos.services.support.XmlUtils.hasDescendantWithAttribute;
@@ -245,13 +246,15 @@ class CustomTemplateServiceImpl implements CustomTemplateService {
                 .flatMap(Optional::stream).toList();
 
         if (!pendingLanguages.isEmpty()) {
-            throw new PendingTranslationException(String.join(", ", pendingLanguages));
+            throw new LeosExceptionResponse(PT001.name(),
+                    "page.collection.milestones.publish-to-catalog.pending-translation.error",
+                    String.join(", ", pendingLanguages));
         }
     }
 
     private void rethrowIfDuplicateTemplate(RestTemplateResponseException e) {
         if (e.getResponse() != null && e.getResponse().getDetails() != null) {
-            throw new DuplicateTemplateException(e.getResponse().getMessage(), e.getResponse().getDetails());
+            throw new LeosExceptionResponse(CT001.name(), e.getResponse().getMessage(), e.getResponse().getDetails());
         }
     }
 
