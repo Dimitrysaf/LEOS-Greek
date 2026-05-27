@@ -124,13 +124,6 @@ public class DocumentPreviewServiceImpl implements DocumentPreviewService {
                 .ifPresent(entity -> documentPreviewRepository.delete(entity));
     }
 
-    @Override
-    @Transactional
-    public void deleteDocumentPreviewOlderThan(int days) {
-        LocalDateTime cutoffDate = LocalDateTime.now().minusDays(days);
-        documentPreviewRepository.deleteByAuditCDateBefore(cutoffDate);
-    }
-
     private eu.europa.ec.leos.repository.model.DocumentPreview toModel(DocumentPreview entity) {
         return new eu.europa.ec.leos.repository.model.DocumentPreview(
                 entity.getId().toString(),

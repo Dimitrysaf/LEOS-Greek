@@ -52,6 +52,12 @@ import { CoEditionServiceWS } from './coEdition.websocket.service';
 import {SearchAndReplaceAllResponse} from "@/features/akn-document/models/search-replace-response.model";
 
 
+export enum PreviewState {
+  NONE = 'NONE',
+  STALE = 'STALE',
+  READY = 'READY'
+}
+
 export enum RelevantElements {
   ALL = 'ALL',
   ENACTING_TERMS = 'ENACTING_TERMS',
@@ -159,10 +165,11 @@ export class DocumentService {
   private openPreviewDialogBS = new BehaviorSubject<boolean>(false);
   public openPreviewDialog$ = this.openPreviewDialogBS.asObservable();
 
-  private previewReadyBS = new BehaviorSubject<boolean>(false);
-  public previewReady$ = this.previewReadyBS.asObservable();
+  private previewStateBS = new BehaviorSubject<PreviewState>(PreviewState.NONE);
+  public previewState$ = this.previewStateBS.asObservable();
 
   private cachedPreviewBlob: Blob = null;
+  private cachedPreviewVersionLabel: string = null;
   private isPreviewGenerating = false;
   private documentPageTitleBS = new BehaviorSubject<string>('');
   private resetZoomBS = new BehaviorSubject<void>(null);
@@ -414,7 +421,8 @@ export class DocumentService {
     this.getAnnotations = null;
     this.setAnnotationMode = null;
     this.cachedPreviewBlob = null;
-    this.previewReadyBS.next(false);
+    this.cachedPreviewVersionLabel = null;
+    this.previewStateBS.next(PreviewState.NONE);
     this.isPreviewGenerating = false;
   }
 
@@ -674,7 +682,9 @@ export class DocumentService {
     this.clearPendingSavingElements();
     this.setDidDocumentLoadAndRender(false);
     this.coEditionService.setShouldReloadAfterUpdate();
-    this.clearPreviewState();
+    this.cachedPreviewBlob = null;
+    this.cachedPreviewVersionLabel = null;
+    this.isPreviewGenerating = false;
     this.setDocumentRefAndCategory(this.documentRef, this.documentType);
     this.setSearchResultsCounter(0);
   }
@@ -717,8 +727,10 @@ export class DocumentService {
   }
 
   clearPreviewState() {
+    const wasReady = this.previewStateBS.getValue() === PreviewState.READY;
     this.cachedPreviewBlob = null;
-    this.previewReadyBS.next(false);
+    this.cachedPreviewVersionLabel = null;
+    this.previewStateBS.next(wasReady ? PreviewState.STALE : PreviewState.NONE);
     this.isPreviewGenerating = false;
     // Do not unsubscribe from WS here - user may still want growl notification
     // for in-progress generation even after document update
@@ -1021,7 +1033,8 @@ export class DocumentService {
       // Navigating to different document - clear preview state only
       // Keep WS subscription alive so growl fires when PDF completes
       this.cachedPreviewBlob = null;
-      this.previewReadyBS.next(false);
+      this.cachedPreviewVersionLabel = null;
+      this.previewStateBS.next(PreviewState.NONE);
       this.isPreviewGenerating = false;
     }
 
@@ -1038,9 +1051,14 @@ export class DocumentService {
     this.viewDocumentPreview(false, true).subscribe({
       next: (response) => {
         if (response.status === 'READY') {
-          this.previewReadyBS.next(true);
+          this.previewStateBS.next(PreviewState.READY);
+        } else if (response.status === 'STALE') {
+          this.previewStateBS.next(PreviewState.STALE);
         } else if (response.status === 'GENERATING' && response.message !== 'NONE') {
           this.isPreviewGenerating = true;
+          if (response.previewBlob || response.previewVersion) {
+            this.previewStateBS.next(PreviewState.STALE);
+          }
         }
       },
       error: () => {} // silent
@@ -1845,11 +1863,13 @@ export class DocumentService {
 
     // Eye icon is showing but no cached blob - user returned to document after navigating away
     // Fetch full blob and open dialog directly without triggering new generation
-    if (this.previewReadyBS.getValue() && !this.cachedPreviewBlob && !this.isPreviewGenerating) {
+    if (this.previewStateBS.getValue() === PreviewState.READY && !this.cachedPreviewBlob && !this.isPreviewGenerating) {
       this.viewDocumentPreview().subscribe({
         next: (response) => {
           if (response.status === 'READY' && response.previewBlob) {
             this.cachedPreviewBlob = this.base64ToBlob(response.previewBlob);
+            this.cachedPreviewVersionLabel = this.documentViewBS.getValue()?.versionInfoVO?.documentVersion ?? null;
+            this.previewStateBS.next(PreviewState.READY);
             this.openPreviewDialogBS.next(true);
             return;
           }
@@ -1870,18 +1890,33 @@ export class DocumentService {
       this.viewDocumentPreview().subscribe({
         next: (response) => {
           if (response.status === 'GENERATING') {
-            this.growlService.growl({
-              severity: 'info',
-              detail: this.translate.instant('page.editor.preview.generating.in.progress'),
-              life: 3000,
-            });
+            if (response.previewBlob) {
+              // Stale exists - show dialog with Generate new disabled
+              this.previewStateBS.next(PreviewState.STALE);
+              this.showStalePreviewConfirmation({
+                isStale: true,
+                previewVersion: response.previewVersion,
+                currentVersion: response.currentVersion,
+                messageKey: 'page.editor.preview.outdated'
+              }, response.previewBlob, true);
+            } else {
+              this.growlService.growl({
+                severity: 'info',
+                detail: this.translate.instant('page.editor.preview.generating.in.progress'),
+                life: 3000,
+              });
+            }
+            this.subscribeToPreviewTopic(documentRef);
           } else {
             this.isPreviewGenerating = false;
             this.coEditionService.unsubscribeFromTopic(`preview-${documentRef}`);
             if (response.status === 'READY' && response.previewBlob) {
               this.cachedPreviewBlob = this.base64ToBlob(response.previewBlob);
+              this.cachedPreviewVersionLabel = this.documentViewBS.getValue()?.versionInfoVO?.documentVersion ?? null;
+              this.previewStateBS.next(PreviewState.READY);
               this.openPreviewDialogBS.next(true);
             } else if (response.status === 'STALE') {
+              this.previewStateBS.next(PreviewState.STALE);
               this.growlService.growl({
                 severity: 'danger',
                 detail: this.translate.instant('page.editor.preview.failed'),
@@ -1913,9 +1948,12 @@ export class DocumentService {
           this.coEditionService.unsubscribeFromTopic(`preview-${documentRef}`);
           const blob = this.base64ToBlob(response.previewBlob);
           this.cachedPreviewBlob = blob;
+          this.cachedPreviewVersionLabel = this.documentViewBS.getValue()?.versionInfoVO?.documentVersion ?? null;
+          this.previewStateBS.next(PreviewState.READY);
           this.openPreviewDialogBS.next(true);
         } else if (response.status === 'STALE') {
           // Stale - unsubscribe, show dialog
+          this.previewStateBS.next(PreviewState.STALE);
           this.coEditionService.unsubscribeFromTopic(`preview-${documentRef}`);
           this.showStalePreviewConfirmation({
             isStale: true,
@@ -1975,7 +2013,7 @@ export class DocumentService {
           this.coEditionService.unsubscribeFromTopic(topicId);
           if (isCurrentVersion && this.documentRef === documentRef) {
             this.isPreviewGenerating = false;
-            this.previewReadyBS.next(true);
+            this.previewStateBS.next(PreviewState.READY);
           }
         } else if (payload.status === 'FAILED') {
           this.growlService.growl({
@@ -1997,29 +2035,37 @@ export class DocumentService {
     this.openPreviewDialogBS.next(false);
   }
 
-  private showStalePreviewConfirmation(staleInfo: StalePreviewInfo, existingPreviewBlob?: string) {
+  private showStalePreviewConfirmation(staleInfo: StalePreviewInfo, existingPreviewBlob?: string, generateDisabled: boolean = false) {
     const message = this.translate.instant(staleInfo.messageKey, {
       previewVersion: staleInfo.previewVersion,
       currentVersion: staleInfo.currentVersion
     });
+    const inProgressLabel = this.translate.instant('page.editor.preview.stale.generate.in.progress');
 
-    this.dialogService.openDialog({
+    const openedDialog = this.dialogService.openDialog({
       title: this.translate.instant('page.editor.preview.stale.title'),
       content: message,
       typeClass: 'warning',
       hasCloseButton: true,
       hasDismissButton: true,
-      acceptLabel: this.translate.instant('page.editor.preview.stale.generate.new'),
+      acceptLabel: generateDisabled ? inProgressLabel : this.translate.instant('page.editor.preview.stale.generate.new'),
       dismissLabel: this.translate.instant('page.editor.preview.stale.view.existing'),
+      isHandleCloseOnAccept: true,
+      open: () => {
+        if (generateDisabled) {
+          this.dialogService.disableAcceptButton();
+        }
+      },
       accept: () => {
-        // User chose to generate new - force regenerate
+        openedDialog.containerRef.instance.dialogContainerConfig.acceptLabel = inProgressLabel;
+        this.dialogService.disableAcceptButton();
         this.generateNewPreview();
       },
       dismiss: () => {
-        // User chose to view existing - use the data we already have!
         if (existingPreviewBlob) {
           const blob = this.base64ToBlob(existingPreviewBlob);
           this.cachedPreviewBlob = blob;
+          this.cachedPreviewVersionLabel = staleInfo.previewVersion;
           this.openPreviewDialogBS.next(true);
         }
       }
@@ -2047,6 +2093,8 @@ export class DocumentService {
           this.isPreviewGenerating = false;
           const blob = this.base64ToBlob(response.previewBlob);
           this.cachedPreviewBlob = blob;
+          this.cachedPreviewVersionLabel = this.documentViewBS.getValue()?.versionInfoVO?.documentVersion ?? null;
+          this.previewStateBS.next(PreviewState.READY);
           this.openPreviewDialogBS.next(true);
         }
         // GENERATING - already subscribed, just wait for WS
@@ -2076,5 +2124,9 @@ export class DocumentService {
 
   getCachedPreview(): Blob {
     return this.cachedPreviewBlob;
+  }
+
+  getCachedPreviewVersionLabel(): string {
+    return this.cachedPreviewVersionLabel;
   }
 }

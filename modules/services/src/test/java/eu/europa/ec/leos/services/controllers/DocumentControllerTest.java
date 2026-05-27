@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.controllers;
 import eu.europa.ec.leos.services.api.DocumentApiService;
 import eu.europa.ec.leos.services.api.GenericDocumentApiService;
 import eu.europa.ec.leos.services.dto.response.DownloadPreviewResponse;
+import eu.europa.ec.leos.services.dto.response.PreviewResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -29,7 +30,7 @@ import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -65,10 +66,10 @@ public class DocumentControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
-        String body = (String) response.getBody();
+        PreviewResponse body = (PreviewResponse) response.getBody();
         assertNotNull(body);
-        assertTrue(body.contains("\"status\":\"READY\""));
-        assertTrue(body.contains("\"previewBlob\":\"" + Base64.getEncoder().encodeToString(pdfBytes) + "\""));
+        assertEquals("READY", body.getStatus());
+        assertEquals(Base64.getEncoder().encodeToString(pdfBytes), body.getPreviewBlob());
     }
 
     @Test
@@ -80,10 +81,10 @@ public class DocumentControllerTest {
 
         assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
-        String body = (String) response.getBody();
+        PreviewResponse body = (PreviewResponse) response.getBody();
         assertNotNull(body);
-        assertTrue(body.contains("\"status\":\"GENERATING\""));
-        assertTrue(body.contains("\"message\":\"page.editor.preview.generating\""));
+        assertEquals("GENERATING", body.getStatus());
+        assertEquals("page.editor.preview.generating", body.getMessage());
     }
 
     @Test
@@ -96,13 +97,13 @@ public class DocumentControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(MediaType.APPLICATION_JSON, response.getHeaders().getContentType());
-        String body = (String) response.getBody();
+        PreviewResponse body = (PreviewResponse) response.getBody();
         assertNotNull(body);
-        assertTrue(body.contains("\"status\":\"STALE\""));
-        assertTrue(body.contains("\"previewVersion\":\"1.0.0\""));
-        assertTrue(body.contains("\"currentVersion\":\"1.1.0\""));
-        assertTrue(body.contains("\"messageKey\":\"page.editor.preview.outdated\""));
-        assertTrue(body.contains("\"previewBlob\":\"" + Base64.getEncoder().encodeToString(stalePdfBytes) + "\""));
+        assertEquals("STALE", body.getStatus());
+        assertEquals("1.0.0", body.getPreviewVersion());
+        assertEquals("1.1.0", body.getCurrentVersion());
+        assertEquals("page.editor.preview.outdated", body.getMessageKey());
+        assertEquals(Base64.getEncoder().encodeToString(stalePdfBytes), body.getPreviewBlob());
     }
 
     @Test
@@ -113,12 +114,27 @@ public class DocumentControllerTest {
         ResponseEntity<Object> response = documentController.getPreview(DOCUMENT_TYPE, DOCUMENT_REF, true, false);
 
         assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
-        String body = (String) response.getBody();
+        PreviewResponse body = (PreviewResponse) response.getBody();
         assertNotNull(body);
-        assertTrue(body.contains("\"status\":\"GENERATING\""));
-        assertTrue(body.contains("\"message\":\"page.editor.preview.generating.latest\""));
+        assertEquals("GENERATING", body.getStatus());
+        assertEquals("page.editor.preview.generating.latest", body.getMessage());
         // verify forceRegenerate=true is passed through to the service
         verify(documentApiService).getDocumentPreview(any(), eq(DOCUMENT_REF), eq(true), eq(false));
+    }
+
+    @Test
+    public void getDocumentPreview_statusOnly_returns200WithoutBlob() {
+        byte[] pdfBytes = "pdf-content".getBytes();
+        when(documentApiService.getDocumentPreview(any(), anyString(), anyBoolean(), anyBoolean()))
+                .thenReturn(new DownloadPreviewResponse(pdfBytes));
+
+        ResponseEntity<Object> response = documentController.getPreview(DOCUMENT_TYPE, DOCUMENT_REF, false, true);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        PreviewResponse body = (PreviewResponse) response.getBody();
+        assertNotNull(body);
+        assertEquals("READY", body.getStatus());
+        assertNull(body.getPreviewBlob());
     }
 
     @Test

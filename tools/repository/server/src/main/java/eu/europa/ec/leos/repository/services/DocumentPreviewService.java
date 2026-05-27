@@ -23,5 +23,4 @@ public interface DocumentPreviewService {
     void markCompleted(String documentRef, String versionLabel, byte[] content);
     void markFailed(String documentRef, String versionLabel);
     void deleteDocumentPreview(String documentRef, String versionLabel);
-    void deleteDocumentPreviewOlderThan(int days);
 }

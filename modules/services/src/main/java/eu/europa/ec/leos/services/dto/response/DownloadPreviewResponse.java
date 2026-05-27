@@ -13,9 +13,12 @@
  */
 package eu.europa.ec.leos.services.dto.response;
 
+import lombok.Getter;
+
 import java.io.Serial;
 import java.io.Serializable;
 
+@Getter
 public class DownloadPreviewResponse implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -26,6 +29,7 @@ public class DownloadPreviewResponse implements Serializable {
     private final String previewVersion;
     private final String currentVersion;
     private final String messageKey;
+    private final byte[] staleContent;
 
     public DownloadPreviewResponse(byte[] responseData) {
         this.responseData = responseData;
@@ -34,6 +38,7 @@ public class DownloadPreviewResponse implements Serializable {
         this.previewVersion = null;
         this.currentVersion = null;
         this.messageKey = null;
+        this.staleContent = null;
     }
 
     public DownloadPreviewResponse(String message) {
@@ -43,6 +48,7 @@ public class DownloadPreviewResponse implements Serializable {
         this.previewVersion = null;
         this.currentVersion = null;
         this.messageKey = null;
+        this.staleContent = null;
     }
 
     public DownloadPreviewResponse(byte[] responseData, boolean isStale, String previewVersion, String currentVersion, String messageKey) {
@@ -52,29 +58,17 @@ public class DownloadPreviewResponse implements Serializable {
         this.previewVersion = previewVersion;
         this.currentVersion = currentVersion;
         this.messageKey = messageKey;
+        this.staleContent = null;
     }
 
-    public byte[] getResponseData() {
-        return responseData;
+    public DownloadPreviewResponse(String message, byte[] staleContent, String previewVersion, String currentVersion) {
+        this.responseData = null;
+        this.message = message;
+        this.isStale = false;
+        this.previewVersion = previewVersion;
+        this.currentVersion = currentVersion;
+        this.messageKey = null;
+        this.staleContent = staleContent;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public boolean isStale() {
-        return isStale;
-    }
-
-    public String getPreviewVersion() {
-        return previewVersion;
-    }
-
-    public String getCurrentVersion() {
-        return currentVersion;
-    }
-
-    public String getMessageKey() {
-        return messageKey;
-    }
 }

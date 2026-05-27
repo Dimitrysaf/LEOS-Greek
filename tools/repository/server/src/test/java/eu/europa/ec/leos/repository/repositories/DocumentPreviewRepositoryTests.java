@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -179,32 +178,6 @@ class DocumentPreviewRepositoryTests extends H2TestBase {
 
         List<DocumentPreview> remaining = documentPreviewRepository.findByDocumentRef(DOC_REF);
         assertEquals(1, remaining.size());
-    }
-
-    @Test
-    @Transactional
-    void deleteByAuditCDateBefore_deletesOldRecords() {
-        DocumentPreview entity = new DocumentPreview(versionId1, DOC_REF, VERSION_LABEL, null, DocumentPreviewStatus.COMPLETED);
-        entity.setAuditCDate(LocalDateTime.now().minusDays(10));
-        documentPreviewRepository.save(entity);
-
-        documentPreviewRepository.deleteByAuditCDateBefore(LocalDateTime.now().minusDays(5));
-        entityManager.flush();
-        entityManager.clear();
-
-        assertTrue(documentPreviewRepository.findByDocumentRef(DOC_REF).isEmpty());
-    }
-
-    @Test
-    @Transactional
-    void deleteByAuditCDateBefore_keepsRecentRecords() {
-        save(versionId1, DOC_REF, VERSION_LABEL, null, DocumentPreviewStatus.COMPLETED);
-
-        documentPreviewRepository.deleteByAuditCDateBefore(LocalDateTime.now().minusDays(5));
-        entityManager.flush();
-        entityManager.clear();
-
-        assertEquals(1, documentPreviewRepository.findByDocumentRef(DOC_REF).size());
     }
 
     @Test

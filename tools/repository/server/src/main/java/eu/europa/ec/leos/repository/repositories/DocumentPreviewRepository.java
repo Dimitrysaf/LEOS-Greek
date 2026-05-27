@@ -20,7 +20,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,8 +32,4 @@ public interface DocumentPreviewRepository extends JpaRepository<DocumentPreview
     @Modifying
     @Query("DELETE FROM DocumentPreview d WHERE d.documentRef = :documentRef AND d.id < :excludeId")
     void deleteOtherVersions(@Param("documentRef") String documentRef, @Param("excludeId") BigDecimal excludeId);
-
-    @Modifying
-    @Query("DELETE FROM DocumentPreview d WHERE d.auditCDate < :cutoffDate")
-    void deleteByAuditCDateBefore(@Param("cutoffDate") LocalDateTime cutoffDate);
 }
