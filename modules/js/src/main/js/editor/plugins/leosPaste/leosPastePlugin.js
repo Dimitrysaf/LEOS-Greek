@@ -180,7 +180,22 @@ define(function leosPastePluginModule(require) {
 
     function _isImagePluginEnabled(editor) {
         let cmd = editor.getCommand('leosBase64ImageDialog');
-        return cmd && cmd.state !== CKEDITOR.TRISTATE_DISABLED;
+        if (!cmd || cmd.state === CKEDITOR.TRISTATE_DISABLED) return false;
+        let removeButtons = editor.config.removeButtons || '';
+        if (removeButtons.indexOf('base64image') !== -1) return false;
+        if (editor.config.toolbar) {
+            return editor.config.toolbar.some(function(group) {
+                if (group.items && group.items.indexOf('base64image') !== -1) return true;
+                return group.name === 'insert' && !group.items;
+            });
+        }
+        if (editor.config.toolbarGroups) {
+            return editor.config.toolbarGroups.some(function(group) {
+                if (group.groups && group.groups.indexOf('base64image') !== -1) return true;
+                return group.name === 'insert' && !group.groups;
+            });
+        }
+        return false;
     }
 
     function _extractImages(htmlString) {
