@@ -76,6 +76,12 @@
             <groupId>org.owasp.esapi</groupId>
             <artifactId>esapi</artifactId>
             <classifier>jakarta</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-lang</groupId>
+                    <artifactId>commons-lang</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
