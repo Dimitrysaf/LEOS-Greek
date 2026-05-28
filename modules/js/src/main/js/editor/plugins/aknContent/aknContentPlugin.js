@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 European Union
+ * Copyright 2026 European Union
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -17,15 +17,10 @@ define(function aknContentPluginModule(require) {
 
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
-    var leosPreventStructuralChanges = require("plugins/leosPreventStructuralChanges/leosPreventStructuralChanges");
 
     var pluginName = "aknContent";
 
-    var pluginDefinition = {
-        init: function init(editor) {
-            leosPreventStructuralChanges.register(editor);
-        }
-    };
+    var pluginDefinition = {};
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
 

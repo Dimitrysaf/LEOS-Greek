@@ -18,9 +18,10 @@ define(function aknChapterPluginModule(require) {
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
     var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
-    var leosPreventStructuralChanges = require("plugins/leosPreventStructuralChanges/leosPreventStructuralChanges");
     var pluginName = "aknHeading";
 
+    var ENTER_KEY = 13;
+    var SHIFT_ENTER = CKEDITOR.SHIFT + ENTER_KEY;
     var UNDERLINE = CKEDITOR.CTRL + 85;
     var BOLD = CKEDITOR.CTRL + 66;
     var ITALIC = CKEDITOR.CTRL + 73;
@@ -28,7 +29,20 @@ define(function aknChapterPluginModule(require) {
     var pluginDefinition = {
         requires : "widget,leosWidget",
         init : function init(editor) {
-            leosPreventStructuralChanges.register(editor);
+
+            leosKeyHandler.on({
+                editor : editor,
+                eventType : 'key',
+                key : ENTER_KEY,
+                action : _cancelEvent
+            });
+
+            leosKeyHandler.on({
+                editor : editor,
+                eventType : 'key',
+                key : SHIFT_ENTER,
+                action : _cancelEvent
+            });
 
             leosKeyHandler.on({
                 editor : editor,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 European Union
+ * Copyright 2026 European Union
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -18,35 +18,39 @@ define(function leosPreventStructuralChangesModule(require) {
     var UTILS = require("core/leosUtils");
     var leosPluginUtils = require("plugins/leosPluginUtils");
     var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
+    var pluginTools = require("plugins/pluginTools");
 
+    var pluginName = "leosPreventStructuralChanges";
     var SHIFT_ENTER = CKEDITOR.SHIFT + UTILS.KEYS.KEY_ENTER;
     var CTRL_ENTER = CKEDITOR.CTRL + UTILS.KEYS.KEY_ENTER;
 
-    function register(editor) {
-        editor.on('key', _onKey, null, null, 0);
-        editor.on('beforeCommandExec', _onBeforeCommand, null, null, 0);
+    var pluginDefinition = {
+        init: function init(editor) {
+            editor.on('key', _onKey, null, null, 0);
+            editor.on('beforeCommandExec', _onBeforeCommand, null, null, 0);
 
-        leosKeyHandler.on({
-            editor: editor,
-            eventType: 'key',
-            key: UTILS.KEYS.KEY_ENTER,
-            action: _cancelEvent
-        });
+            leosKeyHandler.on({
+                editor: editor,
+                eventType: 'key',
+                key: UTILS.KEYS.KEY_ENTER,
+                action: _cancelEvent
+            });
 
-        leosKeyHandler.on({
-            editor: editor,
-            eventType: 'key',
-            key: SHIFT_ENTER,
-            action: _cancelEvent
-        });
+            leosKeyHandler.on({
+                editor: editor,
+                eventType: 'key',
+                key: SHIFT_ENTER,
+                action: _cancelEvent
+            });
 
-        leosKeyHandler.on({
-            editor: editor,
-            eventType: 'key',
-            key: CTRL_ENTER,
-            action: _cancelEvent
-        });
-    }
+            leosKeyHandler.on({
+                editor: editor,
+                eventType: 'key',
+                key: CTRL_ENTER,
+                action: _cancelEvent
+            });
+        }
+    };
 
     function _onKey(event) {
         var keyCode = event.data && event.data.keyCode;
@@ -110,7 +114,11 @@ define(function leosPreventStructuralChangesModule(require) {
         context.event.cancel();
     }
 
-    return {
-        register: register
+    pluginTools.addPlugin(pluginName, pluginDefinition);
+
+    var pluginModule = {
+        name: pluginName
     };
+
+    return pluginModule;
 });
