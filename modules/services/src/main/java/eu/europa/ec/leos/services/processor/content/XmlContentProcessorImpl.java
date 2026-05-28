@@ -53,6 +53,7 @@ import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.text.StringEscapeUtils;
@@ -67,6 +68,7 @@ import org.w3c.dom.NodeList;
 import jakarta.inject.Provider;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -3315,7 +3317,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Document targetDoc = XmlUtils.createDocument(targetXmlDoc);
 
         alignMetaNode(sourceDoc, targetDoc);
-        replaceUnchangedContentInSourceDocByTarget(targetDoc, sourceDoc, sourceBaseDoc);
+        alignSourceNodesWithTargetExcludingAlternatives(sourceDoc, targetDoc, sourceBaseDoc);
         replaceDocumentRefsFromProposalInSourceByTarget(sourceDoc, targetDoc);
         alignInternalReferences(sourceDoc, targetDoc);
         alignAlternatives(targetXmlDoc, sourceDoc, sourceBaseDoc);
@@ -3380,20 +3382,32 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
     }
 
-    private static void replaceUnchangedContentInSourceDocByTarget(Document targetDoc, Document sourceDoc, Document sourceBaseDoc) {
+    private static void alignSourceNodesWithTargetExcludingAlternatives(Document sourceDoc, Document targetDoc, Document sourceBaseDoc) {
         NodeList sourceNodes = getAllNodesWithId(sourceDoc);
         for (int i = 0; i < sourceNodes.getLength(); i++) {
             Node sourceNode = sourceNodes.item(i);
-            highlightNodeForTranslation(sourceNode);
-            Node targetNode = XmlUtils.getElementById(targetDoc, getId(sourceNode));
-            Node sourceBaseNode = XmlUtils.getElementById(sourceBaseDoc, getId(sourceNode));
-            if (targetNode != null && anyHasTextOrImgChildren(sourceNode, targetNode)) {
-                Node alignedNode = alignChildNodes(sourceNode, targetDoc);
-                if (changedTextContentInSource(sourceNode, sourceBaseNode) || changedImageContentInSource(sourceNode, sourceBaseNode)) {
-                    highlightNodeForTranslation(alignedNode);
-                }
-                importAndReplaceNodeInDocument(sourceDoc, sourceNode, alignedNode);
+            if (!XmlUtils.hasAscendantWithAttribute(sourceNode, LEOS_ALTERNATIVE_ATTR)) {
+                alignSourceNodeWithTarget(sourceNode, targetDoc, sourceBaseDoc);
             }
+        }
+    }
+
+    private static void alignSourceNodesWithTarget(NodeList sourceNodes, Document targetDoc, Node sourceBaseRoot) {
+        for (int i = 0; i < sourceNodes.getLength(); i++) {
+            alignSourceNodeWithTarget(sourceNodes.item(i), targetDoc, sourceBaseRoot);
+        }
+    }
+
+    private static void alignSourceNodeWithTarget(Node sourceNode, Document targetDoc, Node sourceBaseRoot) {
+        highlightNodeForTranslation(sourceNode);
+        Node targetNode = XmlUtils.getElementById(targetDoc, getId(sourceNode));
+        Node sourceBaseNode = XmlUtils.getElementById(sourceBaseRoot, getId(sourceNode));
+        if (targetNode != null && anyHasTextOrImgChildren(sourceNode, targetNode)) {
+            Node alignedNode = alignChildNodes(sourceNode, targetDoc);
+            if (changedTextContentInSource(sourceNode, sourceBaseNode) || changedImageContentInSource(sourceNode, sourceBaseNode)) {
+                highlightNodeForTranslation(alignedNode);
+            }
+            importAndReplaceNodeInDocument(sourceNode.getOwnerDocument(), sourceNode, alignedNode);
         }
     }
 
@@ -3493,34 +3507,74 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     private void alignAlternatives(XmlDocument targetXmlDoc, Document sourceDoc, Document sourceBaseDoc) {
         List<Node> sourceAlternativeNodes = XmlUtils.getDescendantsWithAttribute(sourceDoc, LEOS_ALTERNATIVE_ATTR);
         List<Node> sourceBaseAlternativeNodes = XmlUtils.getDescendantsWithAttribute(sourceBaseDoc, LEOS_ALTERNATIVE_ATTR);
+        String sourceLanguage = getFirstElementByXPath(sourceBaseDoc, xPathCatalog.getXPathDocLanguage()).getNodeValue();
 
         sourceAlternativeNodes.forEach(sourceAlternativeNode -> {
             Node sourceBaseAlternativeNode = sourceBaseAlternativeNodes.stream()
-                    .filter(sourceBaseNode -> StringUtils.equals(getId(sourceAlternativeNode), getId(sourceBaseNode))).findFirst().orElse(null);
+                    .filter(sourceBaseNode -> Strings.CS.equals(getId(sourceAlternativeNode), getId(sourceBaseNode))).findFirst().orElse(null);
             String selectedOption = XmlUtils.getAttributeValue(sourceAlternativeNode, LEOS_SELECTED_OPTION_ATTR);
-            if (!StringUtils.equals(selectedOption, XmlUtils.getAttributeValue(sourceBaseAlternativeNode, LEOS_SELECTED_OPTION_ATTR))) {
-                replaceAlternativeNodeWithContentFromLanguageTemplateConfig(targetXmlDoc, sourceAlternativeNode, selectedOption);
+            if (Strings.CS.equals(selectedOption, XmlUtils.getAttributeValue(sourceBaseAlternativeNode, LEOS_SELECTED_OPTION_ATTR))) {
+                alignSourceNodesWithTarget(getAllNodesWithId(sourceAlternativeNode), XmlUtils.createDocument(targetXmlDoc), sourceBaseAlternativeNode);
+            } else {
+                replaceAlternativeNodeWithContentFromLanguageTemplateConfig(targetXmlDoc, sourceAlternativeNode, selectedOption, sourceLanguage);
             }
         });
     }
 
-    private void replaceAlternativeNodeWithContentFromLanguageTemplateConfig(XmlDocument targetXmlDoc, Node sourceAlternativeNode, String selectedOption) {
+
+    private void replaceAlternativeNodeWithContentFromLanguageTemplateConfig(XmlDocument targetXmlDoc, Node sourceAlternativeNode, String selectedOption,
+            String sourceLanguage) {
         LeosMetadata targetDocMetadata = targetXmlDoc.getMetadata().get();
-        documentLanguageContext.setDocumentLanguage(targetDocMetadata.getLanguage());
-        JsonNode targetAlternatives = templateConfigurationService.getElementJsonFromTemplateConfiguration(targetDocMetadata.getDocTemplate(), "alternatives");
+        String docTemplate = targetDocMetadata.getDocTemplate();
         String optionList = XmlUtils.getAttributeValue(sourceAlternativeNode, LEOS_OPTION_LIST_ATTR);
-        targetAlternatives.elements().forEachRemaining(alternativesList -> {
-            if (StringUtils.equals(optionList, alternativesList.get("name").asText())) {
-                alternativesList.get("list").elements().forEachRemaining(alternativeItem -> {
-                    if (StringUtils.equals(selectedOption, alternativeItem.get("index").asText())) {
-                        String xmlFragment = alternativeItem.get("content").asText();
-                        Node targetAlternativeNode = createNodeFromXmlFragment(sourceAlternativeNode.getOwnerDocument(),
-                                xmlFragment.getBytes(StandardCharsets.UTF_8), false);
-                        XmlUtils.replaceElement(targetAlternativeNode, sourceAlternativeNode);
-                    }
-                });
+
+        documentLanguageContext.setDocumentLanguage(targetDocMetadata.getLanguage());
+        Node targetAlternativeNode = getAlternativeNodeFromTemplateConfig(sourceAlternativeNode.getOwnerDocument(), docTemplate, optionList, selectedOption);
+
+        if (targetAlternativeNode != null) {
+            documentLanguageContext.setDocumentLanguage(sourceLanguage);
+            Node originalSourceAlternativeNode = getAlternativeNodeFromTemplateConfig(sourceAlternativeNode.getOwnerDocument(), docTemplate, optionList,
+                    selectedOption);
+
+            if (originalSourceAlternativeNode != null) {
+                highlightChangedAlternativeChildren(sourceAlternativeNode, originalSourceAlternativeNode, targetAlternativeNode);
             }
-        });
+
+            XmlUtils.replaceElement(targetAlternativeNode, sourceAlternativeNode);
+        }
+    }
+
+    private Node getAlternativeNodeFromTemplateConfig(Document ownerDocument, String docTemplate, String optionList, String selectedOption) {
+        JsonNode alternatives = templateConfigurationService.getElementJsonFromTemplateConfiguration(docTemplate, "alternatives");
+        Iterator<JsonNode> alternativesIterator = alternatives.elements();
+        while (alternativesIterator.hasNext()) {
+            JsonNode alternativesList = alternativesIterator.next();
+            if (Strings.CS.equals(optionList, alternativesList.get("name").asText())) {
+                Iterator<JsonNode> listIterator = alternativesList.get("list").elements();
+                while (listIterator.hasNext()) {
+                    JsonNode alternativeItem = listIterator.next();
+                    if (Strings.CS.equals(selectedOption, alternativeItem.get("index").asText())) {
+                        String xmlFragment = alternativeItem.get("content").asText();
+                        return createNodeFromXmlFragment(ownerDocument, xmlFragment.getBytes(StandardCharsets.UTF_8), false);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private static void highlightChangedAlternativeChildren(Node sourceAlternativeNode, Node originalSourceAlternativeNode, Node targetAlternativeNode) {
+        NodeList sourceDescendants = getAllNodesWithId(sourceAlternativeNode);
+        for (int i = 0; i < sourceDescendants.getLength(); i++) {
+            Node sourceDescendant = sourceDescendants.item(i);
+            Node originalDescendant = XmlUtils.getElementById(originalSourceAlternativeNode, getId(sourceDescendant));
+            if (changedTextContentInSource(sourceDescendant, originalDescendant)) {
+                Node targetDescendant = XmlUtils.getElementById(targetAlternativeNode, getId(sourceDescendant));
+                if (targetDescendant != null) {
+                    highlightNodeForTranslation(targetDescendant);
+                }
+            }
+        }
     }
 
     private void alignAttachmentsIds(Document sourceDoc, Document targetDoc) {
