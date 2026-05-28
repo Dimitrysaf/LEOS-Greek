@@ -1742,8 +1742,13 @@ public abstract class ApiServiceImpl implements ApiService {
             if (isClonedProposal) {
                 populateCloneProposalMetadataVO(proposal);
             }
-            if (hasNotChanged(proposal)) {
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+            List<XmlDocument> proposalDocs = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
+            if (hasNotChanged(proposal, proposalDocs)) {
                 throw new LeosExceptionResponse(CM001.name(), "page.milestone.already.exist.for.this.major.version.error");
+            }
+            if (!allHybridNotPdfHasARendition(proposal, proposalDocs)) {
+                throw new LeosExceptionResponse(CM001.name(), "page.milestone.missing.rendition.file.error");
             }
             String packageId = getPackageIdForAlignedMainLanguage(proposal);
             LegDocument previousLegDocument = packageId != null ?
@@ -1902,9 +1907,7 @@ public abstract class ApiServiceImpl implements ApiService {
         return false;
     }
 
-    private boolean hasNotChanged(Proposal proposal) {
-        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
-        List<XmlDocument> proposalDocs = packageService.findDocumentsByPackageId(leosPackage.getId(), XmlDocument.class, false, false);
+    private boolean hasNotChanged(Proposal proposal, List<XmlDocument> proposalDocs) {
         String language = proposal.getMetadata().get().getLanguage();
         languageHelper.setProposalLanguageTag(language.toLowerCase());
         final String versionComment = messageHelper.getMessage("milestone.versionComment");
@@ -1914,6 +1917,14 @@ public abstract class ApiServiceImpl implements ApiService {
             }
         }
         return true;
+    }
+
+    private boolean allHybridNotPdfHasARendition(Proposal proposal, List<XmlDocument> proposalDocs) {
+        return !proposalDocs.stream()
+                .anyMatch(doc -> doc.getCategory().equals(LeosCategory.ANNEX)
+                        && !StringUtils.isEmpty(doc.getOriginalFilename())
+                        && !getFileExtension(doc.getOriginalFilename()).equals("PDF")
+                        && StringUtils.isEmpty(doc.getForeignRenditionOriginalFilename()));
     }
 
     @Override

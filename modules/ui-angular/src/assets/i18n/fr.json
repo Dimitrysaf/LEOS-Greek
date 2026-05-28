@@ -375,6 +375,8 @@
   "page.collection.milestones.create-milestone-dialog.error": "Échec de la création du milestone",
   "page.milestone.already.exist.for.this.major.version.error.title": "Le milestone n'a pas été créé",
   "page.milestone.already.exist.for.this.major.version.error.message": "Les documents contenus dans le nouveau milestone sont identiques aux documents de la version précédente du milestone.<br>Veuillez apporter des modifications au document afin de créer une nouvelle version du milestone.",
+  "page.milestone.missing.rendition.file.error.title": "Le milestone n'a pas été créé",
+  "page.milestone.missing.rendition.file.error.message": "Il y a des annexes hybrides sans version PDF valide, veuillez la télécharger.",
   "page.collection.milestones.create-milestone-dialog.success-clone": "La contribution du Service Légal a été créée pour cet acte",
   "page.collection.milestones.type.custom-template": "Modèle personnalisé",
   "page.collection.milestones.type.proposal1": "Pour Consultation Interservice",

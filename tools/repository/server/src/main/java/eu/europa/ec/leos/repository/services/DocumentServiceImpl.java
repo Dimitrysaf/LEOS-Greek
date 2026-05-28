@@ -1143,12 +1143,12 @@ public class DocumentServiceImpl implements DocumentService {
         if (docView.isPresent()) {
             DocumentVersion docVersion = updateDocumentVersion(doc, userId, versionType, labelVersion, comments);
             DocumentContent docContent;
-            if (foreignRenditionContent != null) {
-                docContent = updateDocumentContentSimplified(docVersion, docView.get(), userId, metadata, foreignRenditionContent, foreignRenditionOriginalFilename);
-            } else {
-                docContent = updateDocumentContent(docVersion, docView.get(), userId, new String(contentBytes, StandardCharsets.UTF_8),
-                        metadata, binaryContent, originalFilename);
+            String xmlContent = null;
+            if (contentBytes != null) {
+                xmlContent = new String(contentBytes, StandardCharsets.UTF_8);
             }
+            docContent = updateDocumentContent(docVersion, docView.get(), userId, xmlContent,
+                    metadata, binaryContent, originalFilename, foreignRenditionContent, foreignRenditionOriginalFilename);
             return Collections.singletonMap(docContent, docVersion);
         } else {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentV.class.getName());
@@ -1255,11 +1255,11 @@ public class DocumentServiceImpl implements DocumentService {
 
     private DocumentContent updateDocumentContent(DocumentVersion docVersion, final DocumentV prevVersion, String userId,
             String contentString, Map<String, ?> metadata) {
-        return this.updateDocumentContent(docVersion, prevVersion, userId, contentString, metadata, null, null);
+        return this.updateDocumentContent(docVersion, prevVersion, userId, contentString, metadata, null, null, null, null);
     }
 
     private DocumentContent updateDocumentContent(DocumentVersion docVersion, final DocumentV prevVersion, String userId,
-            String contentString, Map<String, ?> metadata, byte[] binaryContent, String originalFilename) {
+            String contentString, Map<String, ?> metadata, byte[] binaryContent, String originalFilename, byte[] foreignRenditionContent, String foreignRenditionOriginalFilename) {
 
         DocumentContent content = new DocumentContent();
         if (prevVersion != null) {
@@ -1267,7 +1267,9 @@ public class DocumentServiceImpl implements DocumentService {
             BeanUtils.copyProperties(previousDocumentContent, content, "id");
         }
 
-        content.setContent(contentString);
+        if (contentString != null) {
+            content.setContent(contentString);
+        }
         content.setCreatedBy(userId);
         LocalDateTime localDateTime = LocalDateTime.now();
         content.setCreationDate(localDateTime);
@@ -1277,63 +1279,6 @@ public class DocumentServiceImpl implements DocumentService {
             content.setBinaryContent(binaryContent);
             content.setOriginalFilename(originalFilename);
         }
-
-        Boolean eeaRelevance = ConversionUtils.convertBoolean(metadata.get(PropertiesMetadata.EEA_RELEVANCE.getLeosName()));
-        if (eeaRelevance != null) {
-            content.setEeaRelevance(eeaRelevance);
-        } else if (prevVersion != null) {
-            content.setEeaRelevance(prevVersion.getEeaRelevance());
-        } else {
-            content.setEeaRelevance(false);
-        }
-        if (metadata.get(PropertiesMetadata.TEMPLATE.getLeosName()) != null) {
-            content.setTemplate((String) metadata.get(PropertiesMetadata.TEMPLATE.getLeosName()));
-        } else if (prevVersion != null) {
-            content.setTemplate(prevVersion.getTemplate());
-        }
-        if (metadata.get(PropertiesMetadata.DOC_PURPOSE.getLeosName()) != null) {
-            content.setDocPurpose((String) metadata.get(PropertiesMetadata.DOC_PURPOSE.getLeosName()));
-        } else if (prevVersion != null) {
-            content.setDocPurpose(prevVersion.getDocPurpose());
-        }
-        if (metadata.get(PropertiesMetadata.DOC_TYPE.getLeosName()) != null) {
-            content.setDocType((String) metadata.get(PropertiesMetadata.DOC_TYPE.getLeosName()));
-        } else if (prevVersion != null) {
-            content.setDocType(prevVersion.getDocType());
-        } else {
-            content.setDocType("-");
-        }
-        if (metadata.get(PropertiesMetadata.ACT_TYPE.getLeosName()) != null) {
-            content.setActType((String) metadata.get(PropertiesMetadata.ACT_TYPE.getLeosName()));
-        } else if (prevVersion != null) {
-            content.setActType(prevVersion.getActType());
-        }
-        content.setVersion(docVersion);
-        if (metadata.get(PropertiesMetadata.TITLE.getLeosName()) != null) {
-            content.setTitle((String) metadata.get(PropertiesMetadata.TITLE.getLeosName()));
-        } else if (prevVersion != null) {
-            content.setTitle(prevVersion.getTitle());
-        }
-        if (metadata.get(PropertiesMetadata.CATEGORY.getLeosName()) != null) {
-            content.setCategoryCode((String) metadata.get(PropertiesMetadata.CATEGORY.getLeosName()));
-        } else if (prevVersion != null) {
-            content.setCategoryCode(prevVersion.getCategoryCode());
-        }
-        return documentContentRepository.save(content);
-    }
-
-    private DocumentContent updateDocumentContentSimplified(DocumentVersion docVersion, final DocumentV prevVersion, String userId, Map<String, ?> metadata,
-            byte[] foreignRenditionContent, String foreignRenditionOriginalFilename) {
-        DocumentContent content = new DocumentContent();
-        DocumentContent previousDocumentContent = documentContentRepository.findDocumentContentByVersionId(prevVersion.getVersionId()).get();
-        BeanUtils.copyProperties(previousDocumentContent, content, "id");
-
-        content.setCreatedBy(userId);
-        LocalDateTime localDateTime = LocalDateTime.now();
-        content.setCreationDate(localDateTime);
-        content.setLastModifiedBy(userId);
-        content.setLastModificationDate(localDateTime);
-        content.setVersion(docVersion);
         if (foreignRenditionContent != null) {
             content.setForeignRenditionContent(foreignRenditionContent);
             content.setForeignRenditionOriginalFilename(foreignRenditionOriginalFilename);
@@ -1369,6 +1314,7 @@ public class DocumentServiceImpl implements DocumentService {
         } else if (prevVersion != null) {
             content.setActType(prevVersion.getActType());
         }
+        content.setVersion(docVersion);
         if (metadata.get(PropertiesMetadata.TITLE.getLeosName()) != null) {
             content.setTitle((String) metadata.get(PropertiesMetadata.TITLE.getLeosName()));
         } else if (prevVersion != null) {
