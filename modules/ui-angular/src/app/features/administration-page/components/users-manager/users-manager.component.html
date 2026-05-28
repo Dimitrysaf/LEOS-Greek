@@ -39,7 +39,10 @@
             <td><a (click)="onUserSelect(row)">{{ row.lastName }}</a></td>
             <td><a (click)="onUserSelect(row)">{{ row.login }}</a></td>
             <td><a (click)="onUserSelect(row)">{{ row.dateCreated | date:'dd/MM/yyyy' }}</a></td>
-            <td><a *ngIf="row.special" (click)="deleteUser(row)"><eui-icon-svg icon="eui-delete" fillColor="danger-100"></eui-icon-svg></a></td>
+            <td>
+              <a *ngIf="row.special" (click)="deleteUser(row)"><eui-icon-svg icon="eui-delete" fillColor="danger-100"></eui-icon-svg></a>
+              <a *ngIf="!row.special" class="eui-u-disabled" euiTooltip="{{'page.workspace.administration.user-info.comref-user-tooltip' | translate}}">COMREF</a>
+            </td>
           </tr>
         </ng-template>
       </table>

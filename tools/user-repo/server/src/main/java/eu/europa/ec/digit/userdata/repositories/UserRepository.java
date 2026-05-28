@@ -27,6 +27,39 @@ import java.util.stream.Stream;
 public interface UserRepository extends JpaRepository<User, User.UserId> {
 
     // language=SQL
+    String SEARCH_BY_KEY = """
+            SELECT * FROM LEOS_USER
+                WHERE (
+                   deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey)
+                OR
+                   deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey)
+                OR
+                   deAccent(USER_EMAIL) LIKE deAccent(:searchKey)
+                OR
+                   deAccent(USER_LOGIN) LIKE deAccent(:searchKey))
+                AND
+                   USER_PER_ID != -1
+                AND
+                   USER_EMAIL != 'entity@mail.com'""";
+
+    // language=SQL
+    String COUNT_SEARCH_BY_KEY = """
+            SELECT COUNT(*) FROM LEOS_USER
+                WHERE (
+                   deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey)
+                OR
+                   deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey)
+                OR
+                   deAccent(USER_EMAIL) LIKE deAccent(:searchKey)
+                OR
+                   deAccent(USER_LOGIN) LIKE deAccent(:searchKey))
+                AND
+                   USER_PER_ID != -1
+                AND
+                   USER_EMAIL != 'entity@mail.com'""";
+
+
+    // language=SQL
     String SEARCH_BY_KEY_AND_ENTITY = """
             SELECT u.USER_LOGIN, u.USER_EMAIL, u.USER_PER_ID, u.USER_LASTNAME, u.USER_FIRSTNAME, u.JOB_TITLE, u.DATE_CREATED, u.SPECIAL
             FROM (
@@ -65,43 +98,6 @@ public interface UserRepository extends JpaRepository<User, User.UserId> {
                  OR
                     deAccent(u.USER_LOGIN) LIKE deAccent(:searchKey))
                 AND e.ENTITY_ID = :entityId
-                AND USER_PER_ID != -1
-                AND USER_EMAIL != 'entity@mail.com'
-            ) WHERE rn = 1""";
-
-    // language=SQL
-    String SEARCH_BY_KEY_DEDUPED = """
-            SELECT u.USER_LOGIN, u.USER_EMAIL, u.USER_PER_ID, u.USER_LASTNAME, u.USER_FIRSTNAME, u.JOB_TITLE, u.DATE_CREATED, u.SPECIAL
-            FROM (
-                SELECT u.*,
-                       ROW_NUMBER() OVER (PARTITION BY USER_LOGIN ORDER BY SPECIAL DESC) AS rn
-                FROM LEOS_USER u
-                WHERE (
-                    deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey)
-                 OR
-                    deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey)
-                 OR
-                    deAccent(USER_EMAIL) LIKE deAccent(:searchKey)
-                 OR
-                    deAccent(USER_LOGIN) LIKE deAccent(:searchKey))
-                AND USER_PER_ID != -1
-                AND USER_EMAIL != 'entity@mail.com'
-            ) u
-            WHERE rn = 1""";
-
-    // language=SQL
-    String COUNT_SEARCH_BY_KEY_DEDUPED = """
-            SELECT COUNT(*) FROM (
-                SELECT ROW_NUMBER() OVER (PARTITION BY USER_LOGIN ORDER BY SPECIAL DESC) AS rn
-                FROM LEOS_USER u
-                WHERE (
-                    deAccent(USER_LASTNAME || ' ' || USER_FIRSTNAME) LIKE deAccent(:searchKey)
-                 OR
-                    deAccent(USER_FIRSTNAME || ' ' || USER_LASTNAME) LIKE deAccent(:searchKey)
-                 OR
-                    deAccent(USER_EMAIL) LIKE deAccent(:searchKey)
-                 OR
-                    deAccent(USER_LOGIN) LIKE deAccent(:searchKey))
                 AND USER_PER_ID != -1
                 AND USER_EMAIL != 'entity@mail.com'
             ) WHERE rn = 1""";
@@ -147,7 +143,7 @@ public interface UserRepository extends JpaRepository<User, User.UserId> {
      * @param pageable pagination parameters
      * @return Page of {@link User} objects
      */
-    @Query(value = SEARCH_BY_KEY_DEDUPED, countQuery = COUNT_SEARCH_BY_KEY_DEDUPED, nativeQuery = true)
+    @Query(value = SEARCH_BY_KEY, countQuery = COUNT_SEARCH_BY_KEY, nativeQuery = true)
     Page<User> findByKey(@Param("searchKey") String searchKey, Pageable pageable);
 
     /**

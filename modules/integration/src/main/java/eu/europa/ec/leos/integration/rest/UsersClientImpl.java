@@ -85,6 +85,9 @@ class UsersClientImpl implements UsersProvider {
     @Value("#{integrationProperties['leos.user.repository.entities.delete.uri']}")
     private String deleteEntityUri;
 
+    @Value("#{integrationProperties['leos.user.repository.users.special.getDetails.uri']}")
+    private String specialUserDetailsUri;
+
     @Autowired
     private RestOperations restTemplate;
     
@@ -310,7 +313,7 @@ class UsersClientImpl implements UsersProvider {
 
     @Override
     public UserDTO getUserDetails(String userLogin) {
-        final String uri = repositoryUrl + getDeleteUserUri;
+        final String uri = repositoryUrl + specialUserDetailsUri;
         final Map<String, Object> params = Collections.singletonMap(QUERY_PARAM_USER_LOGIN, userLogin);
         final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(uri).uriVariables(params);
         try {

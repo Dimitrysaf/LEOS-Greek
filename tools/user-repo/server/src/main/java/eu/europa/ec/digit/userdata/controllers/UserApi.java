@@ -114,4 +114,15 @@ public interface UserApi {
     })
     @DeleteMapping("/{userLogin}")
     ResponseEntity<Void> deleteUser(@Parameter(description = "User login") @PathVariable String userLogin);
+
+    @Operation(summary = "Get special user details by ID", description = "Retrieves user details for special user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User found successfully"),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = UserRepoExceptionResponse.class))),
+            @ApiResponse(responseCode = "400", description = "User not found",
+                    content = @Content(schema = @Schema(implementation = UserRepoExceptionResponse.class))),
+    })
+    @GetMapping(path = "/special/{userLogin}")
+    UserDto getSpecialUserDetails(@PathVariable String userLogin);
 }

@@ -220,4 +220,11 @@ public class UserService {
     public Optional<SpecialUser> getSpecialUser(String userId) {
         return specialUserRepository.findByLogin(userId);
     }
+
+    @Transactional(readOnly = true)
+    public Optional<User> getSpecialUserDetails(String userId) {
+        final User user = userRepository.findFirstByLoginAndSpecialIsTrue(userId);
+        user.setEntities(user.getEntities().stream().filter(Entity::getSpecial).toList());
+        return Optional.ofNullable(user);
+    }
 }
