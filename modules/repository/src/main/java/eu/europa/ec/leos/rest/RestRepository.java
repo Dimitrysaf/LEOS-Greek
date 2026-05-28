@@ -360,6 +360,27 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
+    public LeosDocument updateDocument(String versionId, Map<String, ?> properties, byte[] updatedDocumentBytes,
+            VersionType versionType, String category, String comment, String userId, byte[] binaryContent, String originalFilename,
+            byte[] foreignRenditionSource, String foreignRenditionOriginalFilename) {
+        LOGGER.trace("Updating document properties and content... [ref={}]", versionId);
+        UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
+        updateDocumentRequest.setContent(updatedDocumentBytes);
+        updateDocumentRequest.setMetadata(properties);
+        updateDocumentRequest.setVersionType(versionType);
+        updateDocumentRequest.setCategory(category);
+        updateDocumentRequest.setComments(comment);
+        updateDocumentRequest.setUserId(userId);
+        updateDocumentRequest.setBinaryContent(binaryContent);
+        updateDocumentRequest.setOriginalFilename(originalFilename);
+        updateDocumentRequest.setForeignRenditionContent(foreignRenditionSource);
+        updateDocumentRequest.setForeignRenditionOriginalFilename(foreignRenditionOriginalFilename);
+
+        String url = getUrl(leosRestUpdateDocumentContentURI);
+        LeosDocument resp = putEntity(url, updateDocumentRequest, LeosDocument.class, versionId);
+        return resp;
+    }
+
     public void updateDocument(String versionId, AnnexMetadata metadata, VersionType versionType, String category, String comment, String userId, byte[] foreignAnnexRenditionContent, String foreignAnnexRenditionOriginalFilename) {
         LOGGER.trace("Updating document properties and content... [ref={}]", versionId);
         UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();

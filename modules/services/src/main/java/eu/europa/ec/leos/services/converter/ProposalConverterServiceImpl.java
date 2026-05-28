@@ -29,6 +29,7 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XmlUtils;
+import eu.europa.ec.leos.services.utils.FileUtils;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,6 +139,11 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                         doc.setBinaryFile(binaryFile.getBytes());
                         doc.setOriginalFilename(originalFileName);
                         doc.setBinaryFileSize(getFormattedByteAsKB((long)doc.getBinaryFile().length));
+                        String renditionName = unzippedFiles.keySet().stream().filter(e -> e.toUpperCase().equals((FileUtils.getFileName(originalFileName)+".pdf").toUpperCase())).findFirst().orElse(null);
+                        if (renditionName != null) {
+                            doc.setForeignRenditionSource(((LeosFile) unzippedFiles.get(renditionName)).getBytes());
+                            doc.setForeignRenditionOriginalFilename(renditionName);
+                        }
                     }
                     if (doc != null) {
                         if (doc.getCategory() == LeosCategory.ANNEX) {

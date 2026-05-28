@@ -18,7 +18,7 @@ import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 import { MilestoneViewConnectorsService } from "@/shared/services/milestone-view-connectors.service";
 import {apiBaseUrl} from "../../../../config";
-import {downloadBlob} from "@/shared/utils";
+import {downloadBlob, getFileExtension} from "@/shared/utils";
 import {LoadingService} from "@/shared/services/loading.service";
 import {HttpClient} from "@angular/common/http";
 import {TranslateService} from "@ngx-translate/core";
@@ -99,13 +99,22 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit, A
       }
       const srcMatch = xml.match(/componentRef[^>]*src="([^"]+)"/);
       const src = srcMatch ? srcMatch[1] : '';
-      xml = xml.replace(/<annex[^>]*>[\s\S]*?<\/annex>/gi, `<h3 id="label-for-annex-message" class="eui-u-font-bold eui-u-color-info">${msg}</h3><eui-label id="label-for-annex-name" class="eui-u-font-bold">${src}</eui-label><button id="annex-download-button" class="eui-button eui-button--primary eui-button--size-s">${buttonText}</button>`);
+      const srcRend = getFileExtension(src) !== 'pdf' ? src.substring(0, src.lastIndexOf('.')) + '.pdf' : '';
+      if (srcRend) {
+        xml = xml.replace(/<annex[^>]*>[\s\S]*?<\/annex>/gi, `<h3 id="label-for-annex-message" class="eui-u-font-bold eui-u-color-info">${msg}</h3><eui-label id="label-for-annex-name" class="eui-u-font-bold">${src}</eui-label><button id="annex-download-button" class="eui-button eui-button--primary eui-button--size-s">${buttonText}</button><br><br><eui-label id="label-for-annex-name" class="eui-u-font-bold">${srcRend}</eui-label><button id="annex-download-button-rend" class="eui-button eui-button--primary eui-button--size-s">${buttonText}</button>`);
+      } else {
+        xml = xml.replace(/<annex[^>]*>[\s\S]*?<\/annex>/gi, `<h3 id="label-for-annex-message" class="eui-u-font-bold eui-u-color-info">${msg}</h3><eui-label id="label-for-annex-name" class="eui-u-font-bold">${src}</eui-label><button id="annex-download-button" class="eui-button eui-button--primary eui-button--size-s">${buttonText}</button>`);
+      }
       const akomantosoEl = this.cleanupXML(xml);
       rootEl.innerHTML = '';
       rootEl.appendChild(akomantosoEl);
       const button = rootEl.querySelector('#annex-download-button');
       if (button) {
         button.addEventListener('click', () => this.downloadForeignAnnex(aknId, src));
+      }
+      const buttonRend = rootEl.querySelector('#annex-download-button-rend');
+      if (buttonRend) {
+        buttonRend.addEventListener('click', () => this.downloadForeignAnnexRend(aknId, srcRend));
       }
     }
   }
@@ -118,6 +127,18 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit, A
       })
       .subscribe({
         next: (blob) => downloadBlob(blob, `${originalFilename}`),
+        complete: () => this.loadingService.setLoading(false),
+      });
+  }
+
+  downloadForeignAnnexRend(ref: string, originalFilenameOfRend: string) {
+    this.loadingService.setLoading(true);
+    this.http
+      .get(`${apiBaseUrl}/secured/annex/${ref}/rendition`, {
+        responseType: 'blob',
+      })
+      .subscribe({
+        next: (blob) => downloadBlob(blob, `${originalFilenameOfRend}`),
         complete: () => this.loadingService.setLoading(false),
       });
   }

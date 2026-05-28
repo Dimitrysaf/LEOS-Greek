@@ -1207,6 +1207,9 @@ public class LegServiceImpl implements LegService {
         if (annex.getBinaryContent() != null) {
             contentToZip.put(annex.getOriginalFilename(), annex.getBinaryContent());
         }
+        if (annex.getForeignRenditionSource() != null) {
+            contentToZip.put(annex.getForeignRenditionOriginalFilename(), annex.getForeignRenditionSource());
+        }
 
         addAnnotateToZipContent(contentToZip, annex.getMetadata().get().getRef(), annex.getName(), exportOptions, proposalRef);
         if (exportOptions.getFileType().equals(Annex.class)) {
@@ -2094,6 +2097,9 @@ public class LegServiceImpl implements LegService {
         contentToZip.put(annex.getName(), xmlContent);
         if (annex.getBinaryContent() != null) {
             contentToZip.put(annex.getOriginalFilename(), annex.getBinaryContent());
+        }
+        if (annex.getForeignRenditionSource() != null) {
+            contentToZip.put(annex.getForeignRenditionOriginalFilename(), annex.getForeignRenditionSource());
         }
         if(exportOptions.isWithAnnotations()) {
             addAnnotateToZipContentForClone(contentToZip, annex.getMetadata().get().getRef(), annex.getName(), proposalRef, exportOptions);

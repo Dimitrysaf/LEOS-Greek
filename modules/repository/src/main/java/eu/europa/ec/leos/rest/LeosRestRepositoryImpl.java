@@ -480,6 +480,24 @@ public class LeosRestRepositoryImpl implements LeosRepository {
             @CacheEvict(value = "documentByNameCache", allEntries = true),
             @CacheEvict(value = "documentByVersionCache", allEntries = true),
             @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
+    public <D extends LeosDocument, M extends LeosMetadata> D updateDocument(String id, M metadata, byte[] content, VersionType versionType, String comment, Class<? extends D> type, byte[] binaryContent, String originalFilename, byte[] foreignRenditionSource, String foreignRenditionOriginalFilename) {
+        logger.trace("Updating document metadata and content... [id=" + id + ", comment=" + comment + ']');
+        Set<LeosCategory> categories = LeosMapper.leosCategories(type);
+        LeosCategory category = (LeosCategory) CollectionUtils.get(categories, 0);
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(id, updateDocumentProperties(metadata), content, versionType,
+                String.valueOf(category), comment, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER, binaryContent, originalFilename, foreignRenditionSource, foreignRenditionOriginalFilename);
+
+        return toLeosDocument(doc, type, true)
+                .orElseThrow(() -> new IllegalStateException("Unable to update document! [id=" + id + ", comment=" + comment + ']'));
+    }
+
+    @Override
+    @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public <D extends LeosDocument, M extends LeosMetadata> void updateDocument(String id, AnnexMetadata metadata, VersionType versionType, String comment, Class<? extends D> type, byte[] foreignAnnexRenditionContent, String foreignAnnexRenditionOriginalFilename) {
         logger.trace("Updating document metadata and content... [id=" + id + ", comment=" + comment + ']');
         Set<LeosCategory> categories = LeosMapper.leosCategories(type);

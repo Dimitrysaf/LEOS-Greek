@@ -152,6 +152,22 @@ public interface AnnexRepository {
      */
     Annex updateAnnex(String id, AnnexMetadata metadata, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename);
 
+    /**
+     * Updates a [Annex] document with the given metadata and content.
+     *
+     * @param id       the ID of the annex document to update.
+     * @param metadata the metadata of the annex.
+     * @param content  the content of the annex.
+     * @param versionType  the version type to be created
+     * @param comment  the comment of the update, optional.
+     * @param binaryContent     the binary content of the document.
+     * @param originalFilename the binary content name of the document.
+     * @param foreignRenditionSource the foreign content of the document.
+     * @param foreignRenditionOriginalFilename the foreign content name of the document.
+     * @return the updated annex document.
+     */
+    Annex updateAnnex(String id, AnnexMetadata metadata, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename, byte[] foreignRenditionSource, String foreignRenditionOriginalFilename);
+
     void updateAnnex(String id, AnnexMetadata metadata, VersionType versionType, String comment, byte[] foreignAnnexRenditionContent, String foreignAnnexRenditionOriginalFilename);
 
     Annex updateMilestoneComments(String id, List<String> milestoneComments, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename);

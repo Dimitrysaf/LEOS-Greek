@@ -80,6 +80,7 @@ import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserService;
+import eu.europa.ec.leos.services.utils.FileUtils;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -726,6 +727,11 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                     annexVO.setBinaryFile((byte[]) legContent.get(originalFilename));
                     annexVO.setOriginalFilename(originalFilename);
                     annexVO.setBinaryFileSize(getFormattedByteAsKB((long)annexVO.getBinaryFile().length));
+                    String renditionName = legContent.keySet().stream().filter(e -> e.toUpperCase().equals((FileUtils.getFileName(originalFilename)+".pdf").toUpperCase())).findFirst().orElse(null);
+                    if (renditionName != null) {
+                        annexVO.setForeignRenditionSource((byte[]) legContent.get(renditionName));
+                        annexVO.setForeignRenditionOriginalFilename(renditionName);
+                    }
                 }
                 removeTrackChangesFromDoc(annexVO);
                 annexVO.getMetadata().setIndex(null);
