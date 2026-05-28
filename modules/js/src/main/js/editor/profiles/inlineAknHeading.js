@@ -22,6 +22,7 @@ define(function aknHigherElementProfileModule(require) {
     var $ = require('jquery');
 
     var plugins = [];
+    plugins.push(require("plugins/leosPreventStructuralChanges/leosPreventStructuralChanges"));
     plugins.push(require("plugins/aknHeading/aknHeadingPlugin"));
     plugins.push(require("plugins/leosInlineSave/leosInlineSavePlugin"));
     plugins.push(require("plugins/leosInlineCancel/leosInlineCancelPlugin"));

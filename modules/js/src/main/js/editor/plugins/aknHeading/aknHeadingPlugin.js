@@ -43,7 +43,7 @@ define(function aknChapterPluginModule(require) {
                 key : SHIFT_ENTER,
                 action : _cancelEvent
             });
-            
+
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',

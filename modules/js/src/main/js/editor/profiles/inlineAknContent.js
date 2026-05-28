@@ -20,6 +20,7 @@ define(function aknInlineContentModule(require) {
     // require profile dependencies, if needed
     // e.g. ckEditor, plugins or utilities
     var plugins = [];
+    plugins.push(require("plugins/leosPreventStructuralChanges/leosPreventStructuralChanges"));
     plugins.push(require("plugins/aknContent/aknContentPlugin"));
     plugins.push(require("plugins/leosInlineSave/leosInlineSavePlugin"));
     plugins.push(require("plugins/leosInlineCancel/leosInlineCancelPlugin"));
