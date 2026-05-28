@@ -2,7 +2,6 @@ import {Component, EventEmitter, Input, OnChanges, Output, ViewChild} from "@ang
 import {EuiDialogComponent} from "@eui/components/eui-dialog";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
-import {AppConfigService} from "@/core/services/app-config.service";
 import {MilestoneDescriptor} from "@/shared/components/proposal-milestone-view/proposal-milestone-view.component";
 
 @Component({
@@ -14,9 +13,9 @@ export class ProposalLinguisticVersionsDialogComponent implements OnChanges {
   @Input() proposalRef: string;
   @Input() proposalLanguage: string;
   @Input() translatedLanguages: string[] = [];
+  @Input() allAvailableLanguages: string[] = [];
   @Input() milestone: MilestoneDescriptor;
   @Output() closed = new EventEmitter();
-  languages: string[];
 
   @ViewChild('addLinguisticVersionsDialog') addLinguisticVersionsDialog: EuiDialogComponent;
   linguisticVersionsForm: FormGroup;
@@ -24,11 +23,7 @@ export class ProposalLinguisticVersionsDialogComponent implements OnChanges {
   constructor(
     private fb: FormBuilder,
     private proposalDetailsService: ProposalDetailsService,
-    private appConfig: AppConfigService
-  ) {
-    this.appConfig.config.subscribe((config) => {
-      this.languages = config.languages.map(language => language.toUpperCase());
-    });}
+  ) {}
 
   ngOnChanges() {
     this.initLinguisticVersionsForm();
@@ -50,25 +45,25 @@ export class ProposalLinguisticVersionsDialogComponent implements OnChanges {
 
   toggleAllLanguages(event: any) {
     const allSelected = event.target.checked;
-    this.languages.forEach(lang => {
+    this.allAvailableLanguages.forEach(lang => {
       if (this.linguisticVersionsForm.controls[lang].enabled) {
         this.linguisticVersionsForm.controls[lang].patchValue(allSelected);
       }
     });
     this.linguisticVersionsForm.patchValue({
-      newLinguisticVersions: allSelected ? this.languages.filter(lang => !this.isLanguageInProposal(lang)) : [],
+      newLinguisticVersions: allSelected ? this.allAvailableLanguages.filter(lang => !this.isLanguageInProposal(lang)) : [],
     });
   }
 
   updateSelectedLanguages() {
     this.linguisticVersionsForm.patchValue({
-      newLinguisticVersions: this.languages.filter(lang => this.linguisticVersionsForm.controls[lang].value && !this.isLanguageInProposal(lang)),
-      allSelected: this.languages.every(lang => this.linguisticVersionsForm.controls[lang].value)
+      newLinguisticVersions: this.allAvailableLanguages.filter(lang => this.linguisticVersionsForm.controls[lang].value && !this.isLanguageInProposal(lang)),
+      allSelected: this.allAvailableLanguages.every(lang => this.linguisticVersionsForm.controls[lang].value)
     });
   }
 
   private initLinguisticVersionsForm() {
-    const isEveryLanguageInProposal = this.languages.every(lang => this.isLanguageInProposal(lang));
+    const isEveryLanguageInProposal = this.allAvailableLanguages.every(lang => this.isLanguageInProposal(lang));
     if (!this.linguisticVersionsForm) {
       this.linguisticVersionsForm = this.fb.group({
         newLinguisticVersions: new FormControl({ value: [], disabled: true }),
@@ -78,7 +73,7 @@ export class ProposalLinguisticVersionsDialogComponent implements OnChanges {
       this.linguisticVersionsForm.reset({ newLinguisticVersions: [], allSelected: { value: isEveryLanguageInProposal, disabled: isEveryLanguageInProposal } });
     }
 
-    this.languages.forEach(lang => {
+    this.allAvailableLanguages.forEach(lang => {
       const isLanguageInProposal = this.isLanguageInProposal(lang);
       this.linguisticVersionsForm.setControl(lang, new FormControl({ value: isLanguageInProposal, disabled: isLanguageInProposal }));
     });

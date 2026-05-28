@@ -24,7 +24,7 @@
         <label class="language-size"><b> {{ 'page.collection.details.all' | translate }}</b></label>
       </div>
       <div class="language-checkbox"><label class="language-size">|</label></div>
-      <div class="language-checkbox" *ngFor="let lang of languages">
+      <div class="language-checkbox" *ngFor="let lang of allAvailableLanguages">
         <input class="language-size" type="checkbox" [formControlName]="lang"
                (change)="updateSelectedLanguages()"/>
         <label class="language-size" [for]="lang">{{ lang }}</label>

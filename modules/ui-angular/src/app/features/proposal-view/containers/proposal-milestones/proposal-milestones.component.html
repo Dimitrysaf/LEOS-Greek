@@ -120,7 +120,7 @@
                 }}
               </button>
               <button
-                [disabled]="row.legFileStatus == MilestoneStatus.CustomTemplatePublished || row.legFileStatus == MilestoneStatus.InPreparation"
+                [disabled]="row.legFileStatus == MilestoneStatus.CustomTemplatePublished || row.legFileStatus == MilestoneStatus.InPreparation || allLanguagesTranslated"
                 euiDropdownItem
                 (click)="openLinguisticVersionsDialog(row)"
                 *ngIf="row.versionLabel.startsWith(lastMilestoneVersion) && proposal.metadata?.customTemplateAct && isAutonomousAct
@@ -260,6 +260,7 @@
   [proposalRef]="proposalRef"
   [proposalLanguage]="proposalLanguage"
   [translatedLanguages]="translatedLanguages"
+  [allAvailableLanguages]="allAvailableLanguages"
   [milestone]="milestoneViewData"
   (closed)="onLinguisticVersionsDialogClosed()"
   *ngIf="linguisticVersionsDialogVisible && milestoneViewData"

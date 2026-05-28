@@ -68,6 +68,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   isAutonomousAct = false;
   linguisticVersionsEnabled = false;
   canSendContribution = false;
+  allAvailableLanguages: string[] = [];
 
   private milestonesCheckTimer: ReturnType<typeof setTimeout>;
   private milestonesStatus = {
@@ -91,6 +92,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
     this.appConfigService.config.subscribe((config: LeosAppConfig) => {
       this.viewContribution = config.showRevisionEnabled;
+      this.allAvailableLanguages = config.languages?.map(lang => lang.toUpperCase()) || [];
     });
 
     this.proposalDetailsService.milestones$
@@ -363,6 +365,12 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
   get hasTranslatedLanguages(): boolean {
     return this.translatedLanguages?.length > 0;
+  }
+
+  get allLanguagesTranslated(): boolean {
+    return this.allAvailableLanguages.length > 0 && this.allAvailableLanguages.every(lang =>
+      this.translatedLanguages?.some(t => t.toUpperCase() === lang) || this.proposalLanguage?.toUpperCase() === lang
+    );
   }
 
   protected readonly MilestoneStatus = MilestoneStatus;
