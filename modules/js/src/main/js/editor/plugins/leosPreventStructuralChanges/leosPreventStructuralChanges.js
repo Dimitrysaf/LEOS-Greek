@@ -58,7 +58,7 @@ define(function leosPreventStructuralChangesModule(require) {
             var selection = event.editor.getSelection();
             var ranges = selection && selection.getRanges();
             var range = ranges && ranges[0];
-            if (_isFgrHcontainer(range) || _isSelectedElementWithId(selection, range)) {
+            if (_isCursorInEditableRoot(range, event.editor) || _isFgrHcontainer(range) || _isSelectedElementWithId(selection, range)) {
                 event.cancel();
             } else if (range && range.collapsed) {
                 _preventAdjacentElementDeletion(keyCode, range, event);
@@ -66,6 +66,11 @@ define(function leosPreventStructuralChangesModule(require) {
                 _preventCrossSelection(range, event);
             }
         }
+    }
+
+    function _isCursorInEditableRoot(range, editor) {
+        var container = range && range.startContainer;
+        return container && container.equals(editor.editable());
     }
 
     function _isFgrHcontainer(range) {
