@@ -32,7 +32,6 @@ define(function aknArticlePluginModule(require) {
         requires : "widget,leosWidget",
 
         init : function init(editor) {
-            editor.on("toHtml", removeInitialSnapshot, null, null, 100);
 
             editor.widgets.add(aknArticleNumberWidget.name, aknArticleNumberWidget.definition);
             editor.addContentsCss(pluginTools.getResourceUrl(pluginName, aknArticleNumberWidget.css));
@@ -81,16 +80,7 @@ define(function aknArticlePluginModule(require) {
     pluginTools.addPlugin(pluginName, pluginDefinition);
 
 
-    /*
-     * Removes the initial snapshot which don't have 'article' as top level element 
-     */
-    function removeInitialSnapshot(event) {
-        if (event.editor.undoManager.snapshots.length > 0) {
-            if (event.editor.undoManager.snapshots[0].contents.indexOf("article")<0) {
-                event.editor.undoManager.snapshots.shift();
-            }
-        }
-    }
+
     
     var transformationConfig = {
         akn : 'article',
