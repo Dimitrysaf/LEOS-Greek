@@ -208,6 +208,7 @@ class UsersClientImpl implements UsersProvider {
     }
 
     @Override
+    @CacheEvict(value = "users", key = "#entity.name")
     public EntityDTO createEntity(EntityDTO entity) {
         final String uri = repositoryUrl + createEntityUri;
         try {
@@ -241,6 +242,7 @@ class UsersClientImpl implements UsersProvider {
     }
 
     @Override
+    @CacheEvict(value = "users", key = "#userDTO.login")
     public UserDTO addSpecialUser(final UserDTO userDTO) {
         final String uri = repositoryUrl + createUpdateUserUri;
         try {
