@@ -1,4 +1,4 @@
-image: $CI_REGISTRY_IMAGE/image-for-tests:1.0.4
+image: $CI_REGISTRY_IMAGE/image-for-tests:1.0.5
 
 stages:
   - build
@@ -20,7 +20,6 @@ cache:
 java-build:
   stage: build
   script:
-    - echo "=== BUILD MVN START ===$(date) ==="
     - cd $CI_PROJECT_DIR/tools/user-repo
     - mvn clean install
     - cd $CI_PROJECT_DIR/tools/repository
@@ -84,10 +83,11 @@ java-build:
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - npm install
     - npx cypress run --spec "$SPECS" -e CE_ENV="$TAGS_TO_RUN",TAGS="$TAGS_TO_RUN" --browser chrome
+  #    - npx cypress run --quiet -e CE_ENV="$TAGS_TO_RUN",TAGS="$TAGS_TO_RUN" --browser chrome --headed
   after_script:
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - node ./cucumberReport.js
-    - rm -rf $CI_BUILDS_DIR/$CI_PIPELINE_ID/.m2/repository
+    - rm -rf $CI_BUILDS_DIR/$CI_PIPELINE_ID/.m2/repository/
   artifacts:
     expire_in: 1 day
     when: always
@@ -110,6 +110,49 @@ cypress-group-3:
   extends: .cypress-base
   variables:
     SPECS: "cypress/e2e/features/legalAct.feature,cypress/e2e/features/userManagement.feature,cypress/e2e/features/collaborators.feature,cypress/e2e/features/milestones.feature,cypress/e2e/features/actViewer.feature,cypress/e2e/features/expMemo.feature,cypress/e2e/features/homePage.feature,cypress/e2e/features/comparison.feature"
+
+playwright:
+  variables:
+    TAGS_TO_RUN: "@local"
+  stage: test
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      when: never
+  needs: [java-build]
+  script:
+    - echo "=== PLAYWRIGHT MVN INSTALL START ===$(date) ==="
+    - cd $CI_PROJECT_DIR/tools/user-repo
+    - mvn install -DskipTests
+    - cd $CI_PROJECT_DIR/tools/repository
+    - mvn install -DskipTests
+    - cd $CI_PROJECT_DIR
+    - mvn install -DskipTests -DskipKarmaTests -Dleos.log.level=ERROR
+    - echo "=== PLAYWRIGHT MVN INSTALL END ===$(date) ==="
+    - cd $CI_PROJECT_DIR/tools/user-repo/web
+    - mvn spring-boot:run -Dspring-boot.run.profiles=h2 &
+    - cd $CI_PROJECT_DIR/tools/repository/web
+    - mvn spring-boot:run -Dspring-boot.run.additional-classpath-elements=../config/target/generated-config -Dspring-boot.run.arguments="--logging.level.root=ERROR" &
+    #    - cd $CI_PROJECT_DIR/tools/akn4euutil/web
+    #    - mvn spring-boot:run -Dspring-boot.run.additional-classpath-elements=../config/target/generated-config -Dspring-boot.run.jvmArguments="-Dakn4eu.log.level=ERROR" &
+    - cd $CI_PROJECT_DIR/modules/web
+    - mvn -Dcargo.jvmargs="-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false -Xms512m -Xmx2g" cargo:run &
+    - sleep 40
+    - cd $CI_PROJECT_DIR/modules/test-playwright
+    - npm ci
+    - npx playwright install --with-deps
+    - BROWSER=chrome ENVIRONMENT=local xvfb-run -a npx cucumber-js --config cucumber.js
+  after_script:
+    - cd $CI_PROJECT_DIR/modules/test-playwright
+    - npx allure-commandline generate reports/allure-results --clean -o reports/allure-report
+    - rm -f .workers
+  artifacts:
+    expire_in: 1 day
+    when: always
+    paths:
+      - $CI_PROJECT_DIR/modules/test-playwright/reports/allure-report/**/*.*
+  interruptible: true
 
 cypress-test-for-non-local:
   variables:
