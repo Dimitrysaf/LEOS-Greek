@@ -52,7 +52,7 @@ When("verify user creation fails without entities", function (dataTable) {
 When("verify user creation fails if mandatory field is empty", function (dataTable) {
     const user = dataTable.hashes()[0]
     const mandatoryFields = ['firstName', 'lastName', 'email', 'userLogin']
-    mandatoryFields.forEach((field) => {
+    cy.wrap(mandatoryFields).each((field) => {
         userEntityManagementPage.fillUserInfoSectionExcept(user, field)
         userEntityManagementPage.clearField(field)
         userEntityManagementPage.clickSaveButton()
@@ -65,7 +65,7 @@ When("verify user creation fails if mandatory field is empty", function (dataTab
 
 When("verify user creation fails if any field contains invalid data", function (dataTable) {
     const rows = dataTable.hashes()
-    rows.forEach((row) => {
+    cy.wrap(rows).each((row) => {
         userEntityManagementPage.fillUserInfoSectionWithInvalidData(
             { firstName: 'firstuser', lastName: 'lastuser', email: 'first@last.com', userLogin: 'firstLast' },
             row.fields, row.invalidValue
@@ -137,7 +137,7 @@ When("search and click on entity {string}", function (entityName) {
 
 When("verify entity update fails if name contains invalid data", function (dataTable) {
     const rows = dataTable.hashes()
-    rows.forEach((row) => {
+    cy.wrap(rows).each((row) => {
         userEntityManagementPage.fillEntityInfoDetails(row.invalidName)
         userEntityManagementPage.clickSaveButton()
         userEntityManagementPage.elements.newUserorEntityDialogBxTitle().should('contain', 'Error updating entity')
