@@ -6,7 +6,7 @@ import {SharedModule} from "@/shared/shared.module";
 import {TranslateModule} from "@ngx-translate/core";
 import {AdministrationService} from "@/shared/services/administration.service";
 import {CommonModule} from "@angular/common";
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators} from "@angular/forms";
 import {LeosDialogService} from "@/shared/services/leos-dialog.service";
 import {validate} from "@/shared/utils/form.utils";
 import {SortEvent} from "@eui/components/eui-table";
@@ -78,7 +78,7 @@ export class EntityInfoComponent implements OnInit {
               private appConfig: AppConfigService,
               private router: Router) {
     this.entityForm = this.fb.group({
-      name: ['', [Validators.required, Validators.pattern(/^([a-zA-Z0-9_])+(\.?[a-zA-Z0-9_])*$/)]]
+      name: ['', [Validators.required, EntityInfoComponent.nonBlankValidator, Validators.pattern(/^(?=[^()]*(?:\([^()]*\)[^()]*)*$)(?!.*\.[^\p{L}0-9])(?!.*,[^\p{L}0-9\s])[\p{L}_\s.()\-0-9\/,]{0,49}[\p{L}_0-9)]$/u)]]
     });
   }
 
@@ -210,4 +210,7 @@ export class EntityInfoComponent implements OnInit {
     this.editing = false;
     this.entityEditComplete.next(null);
   }
+
+  static nonBlankValidator: ValidatorFn = (control: AbstractControl) =>
+    control.value?.trim().length > 0 ? null : { nonBlank: true };
 }

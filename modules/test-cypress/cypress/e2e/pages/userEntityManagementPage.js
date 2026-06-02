@@ -47,11 +47,11 @@ class userEntityManagementPage {
     }
 
     fillEntityInfoDetails(entityName){
-        this.elements.entityNameTxtBx().clear().type(entityName)
+        this.elements.entityNameTxtBx().invoke('val', entityName).trigger('input').trigger('change')
     }
 
     searchNewEntity(entityName){
-        this.elements.searchEntityTxtBx().clear().type(entityName)
+        this.elements.searchEntityTxtBx().invoke('val', entityName).trigger('input').trigger('change')
         this.elements.searchIconBtn().click()
     }
 
@@ -72,26 +72,26 @@ class userEntityManagementPage {
     }
 
     enterLastName(lastname) {
-        this.elements.lastNameTxtBx().clear().type(lastname, { parseSpecialCharSequences: false })
+        this.elements.lastNameTxtBx().invoke('val', lastname).trigger('input').trigger('change')
     }
 
     enterFirstName(firstname) {
-        this.elements.firstNameTxtBx().clear().type(firstname, { parseSpecialCharSequences: false })
+        this.elements.firstNameTxtBx().invoke('val', firstname).trigger('input').trigger('change')
     }
 
     enterEmail(email)
     {
-        this.elements.emailTxtBx().clear().type(email, { parseSpecialCharSequences: false })
+        this.elements.emailTxtBx().invoke('val', email).trigger('input').trigger('change')
     }
 
     enterUserLogin(userLogin)
     {
-        this.elements.userLoginTxtBx().clear().type(userLogin, { parseSpecialCharSequences: false })
+        this.elements.userLoginTxtBx().invoke('val', userLogin).trigger('input').trigger('change')
     }
 
     searchEntity(entity)
     {
-        this.elements.searchEntityTxtBx().clear().type(entity)
+        this.elements.searchEntityTxtBx().invoke('val', entity).trigger('input').trigger('change')
     }
 
     selectEntity(entity)
@@ -137,7 +137,7 @@ class userEntityManagementPage {
     }
 
     searchNewUserLogin(userLogin) {
-        this.elements.searchUsersTxtBx().clear().type(userLogin)
+        this.elements.searchUsersTxtBx().invoke('val', userLogin).trigger('input').trigger('change')
         this.elements.searchIconBtn().click()
     }
 

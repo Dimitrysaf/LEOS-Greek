@@ -8,6 +8,8 @@ import eu.europa.ec.digit.userdata.entities.SpecialEntity;
 import eu.europa.ec.digit.userdata.repositories.EntityRepository;
 import eu.europa.ec.digit.userdata.repositories.SpecialEntityRepository;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -87,9 +89,43 @@ public class EntityControllerTest {
         assertEquals(entityDto.getOrganizationName(), createdEntity.getOrganizationName());
     }
 
-    @Test
-    void GIVEN_name_with_spaces_WHEN_create_THEN_bad_request() throws Exception {
-        EntityDto entityDto = new EntityDto(null, "TEST 123", "CNECT", true);
+    @ParameterizedTest(name = "GIVEN_name_with_balanced_parens[{0}]_WHEN_create_THEN_ok")
+    @ValueSource(strings = {
+        "TEST(1)",          // parens at end, closing paren is last char
+        "UNIT (A)",         // space before open paren, closing paren last
+        "TEST(abc)1",       // parens mid-name, digit is last char
+        "TEST(abc)(def)",   // multiple paren groups, closing paren last
+        "(TEST)"            // leading open paren, closing paren last
+    })
+    void GIVEN_name_with_balanced_parens_WHEN_create_THEN_ok(String name) throws Exception {
+        EntityDto entityDto = new EntityDto(null, name, "CNECT", true);
+        String entityAsJson = objectMapper.writeValueAsString(entityDto);
+        mockMvc.perform(post("/entities")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(entityAsJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.name").value(name));
+    }
+
+    @ParameterizedTest(name = "GIVEN_invalid_name[{0}]_WHEN_create_THEN_bad_request")
+    @ValueSource(strings = {
+        "TEST ",                                             // trailing space: last char not in [\\p{L}_0-9)]
+        "TEST.",                                             // trailing dot
+        "TEST-",                                             // trailing hyphen
+        "   ",                                               // whitespace-only: @NotBlank
+        "TEST@org",                                          // disallowed character @
+        "TEST!123",                                          // disallowed character !
+        "TEST;sub",                                          // disallowed character ;
+        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", // 51 chars: exceeds max length of 50
+        "TEST(abc",                                          // unclosed opening paren
+        "TESTabc)",                                          // unmatched closing paren
+        "TEST(abc))",                                        // extra closing paren
+        "TEST((abc)",                                        // nested / double opening paren
+        ")TEST("                                             // both unmatched, wrong order
+    })
+    void GIVEN_invalid_name_WHEN_create_THEN_bad_request(String name) throws Exception {
+        EntityDto entityDto = new EntityDto(null, name, "CNECT", true);
         String entityAsJson = objectMapper.writeValueAsString(entityDto);
         mockMvc.perform(post("/entities")
                 .contentType(MediaType.APPLICATION_JSON)
