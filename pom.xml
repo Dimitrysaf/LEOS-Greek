@@ -127,8 +127,8 @@
         <spring.version>6.2.18</spring.version>
         <spring-security.version>6.5.10</spring-security.version>
         <hibernate-orm.version>6.6.36.Final</hibernate-orm.version>
-        <jackson-core.version>2.16.1</jackson-core.version>
-        <auth0.version>4.5.0</auth0.version>
+        <jackson-core.version>2.21.2</jackson-core.version>
+        <auth0.version>4.5.2</auth0.version>
 <!--        <chemistry-opencmis.version>1.1.0</chemistry-opencmis.version>-->
         <servlet.version>6.0.0</servlet.version>
         <commons-collections4.version>4.5.0</commons-collections4.version>
@@ -140,9 +140,10 @@
         <java-diff-utils.version>4.16</java-diff-utils.version>
         <freemarker.version>2.3.34</freemarker.version>
         <xstream.version>1.4.21</xstream.version>
-        <cuid.version>0.1.1</cuid.version> <!-- Needs upgrade-->
+        <cuid.version>2.0.5</cuid.version> <!-- Upgraded from cool.graph:cuid-java (abandoned) -->
         <jsoup.version>1.17.2</jsoup.version>
-        <jackson-databind.version>2.16.1</jackson-databind.version>
+        <jackson-databind.version>2.21.2</jackson-databind.version>
+        <jackson-annotations.version>2.21</jackson-annotations.version>
         <fugue.version>6.1.2</fugue.version>
         <okhttp.version>5.3.1</okhttp.version>
         <kotlin-stdlib.version>2.2.21</kotlin-stdlib.version>
@@ -179,7 +180,7 @@
         <hikari.version>7.0.2</hikari.version>
         <springdoc-openapi.version>2.8.17</springdoc-openapi.version>
         <snakeyaml.version>2.3</snakeyaml.version>
-        <jackson-dataformat-yaml.version>2.16.1</jackson-dataformat-yaml.version>
+        <jackson-dataformat-yaml.version>2.21.2</jackson-dataformat-yaml.version>
         <pdfbox.version>3.0.5</pdfbox.version>
         <spring-data.version>3.5.10</spring-data.version>
         <xercesImpl.version>2.12.2</xercesImpl.version>
@@ -343,7 +344,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>${jackson-databind.version}</version>
+                <version>${jackson-annotations.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.google.guava</groupId>
@@ -386,8 +387,8 @@
                 <version>${saxon.version}</version>
             </dependency>
             <dependency>
-                <groupId>cool.graph</groupId>
-                <artifactId>cuid-java</artifactId>
+                <groupId>io.github.thibaultmeyer</groupId>
+                <artifactId>cuid</artifactId>
                 <version>${cuid.version}</version>
             </dependency>
             <dependency>

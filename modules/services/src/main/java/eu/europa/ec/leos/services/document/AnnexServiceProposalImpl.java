@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.services.document;
 
-import cool.graph.cuid.Cuid;
+import io.github.thibaultmeyer.cuid.CUID;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
@@ -53,7 +53,7 @@ public class AnnexServiceProposalImpl extends AnnexServiceImpl {
     @Override
     public String generateAnnexReference(byte[] content, String language) {
         String docName = xmlContentProcessor.getDocReference(content);
-        return docName.concat(DOC_FILE_NAME_SEPARATOR).concat(Cuid.createCuid())
+        return docName.concat(DOC_FILE_NAME_SEPARATOR).concat(CUID.randomCUID1().toString())
                 .concat(DOC_FILE_NAME_SEPARATOR).concat(language.toLowerCase());
     }
 }

@@ -1,7 +1,7 @@
 package eu.europa.ec.leos.services.document;
 
 import com.google.common.base.Stopwatch;
-import cool.graph.cuid.Cuid;
+import io.github.thibaultmeyer.cuid.CUID;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
@@ -476,7 +476,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     @Override
     public String generateFinancialStatementReference(byte[] content, String language) {
         String docName = content != null ? xmlContentProcessor.getDocReference(content) : STAT_DIGIT_FINANC_LEGIS_FILE_PREFIX;
-        return docName.concat(DOC_FILE_NAME_SEPARATOR).concat(Cuid.createCuid())
+        return docName.concat(DOC_FILE_NAME_SEPARATOR).concat(CUID.randomCUID1().toString())
                 .concat(DOC_FILE_NAME_SEPARATOR).concat(language.toLowerCase());
     }
 

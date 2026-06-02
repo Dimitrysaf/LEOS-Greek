@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.services.document;
 
-import cool.graph.cuid.Cuid;
+import io.github.thibaultmeyer.cuid.CUID;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
@@ -61,7 +61,7 @@ public class BillServiceProposalImpl extends BillServiceImpl {
     @Override
     public String generateBillReference(byte[] content, String language) {
         String docName = xmlContentProcessor.getDocReference(content);
-        return docName.concat(DOC_FILE_NAME_SEPARATOR).concat(Cuid.createCuid())
+        return docName.concat(DOC_FILE_NAME_SEPARATOR).concat(CUID.randomCUID1().toString())
                 .concat(DOC_FILE_NAME_SEPARATOR).concat(language.toLowerCase());
     }
 
