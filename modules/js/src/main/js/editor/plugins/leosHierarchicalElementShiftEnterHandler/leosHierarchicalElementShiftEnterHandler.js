@@ -382,9 +382,8 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             var cursorContainer = firstRange.startContainer;
             
             // If cursor is in empty text node, skip image check
-            if (cursorContainer.type === CKEDITOR.NODE_TEXT && cursorContainer.getText().trim() !== '') {
-                // Skip all image checking logic
-            } else {
+           // Skip the image protection logic if the cursor is inside a non-empty text node (like "text").
+            if (!(cursorContainer.type === CKEDITOR.NODE_TEXT && cursorContainer.getText().trim() !== '')) {
                 var children = inlineWrapper.getChildren();
                 if (children.count() > 0) {
                     var lastChild = children.getItem(children.count() - 1);
