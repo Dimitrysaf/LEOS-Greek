@@ -1868,7 +1868,7 @@ export class DocumentService {
         next: (response) => {
           if (response.status === 'READY' && response.previewBlob) {
             this.cachedPreviewBlob = this.base64ToBlob(response.previewBlob);
-            this.cachedPreviewVersionLabel = this.documentViewBS.getValue()?.versionInfoVO?.documentVersion ?? null;
+            this.cachedPreviewVersionLabel = this.cachedPreviewVersionLabel ?? this.documentViewBS.getValue()?.versionInfoVO?.documentVersion ?? null;
             this.previewStateBS.next(PreviewState.READY);
             this.openPreviewDialogBS.next(true);
             return;
@@ -2013,6 +2013,8 @@ export class DocumentService {
           this.coEditionService.unsubscribeFromTopic(topicId);
           if (isCurrentVersion && this.documentRef === documentRef) {
             this.isPreviewGenerating = false;
+            this.cachedPreviewBlob = null;
+            this.cachedPreviewVersionLabel = payload.versionLabel;
             this.previewStateBS.next(PreviewState.READY);
           }
         } else if (payload.status === 'FAILED') {
