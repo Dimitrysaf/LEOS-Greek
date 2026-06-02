@@ -72,7 +72,7 @@ public class Document implements Serializable {
     private String revisionStatus;
     @Column(name = "CONTRIBUTION_STATUS", length = 30)
     private String contributionStatus;
-    @Column(name = "ORIGIN_REF", length = 30)
+    @Column(name = "ORIGIN_REF", length = 400)
     private String originRef;
     @Column(name = "BASE_REVISION_ID", length = 400)
     private String baseRevisionId;
