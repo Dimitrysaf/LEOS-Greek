@@ -20,10 +20,10 @@ import eu.europa.ec.leos.integration.ExternalDocumentProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.query.ParameterizedSparqlString;
 import org.apache.jena.query.Query;
-import org.apache.jena.query.QueryExecutionFactory;
+import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.ResultSet;
 import org.apache.jena.query.ResultSetFormatter;
-import org.apache.jena.sparql.engine.http.QueryEngineHTTP;
+import org.apache.jena.sparql.exec.http.QueryExecutionHTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,17 +98,20 @@ class OJDocumentProviderImpl implements ExternalDocumentProvider {
             queryStr.append("cdm:manifestation_type ?type filter(regex(str(?type),'fmx4'))");
             queryStr.append("}");
             Query query = queryStr.asQuery();
-            try (QueryEngineHTTP qexec = QueryExecutionFactory.createServiceRequest(uri, query); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-                String uuid = UUID.randomUUID().toString();
-                LOG.info("Calling OJ with Sparql query at URL: {} with uuid: {}", uri, uuid);
-                qexec.addDefaultGraph("");
-                qexec.addParam("debug", PARAM_DEBUG_VALUE);
-                qexec.addParam("timeout", String.valueOf(PARAM_TIMEOUT_VALUE));
-                qexec.addParam("format", PARAM_FORMAT_VALUE);
-                qexec.addParam("uuid", uuid);
-                qexec.setTimeout(PARAM_TIMEOUT_VALUE, PARAM_TIMEOUT_VALUE);
+            String uuid = UUID.randomUUID().toString();
+            LOG.info("Calling OJ with Sparql query at URL: {} with uuid: {}", uri, uuid);
+            try (QueryExecution qexec = QueryExecutionHTTP.newBuilder()
+                    .endpoint(uri)
+                    .query(query)
+                    .addDefaultGraphURI("")
+                    .param("debug", PARAM_DEBUG_VALUE)
+                    .param("timeout", String.valueOf(PARAM_TIMEOUT_VALUE))
+                    .param("format", PARAM_FORMAT_VALUE)
+                    .param("uuid", uuid)
+                    .timeout(PARAM_TIMEOUT_VALUE, TimeUnit.MILLISECONDS)
+                    .build(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("OJ Sparql Query: {}", qexec.getQuery().toString(qexec.getQuery().getSyntax()));
+                    LOG.debug("OJ Sparql Query: {}", query.toString(query.getSyntax()));
                 }
                 ResultSet results = qexec.execSelect();
                 ResultSetFormatter.outputAsJSON(outputStream, results);

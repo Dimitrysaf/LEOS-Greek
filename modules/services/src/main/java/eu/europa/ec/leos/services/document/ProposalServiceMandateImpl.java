@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.services.document;
 
-import cool.graph.cuid.Cuid;
+import io.github.thibaultmeyer.cuid.CUID;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.common.InstanceType;
@@ -91,6 +91,6 @@ public class ProposalServiceMandateImpl extends ProposalServiceImpl {
 
     @Override
     protected String generateProposalReference(String language) {
-        return PROPOSAL_NAME_REFERENCE_PREFIX + "_" + Cuid.createCuid();
+        return PROPOSAL_NAME_REFERENCE_PREFIX + "_" + CUID.randomCUID1().toString();
     }
 }

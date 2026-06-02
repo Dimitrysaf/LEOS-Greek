@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.services.document;
 
-import cool.graph.cuid.Cuid;
+import io.github.thibaultmeyer.cuid.CUID;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
@@ -56,7 +56,7 @@ public class MemorandumServiceMandateImpl extends MemorandumServiceImpl {
 
     @Override
     public String generateMemorandumReference(byte[] content, String language) {
-        return MEMORANDUM_NAME_PREFIX + Cuid.createCuid();
+        return MEMORANDUM_NAME_PREFIX + CUID.randomCUID1().toString();
     }
 
     @Override
