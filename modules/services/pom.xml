@@ -197,8 +197,8 @@
             <artifactId>freemarker</artifactId>
         </dependency>
         <dependency>
-            <groupId>cool.graph</groupId>
-            <artifactId>cuid-java</artifactId>
+            <groupId>io.github.thibaultmeyer</groupId>
+            <artifactId>cuid</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -269,7 +269,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
-            <artifactId>jena-tdb</artifactId>
+            <artifactId>jena-tdb2</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

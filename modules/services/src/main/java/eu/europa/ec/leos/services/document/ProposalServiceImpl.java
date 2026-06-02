@@ -15,7 +15,7 @@ package eu.europa.ec.leos.services.document;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Stopwatch;
-import cool.graph.cuid.Cuid;
+import io.github.thibaultmeyer.cuid.CUID;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
@@ -924,7 +924,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
     }
 
     protected String generateProposalReference(String language) {
-        return PROPOSAL_NAME_PREFIX + "-" + Cuid.createCuid() + "-" + language.toLowerCase();
+        return PROPOSAL_NAME_PREFIX + "-" + CUID.randomCUID1().toString() + "-" + language.toLowerCase();
     }
 
     @Override

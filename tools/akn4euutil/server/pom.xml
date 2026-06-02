@@ -170,8 +170,8 @@
             <version>${lombok.version}</version>
         </dependency>
         <dependency>
-            <groupId>cool.graph</groupId>
-            <artifactId>cuid-java</artifactId>
+            <groupId>io.github.thibaultmeyer</groupId>
+            <artifactId>cuid</artifactId>
             <version>${cuid.version}</version>
         </dependency>
         <dependency>

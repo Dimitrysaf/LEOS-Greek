@@ -1,7 +1,7 @@
 package eu.europa.ec.leos.services.document;
 
 import com.google.common.base.Stopwatch;
-import cool.graph.cuid.Cuid;
+import io.github.thibaultmeyer.cuid.CUID;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
@@ -96,7 +96,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     @Override
     public Explanatory createExplanatory(String templateId, String path, ExplanatoryMetadata metadata, String actionMessage, byte[] content) {
         LOG.trace("Creating Explanatory... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
-        final String explanatoryUid = Cuid.createCuid();
+        final String explanatoryUid = CUID.randomCUID1().toString();
         final String ref = EXPLANATORY_NAME_PREFIX + explanatoryUid;
         final String fileName = ref + EXPLANATORY_DOC_EXTENSION;
         metadata = metadata
@@ -379,7 +379,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
 
     @Override
     public String generateExplanatoryReference(byte[] content, String language) {
-        return EXPLANATORY_NAME_PREFIX + Cuid.createCuid();
+        return EXPLANATORY_NAME_PREFIX + CUID.randomCUID1().toString();
     }
 
     @Override

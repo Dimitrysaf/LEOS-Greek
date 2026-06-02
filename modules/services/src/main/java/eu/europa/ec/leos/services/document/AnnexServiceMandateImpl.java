@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.services.document;
 
-import cool.graph.cuid.Cuid;
+import io.github.thibaultmeyer.cuid.CUID;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
@@ -51,6 +51,6 @@ public class AnnexServiceMandateImpl extends AnnexServiceImpl {
 
     @Override
     public String generateAnnexReference(byte[] content, String language) {
-        return ANNEX_NAME_PREFIX + Cuid.createCuid();
+        return ANNEX_NAME_PREFIX + CUID.randomCUID1().toString();
     }
 }

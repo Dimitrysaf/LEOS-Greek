@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.services.document;
 
-import cool.graph.cuid.Cuid;
+import io.github.thibaultmeyer.cuid.CUID;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
@@ -58,7 +58,7 @@ public class BillServiceMandateImpl extends BillServiceImpl {
 
     @Override
     public String generateBillReference(byte[] content, String language) {
-        return BILL_NAME_PREFIX + Cuid.createCuid();
+        return BILL_NAME_PREFIX + CUID.randomCUID1().toString();
     }
 
     @Override

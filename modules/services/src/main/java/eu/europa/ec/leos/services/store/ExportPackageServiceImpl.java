@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.services.store;
 
-import cool.graph.cuid.Cuid;
+import io.github.thibaultmeyer.cuid.CUID;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
@@ -72,6 +72,6 @@ public class ExportPackageServiceImpl implements ExportPackageService {
     }
 
     private String generateExportName() {
-        return EXPORT_FILE_PREFIX + Cuid.createCuid() + EXPORT_FILE_EXTENSION;
+        return EXPORT_FILE_PREFIX + CUID.randomCUID1().toString() + EXPORT_FILE_EXTENSION;
     }
 }

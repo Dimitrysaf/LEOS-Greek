@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.services.store;
 
-import cool.graph.cuid.Cuid;
+import io.github.thibaultmeyer.cuid.CUID;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.LinkedPackage;
@@ -132,7 +132,7 @@ class PackageServiceImpl implements PackageService {
     }
 
     private String generatePackageName() {
-        return PACKAGE_NAME_PREFIX + Cuid.createCuid();
+        return PACKAGE_NAME_PREFIX + CUID.randomCUID1().toString();
     }
 
     @Override
