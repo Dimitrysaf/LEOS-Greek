@@ -214,7 +214,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         // if the current inline content is not wrap in p, wrap it if it is not heading
         var wrappingP = startElementName === 'h2' ? startElement : wrapCurrentInlineContent(startElement, editor);
 
-        if (editor.LEOS.isTrackChangesEnabled) {
+        if (editor.LEOS.isTrackChangesEnabled && !leosPluginUtils.isInsideTable(selection.getStartElement())) {
             var range = selection.getRanges()[0];
             var currentLi = range.startContainer.getAscendant('li', true);
             if (!currentLi || currentLi.getName() !== 'li') return;
@@ -463,6 +463,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         }
 
         var startElement = selection.getStartElement();
+
         if (startElement && startElement.getAttribute('contenteditable') === 'false') {
             return false;
         }
@@ -500,7 +501,6 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
                     }
                 }
             }
-
         }
         // If element is inside table soft-enter has to be enabled
         if (leosPluginUtils.isInsideTable(selection.getStartElement())) {
@@ -566,6 +566,9 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
     };
 
     function _isEnterAllowedForUnnumberedParagraph(currentElement, editor) {
+        if (leosPluginUtils.isInsideTable(currentElement)) {
+            return true;
+        }
         do {
             var elementName = currentElement.getName && currentElement.getName();
             // Added in case of the unnumbered paragraph: shift-enter should be disabled
@@ -579,6 +582,8 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
                 return true;
             }
         } while (currentElement = currentElement.getParent());
+        // no ol ancestor found - not a list context, allow enter
+        return true;
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
