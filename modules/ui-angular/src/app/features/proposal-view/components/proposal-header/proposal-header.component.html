@@ -46,8 +46,11 @@
       'page.collection.proposal-header.contribution' | translate
     }}</span>
   </eui-chip>
-  <eui-chip *ngIf="originRef" euiSize2XL class="eui-u-mr-2xs eui-u-mb-2xs">
-    <span euiLabel>{{ originRef }}</span>
+  <eui-chip *ngIf="originRef && originRefCallbackUrl" euiSize2XL class="eui-u-mr-2xs eui-u-mb-2xs" style="cursor: pointer" (click)="openCallbackUrl()">
+    <span euiLabel>{{ originRefLabel }}</span>
+  </eui-chip>
+  <eui-chip *ngIf="originRef && !originRefCallbackUrl" euiSize2XL class="eui-u-mr-2xs eui-u-mb-2xs">
+    <span euiLabel>{{ originRefLabel }}</span>
   </eui-chip>
 
   <eui-chip *ngIf="customTemplateAct" euiSize2XL class="eui-u-mr-2xs eui-u-mb-2xs">

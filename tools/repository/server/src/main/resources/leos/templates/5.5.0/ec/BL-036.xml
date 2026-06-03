@@ -126,7 +126,7 @@
             <p>{{bl.conclusionDate}}</p>
             <block name="signatory" leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1" leos:selectedoption="1">
                 <signature leos:optionlist="listOption1">
-                    <organization refersTo="~COM">{bl.forCommission}}</organization>
+                    <organization refersTo="~COM">{{bl.forCommission}}</organization>
                     <role refersTo="~PRESID">{{bl.role.president}}</role>
                     <person refersTo="">[...]</person>
                 </signature>

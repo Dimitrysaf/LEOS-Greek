@@ -68,3 +68,7 @@ When(/^wrapper is present for paragraph (\d+) of article (\d+)$/, function (para
 Then(/^wrapper is present for level (\d+)$/, function (levelNumber) {
     contributionPage.getWrapperOfLevel(levelNumber).should('exist');
 });
+
+Then(/^wrapper is present for article (\d+)$/, function (articleNumber) {
+    contributionPage.getWrapperOfArticle(articleNumber).should('exist');
+});

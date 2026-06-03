@@ -123,6 +123,19 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy, OnChanges {
     }
   }
 
+  get originRefLabel(): string {
+    return this.originRef?.split(';')[0]?.trim() || '';
+  }
+
+  get originRefCallbackUrl(): string | null {
+    if (!this.originRef || !this.originRef.includes(';')) return null;
+    return this.originRef.substring(this.originRef.indexOf(';') + 1);
+  }
+
+  openCallbackUrl(): void {
+    window.open(this.originRefCallbackUrl, '_blank');
+  }
+
   private setPageTitle(newTitle: any) {
     this.title = [this.nonEditablePartOfTitle, newTitle]
       .filter(Boolean)
