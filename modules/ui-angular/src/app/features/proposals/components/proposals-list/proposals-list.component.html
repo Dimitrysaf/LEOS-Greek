@@ -6,7 +6,7 @@
       <app-proposal-item
         [proposal]="proposal"
         [status]="geContributionStatus(proposal)"
-        [originRef]="proposal.cloneProposalMetadataVO?.originRef ?? null"
+        [originRef]="proposal.cloneProposalMetadataVO?.originRef?.split(';')[0]?.trim() ?? null"
       ></app-proposal-item>
     </ng-container>
   </ng-container>
