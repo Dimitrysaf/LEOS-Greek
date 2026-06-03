@@ -376,6 +376,56 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         if (inlineWrapper && inlineWrapper.getName() === 'li') {
             nestedBlock = getNestedBlockElement(inlineWrapper);
         }
+        
+        // If inlineWrapper is 'p', check if cursor is at last child with image
+        if (inlineWrapper && inlineWrapper.getName() === 'p') {
+            var cursorContainer = firstRange.startContainer;
+            
+            // If cursor is in empty text node, skip image check
+           // Skip the image protection logic if the cursor is inside a non-empty text node (like "text").
+            if (!(cursorContainer.type === CKEDITOR.NODE_TEXT && cursorContainer.getText().trim() !== '')) {
+                var children = inlineWrapper.getChildren();
+                if (children.count() > 0) {
+                    var lastChild = children.getItem(children.count() - 1);
+                    
+                    // Skip empty text nodes at the end
+                    var childIndex = children.count() - 1;
+                    while (childIndex >= 0 && lastChild.type === CKEDITOR.NODE_TEXT && lastChild.getText().trim() === '') {
+                        childIndex--;
+                        if (childIndex >= 0) {
+                            lastChild = children.getItem(childIndex);
+                        }
+                    }
+                    
+                    if (childIndex >= 0 && lastChild.type === CKEDITOR.NODE_ELEMENT) {
+                        if (cursorContainer.type === CKEDITOR.NODE_TEXT) {
+                            cursorContainer = cursorContainer.getParent();
+                        }
+                        
+                        // Track changes disabled: <p><img /></p>
+                        if (lastChild.getName() === 'img' && cursorContainer.equals(inlineWrapper)) {
+                            fromShiftEnterRange.collapse(true);
+                            return fromShiftEnterRange;
+                        }
+                        // Track changes enabled: <p><span><img /></span></p>
+                        else if (lastChild.getName() === 'span') {
+                            var spanChildren = lastChild.getChildren();
+                            for (var j = 0; j < spanChildren.count(); j++) {
+                                var spanChild = spanChildren.getItem(j);
+                                if (spanChild.type === CKEDITOR.NODE_ELEMENT && spanChild.getName() === 'img') {
+                                    if (cursorContainer.equals(lastChild) || cursorContainer.getParent().equals(lastChild)) {
+                                        fromShiftEnterRange.collapse(true);
+                                        return fromShiftEnterRange;
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
         if (nestedBlock) {
             fromShiftEnterRange.setEndBefore(nestedBlock, 0);
         } else if (inlineWrapper) {
