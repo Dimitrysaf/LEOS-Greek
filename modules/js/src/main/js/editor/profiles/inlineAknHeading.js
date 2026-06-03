@@ -43,6 +43,7 @@ define(function aknHigherElementProfileModule(require) {
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
     plugins.push(require("plugins/leosOrientation/leosOrientationPlugin"));
     plugins.push(require("plugins/leosProcessTranslation/leosProcessTranslationPlugin"));
+    plugins.push(require("plugins/leosSpecialChar/leosSpecialCharPlugin"));
 
     var pluginNames=[];
     var specificConfig={};
