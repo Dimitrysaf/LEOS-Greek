@@ -59,6 +59,7 @@ define(function aknInlineEMBlockContainerProfileModule(require) {
     plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
     plugins.push(require("plugins/leosPaste/leosPastePlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
+    plugins.push(require("plugins/leosHierarchicalElementShiftEnterHandler/leosHierarchicalElementShiftEnterHandler"));
 
     var pluginNames=[];
     var specificConfig={};
