@@ -727,10 +727,10 @@ export class DocumentService {
   }
 
   clearPreviewState() {
-    const wasReady = this.previewStateBS.getValue() === PreviewState.READY;
+    const currentState = this.previewStateBS.getValue();
     this.cachedPreviewBlob = null;
     this.cachedPreviewVersionLabel = null;
-    this.previewStateBS.next(wasReady ? PreviewState.STALE : PreviewState.NONE);
+    this.previewStateBS.next(currentState !== PreviewState.NONE ? PreviewState.STALE : PreviewState.NONE);
     this.isPreviewGenerating = false;
     // Do not unsubscribe from WS here - user may still want growl notification
     // for in-progress generation even after document update
