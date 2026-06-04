@@ -64,6 +64,10 @@ public class XmlHelperTest extends LeosTest {
         str = "x\\y";
         str = XmlHelper.encodeParam(str);
         assertEquals("x%5Cy", str);
+
+        str = "x?y";
+        str = XmlHelper.encodeParam(str);
+        assertEquals("x%3Fy",str);
     }
 
 }

@@ -131,7 +131,7 @@ public interface LeosApi {
             @Parameter(description = "Target user") @RequestParam("targetUser") String targetUser,
             @Parameter(description = "Connected entity") @RequestParam("connectedEntity") String connectedEntity,
             @Parameter(description = "ISC reference") @RequestParam("iscRef") String iscRef,
-            @Parameter(description = "Proposal callback URL") @RequestParam("proposalCallbackURL") String proposalCallbackURL);
+            @Parameter(description = "Proposal callback URL") @RequestParam(value = "originCallbackURL", required = false) String originCallbackURL);
 
     @Operation(summary = "Update cloned proposal revision status", description = "Updates the revision status of a cloned proposal")
     @ApiResponses({

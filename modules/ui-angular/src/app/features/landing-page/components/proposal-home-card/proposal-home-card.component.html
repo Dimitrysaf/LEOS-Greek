@@ -74,7 +74,7 @@
           <app-proposal-item-home-card
             [proposal]="proposal"
             [status]="geContributionStatus(proposal)"
-            [originRef]="proposal.cloneProposalMetadataVO?.originRef ?? null"
+            [originRef]="proposal.cloneProposalMetadataVO?.originRef?.split(';')[0]?.trim() ?? null"
           ></app-proposal-item-home-card>
         </ng-container>
       </div>
