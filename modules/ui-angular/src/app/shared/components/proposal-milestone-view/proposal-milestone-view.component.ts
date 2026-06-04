@@ -66,6 +66,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   @Input() milestone: MilestoneDescriptor;
   @Input() parentClonedProposal: boolean;
   @Input() parentLegDocumentId: string;
+  @Input() isReadyToMergeStatus!: boolean;
   @Output() closed = new EventEmitter();
   @ViewChild('dialog') dialog: EuiDialogComponent;
 
@@ -124,7 +125,6 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     this.milestonesService.requestStoredDocumentAnnotations$.pipe(takeUntil(this.destroy$)).subscribe(
       (request) => this.requestStoredDocumentAnnotations(request.uri, request.dbg),
     );
-
     this.reloadDocs();
   }
 
