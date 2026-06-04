@@ -388,9 +388,11 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
                 if (children.count() > 0) {
                     var lastChild = children.getItem(children.count() - 1);
                     
-                    // Skip empty text nodes at the end
+                    // Skip empty text nodes and br elements at the end
                     var childIndex = children.count() - 1;
-                    while (childIndex >= 0 && lastChild.type === CKEDITOR.NODE_TEXT && lastChild.getText().trim() === '') {
+                    while (childIndex >= 0 && 
+                           ((lastChild.type === CKEDITOR.NODE_TEXT && lastChild.getText() && lastChild.getText().trim().replace(/\u200B/g, '') === '') ||
+                           (lastChild.type === CKEDITOR.NODE_ELEMENT && lastChild.getName() === 'br'))) {
                         childIndex--;
                         if (childIndex >= 0) {
                             lastChild = children.getItem(childIndex);
