@@ -558,15 +558,6 @@ define(function leosTrackChangesPluginModule(require) {
                             event.getInstance().data.preventDefault();
                             event.getInstance().stop();
                         }
-                        if (e.data.$.ctrlKey && event.getKeyCode() === UTILS.KEYS.KEY_V) {
-                            style.apply(editor, insertTcStyle);
-                            var range = editor.getSelection().getRanges()[0];
-                            range.collapse(false);
-                            range.select();
-                            event.getInstance().data.preventDefault();
-                            event.getInstance().stop();
-                        }
-                        
                         if ((event.getKeyCode() === UTILS.KEYS.KEY_DELETE) || (event.getKeyCode() === UTILS.KEYS.KEY_BACKSPACE)) {
                             editor.element.fire("input", new CKEDITOR.dom.event(new InputEvent("input")));
                         }
@@ -703,17 +694,29 @@ define(function leosTrackChangesPluginModule(require) {
 
                 editor.on("paste", function(e) {
                     if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled) {
-                        var jElement = $("<div/>").html(e.data.dataValue);
+                        let jElement = $("<div/>").html(e.data.dataValue);
                         $(jElement).find(core.TRACKCHANGES_ELEMENT + "[data-akn-action='delete']").remove();
-                        var text = jElement.html();
-                        var el = core.buildTrackChangeElement(editor, core.INSERT_ACTION, text, true);
-                        if (editor.getSelection().getSelectedText().length > 0) { // On delete selection
-                            var delEl = core.buildTrackChangeElement(editor, core.DELETE_ACTION, core.getSelectedHtml(editor), true);
-                            e.data.dataValue = delEl.$.outerHTML + el.$.outerHTML;
-                        } else { // Normal paste flow with track changes
-                            e.data.dataValue = el.$.outerHTML;
+                        let text = jElement.html();
+                        let pastedTable = jElement.find("table")[0];
+                        if (pastedTable) { // Table paste: let MutationObserver handle TC attrs (same as table dialog path)
+                            if (editor.getSelection().getSelectedText().length > 0) { // On delete selection
+                                let tableDelEl = core.buildTrackChangeElement(editor, core.DELETE_ACTION, core.getSelectedHtml(editor), true);
+                                e.data.dataValue = tableDelEl.$.outerHTML + pastedTable.outerHTML;
+                            } else {
+                                e.data.dataValue = pastedTable.outerHTML;
+                            }
+                            handleMutations = true;
+                            editor.insertHtml(e.data.dataValue, "html");
+                        } else {
+                            var el = core.buildTrackChangeElement(editor, core.INSERT_ACTION, text, true);
+                            if (editor.getSelection().getSelectedText().length > 0) { // On delete selection
+                                var delEl = core.buildTrackChangeElement(editor, core.DELETE_ACTION, core.getSelectedHtml(editor), true);
+                                e.data.dataValue = delEl.$.outerHTML + el.$.outerHTML;
+                            } else { // Normal paste flow with track changes
+                                e.data.dataValue = el.$.outerHTML;
+                            }
+                            editor.insertHtml(e.data.dataValue, "html");
                         }
-                        editor.insertHtml(e.data.dataValue, "html");
                         e.cancel();
                     }
                 });
