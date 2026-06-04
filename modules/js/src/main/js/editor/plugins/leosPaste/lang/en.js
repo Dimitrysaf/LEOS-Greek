@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 European Union
+ * Copyright 2026 European Union
  *
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -11,10 +11,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-CKEDITOR.plugins.setLang("leosBase64Image","fr",{
-	"alt":"Texte de remplacement",
-	"lockRatio":"Conserver les proportions",
-	"vSpace":"Espacement vertical",
-	"hSpace":"Espacement horizontal",
-	"border":"Bordure"
+CKEDITOR.plugins.setLang("leosPaste", "en", {
+    "imagePasteWarning": "It's not possible to paste an image here.",
+    "imageSizeWarning": "Image not valid, size bigger than ",
+    "tablePasteWarning": "It's not possible to paste a table here."
 });

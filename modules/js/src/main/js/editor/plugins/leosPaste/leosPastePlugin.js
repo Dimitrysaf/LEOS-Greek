@@ -29,15 +29,20 @@ define(function leosPastePluginModule(require) {
 
     const IMAGE_PASTE_WARNING_DIALOG = 'leosPasteImageWarningDialog';
     const IMAGE_PASTE_SIZE_WARNING_DIALOG = 'leosPasteImageSizeWarningDialog';
+    const TABLE_PASTE_WARNING_DIALOG = 'leosPasteTableWarningDialog';
 
     let pluginDefinition = {
+        lang: ['en', 'fr'],
         init: function init(editor) {
 
-            pluginTools.addDialog(IMAGE_PASTE_WARNING_DIALOG, _createWarningDialog('imagePasteWarning', function() { return editor.lang.base64image && editor.lang.base64image.pasteWarning || "It's not possible to paste an image here."; }));
+            pluginTools.addDialog(IMAGE_PASTE_WARNING_DIALOG, _createWarningDialog('imagePasteWarning', function() { return editor.lang.leosPaste.imagePasteWarning; }));
             const imagePasteWarningCommand = editor.addCommand(IMAGE_PASTE_WARNING_DIALOG, new CKEDITOR.dialogCommand(IMAGE_PASTE_WARNING_DIALOG));
 
-            pluginTools.addDialog(IMAGE_PASTE_SIZE_WARNING_DIALOG, _createWarningDialog('imagePasteSizeWarning', function() { return (editor.lang.base64image && editor.lang.base64image.sizeNotValid || 'Image not valid, size bigger than ') + leosPluginUtils.MAX_IMAGE_SIZE_IN_KB + 'kb'; }));
+            pluginTools.addDialog(IMAGE_PASTE_SIZE_WARNING_DIALOG, _createWarningDialog('imagePasteSizeWarning', function() { return editor.lang.leosPaste.imageSizeWarning + leosPluginUtils.MAX_IMAGE_SIZE_IN_KB + 'kb'; }));
             const imagePasteSizeWarningCommand = editor.addCommand(IMAGE_PASTE_SIZE_WARNING_DIALOG, new CKEDITOR.dialogCommand(IMAGE_PASTE_SIZE_WARNING_DIALOG));
+
+            pluginTools.addDialog(TABLE_PASTE_WARNING_DIALOG, _createWarningDialog('tablePasteWarning', function() { return editor.lang.leosPaste.tablePasteWarning; }));
+            const tablePasteWarningCommand = editor.addCommand(TABLE_PASTE_WARNING_DIALOG, new CKEDITOR.dialogCommand(TABLE_PASTE_WARNING_DIALOG));
 
             // intercept native paste to catch image/png binary (Word puts no text/html for images)
             editor.on('contentDom', function() {
@@ -83,6 +88,15 @@ define(function leosPastePluginModule(require) {
                     }
                 }, null, null, 1);
             });
+
+            // Block table paste before pasteFilter (priority 6) strips the table from dataValue
+            editor.on('paste', function (evt) {
+                let dataValue = evt.data.dataValue.trim();
+                if (dataValue.includes('<table') && (!_isTablePluginEnabled(editor) || editor.config.tableOnlyMode)) {
+                    evt.cancel();
+                    tablePasteWarningCommand.exec();
+                }
+            }, null, null, 2);
 
             editor.on('paste', function (evt) {
                 let dataValue = evt.data.dataValue.trim();
@@ -176,6 +190,11 @@ define(function leosPastePluginModule(require) {
             range.startContainer.setAttribute(leosPluginUtils.DATA_AKN_SUB_HCONTAINER, leosPluginUtils.SUB_HCONTAINER_IMAGE);
         }
         leosPluginUtils.setFocus(img, editor);
+    }
+
+    function _isTablePluginEnabled(editor) {
+        let cmd = editor.getCommand('table');
+        return !!(cmd && cmd.state !== CKEDITOR.TRISTATE_DISABLED);
     }
 
     function _isImagePluginEnabled(editor) {
@@ -326,7 +345,7 @@ define(function leosPastePluginModule(require) {
         });
 
         table.setAttribute('border', '1');
-        table.setAttribute('style', 'width: 100%; border-collapse: collapse;');
+        table.setAttribute('style', 'width: 90%;');
         table.setAttribute('data-akn-name', 'leosTable');
 
         return table.outerHTML;
