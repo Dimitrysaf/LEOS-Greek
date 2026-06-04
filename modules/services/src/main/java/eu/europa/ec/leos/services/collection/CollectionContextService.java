@@ -169,19 +169,7 @@ public abstract class CollectionContextService {
 
     public void useTemplate(String name) {
         Validate.notNull(name, "Template name is required!");
-        XmlDocument template = null;
-        try {
-            template = templateService.getTemplate(name);
-        } catch (IllegalArgumentException e) {
-            LOG.error("Template [name={}] not found!", name);
-            if (StringUtils.isNotEmpty(this.languageTemplateSuffix)) {
-                // TODO: To be removed.
-                // Not all languages versions exists for all templates now. If a template for a language not exists default version is loaded.
-                String defaultTemplateName = name.replaceFirst(this.languageTemplateSuffix + "$", "");
-                template = templateService.getTemplate(defaultTemplateName);
-                LOG.info("Default template [name={}] loaded!", defaultTemplateName);
-            }
-        }
+        XmlDocument template = templateService.getTemplate(name);
         Validate.notNull(template, "Template not found! [name=%s]", name);
 
         LOG.trace("Using {} template... [id={}, name={}]", template.getCategory(), template.getId(), template.getName());
@@ -343,10 +331,10 @@ public abstract class CollectionContextService {
 
     public void useLanguage(String language) {
         this.language = language;
-        useLanguageTemplateSuffix();
+        useLanguageTemplateSuffix(language);
     }
 
-    private void useLanguageTemplateSuffix() {
+    private void useLanguageTemplateSuffix(String language) {
         this.languageTemplateSuffix = LanguageMapUtils.getLanguageTemplateSuffix(language);
     }
 
@@ -403,7 +391,7 @@ public abstract class CollectionContextService {
                 .withFromCustomTemplate(fromCustomTemplate)
                 .build();
 
-        List<CatalogItem> catalogItems;
+        List<CatalogItem> catalogItems = List.of();
         Map<String, String> templatePropertiesMap = new HashMap<>();
         templatePropertiesMap.put(DOCUMENT_MANDATORY_TEMPLATES, "");
         templatePropertiesMap.put(DOCUMENT_DEFAULT_TRUE_TEMPLATES, "");
@@ -414,8 +402,12 @@ public abstract class CollectionContextService {
         } catch (IOException e) {
             LOG.error("Error occurred while retrieving catalog items " + e.getMessage());
         }
-        loadTemplates(templatePropertiesMap, DOCUMENT_MANDATORY_TEMPLATES);
-        loadTemplates(templatePropertiesMap, DOCUMENT_DEFAULT_TRUE_TEMPLATES);
+        try {
+            loadTemplates(templatePropertiesMap, DOCUMENT_MANDATORY_TEMPLATES);
+            loadTemplates(templatePropertiesMap, DOCUMENT_DEFAULT_TRUE_TEMPLATES);
+        } catch (IllegalArgumentException e) {
+            templatePropertiesMap = loadDefaultLanguageTemplates(templatePropertiesMap, catalogItems);
+        }
         String creationOptions = createJsonCreationOptions(templatePropertiesMap);
         metadata.setCreationOptions(creationOptions);
 
@@ -490,7 +482,7 @@ public abstract class CollectionContextService {
                     memorandumContext.usePackageRef(proposal.getMetadata().get().getRef());
                     Memorandum memorandum = memorandumContext.executeImportMemorandum();
                     specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(memorandum.getContent().get().getSource().getBytes());
-                    proposal = proposalService.addComponentRef(proposal, memorandum.getName(), LeosCategory.MEMORANDUM, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
+                    proposal = proposalService.addComponentRef(proposal, memorandum.getName(), MEMORANDUM, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
                     String memorandumRef = memorandum.getMetadata().get().getRef();
                     idsAndUrlsHolder.setMemorandumId(memorandumRef);
                     idsAndUrlsHolder.setMemorandumUrl(urlBuilder.buildMemorandumViewUrl(memorandumRef));
@@ -515,7 +507,7 @@ public abstract class CollectionContextService {
                     billContext.useRefsMatching(refsMatching);
                     Bill bill = billContext.executeImportBill();
                     specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(bill.getContent().get().getSource().getBytes());
-                    proposal = proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
+                    proposal = proposalService.addComponentRef(proposal, bill.getName(), BILL, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
                     String billRef = bill.getMetadata().get().getRef();
                     idsAndUrlsHolder.setBillId(billRef);
                     idsAndUrlsHolder.setBillUrl(urlBuilder.buildBillViewUrl(billRef));
@@ -557,6 +549,24 @@ public abstract class CollectionContextService {
         idsAndUrlsHolder.setCoverpageId(coverPageRef);
         idsAndUrlsHolder.setCoverpageUrl(urlBuilder.buildCoverPageViewUrl(coverPageRef));
         return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
+    }
+
+    // TODO: To be removed.
+    // Not all languages versions exists for all templates now. If a template for a language not exists default version is loaded.
+    private Map<String, String> loadDefaultLanguageTemplates(Map<String, String> templatePropertiesMap, List<CatalogItem> catalogItems) {
+        LOG.error("Templates [key={}] not found!", templatePropertiesMap.get("template"));
+        if (StringUtils.isNotEmpty(this.languageTemplateSuffix)) {
+            useLanguageTemplateSuffix(LanguageMapUtils.PROPOSAL_MAIN_LANGUAGE);
+            templatePropertiesMap = new HashMap<>();
+            templatePropertiesMap.put(DOCUMENT_MANDATORY_TEMPLATES, "");
+            templatePropertiesMap.put(DOCUMENT_DEFAULT_TRUE_TEMPLATES, "");
+            templatePropertiesMap.put(DOCUMENT_DEFAULT_FALSE_TEMPLATES, "");
+            getTemplateProperties(templatePropertiesMap, catalogItems, templateKey, false);
+            loadTemplates(templatePropertiesMap, DOCUMENT_MANDATORY_TEMPLATES);
+            loadTemplates(templatePropertiesMap, DOCUMENT_DEFAULT_TRUE_TEMPLATES);
+            LOG.info("Default templates [key={}] loaded!", templateKey);
+        }
+        return templatePropertiesMap;
     }
 
     private void updateReferencesOnImport(HashMap<String, XmlDocument> refsMatching) {
@@ -691,7 +701,7 @@ public abstract class CollectionContextService {
             memorandumContext.usePackageTemplate(metadata.getTemplate());
             Memorandum memorandum = memorandumContext.executeCreateMemorandum();
             SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(memorandum.getContent().get().getSource().getBytes());
-            prpsl = proposalService.addComponentRef(prpsl, memorandum.getName(), LeosCategory.MEMORANDUM, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
+            prpsl = proposalService.addComponentRef(prpsl, memorandum.getName(), MEMORANDUM, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
         }
 
         BillContextService billContext = billContextProvider.get();
@@ -701,7 +711,7 @@ public abstract class CollectionContextService {
         billContext.useActionMessageMap(actionMsgMap);
         Bill bill = billContext.executeCreateBill();
         SpecificDocumentInformationDTO specificDocumentInformation = xmlContentProcessor.getSpecificDocumentInformation(bill.getContent().get().getSource().getBytes());
-        proposalService.addComponentRef(prpsl, bill.getName(), LeosCategory.BILL, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
+        proposalService.addComponentRef(prpsl, bill.getName(), BILL, specificDocumentInformation.getRefersToOfDocument(), specificDocumentInformation.getShowAs());
         return proposalService.createVersion(prpsl.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 

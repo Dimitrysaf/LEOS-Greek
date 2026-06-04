@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.repository.services;
 
-import eu.europa.ec.leos.repository.model.LeosDocument;
+import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -24,10 +24,12 @@ public class TemplateService {
         this.messageSource = messageSource;
     }
 
-    public String resolve(String template, Locale locale) {
+    public String resolve(String template, Locale locale, boolean requireTranslation) throws RepositoryException {
 
         Pattern pattern = Pattern.compile("\\{\\{(.+?)\\}\\}");
         Matcher matcher = pattern.matcher(template);
+
+        validateAvailableTranslation(locale, matcher, requireTranslation);
 
         StringBuffer result = new StringBuffer();
 
@@ -46,6 +48,19 @@ public class TemplateService {
 
         return result.toString();
 
+    }
+
+    private void validateAvailableTranslation(Locale locale, Matcher matcher, boolean requireTranslation) throws RepositoryException {
+        if (requireTranslation) {
+            String resourcePath = "message_" + locale.getLanguage() + ".properties";
+            if (getClass().getClassLoader().getResource(resourcePath) == null) {
+                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.TRANSLATION_NOT_FOUND, locale.getLanguage());
+            }
+            if (!matcher.find() && !Locale.ENGLISH.equals(locale)) {
+                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.TRANSLATION_NOT_FOUND, locale.getLanguage());
+            }
+            matcher.reset();
+        }
     }
 
 }

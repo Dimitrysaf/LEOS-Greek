@@ -26,6 +26,7 @@ import eu.europa.ec.leos.repository.entities.DocumentMilestoneList;
 import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
 import eu.europa.ec.leos.repository.entities.DocumentV;
 import eu.europa.ec.leos.repository.entities.MilestoneV;
+import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
 import eu.europa.ec.leos.repository.services.TemplateService;
 import eu.europa.ec.leos.repository.utils.DateDesSerializer;
@@ -281,7 +282,7 @@ public class LeosDocument {
         }
     }
 
-    public LeosDocument(Config doc, ConfigContent configContent, TemplateService templateService, String language) {
+    public LeosDocument(Config doc, ConfigContent configContent, TemplateService templateService, String language, boolean requireTranslation) throws RepositoryException {
         if (doc != null) {
             this.setVersionId(configContent.getVersionId().getId());
             this.setCreatedBy(doc.getAuditCBy());
@@ -289,11 +290,11 @@ public class LeosDocument {
             this.setUpdatedBy(configContent.getVersionId().getAuditLastMBy());
             this.setUpdatedOn(configContent.getVersionId().getAuditLastMDate() != null ? Date.from(configContent.getVersionId().getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
             if (StringUtils.isEmpty(language)) {
-                this.metadata.put("language", Locale.ENGLISH.getLanguage().toUpperCase());
-                this.setSource(templateService.resolve(new String(configContent.getContent()), Locale.ENGLISH).getBytes());
+                this.metadata.put("language", doc.getLanguage());
+                this.setSource(templateService.resolve(new String(configContent.getContent()), Locale.ROOT, requireTranslation).getBytes());
             } else {
                 this.metadata.put("language", language.toUpperCase());
-                this.setSource(templateService.resolve(new String(configContent.getContent()), Locale.of(language)).getBytes());
+                this.setSource(templateService.resolve(new String(configContent.getContent()), Locale.of(language), requireTranslation).getBytes());
             }
             this.isLatestVersion = configContent.getVersionId().getIsLatestVersion();
             this.versionType = configContent.getVersionId().getVersionType() != null ? VersionType.fromValue(Integer.parseInt(configContent.getVersionId().getVersionType())) : null;
