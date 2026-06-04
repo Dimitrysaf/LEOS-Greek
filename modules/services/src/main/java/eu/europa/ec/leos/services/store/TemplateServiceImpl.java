@@ -13,7 +13,6 @@
  */
 package eu.europa.ec.leos.services.store;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
@@ -91,21 +90,24 @@ class TemplateServiceImpl implements TemplateService {
 
     private List<CatalogItem> getCatalog(String templatesCatalog) throws IOException {
         List<CatalogItem> catalogList = getCatalogItems(templatesCatalog);
-        removeNotAllowedProposals(catalogList, templatesCatalog);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String catalogConf = templateConfigurationService.getTemplateConfiguration(templatesCatalog);
+        JsonNode catalogNode = catalogConf != null ? objectMapper.readTree(catalogConf) : null;
+        removeNotAllowedProposals(catalogList, catalogNode);
         return catalogList;
     }
 
-    private boolean removeNotAllowedProposals(List<CatalogItem> catalogList, String templatesCatalog) throws JsonProcessingException {
+    private boolean removeNotAllowedProposals(List<CatalogItem> catalogList, JsonNode catalogNode) {
         boolean hasTemplate = false;
         for (CatalogItem catalogItem : catalogList) {
             if (catalogItem.isHidden() == null || !catalogItem.isHidden()) {
                 boolean removeThisItem = true;
-                if (catalogItem.getType().name().equals(CatalogItem.ItemType.TEMPLATE.name()) && verifyIfItemShouldBeProcessed(catalogItem, templatesCatalog)) {
+                if (catalogItem.getType().name().equals(CatalogItem.ItemType.TEMPLATE.name()) && verifyIfItemShouldBeProcessed(catalogItem, catalogNode)) {
                     hasTemplate = true;
                     removeThisItem = false;
                 }
                 if (!catalogItem.getType().name().equals(CatalogItem.ItemType.TEMPLATE.name()) && catalogItem.getItems() != null) {
-                    boolean childrenHasTemplate = removeNotAllowedProposals(catalogItem.getItems(), templatesCatalog);
+                    boolean childrenHasTemplate = removeNotAllowedProposals(catalogItem.getItems(), catalogNode);
                     if (childrenHasTemplate) {
                         hasTemplate = true;
                         removeThisItem = false;
@@ -119,11 +121,8 @@ class TemplateServiceImpl implements TemplateService {
         return hasTemplate;
     }
 
-    private boolean verifyIfItemShouldBeProcessed(CatalogItem catalogItem, String templatesCatalog) throws JsonProcessingException {
+    private boolean verifyIfItemShouldBeProcessed(CatalogItem catalogItem, JsonNode catalogNode) {
         boolean itemShouldBeProcessed = true;
-        ObjectMapper objectMapper = new ObjectMapper();
-        String catalogConf = templateConfigurationService.getTemplateConfiguration(templatesCatalog);
-        JsonNode catalogNode = objectMapper.readTree(catalogConf);
         if (catalogNode != null && catalogNode.get(catalogItem.getKey()) != null) {
             if (catalogNode.get(catalogItem.getKey()).get("environments") != null) {
                 itemShouldBeProcessed = checkJsonNodeForCatalog(catalogItem, catalogNode.get(catalogItem.getKey()));

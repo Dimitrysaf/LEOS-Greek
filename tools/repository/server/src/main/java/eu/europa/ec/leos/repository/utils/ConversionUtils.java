@@ -24,6 +24,7 @@ import eu.europa.ec.leos.repository.entities.DocumentMilestone;
 import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
 import eu.europa.ec.leos.repository.entities.DocumentV;
 import eu.europa.ec.leos.repository.entities.MilestoneV;
+import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.interfaces.SimpleDocumentContentView;
 import eu.europa.ec.leos.repository.model.Collaborator;
 import eu.europa.ec.leos.repository.model.LeosDocument;
@@ -268,8 +269,8 @@ public class ConversionUtils {
     }
 
     public static LeosDocument buildConfigDocument(Config config,
-            ConfigContent configContent, TemplateService templateService, String language) {
-        return new LeosDocument(config, configContent, templateService, language);
+            ConfigContent configContent, TemplateService templateService, String language, boolean requireTranslation) throws RepositoryException {
+        return new LeosDocument(config, configContent, templateService, language, requireTranslation);
     }
 
     public static LeosDocument buildConfigDocument(Config config) {

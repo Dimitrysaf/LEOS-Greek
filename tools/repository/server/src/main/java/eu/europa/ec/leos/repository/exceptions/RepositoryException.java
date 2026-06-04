@@ -18,6 +18,7 @@ public class RepositoryException extends Exception {
     public enum RepositoryExceptionCode {
         DB_NOT_FOUND("Object not found in db"),
         PARA_NOT_FOUND("Parameter not found"),
+        TRANSLATION_NOT_FOUND("Translation not found"),
         ERROR_WHILE_CREATING("Error while creating"),
         ERROR_WHILE_DELETING("Error while deleting");;
 

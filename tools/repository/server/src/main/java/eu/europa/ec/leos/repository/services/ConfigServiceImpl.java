@@ -48,7 +48,9 @@ public class ConfigServiceImpl implements ConfigService {
 
     public List<LeosDocument> findConfigByName(String name, final boolean withContent) throws RepositoryException {
         String language = "";
+        boolean requireTranslation = false;
         if (name.lastIndexOf("-") == name.length()-3) {
+            requireTranslation = isTranslatableTemplate(name);
             language = name.substring(name.lastIndexOf("-")+1);
             name = name.substring(0, name.lastIndexOf("-"));
         }
@@ -57,10 +59,22 @@ public class ConfigServiceImpl implements ConfigService {
             return Arrays.asList(ConversionUtils.buildConfigDocument(hasDoc.get()));
         } else if (hasDoc.isPresent()) {
             ConfigContent content = getConfigContent(hasDoc.get());
-            return Arrays.asList(ConversionUtils.buildConfigDocument(hasDoc.get(), content, templateService, language));
+            try {
+                return Arrays.asList(ConversionUtils.buildConfigDocument(hasDoc.get(), content, templateService, language, requireTranslation));
+            } catch (RepositoryException e) {
+                if (e.getCode() == RepositoryException.RepositoryExceptionCode.TRANSLATION_NOT_FOUND) {
+                    LOG.warn(e.getMessage());
+                    return Arrays.asList();
+                }
+                throw e;
+            }
         } else {
             return Arrays.asList();
         }
+    }
+
+    private boolean isTranslatableTemplate(String name) {
+        return name.length() > 2 && name.charAt(2) == '-' && name.chars().filter(c -> c == '-').count() == 2;
     }
 
     private ConfigContent getConfigContent(Config config) throws RepositoryException {
