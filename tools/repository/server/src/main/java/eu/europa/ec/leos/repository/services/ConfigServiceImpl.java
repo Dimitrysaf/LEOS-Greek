@@ -74,7 +74,9 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     private boolean isTranslatableTemplate(String name) {
-        return name.length() > 2 && name.charAt(2) == '-' && name.chars().filter(c -> c == '-').count() == 2;
+        return name.length() > 2 && name.charAt(2) == '-' //base templates with document prefix ('PR-', 'BL-', 'EM-', 'SG-'...)
+                && name.chars().filter(c -> c == '-').count() == 2 //has suffix for language ('PR-001-es', 'BL-003-fr'...)
+                && name.chars().filter(c -> c == '_').findAny().isEmpty(); //exclude custom templates ('PR-001_8-es'...)
     }
 
     private ConfigContent getConfigContent(Config config) throws RepositoryException {

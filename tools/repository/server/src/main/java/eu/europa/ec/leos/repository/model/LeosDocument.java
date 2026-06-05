@@ -290,7 +290,7 @@ public class LeosDocument {
             this.setUpdatedBy(configContent.getVersionId().getAuditLastMBy());
             this.setUpdatedOn(configContent.getVersionId().getAuditLastMDate() != null ? Date.from(configContent.getVersionId().getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
             if (StringUtils.isEmpty(language)) {
-                this.metadata.put("language", doc.getLanguage());
+                this.metadata.put("language", doc.getLanguage() != null ? doc.getLanguage().toUpperCase() : null);
                 this.setSource(templateService.resolve(new String(configContent.getContent()), Locale.ROOT, requireTranslation).getBytes());
             } else {
                 this.metadata.put("language", language.toUpperCase());
