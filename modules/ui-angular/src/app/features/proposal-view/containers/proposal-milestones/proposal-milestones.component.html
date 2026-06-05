@@ -90,7 +90,7 @@
           </button>
           <eui-dropdown-content>
             <button euiDropdownItem
-                    (click)="openMilestoneViewDialog(row, proposal.cloneProposalMetadataVO?.clonedProposal)">
+                    (click)="openMilestoneViewDialog(row, proposal.cloneProposalMetadataVO?.clonedProposal, row.legFileStatus)">
               {{
                 'page.collection.milestones.actions.view-milestone'
                   | translate
@@ -236,6 +236,7 @@
   [milestone]="milestoneViewData"
   [parentLegDocumentId]="parentLegDocumentId"
   [parentClonedProposal]="parentClonedProposal"
+  [isReadyToMergeStatus]="isReadyToMergeStatus"
   (closed)="onMilestoneViewDialogClosed()"
   *ngIf="openMilestoneViewDialogVisible && milestoneViewData"
 ></app-proposal-milestone-view>

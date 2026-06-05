@@ -77,6 +77,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     ready: 0,
   };
   private destroy$: Subject<any> = new Subject();
+  isReadyToMergeStatus: boolean;
 
   constructor(
     protected proposalDetailsService: ProposalDetailsService,
@@ -115,12 +116,12 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
             if(!this.inputMilestoneViewed && this.legFileName != null) {
               if(milestone.legDocumentName === this.legFileName) {
-                this.openMilestoneViewDialog(milestone, this.proposal.cloneProposalMetadataVO?.clonedProposal);
+                this.openMilestoneViewDialog(milestone, this.proposal.cloneProposalMetadataVO?.clonedProposal, milestone.legFileStatus);
                 this.inputMilestoneViewed = true;
               } else {
                 const clonedMilestone = milestone.clonedMilestones?.find(value => value.legDocumentName === this.legFileName);
                 if(clonedMilestone != null) {
-                  this.openMilestoneViewDialog(clonedMilestone, this.proposal.cloneProposalMetadataVO?.clonedProposal);
+                  this.openMilestoneViewDialog(clonedMilestone, this.proposal.cloneProposalMetadataVO?.clonedProposal,  milestone.legFileStatus);
                   this.inputMilestoneViewed = true;
                 }
               }
@@ -191,10 +192,11 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     this.addMilestoneDialogVisible = false;
   }
 
-  openMilestoneViewDialog(milestone: MilestoneDescriptor, parentClonedProposal: boolean): void {
+  openMilestoneViewDialog(milestone: MilestoneDescriptor, parentClonedProposal: boolean, legFileStatus: string): void {
     this.openMilestoneViewDialogVisible = true;
     this.milestoneViewData = milestone;
     this.parentClonedProposal = parentClonedProposal || false;
+    this.isReadyToMergeStatus = MilestoneStatus.ReadyToMerge === legFileStatus;
     setTimeout(() => this.milestoneViewDialog.open(), 0);
   }
 
@@ -289,7 +291,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   updateReadyToMergeStatus(milestone: Milestone, parentLegDocumentId: string): void {
     this.parentLegDocumentId = parentLegDocumentId;
     this.proposalMilestonesService.updateReadyToMergeStatus(milestone.legFileStatus);
-    this.openMilestoneViewDialog(milestone, this.proposal.cloneProposalMetadataVO?.clonedProposal);
+    this.openMilestoneViewDialog(milestone, this.proposal.cloneProposalMetadataVO?.clonedProposal, milestone.legFileStatus);
   }
 
   isReadyToMerge(status: MilestoneStatus): boolean {
