@@ -58,7 +58,7 @@
             </container>  
             <longTitle>
                 <p>
-                    <docType refersTo="~DIR">{{docType.directive.dots}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
+                    <docType refersTo="~DIR">{{docType.directive}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
                     <docPurpose>{{docPurpose}}</docPurpose>
                 </p>
             </longTitle>

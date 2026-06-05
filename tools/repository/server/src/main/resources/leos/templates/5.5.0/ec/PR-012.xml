@@ -71,7 +71,7 @@
             </container>
             <longTitle>
                 <p>
-                    <docType refersTo="~DEC_DEL">{{docType.012}}</docType> {{pr.afterDocType}} <date date="2999-01-01">{{dateContent}}</date>
+                    <docType refersTo="~DEC_DEL">{{docType.del.decision}}</docType> {{pr.afterDocType}} <date date="2999-01-01">{{dateContent}}</date>
                     <docPurpose  leos:editable="true" leos:deletable="false">{{docPurpose}}</docPurpose>
                 </p>
             </longTitle>

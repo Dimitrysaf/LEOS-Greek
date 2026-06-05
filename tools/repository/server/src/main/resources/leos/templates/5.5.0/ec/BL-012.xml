@@ -58,7 +58,7 @@
             </container>
             <longTitle>
                 <p>
-                    <docType refersTo="~DEC_DEL">{{docType.012}}</docType>  {{pr.afterDocType}} <date date="2999-01-01">{{pr.afterDateContent}}</date>
+                    <docType refersTo="~DEC_DEL">{{docType.del.decision}}</docType>  {{pr.afterDocType}} <date date="2999-01-01">{{pr.afterDateContent}}</date>
                     <docPurpose>on ...</docPurpose>
                 </p>
             </longTitle>
