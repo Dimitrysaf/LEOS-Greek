@@ -1373,6 +1373,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.useAnnexTemplate(annexTemplate + LanguageMapUtils.getLanguageTemplateSuffix(language));
                 billContext.useLanguage(language);
                 billContext.useCustomTemplateAct(metadata.isCustomTemplateAct());
+                billContext.useFromCustomTemplate(metadata.isFromCustomTemplate());
                 billContext.useCloneProposal(isClonedProposal);
                 billContext.useOriginRef(isClonedProposal ? cloneOriginRef : originRef);
                 billContext.usePackageRef(proposalRef);
