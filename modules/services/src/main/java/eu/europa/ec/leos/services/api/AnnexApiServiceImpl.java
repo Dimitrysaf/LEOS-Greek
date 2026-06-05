@@ -219,7 +219,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
             throw new UnexpectedException("Annex not found");
         }
 
-        this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
+        this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED));
         this.populateCloneProposalMetadata(annex);
         elementContent = elementProcessor.updateReferences(elementContent, annex);
         byte[] updatedXmlContent = annexProcessor.updateAnnexBlock(annex, elementId, elementName, elementContent);
@@ -667,6 +667,12 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                 filter(tocItem -> (tocItem.getAknTag().value().equalsIgnoreCase(AnnexStructureType.LEVEL.getType()) ||
                         tocItem.getAknTag().value().equalsIgnoreCase(ARTICLE.getType()))).collect(Collectors.toList());
         return AnnexStructureType.valueOf(tocItems.get(0).getAknTag().value().toUpperCase());
+    }
+
+    private void setStructureContext(AnnexMetadata metadata) {
+        StructureContext context = this.structureContext.get();
+        context.useDocumentTemplate(metadata.getDocTemplate());
+        context.useTranslated(metadata.isTranslated() && (metadata.isCustomTemplateAct() || metadata.isFromCustomTemplate()));
     }
 
     private void setStructureContext(String docTemplate) {
