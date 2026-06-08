@@ -86,7 +86,6 @@
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/api/*</url-pattern>
-        <url-pattern>/secured-api/*</url-pattern>
         <url-pattern>/ui/api/*</url-pattern>
     </servlet-mapping>
 
