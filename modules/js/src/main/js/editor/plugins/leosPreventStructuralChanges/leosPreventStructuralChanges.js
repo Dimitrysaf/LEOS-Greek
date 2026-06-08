@@ -28,6 +28,11 @@ define(function leosPreventStructuralChangesModule(require) {
         init: function init(editor) {
             editor.on('key', _onKey, null, null, 0);
             editor.on('beforeCommandExec', _onBeforeCommand, null, null, 0);
+            editor.on('contentDom', function() {
+                editor.editable().attachListener(editor.editable(), 'focusin', function() {
+                    _removeAutoInsertedEmptyP(editor);
+                }, null, null, 100);
+            });
 
             leosKeyHandler.on({
                 editor: editor,
@@ -112,6 +117,21 @@ define(function leosPreventStructuralChangesModule(require) {
             } else if (range && !range.collapsed) {
                 _preventCrossSelection(range, event);
             }
+        }
+    }
+
+    function _removeAutoInsertedEmptyP(editor) {
+        var editable = editor.editable();
+        if (editable) {
+            editable.getChildren().toArray().forEach(function(child) {
+                if (child.type === CKEDITOR.NODE_ELEMENT
+                    && child.getName() === 'p'
+                    && !child.getAttribute('id')
+                    && !child.getAttribute('data-akn-name')
+                    && (!child.getText().trim() || child.getHtml().replace(/<br[^>]*>/gi, '').trim() === '')) {
+                    child.remove();
+                }
+            });
         }
     }
 
