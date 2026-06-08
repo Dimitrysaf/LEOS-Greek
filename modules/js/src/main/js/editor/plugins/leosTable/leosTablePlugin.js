@@ -67,6 +67,54 @@ define(function leosTablePluginModule(require) {
                     container.children[0].children = children.filter(function(item) {
                         return item.id !== 'wordWrap';
                     });
+
+                    // Override onShow to fix cell detection
+                    event.data.definition.onShow = function() {
+                        var editor = this._.editor;
+                        var selection = editor.getSelection();
+                        var startElement = selection && selection.getStartElement();
+                        if (startElement) {
+                            var cell = startElement.getAscendant({td: 1, th: 1}, true);
+                            if (cell) {
+                                this.cells = [cell];
+                            }
+                        }
+                        if (this.cells && this.cells.length > 0) {
+                            this.setupContent(this.cells);
+                        }
+                    };
+
+                    // Override onOk to propagate alignment to inner <p> elements
+                    var originalOnOk = event.data.definition.onOk;
+                    event.data.definition.onOk = function() {
+                        originalOnOk.call(this);
+                        var cells = this.cells;
+                        if (!cells) return;
+                        for (var i = 0; i < cells.length; i++) {
+                            var cell = cells[i];
+                            var hValue = cell.getStyle('text-align') || '';
+                            var vValue = cell.getStyle('vertical-align') || '';
+                            var paragraphs = cell.getElementsByTag('p');
+                            for (var j = 0; j < paragraphs.count(); j++) {
+                                var p = paragraphs.getItem(j);
+                                if (hValue) {
+                                    p.setStyle('text-align', hValue);
+                                } else {
+                                    p.removeStyle('text-align');
+                                }
+                                if (vValue) {
+                                    p.setStyle('vertical-align', vValue);
+                                } else {
+                                    p.removeStyle('vertical-align');
+                                }
+                            }
+                        }
+                        // Place cursor in the cell to clear fake table selection
+                        var editorInstance = this._.editor;
+                        var range = editorInstance.createRange();
+                        range.moveToPosition(cells[0], CKEDITOR.POSITION_AFTER_START);
+                        range.select();
+                    };
                 }
             });
 
