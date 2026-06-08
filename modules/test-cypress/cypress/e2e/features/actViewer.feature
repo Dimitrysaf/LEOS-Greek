@@ -65,6 +65,7 @@ Feature: act viewer page Regression Features
       | main                    |
       | REG                     |
 #https://code.europa.eu/leos/core/-/work_items/3697
+# https://code.europa.eu/leos/core/-/work_items/3735
   @copyAndChangeAct @local
   Scenario: Verify after adding annex able to copy the act.
     When click on add button in annexes section
@@ -72,10 +73,21 @@ Feature: act viewer page Regression Features
     When click on actions button
     And click on copy change button from action menu
     Then user is on create new legislative document window
-    When click on next button in create document page
+    Then the following radio button options are displayed in create new legislative document window
+      | ChangeCopyAct                 |
+      | Keep the type of the act      |
+      | Change the type of the act to |
+    And "Keep the type of the act" is checked
+    And "Change the type of the act to" is unchecked
+    When user selects the option "Change the type of the act to" in create new legislative document window
+    Then "Keep the type of the act" is unchecked
+    When click on template "SJ-024" in create new legislative document window
+    And click on next button in create document page
+    Then all radio button options are disabled
+    And "Change the type of the act to" is checked
     When tick guidance approval checkbox in create document page
-    When click on next button in create document page
+    And click on next button in create document page
     Then document title is "Automation Testing-copy" in create document page
     When click on create button
-    Then  title of the act contains "Automation Testing-copy" keyword
+    Then title of the act contains "Automation Testing-copy" keyword
     And total number of annexes present in act viewer page is 1

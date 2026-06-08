@@ -48,3 +48,31 @@ Then("user can see the following templates in create new legislative document wi
 When('document title is {string} in create document page', function(title) {
     createActPage.elements.documentTitle().invoke('val').should('include', title);
 })
+
+Then('the following radio button options are displayed in create new legislative document window', function (datatable) {
+    const optionsChangetypeOfAct = datatable.rawTable.slice(1).flat();
+    optionsChangetypeOfAct.forEach((optionChangeTypeOfAct) => {
+        createActPage.elements.keepActType()
+            .contains(optionChangeTypeOfAct)
+            .should('be.visible');
+
+    });
+});
+
+When('{string} is checked', (typeOfAct) => {
+    createActPage.gettypeOfTheAct(typeOfAct).should('be.checked');
+})
+
+Then('{string} is unchecked',(typeOfAct)=>{
+    createActPage.gettypeOfTheAct(typeOfAct).should('not.be.checked');
+})
+
+When ('user selects the option {string} in create new legislative document window',(typeOfAct)=>{
+    createActPage.clickChangeCopyAct(typeOfAct);
+})
+
+Then('all radio button options are disabled', () => {
+    createActPage.elements.keepActType().prev().each(($radio) =>{
+    cy.wrap($radio).should('be.disabled');
+    });
+});

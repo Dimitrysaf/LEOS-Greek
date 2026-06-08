@@ -11,6 +11,7 @@ class createActPage {
         eeARelevanceInputCheckBox: () => cy.get("input[formcontrolname='eeaRelevance']"),
         guidanceApprovalCheckbox: () => cy.get("input#guidanceApproval"),
         templateList: () => cy.get('cdk-nested-tree-node label'),
+        keepActType:() => cy.get('label.eui-u-mt-none'),
     }
 
     clickTemplateByName(templateName) {
@@ -37,5 +38,14 @@ class createActPage {
         this.elements.guidanceApprovalCheckbox().click();
     }
 
+    gettypeOfTheAct(typeOfAct) {
+        return cy.contains('label', typeOfAct)
+            .parent()
+            .find('input');
+
+    }
+    clickChangeCopyAct(typeOfAct){
+        this.elements.keepActType().contains(typeOfAct).click();
+    }
 }
 export default new createActPage();
