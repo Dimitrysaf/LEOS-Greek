@@ -1425,6 +1425,12 @@ define(function leosTrackChangesModule(require) {
         },
 
         removeEnterAndJoinLines: function (element, editor) {
+            if(DEBUG_TRACK_CHANGES) {
+                console.debug('[removeEnterAndJoinLines] id:', element.getAttribute('id'),
+                'hasActionEnter:', element.hasAttribute(core.DATA_AKN_ACTION_ENTER),
+                'hasNum:', element.hasAttribute(leosPluginUtils.DATA_AKN_NUM),
+                ' will fire handleTcEnter:', (element.hasAttribute(core.DATA_AKN_ACTION_ENTER) && !element.hasAttribute(leosPluginUtils.DATA_AKN_NUM)));
+            }
             var keyCodeToUse = 8;
             var ckEditorEvent = new CKEDITOR.dom.event(
                 new KeyboardEvent('key', {
@@ -1449,6 +1455,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         removeEnterInsert: function(element, editor, numberModule) {
+            if(DEBUG_TRACK_CHANGES) console.debug('[removeEnterInsert] id:', element.getAttribute('id'), 'isEmpty:', this.checkIfEmptyListElement(element));
             if(this.checkIfEmptyListElement(element)) {
                 this.removeEmptyElement(element, numberModule, editor);
             } else {
@@ -1606,6 +1613,74 @@ define(function leosTrackChangesModule(require) {
             return spanChild;
         },
 
+        /**
+         * Handles DOM cleanup after a span insert is rejected inside a subparagraph li.
+         * Must be called BEFORE any key/change events fire.
+         *
+         * Special case: if liParentElement is inside an outdent-split paragraph
+         * (grandParentLi has data-akn-action-enter=insert), points that originated
+         * as paragraphs (data-indent-origin-type=PARAGRAPH) are moved out to the outer
+         * ol BEFORE cleanup fires. This prevents _doProposalNum from re-numbering them
+         * as points when the key event triggers resetNumbering.
+         */
+        _rejectSpanInsertCleanup: function(liParentElement, editor, numberModule) {
+            let grandParentLi = liParentElement.getParent() && liParentElement.getParent().getParent();
+            if(DEBUG_TRACK_CHANGES) console.debug('[_rejectSpanInsertCleanup] liParentElement id:', liParentElement.getAttribute('id'),
+                'grandParentLi id:', grandParentLi ? grandParentLi.getAttribute('id') : 'null',
+                'grandParentLi data-akn-element:', grandParentLi ? grandParentLi.getAttribute('data-akn-element') : 'null');
+
+            let outerOl = grandParentLi ? grandParentLi.getParent() : null;
+            let movedLiIds = [];
+
+            if (grandParentLi
+                    && grandParentLi.getAttribute('data-akn-element') === 'paragraph'
+                    && grandParentLi.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.INSERT_ACTION) {
+                grandParentLi.getChildren().toArray().forEach(function(child) {
+                    if (child.type === CKEDITOR.NODE_ELEMENT && (child.getName() === 'ol' || child.getName() === 'ul')) {
+                        child.getChildren().toArray().forEach(function(liChild) {
+                            if (liChild.type === CKEDITOR.NODE_ELEMENT
+                                    && liChild.hasAttribute(leosPluginUtils.DATA_AKN_NUM)
+                                    && liChild.getAttribute('data-indent-origin-type') === 'PARAGRAPH') {
+                                if(DEBUG_TRACK_CHANGES) console.debug('[_rejectSpanInsertCleanup] moving paragraph-origin li id:', liChild.getAttribute('id'), 'to outerOl id:', outerOl ? outerOl.getAttribute('id') : 'null');
+                                liChild.setAttribute('data-akn-element', 'paragraph');
+                                liChild.setAttribute('data-akn-name', 'aknNumberedParagraph');
+                                liChild.removeAttribute(leosPluginUtils.DATA_AKN_NUM);
+                                liChild.removeAttribute('data-akn-num-id');
+                                if (outerOl) {
+                                    liChild.insertAfter(grandParentLi);
+                                    movedLiIds.push(liChild.getAttribute('id'));
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+
+            if (this.checkIfEmptyListElement(liParentElement)) {
+                this.removeEmptyElement(liParentElement, numberModule, editor);
+            } else {
+                let topOl = this._findTopmostOl(liParentElement);
+                let existingEmptyPIds = this._getExistingEmptyPIds(topOl);
+                this._cleanupEmptyPAndLiElements(topOl, existingEmptyPIds, editor);
+            }
+
+            if (movedLiIds.length > 0) {
+                movedLiIds.forEach(function(movedId) {
+                    let movedLi = editor.document.getById(movedId);
+                    if (movedLi && movedLi.find) {
+                        let nestedPoints = movedLi.find('li');
+                        for (let ni = 0; ni < nestedPoints.count(); ni++) {
+                            let nl = nestedPoints.getItem(ni);
+                            if (nl.getAttribute('data-akn-element') === 'point' && !nl.getAttribute('data-akn-name')) {
+                                if(DEBUG_TRACK_CHANGES) console.debug('[_rejectSpanInsertCleanup] restoring data-akn-name=point on id:', nl.getAttribute('id'));
+                                nl.setAttribute('data-akn-name', 'point');
+                            }
+                        }
+                    }
+                });
+            }
+        },
+
         rejectChange: function(editor, element, numberModule) {
             if(DEBUG_TRACK_CHANGES) {
                 console.debug('rejectChange - START');
@@ -1657,16 +1732,20 @@ define(function leosTrackChangesModule(require) {
 
             if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
                 (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
+                if(DEBUG_TRACK_CHANGES) console.debug('[rejectChange] BRANCH: softmove-from insert');
                 if (this.checkIfRejectIsProcessedInBackend(editor, element, numberModule)) {
                     element.getParent().getParent().setAttribute(core.DATA_AKN_ID_TO_BE_RESTORED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
                 }
                 element.remove();
             } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.INSERT_ACTION) {
+                if(DEBUG_TRACK_CHANGES) console.debug('[rejectChange] BRANCH: ACTION_ENTER=insert -> removeEnterInsert');
                 this.removeEnterInsert(element, editor, numberModule);
             } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.DELETE_ACTION) {
+                if(DEBUG_TRACK_CHANGES) console.debug('[rejectChange] BRANCH: ACTION_ENTER=delete -> removeTrackChangesAttributesForEnter');
                 core.removeTrackChangesAttributesForEnter(element);
             } else if(element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION) {
                 if(element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW) {
+                    if(DEBUG_TRACK_CHANGES) console.debug('[rejectChange] BRANCH: ACTION_NUMBER=insert, TC_ORIGINAL_NUMBER=NEW -> removeEnterInsert');
                     this.removeEnterInsert(element, editor, numberModule);
                 } else if ((element.getAttribute(leosPluginUtils.DATA_AKN_NUM) !== element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER)
                     || element.getAttribute(core.DATA_INDENT_ORIGIN_LEVEL)) && element.hasAttribute(core.DATA_AKN_TC_ORIGINAL_INDENT_ACTION)) {
@@ -1873,15 +1952,7 @@ define(function leosTrackChangesModule(require) {
                         if(liParentElement.getParent()){
                             editor.getSelection().fake(liParentElement);
                         }
-                        if (this.checkIfEmptyListElement(liParentElement)) {
-                            this.removeEmptyElement(liParentElement, numberModule, editor);
-                        } else {
-                            let topOl = this._findTopmostOl(liParentElement);
-                            let existingEmptyPIds = this._getExistingEmptyPIds(topOl);
-
-                            this._cleanupEmptyPAndLiElements(topOl, existingEmptyPIds, editor);
-
-                        }
+                        this._rejectSpanInsertCleanup(liParentElement, editor, numberModule);
                     }
                 }
             } else if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
