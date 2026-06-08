@@ -70,7 +70,7 @@
             </container>
             <longTitle>
                 <p>
-                    <docType refersTo="~DIR_IMPL">{{docType.008}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>
+                    <docType refersTo="~DIR_IMPL">{{docType.impl.directive}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>
                     <docPurpose  leos:editable="true" leos:deletable="false">{{docPurpose}}</docPurpose>
                 </p>
             </longTitle>
