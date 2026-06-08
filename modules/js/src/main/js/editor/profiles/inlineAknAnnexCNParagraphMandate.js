@@ -63,6 +63,7 @@ define(function aknAnnexCNParagraphMandateProfileModule(require) {
     plugins.push(require("plugins/leosPreventElementDeletion/leosPreventElementDeletionPlugin"));
     plugins.push(require("plugins/leosElementMergeHandler/leosElementMergeHandlerPlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
+    plugins.push(require("plugins/leosUndo/leosUndoPlugin"));
 
     var pluginNames=[];
     var specificConfig={

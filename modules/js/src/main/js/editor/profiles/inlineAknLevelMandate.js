@@ -63,6 +63,7 @@ define(function aknLevelMandateProfileModule(require) {
     plugins.push(require("plugins/leosAnnexIndentList/leosAnnexIndentListPlugin"));
     plugins.push(require("plugins/aknLevelMandate/aknLevelMandatePlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
+    plugins.push(require("plugins/leosUndo/leosUndoPlugin"));
 
     var pluginNames=[];
     var specificConfig={

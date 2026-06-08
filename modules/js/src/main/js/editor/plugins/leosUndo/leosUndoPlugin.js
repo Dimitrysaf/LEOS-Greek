@@ -29,16 +29,35 @@ define(function leosUndoPluginModule(require) {
         this.editor = editor;
         this.undoStack = [];
         this.redoStack = [];
+        this.snapshots = [];
         this.locked = false;
         this.ignoreInput = false;
         this.ready = false;
         this.saveTimer = null;
         this.currentContent = null;
+        this.currentBookmark = null;
     }
 
     UndoManager.prototype = {
         getContent: function() {
             return this.editor.getSnapshot();
+        },
+
+        getBookmark: function() {
+            var sel = this.editor.getSelection();
+            return sel ? sel.createBookmarks2(true) : null;
+        },
+
+        restoreBookmark: function(bookmark) {
+            if (!bookmark) return;
+            try {
+                var sel = this.editor.getSelection();
+                if (sel) {
+                    sel.selectBookmarks(bookmark);
+                }
+            } catch (e) {
+                // Bookmark may be invalid after content change
+            }
         },
 
         save: function() {
@@ -48,17 +67,19 @@ define(function leosUndoPluginModule(require) {
             if (content === false || content === null) return;
             if (content === this.currentContent) return;
 
-            this.undoStack.push(this.currentContent);
+            this.undoStack.push({ content: this.currentContent, bookmark: this.currentBookmark });
             if (this.undoStack.length > MAX_STACK_SIZE) {
                 this.undoStack.shift();
             }
             this.redoStack = [];
             this.currentContent = content;
+            this.currentBookmark = this.getBookmark();
             this.onChange();
         },
 
         saveInitial: function() {
             this.currentContent = this.getContent();
+            this.currentBookmark = this.getBookmark();
             this.ready = true;
             this.onChange();
         },
@@ -87,13 +108,15 @@ define(function leosUndoPluginModule(require) {
 
             this.runQueuedSave();
 
-            this.redoStack.push(this.currentContent);
-            var snapshot = this.undoStack.pop();
-            this.currentContent = snapshot;
+            this.redoStack.push({ content: this.currentContent, bookmark: this.currentBookmark });
+            var entry = this.undoStack.pop();
+            this.currentContent = entry.content;
+            this.currentBookmark = entry.bookmark;
 
             this.locked = true;
             this.ignoreInput = true;
-            this.editor.loadSnapshot(snapshot);
+            this.editor.loadSnapshot(entry.content);
+            this.restoreBookmark(entry.bookmark);
             this.locked = false;
             var self = this;
             setTimeout(function() { self.ignoreInput = false; }, 100);
@@ -107,13 +130,15 @@ define(function leosUndoPluginModule(require) {
 
             this.runQueuedSave();
 
-            var snapshot = this.redoStack.pop();
-            this.undoStack.push(this.currentContent);
-            this.currentContent = snapshot;
+            var entry = this.redoStack.pop();
+            this.undoStack.push({ content: this.currentContent, bookmark: this.currentBookmark });
+            this.currentContent = entry.content;
+            this.currentBookmark = entry.bookmark;
 
             this.locked = true;
             this.ignoreInput = true;
-            this.editor.loadSnapshot(snapshot);
+            this.editor.loadSnapshot(entry.content);
+            this.restoreBookmark(entry.bookmark);
             this.locked = false;
             var self = this;
             setTimeout(function() { self.ignoreInput = false; }, 100);
@@ -138,6 +163,7 @@ define(function leosUndoPluginModule(require) {
                 this.saveTimer = null;
             }
             this.currentContent = this.getContent();
+            this.currentBookmark = null;
             this.onChange();
         },
 

@@ -53,6 +53,7 @@ define(function aknCitationProfileModule(require) {
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
     plugins.push(require("plugins/leosDapInfo/leosDapInfo"));
     plugins.push(require("plugins/leosInsertAfter/leosInsertAfterPlugin"));
+    plugins.push(require("plugins/leosUndo/leosUndoPlugin"));
 
     var pluginNames=[];
     var specificConfig={};

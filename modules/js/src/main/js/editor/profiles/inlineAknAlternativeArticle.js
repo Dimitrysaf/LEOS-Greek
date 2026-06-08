@@ -63,6 +63,7 @@ define(function aknInlineAlternativeArticleProfileModule(require) {
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesInsPlugin"));
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
     plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
+    plugins.push(require("plugins/leosUndo/leosUndoPlugin"));
 
     var pluginNames=[];
     var specificConfig={};

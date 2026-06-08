@@ -65,6 +65,7 @@ define(function aknParagraphProfileModule(require) {
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
     plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
+    plugins.push(require("plugins/leosUndo/leosUndoPlugin"));
     plugins.push(require("plugins/leosOrientation/leosOrientationPlugin"));
     plugins.push(require("plugins/leosInsertAfter/leosInsertAfterPlugin"));
     plugins.push(require("plugins/leosSubElementMove/leosSubElementMovePlugin"));
