@@ -192,7 +192,7 @@ public interface LeosApi {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> createProposalForeignAnnex(@PathVariable("proposalRef") String proposalRef,
-            @RequestParam("foreignAnnexFile") MultipartFile foreignAnnexFile) throws IOException;
+            @RequestParam("foreignAnnexFile") MultipartFile foreignAnnexFile) throws Exception;
 
     @Operation(summary = "Upload annex rendition", description = "Upload the annex rendition of a specific annex document")
     @ApiResponses({
@@ -204,7 +204,7 @@ public interface LeosApi {
     ResponseEntity<Object> uploadForeignAnnexRendition(
             @Parameter(description = "Proposal reference") @PathVariable("proposalRef") String proposalRef,
             @Parameter(description = "Annex ID") @PathVariable("annexId") String annexId,
-            @Parameter(description = "Foreign Annex Rendition") @RequestParam("foreignAnnexRendition") MultipartFile foreignAnnexRendition) throws IOException;
+            @Parameter(description = "Foreign Annex Rendition") @RequestParam("foreignAnnexRendition") MultipartFile foreignAnnexRendition) throws Exception;
 
     @Operation(summary = "Update annex title", description = "Updates the title of a specific annex document")
     @ApiResponses({
@@ -229,7 +229,7 @@ public interface LeosApi {
     @ResponseBody
     public ResponseEntity<Object> updateForeignAnnex(@PathVariable("proposalRef") String proposalRef,
             @PathVariable("annexId") String annexId,
-            @RequestParam("foreignAnnexFile") MultipartFile foreignAnnexFile) throws IOException;
+            @RequestParam("foreignAnnexFile") MultipartFile foreignAnnexFile) throws Exception;
 
     @Operation(summary = "Update explanatory title", description = "Updates the title of a specific explanatory document")
     @ApiResponses({
