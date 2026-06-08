@@ -250,7 +250,7 @@ public class SearchEngineTest extends LeosTest {
         SearchEngine se = SearchEngineImpl.forContent(docContent);
         List<SearchMatchVO> results = se.searchTextToReplace("Regulation", true, false);
 
-        assertThat(results.size(), is(2));
+        assertThat(results.size(), is(1));
         List<ElementMatchVO> matchedElements = results.get(0).getMatchedElements();
         assertThat(matchedElements.size(), is(1));
         assertThat(matchedElements.get(0).isEditable(), is(true));
@@ -262,7 +262,7 @@ public class SearchEngineTest extends LeosTest {
         assertThat(results.size(), is(0));
 
         results = se.searchTextToReplace("Directive", true, false);
-        assertThat(results.size(), is(2));
+        assertThat(results.size(), is(1));
         assertEquals(squeezeXmlAndRemoveAllNS(new String(resultDoc, UTF_8)), squeezeXmlAndRemoveAllNS(new String(expectedDocContent, UTF_8)));
     }
 

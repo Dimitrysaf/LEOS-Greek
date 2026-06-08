@@ -46,6 +46,7 @@ public class SearchEngineImpl implements SearchEngine {
     private static final String DELETED_START_ID_VALUE = "deleted" + IdGenerator.PREFIX_DELIMITER;
     private static final String DOC_PURPOSE = "docPurpose";
     private static final String DOC_TYPE = "docType";
+    private static final String CLAUSE = "clause";
     private static List<String> tagsToExclude = Arrays.asList(META, AUTHORIAL_NOTE, DELETE_TAG, DOC_PURPOSE, DOC_TYPE);
     private static List<String> tagsToExcludeHighlight = Arrays.asList(META, AUTHORIAL_NOTE, DOC_PURPOSE, DOC_TYPE);
     private static List<String> tagsTrackChanges = Arrays.asList(DELETE_TAG);
@@ -98,7 +99,7 @@ public class SearchEngineImpl implements SearchEngine {
         boolean isNodeIdStartsWithDeleted = (nodeId != null && nodeId.startsWith(DELETED_START_ID_VALUE));
         if(((isHighlight ? tagsToExcludeHighlight : tagsToExclude).contains(tagName) &&
                 !XmlUtils.hasAttributeWithValue(node, LEOS_EDITABLE_ATTR, "true"))
-                ||  isNodeIdStartsWithDeleted){
+                ||  isNodeIdStartsWithDeleted || CLAUSE.equalsIgnoreCase(tagName)){
             return 0;
         }
 
