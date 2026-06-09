@@ -6,8 +6,14 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
 import org.springframework.web.multipart.MultipartFile;
+import org.verapdf.pdfa.Foundries;
+import org.verapdf.pdfa.PDFAParser;
+import org.verapdf.pdfa.PDFAValidator;
+import org.verapdf.pdfa.results.ValidationResult;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -18,7 +24,7 @@ import static eu.europa.ec.leos.services.api.exception.ErrorCode.CA001;
 
 public class FileUtils {
 
-    public static void validateHybridDocument(MultipartFile foreignAnnexFile) throws IOException {
+    public static void validateHybridDocument(MultipartFile foreignAnnexFile) throws Exception {
         validatePath(FilenameUtils.normalize(foreignAnnexFile.getOriginalFilename()));
         if (!isValidFileNameForForeignAnnex(foreignAnnexFile.getOriginalFilename())) {
             throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.invalid.file.name");
@@ -29,9 +35,22 @@ public class FileUtils {
         if (!isValidSizeFileForBinaryFile(foreignAnnexFile.getSize())) {
             throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.max.size.error");
         }
+        String extension = getFileExtension(foreignAnnexFile.getOriginalFilename());
+        if (extension.equals("PDF") && !isPdfA(foreignAnnexFile.getBytes())) {
+            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.not.pdfa");
+        }
     }
 
-    public static void validateRenditionHybridDocument(MultipartFile foreignAnnexRendition) throws IOException {
+    public static boolean isPdfA(byte[] binaryContent) throws Exception {
+        try (InputStream is = new ByteArrayInputStream(binaryContent);
+                PDFAParser parser = Foundries.defaultInstance().createParser(is);
+                PDFAValidator validator = Foundries.defaultInstance().createValidator(parser.getFlavour(), false)) {
+            ValidationResult result = validator.validate(parser);
+            return result.isCompliant();
+        }
+    }
+
+    public static void validateRenditionHybridDocument(MultipartFile foreignAnnexRendition) throws Exception {
         validatePath(FilenameUtils.normalize(foreignAnnexRendition.getOriginalFilename()));
         if (!isValidFileNameForForeignAnnexRendition(foreignAnnexRendition.getOriginalFilename())) {
             throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.invalid.rendition.file.name");
@@ -41,6 +60,10 @@ public class FileUtils {
         }
         if (!isValidSizeFileForBinaryFile(foreignAnnexRendition.getSize())) {
             throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.max.size.error");
+        }
+        String extension = getFileExtension(foreignAnnexRendition.getOriginalFilename());
+        if (extension.equals("PDF") && !isPdfA(foreignAnnexRendition.getBytes())) {
+            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.not.pdfa");
         }
     }
 

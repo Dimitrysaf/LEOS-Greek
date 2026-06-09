@@ -181,6 +181,8 @@
         <springdoc-openapi.version>2.8.17</springdoc-openapi.version>
         <snakeyaml.version>2.3</snakeyaml.version>
         <jackson-dataformat-yaml.version>2.21.2</jackson-dataformat-yaml.version>
+        <verapdf.validation.version>1.28.2</verapdf.validation.version>
+        <jaxb.api.version>2.3.1</jaxb.api.version>
         <pdfbox.version>3.0.5</pdfbox.version>
         <spring-data.version>3.5.10</spring-data.version>
         <xercesImpl.version>2.12.2</xercesImpl.version>
@@ -693,6 +695,22 @@
                 <groupId>com.zaxxer</groupId>
                 <artifactId>HikariCP</artifactId>
                 <version>${hikari.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.verapdf</groupId>
+                <artifactId>validation-model</artifactId>
+                <version>${verapdf.validation.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${jaxb.api.version}</version>
             </dependency>
             <!-- xercesImpl needed by jena-tdb. We override here with the latest xercesImpl version -->
             <dependency>

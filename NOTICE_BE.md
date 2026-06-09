@@ -1115,6 +1115,18 @@ __org.apache.pdfbox:pdfbox 3.0.3__
 * License: The Apache Software License, Version 2.0
 * Copyright:
    * Copyright 2015 The Apache Software Foundation.
+
+__org.verapdf:validation-model 1.28.2__
+* https://verapdf.org/home
+* License: The  Mozilla Public License v2+
+* Copyright:
+   * Copyright © 2015 - 2026 veraPDF consortium
+
+__javax.xml.bind:jaxb-api 2.3.1__
+* https://javaee.github.io/jaxb-v2/
+* License: Common Development and Distribution License CDDL v1.1 (check if possible)
+* Copyright:
+   * Copyright (c) 2017-2018 Oracle and/or its affiliates. All rights reserved.
 ______
 
 __EPL-1.0__

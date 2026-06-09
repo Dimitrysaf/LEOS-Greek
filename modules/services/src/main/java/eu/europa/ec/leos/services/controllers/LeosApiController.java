@@ -579,7 +579,7 @@ public class LeosApiController implements LeosApi {
     }
 
     @Override
-    public ResponseEntity<Object> createProposalForeignAnnex(String proposalRef, MultipartFile foreignAnnexFile) throws IOException {
+    public ResponseEntity<Object> createProposalForeignAnnex(String proposalRef, MultipartFile foreignAnnexFile) throws Exception {
         validateHybridDocument(foreignAnnexFile);
         proposalRef = encodeParam(proposalRef);
         this.apiService.createProposalAnnex(proposalRef, null, AnnexType.FOREIGN, foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename());
@@ -587,7 +587,7 @@ public class LeosApiController implements LeosApi {
     }
 
     @Override
-    public ResponseEntity<Object> uploadForeignAnnexRendition(String proposalRef, String annexId, MultipartFile foreignAnnexRendition) throws IOException {
+    public ResponseEntity<Object> uploadForeignAnnexRendition(String proposalRef, String annexId, MultipartFile foreignAnnexRendition) throws Exception {
         validateRenditionHybridDocument(foreignAnnexRendition);
         proposalRef = encodeParam(proposalRef);
         annexId = encodeParam(annexId);
@@ -614,7 +614,7 @@ public class LeosApiController implements LeosApi {
     }
 
     @Override
-    public ResponseEntity<Object> updateForeignAnnex(String proposalRef,String annexId, MultipartFile foreignAnnexFile) throws IOException {
+    public ResponseEntity<Object> updateForeignAnnex(String proposalRef,String annexId, MultipartFile foreignAnnexFile) throws Exception {
         validateHybridDocument(foreignAnnexFile);
         proposalRef = encodeParam(proposalRef);
         annexId = encodeParam(annexId);
