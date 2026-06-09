@@ -6,6 +6,7 @@ class userEntityManagementPage {
     }
 
     elements = {
+        tableRows: () => cy.get('tr'),
         manageEntitiesTab:() => cy.get('div.eui-tab-item').contains('Manage entities'),
         addEntityBtn: () => cy.get('button[data-e2e=\'eui-button\'] > span').contains('Add an entity'),
         customEntityInfoLabel: () => cy.get('eui-card-header-title').contains('CUSTOM ENTITY INFO'),
@@ -29,13 +30,15 @@ class userEntityManagementPage {
         newUserorEntityCreationMessageLocator: () => cy.get('#containerConfigId'),
         searchUsersTxtBx: () => cy.get('input[placeholder=\'Search by user name, login or email\']'),
         searchIconBtn: () => cy.get('eui-icon-svg[icon=\'eui-search\']'),
-        firstNameColumnInTable: () => cy.get('tr td:nth-child(1)'),
-        lastNameColumnInTable: () => cy.get('tr td:nth-child(2)'),
-        userLoginColumnInTable: () => cy.get('tr td:nth-child(3)'),
-        userDeleteBtnInTable: () => cy.get('tr td:nth-of-type(5) > a > eui-icon-svg'),
+        firstNameColumnInTable: () => this.elements.tableRows().find('td:nth-child(1)'),
+        lastNameColumnInTable: () => this.elements.tableRows().find('td:nth-child(2)'),
+        userLoginColumnInTable: () => this.elements.tableRows().find('td:nth-child(3)'),
+        userDeleteBtnInTable: () => this.elements.tableRows().find('td:nth-of-type(5) > a > eui-icon-svg'),
         editBtn: () => cy.get('span').contains('Edit'),
         deleteEntityBtn: () => cy.get('.eui-icon.eui-icon-delete'),
-        readOnlyEmailTxtBx: () => cy.get('input[formcontrolname=\'email\']')
+        readOnlyEmailTxtBx: () => cy.get('input[formcontrolname=\'email\']'),
+        comrefTextToolTip: () => cy.get("[data-e2e='eui-tooltip']"),
+        comrefTextInTable: (text) => this.elements.tableRows().find('td:nth-child(5)').contains(text)
     }
 
     selectManageEntitiesTab(){
@@ -169,6 +172,10 @@ class userEntityManagementPage {
 
     removeEntity() {
         this.elements.angleRightBtn().click()
+    }
+
+    clickUserLoginInComrefRow(userLogin) {
+        this.elements.tableRows().filter(':contains("COMREF")').find('td:nth-child(3)').contains(userLogin).click()
     }
 
 }

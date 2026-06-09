@@ -65,7 +65,7 @@ Feature: User Management Entities Regression Features
     And  click on save button
     Then show the successful message that a new user is created
     Then verify the new user details on the table
-    Then click on delete button for user "firstLast"
+    Then click on delete button for user
     Then error popup should be displayed as entity is associated with the user
     Then verify the user "firstLast" is still present on the table
     Then select manage entities tab
@@ -126,23 +126,68 @@ Feature: User Management Entities Regression Features
     And  update the user info details
       | firstName   | lastName   | email             |
       | firstEdited | lastEdited | updated@email.com |
-    And  select and remove the entities '["AGRI", "test custom.entity (123)"]' from the user
     And  click on save button
     Then show the successful message that user is updated
     Then verify the updated user details on the table
     When search and click on user with login "firstLast"
     Then verify the updated email in user info section
-    And  verify the entities '["AGRI", "test custom.entity (123)"]' are removed from the user
 
-  @deletingUserSuccessfully @local
-  Scenario: deleting a user successfully after removing associated entities
+  @verifyPinkBackgroundWhenCollaboratorDeletedOrEntityDeleted @local
+  Scenario: create an act and add a collaborator
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    And click on next button in create document page
+    And tick guidance approval checkbox in create document page
+    And click on next button in create document page
+    And provide document title "User Management Act 1" in create document page
+    And click on create button
+    Then user is on act viewer page
+    And click on manage users and entities link under administration dropdown
+    And search and click on user with login "firstLast"
+    And click on edit button
+    And remove the entities '["test custom.entity (123)"]' and update the user form
+    And click on home button
+    And click on view all acts button
+    And provide "User Management Act 1" keyword in search for an act input box in workspace
+    And click on act 1
+    Then user is on act viewer page
+    And click on collaborators tab in act view page
+    When click on add button in collaborators tab
+    And provide input "firstEdited" in name field of add users window
+    And click on row 1 from the user list in name field of add users window
+    And select role with value "OWNER" in add users window
+    And click on add users button
+    Then user name "lastEdited firstEdited" is added as collaborator
+    And click on three vertical dots for user "DOE Jane" in collaborators tab
+    And click on delete role button
+    And click on danger button in dialog box window
+    And click on manage users and entities link under administration dropdown
+    And search and click on user with login "firstLast"
+    And click on edit button
+    And remove the entities '["AGRI"]' and update the user form
+    When click on home button
+    And click on view all acts button
+    And provide "User Management Act 1" keyword in search for an act input box in workspace
+    And click on act 1
+    Then user is on act viewer page
+    And click on collaborators tab in act view page
+    Then background color of row with username "lastEdited firstEdited" is pink
+    Then the entity is not present for collaborator "lastEdited firstEdited"
+    When mousehover on entity column of user "lastEdited firstEdited"
+    Then tooltip contains "Entity association for collaborator could not be found. Please remove the collaborator and re-add him with the correct entity or contact EdiT support."
     When click on manage users and entities link under administration dropdown
-    Then add user button should be displayed
-    When search user with login "firstLast"
-    And  click on delete button for user "firstLast"
+    And search user with login "firstLast"
+    And click on delete button for user
     Then confirm the user deletion for "lastEdited" "firstEdited" "firstLast"
-    Then verify the user "firstLast" is no longer present on the table
-
+    When click on home button
+    And click on view all acts button
+    And provide "User Management Act 1" keyword in search for an act input box in workspace
+    And click on act 1
+    Then user is on act viewer page
+    And click on collaborators tab in act view page
+    Then background color of row with username "lastEdited firstEdited" is pink
+    
   @entityDeletionAllowedWhenNoUserAssociated @local
   Scenario: entity deletion should be allowed when there is no user associated
     When click on manage users and entities link under administration dropdown
@@ -152,3 +197,13 @@ Feature: User Management Entities Regression Features
     When click on delete entity button
     Then confirm the entity deletion for "test custom.entity (123)"
     Then verify the entity "test custom.entity (123)" is no longer present on the table
+
+  @comrefUserNotEditableAndNotDeletable @local
+  Scenario: COMREF user should not be editable and deletable
+    When click on manage users and entities link under administration dropdown
+    Then add user button should be displayed
+    When search user with login "jane"
+    Then verify the row with "COMREF" text is present and its tooltip in the user table
+    When click on user login "jane" in the COMREF row
+    Then user info section should be displayed
+    Then edit button is not present

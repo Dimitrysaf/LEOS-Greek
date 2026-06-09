@@ -208,26 +208,13 @@ Then("verify the updated email in user info section", function () {
     })
 });
 
-When("select and remove the entities {string} from the user", function (entities) {
-    const entityList = JSON.parse(entities)
-    cy.wrap(entityList).each((entity) => {
-        userEntityManagementPage.selectEntityToRemove(entity)
-        userEntityManagementPage.removeEntity()
-    })
-});
 
-Then("verify the entities {string} are removed from the user", function (entities) {
-    const entityList = JSON.parse(entities);
-    cy.wrap(entityList).each((entity) => {
-        userEntityManagementPage.elements.userEntityCell(entity).should('not.exist');
-    });
-});
 
 When("search user with login {string}", function (userLogin) {
     userEntityManagementPage.searchNewUserLogin(userLogin)
 });
 
-When("click on delete button for user {string}", function () {
+When("click on delete button for user", function () {
     userEntityManagementPage.clickDeleteButtonForUser()
 });
 
@@ -283,4 +270,30 @@ Then("confirm the entity deletion for {string}", function (entityName) {
 Then("verify the entity {string} is no longer present on the table", function (entityName) {
     userEntityManagementPage.searchNewEntity(entityName)
     userEntityManagementPage.elements.entityColumnInTable().should('not.exist')
+});
+
+When("remove the entities {string} and update the user form", function (entities) {
+    const entityList = JSON.parse(entities);
+    cy.wrap(entityList).each((entity) => {
+        userEntityManagementPage.selectEntityToRemove(entity)
+        userEntityManagementPage.removeEntity()
+    })
+    userEntityManagementPage.clickSaveButton()
+    userEntityManagementPage.elements.newUserorEntityDialogBxTitle().contains('User updated')
+    euiDialogBoxPage.clickAcceptBtn()
+});
+
+Then("verify the row with {string} text is present and its tooltip in the user table", function (text) {
+    userEntityManagementPage.elements.comrefTextInTable(text).should('be.visible').trigger('mouseenter')
+    userEntityManagementPage.elements.comrefTextToolTip()
+        .should('be.visible')
+        .and('contain.text', 'This user is originating from the COMREF database. It cannot be edited nor deleted.')
+});
+
+When("click on user login {string} in the COMREF row", function (userLogin) {
+    userEntityManagementPage.clickUserLoginInComrefRow(userLogin)
+});
+
+Then("edit button is not present", function () {
+    userEntityManagementPage.elements.editBtn().should('not.exist')
 });
