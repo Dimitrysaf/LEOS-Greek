@@ -10,6 +10,7 @@ import {AppConfigService} from "@/core/services/app-config.service";
 })
 export class ProposalCreateFormComponent implements OnChanges {
   @Input() createForm: FormGroup;
+  @Input() isCopyChangeAct!: boolean;
   @Input() isCustomTemplate!: boolean;
   @Input() translationKey: 'document' | 'draft' = 'document';
   canCreateTemplate = false;

@@ -140,7 +140,7 @@
     </div>
   </div>
 
-  <div class="eui-u-mt-l eui-u-mb-m" *ngIf="canCreateTemplate && !isCustomTemplate">
+  <div class="eui-u-mt-l eui-u-mb-m" *ngIf="canCreateTemplate && !isCustomTemplate && !isCopyChangeAct">
     <hr class="eui-u-mt-xs" />
     <p>
       {{ 'page.workspace.create-form.' + translationKey + '.custom-template-section' | translate }}
@@ -148,7 +148,7 @@
   </div>
 
   <!-- Custom Template section -->
-  <div euiInputGroup class="row" *ngIf="canCreateTemplate && !isCustomTemplate">
+  <div euiInputGroup class="row" *ngIf="canCreateTemplate && !isCustomTemplate && !isCopyChangeAct">
     <div class="col-md-3">
       <label euiLabel for="customTemplateAct">{{
           'page.workspace.create-form.' + translationKey + '.custom-template-act'
