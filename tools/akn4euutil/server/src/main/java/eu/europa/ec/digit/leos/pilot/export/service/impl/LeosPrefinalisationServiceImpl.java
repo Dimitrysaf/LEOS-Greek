@@ -214,10 +214,6 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
                 commissionerPos += 1;
             }
         }
-        if (!hasLinkedDocumentsField(action)) {
-            // associatedReferences container will be removed if no linkedDocuments are set
-            processApplyMetadataRequestField(new ApplyMetadataRequest.FieldNode(MetadataFieldType.LINKED_DOCUMENTS.toString(), ""), documentXmlFiles, commissionerPos, coteOrFinalCoteField);
-        }
         if (hasCoteField(action)) {
             documentXmlFiles.stream().forEach((xmlFile) -> {
                 metadataService.removeTemplateClassAttributes(xmlFile);
