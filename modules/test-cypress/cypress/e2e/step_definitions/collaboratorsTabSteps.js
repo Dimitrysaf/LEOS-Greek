@@ -61,5 +61,35 @@ Then ('delete option is not be visible for the collaborator',()=>{
         collaboratorsTab.elements.deleteRole().should('not.exist');
     });
 
+Then('user name {string} is added as collaborator', (fullName) => {
+    collaboratorsTab.getRowByName(fullName).should('exist');
+});
 
+Then('background color of row with username {string} is pink', (name) => {
+    collaboratorsTab.getRowByName(name)
+        .find('td').first()
+        .should('have.class', 'eui-u-bg-color-danger-25');
+});
 
+Then('the entity is not present for collaborator {string}', (name) => {
+    collaboratorsTab.getRowByName(name)
+        .find('td').eq(1)
+        .invoke('text')
+        .then(text => expect(text.trim()).to.equal(''));
+});
+
+When('mousehover on entity column of user {string}', (name) => {
+    collaboratorsTab.getRowByName(name)
+        .find('td').eq(1)
+        .trigger('mouseenter');
+});
+
+Then('tooltip contains {string}', (expectedText) => {
+    collaboratorsTab.elements.tooltip()
+        .should('be.visible')
+        .and('contain.text', expectedText);
+});
+
+When('click on three vertical dots for user {string} in collaborators tab', (name) => {
+    collaboratorsTab.clickThreeVerticalDotsForUser(name);
+});

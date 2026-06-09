@@ -4,7 +4,7 @@ class repositoryBrowserPage {
         proposalLink: () => this.elements.proposalTable().find('a'),
         createProposalBtn: () => cy.contains('Create act'),
         uploadBtn: () => cy.contains('Upload act'),
-        searchFilterInputBtn: () => cy.get("input[placeholder='Search for a proposal']"),
+        searchFilterInputBtn: () => cy.get("input[placeholder='search by title']"),
     }
 
     clickCreateProposalBtn() {

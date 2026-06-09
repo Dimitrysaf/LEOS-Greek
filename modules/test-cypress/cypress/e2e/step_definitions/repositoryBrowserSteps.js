@@ -29,3 +29,7 @@ Then('name of act {int} contains {string}', (proposalIndex, name) => {
 Then('contribution status of act {int} contains {string}', (proposalIndex, status) => {
     repositoryBrowserPage.getRightContentOfProposal(proposalIndex).should('include.text', status)
 });
+
+When('provide {string} keyword in search for an act input box in workspace', (keyword) => {
+    repositoryBrowserPage.enterSearchText(keyword);
+});

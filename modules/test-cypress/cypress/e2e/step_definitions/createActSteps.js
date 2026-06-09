@@ -1,6 +1,7 @@
-import { When, Then } from "@badeball/cypress-cucumber-preprocessor";
+import { When, Then} from "@badeball/cypress-cucumber-preprocessor";
 require('@cypress/xpath');
 import createActPage from "../pages/createActPage";
+
 
 Then('user is on create new legislative document window', () => {
     createActPage.elements.dialogHeader().should('be.visible');
