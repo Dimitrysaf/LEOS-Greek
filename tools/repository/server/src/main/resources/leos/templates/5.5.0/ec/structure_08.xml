@@ -203,7 +203,7 @@
             <onlySameParentAsChild>true</onlySameParentAsChild>
             <editable>false</editable>
             <template>
-                <![CDATA[<recitals leos:editable="false"><num>${num}</num><heading>${heading}</heading><recital leos:editable="true"><num>${num}</num><p>Recital...</p></recital></recitals>]]>
+                <![CDATA[<recitals leos:editable="false"><num>${num}</num><heading leos:editable="true">${heading}</heading><recital leos:editable="true"><num>${num}</num><p>Recital...</p></recital></recitals>]]>
             </template>
         </tocItem>
 
