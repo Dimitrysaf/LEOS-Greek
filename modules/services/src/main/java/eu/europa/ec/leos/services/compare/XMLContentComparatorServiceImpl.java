@@ -20,6 +20,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.compare.vo.Element;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import org.apache.commons.collections4.CollectionUtils;
@@ -31,6 +32,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -83,6 +85,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
+import static eu.europa.ec.leos.services.support.XmlHelper.XML_NAME;
 import static eu.europa.ec.leos.services.support.XmlHelper.getDateAsXml;
 import static eu.europa.ec.leos.services.support.XmlHelper.getSoftUserAttribute;
 
@@ -1375,8 +1378,44 @@ public class XMLContentComparatorServiceImpl implements ContentComparatorService
         } else if (!isConvertedAlineaToIntro(context.getOldElement(), context.getNewElement())
                 && !isConvertedSubparagraphToIntro(context.getOldElement(), context.getNewElement())) {
             Node node = getChangedElementContent(context.getOldElement().getNode(), context.getOldElement(), context.getAttrName(), context.getRemovedValue());
+            node = this.createSubparagraphIfContentNode(node);
             addToResultNode(context, node);
         }
+    }
+
+    private Node createSubparagraphIfContentNode(Node node) {
+        Node parentNode = node.getParentNode();
+        Node docAscendant = XmlUtils.getFirstAscendant(node, Arrays.asList("doc"));
+        boolean isAnnex = docAscendant != null &&
+                docAscendant.hasAttributes()
+                && "ANNEX".equalsIgnoreCase(XmlUtils.getAttributeValue(docAscendant, XML_NAME));
+
+        if ("content".equals(node.getNodeName())
+                && "leos-content-removed".equals(XmlUtils.getAttributeValue(node, "class"))
+                && parentNode != null
+                && "level".equals(parentNode.getNodeName())
+                && (this.hasSiblingList(parentNode) || isAnnex)) {
+            Node parent = node.getParentNode();
+
+            org.w3c.dom.Element subparagraph = node.getOwnerDocument().createElement(SUBPARAGRAPH);
+
+            XmlUtils.insertOrUpdateAttributeValue(subparagraph, XMLID, IdGenerator.generateId());
+            XmlUtils.insertOrUpdateAttributeValue(subparagraph, "class", "leos-content-removed");
+            XmlUtils.removeAttribute(node, "class");
+            parent.replaceChild(subparagraph, node);
+            subparagraph.appendChild(node);
+            node = subparagraph;
+        }
+        return node;
+    }
+
+    private boolean hasSiblingList(Node parent) {
+        NodeList siblings = parent.getParentNode() != null ? parent.getParentNode().getChildNodes() : null;
+        if (siblings == null) return false;
+        for (int i = 0; i < siblings.getLength(); i++) {
+            if (LIST.equals(siblings.item(i).getNodeName())) return true;
+        }
+        return false;
     }
 
     protected void appendRemovedContent(ContentComparatorContext context) {
