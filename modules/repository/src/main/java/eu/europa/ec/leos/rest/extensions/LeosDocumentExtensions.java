@@ -393,6 +393,14 @@ public class LeosDocumentExtensions {
     // FIXME maybe move title property to metadata or remove it entirely
     private static String getTitle(eu.europa.ec.leos.rest.support.model.LeosDocument document) { // FIXME add check for leos:xml primary type
         String title = (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_TITLE));
+        LeosCategory category = getCategory(document);
+        if (category == LeosCategory.PROPOSAL) {
+            return Optional.ofNullable(title)
+                    .map(FormatUtils::cleanHtmlFormattingElementsKeepSubSup)
+                    .map(FormatUtils::cleanTrackChanges)
+                    .map(FormatUtils::cleanNonBreakingSpace)
+                    .orElse(title);
+        }
         return Optional.ofNullable(title)
                 .map(FormatUtils::cleanHtmlFormattingElements)
                 .map(FormatUtils::cleanTrackChanges)

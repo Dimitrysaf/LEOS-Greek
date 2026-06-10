@@ -649,6 +649,10 @@ export class DocumentComponent
     if (!content) {
       content = '';
     }
+    if (this.documentType === 'coverPage') {
+      content = content.replace(/&lt;(\/?)(sub|sup)(\s[^&]*?)?&gt;/gi,
+        (match, slash, tag, attrs) => `<${slash}${tag}${attrs || ''}>`);
+    }
     return content
       .replaceAll('<p ', '<aknp ')
       .replaceAll('</p>', '</aknp>')
