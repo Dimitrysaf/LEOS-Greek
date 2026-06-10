@@ -1521,6 +1521,18 @@ public class MetadataServiceImpl implements MetadataService {
         XmlUtil.removeNodeAttributeValue(node, MetadataUtil.ATTRIBUTE_CLASS);
     }
 
+    public void removeLinkedDocuments(XmlUtil.XmlFile xmlFile) {
+        Node xmlNodeCoverpage = xmlFile.getElementByName(MetadataUtil.ELEMENT_COVERPAGE);
+        if (xmlNodeCoverpage == null) {
+            return;
+        }
+        Node xmlNodeAssociatedReferences = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage,
+                MetadataUtil.VALUE_CROSS_CONFERENCE_NAME);
+        if (xmlNodeAssociatedReferences != null) {
+            xmlNodeCoverpage.removeChild(xmlNodeAssociatedReferences);
+        }
+    }
+
     public void removeDateIfNeeded(XmlUtil.XmlFile xmlFile) {
         this.removeConclusionsDateIfNeeded(xmlFile);
         if (MetadataUtil.isMainDocumentFile(xmlFile)) {

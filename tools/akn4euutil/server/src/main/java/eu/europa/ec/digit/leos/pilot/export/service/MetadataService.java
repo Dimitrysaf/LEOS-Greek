@@ -196,5 +196,15 @@ public interface MetadataService {
      * */
     void removeTemplateClassAttributes(XmlUtil.XmlFile xmlFile);
 
+    /**
+     * Removes the associated documents element
+     * @param xmlFile XmlFile to modify
+     * */
+    void removeLinkedDocuments(XmlUtil.XmlFile xmlFile);
+
+    /**
+     * Removes the date element if it is empty
+     * @param xmlFile XmlFile to modify
+     * */
     void removeDateIfNeeded(XmlUtil.XmlFile xmlFile);
 }

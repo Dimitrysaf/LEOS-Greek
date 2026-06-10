@@ -216,6 +216,8 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
         }
         if (hasCoteField(action)) {
             documentXmlFiles.stream().forEach((xmlFile) -> {
+                metadataService.removeLinkedDocuments(xmlFile);
+                metadataService.removeDateIfNeeded(xmlFile);
                 metadataService.removeTemplateClassAttributes(xmlFile);
             });
         }
