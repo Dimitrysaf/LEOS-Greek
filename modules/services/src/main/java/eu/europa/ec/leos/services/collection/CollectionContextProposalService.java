@@ -109,6 +109,7 @@ public class CollectionContextProposalService extends CollectionContextService {
 
         Option<ProposalMetadata> metadataOption = proposalTemplate.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
+        String docTemplate = fromCustomTemplate ? metadataOption.get().getRef() : metadataOption.get().getDocTemplate();
 
         Validate.notNull(purpose, "Proposal purpose is required!");
         ProposalMetadata metadata = metadataOption.get()
@@ -122,6 +123,7 @@ public class CollectionContextProposalService extends CollectionContextService {
                 .withNonSensitivityTitle(nonSensitivityTitle)
                 .withCustomTemplateAct(customTemplateAct)
                 .withFromCustomTemplate(fromCustomTemplate)
+                .withDocTemplate(docTemplate)
                 .withRef(this.originRef)
                 .build();
 

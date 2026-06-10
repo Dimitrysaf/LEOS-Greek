@@ -201,6 +201,7 @@ public class MemorandumContextService {
 
         Option<MemorandumMetadata> metadataOption = memorandum.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), MEMORANDUM_METADATA_IS_REQUIRED);
+        String docTemplate = fromCustomTemplate ? metadataOption.get().getRef() : metadataOption.get().getDocTemplate();
 
         Validate.notNull(purpose, MEMORANDUM_PURPOSE_IS_REQUIRED);
         MemorandumMetadata metadata = metadataOption.get()
@@ -211,6 +212,7 @@ public class MemorandumContextService {
                 .withPackageRef(packageRef)
                 .withCustomTemplateAct(customTemplateAct)
                 .withFromCustomTemplate(fromCustomTemplate)
+                .withDocTemplate(docTemplate)
                 .withRef(originRef)
                 .build();
 
