@@ -909,7 +909,7 @@
                 </heading>
                 <subparagraph leos:editable="false">
                     <content>
-                        <p style="text-align: right; margin-bottom: -15px;">EUR million (to three decimal places)</p>
+                        <p class="eur_million">EUR million (to three decimal places)</p>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false">
@@ -2656,7 +2656,7 @@
                             </tr>
                             <tr>
                                 <td rowspan="2" style="width: 25%; background: #E6E6E6; text-align: center;">
-                                    <p><b>TOTAL appropriations<br/>Under Heading 1 to 6</b><br/>of the multiannual financial framework<br/>(Reference amount)</p>
+                                    <p><b>TOTAL appropriations<br/>Under Headings 1 to 3</b><br/>of the multiannual financial framework<br/>(Reference amount)</p>
                                 </td>
                                 <td style="width: 9%;">
                                     <p>Commitments</p>
@@ -2765,7 +2765,7 @@
                                 </td>
                                 <td style="width: 7%; text-align: center;">
                                     <p>
-                                        <b>7</b>
+                                        <b>4</b>
                                     </p>
                                 </td>
                                 <td style="width: 57%;">
@@ -3149,7 +3149,7 @@
                 </subparagraph>
                 <subparagraph leos:editable="false">
                     <content>
-                        <p style="text-align: right; margin-bottom: -15px;">EUR million (to three decimal places)</p>
+                        <p class="eur_million">EUR million (to three decimal places)</p>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false">
@@ -3286,7 +3286,7 @@
                 </heading>
                 <subparagraph leos:editable="false">
                     <content>
-                        <p style="text-align: right; margin-bottom: -15px;">EUR million (to three decimal places)</p>
+                        <p class="eur_million">EUR million (to three decimal places)</p>
                     </content>
                 </subparagraph>
                 <subparagraph style="text-align: right;" leos:editable="true" leos:deletable="false">
@@ -5559,7 +5559,7 @@
                                 </td>
                                 <td style="width: 7.6%; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #F1F1F1;">
                                     <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;">
-                                        <b>7</b>
+                                        <b>4</b>
                                     </p>
                                 </td>
                                 <td style="width: 54.98%; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
@@ -5576,7 +5576,7 @@
                 </subparagraph>
                 <subparagraph leos:editable="false">
                     <content>
-                        <p style="text-align: right; margin-bottom: -15px;">EUR million (to three decimal places)</p>
+                        <p class="eur_million">EUR million (to three decimal places)</p>
                     </content>
                 </subparagraph>
                 <subparagraph style="text-align: right;padding-right:2%;" leos:editable="true" leos:deletable="false">
@@ -5966,7 +5966,7 @@
                 </subparagraph>
                 <subparagraph leos:editable="false">
                     <content>
-                        <p style="text-align: right; margin-bottom: -15px;">EUR million (to three decimal places)</p>
+                        <p class="eur_million">EUR million (to three decimal places)</p>
                     </content>
                 </subparagraph>
                 <subparagraph style="text-align: right;padding-right:2%;" leos:editable="true" leos:deletable="false">
@@ -6106,9 +6106,9 @@
                     <i>Estimated output funded from operational appropriations (not to be completed
                         for decentralised agencies)</i>
                 </heading>
-                <subparagraph style="text-align: right; margin-bottom: -15px;">
+                <subparagraph>
                     <content>
-                        <p>Commitment appropriations in EUR million (to three decimal places)</p>
+                        <p class="eur_million">Commitment appropriations in EUR million (to three decimal places)</p>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false">
@@ -6713,29 +6713,29 @@
                                         resources </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -6744,29 +6744,29 @@
                                     <p style="margin: 0cm; text-align: left;">Other administrative expenditure </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -6778,42 +6778,42 @@
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -6830,29 +6830,29 @@
                                         resources </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 11 border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -6862,29 +6862,29 @@
                                         expenditure of an administrative nature</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -6896,42 +6896,42 @@
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -6948,42 +6948,42 @@
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -7044,29 +7044,29 @@
                                         resources </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -7076,29 +7076,29 @@
                                         administrative expenditure </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -7110,42 +7110,42 @@
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -7162,29 +7162,29 @@
                                         resources </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -7194,29 +7194,29 @@
                                         expenditure of an administrative nature</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -7228,42 +7228,42 @@
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -7273,49 +7273,49 @@
                                 </td>
                             </tr>
                             <tr style="height: 15.6pt;">
-                                <td style="width: 45%; border-top: none; border-left: solid black 1.5pt; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt;">
+                                <td style="width: 45%; border-top: none; border-left: solid black 1.0pt; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm; text-align: center;">
                                         <b>TOTAL</b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
-                                <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -7373,29 +7373,29 @@
                                         resources </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -7405,29 +7405,29 @@
                                         administrative expenditure </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -7439,42 +7439,42 @@
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -7491,29 +7491,29 @@
                                         resources </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -7523,29 +7523,29 @@
                                         expenditure of an administrative nature</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0.000</p>
+                                    <p style="margin: 0cm; text-align: right;">0</p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -7557,42 +7557,42 @@
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                                 <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -7602,49 +7602,49 @@
                                 </td>
                             </tr>
                             <tr style="height: 15.6pt;">
-                                <td style="width: 45%; border-top: none; border-left: solid black 1.5pt; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt;">
+                                <td style="width: 45%; border-top: none; border-left: solid black 1.0pt; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm; text-align: center;">
                                         <b>TOTAL</b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
-                                <td style="width: 11% border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 11% border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
-                                        <b>0.000</b>
+                                        <b>0</b>
                                     </p>
                                 </td>
                             </tr>
@@ -7941,7 +7941,7 @@
                             </tr>
                             <tr style="height: 15.0pt;">
                                 <td style="width: 15%; border: solid black 1.0pt; border-top: none;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;">Admin. support line<br/>[XX.01.YY.YY]</p>
+                                    <p style="margin: 0cm; text-align: center;">Admin. Support line<br/>[XX.01.YY.YY]</p>
                                 </td>
                                 <td style="width: 15%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">at Headquarters</p>
@@ -8387,7 +8387,7 @@
                             </tr>
                             <tr style="height: 15.0pt;">
                                 <td style="width: 15%; border: solid black 1.0pt; border-top: none;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;">Admin. support line<br/>[XX.01.YY.YY]</p>
+                                    <p style="margin: 0cm; text-align: center;">Admin. Support line<br/>[XX.01.YY.YY]</p>
                                 </td>
                                 <td style="width: 15%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">at Headquarters</p>
@@ -8830,7 +8830,7 @@
                             </tr>
                             <tr style="height: 15.0pt;">
                                 <td style="width: 15%; border: solid black 1.0pt; border-top: none;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;">Admin. support line<br/>[XX.01.YY.YY]</p>
+                                    <p style="margin: 0cm; text-align: center;">Admin. Support line<br/>[XX.01.YY.YY]</p>
                                 </td>
                                 <td style="width: 15%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">at Headquarters</p>
@@ -9408,47 +9408,47 @@
                                 </td>
                             </tr>
                             <tr style="height: 15.75pt;">
-                                <td style="width: 6%; border-top: none; border-left: solid black 1.5pt; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt;">
+                                <td style="width: 6%; border-top: none; border-left: solid black 1.0pt; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
                                     <p style="margin: 0cm; text-align: center;">
                                         <b> TOTAL </b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
                                         <b> 0 </b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
                                         <b> 0 </b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
                                         <b> 0 </b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
                                         <b> 0 </b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
                                         <b> 0 </b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
                                         <b> 0 </b>
                                     </p>
                                 </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
                                         <b> 0 </b>
                                     </p>
                                 </td>
-                                <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.5pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: right;">
                                         <b> 0 </b>
                                     </p>
@@ -9528,9 +9528,9 @@
                         </content>
                     </indent>
                 </list>
-                <subparagraph leos:editable="false" style="text-align: right;margin-bottom: -15px;">
+                <subparagraph leos:editable="false">
                     <content>
-                        <p>Appropriations in EUR million (to three decimal places)</p>
+                        <p class="eur_million">Appropriations in EUR million (to three decimal places)</p>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false">
@@ -9681,9 +9681,9 @@
                         </list>
                     </indent>
                 </list>
-                <subparagraph leos:editable="false" style="text-align: right;margin-bottom: -15px;">
+                <subparagraph leos:editable="false">
                     <content>
-                        <p>EUR million (to three decimal places)</p>
+                        <p class="eur_million">EUR million (to three decimal places)</p>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false">
