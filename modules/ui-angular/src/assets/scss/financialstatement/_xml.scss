@@ -74,9 +74,16 @@
                 }
             }
 
+            .eur_million {
+                text-align: right;
+                margin-bottom: -15px;
+                position: relative;
+                z-index: 1;
+            }
+
         }
     }
-    
+
     // AKN styles
     doc[name="STAT_DIGIT_FINANC_LEGIS" i] {
         @extend %xmlAuthorialNote;

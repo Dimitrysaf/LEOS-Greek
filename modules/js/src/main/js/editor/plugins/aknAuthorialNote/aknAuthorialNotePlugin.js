@@ -184,6 +184,9 @@ define(function aknAuthorialNotePluginModule(require) {
         }, {
             akn : "leos:editable",
             html : "contenteditable"
+        }, {
+            akn : "onclick",
+            html : "onclick"
         } ],
         sub : {
             akn : 'mp',
