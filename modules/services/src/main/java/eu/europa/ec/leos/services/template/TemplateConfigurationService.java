@@ -32,4 +32,6 @@ public interface TemplateConfigurationService {
     String getElementFromTemplateConfiguration(String templateId, String configurationElement) ;
 
     JsonNode getElementJsonFromTemplateConfiguration(String templateId, String configurationElement) ;
+
+    JsonNode getElementJsonFromTemplateConfiguration(String templateId, String configurationElement, String documentLanguage);
 }

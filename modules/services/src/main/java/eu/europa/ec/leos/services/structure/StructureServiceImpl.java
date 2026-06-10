@@ -86,6 +86,13 @@ public class StructureServiceImpl implements StructureService {
         loadTocStructure(docTemplate, false);
         return tocStructureMap.get(docTemplate).getRefConfigs();
     }
+
+    @Override
+    @Cacheable(value = "refConfigs")
+    public List<RefConfig> getRefConfigs(String docTemplate, String documentLanguage) {
+        loadTocStructure(docTemplate, false, documentLanguage);
+        return tocStructureMap.get(docTemplate).getRefConfigs();
+    }
     
     @Override
     @Cacheable(value = "alternateConfList")
@@ -111,13 +118,16 @@ public class StructureServiceImpl implements StructureService {
         loadTocStructure(docTemplate, false);
         return tocStructureMap.get(docTemplate).getStructureDescription();
     }
-    
-    /**
-     * Load from CMIS only the first time for specific template.
-     * The server needs to be restarted in case the cmis xml has been changed.
-     */
+
     private void loadTocStructure(String docTemplate, boolean translated) {
-        byte[] structureXmlFile = templateStructureService.getStructure(docTemplate, translated);
+        this.buildTocStructureMap(docTemplate, translated, templateStructureService.getStructure(docTemplate, translated));
+    }
+
+    private void loadTocStructure(String docTemplate, boolean translated, String documentLanguage) {
+        this.buildTocStructureMap(docTemplate, translated, templateStructureService.getStructure(docTemplate, translated, documentLanguage));
+    }
+
+    private void buildTocStructureMap(String docTemplate, boolean translated, byte[] structureXmlFile) {
         final Structure structure = loadRulesFromFile(structureXmlFile);
 
         TocStructure tocStructure = new TocStructure();
@@ -126,7 +136,7 @@ public class StructureServiceImpl implements StructureService {
         tocStructure.setStructureDescription(structure.getDescription());
         tocStructure.setNumberingConfigs(structure.getNumberingConfigs().getNumberingConfigs());
         tocStructure.setAlternateConfigs(structure.getAlternateConfigs().getAlternateConfigs());
-        if(structure.getReferenceConfig() != null) {
+        if (structure.getReferenceConfig() != null) {
             tocStructure.setRefConfigs(structure.getReferenceConfig().getRefConfigs());
         }
 
