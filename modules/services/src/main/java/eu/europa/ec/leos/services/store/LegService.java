@@ -65,7 +65,7 @@ public interface LegService {
     
     byte[] updateLegPackageContentWithComments(byte[] legPackageContent, List<String> comments) throws IOException;
 
-    void addFilteredAnnotationsToZipContent(Map<String, Object> contentToZip, String docName, ExportOptions exportOptions);
+    void addFilteredAnnotationsToZipContent(Map<String, Object> contentToZip, String docName, ExportOptions exportOptions, boolean isClonedProposal);
 
     String storeLegDocumentTemporary(final LegDocument legDocument);
 
