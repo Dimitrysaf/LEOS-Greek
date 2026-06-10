@@ -23,13 +23,16 @@ public class TemplateStructureServiceImpl implements TemplateStructureService {
     ConfigurationRepository configurationRepository;
 
     @Override
-    public byte[] getStructure(String templateID) {
-        return getStructure(templateID, false);
+    public byte[] getStructure(String templateID, boolean translated) {
+        return this.getStructureXMLDocument(templateConfigurationService.getElementJsonFromTemplateConfiguration(templateID, structure), translated);
     }
 
     @Override
-    public byte[] getStructure(String templateID, boolean translated) {
-        JsonNode structureJson = templateConfigurationService.getElementJsonFromTemplateConfiguration(templateID, structure);
+    public byte[] getStructure(String templateID, boolean translated, String documentLanguage) {
+        return this.getStructureXMLDocument(templateConfigurationService.getElementJsonFromTemplateConfiguration(templateID, structure, documentLanguage), translated);
+    }
+
+    private byte[] getStructureXMLDocument(JsonNode structureJson, boolean translated) {
         String structureName = getStructureName(structureJson, translated);
         XmlDocument structureXmlDocument = configurationRepository.findTemplate(templatesStructurePath, structureName);
         return structureXmlDocument.getContent().get().getSource().getBytes();

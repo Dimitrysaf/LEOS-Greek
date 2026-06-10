@@ -140,7 +140,7 @@ public abstract class XmlContentProcessorTest extends LeosTest {
         when(structureContext.getTocRules()).thenReturn(tocRules);
         when(structureContext.getRefConfigs()).thenReturn(Arrays.asList(refConfig));
 
-        when(structureService.getRefConfigs(argThat(any(String.class)))).thenReturn(Arrays.asList(refConfig));
+        when(structureService.getRefConfigs(argThat(any(String.class)), argThat(any(String.class)))).thenReturn(Arrays.asList(refConfig));
 
         List<Entity> entities = new ArrayList<Entity>();
         entities.add(new Entity("1", "DIGIT.B2", "DIGIT", true));
