@@ -27,6 +27,12 @@ public class ResponseExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(SecurityException.class)
+    public ResponseEntity<?> handleSecurityException(SecurityException ex) {
+        LOG.warn("Security violation: {}", ex.getMessage());
+        return new ResponseEntity<>("Invalid request", HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception ex, HandlerMethod handlerMethod) {
         String errorMessage = ex.getMessage();

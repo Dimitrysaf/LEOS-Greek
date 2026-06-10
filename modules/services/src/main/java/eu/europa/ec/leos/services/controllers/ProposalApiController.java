@@ -20,6 +20,7 @@ import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.integration.ConValidatorService;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.services.api.ApiService;
+import eu.europa.ec.leos.services.api.exception.LeosApiException;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
@@ -48,6 +49,8 @@ import java.util.Objects;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 import static eu.europa.ec.leos.services.utils.FileUtils.isValidFileName;
+import static eu.europa.ec.leos.services.utils.FileUtils.isValidMimeTypeForLegFile;
+import static eu.europa.ec.leos.services.utils.FileUtils.isValidSizeFileForBinaryFile;
 import static eu.europa.ec.leos.services.utils.FileUtils.sanitizeFilename;
 
 @RestController
@@ -301,18 +304,12 @@ public class ProposalApiController implements ProposalApi {
 
     @Override
     public ResponseEntity<Object> uploadProposal(@RequestParam("legFile") MultipartFile legFile) {
-        CreateCollectionResult createCollectionResult;
         try {
-            String sanitizedFilename = sanitizeFilename(legFile.getName());
-            LeosFile content = new LeosFile(sanitizedFilename);
-            try {
-                content.setBytes(legFile.getBytes());
-            } catch (IOException ioe) {
-                LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
-                return new ResponseEntity<>("An error occurred during the reading of the Leg file.", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-            createCollectionResult = apiService.uploadProposal(content);
+            LeosFile content = validateAndBuildLeosFile(legFile);
+            CreateCollectionResult createCollectionResult = apiService.uploadProposal(content);
             return new ResponseEntity<>(createCollectionResult, HttpStatus.OK);
+        } catch (LeosApiException ex) {
+            return new ResponseEntity<>(ex.getMessage(), ex.getHttpStatus());
         } catch (CreateCollectionException ex) {
             LOG.error("Error occurred while creating proposal " + ex.getMessage());
             return new ResponseEntity<>("Error occurred while creating proposal", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -321,33 +318,48 @@ public class ProposalApiController implements ProposalApi {
 
     @Override
     public ResponseEntity<LegFileValidation> validateLegFile(@RequestParam("legFile") MultipartFile legFile) {
-        String sanitizedFilename = sanitizeFilename(legFile.getName());
-        LeosFile content = new LeosFile(sanitizedFilename);
         try {
-            content.setBytes(legFile.getBytes());
-        } catch (IOException ioe) {
-            LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            LeosFile content = validateAndBuildLeosFile(legFile);
+            LegFileValidation result = this.apiService.validateLegFile(content);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (LeosApiException ex) {
+            return new ResponseEntity<>(ex.getHttpStatus());
         }
-        LegFileValidation result = this.apiService.validateLegFile(content);
-        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<String> conValidateLegFile(@RequestParam("legFile") MultipartFile legFile) throws IOException {
-        String sanitizedFilename = sanitizeFilename(legFile.getName());
-        if (!isValidFileName(sanitizedFilename)) {
-            new ResponseEntity<>("Invalid file name", HttpStatus.BAD_REQUEST);
-        }
-        LeosFile content = new LeosFile(sanitizedFilename);
         try {
-            content.setBytes(legFile.getBytes());
-        } catch (IOException ioe) {
-            LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            LeosFile content = validateAndBuildLeosFile(legFile);
+            ConvalValidationResponse result = conValidatorService.validate(content);
+            return new ResponseEntity<>(result.getResult(), HttpStatus.OK);
+        } catch (LeosApiException ex) {
+            return new ResponseEntity<>(ex.getMessage(), ex.getHttpStatus());
         }
-        ConvalValidationResponse result = conValidatorService.validate(content);
-        return new ResponseEntity<>(result.getResult(), HttpStatus.OK);
+    }
+
+    private LeosFile validateAndBuildLeosFile(MultipartFile legFile) {
+        String sanitizedFilename = sanitizeFilename(legFile.getOriginalFilename());
+        if (!isValidFileName(sanitizedFilename)) {
+            throw new LeosApiException("Invalid file name", HttpStatus.BAD_REQUEST);
+        }
+        if (!isValidSizeFileForBinaryFile(legFile.getSize())) {
+            throw new LeosApiException("File size exceeds the allowed limit", HttpStatus.BAD_REQUEST);
+        }
+        try {
+            byte[] bytes = legFile.getBytes();
+            if (!isValidMimeTypeForLegFile(bytes)) {
+                throw new LeosApiException("Invalid file type", HttpStatus.BAD_REQUEST);
+            }
+            LeosFile content = new LeosFile(sanitizedFilename);
+            content.setBytes(bytes);
+            return content;
+        } catch (LeosApiException ex) {
+            throw ex;
+        } catch (IOException ex) {
+            LOG.error("Error occurred while reading leg file: " + ex.getMessage(), ex);
+            throw new LeosApiException("Error occurred while reading file", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
