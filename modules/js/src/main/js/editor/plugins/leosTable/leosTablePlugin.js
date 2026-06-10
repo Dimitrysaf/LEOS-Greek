@@ -72,24 +72,38 @@ define(function leosTablePluginModule(require) {
                     event.data.definition.onShow = function() {
                         var editor = this._.editor;
                         var selection = editor.getSelection();
-                        var startElement = selection && selection.getStartElement();
-                        if (startElement) {
-                            var cell = startElement.getAscendant({td: 1, th: 1}, true);
-                            if (cell) {
-                                this.cells = [cell];
+                        var cells = [];
+                        var ranges = selection.getRanges();
+                        if (selection.isFake && ranges.length > 1) {
+                            for (var i = 0; i < ranges.length; i++) {
+                                var rangeCell = ranges[i]._getTableElement();
+                                if (rangeCell && rangeCell.is && rangeCell.is({td: 1, th: 1})) {
+                                    cells.push(rangeCell);
+                                }
                             }
                         }
+                        if (cells.length === 0) {
+                            cells = CKEDITOR.plugins.tabletools.getSelectedCells(selection);
+                        }
+                        this.cells = cells;
                         if (this.cells && this.cells.length > 0) {
                             this.setupContent(this.cells);
                         }
                     };
 
-                    // Override onOk to propagate alignment to inner <p> elements
-                    var originalOnOk = event.data.definition.onOk;
+                    // Override onOk to  align inner <p> elements
                     event.data.definition.onOk = function() {
-                        originalOnOk.call(this);
                         var cells = this.cells;
-                        if (!cells) return;
+                        if (!cells || cells.length === 0) return;
+
+                        var editorInstance = this._.editor;
+
+
+                        for (var i = 0; i < cells.length; i++) {
+                            this.commitContent(cells[i]);
+                        }
+
+
                         for (var i = 0; i < cells.length; i++) {
                             var cell = cells[i];
                             var hValue = cell.getStyle('text-align') || '';
@@ -109,11 +123,13 @@ define(function leosTablePluginModule(require) {
                                 }
                             }
                         }
-                        // Place cursor in the cell to clear fake table selection
-                        var editorInstance = this._.editor;
+
+
+                        editorInstance.forceNextSelectionCheck();
                         var range = editorInstance.createRange();
                         range.moveToPosition(cells[0], CKEDITOR.POSITION_AFTER_START);
                         range.select();
+                        editorInstance.selectionChange();
                     };
                 }
             });
