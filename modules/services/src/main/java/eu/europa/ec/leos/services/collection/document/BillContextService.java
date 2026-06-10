@@ -341,6 +341,7 @@ public class BillContextService {
 
         Option<BillMetadata> metadataOption = bill.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), BILL_METADATA_IS_REQUIRED);
+        String docTemplate = fromCustomTemplate ? metadataOption.get().getRef() : metadataOption.get().getDocTemplate();
 
         Validate.notNull(purpose, BILL_PURPOSE_IS_REQUIRED);
         BillMetadata metadata = metadataOption.get()
@@ -349,6 +350,7 @@ public class BillContextService {
                 .withPackageRef(packageRef)
                 .withCustomTemplateAct(customTemplateAct)
                 .withFromCustomTemplate(fromCustomTemplate)
+                .withDocTemplate(docTemplate)
                 .withEeaRelevance(eeaRelevance)
                 .withRef(originRef)
                 .build();

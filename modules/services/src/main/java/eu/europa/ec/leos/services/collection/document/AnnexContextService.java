@@ -273,6 +273,7 @@ public class AnnexContextService {
 
         Option<AnnexMetadata> metadataOption = annex.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), ANNEX_METADATA_IS_REQUIRED);
+        String docTemplate = fromCustomTemplate ? metadataOption.get().getRef() : metadataOption.get().getDocTemplate();
 
         Validate.notNull(purpose, ANNEX_PURPOSE_IS_REQUIRED);
         Validate.notNull(type, ANNEX_TYPE_IS_REQUIRED);
@@ -288,6 +289,7 @@ public class AnnexContextService {
                 .withRef(originRef)
                 .withCustomTemplateAct(customTemplateAct)
                 .withFromCustomTemplate(fromCustomTemplate)
+                .withDocTemplate(docTemplate)
                 .build();
 
         if (binaryContent != null) {
