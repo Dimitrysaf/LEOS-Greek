@@ -669,8 +669,8 @@ Feature: CK Editor Regression Features
     When enable track changes
     When mouseover and click on block container 1 in explanatory memorandum page
     Then ck editor window is displayed
-    And  content of p tag 1 with attribute "data-akn-name" with value "aknParagraph" of blockContainer contains "Not Applicable" in edition mode
-    When click at offset 14 in p with attribute "data-akn-name" with value "aknParagraph" of blockContainer in edition mode
+    And  content of p tag 1 with attribute "data-akn-name" with value "aknParagraph" of blockContainer contains "Not applicable." in edition mode
+    When click at offset 15 in p with attribute "data-akn-name" with value "aknParagraph" of blockContainer in edition mode
     And  click on numberedList icon present in ck editor panel
     And  click enter from keyboard in edition mode
     And  add "test2" at current cursor position in edition mode
@@ -695,8 +695,8 @@ Feature: CK Editor Regression Features
       | Accept All |
       | Reject All |
     When click on reject all changes dropdown button
-    Then content of p tag 1 with attribute "data-akn-name" with value "aknParagraph" of blockContainer contains "Not Applicable" in edition mode
-    When click at offset 14 in p with attribute "data-akn-name" with value "aknParagraph" of blockContainer in edition mode
+    Then content of p tag 1 with attribute "data-akn-name" with value "aknParagraph" of blockContainer contains "Not applicable." in edition mode
+    When click at offset 15 in p with attribute "data-akn-name" with value "aknParagraph" of blockContainer in edition mode
     And  click on numberedList icon present in ck editor panel
     And  click enter from keyboard in edition mode
     And  add "test2" at current cursor position in edition mode
@@ -721,7 +721,7 @@ Feature: CK Editor Regression Features
     When click save and close button of ck editor
     Then ck editor window is not displayed
     And  num of item 1 of blockList 1 of blockContainer 1 contains value "1."
-    And  content of item 1 of blockList 1 of blockContainer 1 contains value "Not Applicable"
+    And  content of item 1 of blockList 1 of blockContainer 1 contains value "Not applicable."
     And  num of item 2 of blockList 1 of blockContainer 1 contains value "2."
     And  content of item 2 of blockList 1 of blockContainer 1 contains value "test2"
     And  num of item 1 of blockList 1 of item 2 of blockList 1 of blockContainer 1 contains value "1."
