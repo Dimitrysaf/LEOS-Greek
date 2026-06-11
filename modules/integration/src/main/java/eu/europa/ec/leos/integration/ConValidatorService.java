@@ -15,9 +15,11 @@ package eu.europa.ec.leos.integration;
 
 import eu.europa.ec.leos.domain.repository.common.ConvalValidationResponse;
 import eu.europa.ec.leos.domain.repository.common.LeosFile;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface ConValidatorService {
 
+    @PreAuthorize("isAuthenticated()")
     ConvalValidationResponse validate(LeosFile file);
 
 }

@@ -52,11 +52,11 @@ public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessin
         String userLogin;
         User user;
 
-        //fetch token from header
-        token =  request.getHeader(AUTHORIZATION).substring(7);
-
         //validate auth headers of request
         validateAuthorizationHeaders(request);
+
+        //fetch token from header
+        token =  request.getHeader(AUTHORIZATION).substring(7);
 
         //authorize request with session id
         authorizeWithSessionId(request, token);

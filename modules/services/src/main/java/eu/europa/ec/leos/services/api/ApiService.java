@@ -38,6 +38,7 @@ import eu.europa.ec.leos.services.dto.response.MilestoneViewResponse;
 import eu.europa.ec.leos.services.dto.response.WorkspaceProposalResponse;
 import eu.europa.ec.leos.services.export.ExportPackageVO;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.io.IOException;
 import java.util.List;
@@ -63,10 +64,12 @@ public interface ApiService {
 
     List<ExtPackageResult> createExtProposal(String templateKey, String[] languageCodes, String docPurpose);
 
+     @PreAuthorize("isAuthenticated()")
     CreateCollectionResult uploadProposal(LeosFile legDocument) throws CreateCollectionException;
 
     List<String> createLinguisticVersionsFromMilestone(String legFileId, List<String> linguisticVersions) throws CreateCollectionException;
 
+     @PreAuthorize("isAuthenticated()")
     LegFileValidation validateLegFile(LeosFile legDocument);
 
     void deleteAnnex(String proposalRef, String annexRef) throws Exception;
