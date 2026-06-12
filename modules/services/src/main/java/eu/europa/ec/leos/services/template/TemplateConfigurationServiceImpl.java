@@ -47,25 +47,30 @@ class TemplateConfigurationServiceImpl implements TemplateConfigurationService {
 
     @Override
     public String getTemplateConfiguration(String templateId) {
-        JsonNode confJson = getConfJson(templateId);
+        JsonNode confJson = getConfJson(templateId, documentLanguageContext.getDocumentLanguage());
         return confJson != null ? confJson.toString() : null;
     }
 
     @Override
     public String getElementFromTemplateConfiguration(String templateId, String confElement) {
-        JsonNode confElementJson = getConfElementJson(templateId, confElement);
+        JsonNode confElementJson = getConfElementJson(templateId, confElement, documentLanguageContext.getDocumentLanguage());
         return confElementJson != null ? confElementJson.toString() : null;
     }
 
     @Override
     public JsonNode getElementJsonFromTemplateConfiguration(String templateId, String confElement) {
-        return getConfElementJson(templateId, confElement);
+        return getConfElementJson(templateId, confElement, documentLanguageContext.getDocumentLanguage());
     }
 
-    private JsonNode getConfElementJson(String templateId, String confElement) {
+    @Override
+    public JsonNode getElementJsonFromTemplateConfiguration(String templateId, String confElement, String documentLanguage) {
+        return getConfElementJson(templateId, confElement, documentLanguage);
+    }
+
+    private JsonNode getConfElementJson(String templateId, String confElement, String documentLanguage) {
         LOG.trace("Getting template configuration... [templateId={}] , [confElement={}]", templateId, confElement);
 
-        JsonNode rootNode = getConfJson(templateId);
+        JsonNode rootNode = getConfJson(templateId, documentLanguage);
         JsonNode templateConfJson = rootNode.get(confElement);
         if (templateConfJson == null) {
             throw new IllegalArgumentException("Element '" + confElement + "' not present in the '" + templateId + "-CONF'");
@@ -76,10 +81,9 @@ class TemplateConfigurationServiceImpl implements TemplateConfigurationService {
         return templateConfJson;
     }
 
-    private JsonNode getConfJson(String templateId) {
+    private JsonNode getConfJson(String templateId, String documentLanguage) {
         LOG.trace("Getting template configuration... [templateId={}]", templateId);
         String conf;
-        String documentLanguage = documentLanguageContext.getDocumentLanguage();
         String languageSuffix = LanguageMapUtils.getLanguageTemplateSuffix(documentLanguage);
         String confFile = templateId + "-CONF";
 

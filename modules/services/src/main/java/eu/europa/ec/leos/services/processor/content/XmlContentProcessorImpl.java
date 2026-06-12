@@ -66,6 +66,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import jakarta.inject.Provider;
+
+import javax.print.DocFlavor;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -1727,9 +1729,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         RefConfig refConfig = null;
         if (mrefList.getLength() > 0) {
             String docTemplate = XmlUtils.getElementsByXPath(document, xPathCatalog.getXPathDocTemplate()).item(0).getTextContent();
-            List<RefConfig> refConfigs = structureService.getRefConfigs(docTemplate);
+            String language = StringUtils.defaultIfBlank(XmlUtils.getElementsByXPath(document, xPathCatalog.getXPathDocLanguage()).item(0).getTextContent(), "en");
+            List<RefConfig> refConfigs = structureService.getRefConfigs(docTemplate, language);
             if ((refConfigs != null) && !refConfigs.isEmpty()) {
-                String language = XmlUtils.getElementsByXPath(document, xPathCatalog.getXPathDocLanguage()).item(0).getTextContent();
                 refConfig = refConfigs.stream().filter(value -> value.getLanguage().equalsIgnoreCase(language) ||
                         value.getLanguage().equalsIgnoreCase("default")).findFirst().get();
             }

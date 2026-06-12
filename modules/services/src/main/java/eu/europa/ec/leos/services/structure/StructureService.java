@@ -24,6 +24,8 @@ public interface StructureService {
     List<NumberingConfig> getNumberingConfigs(String docTemplate);
 
     List<RefConfig> getRefConfigs(String docTemplate);
+
+    List<RefConfig> getRefConfigs(String docTemplate, String documentLanguage);
     
     String getStructureName(String docTemplate);
     
