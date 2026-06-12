@@ -192,13 +192,9 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
 
     private ApplyMetadataResponse.TaskNode processApplyMetadataRequestTask(ApplyMetadataRequest.TaskNode task, List<XmlFile> documentXmlFiles, String prefinalizedLegName) {
         List<ApplyMetadataResponse.ActionNode> actionResponses = new ArrayList<>();
-        for (ApplyMetadataRequest.ActionNode action : task.getActions()){
+        for (ApplyMetadataRequest.ActionNode action : task.getActions()) {
             actionResponses.add(processApplyMetadataRequestAction(action, documentXmlFiles));
         }
-
-        documentXmlFiles.stream().forEach((xmlFile) -> {
-            metadataService.removeDateIfNeeded(xmlFile);
-        });
 
         final String statusCode = isContainsActionResponseWithErrors(actionResponses) ? "1" : "0";
         return new ApplyMetadataResponse.TaskNode(task.getTaskId(), statusCode, actionResponses,
@@ -218,12 +214,10 @@ class LeosPrefinalisationServiceImpl implements LeosPrefinalisationService {
                 commissionerPos += 1;
             }
         }
-        if (!hasLinkedDocumentsField(action)) {
-            // Remove associatedReferences container if no linkedDocuments are set
-            processApplyMetadataRequestField(new ApplyMetadataRequest.FieldNode(MetadataFieldType.LINKED_DOCUMENTS.toString(), ""), documentXmlFiles, commissionerPos, coteOrFinalCoteField);
-        }
         if (hasCoteField(action)) {
             documentXmlFiles.stream().forEach((xmlFile) -> {
+                metadataService.removeLinkedDocuments(xmlFile);
+                metadataService.removeDateIfNeeded(xmlFile);
                 metadataService.removeTemplateClassAttributes(xmlFile);
             });
         }
