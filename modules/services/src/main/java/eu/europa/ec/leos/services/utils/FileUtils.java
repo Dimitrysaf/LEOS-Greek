@@ -6,6 +6,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
 import org.springframework.web.multipart.MultipartFile;
+import org.verapdf.gf.foundry.VeraGreenfieldFoundryProvider;
 import org.verapdf.pdfa.Foundries;
 import org.verapdf.pdfa.PDFAParser;
 import org.verapdf.pdfa.PDFAValidator;
@@ -23,6 +24,10 @@ import java.util.regex.Pattern;
 import static eu.europa.ec.leos.services.api.exception.ErrorCode.CA001;
 
 public class FileUtils {
+
+    static {
+        VeraGreenfieldFoundryProvider.initialise();
+    }
 
     public static void validateHybridDocument(MultipartFile foreignAnnexFile) throws Exception {
         validatePath(FilenameUtils.normalize(foreignAnnexFile.getOriginalFilename()));
