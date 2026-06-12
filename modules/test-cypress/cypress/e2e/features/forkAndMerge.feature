@@ -1138,6 +1138,7 @@ Feature: fork and merge features
   # Ticket:https://code.europa.eu/leos/core/-/work_items/3024
   #Ticket LEOS##3100 : Wrapper is created for wrong element in legal act
   # Ticket:https://code.europa.eu/leos/core/-/work_items/2909
+  # Ticket:https://code.europa.eu/leos/core/-/work_items/2820
   @VerifyWrapper @local
   Scenario: Wrapper Check for a clone proposal
     Given navigate to leos application with "User1"
@@ -1226,8 +1227,8 @@ Feature: fork and merge features
     Then ck editor window is not displayed
     When  click on insert after icon of article 2
     Then  article 3 is displayed
-    And  content of paragraph 1 of article 1 contains "Text..."
-    And  content of paragraph 2 of article 1 contains "Text..."
+    And  content of paragraph 1 of article 3 contains "Text..."
+    And  content of paragraph 2 of article 3 contains "Text..."
     When mouseover and click on article 3
     Then ck editor window is displayed
     When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
@@ -1242,7 +1243,46 @@ Feature: fork and merge features
     And  add "subpara1" at current cursor position in edition mode
     And click save and close button of ck editor
     Then ck editor window is not displayed
+    #When click on act view link in breadcrumb item
+    #start of the ticket 2820
+    When  click on insert after icon of article 3
+    Then  article 4 is displayed
+    When mouseover and click on article 4
+    Then ck editor window is displayed
+    Then  li 1 with data-akn-element "paragraph" of article contains "Text..." in edition mode
+    And li 2 with data-akn-element "paragraph" of article contains "Text..." in edition mode
+    When click at offset 7 of li 2 with data-akn-element "paragraph" of article in edition mode
+    And add "testing" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And add "Paragraph 3" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on increase indent icon present in ck editor panel
+    And  add "point a" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And  add "point b" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on increase indent icon present in ck editor panel
+    And  add "point i" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And  add "point ii" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on increase indent icon present in ck editor panel
+    And  add "point 1" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And  add "point 2" at current cursor position in edition mode
+    And  click enter from keyboard in edition mode
+    And click on increase indent icon present in ck editor panel
+    And click on increase indent icon present in ck editor panel
+    And  add "point dash 1" at current cursor position in edition mode
+    And click enter from keyboard in edition mode
+    And  add "point dash 2" at current cursor position in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
     When click on act view link in breadcrumb item
+    #End of the ticket :#2820
     #End ticket :#2909
    #StratTicket LEOS##3024 : Wrapper is not creating
     Then user is on act viewer page
@@ -1309,8 +1349,28 @@ Feature: fork and merge features
     And click on decrease indent icon present in ck editor panel
     And click save and close button of ck editor
     Then ck editor window is not displayed
-    When click on act view link in breadcrumb item
     #End ticket #2909
+
+    #Start of the ticket ; #2820
+    And mouseover and click on article 4
+    When click at offset 10 of li 2 with data-akn-element "paragraph" of article in edition mode
+    And click on soft enter icon present in ck editor panel
+    When click at offset 9 in li 1 with data-akn-element "subparagraph" of li 3 with data-akn-element "paragraph" of article in edition mode
+    And click on soft enter icon present in ck editor panel
+    When click at offset 6 in li 1 with data-akn-element "subparagraph" of li 2 with data-akn-element "point" of li 3 with data-akn-element "paragraph" of article in edition mode
+    And click on soft enter icon present in ck editor panel
+    When click at offset 6 in li 1 with data-akn-element "subparagraph" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 3 with data-akn-element "paragraph" of article in edition mode
+    And click on soft enter icon present in ck editor panel
+    When click at offset 6 in li 1 with data-akn-element "subparagraph" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 3 with data-akn-element "paragraph" of article in edition mode
+    And click on soft enter icon present in ck editor panel
+    When click at offset 6 in li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 3 with data-akn-element "paragraph" of article in edition mode
+    And click on soft enter icon present in ck editor panel
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    When click on act view link in breadcrumb item
+    Then user is on act viewer page
+    #End of the ticket : #2820
+
    #Start Ticket LEOS##3024 : Wrapper is not creating
     When click on annex 1 link
     Then user is on annex page
@@ -1358,6 +1418,7 @@ Feature: fork and merge features
     And  wrapper is present for paragraph 1 of article 3
     And wrapper is present for article 3
     And  wrapper is present for paragraph 2 of article 3
+    And wrapper is present for article 4
    #StartTicket LEOS##3024 : Wrapper is not creating
     When click on close button present in legal act page
     Then user is on act viewer page
