@@ -183,6 +183,7 @@ public class LegServiceImpl implements LegService {
 
     public static final String FORMAT_DATE_TIME_ISO_8601 = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
     public static final String SUGGESTION = "suggestion";
+    public static final String HIGHLIGHT = "highlight";
 
     @Autowired
     public LegServiceImpl(PackageRepository packageRepository,
@@ -657,7 +658,8 @@ public class LegServiceImpl implements LegService {
                     xmlContent = xmlContentProcessor.cleanSoftActionsAndRemoveMiscAttributes(memorandum.getContent().get().getSource().getBytes());
                     xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
                 }
-                enrichZipWithMemorandum(contentToZip, exportProposalResource, proposalRefsMap, memorandum, proposal.getMetadata().getOrNull().getRef(), xmlContent);
+                enrichZipWithMemorandum(contentToZip, exportProposalResource, proposalRefsMap, memorandum,
+                        proposal.getMetadata().getOrNull().getRef(), xmlContent, proposal.isClonedProposal());
                 legPackage.addContainedFile(memorandum.getVersionedReference());
             } else if (Bill.class.equals(exportOptions.getFileType())) {
                 final Bill bill = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(),
@@ -683,7 +685,8 @@ public class LegServiceImpl implements LegService {
                 ExportResource exportBillResource = buildExportResourceBill(proposalRefsMap, proposal.getName(), billXmlContent);
                 exportBillResource.setExportOptions(exportOptions);
                 exportProposalResource.addChildResource(exportBillResource);
-                addAnnexToPackage(leosPackage, contentToZip, exportOptions, exportBillResource, legPackage, proposal.getMetadata().getOrNull().getRef(), billXmlContent);
+                addAnnexToPackage(leosPackage, contentToZip, exportOptions, exportBillResource, legPackage,
+                        proposal.getMetadata().getOrNull().getRef(), billXmlContent, proposal.isClonedProposal());
                 legPackage.addContainedFile(bill.getVersionedReference());
             } else if (FinancialStatement.class.equals(exportOptions.getFileType())) {
                 FinancialStatement financialStatement = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(),
@@ -696,7 +699,7 @@ public class LegServiceImpl implements LegService {
                     xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
                 }
                 enrichZipWithFinancialStatement(contentToZip, exportProposalResource, proposalRefsMap, financialStatement,
-                        proposal.getMetadata().getOrNull().getRef(), xmlContent);
+                        proposal.getMetadata().getOrNull().getRef(), xmlContent, proposal.isClonedProposal());
                 legPackage.addContainedFile(financialStatement.getVersionedReference());
             } else if (Explanatory.class.equals(exportOptions.getFileType())) {
             	addExplanatoryToPackage(leosPackage, contentToZip, exportOptions, exportProposalResource, legPackage, proposal);
@@ -706,10 +709,11 @@ public class LegServiceImpl implements LegService {
                 throw new IllegalStateException("Not implemented for type: " + exportOptions.getFileType());
             }
         } else {
-            addMemorandumToPackage(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage, proposal.getMetadata().getOrNull().getRef());
+            addMemorandumToPackage(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage,
+                    proposal.getMetadata().getOrNull().getRef(), proposal.isClonedProposal());
             addExplanatoryToPackage(leosPackage, contentToZip, exportOptions, exportProposalResource, legPackage, proposal);
             addBillToPackage(leosPackage, contentToZip, exportOptions, exportProposalResource, proposalRefsMap, legPackage, proposal);
-            addFinancialStatementToPackage(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage, proposal.getMetadata().getOrNull().getRef());
+            addFinancialStatementToPackage(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage, proposal.getMetadata().getOrNull().getRef(), proposal.isClonedProposal());
 
             if (exportOptions.isWithRenditions()) {
                 addCoverPageHtmlRendition(contentToZip, proposalContent, coverPageStyleSheet, proposal);
@@ -755,10 +759,11 @@ public class LegServiceImpl implements LegService {
             }
         };
 
-        addMemorandumToPackage(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage, proposal.getMetadata().getOrNull().getRef());
+        addMemorandumToPackage(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage,
+                proposal.getMetadata().getOrNull().getRef(), proposal.isClonedProposal());
         addExplanatoryToPackage(leosPackage, contentToZip, exportOptions, exportProposalResource, legPackage, proposal);
         addBillToPackage(leosPackage, contentToZip, exportOptions, exportProposalResource, proposalRefsMap, legPackage, proposal);
-        addFinancialStatementToPackage(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage, proposal.getMetadata().getOrNull().getRef());
+        addFinancialStatementToPackage(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage, proposal.getMetadata().getOrNull().getRef(), proposal.isClonedProposal());
         String legPackageName = proposalRefsMap.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION).concat(LEG_FILE_EXTENSION);
         legPackage.setFile(ZipPackageUtil.zipLeosFiles(legPackageName, contentToZip, language));
         legPackage.setExportResource(exportProposalResource);
@@ -768,7 +773,7 @@ public class LegServiceImpl implements LegService {
 
     private void enrichZipWithFinancialStatement(final Map<String, Object> contentToZip, ExportResource exportProposalResource,
                                          Map<String, String> proposalRefsMap, FinancialStatement financialStatement,
-                                         String proposalRef) {
+                                         String proposalRef, boolean isClonedProposal) {
         ExportOptions exportOptions = exportProposalResource.getExportOptions();
 
         byte[] xmlContent = financialStatement.getContent().get().getSource().getBytes();
@@ -779,8 +784,8 @@ public class LegServiceImpl implements LegService {
         }
         contentToZip.put(financialStatement.getName(), xmlContent);
 
-        addAnnotateToZipContent(contentToZip, financialStatement.getMetadata().get().getRef(), financialStatement.getName(), exportOptions, proposalRef);
-        addFilteredAnnotationsToZipContent(contentToZip, financialStatement.getName(), exportOptions);
+        addAnnotateToZipContent(contentToZip, financialStatement.getMetadata().get().getRef(), financialStatement.getName(), exportOptions, proposalRef, isClonedProposal);
+        addFilteredAnnotationsToZipContent(contentToZip, financialStatement.getName(), exportOptions, isClonedProposal);
 
         if (exportOptions.isWithRenditions()) {
             addResourceToZipContent(contentToZip, financialStatementStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
@@ -794,13 +799,13 @@ public class LegServiceImpl implements LegService {
     }
 
     private ExportResource enrichZipWithFinancialStatement(final Map<String, Object> contentToZip, ExportResource exportProposalResource, Map<String, String> proposalRefsMap,
-                                                           FinancialStatement financialStatement, String proposalRef, byte[] xmlContent) {
+                                                           FinancialStatement financialStatement, String proposalRef, byte[] xmlContent, boolean isClonedProposal) {
         ExportOptions exportOptions = exportProposalResource.getExportOptions();
         contentToZip.put(financialStatement.getName(), xmlContent);
 
-        addAnnotateToZipContent(contentToZip, financialStatement.getMetadata().get().getRef(), financialStatement.getName(), exportOptions, proposalRef);
+        addAnnotateToZipContent(contentToZip, financialStatement.getMetadata().get().getRef(), financialStatement.getName(), exportOptions, proposalRef, isClonedProposal);
         if (exportOptions.getFileType().equals(FinancialStatement.class)) {
-            addFilteredAnnotationsToZipContent(contentToZip, financialStatement.getName(), exportOptions);
+            addFilteredAnnotationsToZipContent(contentToZip, financialStatement.getName(), exportOptions, isClonedProposal);
         }
 
         if (!exportOptions.isComparisonMode() && exportOptions.isWithRenditions()) {
@@ -818,7 +823,7 @@ public class LegServiceImpl implements LegService {
 
     private void addMemorandumToPackage(final LeosPackage leosPackage, final Map<String, Object> contentToZip,
                                         ExportResource exportProposalResource, final Map<String, String> proposalRefsMap,
-                                        LegPackage legPackage, String proposalRef) {
+                                        LegPackage legPackage, String proposalRef, boolean isClonedProposal) {
         final String memorandumRef = proposalRefsMap.get(LeosCategory.MEMORANDUM.name() + "_href");
         if (!StringUtils.isEmpty(memorandumRef) && !memorandumRef.equals("#")) {
             Memorandum memorandum = null;
@@ -830,7 +835,7 @@ public class LegServiceImpl implements LegService {
                 }
             }
             if(memorandum != null) {
-                enrichZipWithMemorandum(contentToZip, exportProposalResource, proposalRefsMap, memorandum, proposalRef);
+                enrichZipWithMemorandum(contentToZip, exportProposalResource, proposalRefsMap, memorandum, proposalRef, isClonedProposal);
                 legPackage.addContainedFile(memorandum.getVersionedReference());
             }
         }
@@ -838,7 +843,7 @@ public class LegServiceImpl implements LegService {
 
     private void addFinancialStatementToPackage(final LeosPackage leosPackage, final Map<String, Object> contentToZip,
                                         ExportResource exportProposalResource, final Map<String, String> proposalRefsMap,
-                                        LegPackage legPackage, String proposalRef) {
+                                        LegPackage legPackage, String proposalRef, boolean isClonedProposal) {
         final String financialStatementRef = proposalRefsMap.get(LeosCategory.STAT_DIGIT_FINANC_LEGIS.name() + "_href");
         if (!StringUtils.isEmpty(financialStatementRef) && !financialStatementRef.equals("#")) {
             FinancialStatement financialStatement = null;
@@ -850,7 +855,7 @@ public class LegServiceImpl implements LegService {
                 }
             }
             if(financialStatement != null) {
-                enrichZipWithFinancialStatement(contentToZip, exportProposalResource, proposalRefsMap, financialStatement, proposalRef);
+                enrichZipWithFinancialStatement(contentToZip, exportProposalResource, proposalRefsMap, financialStatement, proposalRef, isClonedProposal);
                 legPackage.addContainedFile(financialStatement.getVersionedReference());
             }
         }
@@ -890,7 +895,7 @@ public class LegServiceImpl implements LegService {
 
                 if(explanatory != null) {
                     String proposalRef = proposal.getMetadata().getOrNull().getRef();
-                    enrichZipWithExplanatory(contentToZip, exportProposalResource, explanatory, exportOptions, id, href, proposalRef);
+                    enrichZipWithExplanatory(contentToZip, exportProposalResource, explanatory, exportOptions, id, href, proposalRef, proposal.isClonedProposal());
                     legPackage.addContainedFile(explanatory.getVersionedReference());
                 }
             }
@@ -925,14 +930,15 @@ public class LegServiceImpl implements LegService {
                 ExportResource exportBillResource = enrichZipWithBill(contentToZip, exportProposalResource, proposalRefsMap, bill, proposal, billXmlContent);
                 legPackage.addContainedFile(bill.getVersionedReference());
 
-                addAnnexToPackage(leosPackage, contentToZip, exportOptions, exportBillResource, legPackage, proposal.getMetadata().getOrNull().getRef(), billXmlContent);
+                addAnnexToPackage(leosPackage, contentToZip, exportOptions, exportBillResource, legPackage,
+                        proposal.getMetadata().getOrNull().getRef(), billXmlContent, proposal.isClonedProposal());
             }
         }
     }
 
     private void addAnnexToPackage(final LeosPackage leosPackage, final Map<String, Object> contentToZip,
                                    ExportOptions exportOptions, ExportResource exportProposalResource, LegPackage legPackage,
-                                   String proposalRef, byte[] xmlContent) {
+                                   String proposalRef, byte[] xmlContent, boolean isClonedProposal) {
         // if we are in comparison mode, we don't need to fetch the document from CMIS, is already present in exportVersions
         final String annexId = exportOptions.isComparisonMode() ||
                 exportOptions.isCleanVersion() &&
@@ -959,7 +965,7 @@ public class LegServiceImpl implements LegService {
                 }
 
                 if(annex != null) {
-                    enrichZipWithAnnex(contentToZip, exportProposalResource, annex, exportOptions, id, href, proposalRef);
+                    enrichZipWithAnnex(contentToZip, exportProposalResource, annex, exportOptions, id, href, proposalRef, isClonedProposal);
                     legPackage.addContainedFile(annex.getVersionedReference());
                 }
             }
@@ -985,9 +991,9 @@ public class LegServiceImpl implements LegService {
         contentToZip.put(proposalService.generateProposalName(proposal.getMetadata().get().getRef(),
                 proposal.getMetadata().get().getLanguage()), xmlContent);
 
-        addAnnotateToZipContent(contentToZip, proposal.getMetadata().get().getRef(), proposal.getName(), exportOptions, proposal.getMetadata().getOrNull().getRef());
+        addAnnotateToZipContent(contentToZip, proposal.getMetadata().get().getRef(), proposal.getName(), exportOptions, proposal.getMetadata().getOrNull().getRef(), proposal.isClonedProposal());
         if (exportOptions.getFileType().equals(Proposal.class)) {
-            addFilteredAnnotationsToZipContent(contentToZip, proposal.getName(), exportOptions);
+            addFilteredAnnotationsToZipContent(contentToZip, proposal.getName(), exportOptions, proposal.isClonedProposal());
         }
         return buildProposalExportResource(exportProposalResource, proposal.getName(), xmlContent, specificDocumentInformationForMemorandum, specificDocumentInformationForBill,
                 specificDocumentInformationForFinancialStatement);
@@ -1023,9 +1029,10 @@ public class LegServiceImpl implements LegService {
         contentToZip.put(proposalService.generateProposalName(proposal.getMetadata().get().getRef(),
                 proposal.getMetadata().get().getLanguage()), xmlContent);
 
-        addAnnotateToZipContent(contentToZip, proposal.getMetadata().get().getRef(), proposal.getName(), exportOptions, proposal.getMetadata().getOrNull().getRef());
+        addAnnotateToZipContent(contentToZip, proposal.getMetadata().get().getRef(), proposal.getName(), exportOptions,
+                proposal.getMetadata().getOrNull().getRef(), proposal.isClonedProposal());
         if (exportOptions.getFileType().equals(Proposal.class)) {
-            addFilteredAnnotationsToZipContent(contentToZip, proposal.getName(), exportOptions);
+            addFilteredAnnotationsToZipContent(contentToZip, proposal.getName(), exportOptions, proposal.isClonedProposal());
         }
 
         return buildProposalExportResource(exportProposalResource, proposal.getName(), xmlContent,  specificDocumentInformationForMemorandum,  specificDocumentInformationForBill,
@@ -1042,15 +1049,15 @@ public class LegServiceImpl implements LegService {
 
     private void enrichZipWithMemorandum(final Map<String, Object> contentToZip, ExportResource exportProposalResource,
                                          Map<String, String> proposalRefsMap, Memorandum memorandum,
-                                         String proposalRef) {
+                                         String proposalRef, boolean isClonedProposal) {
         ExportOptions exportOptions = exportProposalResource.getExportOptions();
 
         byte[] xmlContent = memorandum.getContent().get().getSource().getBytes();
         xmlContent = addMetadataToMemorandum(memorandum, xmlContent);
         contentToZip.put(memorandum.getName(), xmlContent);
 
-        addAnnotateToZipContent(contentToZip, memorandum.getMetadata().get().getRef(), memorandum.getName(), exportOptions, proposalRef);
-        addFilteredAnnotationsToZipContent(contentToZip, memorandum.getName(), exportOptions);
+        addAnnotateToZipContent(contentToZip, memorandum.getMetadata().get().getRef(), memorandum.getName(), exportOptions, proposalRef, isClonedProposal);
+        addFilteredAnnotationsToZipContent(contentToZip, memorandum.getName(), exportOptions, isClonedProposal);
 
         if (exportOptions.isWithRenditions()) {
             addResourceToZipContent(contentToZip, memoStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
@@ -1064,13 +1071,13 @@ public class LegServiceImpl implements LegService {
     }
 
     private ExportResource enrichZipWithMemorandum(final Map<String, Object> contentToZip, ExportResource exportProposalResource, Map<String, String> proposalRefsMap,
-                                                   Memorandum memorandum, String proposalRef, byte[] xmlContent) {
+                                                   Memorandum memorandum, String proposalRef, byte[] xmlContent, boolean isClonedProposal) {
         ExportOptions exportOptions = exportProposalResource.getExportOptions();
         contentToZip.put(memorandum.getName(), xmlContent);
 
-        addAnnotateToZipContent(contentToZip, memorandum.getMetadata().get().getRef(), memorandum.getName(), exportOptions, proposalRef);
+        addAnnotateToZipContent(contentToZip, memorandum.getMetadata().get().getRef(), memorandum.getName(), exportOptions, proposalRef, isClonedProposal);
         if (exportOptions.getFileType().equals(Memorandum.class)) {
-            addFilteredAnnotationsToZipContent(contentToZip, memorandum.getName(), exportOptions);
+            addFilteredAnnotationsToZipContent(contentToZip, memorandum.getName(), exportOptions, isClonedProposal);
         }
 
         if (!exportOptions.isComparisonMode() && exportOptions.isWithRenditions()) {
@@ -1091,9 +1098,10 @@ public class LegServiceImpl implements LegService {
         ExportOptions exportOptions = exportProposalResource.getExportOptions();
         contentToZip.put(bill.getName(), xmlContent);
 
-        addAnnotateToZipContent(contentToZip, bill.getMetadata().get().getRef(), bill.getName(), exportOptions, proposal.getMetadata().getOrNull().getRef());
+        addAnnotateToZipContent(contentToZip, bill.getMetadata().get().getRef(), bill.getName(), exportOptions,
+                proposal.getMetadata().getOrNull().getRef(), proposal.isClonedProposal());
         if (exportOptions.getFileType().equals(Bill.class)) {
-            addFilteredAnnotationsToZipContent(contentToZip, bill.getName(), exportOptions);
+            addFilteredAnnotationsToZipContent(contentToZip, bill.getName(), exportOptions, proposal.isClonedProposal());
         }
 
         if (!exportOptions.isComparisonMode() && exportOptions.isWithRenditions()) {
@@ -1187,7 +1195,7 @@ public class LegServiceImpl implements LegService {
 
     private void enrichZipWithAnnex(final Map<String, Object> contentToZip, ExportResource exportBillResource,
                                     Annex annex, ExportOptions exportOptions, String resourceId, String href,
-                                    String proposalRef) {
+                                    String proposalRef, boolean isClonedProposal) {
         byte[] xmlContent;
         if(exportOptions.isComparisonMode()){
             xmlContent = getComparedContent(exportOptions);
@@ -1211,9 +1219,9 @@ public class LegServiceImpl implements LegService {
             contentToZip.put(annex.getForeignRenditionOriginalFilename(), annex.getForeignRenditionSource());
         }
 
-        addAnnotateToZipContent(contentToZip, annex.getMetadata().get().getRef(), annex.getName(), exportOptions, proposalRef);
+        addAnnotateToZipContent(contentToZip, annex.getMetadata().get().getRef(), annex.getName(), exportOptions, proposalRef, isClonedProposal);
         if (exportOptions.getFileType().equals(Annex.class)) {
-            addFilteredAnnotationsToZipContent(contentToZip, annex.getName(), exportOptions);
+            addFilteredAnnotationsToZipContent(contentToZip, annex.getName(), exportOptions, isClonedProposal);
         }
 
         if (!exportOptions.isComparisonMode() && exportOptions.isWithRenditions()) {
@@ -1230,7 +1238,7 @@ public class LegServiceImpl implements LegService {
 
     private void enrichZipWithExplanatory(final Map<String, Object> contentToZip, ExportResource exportBillResource,
                                           Explanatory explanatory, ExportOptions exportOptions, String resourceId, String href,
-                                          String proposalRef) {
+                                          String proposalRef, boolean isClonedProposal) {
         byte[] xmlContent;
         if(exportOptions.isComparisonMode()){
             xmlContent = getComparedContent(exportOptions);
@@ -1248,9 +1256,9 @@ public class LegServiceImpl implements LegService {
         }
         contentToZip.put(explanatory.getName(), xmlContent);
 
-        addAnnotateToZipContent(contentToZip, explanatory.getMetadata().get().getRef(), explanatory.getName(), exportOptions, proposalRef);
+        addAnnotateToZipContent(contentToZip, explanatory.getMetadata().get().getRef(), explanatory.getName(), exportOptions, proposalRef, isClonedProposal);
         if (exportOptions.getFileType().equals(Explanatory.class)) {
-            addFilteredAnnotationsToZipContent(contentToZip, explanatory.getName(), exportOptions);
+            addFilteredAnnotationsToZipContent(contentToZip, explanatory.getName(), exportOptions, isClonedProposal);
         }
 
         if (!exportOptions.isComparisonMode() && exportOptions.isWithRenditions()) {
@@ -1648,11 +1656,12 @@ public class LegServiceImpl implements LegService {
     /**
      * Calls service to get Annotations per document
      */
-    private void addAnnotateToZipContent(Map<String, Object> contentToZip, String ref, String docName, ExportOptions exportOptions, String proposalRef) {
+    private void addAnnotateToZipContent(Map<String, Object> contentToZip, String ref, String docName,
+                                         ExportOptions exportOptions, String proposalRef, boolean isClonedProposal) {
         if (exportOptions.isWithAnnotations()) {
             try {
                 String annotations = annotateService.getAnnotations(ref, proposalRef);
-                annotations = processAnnotations(annotations, exportOptions);
+                annotations = processAnnotations(annotations, exportOptions, isClonedProposal);
                 annotations = filterReplies(annotations, ref, proposalRef);
                 final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
                 contentToZip.put(creatAnnotationFileName(docName), xmlAnnotationContent);
@@ -1669,7 +1678,7 @@ public class LegServiceImpl implements LegService {
                 String annotations = getAnnotationsFromZipContent(contentToZip, docName);
                 String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legDoc, proposalRef);
                 List<JsonNode> feedbackReplies = annotateService.getFeedbackRepliesFromDB(ref, proposalRef, legDoc, annotations);
-                feedbackAnnotations = processAnnotations(feedbackAnnotations, exportOptions);
+                feedbackAnnotations = processAnnotations(feedbackAnnotations, exportOptions, true);
                 annotations = addFeedbackAnnotations(annotations, legDoc, feedbackAnnotations, feedbackReplies);
                 annotations = removeFeedbackFlag(annotations);
                 final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
@@ -1827,11 +1836,11 @@ public class LegServiceImpl implements LegService {
     }
 
 
-    public void addFilteredAnnotationsToZipContent(Map<String, Object> contentToZip, String docName, ExportOptions exportOptions) {
+    public void addFilteredAnnotationsToZipContent(Map<String, Object> contentToZip, String docName, ExportOptions exportOptions, boolean isClonedProposal) {
         if (exportOptions.isWithFilteredAnnotations()) {
             try {
                 String annotations = exportOptions.getFilteredAnnotations();
-                annotations = processAnnotations(annotations, exportOptions);
+                annotations = processAnnotations(annotations, exportOptions, isClonedProposal);
                 final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
                 contentToZip.put(creatAnnotationFileName(docName), xmlAnnotationContent);
             } catch(Exception e) {
@@ -1989,7 +1998,7 @@ public class LegServiceImpl implements LegService {
 
         //5. Add financial statement to package
         addFinancialStatementToPackage(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage,
-                proposal.getMetadata().getOrNull().getRef());
+                proposal.getMetadata().getOrNull().getRef(), proposal.isClonedProposal());
 
         if (exportOptions.isWithRenditions()) {
             //6. Add toc and media
@@ -2043,7 +2052,7 @@ public class LegServiceImpl implements LegService {
         if (exportOptions.isWithAnnotations()) {
             addAnnotateToZipContentForClone(contentToZip, bill.getMetadata().get().getRef(), bill.getName(), proposal.getMetadata().getOrNull().getRef(), exportOptions);
             if (exportOptions.getFileType().equals(Bill.class)) {
-                addFilteredAnnotationsToZipContent(contentToZip, bill.getName(), exportOptions);
+                addFilteredAnnotationsToZipContent(contentToZip, bill.getName(), exportOptions,  proposal.isClonedProposal());
             }
         }
 
@@ -2104,7 +2113,7 @@ public class LegServiceImpl implements LegService {
         if(exportOptions.isWithAnnotations()) {
             addAnnotateToZipContentForClone(contentToZip, annex.getMetadata().get().getRef(), annex.getName(), proposalRef, exportOptions);
             if (exportOptions.getFileType().equals(Annex.class)) {
-                addFilteredAnnotationsToZipContent(contentToZip, annex.getName(), exportOptions);
+                addFilteredAnnotationsToZipContent(contentToZip, annex.getName(), exportOptions, true);
             }
         }
 
@@ -2158,7 +2167,7 @@ public class LegServiceImpl implements LegService {
         if (exportOptions.isWithAnnotations()) {
             addAnnotateToZipContentForClone(contentToZip, memorandum.getMetadata().get().getRef(), memorandum.getName(), proposalRef, exportOptions);
             if (exportOptions.getFileType().equals(Memorandum.class)) {
-                addFilteredAnnotationsToZipContent(contentToZip, memorandum.getName(), exportOptions);
+                addFilteredAnnotationsToZipContent(contentToZip, memorandum.getName(), exportOptions, true);
             }
         }
 
@@ -2176,7 +2185,7 @@ public class LegServiceImpl implements LegService {
     private void addAnnotateToZipContentForClone(Map<String, Object> contentToZip, String ref, String docName, String proposalRef, ExportOptions exportOptions) {
         try {
             String annotations = annotateService.getAnnotations(ref, proposalRef);
-            annotations = processAnnotations(annotations, exportOptions);
+            annotations = processAnnotations(annotations, exportOptions, true);
             annotations = filterReplies(annotations, ref, proposalRef);
             final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
             contentToZip.put(creatAnnotationFileName(docName), xmlAnnotationContent);
@@ -2203,7 +2212,7 @@ public class LegServiceImpl implements LegService {
         return mapper.writeValueAsString(json);
     }
 
-    private String processAnnotations(String annotations, ExportOptions exportOptions) throws JsonProcessingException {
+    private String processAnnotations(String annotations, ExportOptions exportOptions, boolean isClonedProposal) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode json = mapper.readTree(annotations);
         JsonNode rootNode = json.get("rows");
@@ -2214,6 +2223,10 @@ public class LegServiceImpl implements LegService {
         itr.forEachRemaining(node -> {
             if (!exportOptions.isWithSuggestions() && node.findValue("tags").get(0) != null && node.findValue("tags").get(0).textValue().equalsIgnoreCase(SUGGESTION)) {
                 // Skip suggestions
+                return;
+            }
+            if (isClonedProposal && node.findValue("tags").get(0) != null && node.findValue("tags").get(0).textValue().equalsIgnoreCase(HIGHLIGHT)) {
+                // Skip highlight
                 return;
             }
 
