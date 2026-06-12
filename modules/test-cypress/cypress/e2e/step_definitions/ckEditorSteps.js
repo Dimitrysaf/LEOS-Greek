@@ -932,3 +932,11 @@ Then('click on reject this change context menu option in edition mode', function
 When(`click at offset {int} in li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode`, (offSet, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4) => {
     ckEditorWindow.moveCursorToSpecificOffsetInThirdLayerPointOfParagraphOfArticle(offSet, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4);
 });
+
+When ('click at offset {int} in li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode',(offset,li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4,li5,dataAknElement5)=>{
+    ckEditorWindow.moveCursorToSpecificOffsetInFourthLayerPointOfParagraphOfArticle(offset,li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4,li5,dataAknElement5);
+});
+
+
+
+
