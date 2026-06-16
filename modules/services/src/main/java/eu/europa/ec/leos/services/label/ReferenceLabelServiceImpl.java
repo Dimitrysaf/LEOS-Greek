@@ -40,10 +40,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.w3c.dom.Node;
 
 import jakarta.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -270,7 +268,7 @@ abstract class ReferenceLabelServiceImpl implements ReferenceLabelService {
         for (LabelHandler rule : labelHandlers) {
             if(rule.canProcess(refs)) {
                 rule.addPreffix(accumulator, docType, refs);
-                rule.process(refs, mrefCommonNodes, sourceNode, accumulator, languageHelper.getCurrentLocale(), withAnchor, capital);
+                rule.process(refs, mrefCommonNodes, sourceNode, accumulator, Locale.ENGLISH, withAnchor, capital);
                 rule.addSuffix(accumulator, docType, refs);
                 break;
             }

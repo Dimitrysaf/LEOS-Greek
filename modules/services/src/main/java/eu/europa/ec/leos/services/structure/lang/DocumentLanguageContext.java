@@ -23,6 +23,6 @@ public class DocumentLanguageContext {
 
     public void setDocumentLanguage(String documentLanguage) {
         this.documentLanguage = documentLanguage;
-        this.languageHelper.setProposalLanguageTag(Locale.ENGLISH.getLanguage());
+        this.languageHelper.setProposalLanguageTag(documentLanguage.toLowerCase());
     }
 }
