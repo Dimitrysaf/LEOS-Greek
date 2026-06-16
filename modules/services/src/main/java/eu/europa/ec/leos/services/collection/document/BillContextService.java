@@ -45,6 +45,7 @@ import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
+import eu.europa.ec.leos.services.utils.FileUtils;
 import eu.europa.ec.leos.services.utils.LanguageMapUtils;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
@@ -403,6 +404,11 @@ public class BillContextService {
         List<Annex> annexes = new ArrayList<>();
         for (DocumentVO docChild : billDocument.getChildDocuments()) {
             if (docChild.getCategory() == ANNEX) {
+                String newName = FileUtils.getFileNameCaseSensitive(docChild.getName());
+                docChild.setOriginalFilename(docChild.getOriginalFilename().replace(docChild.getRef(), newName));
+                if (docChild.getForeignRenditionOriginalFilename() != null) {
+                    docChild.setForeignRenditionOriginalFilename(docChild.getForeignRenditionOriginalFilename().replace(docChild.getRef(), newName));
+                }
                 useAnnexDocument(docChild);
                 Annex annex = executeImportBillAnnex();
                 annexes.add(annex);
@@ -628,7 +634,7 @@ public class BillContextService {
         executeCreateBillAnnex(null, null, null);
     }
 
-    public void executeCreateBillAnnex(AnnexType annexType, byte[] binaryContent, String originalFilename) {
+    public void executeCreateBillAnnex(AnnexType annexType, byte[] binaryContent, String fileExtension) {
         LOG.trace("Executing 'Create Bill Annex' use case...");
 
         Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
@@ -663,7 +669,7 @@ public class BillContextService {
             annexContext.useExistingTitle(existingAnnexTitle);
             annexContext.useExistingContent(existingAnnexContent, true);
         }
-        Annex annex = annexContext.executeCreateAnnex(annexType, binaryContent, originalFilename);
+        Annex annex = annexContext.executeCreateAnnex(annexType, binaryContent, fileExtension);
 
         String href = annex.getName();
         String showAs = annexNumber; //createdAnnex.getMetadata().get().getNumber(); //ShowAs attribute is not used so it is kept as blank as of now.

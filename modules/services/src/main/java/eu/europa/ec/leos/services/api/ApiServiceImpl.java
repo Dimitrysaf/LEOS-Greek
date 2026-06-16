@@ -165,7 +165,7 @@ import static eu.europa.ec.leos.services.converter.ProposalConverterServiceImpl.
 import static eu.europa.ec.leos.services.support.LeosXmlUtils.getTitleValue;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 import static eu.europa.ec.leos.services.utils.FileUtils.getFileExtension;
-import static eu.europa.ec.leos.services.utils.FileUtils.getFileName;
+import static eu.europa.ec.leos.services.utils.FileUtils.getFileNameCaseSensitive;
 import static eu.europa.ec.leos.services.utils.FileUtils.getMimeType;
 import static org.apache.commons.lang3.StringEscapeUtils.escapeXml10;
 import static org.apache.commons.lang3.StringUtils.normalizeSpace;
@@ -1336,7 +1336,7 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public void createProposalAnnex(String proposalRef, String originRef, AnnexType annexType, byte[] binaryContent, String originalFilename) throws IOException {
+    public void createProposalAnnex(String proposalRef, String originRef, AnnexType annexType, byte[] binaryContent, String fileExtension) throws IOException {
         LOG.trace("Creating annex...");
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
@@ -1345,10 +1345,6 @@ public abstract class ApiServiceImpl implements ApiService {
                 populateTrackChangesContext(proposal);
                 LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
                 List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
-                boolean annexExistWithSameName = StringUtils.isEmpty(originalFilename) ? false : documents.stream().filter(xmlDocument -> xmlDocument.getCategory().equals(LeosCategory.ANNEX) && StringUtils.isNotEmpty(xmlDocument.getOriginalFilename()) && xmlDocument.getOriginalFilename().toUpperCase().trim().equals(originalFilename.toUpperCase().trim())).findAny().isPresent();
-                if (annexExistWithSameName) {
-                    throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.same.name.error");
-                }
                 if (proposal.getMetadata() != null && proposal.getMetadata().get().isCustomTemplateAct()){
                     documents.forEach(document -> {
                         if (document.getCategory().equals(LeosCategory.ANNEX)){
@@ -1377,7 +1373,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.useCloneProposal(isClonedProposal);
                 billContext.useOriginRef(isClonedProposal ? cloneOriginRef : originRef);
                 billContext.usePackageRef(proposalRef);
-                billContext.executeCreateBillAnnex(annexType, binaryContent, originalFilename);
+                billContext.executeCreateBillAnnex(annexType, binaryContent, fileExtension);
                 billService.updateExternalReferencesAsync(leosPackage);
             } catch (IOException e) {
                 LOG.error("Unexpected error occurred while creating new annex", e);
@@ -1632,24 +1628,18 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public void updateForeignAnnex(String proposalRef, String annexId, byte[] binaryContent, String originalFilename) {
-        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
-        List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
-        boolean annexExistWithSameName = documents.stream().filter(xmlDocument -> { return xmlDocument.getCategory().equals(LeosCategory.ANNEX) && !xmlDocument.getId().equals(annexId) && StringUtils.isNotEmpty(xmlDocument.getOriginalFilename()) && xmlDocument.getOriginalFilename().toUpperCase().equals(originalFilename.toUpperCase()); }).findAny().isPresent();
-        if (annexExistWithSameName) {
-            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.same.name.error");
-        }
+    public void updateForeignAnnex(String proposalRef, String annexId, byte[] binaryContent, String fileExtension) {
         Annex annex = annexService.findAnnex(annexId, true);
+        String originalFilename = getFileNameCaseSensitive(annex.getOriginalFilename()) + "." + fileExtension.toLowerCase();
         AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
         if (binaryContent != null) {
-            String extension = getFileExtension(originalFilename);
-            String mimeType = getMimeType(extension);
-            String showAs = getShowAsForForeignAnnex(extension);
+            String mimeType = getMimeType(fileExtension);
+            String showAs = getShowAsForForeignAnnex(fileExtension);
             metadata = metadata.builder()
-                .withFileFormatRefersTo("~" + extension)
+                .withFileFormatRefersTo("~" + fileExtension)
                 .withFileFormatValue(mimeType)
-                .withTlcReferenceNameFormatId(extension)
-                .withTlcReferenceNameFormatHref("http://publications.europa.eu/resource/authority/file-type/" + extension)
+                .withTlcReferenceNameFormatId(fileExtension)
+                .withTlcReferenceNameFormatHref("http://publications.europa.eu/resource/authority/file-type/" + fileExtension)
                 .withTlcReferenceNameFormatShowAs(showAs)
                 .withForeignAnnexSource(originalFilename)
                 .build();
@@ -1658,14 +1648,10 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public void uploadForeignAnnexRendition(String proposalRef, String annexId, byte[] foreignAnnexRenditionContent, String foreignAnnexRenditionOriginalFilename) {
+    public void uploadForeignAnnexRendition(String proposalRef, String annexId, byte[] foreignAnnexRenditionContent) {
         Annex annex = annexService.findAnnex(annexId, true);
         AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
-        String annexFileName = getFileName(annex.getOriginalFilename());
-        String annexRenditionFileName = getFileName(foreignAnnexRenditionOriginalFilename);
-        if (!annexFileName.equals(annexRenditionFileName)) {
-            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.alert.upload.rendition.different.name");
-        }
+        String foreignAnnexRenditionOriginalFilename = getFileNameCaseSensitive(annex.getOriginalFilename()) + ".pdf";
         annexService.updateAnnex(annex, metadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_FOREIGN_ANNEX_RENDITION_UPDATED), foreignAnnexRenditionContent, foreignAnnexRenditionOriginalFilename);
     }
 
