@@ -526,7 +526,7 @@
   "page.collection.drafts.annex.invalid.file.title": "Annexes",
   "page.collection.drafts.annex.invalid.file.message": "The file must be in one of these format: PDF/A format (archiving standard), DOCX or XLSX.<br>Please convert your document before trying again.",
   "page.collection.drafts.annex.not.pdfa.title": "Annexes",
-  "page.collection.drafts.annex.not.pdfa.message": "The pdf needs to be PDF/A. Please upload a valid document.",
+  "page.collection.drafts.annex.not.pdfa.message": "The pdf needs to be PDF/A. Please upload a valid document.<br>To know what a PDF/A file is and how to create it, please visit https://www.adobe.com/uk/acrobat/resources/document-files/pdf-types/pdf-a.html",
   "page.collection.drafts.annex.invalid.file.name.title": "Annexes",
   "page.collection.drafts.annex.invalid.file.name.message": "File name must contain only letters, numbers, dots, hyphens, underscores, spaces, <br>or parentheses, and must have a .pdf, .docx, or .xlsx extension.",
   "page.collection.drafts.annex.invalid.rendition.file.name.title": "Annexes",
