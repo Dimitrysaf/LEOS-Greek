@@ -46,12 +46,10 @@ Feature: CK Editor Regression Features
     When click on subscript icon present in ck editor panel
     Then "sub" tag is present in citation in edition mode
     When click on undo icon present in ck editor panel
-    And  click on undo icon present in ck editor panel
     Then "sub" tag is not present in citation in edition mode
     When click on superscript icon present in ck editor panel
     Then "sup" tag is present in citation in edition mode
     When click on undo icon present in ck editor panel
-    And  click on undo icon present in ck editor panel
     Then "sup" tag is not present in citation in edition mode
     When click on insert footnote icon present in ck editor panel
     Then cke dialog window is displayed with title "Edit Footnote"
@@ -93,12 +91,10 @@ Feature: CK Editor Regression Features
     When click on subscript icon present in ck editor panel
     Then "sub" tag is present in recital in edition mode
     When click on undo icon present in ck editor panel
-    And  click on undo icon present in ck editor panel
     Then "sub" tag is not present in recital in edition mode
     When click on superscript icon present in ck editor panel
     Then "sup" tag is present in recital in edition mode
     When click on undo icon present in ck editor panel
-    And  click on undo icon present in ck editor panel
     Then "sup" tag is not present in recital in edition mode
     When click on insert footnote icon present in ck editor panel
     Then cke dialog window is displayed with title "Edit Footnote"
@@ -130,7 +126,6 @@ Feature: CK Editor Regression Features
     And  redo button is disabled in ck editor
     And  numbered paragraph 1 of article contains "TEXT" in edition mode
     When click on undo icon present in ck editor panel
-    And  click on undo icon present in ck editor panel
     Then undo button is disabled in ck editor
     And  redo button is enabled in ck editor
     And  numbered paragraph 1 of article contains "Text" in edition mode
@@ -142,12 +137,10 @@ Feature: CK Editor Regression Features
     When click on subscript icon present in ck editor panel
     Then numbered paragraph 1 of article contains "sub" tag in edition mode
     When click on undo icon present in ck editor panel
-    And  click on undo icon present in ck editor panel
     Then numbered paragraph 1 of article doesn't contain "sub" tag in edition mode
     When click on superscript icon present in ck editor panel
     Then numbered paragraph 1 of article contains "sup" tag in edition mode
     When click on undo icon present in ck editor panel
-    And  click on undo icon present in ck editor panel
     Then numbered paragraph 1 of article doesn't contain "sup" tag in edition mode
     When click on insert footnote icon present in ck editor panel
     Then cke dialog window is displayed with title "Edit Footnote"

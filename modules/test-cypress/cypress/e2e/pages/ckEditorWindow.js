@@ -150,6 +150,7 @@ class ckEditorWindow {
 
     clickUndoIcon() {
         this.elements.undoBtn().click();
+        this.elements.undoBtn().click();
     }
 
     clickRedoIcon() {
