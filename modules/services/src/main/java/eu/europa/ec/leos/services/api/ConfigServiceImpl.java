@@ -100,6 +100,8 @@ public class ConfigServiceImpl implements ConfigService {
         boolean repetitiveActsEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.repetitive.acts.enabled"));
         boolean linguisticVersionsEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.custom.template.linguistic.versions.enabled"));
         boolean annexHybridDocumentsEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.annex.hybrid.documents.enabled"));
+        boolean ref2linkLinkedDataEnabled = Boolean.parseBoolean(integrationProperties.getProperty("leos.ref2link.linked.data.enabled", "false"));
+        String ref2linkPublicationsServiceUrl = integrationProperties.getProperty("leos.ref2link.publications.service.url", "");
 
         appConfigResponse.setMappingUrl(mappingUrl);
         appConfigResponse.setImplicitSaveAndClose(implicitSaveEnabled);
@@ -134,6 +136,8 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setLinguisticVersionsEnabled(linguisticVersionsEnabled);
         appConfigResponse.setLanguages(languages);
         appConfigResponse.setAnnexHybridDocumentsEnabled(annexHybridDocumentsEnabled);
+        appConfigResponse.setRef2linkLinkedDataEnabled(ref2linkLinkedDataEnabled);
+        appConfigResponse.setRef2linkPublicationsServiceUrl(ref2linkPublicationsServiceUrl);
 
         return appConfigResponse;
     }

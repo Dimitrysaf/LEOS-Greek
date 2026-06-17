@@ -72,6 +72,8 @@ export type LeosConfig = {
   linguisticVersionsEnabled: boolean;
   languages: string[];
   annexHybridDocumentsEnabled: boolean;
+  ref2linkLinkedDataEnabled: boolean;
+  ref2linkPublicationsServiceUrl: string;
 };
 
 export type LeosAppConfig = LeosConfig & {
