@@ -7694,9 +7694,9 @@
                 <heading leos:editable="false">
                     <i>Financed from voted budget</i>
                 </heading>
-                <subparagraph leos:editable="false" style="text-align: right; margin-bottom: -15px;">
+                <subparagraph leos:editable="false">
                     <content>
-                        <p>Estimate to be expressed in full-time equivalent units (FTEs)
+                        <p class="eur_million">Estimate to be expressed in full-time equivalent units (FTEs)
                             <authorialNote marker="18" placement="bottom">
                                 <p>Please specify below the table how many FTEs within the number
                                     indicated are already assigned to the management of the action
@@ -8333,8 +8333,8 @@
                             </tr>
                             <tr style="height: 15.0pt;">
                                 <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 02 01 (AC, END from the global
-                                        envelope)</p>
+                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 02 01 (AC, END from the 'global
+                                        envelope')</p>
                                 </td>
                                 <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: center;">0</p>
@@ -8776,8 +8776,8 @@
                             </tr>
                             <tr style="height: 15.0pt;">
                                 <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 02 01 (AC, END from the global
-                                        envelope)</p>
+                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 02 01 (AC, END from the 'global
+                                        envelope')</p>
                                 </td>
                                 <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
                                     <p style="margin: 0cm; text-align: center;">0</p>

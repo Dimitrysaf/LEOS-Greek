@@ -40,7 +40,7 @@
     {
       "targets": [
         {
-          "destinationPath": "//level[19]",
+          "destinationPath": "//level[19]/heading[1]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -76,7 +76,7 @@
     {
       "targets": [
         {
-          "destinationPath": "//level[24]",
+          "destinationPath": "//level[24]/heading[1]",
           "position": "AFTER-WRAPPER"
         }
       ],
