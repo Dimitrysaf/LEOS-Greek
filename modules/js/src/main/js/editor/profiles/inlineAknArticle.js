@@ -53,6 +53,7 @@ define(function aknInlineArticleProfileModule(require) {
     plugins.push(require("plugins/leosXmlEntities/leosXmlEntitiesPlugin"));
     plugins.push(require("plugins/leosTextCaseChanger/leosTextCaseChangerPlugin"));
     plugins.push(require("plugins/leosSpecialChar/leosSpecialCharPlugin"));
+    plugins.push(require("plugins/leosUndo/leosUndoPlugin"));
     plugins.push(require("plugins/leosSpellChecker/leosSpellCheckerPlugin"));
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
     plugins.push(require("plugins/leosSubElementMove/leosSubElementMovePlugin"));

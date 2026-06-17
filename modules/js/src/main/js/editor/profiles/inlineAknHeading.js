@@ -41,6 +41,7 @@ define(function aknHigherElementProfileModule(require) {
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
     plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
+    plugins.push(require("plugins/leosUndo/leosUndoPlugin"));
     plugins.push(require("plugins/leosOrientation/leosOrientationPlugin"));
     plugins.push(require("plugins/leosProcessTranslation/leosProcessTranslationPlugin"));
     plugins.push(require("plugins/leosSpecialChar/leosSpecialCharPlugin"));

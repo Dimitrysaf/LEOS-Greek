@@ -69,6 +69,7 @@ define(function aknExplanatoryLevelProfileModule(require) {
     plugins.push(require("plugins/aknHeading/aknHeadingPlugin"));
     plugins.push(require("plugins/aknExplanatoryLevel/aknExplanatoryLevelPlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
+    plugins.push(require("plugins/leosUndo/leosUndoPlugin"));
 
     var pluginNames=[];
     var specificConfig={

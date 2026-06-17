@@ -85,12 +85,13 @@ define(function aknArticlePluginModule(require) {
      * Removes the initial snapshot which don't have 'article' as top level element 
      */
     function removeInitialSnapshot(event) {
-        if (event.editor.undoManager.snapshots.length > 0) {
+        if (event.editor.undoManager && event.editor.undoManager.snapshots && event.editor.undoManager.snapshots.length > 0) {
             if (event.editor.undoManager.snapshots[0].contents.indexOf("article")<0) {
                 event.editor.undoManager.snapshots.shift();
             }
         }
     }
+
     
     var transformationConfig = {
         akn : 'article',

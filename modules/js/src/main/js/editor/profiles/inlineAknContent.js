@@ -53,6 +53,7 @@ define(function aknInlineContentModule(require) {
     plugins.push(require("plugins/aknOrganization/aknOrganizationPlugin"));
     plugins.push(require("plugins/aknRole/aknRolePlugin"));
     plugins.push(require("plugins/aknPerson/aknPersonPlugin"));
+    plugins.push(require("plugins/leosUndo/leosUndoPlugin"));
 
     var pluginNames=[];
     var specificConfig={

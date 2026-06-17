@@ -42,6 +42,7 @@ define(function aknDivisionHeadingProfileModule(require) {
     plugins.push(require("plugins/aknHtmlSubScript/aknHtmlSubScriptPlugin"));
     plugins.push(require("plugins/leosTextCaseChanger/leosTextCaseChangerPlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
+    plugins.push(require("plugins/leosUndo/leosUndoPlugin"));
     plugins.push(require("plugins/leosSpecialChar/leosSpecialCharPlugin"));
 
     var pluginNames=[];

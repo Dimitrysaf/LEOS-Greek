@@ -59,6 +59,7 @@ define(function aknInlineAknExpanatoryBlockHeadingProfileModule(require) {
     plugins.push(require("plugins/aknBlockHeading/aknBlockHeadingPlugin"));
 	plugins.push(require("plugins/leosPaste/leosPastePlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
+    plugins.push(require("plugins/leosUndo/leosUndoPlugin"));
 
     var pluginNames=[];
     var specificConfig={};

@@ -58,6 +58,7 @@ define(function aknSignatoryProfileModule(require) {
     plugins.push(require("plugins/leosDapInfo/leosDapInfo"));
     plugins.push(require("plugins/leosAlternativesSignatory/leosAlternativesSignatoryPlugin"));
     plugins.push(require("plugins/leosToolbar/leosToolbarPlugin"));
+    plugins.push(require("plugins/leosUndo/leosUndoPlugin"));
 
     var pluginNames=[];
     var specificConfig={};

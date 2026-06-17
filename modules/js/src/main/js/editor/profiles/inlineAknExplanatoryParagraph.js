@@ -68,6 +68,7 @@ define(function aknExplanatoryParagraphProfileModule(require) {
     plugins.push(require("plugins/aknHtmlUnderline/aknHtmlUnderlinePlugin"));
     plugins.push(require("plugins/aknHtmlStrikeThrough/aknHtmlStrikeThroughPlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
+    plugins.push(require("plugins/leosUndo/leosUndoPlugin"));
 
 
     var pluginNames=[];
