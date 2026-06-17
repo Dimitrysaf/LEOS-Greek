@@ -21,7 +21,7 @@
                     <FRBRuri value=""/>
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
-                    <FRBRlanguage language="en"/>
+                    <FRBRlanguage language="{{language}}"/>
                 </FRBRExpression>
                 <FRBRManifestation>
                     <FRBRthis value=""/>
@@ -40,7 +40,7 @@
                 <TLCRole xml:id="PRESID" href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
                 <TLCReference xml:id="DEC" href="http://publications.europa.eu/resource/authority/resource-type/DEC" name="docType" showAs="Decision"/>
                 <TLCReference xml:id="legalBasis" href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis"/>
-                <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en"/>
+                <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/{{language3}}" name="language" showAs="{{language}}"/>
                 <TLCConcept xml:id="ART_DEF" href="http://publications.europa.eu/resource/authority/subdivision-content/ART_DEF" showAs="Article on definitions"/>
             </references>
             <proprietary source="~COM">
@@ -58,72 +58,72 @@
             </container>  
             <longTitle>
                 <p>
-                    <docType refersTo="~DEC">COMMISSION DECISION (EU) .../...</docType> of <date date="2999-01-01">XXX</date>
-                    <docPurpose>on ...</docPurpose>
+                    <docType refersTo="~DEC">{{docType.decision.eu}}</docType>{{pr.afterDocType}}<date date="2999-01-01">{{dateContent}}</date>{{pr.afterDateContent}}
+                    <docPurpose>{{docPurpose}}</docPurpose>
                 </p>
             </longTitle>
         </preface>
         <preamble>
             <formula name="actingEntity">
-                <p>THE EUROPEAN COMMISSION,</p>
+                <p>{{bl.commission.decision}}</p>
             </formula>
             <citations leos:editable="false">
                 <citation refersTo="~_legalBasis" leos:editable="true">
-                    <p>Having regard to the Treaty on the Functioning of the European Union,</p>
+                    <p>{{bl.citation1}}</p>
                 </citation>
                 <citation leos:editable="true">
-                    <p>Having regard to [...] <authorialNote marker="1" placement="bottom"><p>OJ L [...], [...], p. [...].</p></authorialNote>, and in particular Article [...] thereof,</p>
+                    <p>{{bl.citation2Before}}<authorialNote marker="1" placement="bottom"><p>{{bl.citation2inside}}</p></authorialNote>{{bl.citation2after}}</p>
                 </citation>
             </citations>
             <recitals leos:editable="false">
-                <intro><p>Whereas:</p></intro>
+                <intro><p>{{bl.intro}}</p></intro>
                 <recital leos:editable="true">
                     <num>(1)</num>
-                    <p>Recital...</p>
+                    <p>{{bl.recital}}</p>
                 </recital>
                 <recital leos:editable="true">
                     <num>(2)</num>
-                    <p>Recital...</p>
+                    <p>{{bl.recital}}</p>
                 </recital>
             </recitals>
             <formula name="enactingFormula">
-                <p>HAS ADOPTED THIS DECISION:</p>
+                <p>{{bl.enactingFormula.decision}}</p>
             </formula>
         </preamble>
         <body>
             <article leos:editable="true" leos:deletable="true" leos:autonumbering="true">
-                <num leos:editable="false">Article 1</num>
-                <heading>Article heading...</heading>
+                <num leos:editable="false">{{bl.num1}}</num>
+                <heading>{{bl.heading}}</heading>
                 <paragraph>
                     <num>1.</num>
                     <content>
-                        <p>Text...</p>
+                        <p>{{bl.content}}</p>
                     </content>
                 </paragraph>
                 <paragraph>
                     <num>2.</num>
                     <content>
-                        <p>Text...</p>
+                        <p>{{bl.content}}</p>
                     </content>
                 </paragraph>
             </article>
             <article leos:editable="true" leos:deletable="true" leos:autonumbering="true">
-                <num leos:editable="false">Article 2</num>
-                <heading>Article heading...</heading>
+                <num leos:editable="false">{{bl.num2}}</num>
+                <heading>{{bl.heading}}</heading>
                 <paragraph>
                     <content>
-                        <p>This Decision  shall enter into force on the [...] day following that of its publication in the <i>Official Journal of the European Union</i>.</p>
+                        <p>{{bl.article2.decision}}</p>
                     </content>
                 </paragraph>
             </article>
            
         </body>
         <conclusions>
-            <p>Done at <location refersTo="~BEL_BRU">Brussels</location>, <date class="template" date="2999-01-01"/></p>
+            <p>{{bl.conclusionDate}}</p>
             <block name="signatory" leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1" leos:selectedoption="1">
                 <signature leos:optionlist="listOption1">
-                    <organization refersTo="~COM">For the Commission</organization>
-                    <role refersTo="~PRESID">The President</role>
+                    <organization refersTo="~COM">{{bl.forCommission}}</organization>
+                    <role refersTo="~PRESID">{{bl.role.president}}</role>
                     <person refersTo="">[...]</person>
                 </signature>
             </block>
