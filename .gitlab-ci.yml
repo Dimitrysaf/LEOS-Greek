@@ -146,7 +146,6 @@ playwright:
   after_script:
     - cd $CI_PROJECT_DIR/modules/test-playwright
     - npx allure-commandline generate reports/allure-results --clean -o reports/allure-report
-    - rm -f .workers
   artifacts:
     expire_in: 1 day
     when: always
