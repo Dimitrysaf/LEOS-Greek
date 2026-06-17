@@ -99,6 +99,10 @@ define(function datePickerExtensionModule(require) {
         if (!connector.getState().hasUpdatePermission) {
             $("button.ui-datepicker-trigger").attr("disabled", true);
         }
+        if ($(selector).closest('coverpage').length > 0) {
+            $("button.ui-datepicker-trigger").remove();
+            $(selector).next('input[type="hidden"]').remove();
+        }
     }
 
     function padZero(value) {
