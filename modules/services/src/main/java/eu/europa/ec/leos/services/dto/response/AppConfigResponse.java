@@ -55,6 +55,9 @@ public class AppConfigResponse {
     private List<String> languages;
     private boolean annexHybridDocumentsEnabled;
 
+    private boolean ref2linkLinkedDataEnabled;
+    private String ref2linkPublicationsServiceUrl;
+
     public AppConfigResponse() {
     }
 
@@ -287,6 +290,22 @@ public class AppConfigResponse {
 
     public void setAnnexHybridDocumentsEnabled(final boolean annexHybridDocumentsEnabled) {
         this.annexHybridDocumentsEnabled = annexHybridDocumentsEnabled;
+    }
+
+    public boolean getRef2linkLinkedDataEnabled() {
+        return this.ref2linkLinkedDataEnabled;
+    }
+
+    public void setRef2linkLinkedDataEnabled(final boolean ref2linkLinkedDataEnabled) {
+        this.ref2linkLinkedDataEnabled = ref2linkLinkedDataEnabled;
+    }
+
+    public String getRef2linkPublicationsServiceUrl() {
+        return this.ref2linkPublicationsServiceUrl;
+    }
+
+    public void setRef2linkPublicationsServiceUrl(final String ref2linkPublicationsServiceUrl) {
+        this.ref2linkPublicationsServiceUrl = ref2linkPublicationsServiceUrl;
     }
 
 }

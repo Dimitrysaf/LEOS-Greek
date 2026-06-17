@@ -30,14 +30,19 @@ define(function refToLinkExtensionModule(require) {
 
         target = UTILS.getParentElement(connector);
         otherTargets = connector.otherTargets;
+        const linkedDataEnabled = connector.getState().ref2linkLinkedDataEnabled;
 
         let R2L = window['R2L'];
         // configure ref2Link
         // See https://webgate.ec.europa.eu/fpfis/wikis/spaces/Ref2Link/pages/800752769/Ref2Link+Javascript+API+advanced+v1.3 for available options
         R2L.setOptions({
-            worker: true,  // use a web worker for a smoother UX
-            linkeddata: true // enable linked data
+            worker: true, // use a web worker for a smoother UX
+            linkeddata: linkedDataEnabled // enable or disable linked data
         });
+
+        if (linkedDataEnabled) {
+            R2L.setConstant('R2L_PUBLICATIONS_ENDPOINT', connector.getState().ref2linkPublicationsServiceUrl);
+        }
 
         R2L.setFilter('environments', ['EC-PRD']);// enable sets of rules
 
