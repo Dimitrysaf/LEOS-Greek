@@ -405,7 +405,9 @@ public class BillContextService {
         for (DocumentVO docChild : billDocument.getChildDocuments()) {
             if (docChild.getCategory() == ANNEX) {
                 String newName = FileUtils.getFileNameCaseSensitive(docChild.getName());
-                docChild.setOriginalFilename(docChild.getOriginalFilename().replace(docChild.getRef(), newName));
+                if (docChild.getOriginalFilename() != null) {
+                    docChild.setOriginalFilename(docChild.getOriginalFilename().replace(docChild.getRef(), newName));
+                }
                 if (docChild.getForeignRenditionOriginalFilename() != null) {
                     docChild.setForeignRenditionOriginalFilename(docChild.getForeignRenditionOriginalFilename().replace(docChild.getRef(), newName));
                 }
