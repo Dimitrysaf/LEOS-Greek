@@ -71,7 +71,7 @@ export class ProposalItemHomeCardComponent implements OnInit {
   }
 
   determineOriginRefFromDocument(document: Document) {
-    return document.cloneProposalMetadataVO?.originRef ?? null;
+    return document.cloneProposalMetadataVO?.originRef?.split(';')[0]?.trim() ?? null;
   }
 
   private setItemTitle(newTitle: any) {
