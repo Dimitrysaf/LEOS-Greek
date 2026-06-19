@@ -739,7 +739,9 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 billContext.usePurpose(metadata.getPurpose());
                 billContext.createRefForAnnex(metadata);
                 String newName = FileUtils.getFileNameCaseSensitive(annexVO.getName());
-                annexVO.setOriginalFilename(annexVO.getOriginalFilename().replace(annexVO.getRef(), newName));
+                if (annexVO.getOriginalFilename() != null) {
+                    annexVO.setOriginalFilename(annexVO.getOriginalFilename().replace(annexVO.getRef(), newName));
+                }
                 if (annexVO.getForeignRenditionOriginalFilename() != null) {
                     annexVO.setForeignRenditionOriginalFilename(annexVO.getForeignRenditionOriginalFilename().replace(annexVO.getRef(), newName));
                 }
