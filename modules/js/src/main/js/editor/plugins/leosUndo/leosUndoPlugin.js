@@ -255,17 +255,20 @@ define(function leosUndoPluginModule(require) {
                 });
             });
 
-            // Save on blur
             editor.on('blur', function() {
                 undoManager.runQueuedSave();
             });
 
-            // Initial snapshot when editor is ready
+            editor.on('focus', function() {
+                setTimeout(function() {
+                    undoManager.onChange();
+                }, 0);
+            });
+
             editor.on('instanceReady', function() {
                 undoManager.saveInitial();
             });
 
-            // Lock/unlock support
             editor.on('lockSnapshot', function() {
                 undoManager.locked = true;
             });
