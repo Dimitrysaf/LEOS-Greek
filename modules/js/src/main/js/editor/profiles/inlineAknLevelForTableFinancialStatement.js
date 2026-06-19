@@ -43,7 +43,7 @@ define(function inlineAknLevelForTableFinancialStatementProfileModule(require) {
     plugins.push(require("plugins/leosWidget/leosWidgetPlugin"));
     plugins.push(require("plugins/leosAttrHandler/leosAttrHandlerPlugin"));
     plugins.push(require("plugins/leosPaste/leosPastePlugin"));
-    plugins.push(require("plugins/leosHierarchicalElementShiftEnterHandler/leosHierarchicalElementShiftEnterHandler"));
+    plugins.push(require("plugins/leosHierarchicalElementShiftEnterHandlerFS/leosHierarchicalElementShiftEnterHandlerFS"));
     plugins.push(require("plugins/leosHierarchicalElementSubparagraphAfterLastPoint/leosHierarchicalElementSubparagraphAfterLastPoint"));
     plugins.push(require("plugins/leosFloatingSpace/leosFloatingSpacePlugin"));
     plugins.push(require("plugins/leosMessageBus/leosMessageBusPlugin"));
@@ -52,26 +52,23 @@ define(function inlineAknLevelForTableFinancialStatementProfileModule(require) {
     plugins.push(require("plugins/leosTextCaseChanger/leosTextCaseChangerPlugin"));
     plugins.push(require("plugins/leosSpecialChar/leosSpecialCharPlugin"));
     plugins.push(require("plugins/leosPreventElementDeletion/leosPreventElementDeletionPlugin"));
+    plugins.push(require("plugins/leosElementSplitHandler/leosElementSplitHandlerPlugin"));
     plugins.push(require("plugins/leosSpellChecker/leosSpellCheckerPlugin"));
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
-    plugins.push(require("plugins/aknLevelSubParagraph/aknLevelSubParagraphPlugin"));
-    plugins.push(require("plugins/aknHtmlImage/aknHtmlImagePlugin"));
-    plugins.push(require("plugins/leosBase64Image/leosBase64ImagePlugin"));
-    plugins.push(require("plugins/leosImageResize/leosImageResizePlugin"));
     plugins.push(require("plugins/aknHeading/aknHeadingPlugin"));
-    plugins.push(require("plugins/leosAnnexOrderedList/leosAnnexOrderedListPlugin"));
-    plugins.push(require("plugins/leosAnnexList/leosAnnexListPlugin"));
-    plugins.push(require("plugins/leosAnnexIndentList/leosAnnexIndentListPlugin"));
     plugins.push(require("plugins/aknLevel/aknLevelPlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
     plugins.push(require("plugins/leosUndo/leosUndoPlugin"));
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesInsPlugin"));
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
     plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
+    plugins.push(require("plugins/leosDisableCut/leosDisableCutPlugin"));
 
     var pluginNames=[];
     var specificConfig={
-        addPreventElementDeletionWidgetToFirstChild : true
+        addPreventElementDeletionWidgetToFirstChild : true,
+        // for editor fields with only tables (content not updatable outside the table)
+        tableOnlyMode: true
     };
     $.each(plugins, function( index, value ) {
         pluginNames.push(value.name);
@@ -82,7 +79,7 @@ define(function inlineAknLevelForTableFinancialStatementProfileModule(require) {
     pluginTools.addExternalPlugins(externalPluginsNames);
     var extraPlugins = pluginNames.concat(externalPluginsNames).join(",");
     var transformationConfigResolver = transformationConfigManager.getTransformationConfigResolverForPlugins(pluginNames);
-    var leosPasteFilter = pluginTools.createFilterList(transformationConfigResolver, pluginNames);
+    var leosPasteFilter = pluginTools.createFilterList(transformationConfigResolver, pluginNames, true);
 
     var profileName = "Inline AKN Financial Statement Level";
 
@@ -94,7 +91,7 @@ define(function inlineAknLevelForTableFinancialStatementProfileModule(require) {
         customConfig: "",
         // comma-separated list of plugins to be loaded
         plugins: "toolbar,wysiwygarea,elementspath,clipboard,undo,pastefromword,enterkey,button,dialog,dialogui,"
-            + "widget,lineutils,basicstyles," + "indent,"
+            + "widget,lineutils,basicstyles,"
             + "fakeobjects,specialchar,table,tableresize,tabletools,tableselection,contextmenu,menubutton,mathjax,pastetext,colorbutton",
         // comma-separated list of plugins that must not be loaded
         removePlugins: "",
@@ -114,15 +111,14 @@ define(function inlineAknLevelForTableFinancialStatementProfileModule(require) {
         // toolbar groups arrangement, optimized for a single toolbar row
         toolbar : [
             { name: 'save', items: [ 'leosInlineSave' , 'leosInlineSaveClose', 'leosInlineCancel' ] },
-            { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo' ] },
+            { name: 'clipboard', items: [ 'Copy', 'Paste', '-', 'Undo', 'Redo' ] },
             { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Subscript', 'Superscript', 'TransformTextSwitcher' ] },
-            { name: 'soft_insert', items: ['leosHierarchicalElementShiftEnterHandler', 'leosHierarchicalElementSubparagraphAfterLastPoint']},
             { name: 'ref', items: ['authorialNoteWidget'] },
-            { name: 'insert', items: [ 'Mathjax', 'SpecialChar' , "base64image"] },
-            { name: 'paragraph', items: ['Outdent', 'Indent'] },
-            '/',
+            { name: 'insert', items: [ 'Mathjax', 'SpecialChar' ] },
             { name: 'tools', items: [ 'LeosShowBlocks' ] },
-            { name : "mode" , items: [ 'Sourcedialog', 'spellchecker'] },
+            '/',
+            { name: 'splitmerge', items: [ 'leosHierarchicalElementShiftEnterHandlerFS' ] },
+            { name: "mode", items: ['Sourcedialog', 'spellchecker'] },
             { name: 'trackChanges', items: ['toggleDisplay', 'trackChangeActions'] },
             { name : "colors" , items: [ 'BGColor' ] }
         ],
