@@ -60,7 +60,8 @@ define(function leosTablePluginModule(require) {
 
             CKEDITOR.on('dialogDefinition', function(event) {
                 if (event.data.name === 'cellProperties') {
-                    var container = event.data.definition.contents[0].elements[0];
+                    var definition = event.data.definition;
+                    var container = definition.contents[0].elements[0];
                     container.children.splice(2, 1);
 
                     var children = container.children[0].children;
@@ -68,68 +69,98 @@ define(function leosTablePluginModule(require) {
                         return item.id !== 'wordWrap';
                     });
 
-                    // Override onShow to fix cell detection
-                    event.data.definition.onShow = function() {
-                        var editor = this._.editor;
-                        var selection = editor.getSelection();
-                        var cells = [];
-                        var ranges = selection.getRanges();
-                        if (selection.isFake && ranges.length > 1) {
-                            for (var i = 0; i < ranges.length; i++) {
-                                var rangeCell = ranges[i]._getTableElement();
-                                if (rangeCell && rangeCell.is && rangeCell.is({td: 1, th: 1})) {
-                                    cells.push(rangeCell);
+                    var originalOnShow = definition.onShow;
+                    definition.onShow = function() {
+                        var ed = this._.editor;
+                        var selection = ed.getSelection();
+                        var cells = CKEDITOR.plugins.tabletools.getSelectedCells(selection);
+
+                        // Filter to only visually selected cells (those with faked-selection class)
+                        var fakedCells = [];
+                        for (var i = 0; i < cells.length; i++) {
+                            if (cells[i].hasClass('cke_table-faked-selection')) {
+                                fakedCells.push(cells[i]);
+                            }
+                        }
+                        if (fakedCells.length > 0) {
+                            cells = fakedCells;
+                        }
+
+
+                        var startElement = selection.getStartElement();
+                        if (startElement) {
+                            var anchorCell = startElement.getAscendant({td: 1, th: 1}, true);
+                            if (anchorCell && anchorCell.hasClass('cke_table-faked-selection')) {
+                                var alreadyIncluded = false;
+                                var anchorId = anchorCell.getAttribute('id');
+                                for (var i = 0; i < cells.length; i++) {
+                                    if (cells[i].getAttribute('id') === anchorId) {
+                                        alreadyIncluded = true;
+                                        break;
+                                    }
+                                }
+                                if (!alreadyIncluded) {
+                                    cells.unshift(anchorCell);
                                 }
                             }
                         }
-                        if (cells.length === 0) {
-                            cells = CKEDITOR.plugins.tabletools.getSelectedCells(selection);
-                        }
-                        this.cells = cells;
-                        if (this.cells && this.cells.length > 0) {
-                            this.setupContent(this.cells);
-                        }
+
+                        this.leosCells = cells;
+                        if (originalOnShow) originalOnShow.apply(this, arguments);
                     };
 
-                    // Override onOk to  align inner <p> elements
-                    event.data.definition.onOk = function() {
-                        var cells = this.cells;
-                        if (!cells || cells.length === 0) return;
-
-                        var editorInstance = this._.editor;
-
-
-                        for (var i = 0; i < cells.length; i++) {
-                            this.commitContent(cells[i]);
+                    var originalOnOk = definition.onOk;
+                    definition.onOk = function() {
+                        var cells = this.leosCells;
+                        if (!cells || cells.length === 0) {
+                            if (originalOnOk) originalOnOk.apply(this, arguments);
+                            return;
                         }
 
+                        var hAlign = this.getValueOf('info', 'hAlign') || '';
+                        var vAlign = this.getValueOf('info', 'vAlign') || '';
+                        var width = this.getValueOf('info', 'width') || '';
+                        var height = this.getValueOf('info', 'height') || '';
+
+                        var ed = this._.editor;
 
                         for (var i = 0; i < cells.length; i++) {
                             var cell = cells[i];
-                            var hValue = cell.getStyle('text-align') || '';
-                            var vValue = cell.getStyle('vertical-align') || '';
+
+                            if (width) { cell.setStyle('width', width); } else { cell.removeStyle('width'); }
+                            if (height) { cell.setStyle('height', height); } else { cell.removeStyle('height'); }
+                            if (hAlign) { cell.setStyle('text-align', hAlign); } else { cell.removeStyle('text-align'); }
+                            if (vAlign) { cell.setStyle('vertical-align', vAlign); } else { cell.removeStyle('vertical-align'); }
+
                             var paragraphs = cell.getElementsByTag('p');
                             for (var j = 0; j < paragraphs.count(); j++) {
                                 var p = paragraphs.getItem(j);
-                                if (hValue) {
-                                    p.setStyle('text-align', hValue);
-                                } else {
-                                    p.removeStyle('text-align');
-                                }
-                                if (vValue) {
-                                    p.setStyle('vertical-align', vValue);
-                                } else {
-                                    p.removeStyle('vertical-align');
-                                }
+                                if (hAlign) { p.setStyle('text-align', hAlign); } else { p.removeStyle('text-align'); }
+                                if (vAlign) { p.setStyle('vertical-align', vAlign); } else { p.removeStyle('vertical-align'); }
                             }
                         }
 
+                        // Re-apply to first cell after CKEditor's selection cleanup
+                        var firstCellId = cells[0].getAttribute('id');
+                        setTimeout(function() {
+                            var cell = ed.document.getById(firstCellId);
+                            if (!cell) return;
+                            if (hAlign) { cell.setStyle('text-align', hAlign); } else { cell.removeStyle('text-align'); }
+                            if (vAlign) { cell.setStyle('vertical-align', vAlign); } else { cell.removeStyle('vertical-align'); }
+                            var paragraphs = cell.getElementsByTag('p');
+                            for (var j = 0; j < paragraphs.count(); j++) {
+                                var p = paragraphs.getItem(j);
+                                if (hAlign) { p.setStyle('text-align', hAlign); } else { p.removeStyle('text-align'); }
+                                if (vAlign) { p.setStyle('vertical-align', vAlign); } else { p.removeStyle('vertical-align'); }
+                            }
+                        }, 200);
 
-                        editorInstance.forceNextSelectionCheck();
-                        var range = editorInstance.createRange();
+
+                        ed.forceNextSelectionCheck();
+                        var range = ed.createRange();
                         range.moveToPosition(cells[0], CKEDITOR.POSITION_AFTER_START);
                         range.select();
-                        editorInstance.selectionChange();
+                        ed.selectionChange();
                     };
                 }
             });
