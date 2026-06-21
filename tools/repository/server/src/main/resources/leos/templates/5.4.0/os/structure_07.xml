@@ -85,10 +85,6 @@
                     <elementSelector>level heading[leos\:optional='true']</elementSelector>
                     <profileName>inlineAknLevelFinancialStatement</profileName>
                 </profile>
-                <profile>
-                    <elementSelector>level:has(> content > table[leos\:tableOnlyMode='true'])</elementSelector>
-                    <profileName>inlineAknSubParagraphForTableFinancialStatement</profileName>
-                </profile>
             </profiles>
             <editable>true</editable>
             <maxDepth>7</maxDepth>
