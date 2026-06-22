@@ -31,8 +31,8 @@ public class FileUtils {
 
     public static void validateHybridDocument(MultipartFile foreignAnnexFile) throws Exception {
         validatePath(FilenameUtils.normalize(foreignAnnexFile.getOriginalFilename()));
-        if (!isValidFileNameForForeignAnnex(foreignAnnexFile.getOriginalFilename())) {
-            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.invalid.file.name");
+        if (!isValidExtensionForForeignAnnex(foreignAnnexFile.getOriginalFilename())) {
+            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.invalid.file.extension");
         }
         if (!isValidMimeTypeForForeignAnnex(foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename())) {
             throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.invalid.file");
@@ -57,8 +57,8 @@ public class FileUtils {
 
     public static void validateRenditionHybridDocument(MultipartFile foreignAnnexRendition) throws Exception {
         validatePath(FilenameUtils.normalize(foreignAnnexRendition.getOriginalFilename()));
-        if (!isValidFileNameForForeignAnnexRendition(foreignAnnexRendition.getOriginalFilename())) {
-            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.invalid.rendition.file.name");
+        if (!isValidExtensionForForeignAnnexRendition(getFileExtension(foreignAnnexRendition.getOriginalFilename()))) {
+            throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.invalid.rendition.extension");
         }
         if (!isValidMimeTypeForForeignAnnexRendition(foreignAnnexRendition.getBytes(), foreignAnnexRendition.getOriginalFilename())) {
             throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.invalid.rendition.file");
@@ -125,8 +125,25 @@ public class FileUtils {
         return pattern.matcher(fileName).matches();
     }
 
+    public static boolean isValidExtensionForForeignAnnex(String fileName) {
+        String extension = getFileExtension(fileName);
+        Pattern pattern = Pattern.compile("^(pdf|docx|xlsx|PDF|DOCX|XLSX)$");
+        if (fileName.length() > 400) {
+            return false;
+        }
+        return pattern.matcher(extension).matches();
+    }
+
     public static boolean isValidFileNameForForeignAnnexRendition(String fileName) {
         Pattern pattern = Pattern.compile("^[A-Za-z0-9\\.\\-_ ()]+\\.(pdf|PDF)$");
+        if (fileName.length() > 400) {
+            return false;
+        }
+        return pattern.matcher(fileName).matches();
+    }
+
+    public static boolean isValidExtensionForForeignAnnexRendition(String fileName) {
+        Pattern pattern = Pattern.compile("^(pdf|PDF)$");
         if (fileName.length() > 400) {
             return false;
         }
@@ -158,6 +175,10 @@ public class FileUtils {
 
     public static String getFileName(String fileName) {
         return fileName.substring(0, fileName.lastIndexOf(".")).toUpperCase();
+    }
+
+    public static String getFileNameCaseSensitive(String fileName) {
+        return fileName.substring(0, fileName.lastIndexOf("."));
     }
 
     public static String getFileExtension(String fileName) {

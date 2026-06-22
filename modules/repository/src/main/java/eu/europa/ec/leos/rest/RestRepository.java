@@ -244,12 +244,7 @@ public class RestRepository extends AbstractRestClient {
     }
 
     LeosDocument createDocumentFromContent(final String packageName, final String name, Map<String, ?> properties,
-                                           final String mimeType, byte[] contentBytes, String userId) {
-        return createDocumentFromContent(packageName, name, properties, mimeType, contentBytes, userId, null, null);
-    }
-
-    LeosDocument createDocumentFromContent(final String packageName, final String name, Map<String, ?> properties,
-            final String mimeType, byte[] contentBytes, String userId, byte[] binaryContent, String originalFilename) {
+            final String mimeType, byte[] contentBytes, String userId) {
 
         LOGGER.trace("Creating document... [packageName={}, name={}, mimeType={}]", packageName, name, mimeType);
         Map<String, Object> updatedProperties = new LinkedHashMap<>();
@@ -343,7 +338,7 @@ public class RestRepository extends AbstractRestClient {
     }
 
     public LeosDocument updateDocument(String versionId, Map<String, ?> properties, byte[] updatedDocumentBytes,
-            VersionType versionType, String category, String comment, String userId, byte[] binaryContent, String originalFilename) {
+            VersionType versionType, String category, String comment, String userId, byte[] binaryContent, String hybridDocumentName) {
         LOGGER.trace("Updating document properties and content... [ref={}]", versionId);
         UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
         updateDocumentRequest.setContent(updatedDocumentBytes);
@@ -353,7 +348,7 @@ public class RestRepository extends AbstractRestClient {
         updateDocumentRequest.setComments(comment);
         updateDocumentRequest.setUserId(userId);
         updateDocumentRequest.setBinaryContent(binaryContent);
-        updateDocumentRequest.setOriginalFilename(originalFilename);
+        updateDocumentRequest.setOriginalFilename(hybridDocumentName);
 
         String url = getUrl(leosRestUpdateDocumentContentURI);
         LeosDocument resp = putEntity(url, updateDocumentRequest, LeosDocument.class, versionId);

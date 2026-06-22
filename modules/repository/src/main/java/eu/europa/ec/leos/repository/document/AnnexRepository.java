@@ -147,10 +147,10 @@ public interface AnnexRepository {
      * @param versionType  the version type to be created
      * @param comment  the comment of the update, optional.
      * @param binaryContent     the binary content of the document.
-     * @param originalFilename the binary content type of the document.
+     * @param hybridDocumentName the binary content type of the document.
      * @return the updated annex document.
      */
-    Annex updateAnnex(String id, AnnexMetadata metadata, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String originalFilename);
+    Annex updateAnnex(String id, AnnexMetadata metadata, byte[] content, VersionType versionType, String comment, byte[] binaryContent, String hybridDocumentName);
 
     /**
      * Updates a [Annex] document with the given metadata and content.

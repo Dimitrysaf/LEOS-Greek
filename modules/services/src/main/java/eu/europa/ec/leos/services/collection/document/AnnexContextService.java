@@ -263,7 +263,7 @@ public class AnnexContextService {
         annexService.updateReferencesAsync(annex, mapOldAndNewRefs, annex.getBinaryContent(), annex.getOriginalFilename());
     }
 
-    public Annex executeCreateAnnex(AnnexType annexType, byte[] binaryContent, String originalFilename) {
+    public Annex executeCreateAnnex(AnnexType annexType, byte[] binaryContent, String fileExtension) {
         LOG.trace("Executing 'Create Annex' use case...");
 
         Validate.notNull(leosPackage, ANNEX_PACKAGE_IS_REQUIRED);
@@ -293,27 +293,25 @@ public class AnnexContextService {
                 .build();
 
         if (binaryContent != null) {
-            String extension = getFileExtension(originalFilename);
-            String mimeType = getMimeType(extension);
-            String showAs = getShowAsForForeignAnnex(extension);
+            String mimeType = getMimeType(fileExtension);
+            String showAs = getShowAsForForeignAnnex(fileExtension);
             metadata = metadata.builder()
-                    .withFileFormatRefersTo("~" + extension)
+                    .withFileFormatRefersTo("~" + fileExtension)
                     .withFileFormatValue(mimeType)
-                    .withTlcReferenceNameFormatId(extension)
-                    .withTlcReferenceNameFormatHref("http://publications.europa.eu/resource/authority/file-type/" + extension)
+                    .withTlcReferenceNameFormatId(fileExtension)
+                    .withTlcReferenceNameFormatHref("http://publications.europa.eu/resource/authority/file-type/" + fileExtension)
                     .withTlcReferenceNameFormatShowAs(showAs)
                     .withForeignAnnexNumber(annexNumber)
-                    .withForeignAnnexSource(originalFilename)
                     .build();
         }
 
         if (cloneProposal) {
             CloneDocumentMetadataVO cloneDocumentMetadataVO = new CloneDocumentMetadataVO("USER_ADDED_IN_CLONE_PROPOSAL", originRef);
             annex = annexService.createClonedAnnex(annex.getId(), leosPackage.getPath(), metadata, cloneDocumentMetadataVO, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED),
-                    getContent(annex));
+                    getContent(annex), binaryContent, fileExtension);
         } else {
             annex = annexService.createAnnex(annex.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED),
-                    getContent(annex), annexType, binaryContent, originalFilename);
+                    getContent(annex), annexType, binaryContent, fileExtension);
 
             if (existingContent != null) {
                 metadata = metadata.builder().withRef(metadataOption.get().getRef()).withTitle(existingTitle).withIndex(existingOrder).build();
@@ -322,7 +320,7 @@ public class AnnexContextService {
         }
 
         annex = securityService.updateCollaborators(annex.getMetadata().get().getRef(), annex.getId(), collaborators, Annex.class);
-        return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED), binaryContent, originalFilename);
+        return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED), binaryContent, annex.getOriginalFilename());
     }
 
     public Annex executeImportAnnex() {

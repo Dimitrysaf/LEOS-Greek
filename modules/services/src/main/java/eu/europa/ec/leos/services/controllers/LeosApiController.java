@@ -64,6 +64,7 @@ import eu.europa.ec.leos.services.support.LeosXmlUtils;
 import eu.europa.ec.leos.services.support.XmlUtils;
 import eu.europa.ec.leos.services.template.CustomTemplateService;
 import eu.europa.ec.leos.services.user.UserService;
+import eu.europa.ec.leos.services.utils.FileUtils;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
 import eu.europa.ec.leos.vo.coedition.InfoType;
 import eu.europa.ec.leos.vo.token.JsonTokenReponse;
@@ -582,7 +583,7 @@ public class LeosApiController implements LeosApi {
     public ResponseEntity<Object> createProposalForeignAnnex(String proposalRef, MultipartFile foreignAnnexFile) throws Exception {
         validateHybridDocument(foreignAnnexFile);
         proposalRef = encodeParam(proposalRef);
-        this.apiService.createProposalAnnex(proposalRef, null, AnnexType.FOREIGN, foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename());
+        this.apiService.createProposalAnnex(proposalRef, null, AnnexType.FOREIGN, foreignAnnexFile.getBytes(), FileUtils.getFileExtension(foreignAnnexFile.getOriginalFilename()));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -591,7 +592,7 @@ public class LeosApiController implements LeosApi {
         validateRenditionHybridDocument(foreignAnnexRendition);
         proposalRef = encodeParam(proposalRef);
         annexId = encodeParam(annexId);
-        apiService.uploadForeignAnnexRendition(proposalRef, annexId, foreignAnnexRendition.getBytes(), foreignAnnexRendition.getOriginalFilename());
+        apiService.uploadForeignAnnexRendition(proposalRef, annexId, foreignAnnexRendition.getBytes());
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -618,7 +619,7 @@ public class LeosApiController implements LeosApi {
         validateHybridDocument(foreignAnnexFile);
         proposalRef = encodeParam(proposalRef);
         annexId = encodeParam(annexId);
-        this.apiService.updateForeignAnnex(proposalRef, annexId, foreignAnnexFile.getBytes(), foreignAnnexFile.getOriginalFilename());
+        this.apiService.updateForeignAnnex(proposalRef, annexId, foreignAnnexFile.getBytes(), FileUtils.getFileExtension(foreignAnnexFile.getOriginalFilename()));
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

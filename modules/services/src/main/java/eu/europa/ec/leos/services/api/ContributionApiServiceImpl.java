@@ -720,10 +720,6 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 if (srcOfComponentReg != null) {
                     String originalFilename = srcOfComponentReg.getTextContent();
                     List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
-                    boolean annexExistWithSameName = StringUtils.isEmpty(originalFilename) ? false : documents.stream().filter(xmlDocument -> xmlDocument.getCategory().equals(LeosCategory.ANNEX) && StringUtils.isNotEmpty(xmlDocument.getOriginalFilename()) && xmlDocument.getOriginalFilename().toUpperCase().equals(originalFilename.toUpperCase())).findAny().isPresent();
-                    if (annexExistWithSameName) {
-                        throw new LeosExceptionResponse(CA001.name(), "page.collection.drafts.annex.same.name.error");
-                    }
                     annexVO.setBinaryFile((byte[]) legContent.get(originalFilename));
                     annexVO.setOriginalFilename(originalFilename);
                     annexVO.setBinaryFileSize(getFormattedByteAsKB((long)annexVO.getBinaryFile().length));
@@ -742,6 +738,13 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 billContext.useAnnexDocument(annexVO);
                 billContext.usePurpose(metadata.getPurpose());
                 billContext.createRefForAnnex(metadata);
+                String newName = FileUtils.getFileNameCaseSensitive(annexVO.getName());
+                if (annexVO.getOriginalFilename() != null) {
+                    annexVO.setOriginalFilename(annexVO.getOriginalFilename().replace(annexVO.getRef(), newName));
+                }
+                if (annexVO.getForeignRenditionOriginalFilename() != null) {
+                    annexVO.setForeignRenditionOriginalFilename(annexVO.getForeignRenditionOriginalFilename().replace(annexVO.getRef(), newName));
+                }
                 annexVO.getMetadata().setIndex(Integer.toString(((AnnexMetadata) annexVO.getMetadataDocument()).getIndex()));
                 CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
                 idsAndUrlsHolder.setBillId(metadata.getRef());

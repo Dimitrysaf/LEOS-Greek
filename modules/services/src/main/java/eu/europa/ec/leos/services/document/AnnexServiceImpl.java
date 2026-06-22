@@ -287,13 +287,13 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     @Override
-    public Annex createVersion(String id, VersionType versionType, String comment, byte[] binaryContent, String originalFilename) {
+    public Annex createVersion(String id, VersionType versionType, String comment, byte[] binaryContent, String hybridDocumentName) {
         LOG.trace("Creating Annex version... [id={}, versionType={}, comment={}]", id, versionType, comment);
         Annex annex = findAnnex(id, true);
         final AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata is required!");
         final Content content = annex.getContent().getOrError(() -> "Annex content is required!");
         byte[] contentBytes = content.getSource().getBytes();
-        annex = annexRepository.updateAnnex(id, metadata, contentBytes, versionType, comment, binaryContent, originalFilename);
+        annex = annexRepository.updateAnnex(id, metadata, contentBytes, versionType, comment, binaryContent, hybridDocumentName);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
         documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;
@@ -424,38 +424,48 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     @Override
-    public Annex createAnnex(String templateId, String path, AnnexMetadata metadata, String actionMessage, byte[] content, AnnexType annexType, byte[] binaryContent, String originalFilename) {
+    public Annex createAnnex(String templateId, String path, AnnexMetadata metadata, String actionMessage, byte[] content, AnnexType annexType, byte[] binaryContent, String extension) {
         LOG.trace("Creating Annex... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
         final String language = metadata.getLanguage();
         String ref = metadata.getRef() != null ?
                 getTranslatedProposalReference(metadata.getRef(), language) :
                 generateAnnexReference(content, language);
+        String hybridDocumentName = null;
+        if (binaryContent != null && extension != null) {
+            hybridDocumentName = ref + "." + extension.toLowerCase();
+        }
         metadata = metadata
                 .builder()
                 .withRef(ref)
+                .withForeignAnnexSource(hybridDocumentName)
                 .build();
         Annex annex = annexRepository.createAnnex(templateId, path, ref + XML_DOC_EXT, metadata);
         LOG.info("Created Annex with ref '{}' in path {}", ref, path);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(annex) : content, metadata, false);
-        annex = annexRepository.updateAnnex(annex.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage, binaryContent, originalFilename);
+        annex = annexRepository.updateAnnex(annex.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage, binaryContent, hybridDocumentName);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
         documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;
     }
 
     @Override
-    public Annex createClonedAnnex(String templateId, String path, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage, byte[] content) {
+    public Annex createClonedAnnex(String templateId, String path, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage, byte[] content, byte[] binaryContent, String extension) {
         LOG.trace("Creating cloned Annex... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
         String ref = generateAnnexReference(content, metadata.getLanguage());
+        String hybridDocumentName = null;
+        if (binaryContent != null && extension != null) {
+            hybridDocumentName = ref + "." + extension.toLowerCase();
+        }
         metadata = metadata
                 .builder()
                 .withRef(ref)
+                .withForeignAnnexSource(hybridDocumentName)
                 .build();
         Annex annex = annexRepository.createClonedAnnex(templateId, path, ref + XML_DOC_EXT, metadata, cloneDocumentMetadataVO);
         LOG.info("Created Annex with ref '{}' in path {}", ref, path);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(annex) : content, metadata, false);
         updatedBytes = xmlContentProcessor.addTrackChangesAttributes(updatedBytes);
-        annex = annexRepository.updateAnnex(annex.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
+        annex = annexRepository.updateAnnex(annex.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage, binaryContent, hybridDocumentName);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
         documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;

@@ -1262,8 +1262,9 @@ public class DocumentServiceImpl implements DocumentService {
             String contentString, Map<String, ?> metadata, byte[] binaryContent, String originalFilename, byte[] foreignRenditionContent, String foreignRenditionOriginalFilename) {
 
         DocumentContent content = new DocumentContent();
+        DocumentContent previousDocumentContent = null;
         if (prevVersion != null) {
-            DocumentContent previousDocumentContent = documentContentRepository.findDocumentContentByVersionId(prevVersion.getVersionId()).get();
+            previousDocumentContent = documentContentRepository.findDocumentContentByVersionId(prevVersion.getVersionId()).get();
             BeanUtils.copyProperties(previousDocumentContent, content, "id");
         }
 
@@ -1282,6 +1283,10 @@ public class DocumentServiceImpl implements DocumentService {
         if (foreignRenditionContent != null) {
             content.setForeignRenditionContent(foreignRenditionContent);
             content.setForeignRenditionOriginalFilename(foreignRenditionOriginalFilename);
+        }
+        if (binaryContent != null && foreignRenditionContent == null && previousDocumentContent != null && !Arrays.equals(previousDocumentContent.getBinaryContent(), binaryContent)) {
+            content.setForeignRenditionContent(null);
+            content.setForeignRenditionOriginalFilename(null);
         }
 
         Boolean eeaRelevance = ConversionUtils.convertBoolean(metadata.get(PropertiesMetadata.EEA_RELEVANCE.getLeosName()));
