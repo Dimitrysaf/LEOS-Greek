@@ -121,6 +121,12 @@ define(function leosTablePluginModule(require) {
                         var vAlign = this.getValueOf('info', 'vAlign') || '';
                         var width = this.getValueOf('info', 'width') || '';
                         var height = this.getValueOf('info', 'height') || '';
+                        var widthType = this.getValueOf('info', 'widthType') || 'px';
+                        var heightType = this.getValueOf('info', 'heightType') || 'px';
+
+                        // Append unit if value is a plain number
+                        if (width && !isNaN(width)) { width = width + widthType; }
+                        if (height && !isNaN(height)) { height = height + heightType; }
 
                         var ed = this._.editor;
 
