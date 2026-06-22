@@ -188,7 +188,7 @@ CREATE VIEW LEOS_USER ("USER_LOGIN", "USER_PER_ID", "USER_LASTNAME", "USER_FIRST
 CREATE
 ALIAS deAccent AS '
   String deAccent(String value) throws Exception{
-      return value.toUpperCase();
+      return value != null ? value.toUpperCase() : null;
   }
 ';
 

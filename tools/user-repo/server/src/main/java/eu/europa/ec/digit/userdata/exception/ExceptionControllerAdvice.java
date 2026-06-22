@@ -1,6 +1,7 @@
 package eu.europa.ec.digit.userdata.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.Strings;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -29,7 +30,7 @@ public class ExceptionControllerAdvice {
                 .collect(Collectors.toMap(
                         FieldError::getField,
                         fe -> fe.getDefaultMessage() != null ? fe.getDefaultMessage() : "",
-                        (msg1, msg2) -> msg1 + "; " + msg2));
+                        (msg1, msg2) -> (Strings.CS.equals(msg1, msg2) ? msg2 : msg1 + "; " + msg2)));
         final String message = String.join("; ", errors.values());
         return ResponseEntity.badRequest().body(new UserRepoExceptionResponse(message, errors));
     }

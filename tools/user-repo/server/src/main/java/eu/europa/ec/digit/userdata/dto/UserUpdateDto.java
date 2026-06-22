@@ -1,9 +1,7 @@
 package eu.europa.ec.digit.userdata.dto;
 
 import eu.europa.ec.digit.userdata.dto.validationgroup.UserValidOnUpdate;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -31,6 +29,7 @@ public class UserUpdateDto {
             message = "page.workspace.administration.user-info.error.invalid_firstname")
     private String firstName;
 
+    @Size(min = 3, message = "page.workspace.administration.user-info.error.invalid_email")
     @Email(message = "page.workspace.administration.user-info.error.invalid_email")
     private String email;
 

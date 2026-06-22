@@ -35,7 +35,7 @@ public class UserDto {
             groups = {Create.class, Update.class})
     private String firstName;
 
-    @NotBlank(groups = Create.class, message = "page.workspace.administration.user-info.error.email_required")
+    @NotEmpty(groups = Create.class, message = "page.workspace.administration.user-info.error.email_required")
     @Email(groups = {Create.class, Update.class}, message = "page.workspace.administration.user-info.error.invalid_email")
     private String email;
 
