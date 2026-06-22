@@ -595,11 +595,9 @@
                 <heading leos:editable="false">
                     <b>ESTIMATED FINANCIAL IMPACT OF THE PROPOSAL/INITIATIVE</b>
                 </heading>
-                <subparagraph leos:editable="false">
-                    <content>
-                        <p style="margin-top: 12px;">The estimated impact on expenditure and staffing for 2028 and beyond is added for illustrative purposes only and does not pre-judge the next Multiannual Financial Framework. The source of financing and scope of Union financial commitment in the post-2027 period remain subject to the outcome of interinstitutional negotiations on the MFF 2028-2034 and thereafter shall be determined through the annual budgetary procedure. All appropriations and staffing allocations as of 2028 are indicative.</p>
-                    </content>
-                </subparagraph>
+                <content leos:editable="false">
+                    <p style="margin-top: 12px;">The estimated impact on expenditure and staffing for 2028 and beyond is added for illustrative purposes only and does not pre-judge the next Multiannual Financial Framework. The source of financing and scope of Union financial commitment in the post-2027 period remain subject to the outcome of interinstitutional negotiations on the MFF 2028-2034 and thereafter shall be determined through the annual budgetary procedure. All appropriations and staffing allocations as of 2028 are indicative.</p>
+                </content>
             </level>
             <level leos:depth="2" leos:deletable="false" class="landscape">
                 <num>3.1.</num>
@@ -6661,667 +6659,663 @@
                     </indent>
                 </list>
             </level>
-            <level leos:depth="4" class="landscape" leos:deletable="false">
+            <level leos:depth="4" class="landscape" leos:deletable="false" leos:editable="true">
                 <num>3.2.3.1.</num>
                 <heading leos:editable="false">
                     <i>Appropriations from voted budget</i>
                 </heading>
-                <subparagraph leos:editable="true" leos:deletable="false">
-                    <content>
-                        <table leos:predefinedTable="true" leos:tableOnlyMode="true" style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 45%; border: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>VOTED APPROPRIATIONS</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2028</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2029</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2030</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2031</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2032</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2033</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2034</b></p>
-                                </td>
-                                <td style="width: 11%; text-align: center;">
-                                    <p><b>TOTAL MFF<br/>2028-2034</b></p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 100.0%; border: solid black 1.0pt; border-top: none;" colspan="9">
-                                    <p style="margin: 0cm; text-align: left;">
-                                        <b>HEADING 4</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 45%; border: solid black 1.0pt; border-top: none;">
-                                    <p style="margin: 0cm; text-align: left;">Human
-                                        resources </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 45%; border: solid black 1.0pt; border-top: none;">
-                                    <p style="margin: 0cm; text-align: left;">Other administrative expenditure </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 45%; border: solid black 1.0pt; border-top: none; background: #CCCCCC;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>Subtotal HEADING 4</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 100.0%; border: solid black 1.0pt; border-top: none;" colspan="9">
-                                    <p style="margin: 0cm; text-align: left;">
-                                        <b>Outside HEADING 4</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 45%; border: solid black 1.0pt; border-top: none;">
-                                    <p style="margin: 0cm; text-align: left;">Human
-                                        resources </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 11 border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 45%; border: solid black 1.0pt; border-top: none;">
-                                    <p style="margin: 0cm; text-align: left;">Other
-                                        expenditure of an administrative nature</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 45%; border: solid black 1.0pt; border-top: none; background: #CCCCCC;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>Subtotal outside HEADING 4</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 100.0%; border: solid black 1.0pt; border-top: none;" colspan="9">
-                                    <p style="margin: 0cm; text-align: center;"> </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 45%; border: solid black 1.0pt; border-top: none;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>TOTAL</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                            </tr>
-                        </table>
-                    </content>
-                </subparagraph>
+                <content>
+                    <table leos:predefinedTable="true" leos:tableOnlyMode="true" style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 45%; border: solid black 1.0pt;">
+                                <p style="margin: 0cm; text-align: center;">
+                                    <b>VOTED APPROPRIATIONS</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2028</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2029</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2030</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2031</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2032</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2033</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2034</b></p>
+                            </td>
+                            <td style="width: 11%; text-align: center;">
+                                <p><b>TOTAL MFF<br/>2028-2034</b></p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 100.0%; border: solid black 1.0pt; border-top: none;" colspan="9">
+                                <p style="margin: 0cm; text-align: left;">
+                                    <b>HEADING 4</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 45%; border: solid black 1.0pt; border-top: none;">
+                                <p style="margin: 0cm; text-align: left;">Human
+                                    resources </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 45%; border: solid black 1.0pt; border-top: none;">
+                                <p style="margin: 0cm; text-align: left;">Other administrative expenditure </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 45%; border: solid black 1.0pt; border-top: none; background: #CCCCCC;">
+                                <p style="margin: 0cm; text-align: center;">
+                                    <b>Subtotal HEADING 4</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 100.0%; border: solid black 1.0pt; border-top: none;" colspan="9">
+                                <p style="margin: 0cm; text-align: left;">
+                                    <b>Outside HEADING 4</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 45%; border: solid black 1.0pt; border-top: none;">
+                                <p style="margin: 0cm; text-align: left;">Human
+                                    resources </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 11 border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 45%; border: solid black 1.0pt; border-top: none;">
+                                <p style="margin: 0cm; text-align: left;">Other
+                                    expenditure of an administrative nature</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 45%; border: solid black 1.0pt; border-top: none; background: #CCCCCC;">
+                                <p style="margin: 0cm; text-align: center;">
+                                    <b>Subtotal outside HEADING 4</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 100.0%; border: solid black 1.0pt; border-top: none;" colspan="9">
+                                <p style="margin: 0cm; text-align: center;"> </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 45%; border: solid black 1.0pt; border-top: none;">
+                                <p style="margin: 0cm; text-align: center;">
+                                    <b>TOTAL</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </content>
             </level>
             <!-- Optionnal levels -Optional: if the proposal is partly or fully financed from external assigned revenues, fill in the tables in Sections 3.2.3.2. and 3.2.3.3. If not, please delete both sections. -->
-            <level leos:depth="4" class="landscape" leos:deletable="false">
+            <level leos:depth="4" class="landscape" leos:deletable="false" leos:editable="true">
                 <num>3.2.3.2.</num>
                 <heading leos:editable="false" leos:optional="true">
                     <i>Appropriations from external assigned revenues</i>
                 </heading>
-                <subparagraph leos:editable="true" leos:deletable="false" >
-                    <content>
-                        <table leos:predefinedTable="true" leos:tableOnlyMode="true" leos:deletable="false" style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 45%; border: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>EXTERNAL ASSIGNED REVENUES</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2028</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2029</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2030</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2031</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2032</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2033</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2034</b></p>
-                                </td>
-                                <td style="width: 11%; text-align: center;">
-                                    <p><b>TOTAL MFF<br/>2028-2034</b></p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 100.0%; border: solid black 1.0pt; border-top: none;" colspan="9">
-                                    <p style="margin: 0cm; text-align: left;">
-                                        <b>HEADING 4</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 45%; border: solid black 1.0pt; border-top: none;">
-                                    <p style="margin: 0cm; text-align: left;">Human
-                                        resources </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 43.32%; border: solid black 1.0pt; border-top: none;">
-                                    <p style="margin: 0cm; text-align: left;">Other
-                                        administrative expenditure </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 45%; border: solid black 1.0pt; border-top: none; background: #CCCCCC;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>Subtotal HEADING 4</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 100.0%; border: solid black 1.0pt; border-top: none;" colspan="9">
-                                    <p style="margin: 0cm; text-align: left;">
-                                        <b>Outside HEADING 4</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 45%; border: solid black 1.0pt; border-top: none;">
-                                    <p style="margin: 0cm; text-align: left;">Human
-                                        resources </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 45%; border: solid black 1.0pt; border-top: none;">
-                                    <p style="margin: 0cm; text-align: left;">Other
-                                        expenditure of an administrative nature</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">0</p>
-                                </td>
-                                <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 45%; border: solid black 1.0pt; border-top: none; background: #CCCCCC;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>Subtotal outside HEADING 4</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 100.0%; border: solid black 1.0pt; border-top: none;" colspan="9">
-                                    <p style="margin: 0cm; text-align: center;"> </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.6pt;">
-                                <td style="width: 45%; border-top: none; border-left: solid black 1.0pt; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>TOTAL</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: right;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                            </tr>
-                        </table>
-                    </content>
-                </subparagraph>
+                <content>
+                    <table leos:predefinedTable="true" leos:tableOnlyMode="true" leos:deletable="false" style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 45%; border: solid black 1.0pt;">
+                                <p style="margin: 0cm; text-align: center;">
+                                    <b>EXTERNAL ASSIGNED REVENUES</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2028</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2029</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2030</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2031</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2032</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2033</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2034</b></p>
+                            </td>
+                            <td style="width: 11%; text-align: center;">
+                                <p><b>TOTAL MFF<br/>2028-2034</b></p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 100.0%; border: solid black 1.0pt; border-top: none;" colspan="9">
+                                <p style="margin: 0cm; text-align: left;">
+                                    <b>HEADING 4</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 45%; border: solid black 1.0pt; border-top: none;">
+                                <p style="margin: 0cm; text-align: left;">Human
+                                    resources </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 43.32%; border: solid black 1.0pt; border-top: none;">
+                                <p style="margin: 0cm; text-align: left;">Other
+                                    administrative expenditure </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 45%; border: solid black 1.0pt; border-top: none; background: #CCCCCC;">
+                                <p style="margin: 0cm; text-align: center;">
+                                    <b>Subtotal HEADING 4</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 100.0%; border: solid black 1.0pt; border-top: none;" colspan="9">
+                                <p style="margin: 0cm; text-align: left;">
+                                    <b>Outside HEADING 4</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 45%; border: solid black 1.0pt; border-top: none;">
+                                <p style="margin: 0cm; text-align: left;">Human
+                                    resources </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 45%; border: solid black 1.0pt; border-top: none;">
+                                <p style="margin: 0cm; text-align: left;">Other
+                                    expenditure of an administrative nature</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">0</p>
+                            </td>
+                            <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 45%; border: solid black 1.0pt; border-top: none; background: #CCCCCC;">
+                                <p style="margin: 0cm; text-align: center;">
+                                    <b>Subtotal outside HEADING 4</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 100.0%; border: solid black 1.0pt; border-top: none;" colspan="9">
+                                <p style="margin: 0cm; text-align: center;"> </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.6pt;">
+                            <td style="width: 45%; border-top: none; border-left: solid black 1.0pt; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
+                                <p style="margin: 0cm; text-align: center;">
+                                    <b>TOTAL</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 11%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: right;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </content>
             </level>
             <level leos:depth="4" leos:deletable="false" class="landscape">
                 <num>3.2.3.3.</num>
@@ -8146,450 +8140,448 @@
                 </subparagraph>
             </level>
             <!-- optionnal levels together - Optional: if the proposal is partly or fully financed from external assigned revenues, fill in the tables in Sections 3.2.4.2. and 3.2.4.3. If not, please delete both sections. -->
-            <level leos:depth="4" class="landscape" leos:deletable="false">
+            <level leos:depth="4" class="landscape" leos:deletable="false" leos:editable="true">
                 <num>3.2.4.2.</num>
                 <heading leos:editable="false" leos:optional="true">
                     <i>Financed from external assigned revenues</i>
                 </heading>
-                <subparagraph leos:editable="true" leos:deletable="false" >
-                    <content>
-                        <table leos:predefinedTable="true" leos:tableOnlyMode="true" leos:deletable="false" style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 30%; border: solid black 1.0pt; border-right: solid black 1.0pt;" colspan="2">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>EXTERNAL ASSIGNED REVENUES</b>
-                                    </p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2028</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2029</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2030</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2031</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2032</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2033</b></p>
-                                </td>
-                                <td style="width: 6%; text-align: center;">
-                                    <p>Year<br/><b>2034</b></p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 100.0%; border: solid black 1.0pt; border-top: none;" colspan="9">
-                                    <p style="margin: 0cm; text-align: left;">
-                                        <b> </b>
-                                        <b> Establishment plan posts (officials and
-                                            temporary staff)</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 01 02 01 (Headquarters and Commission's
-                                        Representation Offices)</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 01 02 03 (EU Delegations)</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">(Indirect research)</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">(Direct research)</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">Other budget lines (specify)</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 100.0%; border: solid black 1.0pt; border-top: none;" colspan="9">
-                                    <p style="margin: 0cm; text-align: left;">
-                                        <b> </b>
-                                        <b> External staff (in full time equivalent
-                                            units)</b>
-                                    </p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 02 01 (AC, END from the 'global
-                                        envelope')</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 02 03 (AC, AL, END and JPD in the EU
-                                        Delegations)</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 15%; border: solid black 1.0pt; border-top: none;" rowspan="2">
-                                    <p style="margin: 0cm; text-align: center;">Admin. Support line<br/>[XX.01.YY.YY]</p>
-                                </td>
-                                <td style="width: 15%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">at Headquarters</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 15%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">in EU Delegations </p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">(AC, END - Indirect research)</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;"> (AC, END - Direct research)</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">Other budget lines (specify) - Heading 4</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">Other budget lines (specify) - Outside
-                                        Heading 4</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">0</p>
-                                </td>
-                            </tr>
-                            <tr style="height: 15.0pt;">
-                                <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
-                                    <p style="margin: 0cm; text-align: left; text-indent: 8.05pt;">
-                                        <b>TOTAL</b>
-                                    </p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                                <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
-                                    <p style="margin: 0cm; text-align: center;">
-                                        <b>0</b>
-                                    </p>
-                                </td>
-                            </tr>
-                        </table>
-                    </content>
-                </subparagraph>
+                <content>
+                    <table leos:predefinedTable="true" leos:tableOnlyMode="true" leos:deletable="false" style="width: 100.0%; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 30%; border: solid black 1.0pt; border-right: solid black 1.0pt;" colspan="2">
+                                <p style="margin: 0cm; text-align: center;">
+                                    <b>EXTERNAL ASSIGNED REVENUES</b>
+                                </p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2028</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2029</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2030</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2031</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2032</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2033</b></p>
+                            </td>
+                            <td style="width: 6%; text-align: center;">
+                                <p>Year<br/><b>2034</b></p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 100.0%; border: solid black 1.0pt; border-top: none;" colspan="9">
+                                <p style="margin: 0cm; text-align: left;">
+                                    <b> </b>
+                                    <b> Establishment plan posts (officials and
+                                        temporary staff)</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
+                                <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 01 02 01 (Headquarters and Commission's
+                                    Representation Offices)</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
+                                <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 01 02 03 (EU Delegations)</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
+                                <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">(Indirect research)</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
+                                <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">(Direct research)</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
+                                <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">Other budget lines (specify)</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 100.0%; border: solid black 1.0pt; border-top: none;" colspan="9">
+                                <p style="margin: 0cm; text-align: left;">
+                                    <b> </b>
+                                    <b> External staff (in full time equivalent
+                                        units)</b>
+                                </p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
+                                <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 02 01 (AC, END from the 'global
+                                    envelope')</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
+                                <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">20 02 03 (AC, AL, END and JPD in the EU
+                                    Delegations)</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 15%; border: solid black 1.0pt; border-top: none;" rowspan="2">
+                                <p style="margin: 0cm; text-align: center;">Admin. Support line<br/>[XX.01.YY.YY]</p>
+                            </td>
+                            <td style="width: 15%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
+                                <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">at Headquarters</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 15%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt;">
+                                <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">in EU Delegations </p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
+                                <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">(AC, END - Indirect research)</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
+                                <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;"> (AC, END - Direct research)</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
+                                <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">Other budget lines (specify) - Heading 4</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
+                                <p style="margin: 0cm; text-align: left; text-indent: 8.0pt;">Other budget lines (specify) - Outside
+                                    Heading 4</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">0</p>
+                            </td>
+                        </tr>
+                        <tr style="height: 15.0pt;">
+                            <td style="width: 30%; border: solid black 1.0pt; border-top: none;" colspan="2">
+                                <p style="margin: 0cm; text-align: left; text-indent: 8.05pt;">
+                                    <b>TOTAL</b>
+                                </p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                            <td style="width: 10%; border-top: none; border-left: none; border-bottom: solid black 1.0pt; border-right: solid black 1.0pt; background: #D9D9D9;">
+                                <p style="margin: 0cm; text-align: center;">
+                                    <b>0</b>
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </content>
             </level>
             <level leos:depth="4" class="landscape" leos:deletable="false">
                 <num>3.2.4.3.</num>
