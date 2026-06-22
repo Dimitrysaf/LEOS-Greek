@@ -52,7 +52,6 @@ define(function inlineAknLevelForTableFinancialStatementProfileModule(require) {
     plugins.push(require("plugins/leosTextCaseChanger/leosTextCaseChangerPlugin"));
     plugins.push(require("plugins/leosSpecialChar/leosSpecialCharPlugin"));
     plugins.push(require("plugins/leosPreventElementDeletion/leosPreventElementDeletionPlugin"));
-    plugins.push(require("plugins/leosElementSplitHandler/leosElementSplitHandlerPlugin"));
     plugins.push(require("plugins/leosSpellChecker/leosSpellCheckerPlugin"));
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
     plugins.push(require("plugins/aknHeading/aknHeadingPlugin"));
