@@ -79,6 +79,7 @@ define(function aknNumberedBlockListPluginModule(require) {
                     event.editor.fire( 'unlockSnapshot' );
                 }
             });
+            editor.on('selectionChange', leosPluginUtils.disableListForTableInsideBlockContainer);
         }
     };
 

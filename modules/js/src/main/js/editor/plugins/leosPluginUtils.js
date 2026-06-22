@@ -1987,6 +1987,23 @@ define(function leosPluginUtilsModule(require) {
         return null;
     }
 
+    function _disableListForTableInsideBlockContainer(event) {
+        var path = event.editor.elementPath();
+        if (!path) return;
+
+        var inTable = path.contains('table');
+        var disabled = inTable && !!inTable.getAscendant(function(el) {
+            return el.type === CKEDITOR.NODE_ELEMENT &&
+                el.getName() === 'div' &&
+                el.getAttribute('data-akn-name')?.toLowerCase() === BLOCKCONTAINER;
+        }, true);
+
+        ['numberedlist', 'bulletedlist'].forEach(function(name) {
+            var btn = event.editor.getCommand(name);
+            if (btn) btn.setState(disabled ? CKEDITOR.TRISTATE_DISABLED : CKEDITOR.TRISTATE_OFF);
+        });
+    }
+    
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -2085,6 +2102,7 @@ define(function leosPluginUtilsModule(require) {
         isContentEditable: _isContentEditable,
         clearSelection: _clearSelection,
         findFirstChild: _findFirstChild,
+        disableListForTableInsideBlockContainer: _disableListForTableInsideBlockContainer,
         commonAttributes: commonAttributes,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
