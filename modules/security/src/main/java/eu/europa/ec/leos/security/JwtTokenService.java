@@ -109,12 +109,6 @@ public class JwtTokenService implements TokenService {
                 registeredClients.add(new AuthClient(clientName, clientId, clientSecret));
             }
         }
-        boolean containsNgClient = Arrays.asList(clientsNames).contains("ngLeos");
-        if (!containsNgClient) {
-            ngClientId = "ngLeosClientId";
-            ngClientSecret = "ngLeosSecret";
-            registeredClients.add(new AuthClient("ngLeos", ngClientId, ngClientSecret));
-        }
     }
     
     /**
