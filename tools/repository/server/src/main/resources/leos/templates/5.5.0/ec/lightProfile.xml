@@ -57,6 +57,25 @@
         </profile>
 
         <profile language="default">
+            <name>DECIDE_EDIT</name>
+            <breadcrumb>false</breadcrumb>
+            <tocEdition>false</tocEdition>
+            <tocSignatureEdition>false</tocSignatureEdition>
+            <signatureEdition>false</signatureEdition>
+            <versionUpdate>false</versionUpdate>
+            <internalReference>false</internalReference>
+            <authorialNote>false</authorialNote>
+            <showLoggedUser>true</showLoggedUser>
+            <trackChangesEnabled>false</trackChangesEnabled>
+            <closeDocument>true</closeDocument>
+            <callbackPresent>true</callbackPresent>
+            <annotations>true</annotations>
+            <importOJ>false</importOJ>
+            <markAsDoneAvailable>false</markAsDoneAvailable>
+            <viewOriginalLanguage>true</viewOriginalLanguage>
+        </profile>
+
+        <profile language="default">
             <name>EDIT_MULTILINGUAL</name>
             <breadcrumb>true</breadcrumb>
             <tocEdition>false</tocEdition>
