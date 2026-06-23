@@ -22,3 +22,15 @@
 *.woff  binary
 *.xls   binary
 *.xlsx  binary
+
+# -----------------------------------------------------------------------
+# Greek fork: upstream paths that Greece will never use.
+# On conflict, always keep our version (deleted or replaced).
+# -----------------------------------------------------------------------
+
+# EU/EC-specific document templates — Greece will have its own gr/ tree
+tools/repository/server/src/main/resources/leos/templates/**/ec/** merge=ours
+tools/repository/server/src/main/resources/leos/templates/**/os/** merge=ours
+
+# DECIDE / ISC integration — EU institution workflow, not relevant for Greece
+modules/integration/**                                                 merge=ours

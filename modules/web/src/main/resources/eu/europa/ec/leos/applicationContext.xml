@@ -26,6 +26,8 @@
     <!-- Application Language Tags (tags as specified by IETF BCP 47) -->
     <util:list id="applicationLanguageTags">
         <value>en-UK</value>
+        <value>fr</value>
+        <value>el</value>
     </util:list>
 
     <!-- Message Source -->
