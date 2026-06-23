@@ -14,10 +14,19 @@
 # See the Licence for the specific language governing permissions and limitations under the Licence.
 #
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 #TITLE Leos-Pilot
 echo "---------------------LEOS-----------------------------------------------"
 
+echo "---------------------CLEANING LOCKED TARGETS...------------------------"
+pkill -9 -f "surefirebooter" 2>/dev/null || true
+sleep 1
+rm -rf "$SCRIPT_DIR/modules/services/target" 2>/dev/null || true
+rm -rf "$SCRIPT_DIR/modules/domain/target" 2>/dev/null || true
+
 echo "---------------------LEOS COMPILING...----------------------------------"
+cd "$SCRIPT_DIR"
 mvn clean install
 echo "---------------------LEOS COMPILED.-------------------------------------"
 

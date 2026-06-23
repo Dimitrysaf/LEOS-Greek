@@ -236,3 +236,50 @@ node_modules
 
 # Kiro AI agent configuration
 .kiro/
+
+# Runtime log files
+*.log
+
+# Build-generated API documentation
+docs/REST/
+
+# Maven OpenAPI plugin generates files with Windows-style backslash paths on Linux
+modules/services\\*
+modules/services/target\\*
+tools/repository/server\\*
+tools/repository/server/target\\*
+tools/akn4euutil/server\\*
+tools/akn4euutil/server/target\\*
+
+# Runtime-generated LEOS catalog templates (created when LEOS loads the catalog)
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/SJ-*/
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/PR-*
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/EE-*/
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/SG-*.xml
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/SG-*/
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/CP-*.xml
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/CP-*-CONF.json
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/EM-AA*.xml
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/EM-AA*-CONF.json
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/FS-001/
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/*_translated.xml
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/structure_08.xml
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/structure_09.xml
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-00*.xml
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-00*-CONF.json
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-01[0-8].xml
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-01[0-8]-CONF.json
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-030*.xml
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-030*-CONF.json
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-031*.xml
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-031*-CONF.json
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-032*.xml
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-032*-CONF.json
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-033*.xml
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-033*-CONF.json
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-035*.xml
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-035*-CONF.json
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-036*.xml
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-036*-CONF.json
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-037*.xml
+tools/repository/server/src/main/resources/leos/templates/consolidated/*/BL-037*-CONF.json
