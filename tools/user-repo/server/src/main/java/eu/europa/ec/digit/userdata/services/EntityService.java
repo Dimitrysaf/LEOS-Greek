@@ -94,7 +94,7 @@ public class EntityService {
                 new BadRequestException(
                         "SpecialEntity with the given ID does not exist.",
                         "page.workspace.administration.entity-info.special-entity-not-found"));
-        final String name = dto.getName();
+        final String name = dto.getName().trim();
         if (!entityRepository.findByNameIgnoreCase(name).isEmpty()) {
             throw new BadRequestException(
                     "Cannot update SpecialEntity(%s): Entity with the same name (case-insensitive) already exists".formatted(dto.getId()),
