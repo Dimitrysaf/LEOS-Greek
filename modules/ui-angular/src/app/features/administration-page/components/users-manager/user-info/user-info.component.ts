@@ -238,7 +238,7 @@ export class UserInfoComponent implements OnInit, OnDestroy {
                   control.setErrors({});
                 }
               }
-              combinedMessage += '<li>' + this.translateService.instant(e[1] as string) + '</li>';
+              combinedMessage += '<li>' + (e[1] as string).split(';').map(s => s.trim()).map(s => this.translateService.instant(s)).reduce((prev, curr) => prev + '<br>' + curr) + '</li>';
               this.errorInEntities = Object.keys(errorMap).includes('entities');
             });
             combinedMessage += '</ul>'
@@ -250,7 +250,6 @@ export class UserInfoComponent implements OnInit, OnDestroy {
           });
         }
       });
-    // }
   }
 
   private get userIsEnrolled() {
