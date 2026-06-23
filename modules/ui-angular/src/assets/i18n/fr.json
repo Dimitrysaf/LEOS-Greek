@@ -32,6 +32,7 @@
   "global.actions.remove": "Supprimer",
   "global.language.en": "Anglais",
   "global.language.fr": "Français",
+  "global.language.el": "Grec",
   "global.notifications.title.error": "Erreur",
   "global.notifications.title.info": "Info",
   "global.notifications.title.success": "Succès",
