@@ -163,7 +163,7 @@
         <!-- JUnit 5 -->
         <junit-jupiter.version>5.12.2</junit-jupiter.version>
         <assertj.version>3.27.7</assertj.version>
-        <byte-buddy.version>1.14.9</byte-buddy.version>
+        <byte-buddy.version>1.17.8</byte-buddy.version>
         <!-- httpclient -->
        <httpclient5.version>5.5.1</httpclient5.version>
         <!-- Sonar -->
@@ -866,6 +866,9 @@
                             <include>**/*Test_IT.java</include>
                         </includes>
                         <argLine>
+                            ${argLine}
+                            -javaagent:${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${byte-buddy.version}/byte-buddy-agent-${byte-buddy.version}.jar
+                            -XX:+EnableDynamicAgentLoading
                             --add-opens java.base/java.lang=ALL-UNNAMED
                             --add-opens java.base/java.util=ALL-UNNAMED
                             --add-opens java.base/java.lang.reflect=ALL-UNNAMED

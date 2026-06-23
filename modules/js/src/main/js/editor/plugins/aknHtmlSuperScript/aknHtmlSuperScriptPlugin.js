@@ -46,6 +46,9 @@ define(function aknHtmlSuperScriptPluginModule(require) {
         akn: "sup",
         html: "sup",
         attr: [{
+            akn: "xml:id",
+            html: "id"
+        }, {
             akn : "leos:origin",
             html : "data-origin"
         }],

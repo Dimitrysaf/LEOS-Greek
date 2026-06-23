@@ -19,11 +19,7 @@ define(function testAknAuthorialNotePlugin(require) {
     describe(
         "Unit tests for plugins/aknAuthorialNote",
         function() {
-            var transformationConfigForAknAuthorialNote = '{"akn":"authorialNote","html":"span[class=authorialnote]","attr":[{"html":"class=authorialnote"},{"akn":"marker","html":"marker"},{"akn":"placement","html":"placement"},{"akn":"xml:id","html":"id"},{"akn":"leos:origin","html":"data-origin"},{"akn":"leos:softuser","html":"data-akn-attr-softuser"},{"akn":"leos:softdate","html":"data-akn-attr-softdate"}' +
-                ',{"akn": "leos:id-to-be-restored","html": "data-akn-id-to-be-restored"}' +
-                ',{"akn": "leos:renumber-origin", "html": "data-akn-renumber-origin"} ' +
-                ',{"akn": "leos:id-to-be-removed", "html": "data-akn-id-to-be-removed"}' +
-                ',{"html":"data-akn-name=aknAuthorialNote"},{"akn":"leos:editable","html":"contenteditable"}],"sub":{"akn":"mp","html":"span","attr":[{"akn":"xml:id","html":"data-akn-mp-id"},{"akn":"leos:origin","html":"data-mp-origin"}],"sub":[{"akn":"text","html":"span[title]"}]}}';
+            var transformationConfigForAknAuthorialNote = '{"akn":"authorialNote","html":"span[class=authorialnote]","attr":[{"html":"class=authorialnote"},{"akn":"marker","html":"marker"},{"akn":"placement","html":"placement"},{"akn":"xml:id","html":"id"},{"akn":"leos:origin","html":"data-origin"},{"akn":"leos:softuser","html":"data-akn-attr-softuser"},{"akn":"leos:softdate","html":"data-akn-attr-softdate"},{"akn":"leos:id-to-be-restored","html":"data-akn-id-to-be-restored"},{"akn":"leos:renumber-origin","html":"data-akn-renumber-origin"},{"akn":"leos:id-to-be-removed","html":"data-akn-id-to-be-removed"},{"html":"data-akn-name=aknAuthorialNote"},{"akn":"leos:editable","html":"contenteditable"},{"akn":"onclick","html":"onclick"}],"sub":{"akn":"mp","html":"span","attr":[{"akn":"xml:id","html":"data-akn-mp-id"},{"akn":"leos:origin","html":"data-mp-origin"},{"akn":"leos:update-translation","html":"data-akn-update-translation"}],"sub":[{"akn":"text","html":"span[title]"}]}}';
 
             it("Tests if transformation config is valid.", function() {
                 expect(JSON.stringify(aknAuthorialNotePluginToTest.transformationConfig)).toEqual(transformationConfigForAknAuthorialNote);

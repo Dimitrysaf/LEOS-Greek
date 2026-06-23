@@ -344,7 +344,7 @@ define(function listItemNumberModule(require) {
         var editor = event.editor;
         var sequences = _getSequences();
         var articleType = leosPluginUtils.getArticleType(editor.element, editor.LEOS.articleTypesConfig);
-        listNumberConfig = editor.LEOS.listNumberConfig[articleType];
+        listNumberConfig = editor.LEOS.listNumberConfig?.[articleType];
         numberingConfigs = editor.LEOS.numberingConfigs;
         if(listNumberConfig){
             for (var i = 0; i < listNumberConfig.length; i++) {

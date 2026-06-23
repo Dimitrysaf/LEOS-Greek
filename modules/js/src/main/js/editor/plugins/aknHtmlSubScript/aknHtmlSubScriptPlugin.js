@@ -46,6 +46,9 @@ define(function aknHtmlSubScriptPluginModule(require) {
         akn: "sub",
         html: "sub",
         attr: [{
+            akn: "xml:id",
+            html: "id"
+        }, {
             akn : "leos:origin",
             html : "data-origin"
         }],

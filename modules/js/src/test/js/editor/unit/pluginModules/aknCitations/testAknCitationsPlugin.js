@@ -16,7 +16,7 @@ define(function testAknCitationsPlugin(require) {
     "use strict";
     var aknCitationsPluginToTest = require("plugins/aknCitations/aknCitationsPlugin");
     describe("Unit tests for plugins/aknCitationsPlugin", function() {
-        var transformationConfigForCitations = '{"akn":"citations","html":"div[data-akn-name=citations]","attr":[{"akn":"xml:id","html":"id"},{"akn":"leos:origin","html":"data-origin"},{"akn":"leos:editable","html":"data-akn-attr-editable"},{"akn":"leos:softuser","html":"data-akn-attr-softuser"},{"akn":"leos:softdate","html":"data-akn-attr-softdate"},{"html":"data-akn-name=citations"}]}';
+        var transformationConfigForCitations = '{"akn":"citations","html":"div[data-akn-name=citations]","attr":[{"akn":"xml:id","html":"id"},{"akn":"leos:origin","html":"data-origin"},{"akn":"leos:editable","html":"data-akn-attr-editable"},{"akn":"leos:softuser","html":"data-akn-attr-softuser"},{"akn":"leos:softdate","html":"data-akn-attr-softdate"},{"akn":"leos:id-to-be-restored","html":"data-akn-id-to-be-restored"},{"akn":"leos:renumber-origin","html":"data-akn-renumber-origin"},{"akn":"leos:id-to-be-removed","html":"data-akn-id-to-be-removed"},{"html":"data-akn-name=citations"}]}';
         it("Tests if transformation config is valid.", function() {
             expect(JSON.stringify(aknCitationsPluginToTest.transformationConfig)).toEqual(transformationConfigForCitations);
 
