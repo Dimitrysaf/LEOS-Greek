@@ -23,6 +23,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
 
 @Service
 @Instance(InstanceType.COMMISSION)
@@ -99,5 +101,12 @@ public class ProposalAKN4EUServiceImpl implements AKN4EUService {
         } catch(Exception e){
             throw new Exception("Exception while calling external service Akn4EU", e);
         }
+    }
+
+    @Override
+    public Map<String, byte[]> getHtmlRenditions(LeosFile legFile, User user) throws Exception {
+        // Commission instance uses the external Toolbox for rendering; local HTML renditions not supported here
+        LOG.warn("getHtmlRenditions called on Commission instance — not supported, returning empty");
+        return Collections.emptyMap();
     }
 }

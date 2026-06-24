@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -294,7 +295,11 @@ public class ProposalApiController implements ProposalApi {
             proposalRef = encodeParam(proposalRef);
             exportOutput = encodeParam(exportOutput);
             byte[] exportProposal = apiService.exportProposalDownload(proposalRef, exportOutput);
-            return new ResponseEntity<>(exportProposal, HttpStatus.OK);
+            String ext = "PDF".equalsIgnoreCase(exportOutput) ? "pdf" : "zip";
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            headers.setContentDispositionFormData("attachment", proposalRef + "." + ext);
+            return new ResponseEntity<>(exportProposal, headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while trying to download export proposal {}", proposalRef, e);
             return new ResponseEntity<>("Error occurred while downloading export proposal " + proposalRef + ": " + e.getMessage(),

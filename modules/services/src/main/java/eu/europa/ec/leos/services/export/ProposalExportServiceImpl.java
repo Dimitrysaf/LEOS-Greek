@@ -54,7 +54,7 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@Instance(instances = {InstanceType.COMMISSION, InstanceType.OS})
+@Instance(InstanceType.COMMISSION)
 public class ProposalExportServiceImpl extends ExportServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(ProposalExportServiceImpl.class);
     private static final String FILE_NOT_DELETED = "File not deleted {}";
