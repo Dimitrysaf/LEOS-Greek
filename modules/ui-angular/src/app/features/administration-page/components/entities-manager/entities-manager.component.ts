@@ -70,6 +70,7 @@ export class EntitiesManagerComponent implements OnInit {
     this.adminService.getUserEntities().subscribe(entities => {
       this.loading = false;
       this.entities = entities.filter(entity => entity.name?.toLowerCase().includes(searchTerm));
+      this.page = 0;
       this.updatePagination();
     });
   }

@@ -375,6 +375,7 @@ define(function aknUnNumberedBlockListPluginModule(require) {
                     event.editor.fire( 'unlockSnapshot' );
                 }
             });
+            editor.on('selectionChange', leosPluginUtils.disableListForTableInsideBlockContainer);
         }
     };
     function _startObservingAllLists(event){
