@@ -3,8 +3,8 @@ import { GlobalConfig } from '@eui/core';
 export const GLOBAL: GlobalConfig = {
   i18n: {
     i18nService: {
-      defaultLanguage: 'en',
-      languages: ['en', 'fr', 'el'],
+      defaultLanguage: 'el',
+      languages: ['el', 'en', 'fr'],
     },
     i18nLoader: {
       i18nFolders: ['i18n-eui', 'i18n'],
@@ -13,7 +13,7 @@ export const GLOBAL: GlobalConfig = {
   user: {
     defaultUserPreferences: {
       dashboard: {},
-      lang: 'en',
+      lang: 'el',
     },
   },
 };

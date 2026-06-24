@@ -36,14 +36,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   headerTitleHtml = '';
   headerLogoUrl = document.baseURI;
-  headerLogoImgUrl =
-    process.env.NG_APP_LEOS_INSTANCE === 'cn'
-      ? 'assets/images/logo-cn-w.svg'
-      : '';
-  polarisLogoImgUrl =
-    process.env.NG_APP_LEOS_INSTANCE === 'ec'
-      ? 'assets/images/logo-polaris-ec.svg'
-      : '';
+  headerLogoImgUrl = 'assets/images/flag-gr.svg';
   userInfos: UserState;
   // Observe state changes
   userState: Observable<UserState>;
@@ -125,7 +118,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.notificationsService.fetchNotifications().pipe(take(1)).subscribe();
 
     this.i18nState.pipe(takeUntil(this.destroy$)).subscribe((state) => {
-      const activeLang = state.activeLang ?? 'en';
+      const activeLang = state.activeLang ?? 'el';
       this.translateService.use(activeLang);
       this.storage.set('lang', activeLang);
     });
@@ -151,25 +144,15 @@ export class AppComponent implements OnInit, OnDestroy {
   onListItemClicked(item) {
     switch (item.id) {
       case 1: {
-        window.location.href =
-          'mailto:SG-DECIDE-FORMATION-SUPPORT@ec.europa.eu';
         break;
       }
       case 2: {
-        window.location.href =
-          'https://eceuropaeu.sharepoint.com/teams/GRP-PRO-SG-EU-PMH-IT-training-support/SitePages/Edit.aspx';
         break;
       }
       case 3: {
-        window.open(
-          'https://eceuropaeu.sharepoint.com/sites/gopro',
-          '_blank',
-        );
         break;
       }
       case 4: {
-        window.location.href =
-          'https://intragate.ec.europa.eu/decide/sep/entrance';
         break;
       }
     }

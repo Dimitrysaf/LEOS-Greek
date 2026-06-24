@@ -366,33 +366,22 @@ export class ProposalDetailsService implements OnDestroy {
   }
 
   exportProposal(outputType: string) {
+    this.loadingService.setLoading(true);
+    const ext = outputType === 'PDF' ? 'pdf' : 'zip';
     this.http
       .get(
-        `${apiBaseUrl}/secured/proposal/${this.proposalRef}/export?exportOutput=${outputType}`,
-        { responseType: 'text' },
+        `${apiBaseUrl}/secured/proposal/${this.proposalRef}/export/download?exportOutput=${outputType}`,
+        { responseType: 'blob', observe: 'response' },
       )
       .subscribe({
-        next: () => {
-          this.appConfig.config.subscribe((c) => {
-            const userEmail = c.user.email;
-            const fileType = { PDF: 'Pdf', WORD: 'Legiswrite' }[outputType];
-            this.translateService
-              .get('page.editor.export-email-sent', { fileType, userEmail })
-              .subscribe((message) => {
-                this.growlService.growl({
-                  severity: 'info',
-                  summary: message,
-                  life: 3000,
-                  isGrowlSticky: false,
-                  position: 'bottom-right',
-                });
-              });
-          });
+        next: (resp) => {
+          const blob = resp.body;
+          downloadBlob(blob, `${this.proposalRef}.${ext}`);
         },
         error: (err) => {
-          // TODO : handle errors
           this.growlService.growlError(err.error);
         },
+        complete: () => this.loadingService.setLoading(false),
       });
   }
 

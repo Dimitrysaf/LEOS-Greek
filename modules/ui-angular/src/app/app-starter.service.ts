@@ -24,7 +24,7 @@ export class AppStarterService {
   ) {}
 
   start(): Observable<any> {
-    const lang = this.storage.get('lang');
+    const lang = this.storage.get('lang') ?? 'el';
 
     this.i18nService.init({ activeLang: lang });
 

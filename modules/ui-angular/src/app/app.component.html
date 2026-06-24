@@ -1,21 +1,13 @@
 <eui-app>
   <eui-app-toolbar>
     <eui-toolbar>
-      <eui-toolbar-logo
-        *ngIf="!headerLogoImgUrl && !polarisLogoImgUrl"
-        [homeUrl]="headerLogoUrl"
-      ></eui-toolbar-logo>
+      <eui-toolbar-logo *ngIf="!headerLogoImgUrl" [homeUrl]="headerLogoUrl"></eui-toolbar-logo>
+      <a [href]="headerLogoUrl" *ngIf="headerLogoImgUrl">
+        <img class="eui-toolbar-logo eui-toolbar-logo--custom gr-flag-logo"
+             alt="Ελληνική Δημοκρατία"
+             [src]="headerLogoImgUrl" />
+      </a>
       <eui-toolbar-app [innerHTML]="headerTitleHtml"></eui-toolbar-app>
-      <a [href]="headerLogoUrl" *ngIf="headerLogoImgUrl"
-      ><img
-        class="eui-toolbar-logo eui-toolbar-logo--custom"
-        [alt]="
-            'app.header.logo-alt'
-              | translate : { title: headerTitleHtml | htmlToPlaintext }
-          "
-        [src]="headerLogoImgUrl"
-      /></a>
-      <div class="eui-toolbar-app" [innerHTML]="headerTitleHtml"></div>
 
       <eui-toolbar-items [euiPositionRight]="false">
         <eui-toolbar-item>
@@ -70,12 +62,6 @@
             </eui-dropdown-content>
           </eui-dropdown>
         </eui-toolbar-item>
-        <eui-toolbar-item *ngIf="polarisLogoImgUrl">
-            <img class="eui-toolbar-logo-polaris" [src]="polarisLogoImgUrl" alt="Logo"/>
-        </eui-toolbar-item>
-        <eui-toolbar-item *ngIf="polarisLogoImgUrl">
-          <eui-toolbar-logo></eui-toolbar-logo>
-        </eui-toolbar-item>
         <eui-toolbar-item>
           <eui-user-profile *ngIf="showLoggedUser"></eui-user-profile>
         </eui-toolbar-item>
@@ -100,18 +86,8 @@
   </eui-app-toolbar>
   <eui-app-footer>
     <eui-footer euiPrimary [className]="'leos-footer-content'">
-      <a
-        href="https://eceuropaeu.sharepoint.com/teams/GRP-PRO-SG-EU-PMH-IT-training-support/SitePages/Edit.aspx"
-        target="_target"
-      ><span>Help </span></a>
-      |
-      <a
-        href="https://eceuropaeu.sharepoint.com/teams/GRP-PRO-SG-EU-PMH-IT-training-support/Public librairy/Forms/AllItems.aspx?id=%2Fteams%2FGRP-PRO-SG-EU-PMH-IT-training-support%2FPublic librairy%2FEdiT_Privacy_statement%2Epdf&parent=%2Fteams%2FGRP-PRO-SG-EU-PMH-IT-training-support%2FPublic librairy"
-        target="_target"
-      ><span> Privacy Statement </span></a>
-      | Developed by DIGIT.A3 | Version:
-      {{ 'NG_APP_LEOS_VERSION' | env }} | Revision:
-      {{ 'NG_APP_LEOS_SOURCE_REVISION' | env }} | Date:
+      Έκδοση: {{ 'NG_APP_LEOS_VERSION' | env }} | Αναθεώρηση:
+      {{ 'NG_APP_LEOS_SOURCE_REVISION' | env }} | Ημερομηνία:
       {{ 'NG_APP_LEOS_VERSION_BUILD_DATE' | env }}
     </eui-footer>
   </eui-app-footer>

@@ -7,6 +7,27 @@
  * Overrides
  */
 
+/* Greek fork: suppress ECL EU flag background behind logo */
+.eui-toolbar-logo,
+.eui-toolbar-logo--custom,
+eui-toolbar-logo {
+  background-image: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+img.eui-toolbar-logo--custom {
+  height: 50px;
+  width: auto;
+}
+
+img.gr-flag-logo {
+  height: 40px;
+  width: auto;
+  margin-right: 8px;
+}
+
 eui-icon-svg > svg > use {
   // disables svg icon tooltips
   pointer-events: none;
